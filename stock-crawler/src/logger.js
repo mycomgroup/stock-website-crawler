@@ -48,6 +48,46 @@ class Logger {
   }
 
   /**
+   * 获取北京时间字符串（UTC+8）
+   * @param {Date} date - 日期对象
+   * @returns {string} 格式化的北京时间字符串
+   */
+  getBeijingTime(date = new Date()) {
+    // 转换为北京时间（UTC+8）
+    const beijingTime = new Date(date.getTime() + (8 * 60 * 60 * 1000));
+    
+    // 格式化为 YYYY-MM-DD HH:mm:ss
+    const year = beijingTime.getUTCFullYear();
+    const month = String(beijingTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(beijingTime.getUTCDate()).padStart(2, '0');
+    const hours = String(beijingTime.getUTCHours()).padStart(2, '0');
+    const minutes = String(beijingTime.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(beijingTime.getUTCSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
+  /**
+   * 获取用于文件名的北京时间字符串
+   * @param {Date} date - 日期对象
+   * @returns {string} 格式化的文件名时间字符串
+   */
+  getBeijingTimeForFilename(date = new Date()) {
+    // 转换为北京时间（UTC+8）
+    const beijingTime = new Date(date.getTime() + (8 * 60 * 60 * 1000));
+    
+    // 格式化为 YYYYMMDD-HHmmss
+    const year = beijingTime.getUTCFullYear();
+    const month = String(beijingTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(beijingTime.getUTCDate()).padStart(2, '0');
+    const hours = String(beijingTime.getUTCHours()).padStart(2, '0');
+    const minutes = String(beijingTime.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(beijingTime.getUTCSeconds()).padStart(2, '0');
+    
+    return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+  }
+
+  /**
    * 初始化日志文件
    */
   initLogFile() {
@@ -57,12 +97,13 @@ class Logger {
         fs.mkdirSync(this.logDir, { recursive: true });
       }
 
-      // 生成日志文件名（带时间戳）
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      // 生成日志文件名（带北京时间戳）
+      const timestamp = this.getBeijingTimeForFilename();
       this.logFile = path.join(this.logDir, `crawler-${timestamp}.log`);
 
-      // 创建日志文件
-      fs.writeFileSync(this.logFile, `Crawler Log - ${new Date().toISOString()}\n\n`, 'utf-8');
+      // 创建日志文件（使用北京时间）
+      const beijingTime = this.getBeijingTime();
+      fs.writeFileSync(this.logFile, `Crawler Log - ${beijingTime} (Beijing Time)\n\n`, 'utf-8');
     } catch (error) {
       console.error('Failed to initialize log file:', error.message);
     }
@@ -120,13 +161,13 @@ class Logger {
     // 检查是否应该输出此级别的日志
     if (!this.shouldLog(level)) {
       // 即使不输出到控制台，也写入文件
-      const timestamp = new Date().toISOString();
+      const timestamp = this.getBeijingTime();
       const logEntry = `[${timestamp}] [${level}] ${message}`;
       this.writeToFile(logEntry);
       return;
     }
 
-    const timestamp = new Date().toISOString();
+    const timestamp = this.getBeijingTime();
     const logEntry = `[${timestamp}] [${level}] ${message}`;
 
     // 控制台输出（带颜色）
@@ -178,7 +219,7 @@ class Logger {
     const color = statusColors[status] || '';
     const message = `URL [${status.toUpperCase()}]: ${url}${details ? ' - ' + details : ''}`;
     
-    const timestamp = new Date().toISOString();
+    const timestamp = this.getBeijingTime();
     const logEntry = `[${timestamp}] ${message}`;
 
     console.log(`${color}${logEntry}\x1b[0m`);
