@@ -1,0 +1,31 @@
+{
+  "name": "stock-website-crawler",
+  "version": "1.0.0",
+  "description": "A configurable web crawler for stock data websites",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "crawl": "node src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:login": "node scripts/test-login.js",
+    "test:pagination": "node scripts/test-pagination.js"
+  },
+  "keywords": [
+    "crawler",
+    "web-scraper",
+    "stock-data",
+    "playwright"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
+  "devDependencies": {
+    "fast-check": "^3.15.0",
+    "jest": "^29.7.0",
+    "jsdom": "^27.0.1"
+  }
+}

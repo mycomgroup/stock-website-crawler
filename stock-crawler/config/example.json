@@ -1,0 +1,26 @@
+{
+  "name": "example-crawler",
+  "seedUrls": [
+    "https://example.com/api/docs"
+  ],
+  "urlRules": {
+    "include": [".*api.*", ".*docs.*"],
+    "exclude": [".*login.*", ".*logout.*"]
+  },
+  "login": {
+    "required": false,
+    "username": "",
+    "password": "",
+    "loginUrl": ""
+  },
+  "crawler": {
+    "headless": true,
+    "timeout": 30000,
+    "waitBetweenRequests": 500,
+    "maxRetries": 3
+  },
+  "output": {
+    "directory": "./output",
+    "format": "markdown"
+  }
+}

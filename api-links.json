@@ -1,0 +1,67 @@
+{
+  "apiDocLinks": [
+    {
+      "url": "https://www.lixinger.com/open/api/detail?api-key=cn/company",
+      "name": "股票信息API"
+    }
+  ],
+  "byGroup": [],
+  "allLinks": [
+    {
+      "url": "https://www.lixinger.com/open/api/",
+      "name": "开放平台"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api",
+      "name": "开放平台"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/token",
+      "name": "我的Token"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/detail?api-key=cn/company",
+      "name": "股票信息API"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/doc",
+      "name": "API文档"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/precaution",
+      "name": "api注意事项"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/my-settings",
+      "name": "我的设置"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/my-apis",
+      "name": "我的接口"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/orders",
+      "name": "我的订单"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/receipts",
+      "name": "我的发票"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/price-tier",
+      "name": "购买"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/open-source-projects",
+      "name": "开源对接项目"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/update-log",
+      "name": "更新日志"
+    },
+    {
+      "url": "https://www.lixinger.com/open/api/price-tier?api-groups=[{%22areaCode%22:%22cn%22,%22dataType%22:%22company%22}]",
+      "name": "购买"
+    }
+  ]
+}

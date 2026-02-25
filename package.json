@@ -1,0 +1,13 @@
+{
+  "name": "testlixingren",
+  "private": true,
+  "scripts": {
+    "login": "node login.js",
+    "fetch-api-links": "node fetch-api-links.js",
+    "crawl-doc-to-md": "node crawl-doc-to-md.js",
+    "test-api": "node test-api.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

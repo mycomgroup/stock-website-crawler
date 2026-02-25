@@ -1,0 +1,24 @@
+node_modules/
+.env
+*.png
+captured-responses.json
+table-debug.html
+
+# 爬虫输出数据
+stock-crawler/output/
+stock-crawler/chrome_user_data/
+stock-crawler/chrome_user_data_test/
+
+# 日志文件
+*.log
+crawl-log.txt
+crawl-output.log
+
+# 临时文件
+*.bak
+*.tmp
+debug-*.json
+
+# 抓取的数据文件
+api-docs/
+links.txtbak
