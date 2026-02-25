@@ -90,8 +90,14 @@ class GenericParser extends BaseParser {
       // 提取并保存图表（Canvas/SVG）
       const charts = await this.extractAndSaveCharts(page, options.filepath, options.pagesDir);
       
-      // 处理无限滚动加载更多内容
-      await this.handleInfiniteScroll(page);
+      // 1. 先点击所有"更多/展开"按钮，展开折叠内容
+      await this.clickAllExpandButtons(page);
+      
+      // 2. 处理无限滚动加载更多内容（优化版）
+      await this.handleInfiniteScrollEnhanced(page);
+      
+      // 3. 提取运行时图表数据（ECharts/Highcharts）
+      const chartData = await this.extractChartData(page);
       
       // 提取主内容区域的混排内容（段落、图片、列表等按原始顺序）
       const mainContent = await this.extractMainContentWithOrder(page, options.filepath, options.pagesDir);
@@ -124,6 +130,7 @@ class GenericParser extends BaseParser {
         codeBlocks: initialCodeBlocks,
         images: initialImages,
         charts,
+        chartData, // 新增：运行时图表数据
         blockquotes,
         definitionLists,
         horizontalRules,
@@ -2248,6 +2255,356 @@ class GenericParser extends BaseParser {
       return content;
     } catch (error) {
       console.error('Failed to extract main content with order:', error.message);
+      return [];
+    }
+  }
+
+  /**
+   * 点击所有"更多/展开/查看全部"按钮
+   * @param {Page} page - Playwright页面对象
+   * @returns {Promise<number>} 点击的按钮数量
+   */
+  async clickAllExpandButtons(page) {
+    try {
+      const buttonTexts = [
+        '更多', '展开', '查看全部', '加载更多', '全部', '历史', '明细',
+        'More', 'Expand', 'Show All', 'Load More', 'View All'
+      ];
+      
+      let totalClicked = 0;
+      let clicked = true;
+      let maxClicks = 50; // 防止无限循环
+      
+      console.log('  查找并点击展开按钮...');
+      
+      while (clicked && maxClicks > 0) {
+        clicked = false;
+        
+        for (const text of buttonTexts) {
+          try {
+            // 查找包含该文本的按钮或链接
+            const buttons = await page.locator(`button:has-text("${text}"), a:has-text("${text}"), [class*="more"]:has-text("${text}"), [class*="expand"]:has-text("${text}")`).all();
+            
+            for (const button of buttons) {
+              try {
+                // 检查按钮是否可见且可点击
+                const isVisible = await button.isVisible();
+                if (!isVisible) continue;
+                
+                const isDisabled = await button.evaluate(el => {
+                  return el.disabled || 
+                         el.classList.contains('disabled') ||
+                         el.getAttribute('aria-disabled') === 'true' ||
+                         el.style.display === 'none';
+                });
+                
+                if (isDisabled) continue;
+                
+                // 点击按钮
+                await button.click();
+                await page.waitForTimeout(800);
+                
+                clicked = true;
+                totalClicked++;
+                maxClicks--;
+                
+                console.log(`    ✓ 点击了"${text}"按钮 (${totalClicked})`);
+                
+                // 每点击一个按钮就跳出内层循环，重新查找
+                break;
+              } catch (e) {
+                // 单个按钮点击失败，继续尝试下一个
+                continue;
+              }
+            }
+            
+            if (clicked) break; // 如果点击了按钮，跳出文本循环，重新开始
+          } catch (e) {
+            // 查找失败，继续下一个文本
+            continue;
+          }
+        }
+      }
+      
+      if (totalClicked > 0) {
+        console.log(`  ✓ 共点击了 ${totalClicked} 个展开按钮`);
+        // 等待内容加载完成
+        await page.waitForTimeout(2000);
+      }
+      
+      return totalClicked;
+    } catch (error) {
+      console.error('Error clicking expand buttons:', error.message);
+      return 0;
+    }
+  }
+
+  /**
+   * 处理无限滚动加载（增强版）
+   * @param {Page} page - Playwright页面对象
+   * @returns {Promise<void>}
+   */
+  async handleInfiniteScrollEnhanced(page) {
+    try {
+      console.log('  处理无限滚动...');
+      
+      // 1. 识别滚动容器
+      const scrollContainer = await this.findScrollContainer(page);
+      
+      const maxScrolls = 30;
+      const scrollTimeout = 60000;
+      const startTime = Date.now();
+      
+      let scrollCount = 0;
+      let previousHash = '';
+      let noChangeCount = 0;
+      
+      while (scrollCount < maxScrolls && noChangeCount < 3) {
+        if (Date.now() - startTime > scrollTimeout) {
+          console.log('    滚动超时');
+          break;
+        }
+        
+        // 2. 混合模式：先尝试点击"加载更多"按钮
+        const loadMoreClicked = await this.clickLoadMoreButton(page);
+        if (loadMoreClicked) {
+          await page.waitForTimeout(1500);
+        }
+        
+        // 3. 滚动（容器或window）
+        if (scrollContainer) {
+          await page.evaluate(() => {
+            const container = document.querySelector('[class*="scroll"], [class*="list"], [style*="overflow"]');
+            if (container) {
+              container.scrollTop = container.scrollHeight;
+            }
+          });
+        } else {
+          await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        }
+        
+        scrollCount++;
+        await page.waitForTimeout(2000);
+        
+        // 4. 检查内容变化（使用hash）
+        const currentHash = await page.evaluate(() => {
+          const content = document.body.innerText;
+          return content.length + '_' + content.slice(-200);
+        });
+        
+        if (currentHash === previousHash) {
+          noChangeCount++;
+        } else {
+          noChangeCount = 0;
+          previousHash = currentHash;
+        }
+        
+        // 5. 检查"没有更多"提示
+        const hasNoMore = await page.evaluate(() => {
+          const noMoreTexts = ['没有更多', 'no more', '已经到底', '暂无更多', '全部加载完成', 'end of list', '到底了'];
+          const bodyText = document.body.textContent.toLowerCase();
+          return noMoreTexts.some(text => bodyText.includes(text.toLowerCase()));
+        });
+        
+        if (hasNoMore) {
+          console.log('    检测到"没有更多"提示');
+          break;
+        }
+      }
+      
+      if (scrollCount > 0) {
+        console.log(`    ✓ 滚动了 ${scrollCount} 次`);
+        // 滚动回顶部
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await page.waitForTimeout(1000);
+      }
+      
+    } catch (error) {
+      console.error('Error handling infinite scroll:', error.message);
+    }
+  }
+
+  /**
+   * 查找滚动容器
+   * @param {Page} page - Playwright页面对象
+   * @returns {Promise<boolean>} 是否找到滚动容器
+   */
+  async findScrollContainer(page) {
+    try {
+      const hasContainer = await page.evaluate(() => {
+        const selectors = [
+          '[class*="scroll-container"]',
+          '[class*="list-container"]',
+          '[class*="table-container"]',
+          '[style*="overflow: auto"]',
+          '[style*="overflow: scroll"]',
+          '[style*="overflow-y: auto"]',
+          '[style*="overflow-y: scroll"]'
+        ];
+        
+        for (const selector of selectors) {
+          const el = document.querySelector(selector);
+          if (el && el.scrollHeight > el.clientHeight) {
+            return true;
+          }
+        }
+        return false;
+      });
+      
+      return hasContainer;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * 点击"加载更多"按钮
+   * @param {Page} page - Playwright页面对象
+   * @returns {Promise<boolean>} 是否成功点击
+   */
+  async clickLoadMoreButton(page) {
+    try {
+      const buttonTexts = ['加载更多', '查看更多', 'Load More', 'Show More', '更多'];
+      
+      for (const text of buttonTexts) {
+        try {
+          const button = page.locator(`button:has-text("${text}"), a:has-text("${text}")`).first();
+          const count = await button.count();
+          
+          if (count > 0) {
+            const isVisible = await button.isVisible();
+            if (isVisible) {
+              await button.click();
+              return true;
+            }
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * 提取运行时图表数据（ECharts/Highcharts）
+   * @param {Page} page - Playwright页面对象
+   * @returns {Promise<Array>} 图表数据数组
+   */
+  async extractChartData(page) {
+    try {
+      console.log('  提取运行时图表数据...');
+      
+      const chartData = await page.evaluate(() => {
+        const data = [];
+        
+        // 1. ECharts
+        if (window.echarts) {
+          try {
+            // 查找所有ECharts实例
+            const echartsElements = document.querySelectorAll('[_echarts_instance_]');
+            echartsElements.forEach((el, index) => {
+              try {
+                const instance = window.echarts.getInstanceByDom(el);
+                if (instance) {
+                  const option = instance.getOption();
+                  if (option) {
+                    data.push({
+                      type: 'echarts',
+                      index: index + 1,
+                      title: option.title ? option.title[0]?.text || '' : '',
+                      series: option.series || [],
+                      xAxis: option.xAxis || [],
+                      yAxis: option.yAxis || [],
+                      legend: option.legend || {},
+                      tooltip: option.tooltip || {}
+                    });
+                  }
+                }
+              } catch (e) {
+                // 忽略单个实例的错误
+              }
+            });
+          } catch (e) {
+            // ECharts不可用或出错
+          }
+        }
+        
+        // 2. Highcharts
+        if (window.Highcharts && window.Highcharts.charts) {
+          try {
+            window.Highcharts.charts.forEach((chart, index) => {
+              if (chart) {
+                try {
+                  data.push({
+                    type: 'highcharts',
+                    index: index + 1,
+                    title: chart.title ? chart.title.textStr : '',
+                    series: chart.series.map(s => ({
+                      name: s.name,
+                      type: s.type,
+                      data: s.data.map(p => {
+                        if (p && typeof p === 'object') {
+                          return { x: p.x, y: p.y, name: p.name };
+                        }
+                        return p;
+                      })
+                    })),
+                    xAxis: chart.xAxis ? chart.xAxis.map(x => ({
+                      categories: x.categories,
+                      type: x.type
+                    })) : [],
+                    yAxis: chart.yAxis ? chart.yAxis.map(y => ({
+                      title: y.axisTitle ? y.axisTitle.textStr : '',
+                      type: y.type
+                    })) : []
+                  });
+                } catch (e) {
+                  // 忽略单个图表的错误
+                }
+              }
+            });
+          } catch (e) {
+            // Highcharts不可用或出错
+          }
+        }
+        
+        // 3. Chart.js
+        if (window.Chart && window.Chart.instances) {
+          try {
+            Object.values(window.Chart.instances).forEach((chart, index) => {
+              if (chart && chart.config) {
+                try {
+                  data.push({
+                    type: 'chartjs',
+                    index: index + 1,
+                    chartType: chart.config.type,
+                    data: chart.config.data,
+                    options: chart.config.options
+                  });
+                } catch (e) {
+                  // 忽略单个图表的错误
+                }
+              }
+            });
+          } catch (e) {
+            // Chart.js不可用或出错
+          }
+        }
+        
+        return data;
+      });
+      
+      if (chartData.length > 0) {
+        console.log(`    ✓ 提取了 ${chartData.length} 个图表的运行时数据`);
+      }
+      
+      return chartData;
+    } catch (error) {
+      console.error('Error extracting chart data:', error.message);
       return [];
     }
   }
