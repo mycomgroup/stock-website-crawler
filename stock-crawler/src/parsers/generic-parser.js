@@ -1313,8 +1313,14 @@ class GenericParser extends BaseParser {
         return dropdowns;
       }
 
-      if (dropdownElements.length === 0) {
-        return dropdowns;
+      // 检测下拉框数量，决定处理策略
+      const dropdownCount = dropdownElements.length;
+      const MAX_DROPDOWNS_FOR_COMBINATION = 5;
+      
+      if (dropdownCount > MAX_DROPDOWNS_FOR_COMBINATION) {
+        console.log(`  检测到 ${dropdownCount} 个下拉框（超过${MAX_DROPDOWNS_FOR_COMBINATION}个），使用依次遍历模式（不做排列组合）`);
+      } else {
+        console.log(`  检测到 ${dropdownCount} 个下拉框，使用标准遍历模式`);
       }
 
       // 处理每个下拉框
