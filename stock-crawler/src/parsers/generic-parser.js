@@ -102,8 +102,8 @@ class GenericParser extends BaseParser {
       // 提取主内容区域的混排内容（段落、图片、列表等按原始顺序）
       const mainContent = await this.extractMainContentWithOrder(page, options.filepath, options.pagesDir);
       
-      // 提取表格（支持分页）
-      const tables = await this.extractTablesWithPagination(page, options.onDataChunk);
+      // 提取表格（支持分页和虚拟表格）
+      const tables = await this.extractTablesWithPaginationAndVirtual(page, options.onDataChunk);
       
       // 尝试提取Tab页和下拉框内容（会检测数据变化）
       const tabsAndDropdowns = await this.extractTabsAndDropdowns(page, options.filepath, options.onDataChunk);
@@ -2607,6 +2607,512 @@ class GenericParser extends BaseParser {
       console.error('Error extracting chart data:', error.message);
       return [];
     }
+  }
+
+  /**
+   * 提取表格（支持分页和虚拟表格）
+   * @param {Page} page - Playwright页面对象
+   * @param {Function} onDataChunk - 数据块回调函数
+   * @returns {Promise<Array>} 表格数组
+   */
+  async extractTablesWithPaginationAndVirtual(page, onDataChunk) {
+    try {
+      const tables = [];
+      const tableElements = await page.locator('table').all();
+      
+      for (let tableIndex = 0; tableIndex < tableElements.length; tableIndex++) {
+        const tableEl = tableElements[tableIndex];
+        
+        // 检测是否为虚拟表格
+        const isVirtual = await this.detectVirtualTable(page, tableEl);
+        
+        if (isVirtual) {
+          console.log(`  检测到虚拟表格 ${tableIndex + 1}，使用虚拟表格提取模式`);
+          const virtualTableData = await this.extractVirtualTable(page, tableEl, tableIndex, onDataChunk);
+          tables.push(virtualTableData);
+        } else {
+          // 使用原有的分页表格提取逻辑
+          const tableInfo = await this.extractSingleTable(tableEl, tableIndex);
+          const paginationInfo = await this.findPaginationControls(page, tableEl);
+          
+          if (paginationInfo.hasPagination) {
+            // 分页表格处理（原有逻辑）
+            const paginatedTable = await this.extractPaginatedTable(page, tableEl, tableIndex, tableInfo, paginationInfo, onDataChunk);
+            tables.push(paginatedTable);
+          } else {
+            // 无分页，直接添加
+            tables.push(tableInfo);
+            
+            if (onDataChunk) {
+              await onDataChunk({
+                type: 'table',
+                tableIndex,
+                page: 1,
+                headers: tableInfo.headers,
+                rows: tableInfo.rows,
+                isFirstPage: true,
+                isLastPage: true
+              });
+            }
+          }
+        }
+      }
+      
+      return tables;
+    } catch (error) {
+      console.error('Failed to extract tables:', error.message);
+      return [];
+    }
+  }
+
+  /**
+   * 检测是否为虚拟表格
+   * @param {Page} page - Playwright页面对象
+   * @param {Locator} tableEl - 表格元素
+   * @returns {Promise<boolean>} 是否为虚拟表格
+   */
+  async detectVirtualTable(page, tableEl) {
+    try {
+      const virtualIndicators = await tableEl.evaluate((table) => {
+        const indicators = {
+          hasDataId: false,
+          hasAriaRowIndex: false,
+          hasVirtualClass: false,
+          hasScrollParent: false,
+          rowCountLow: false
+        };
+        
+        // 1. 检查是否有data-id或aria-rowindex属性
+        const rows = table.querySelectorAll('tr');
+        if (rows.length > 0) {
+          const firstRow = rows[0];
+          indicators.hasDataId = !!firstRow.getAttribute('data-id') || 
+                                 !!firstRow.getAttribute('data-key') ||
+                                 !!firstRow.getAttribute('data-row-key');
+          indicators.hasAriaRowIndex = !!firstRow.getAttribute('aria-rowindex');
+        }
+        
+        // 2. 检查是否有虚拟列表相关的class
+        const virtualClasses = ['virtual', 'virtualized', 'react-window', 'react-virtualized'];
+        const tableClasses = table.className.toLowerCase();
+        indicators.hasVirtualClass = virtualClasses.some(cls => tableClasses.includes(cls));
+        
+        // 3. 检查父元素是否有滚动容器
+        let parent = table.parentElement;
+        let depth = 0;
+        while (parent && depth < 5) {
+          const style = window.getComputedStyle(parent);
+          const overflow = style.overflow + style.overflowY;
+          if (overflow.includes('auto') || overflow.includes('scroll')) {
+            // 检查是否真的可滚动
+            if (parent.scrollHeight > parent.clientHeight) {
+              indicators.hasScrollParent = true;
+              break;
+            }
+          }
+          parent = parent.parentElement;
+          depth++;
+        }
+        
+        // 4. 检查行数是否异常少（可能是虚拟表格只渲染可见行）
+        const bodyRows = table.querySelectorAll('tbody tr');
+        indicators.rowCountLow = bodyRows.length > 0 && bodyRows.length < 50;
+        
+        return indicators;
+      });
+      
+      // 判断逻辑：满足以下任一条件即认为是虚拟表格
+      // 1. 有data-id或aria-rowindex（强特征）
+      // 2. 有虚拟列表class（强特征）
+      // 3. 有滚动父容器 + 行数少（弱特征组合）
+      const isVirtual = 
+        virtualIndicators.hasDataId ||
+        virtualIndicators.hasAriaRowIndex ||
+        virtualIndicators.hasVirtualClass ||
+        (virtualIndicators.hasScrollParent && virtualIndicators.rowCountLow);
+      
+      return isVirtual;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * 提取虚拟表格数据
+   * @param {Page} page - Playwright页面对象
+   * @param {Locator} tableEl - 表格元素
+   * @param {number} tableIndex - 表格索引
+   * @param {Function} onDataChunk - 数据块回调
+   * @returns {Promise<Object>} 表格数据
+   */
+  async extractVirtualTable(page, tableEl, tableIndex, onDataChunk) {
+    try {
+      console.log(`    开始提取虚拟表格数据...`);
+      
+      // 提取表头
+      const headers = await this.extractTableHeaders(tableEl);
+      
+      // 查找滚动容器
+      const scrollContainer = await this.findTableScrollContainer(page, tableEl);
+      
+      // 使用Map存储数据，按主键去重
+      const recordsMap = new Map();
+      let noNewRecords = 0;
+      let scrollPosition = 0;
+      const scrollStep = 300; // 小步长滚动
+      const maxNoNewCount = 5; // 连续5次没有新数据就停止
+      const maxScrolls = 200; // 最多滚动200次
+      let scrollCount = 0;
+      
+      while (noNewRecords < maxNoNewCount && scrollCount < maxScrolls) {
+        // 提取当前可见行
+        const currentRows = await this.extractVisibleRows(tableEl);
+        let newCount = 0;
+        
+        for (const row of currentRows) {
+          const rowKey = row.key;
+          
+          if (!recordsMap.has(rowKey)) {
+            recordsMap.set(rowKey, row.cells);
+            newCount++;
+          }
+        }
+        
+        if (newCount === 0) {
+          noNewRecords++;
+        } else {
+          noNewRecords = 0;
+          console.log(`      已收集 ${recordsMap.size} 行数据 (+${newCount})`);
+        }
+        
+        // 滚动
+        scrollPosition += scrollStep;
+        
+        if (scrollContainer) {
+          // 滚动容器
+          await page.evaluate((pos) => {
+            const container = document.querySelector('[class*="scroll"], [class*="table"], [style*="overflow"]');
+            if (container) {
+              container.scrollTop = pos;
+            }
+          }, scrollPosition);
+        } else {
+          // 滚动表格本身或其父元素
+          await tableEl.evaluate((table, pos) => {
+            let scrollTarget = table;
+            let parent = table.parentElement;
+            let depth = 0;
+            
+            // 查找可滚动的父元素
+            while (parent && depth < 5) {
+              const style = window.getComputedStyle(parent);
+              const overflow = style.overflow + style.overflowY;
+              if ((overflow.includes('auto') || overflow.includes('scroll')) && 
+                  parent.scrollHeight > parent.clientHeight) {
+                scrollTarget = parent;
+                break;
+              }
+              parent = parent.parentElement;
+              depth++;
+            }
+            
+            scrollTarget.scrollTop = pos;
+          }, scrollPosition);
+        }
+        
+        await page.waitForTimeout(300); // 等待渲染
+        scrollCount++;
+        
+        // 检查是否到底
+        const isAtBottom = await this.checkScrollAtBottom(page, tableEl);
+        if (isAtBottom && noNewRecords > 0) {
+          console.log(`      已滚动到底部`);
+          break;
+        }
+      }
+      
+      const allRows = Array.from(recordsMap.values());
+      
+      console.log(`    ✓ 虚拟表格提取完成: ${allRows.length} 行数据`);
+      
+      // 发送数据块
+      if (onDataChunk) {
+        await onDataChunk({
+          type: 'table',
+          tableIndex,
+          page: 1,
+          headers,
+          rows: allRows,
+          isFirstPage: true,
+          isLastPage: true,
+          isVirtual: true,
+          totalRows: allRows.length
+        });
+      }
+      
+      return {
+        index: tableIndex,
+        headers,
+        rows: allRows,
+        caption: '',
+        isVirtual: true,
+        totalRows: allRows.length
+      };
+    } catch (error) {
+      console.error('Error extracting virtual table:', error.message);
+      // 降级到普通提取
+      return await this.extractSingleTable(tableEl, tableIndex);
+    }
+  }
+
+  /**
+   * 提取表格表头
+   * @param {Locator} tableEl - 表格元素
+   * @returns {Promise<Array>} 表头数组
+   */
+  async extractTableHeaders(tableEl) {
+    try {
+      const headers = await tableEl.evaluate((table) => {
+        const headerCells = table.querySelectorAll('thead th, thead td');
+        if (headerCells.length > 0) {
+          return Array.from(headerCells).map(cell => cell.textContent.trim());
+        }
+        
+        const firstRow = table.querySelector('tr');
+        if (firstRow) {
+          const cells = firstRow.querySelectorAll('th, td');
+          return Array.from(cells).map(cell => cell.textContent.trim());
+        }
+        
+        return [];
+      });
+      
+      return headers;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * 提取当前可见的表格行
+   * @param {Locator} tableEl - 表格元素
+   * @returns {Promise<Array>} 行数据数组
+   */
+  async extractVisibleRows(tableEl) {
+    try {
+      const rows = await tableEl.evaluate((table) => {
+        const bodyRows = table.querySelectorAll('tbody tr');
+        const rowsToProcess = bodyRows.length > 0 ? bodyRows : table.querySelectorAll('tr');
+        
+        const result = [];
+        
+        rowsToProcess.forEach((row, index) => {
+          // 跳过表头行
+          if (row.querySelector('th') && !row.querySelector('td')) {
+            return;
+          }
+          
+          // 提取主键（优先级：data-id > data-key > aria-rowindex > 首列文本 > 行索引）
+          let rowKey = row.getAttribute('data-id') ||
+                       row.getAttribute('data-key') ||
+                       row.getAttribute('data-row-key') ||
+                       row.getAttribute('aria-rowindex');
+          
+          if (!rowKey) {
+            // 使用首列文本作为主键
+            const firstCell = row.querySelector('td');
+            if (firstCell) {
+              rowKey = firstCell.textContent.trim();
+            }
+          }
+          
+          if (!rowKey) {
+            // 最后使用行索引
+            rowKey = `row_${index}`;
+          }
+          
+          // 提取单元格数据
+          const cells = Array.from(row.querySelectorAll('td, th'));
+          const cellData = cells.map(cell => cell.textContent.trim());
+          
+          if (cellData.length > 0) {
+            result.push({
+              key: rowKey,
+              cells: cellData
+            });
+          }
+        });
+        
+        return result;
+      });
+      
+      return rows;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * 查找表格的滚动容器
+   * @param {Page} page - Playwright页面对象
+   * @param {Locator} tableEl - 表格元素
+   * @returns {Promise<boolean>} 是否找到滚动容器
+   */
+  async findTableScrollContainer(page, tableEl) {
+    try {
+      const hasContainer = await tableEl.evaluate((table) => {
+        let parent = table.parentElement;
+        let depth = 0;
+        
+        while (parent && depth < 5) {
+          const style = window.getComputedStyle(parent);
+          const overflow = style.overflow + style.overflowY;
+          
+          if ((overflow.includes('auto') || overflow.includes('scroll')) && 
+              parent.scrollHeight > parent.clientHeight) {
+            return true;
+          }
+          
+          parent = parent.parentElement;
+          depth++;
+        }
+        
+        return false;
+      });
+      
+      return hasContainer;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * 检查是否滚动到底部
+   * @param {Page} page - Playwright页面对象
+   * @param {Locator} tableEl - 表格元素
+   * @returns {Promise<boolean>} 是否到底
+   */
+  async checkScrollAtBottom(page, tableEl) {
+    try {
+      const isAtBottom = await tableEl.evaluate((table) => {
+        let scrollTarget = table;
+        let parent = table.parentElement;
+        let depth = 0;
+        
+        // 查找可滚动的父元素
+        while (parent && depth < 5) {
+          const style = window.getComputedStyle(parent);
+          const overflow = style.overflow + style.overflowY;
+          if ((overflow.includes('auto') || overflow.includes('scroll')) && 
+              parent.scrollHeight > parent.clientHeight) {
+            scrollTarget = parent;
+            break;
+          }
+          parent = parent.parentElement;
+          depth++;
+        }
+        
+        // 检查是否到底（允许5px的误差）
+        const scrollTop = scrollTarget.scrollTop;
+        const scrollHeight = scrollTarget.scrollHeight;
+        const clientHeight = scrollTarget.clientHeight;
+        
+        return scrollTop + clientHeight >= scrollHeight - 5;
+      });
+      
+      return isAtBottom;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * 提取分页表格（原有逻辑提取为独立方法）
+   * @param {Page} page - Playwright页面对象
+   * @param {Locator} tableEl - 表格元素
+   * @param {number} tableIndex - 表格索引
+   * @param {Object} tableInfo - 表格基本信息
+   * @param {Object} paginationInfo - 分页信息
+   * @param {Function} onDataChunk - 数据块回调
+   * @returns {Promise<Object>} 表格数据
+   */
+  async extractPaginatedTable(page, tableEl, tableIndex, tableInfo, paginationInfo, onDataChunk) {
+    const allRows = [...tableInfo.rows];
+    let currentPage = 1;
+    const maxPages = paginationInfo.totalPages || 100;
+    
+    // 发送第一页数据
+    if (onDataChunk) {
+      await onDataChunk({
+        type: 'table',
+        tableIndex,
+        page: currentPage,
+        headers: tableInfo.headers,
+        rows: tableInfo.rows,
+        isFirstPage: true,
+        isLastPage: false
+      });
+    }
+    
+    // 翻页并提取数据
+    while (currentPage < maxPages) {
+      const hasNextPage = await this.clickNextPage(page, paginationInfo);
+      
+      if (!hasNextPage) {
+        break;
+      }
+      
+      currentPage++;
+      await page.waitForTimeout(1000);
+      
+      // 提取当前页的表格数据
+      const currentTableEl = (await page.locator('table').all())[tableIndex];
+      const currentPageData = await this.extractSingleTable(currentTableEl, tableIndex);
+      
+      // 检查表格结构是否一致
+      const headersMatch = this.compareHeaders(tableInfo.headers, currentPageData.headers);
+      
+      if (headersMatch) {
+        allRows.push(...currentPageData.rows);
+        
+        if (onDataChunk) {
+          await onDataChunk({
+            type: 'table',
+            tableIndex,
+            page: currentPage,
+            headers: currentPageData.headers,
+            rows: currentPageData.rows,
+            isFirstPage: false,
+            isLastPage: false
+          });
+        }
+      } else {
+        break;
+      }
+      
+      await page.waitForTimeout(500);
+    }
+    
+    // 发送最后一页标记
+    if (onDataChunk) {
+      await onDataChunk({
+        type: 'table',
+        tableIndex,
+        page: currentPage,
+        headers: tableInfo.headers,
+        rows: [],
+        isFirstPage: false,
+        isLastPage: true
+      });
+    }
+    
+    return {
+      index: tableIndex,
+      headers: tableInfo.headers,
+      rows: allRows,
+      caption: tableInfo.caption,
+      totalPages: currentPage
+    };
   }
 }
 

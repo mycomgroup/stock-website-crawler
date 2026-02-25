@@ -6,8 +6,9 @@
 ## 已实施的功能
 
 ### 1. "更多/展开/查看全部"按钮循环点击 ✅
-
-**方法**: `clickAllExpandButtons(page)`
+### 2. 无限滚动优化（增强版） ✅
+### 3. 虚拟列表/虚拟表格处理 ✅
+### 4. 运行时图表数据提取 ✅
 
 **功能**:
 - 自动查找并点击页面上的所有展开按钮
@@ -58,15 +59,46 @@
 
 ---
 
-### 3. 虚拟列表/虚拟表格处理 ⏳
+### 3. 虚拟列表/虚拟表格处理 ✅
 
-**状态**: 待实施（下一步）
+**方法**: `extractVirtualTable(page, tableEl, tableIndex, onDataChunk)`
 
-**原因**: 需要更复杂的实现，包括：
-- 主键识别策略
-- 小步长滚动
-- 增量数据收集
-- 去重逻辑
+**检测方法**: `detectVirtualTable(page, tableEl)`
+
+**功能**:
+- 自动检测虚拟表格特征（data-id、aria-rowindex、虚拟列表class等）
+- 主键识别策略：data-id > data-key > aria-rowindex > 首列文本 > 行索引
+- 小步长滚动（300px）避免跳过行
+- 使用Map按主键去重，增量收集数据
+- 连续5次无新数据或最多200次滚动后停止
+- 自动查找滚动容器（表格父元素）
+
+**辅助方法**:
+- `extractTableHeaders(tableEl)` - 提取表头
+- `extractVisibleRows(tableEl)` - 提取当前可见行
+- `findTableScrollContainer(page, tableEl)` - 查找滚动容器
+- `checkScrollAtBottom(page, tableEl)` - 检查是否到底
+
+**检测特征**:
+1. 行有data-id、data-key或aria-rowindex属性（强特征）
+2. 表格有virtual、virtualized相关class（强特征）
+3. 有滚动父容器 + 行数少于50（弱特征组合）
+
+**使用场景**:
+- 东方财富等网站的虚拟表格
+- 只渲染可见行的大数据表格
+- DOM行数固定但内容随滚动变化的表格
+
+**效果**:
+```
+  检测到虚拟表格 1，使用虚拟表格提取模式
+    开始提取虚拟表格数据...
+      已收集 50 行数据 (+50)
+      已收集 100 行数据 (+50)
+      已收集 150 行数据 (+50)
+      已滚动到底部
+    ✓ 虚拟表格提取完成: 150 行数据
+```
 
 ---
 
@@ -134,12 +166,16 @@ async parse(page, url, options = {}) {
   // 3. 提取运行时图表数据
   const chartData = await this.extractChartData(page);
   
-  // 4. 提取其他内容（表格、图片等）
+  // 4. 提取表格（自动检测虚拟表格、分页表格、普通表格）
+  const tables = await this.extractTablesWithPaginationAndVirtual(page, options.onDataChunk);
+  
+  // 5. 提取其他内容（图片、Tab等）
   // ...
   
   return {
     // ...
-    chartData, // 新增字段
+    chartData, // 图表数据
+    tables,    // 表格数据（包含虚拟表格）
     // ...
   };
 }
@@ -237,28 +273,18 @@ node scripts/test-advanced-features.js
 
 ## 下一步计划
 
-### Phase 2: 虚拟表格处理（优先级最高）
+### Phase 2: 其他优化（可选）
 
-**预计时间**: 3-4天
+**预计时间**: 按需实施
 
-**实施要点**:
-1. 识别虚拟表格（DOM行数不变，内容替换）
-2. 主键提取策略（data-id > aria-rowindex > 首列文本）
-3. 小步长滚动（避免跳过行）
-4. 增量收集和去重
+**可选功能**:
+1. pageSize自动调整（查找并设置每页条数下拉框）
+2. 排序遍历（按不同列排序获取不同Top-N）
+3. 行展开/详情页处理（点击行查看详情）
+4. 筛选器笛卡尔积（行业/概念/市场等组合）
+5. hover数据提取（提示框、迷你卡片等）
 
-**方法签名**:
-```javascript
-async extractVirtualTable(page, tableLocator) {
-  // 返回完整的表格数据
-}
-```
-
-### Phase 3: 其他优化
-
-- pageSize自动调整
-- 排序遍历
-- 行展开/详情页处理
+这些功能可以根据实际需求逐步添加。
 
 ---
 
@@ -357,12 +383,16 @@ Object.values(window.Chart.instances).forEach(chart => {
 
 ## 总结
 
-已成功实施3个高级数据提取功能：
+已成功实施4个高级数据提取功能：
 
-1. ✅ "更多/展开"按钮循环点击 - 简单高效
-2. ✅ 无限滚动优化 - 更可靠的实现
-3. ✅ 运行时图表数据提取 - 获取精确数据
+1. ✅ "更多/展开"按钮循环点击 - 展开折叠内容
+2. ✅ 无限滚动优化 - 更可靠的懒加载处理
+3. ✅ 虚拟表格处理 - 完整提取虚拟列表数据
+4. ✅ 运行时图表数据提取 - 获取精确图表数据
 
-这些功能将显著提升数据完整性，特别是对于折叠内容和动态加载的页面。
+这些功能将显著提升数据完整性，特别是对于：
+- 折叠内容和动态加载的页面
+- 使用虚拟列表技术的大数据表格
+- Canvas/SVG渲染的图表数据
 
-下一步将实施虚拟表格处理，这是最重要但也最复杂的功能。
+所有功能已集成到 `GenericParser` 中，会自动执行，无需额外配置。
