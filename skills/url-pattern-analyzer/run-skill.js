@@ -344,14 +344,15 @@ function generateChineseReport(jsonData, patterns, stats, config) {
   // 模式分布
   lines.push('## 📈 模式分布');
   lines.push('');
-  lines.push('| 排名 | 模式名称 | URL数量 | 占比 | 路径模板 |');
-  lines.push('|------|----------|---------|------|----------|');
+  lines.push('| 排名 | 模式名称 | 中文描述 | URL数量 | 占比 | 路径模板 |');
+  lines.push('|------|----------|----------|---------|------|----------|');
   
   patterns.forEach((pattern, index) => {
     const percentage = stats.totalUrls > 0 
       ? ((pattern.urlCount / stats.totalUrls) * 100).toFixed(2)
       : 0;
-    lines.push(`| ${index + 1} | ${pattern.name} | ${pattern.urlCount.toLocaleString()} | ${percentage}% | \`${pattern.pathTemplate}\` |`);
+    const description = pattern.description || '';
+    lines.push(`| ${index + 1} | ${pattern.name} | ${description} | ${pattern.urlCount.toLocaleString()} | ${percentage}% | \`${pattern.pathTemplate}\` |`);
   });
   lines.push('');
   
@@ -367,6 +368,10 @@ function generateChineseReport(jsonData, patterns, stats, config) {
       
     lines.push(`### ${index + 1}. ${pattern.name}`);
     lines.push('');
+    if (pattern.description) {
+      lines.push(`**描述**: ${pattern.description}`);
+      lines.push('');
+    }
     lines.push(`- **URL数量**: ${pattern.urlCount.toLocaleString()} (${percentage}%)`);
     lines.push(`- **路径模板**: \`${pattern.pathTemplate}\``);
     lines.push(`- **正则表达式**: \`${pattern.pattern}\``);
