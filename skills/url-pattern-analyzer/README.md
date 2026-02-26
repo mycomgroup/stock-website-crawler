@@ -1,400 +1,185 @@
 # URL Pattern Analyzer
 
-分析links.txt中的URL，识别URL模式并分组。
+智能URL模式识别和分类工具，通过三层优化算法自动识别网站的URL结构模式。
 
-## 功能
+## 核心特性
 
-- **读取links.txt文件**: 解析JSON格式的URL记录
-- **提取URL特征**: 协议、主机、路径段、查询参数、路径深度
-- **计算URL相似度**: 基于路径和参数的相似度评分
-- **URL聚类**: 基于URL正则匹配和后端渲染判断
-- **生成正则表达式**: 为URL组生成匹配模式
-- **统计分析**: 提供URL状态和错误统计
+- ✅ **智能聚类**: 自动识别相似URL并分组
+- ✅ **三层优化**: 路径严格化 → 半固定段细分 → 大簇严格细分
+- ✅ **参数化设计**: 所有关键阈值可配置，无需修改代码
+- ✅ **高性能**: 支持8000+ URL快速分析（<200ms）
+- ✅ **多格式输出**: JSON + Markdown + 统计报告
+- ✅ **业务导向**: 模式数量对应页面模板数量
 
-## 安装
+## 快速开始
 
-```bash
-npm install
-```
-
-## 使用
-
-### 完整工作流
-
-```javascript
-const LinksReader = require('./lib/links-reader');
-const URLPatternAnalyzer = require('./lib/url-clusterer');
-
-// 1. 读取links.txt文件
-const reader = new LinksReader();
-const records = await reader.readLinksFile('path/to/links.txt');
-
-// 2. 提取有效的URL
-const urls = reader.extractURLs(records, { 
-  status: 'fetched', 
-  excludeErrors: true 
-});
-
-// 3. URL聚类分析
-const analyzer = new URLPatternAnalyzer();
-const clusters = analyzer.clusterURLs(urls);
-
-// 4. 为每个簇生成正则表达式
-clusters.forEach(cluster => {
-  const pattern = analyzer.generatePattern(cluster);
-  console.log(pattern);
-});
-```
-
-### LinksReader API
-
-```javascript
-const LinksReader = require('./lib/links-reader');
-const reader = new LinksReader();
-
-// 读取links.txt文件
-const records = await reader.readLinksFile('path/to/links.txt');
-// 返回: [{ url, status, addedAt, retryCount, error, fetchedAt }, ...]
-
-// 提取URL列表
-const allUrls = reader.extractURLs(records);
-const fetchedUrls = reader.extractURLs(records, { status: 'fetched' });
-const noErrorUrls = reader.extractURLs(records, { excludeErrors: true });
-
-// 获取统计信息
-const stats = reader.getStatistics(records);
-// 返回: { total, byStatus: {}, withErrors, withoutUrl }
-```
-
-### URLPatternAnalyzer API
-
-```javascript
-const URLPatternAnalyzer = require('./lib/url-clusterer');
-const analyzer = new URLPatternAnalyzer();
-
-// 提取URL特征
-const features = analyzer.extractFeatures('https://www.lixinger.com/open/api/doc?api-key=cn/company');
-console.log(features);
-// {
-//   protocol: 'https',
-//   host: 'www.lixinger.com',
-//   pathSegments: ['open', 'api', 'doc'],
-//   queryParams: ['api-key'],
-//   pathDepth: 3
-// }
-
-// 计算URL相似度
-const url1 = 'https://www.lixinger.com/open/api/doc?api-key=cn/company';
-const url2 = 'https://www.lixinger.com/open/api/doc?api-key=hk/index';
-const similarity = analyzer.calculateSimilarity(url1, url2);
-console.log(similarity); // 55
-
-// URL聚类
-const urls = [
-  'https://www.lixinger.com/open/api/doc?api-key=cn/company',
-  'https://www.lixinger.com/open/api/doc?api-key=hk/index',
-  'https://www.lixinger.com/analytics/company/dashboard',
-  'https://www.lixinger.com/analytics/index/dashboard'
-];
-const clusters = analyzer.clusterURLs(urls);
-console.log(clusters);
-// [
-//   [
-//     'https://www.lixinger.com/open/api/doc?api-key=cn/company',
-//     'https://www.lixinger.com/open/api/doc?api-key=hk/index'
-//   ],
-//   [
-//     'https://www.lixinger.com/analytics/company/dashboard',
-//     'https://www.lixinger.com/analytics/index/dashboard'
-//   ]
-// ]
-```
-
-### 运行测试
+### 基本使用
 
 ```bash
-# 运行单元测试
-npm test
+# 分析项目URL
+node run-skill.js lixinger-crawler
 
-# 运行演示脚本
-node test/test-analyzer.js
+# 自定义参数
+node run-skill.js lixinger-crawler --min-group-size 10 --strict-top-n 5
 ```
 
-## API 文档
+### 输出文件
 
-### LinksReader
+- `url-patterns.json`: 完整的模式数据
+- `url-patterns.md`: 可读性好的Markdown报告
+- `url-patterns-stats.md`: 中文统计报告
 
-#### `readLinksFile(filePath)`
+## 参数说明
 
-读取JSON格式的links.txt文件。
+### 基础参数
 
-**参数:**
-- `filePath` (string): links.txt文件路径
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `--min-group-size` | 5 | 最小分组大小，过滤小簇 |
+| `--sample-count` | 5 | 每个模式的示例URL数量 |
+| `--max-patterns` | 无限制 | 最大模式数量（仅统计报告） |
 
-**返回:**
-- `Promise<Array>`: URL记录数组，每个记录包含:
-  - `url` (string): URL地址
-  - `status` (string): 状态（如 'fetched', 'pending', 'unfetched'）
-  - `addedAt` (number): 添加时间戳
-  - `retryCount` (number): 重试次数
-  - `error` (string|null): 错误信息
-  - `fetchedAt` (number): 抓取时间戳
+### 细分控制参数
 
-**错误处理:**
-- 文件不存在: 抛出 "Links file not found" 错误
-- 权限不足: 抛出 "Permission denied" 错误
-- JSON格式错误: 跳过错误行，记录警告，继续处理其他行
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `--refine-max-values` | 8 | 半固定段最大唯一值数量 |
+| `--refine-min-count` | 10 | 每个值最小出现次数 |
+| `--refine-min-groups` | 2 | 最少需要几个大组才细分 |
 
-**示例:**
-```javascript
-const records = await reader.readLinksFile('stock-crawler/output/lixinger-crawler/links.txt');
-console.log(`读取 ${records.length} 条记录`);
-```
+### 严格模式参数
 
-#### `extractURLs(records, options)`
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `--strict-top-n` | 0 | 对前N个最大簇应用严格规则（0=不启用） |
+| `--strict-match-ratio` | 0.8 | 严格模式下的匹配比例阈值 |
 
-从记录中提取URL列表。
+## 使用场景
 
-**参数:**
-- `records` (Array): URL记录数组
-- `options` (Object): 过滤选项
-  - `status` (string): 只包含特定状态的URL
-  - `excludeErrors` (boolean): 排除有错误的URL
-
-**返回:**
-- `Array<string>`: URL字符串数组
-
-**示例:**
-```javascript
-// 提取所有URL
-const allUrls = reader.extractURLs(records);
-
-// 只提取已抓取的URL
-const fetchedUrls = reader.extractURLs(records, { status: 'fetched' });
-
-// 排除有错误的URL
-const noErrorUrls = reader.extractURLs(records, { excludeErrors: true });
-
-// 组合条件
-const validUrls = reader.extractURLs(records, { 
-  status: 'fetched', 
-  excludeErrors: true 
-});
-```
-
-#### `getStatistics(records)`
-
-获取URL记录的统计信息。
-
-**参数:**
-- `records` (Array): URL记录数组
-
-**返回:**
-- `Object`: 统计信息对象
-  - `total` (number): 总记录数
-  - `byStatus` (Object): 按状态统计，如 { fetched: 100, pending: 50 }
-  - `withErrors` (number): 有错误的记录数
-  - `withoutUrl` (number): 缺少URL字段的记录数
-
-**示例:**
-```javascript
-const stats = reader.getStatistics(records);
-console.log(`总记录: ${stats.total}`);
-console.log(`已抓取: ${stats.byStatus.fetched}`);
-console.log(`有错误: ${stats.withErrors}`);
-```
-
-### URLPatternAnalyzer
-
-#### `extractFeatures(url)`
-
-提取URL特征。
-
-**参数:**
-- `url` (string|URL): URL字符串或URL对象
-
-**返回:**
-- `Object`: 包含以下属性的特征对象
-  - `protocol` (string): 协议（如 'https'）
-  - `host` (string): 主机名（如 'www.lixinger.com'）
-  - `pathSegments` (Array<string>): 路径段数组
-  - `queryParams` (Array<string>): 查询参数键数组
-  - `pathDepth` (number): 路径深度
-
-### `calculateSimilarity(url1, url2)`
-
-计算两个URL的相似度分数。
-
-**参数:**
-- `url1` (string|URL): 第一个URL
-- `url2` (string|URL): 第二个URL
-
-**返回:**
-- `number`: 相似度分数
-  - 协议和主机不同: 0
-  - 路径深度相同: +20
-  - 每个匹配的路径段: +10
-  - 每个匹配的查询参数: +5
-
-### `clusterURLs(urls)`
-
-对URL列表进行聚类，将相似的URL分组。
-
-**算法**:
-- 使用层次聚类（Hierarchical Clustering）
-- 基于相似度分数动态决定分组
-- 不使用固定阈值，而是使用动态阈值（最小30分）
-- 迭代合并最相似的簇，直到无法再合并
-
-**参数:**
-- `urls` (Array<string>): URL字符串数组
-
-**返回:**
-- `Array<Array<string>>`: 聚类结果，每个元素是一个URL数组（簇）
-  - 簇按大小降序排列（最大的簇在前）
-  - 每个簇包含相似的URL
-
-**聚类规则:**
-- 相似度 ≥ 30分的URL会被聚在一起
-- 30分 = 路径深度相同(20分) + 至少一个路径段匹配(10分)
-- 协议或主机不同的URL不会聚在一起（相似度为0）
-
-**示例:**
-```javascript
-const urls = [
-  'https://www.lixinger.com/open/api/doc?api-key=cn/company',
-  'https://www.lixinger.com/open/api/doc?api-key=hk/index',
-  'https://www.lixinger.com/analytics/company/dashboard',
-  'https://www.lixinger.com/analytics/index/dashboard'
-];
-
-const clusters = analyzer.clusterURLs(urls);
-// 返回:
-// [
-//   [  // 簇1: API文档 (4个URL)
-//     'https://www.lixinger.com/open/api/doc?api-key=cn/company',
-//     'https://www.lixinger.com/open/api/doc?api-key=hk/index'
-//   ],
-//   [  // 簇2: Dashboard (2个URL)
-//     'https://www.lixinger.com/analytics/company/dashboard',
-//     'https://www.lixinger.com/analytics/index/dashboard'
-//   ]
-// ]
-```
-
-### `generatePattern(urlGroup)`
-
-为URL组生成正则表达式模式。
-
-**参数:**
-- `urlGroup` (Array<string>): URL字符串数组
-
-**返回:**
-- `Object`: 包含以下属性的模式对象
-  - `pattern` (string): 正则表达式字符串
-  - `pathTemplate` (string): 路径模板（如 '/open/api/{param2}'）
-  - `queryParams` (Array<string>): 查询参数键数组
-
-**算法:**
-- 分析URL组，识别固定部分和变化部分
-- 固定段保持不变，变化段用捕获组 `([^/]+)` 表示
-- 查询参数使用宽松匹配 `(\\?.*)?`
-
-**示例:**
-```javascript
-const urlGroup = [
-  'https://www.lixinger.com/open/api/doc?api-key=cn/company',
-  'https://www.lixinger.com/open/api/doc?api-key=hk/index'
-];
-
-const pattern = analyzer.generatePattern(urlGroup);
-// 返回:
-// {
-//   pattern: '^https://www\\.lixinger\\.com/open/api/([^/]+)(\\?.*)?$',
-//   pathTemplate: '/open/api/{param2}',
-//   queryParams: ['api-key']
-// }
-```
-
-## 运行测试
+### 场景1: 模式太多（>200）
 
 ```bash
-# 运行LinksReader单元测试
-node test/links-reader.test.js
-
-# 运行URLPatternAnalyzer单元测试
-npm test
-
-# 测试真实links.txt文件
-node test/test-real-links.js
-
-# 运行集成测试
-node test/test-integration.js
-
-# 运行演示脚本
-node test/test-analyzer.js
+# 保守模式
+node run-skill.js project-name \
+  --min-group-size 20 \
+  --refine-max-values 5 \
+  --refine-min-count 20 \
+  --strict-top-n 0
 ```
 
-## 测试覆盖
+### 场景2: 模式太少（<50）
 
-项目包含完整的测试套件：
-
-### LinksReader 测试
-- ✓ 读取有效的links文件
-- ✓ 处理格式错误的行（跳过并继续）
-- ✓ 提取URL列表（支持多种过滤条件）
-- ✓ 获取统计信息
-- ✓ 文件不存在错误处理
-- ✓ 空文件处理
-- ✓ 只有空行的文件处理
-
-### URLPatternAnalyzer 测试
-- ✓ URL特征提取（字符串和URL对象）
-- ✓ 处理无查询参数的URL
-- ✓ 处理多个查询参数
-- ✓ 处理根路径
-- ✓ 过滤空路径段
-- ✓ 相似度计算（相同路径、不同协议、不同主机、部分匹配等）
-- ✓ URL聚类算法
-- ✓ 正则表达式生成
-
-### 集成测试
-- ✓ 完整工作流：读取 → 提取 → 聚类 → 生成模式
-- ✓ 使用真实的8000+条URL数据测试
-
-## 设计原则
-
-- **不使用固定阈值**: 相似度计算返回分数，由聚类算法决定分组
-- **基于URL正则匹配**: 判断URL是否属于同一模式
-- **后端渲染判断**: 判断页面是否由同一个后端模板渲染
-- **错误容忍**: 格式错误的行会被跳过，不影响整体处理
-- **灵活过滤**: 支持按状态、错误等多种条件过滤URL
-
-## 文件结构
-
-```
-skills/url-pattern-analyzer/
-├── lib/
-│   ├── url-clusterer.js      # URL聚类和模式识别
-│   └── links-reader.js        # links.txt文件读取器
-├── test/
-│   ├── url-clusterer.test.js  # URLPatternAnalyzer单元测试
-│   ├── links-reader.test.js   # LinksReader单元测试
-│   ├── test-real-links.js     # 真实数据测试
-│   ├── test-integration.js    # 集成测试
-│   └── test-analyzer.js       # 演示脚本
-├── README.md
-├── package.json
-└── skill.json
+```bash
+# 激进模式
+node run-skill.js project-name \
+  --min-group-size 10 \
+  --refine-max-values 12 \
+  --refine-min-count 5 \
+  --strict-top-n 10
 ```
 
-## 下一步
+### 场景3: 大簇需要细分
 
-- [x] 实现 `readLinksFile()` 方法
-- [x] 实现 `extractURLs()` 方法
-- [x] 实现 `getStatistics()` 方法
-- [x] 实现 `clusterURLs()` 方法
-- [x] 实现 `generatePattern()` 方法
-- [ ] 创建主入口文件 `main.js`
-- [ ] 集成到完整的分析工作流
-- [ ] 生成JSON和Markdown格式的分析报告
+```bash
+# 大簇优化模式
+node run-skill.js project-name \
+  --min-group-size 15 \
+  --strict-top-n 10 \
+  --strict-match-ratio 0.85
+```
+
+## 真实案例
+
+### lixinger-crawler 项目
+
+**网站特点**: 8,490个URL，中型金融数据网站
+
+**优化过程**:
+1. 初始版本: 14个模式，最大簇3,261个URL
+2. 路径严格化: 38个模式，结构分离成功
+3. 半固定段细分: 70个模式，市场代码分离
+4. 大簇严格细分: 81个模式，最大簇923个URL
+
+**最终配置**:
+```bash
+node run-skill.js lixinger-crawler --min-group-size 10 --strict-top-n 5
+```
+
+**效果**:
+- 模式数量: 14 → 81 (+478%)
+- 最大簇: 3,261 → 923 (-72%)
+- 覆盖率: 99.2%
+- 分类精度: 显著提升
+
+## 文档
+
+- [PRACTICAL_GUIDE.md](./PRACTICAL_GUIDE.md) - 实用调优指南
+- [OPTIMIZATION_SUMMARY.md](./OPTIMIZATION_SUMMARY.md) - 优化总结
+- [REAL_WORLD_TEST_SUMMARY.md](./REAL_WORLD_TEST_SUMMARY.md) - 真实场景测试
+- [ALGORITHM_OPTIMIZATION.md](./ALGORITHM_OPTIMIZATION.md) - 算法优化记录
+
+## 核心原则
+
+1. **模式数 ≈ 模板数**: 一个网站通常有10-200个页面模板
+2. **相同模板 = 相同提取**: 同一模式的URL应该用相同方式提取数据
+3. **质量 > 数量**: 宁可少而准，不要多而乱
+4. **迭代调优**: 先用默认参数，再根据结果调整
+
+## 技术亮点
+
+### 三层优化架构
+
+```
+基础聚类（路径深度+段匹配）
+    ↓
+半固定段细分（识别有限唯一值）
+    ↓
+严格模式细分（对大簇应用严格规则）
+    ↓
+最终结果
+```
+
+### 智能识别机制
+
+- **路径深度**: 必须完全相同
+- **段匹配**: 至少50%相同
+- **半固定段**: 唯一值≤8且有大组
+- **严格细分**: 固定比例<80%时细分
+
+## 性能
+
+- 时间复杂度: O(n log n)
+- 实测性能: 8,490个URL，用时<200ms
+- 缓存优化: 特征提取和相似度计算
+
+## 适用场景
+
+- ✅ 网站爬虫开发
+- ✅ API接口分析
+- ✅ 数据提取规划
+- ✅ 网站结构分析
+- ✅ SEO优化分析
+
+## 版本历史
+
+- **v1.0.0** (2026-02-26): 初始版本
+  - 基础URL聚类
+  - JSON和Markdown报告生成
+  
+- **v1.1.0** (2026-02-26): 路径严格化优化
+  - 要求路径深度完全相同
+  - 要求至少50%段匹配
+  
+- **v1.2.0** (2026-02-26): 半固定段细分
+  - 识别有限唯一值的段
+  - 智能细分大组
+  - 添加3个可配置参数
+  
+- **v1.3.0** (2026-02-26): 大簇严格细分
+  - 对最大N个簇应用严格规则
+  - 计算段固定比例
+  - 添加2个可配置参数
+
+## License
+
+MIT
