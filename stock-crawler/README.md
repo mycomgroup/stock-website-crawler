@@ -233,10 +233,13 @@ Crawled pages are saved in a project-specific directory structure:
 ```
 output/
 └── <project-name>/
-    ├── pages/          # Markdown files for each page
-    ├── logs/           # Log files
-    └── links.txt       # URL list with status
+    ├── pages-YYYYMMDD-HHmmss/  # Markdown files for each page (timestamped)
+    ├── logs/                    # Log files
+    │   └── crawler-YYYYMMDD-HHmmss.log
+    └── links.txt                # URL list with status
 ```
+
+**Note**: The `pages` directory includes a timestamp suffix (e.g., `pages-20260226-153523`) that matches the corresponding log file name. This makes it easy to correlate crawled pages with their execution logs for debugging and tracking purposes.
 
 Each Markdown file contains:
 - Page title

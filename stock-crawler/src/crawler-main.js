@@ -34,7 +34,6 @@ class CrawlerMain {
     // Setup project directory structure
     // output/project-name/
     this.projectDir = `${this.config.output.directory}/${this.config.name}`;
-    this.pagesDir = `${this.projectDir}/pages`;
     this.logsDir = `${this.projectDir}/logs`;
     this.linksFile = `${this.projectDir}/links.txt`;
     
@@ -43,9 +42,6 @@ class CrawlerMain {
     if (!fs.existsSync(this.projectDir)) {
       fs.mkdirSync(this.projectDir, { recursive: true });
     }
-    if (!fs.existsSync(this.pagesDir)) {
-      fs.mkdirSync(this.pagesDir, { recursive: true });
-    }
     if (!fs.existsSync(this.logsDir)) {
       fs.mkdirSync(this.logsDir, { recursive: true });
     }
@@ -53,6 +49,13 @@ class CrawlerMain {
     // Initialize logger with project-specific log directory
     this.logger = new Logger(this.logsDir);
     this.statsTracker = new StatsTracker();
+    
+    // Create pages directory with timestamp suffix matching log file
+    const timestamp = this.logger.getTimestamp();
+    this.pagesDir = `${this.projectDir}/pages-${timestamp}`;
+    if (!fs.existsSync(this.pagesDir)) {
+      fs.mkdirSync(this.pagesDir, { recursive: true });
+    }
     
     this.logger.info(`Loaded configuration: ${this.config.name}`);
 

@@ -98,8 +98,8 @@ class Logger {
       }
 
       // 生成日志文件名（带北京时间戳）
-      const timestamp = this.getBeijingTimeForFilename();
-      this.logFile = path.join(this.logDir, `crawler-${timestamp}.log`);
+      this.timestamp = this.getBeijingTimeForFilename();
+      this.logFile = path.join(this.logDir, `crawler-${this.timestamp}.log`);
 
       // 创建日志文件（使用北京时间）
       const beijingTime = this.getBeijingTime();
@@ -107,6 +107,14 @@ class Logger {
     } catch (error) {
       console.error('Failed to initialize log file:', error.message);
     }
+  }
+
+  /**
+   * 获取当前日志的时间戳
+   * @returns {string} 时间戳字符串
+   */
+  getTimestamp() {
+    return this.timestamp;
   }
 
   /**
