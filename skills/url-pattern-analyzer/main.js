@@ -48,14 +48,15 @@ function parseArgs() {
     outputFile: args[1],
     minGroupSize: 5,
     sampleCount: 5,
-    generateMarkdown: false,
     // 细分控制参数
     refineMaxValues: 8,      // 半固定段最大唯一值数量
     refineMinCount: 10,      // 每个值最小出现次数
     refineMinGroups: 2,      // 最少需要几个大组才细分
     // 严格模式参数
     strictTopN: 0,           // 对前N个最大簇应用严格规则（0=不启用）
-    strictMatchRatio: 0.8    // 严格模式下的匹配比例
+    strictMatchRatio: 0.8,   // 严格模式下的匹配比例
+    // 尝试拆分参数
+    tryRefineTopN: 0         // 尝试智能拆分前N个大簇
   };
   
   // 解析选项
@@ -76,8 +77,8 @@ function parseArgs() {
       config.strictTopN = parseInt(args[++i], 10);
     } else if (arg === '--strict-match-ratio' && i + 1 < args.length) {
       config.strictMatchRatio = parseFloat(args[++i]);
-    } else if (arg === '--markdown') {
-      config.generateMarkdown = true;
+    } else if (arg === '--try-refine-top-n' && i + 1 < args.length) {
+      config.tryRefineTopN = parseInt(args[++i], 10);
     }
   }
   
@@ -101,7 +102,6 @@ URL Pattern Analyzer - 分析URL模式并生成报告
 基础选项:
   --min-group-size <n>   最小分组大小（默认5）
   --sample-count <n>     每个模式的示例URL数量（默认5）
-  --markdown             同时生成Markdown报告
 
 细分控制选项（用于控制URL模式的细分程度）:
   --refine-max-values <n>   半固定段最大唯一值数量（默认8）
@@ -119,15 +119,17 @@ URL Pattern Analyzer - 分析URL模式并生成报告
                             
   --strict-match-ratio <f>  严格模式下的匹配比例（默认0.8，即80%）
                             整体固定比例 >= 此值时不再细分
+
+智能拆分选项（推荐给AI使用）:
+  --try-refine-top-n <n>    尝试智能拆分前N个最大簇（默认0，不启用）
+                            自动尝试拆分，能拆就拆，拆不开就保持原样
+                            适合AI模型反复尝试找到最佳拆分方案
   
   --help, -h             显示此帮助信息
 
 示例:
   # 基本使用
   node main.js links.txt url-patterns.json
-
-  # 生成Markdown报告
-  node main.js links.txt url-patterns.json --markdown
 
   # 自定义分组参数
   node main.js links.txt url-patterns.json --min-group-size 10 --sample-count 3
@@ -137,6 +139,9 @@ URL Pattern Analyzer - 分析URL模式并生成报告
 
   # 控制细分程度（更保守的细分）
   node main.js links.txt url-patterns.json --refine-max-values 5 --refine-min-count 20
+
+  # AI智能拆分（推荐）
+  node main.js links.txt url-patterns.json --try-refine-top-n 10
 
 参数调优建议:
   
@@ -162,7 +167,6 @@ URL Pattern Analyzer - 分析URL模式并生成报告
 
 输出:
   - JSON报告: 包含所有识别的URL模式
-  - Markdown报告: 可读性更好的分析报告（可选）
   `);
 }
 
@@ -179,7 +183,6 @@ async function main() {
     console.log(`输出文件: ${config.outputFile}`);
     console.log(`最小分组: ${config.minGroupSize}`);
     console.log(`示例数量: ${config.sampleCount}`);
-    console.log(`生成Markdown: ${config.generateMarkdown ? '是' : '否'}`);
     console.log('');
     
     // 步骤1: 读取links.txt
@@ -224,7 +227,8 @@ async function main() {
       refineMinCount: config.refineMinCount,
       refineMinGroups: config.refineMinGroups,
       strictTopN: config.strictTopN,
-      strictMatchRatio: config.strictMatchRatio
+      strictMatchRatio: config.strictMatchRatio,
+      tryRefineTopN: config.tryRefineTopN
     });
     const startTime = Date.now();
     const clusters = analyzer.clusterURLs(urlStrings);
@@ -263,15 +267,6 @@ async function main() {
     console.log('-------------------');
     await generator.saveJSONReport(jsonReport, config.outputFile);
     
-    // 生成并保存Markdown报告（如果需要）
-    if (config.generateMarkdown) {
-      const markdown = generator.generateMarkdownReport(filteredClusters, { 
-        sampleCount: config.sampleCount 
-      });
-      const mdPath = config.outputFile.replace(/\.json$/, '.md');
-      await generator.saveMarkdownReport(markdown, mdPath);
-    }
-    
     // 显示报告摘要
     console.log('\n=== 分析完成 ===');
     console.log(`总URL数: ${jsonReport.summary.totalUrls}`);
@@ -289,11 +284,7 @@ async function main() {
     }
     
     console.log('\n✓ 分析成功完成！');
-    console.log(`\n输出文件:`);
-    console.log(`  - ${config.outputFile}`);
-    if (config.generateMarkdown) {
-      console.log(`  - ${config.outputFile.replace(/\.json$/, '.md')}`);
-    }
+    console.log(`\n输出文件: ${config.outputFile}`);
     
     // 返回结果（供程序化调用）
     return {

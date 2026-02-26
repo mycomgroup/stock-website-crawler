@@ -25,9 +25,8 @@ node run-skill.js lixinger-crawler --min-group-size 10 --strict-top-n 5
 
 ### 输出文件
 
-- `url-patterns.json`: 完整的模式数据
-- `url-patterns.md`: 可读性好的Markdown报告
-- `url-patterns-stats.md`: 中文统计报告
+- `url-patterns.json`: 完整的模式数据（JSON格式）
+- `url-patterns-report.md`: 中文分析报告（包含统计和详情）
 
 ## 参数说明
 
@@ -53,6 +52,12 @@ node run-skill.js lixinger-crawler --min-group-size 10 --strict-top-n 5
 |------|--------|------|
 | `--strict-top-n` | 0 | 对前N个最大簇应用严格规则（0=不启用） |
 | `--strict-match-ratio` | 0.8 | 严格模式下的匹配比例阈值 |
+
+### 智能拆分参数（推荐AI使用）
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `--try-refine-top-n` | 0 | 尝试智能拆分前N个最大簇（0=不启用） |
 
 ## 使用场景
 
@@ -111,13 +116,27 @@ node run-skill.js lixinger-crawler --min-group-size 10 --strict-top-n 5
 - 覆盖率: 99.2%
 - 分类精度: 显著提升
 
-## 文档
+## 📚 文档导航
 
-- [VALUE_FOCUSED_ANALYSIS.md](./VALUE_FOCUSED_ANALYSIS.md) - 价值导向分析（重要！）
-- [PRACTICAL_GUIDE.md](./PRACTICAL_GUIDE.md) - 实用调优指南
-- [OPTIMIZATION_SUMMARY.md](./OPTIMIZATION_SUMMARY.md) - 优化总结
-- [REAL_WORLD_TEST_SUMMARY.md](./REAL_WORLD_TEST_SUMMARY.md) - 真实场景测试
-- [ALGORITHM_OPTIMIZATION.md](./ALGORITHM_OPTIMIZATION.md) - 算法优化记录
+完整文档请访问 [文档中心](docs/README.md)
+
+### 快速开始
+- [5分钟快速开始](docs/guides/QUICK_START.md)
+- [完整使用指南](docs/guides/USAGE.md)
+
+### 深入理解
+- [价值导向分析](docs/knowledge/VALUE_FOCUSED_ANALYSIS.md) ⭐ 重要
+- [实用调优指南](docs/guides/PRACTICAL_GUIDE.md) ⭐ 推荐
+- [算法优化原理](docs/knowledge/ALGORITHM_OPTIMIZATION.md)
+
+### 测试报告
+- [优化总结](docs/reports/OPTIMIZATION_SUMMARY.md)
+- [真实场景测试](docs/reports/REAL_WORLD_TEST_SUMMARY.md)
+- [增强功能总结](docs/reports/ENHANCEMENT_SUMMARY.md)
+
+### 快速参考
+- [参数速查表](docs/reference/QUICK_REFERENCE.md)
+- [模式验证指南](docs/reference/PATTERN_VALIDATION_GUIDE.md)
 
 ## 核心原则
 
