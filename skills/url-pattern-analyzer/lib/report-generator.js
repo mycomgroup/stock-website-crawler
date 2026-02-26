@@ -43,12 +43,12 @@ class ReportGenerator {
       
       return {
         name,
+        description,
         pathTemplate: patternInfo.pathTemplate,
         pattern: patternInfo.pattern,
         queryParams: patternInfo.queryParams,
         urlCount: urlGroup.length,
-        samples,
-        description
+        samples
       };
     });
     
@@ -224,158 +224,156 @@ class ReportGenerator {
   _generateDescription(pattern) {
     const { name, pathTemplate, samples } = pattern;
     
-    // 中文映射表
-    const TRANSLATIONS = {
-      // 市场/交易所
-      'sh': '上海', 'sz': '深圳', 'hk': '香港',
-      'nasdaq': '纳斯达克', 'nyse': '纽约',
-      'csi': '中证', 'sw': '申万', 'sw_2021': '申万2021', 'lxr': '理杏仁',
-      
-      // 资产类型
-      'company': '公司', 'fund': '基金', 'index': '指数',
-      'industry': '行业', 'bond': '债券', 'macro': '宏观',
-      
-      // 页面类型
-      'detail': '详情', 'dashboard': '看板', 'list': '列表',
-      'profile': '资料', 'analytics': '分析',
-      
-      // 数据类型
-      'fundamental': '基本面', 'valuation': '估值', 'shareholders': '股东',
-      'capital-flow': '资金流向', 'constituents': '成分股',
-      'followed-users': '关注用户', 'memo': '备忘录', 'content': '内容',
-      'fees': '费用', 'pledge': '质押', 'employee': '员工',
-      
-      // 基本面指标
-      'peg': 'PEG估值', 'dcf': 'DCF估值', 'costs': '成本分析',
-      'safety': '安全性', 'profit': '盈利能力', 'growth': '成长性',
-      'cashflow': '现金流', 'operation-capability': '运营能力',
-      'custom-chart': '自定义图表',
-      
-      // 其他
-      'mutual-market': '互联互通', 'chart-maker': '图表制作',
-      'open': '开放', 'api': 'API', 'user': '用户', 'wiki': '百科',
-      'marketing': '营销', 'payment': '支付', 'interest-rates': '利率',
-      'price-index': '价格指数', 'fund-collection': '基金公司',
-      'fund-manager': '基金经理', 'jjgs': '基金公司', 'fm': '基金经理',
-      'jj': '基金', 'post': '帖子', 'discussions': '讨论',
-      'companies': '公司列表', 'account': '账户', 'notifications': '通知',
-      'place-order': '下单', 'my-followed': '我的关注', 'center': '中心',
-      'user-data': '用户数据', 'model': '模型', 'primary': '主要指标',
-      'fitting': '拟合', 'doc': '文档', 'token': '令牌', 'orders': '订单',
-      'my-apis': '我的API', 'receipts': '收据',
-      'bs': '资产负债表', 'ps': '利润表', 'cfs': '现金流量表', 'm': '主要指标'
-    };
-    
     // 解析路径段
     const segments = pathTemplate.split('/').filter(s => s && !s.startsWith('{'));
     
-    let market = '', assetType = '', dataType = '';
+    let market = '', assetType = '', pageType = '', dataType = '', subType = '';
     
     // 识别市场
-    if (pathTemplate.includes('/sh/')) market = '上海';
-    else if (pathTemplate.includes('/sz/')) market = '深圳';
-    else if (pathTemplate.includes('/hk/')) market = '香港';
+    if (pathTemplate.includes('/sh/')) market = '上海证券交易所';
+    else if (pathTemplate.includes('/sz/')) market = '深圳证券交易所';
+    else if (pathTemplate.includes('/hk/')) market = '香港交易所';
     else if (pathTemplate.includes('/nasdaq/')) market = '纳斯达克';
-    else if (pathTemplate.includes('/nyse/')) market = '纽约';
-    else if (pathTemplate.includes('/csi/')) market = '中证';
-    else if (pathTemplate.includes('/sw_2021/')) market = '申万2021';
-    else if (pathTemplate.includes('/sw/')) market = '申万';
+    else if (pathTemplate.includes('/nyse/')) market = '纽约证券交易所';
+    else if (pathTemplate.includes('/csi/')) market = '中证指数';
+    else if (pathTemplate.includes('/sw_2021/')) market = '申万2021行业';
+    else if (pathTemplate.includes('/sw/')) market = '申万行业';
     
     // 识别资产类型
     if (segments.includes('company')) assetType = '公司';
-    else if (segments.includes('fund')) assetType = '基金';
-    else if (segments.includes('index')) assetType = '指数';
+    else if (segments.includes('fund')) {
+      if (segments.includes('fund-collection')) assetType = '基金公司';
+      else if (segments.includes('fund-manager')) assetType = '基金经理';
+      else assetType = '基金';
+    } else if (segments.includes('index')) assetType = '指数';
     else if (segments.includes('industry')) assetType = '行业';
     else if (segments.includes('bond')) assetType = '债券';
     
-    // 识别数据类型
+    // 识别页面类型
+    if (segments.includes('detail')) pageType = '详情页';
+    else if (segments.includes('dashboard')) pageType = '数据看板';
+    else if (segments.includes('list')) pageType = '列表页';
+    
+    // 识别数据类型和子类型
     if (segments.includes('fundamental')) {
-      if (name.includes('peg')) dataType = 'PEG估值';
-      else if (name.includes('dcf')) dataType = 'DCF估值';
-      else if (name.includes('costs')) dataType = '成本分析';
-      else if (name.includes('safety')) dataType = '安全性';
-      else if (name.includes('profit')) dataType = '盈利能力';
-      else if (name.includes('growth')) dataType = '成长性';
-      else if (name.includes('cashflow')) dataType = '现金流';
-      else if (name.includes('operation-capability')) dataType = '运营能力';
-      else if (name.includes('custom-chart')) dataType = '自定义图表';
-      else if (name.includes('valuation')) dataType = '估值分析';
-      else dataType = '基本面分析';
+      dataType = '基本面数据';
+      if (name.includes('peg')) subType = 'PEG估值指标';
+      else if (name.includes('dcf')) subType = 'DCF现金流折现估值';
+      else if (name.includes('costs')) subType = '成本分析';
+      else if (name.includes('safety')) subType = '安全性指标';
+      else if (name.includes('profit')) subType = '盈利能力分析';
+      else if (name.includes('growth')) subType = '成长性指标';
+      else if (name.includes('cashflow')) subType = '现金流分析';
+      else if (name.includes('operation-capability')) subType = '运营能力指标';
+      else if (name.includes('custom-chart')) subType = '自定义图表';
+      else if (name.includes('valuation')) subType = '估值分析';
     } else if (segments.includes('valuation')) {
-      if (name.includes('primary')) dataType = '估值主要指标';
-      else if (name.includes('fitting')) dataType = '估值拟合';
-      else dataType = '估值分析';
+      dataType = '估值数据';
+      if (name.includes('primary')) subType = '主要估值指标';
+      else if (name.includes('fitting')) subType = '估值拟合分析';
     } else if (segments.includes('shareholders')) {
-      if (name.includes('pledge')) dataType = '股东质押';
-      else if (name.includes('fund-collection')) dataType = '基金公司持股';
-      else dataType = '股东信息';
+      dataType = '股东数据';
+      if (name.includes('pledge')) subType = '股东质押信息';
+      else if (name.includes('fund-collection')) subType = '基金公司持股';
     } else if (segments.includes('capital-flow')) {
-      dataType = name.includes('mutual-market') ? '互联互通资金流' : '资金流向';
+      dataType = '资金流向数据';
+      if (name.includes('mutual-market')) subType = '沪深港通资金流';
     } else if (segments.includes('constituents')) {
-      dataType = '成分股';
+      dataType = '成分股数据';
     } else if (segments.includes('followed-users')) {
-      dataType = '关注用户';
+      dataType = '关注用户列表';
     } else if (segments.includes('content')) {
-      dataType = name.includes('memo') ? '备忘录' : '内容';
+      dataType = '内容数据';
+      if (name.includes('memo')) subType = '用户备忘录';
     } else if (segments.includes('fees')) {
       dataType = '费用信息';
     } else if (segments.includes('employee')) {
       dataType = '员工信息';
     } else if (name.includes('chart-maker')) {
-      dataType = '图表制作工具';
+      return '图表制作工具 - 用于创建和管理自定义数据图表';
     } else if (segments.includes('open') && segments.includes('api')) {
-      dataType = '开放API';
+      if (name.includes('doc')) return '开放API文档 - API接口说明和使用指南';
+      return '开放API服务 - 提供数据接口访问';
     } else if (segments.includes('fund-list')) {
       dataType = '基金列表';
-    } else if (segments.includes('fund-manager')) {
-      dataType = '基金经理';
-    } else if (segments.includes('fund-collection')) {
-      dataType = '基金公司';
     } else if (segments.includes('user')) {
-      if (name.includes('companies')) dataType = '用户关注公司';
-      else if (name.includes('discussions')) dataType = '用户讨论';
-      else if (name.includes('memo')) dataType = '用户备忘录';
-      else if (name.includes('account')) dataType = '账户设置';
-      else if (name.includes('notifications')) dataType = '通知';
-      else dataType = '用户';
+      if (name.includes('companies')) return '用户关注的公司列表';
+      else if (name.includes('discussions')) return '用户发表的讨论帖子';
+      else if (name.includes('memo')) return '用户的个人备忘录';
+      else if (name.includes('account')) return '用户账户设置';
+      else if (name.includes('notifications')) return '用户通知消息';
+      else return '用户相关页面';
     } else if (segments.includes('profile')) {
-      dataType = name.includes('center') ? '个人中心' : '个人资料';
+      if (name.includes('center')) {
+        if (name.includes('user-data')) return '个人中心 - 用户数据管理';
+        else if (name.includes('my-followed')) return '个人中心 - 我的关注';
+        return '个人中心';
+      }
+      return '个人资料页';
     } else if (segments.includes('macro')) {
-      if (name.includes('interest-rates')) dataType = '利率数据';
-      else if (name.includes('price-index')) dataType = '价格指数';
-      else dataType = '宏观数据';
+      dataType = '宏观经济数据';
+      if (name.includes('interest-rates')) subType = '利率数据';
+      else if (name.includes('price-index')) subType = '价格指数';
     } else if (segments.includes('wiki')) {
-      dataType = '百科';
+      return '百科知识库';
     } else if (segments.includes('marketing')) {
-      dataType = '营销页面';
+      return '营销推广页面';
     } else if (segments.includes('payment')) {
-      dataType = '支付';
+      if (name.includes('place-order')) return '支付下单页面';
+      return '支付相关页面';
     } else if (segments.includes('feedback')) {
-      dataType = '反馈帖子';
+      return '用户反馈帖子';
     } else if (segments.includes('model')) {
-      dataType = '模型';
+      return '数据模型分析工具';
     }
     
     // 特殊处理财报类型
-    if (name.includes('-bs')) dataType = '资产负债表';
-    else if (name.includes('-ps')) dataType = '利润表';
-    else if (name.includes('-cfs')) dataType = '现金流量表';
-    else if (name.includes('-m') && market) dataType = '主要指标';
+    if (name.includes('-bs')) {
+      dataType = '财务报表';
+      subType = '资产负债表';
+    } else if (name.includes('-ps')) {
+      dataType = '财务报表';
+      subType = '利润表';
+    } else if (name.includes('-cfs')) {
+      dataType = '财务报表';
+      subType = '现金流量表';
+    } else if (name.includes('-m') && market) {
+      dataType = '财务数据';
+      subType = '主要财务指标';
+    }
     
     // 组合描述
     let description = '';
-    if (market && assetType && dataType) {
-      description = `${market}${assetType}${dataType}`;
+    
+    if (market && assetType && dataType && subType) {
+      description = `${market}${assetType}${pageType || ''} - ${dataType}(${subType})`;
+    } else if (market && assetType && dataType) {
+      description = `${market}${assetType}${pageType || ''} - ${dataType}`;
+    } else if (market && assetType && pageType) {
+      description = `${market}${assetType}${pageType}`;
     } else if (market && assetType) {
-      description = `${market}${assetType}详情`;
+      description = `${market}${assetType}详情页`;
+    } else if (assetType && dataType && subType) {
+      description = `${assetType}${pageType || ''} - ${dataType}(${subType})`;
     } else if (assetType && dataType) {
-      description = `${assetType}${dataType}`;
+      description = `${assetType}${pageType || ''} - ${dataType}`;
+    } else if (assetType && pageType) {
+      description = `${assetType}${pageType}`;
+    } else if (dataType && subType) {
+      description = `${dataType} - ${subType}`;
     } else if (dataType) {
       description = dataType;
     } else {
-      // 兜底：翻译name
+      // 兜底：使用简单翻译
+      const SIMPLE_TRANS = {
+        'sh': '上海', 'sz': '深圳', 'hk': '香港', 'nasdaq': '纳斯达克', 'nyse': '纽约',
+        'csi': '中证', 'sw': '申万', 'sw_2021': '申万2021',
+        'company': '公司', 'fund': '基金', 'index': '指数', 'industry': '行业',
+        'detail': '详情', 'dashboard': '看板', 'list': '列表',
+        'jjgs': '基金公司', 'fm': '基金经理', 'jj': '基金'
+      };
       const words = name.split('-');
-      description = words.map(w => TRANSLATIONS[w] || w).join('');
+      description = words.map(w => SIMPLE_TRANS[w] || w).join('');
     }
     
     return description || name;
