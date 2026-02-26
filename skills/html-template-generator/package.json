@@ -1,0 +1,30 @@
+{
+  "name": "html-template-generator",
+  "version": "1.0.0",
+  "description": "Generate HTML extraction templates using XPath from sample URLs",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "node run-skill.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:e2e": "node test/test-e2e.js"
+  },
+  "keywords": [
+    "html",
+    "xpath",
+    "template",
+    "extraction",
+    "web-scraping"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "jsdom": "^23.0.0",
+    "xpath": "^0.0.32"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

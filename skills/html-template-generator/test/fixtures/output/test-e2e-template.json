@@ -1,0 +1,103 @@
+{
+  "templateName": "test-template",
+  "version": "1.0.0",
+  "generatedAt": "2026-02-26T10:15:40.128Z",
+  "samples": [
+    "https://example.com",
+    "https://example.org"
+  ],
+  "xpaths": {
+    "title": "//h1/text()",
+    "sections": {
+      "xpath": "//div",
+      "extract": {
+        "heading": ".//h2/text()",
+        "description": ".//p/text()",
+        "table": null,
+        "codeExample": null,
+        "list": null
+      }
+    },
+    "filters": {
+      "removeXPaths": [
+        "//nav",
+        "//header",
+        "//footer",
+        "//aside",
+        "//div[contains(@class, 'ad')]",
+        "//section[contains(@class, 'ad')]",
+        "//div[contains(@class, 'advertisement')]",
+        "//section[contains(@class, 'advertisement')]",
+        "//div[contains(@class, 'banner')]",
+        "//section[contains(@class, 'banner')]",
+        "//div[contains(@class, 'promo')]",
+        "//section[contains(@class, 'promo')]",
+        "//div[contains(@class, 'sponsored')]",
+        "//section[contains(@class, 'sponsored')]",
+        "//div[contains(@class, 'menu')]",
+        "//ul[contains(@class, 'menu')]",
+        "//div[contains(@class, 'navigation')]",
+        "//ul[contains(@class, 'navigation')]",
+        "//div[contains(@class, 'navbar')]",
+        "//ul[contains(@class, 'navbar')]",
+        "//div[contains(@class, 'nav-bar')]",
+        "//ul[contains(@class, 'nav-bar')]",
+        "//div[contains(@class, 'breadcrumb')]",
+        "//ul[contains(@class, 'breadcrumb')]",
+        "//div[contains(@class, 'sidebar')]",
+        "//aside[contains(@class, 'sidebar')]",
+        "//div[contains(@class, 'side-bar')]",
+        "//aside[contains(@class, 'side-bar')]",
+        "//div[contains(@class, 'widget')]",
+        "//aside[contains(@class, 'widget')]",
+        "//div[contains(@class, 'related')]",
+        "//aside[contains(@class, 'related')]"
+      ],
+      "cleanText": true
+    }
+  },
+  "filters": {
+    "removeXPaths": [
+      "//nav",
+      "//header",
+      "//footer",
+      "//aside",
+      "//div[contains(@class, 'ad')]",
+      "//section[contains(@class, 'ad')]",
+      "//div[contains(@class, 'advertisement')]",
+      "//section[contains(@class, 'advertisement')]",
+      "//div[contains(@class, 'banner')]",
+      "//section[contains(@class, 'banner')]",
+      "//div[contains(@class, 'promo')]",
+      "//section[contains(@class, 'promo')]",
+      "//div[contains(@class, 'sponsored')]",
+      "//section[contains(@class, 'sponsored')]",
+      "//div[contains(@class, 'menu')]",
+      "//ul[contains(@class, 'menu')]",
+      "//div[contains(@class, 'navigation')]",
+      "//ul[contains(@class, 'navigation')]",
+      "//div[contains(@class, 'navbar')]",
+      "//ul[contains(@class, 'navbar')]",
+      "//div[contains(@class, 'nav-bar')]",
+      "//ul[contains(@class, 'nav-bar')]",
+      "//div[contains(@class, 'breadcrumb')]",
+      "//ul[contains(@class, 'breadcrumb')]",
+      "//div[contains(@class, 'sidebar')]",
+      "//aside[contains(@class, 'sidebar')]",
+      "//div[contains(@class, 'side-bar')]",
+      "//aside[contains(@class, 'side-bar')]",
+      "//div[contains(@class, 'widget')]",
+      "//aside[contains(@class, 'widget')]",
+      "//div[contains(@class, 'related')]",
+      "//aside[contains(@class, 'related')]"
+    ],
+    "cleanText": true
+  },
+  "metadata": {
+    "sampleCount": 2,
+    "commonElements": {
+      "title": 2,
+      "sections": 2
+    }
+  }
+}

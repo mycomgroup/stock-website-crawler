@@ -1,0 +1,13 @@
+[
+  {
+    "name": "test-template",
+    "description": "Test template for E2E testing",
+    "pathTemplate": "/",
+    "pattern": "^https://example\\.(com|org)/?$",
+    "urlCount": 2,
+    "samples": [
+      "https://example.com",
+      "https://example.org"
+    ]
+  }
+]

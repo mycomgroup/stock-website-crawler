@@ -20,7 +20,7 @@
 **输出**：页面抽取模板（JSON 格式的抽取规则，使用 XPath）
 **过程**：
 1. 读取 url-patterns.json
-2. 使用 Puppeteer 抓取样例页面的 HTML（复用已登录的浏览器状态）
+2. 使用 Playwright 抓取样例页面的 HTML（复用已登录的浏览器状态）
 3. 分析 HTML 结构，识别共同模式
 4. 生成抽取规则（XPath 表达式）
 5. 输出模板文件
@@ -30,7 +30,7 @@
 **完全独立**：
 - 不依赖 stock-crawler 的任何代码
 - 只需要 url-patterns.json 作为输入
-- 自己管理浏览器（Puppeteer）
+- 自己管理浏览器（Playwright）
 - 使用已保存的登录状态（不需要 login-handler）
 
 **XPath 优先**：
@@ -415,7 +415,7 @@ const browser = await chromium.launchPersistentContext(userDataDir, {
 html-template-generator/
 ├── lib/
 │   ├── pattern-reader.js      # 读取 url-patterns.json
-│   ├── browser-manager.js      # 浏览器管理（Puppeteer）
+│   ├── browser-manager.js      # 浏览器管理（Playwright）
 │   ├── html-fetcher.js         # 抓取页面 HTML
 │   ├── structure-analyzer.js   # 分析 HTML 结构
 │   ├── xpath-generator.js      # 生成 XPath 表达式
@@ -520,8 +520,8 @@ class TemplateGenerator {
 
 ### 阶段 3：规则生成（1天）
 
-- [ ] 实现 rule-generator
-- [ ] 生成 CSS 选择器
+- [ ] 实现 xpath-generator
+- [ ] 生成 XPath 表达式
 - [ ] 输出 JSON 格式规则
 
 ### 阶段 4：测试和文档（1天）
@@ -586,7 +586,7 @@ const browser = await chromium.launchPersistentContext(userDataDir, {
 - 不需要配置用户名密码
 - 完全独立，不依赖 stock-crawler 代码
 
-**Playwright vs Puppeteer**：
+**Playwright 优势**：
 - ✅ 更现代、更稳定的 API
 - ✅ 更好的等待机制（waitUntil: 'networkidle'）
 - ✅ launchPersistentContext 原生支持
@@ -624,5 +624,6 @@ const browser = await chromium.launchPersistentContext(userDataDir, {
 
 - url-pattern-analyzer 的设计模式
 - stock-crawler 的 parser 架构
-- Puppeteer 文档
-- CSS 选择器最佳实践
+- Playwright 文档
+- XPath 规范和最佳实践
+- jsdom 文档
