@@ -210,12 +210,161 @@ node run-skill.js lixinger-crawler --min-group-size 10 --max-patterns 20
   - URL模式识别和聚类
   - JSON和Markdown报告生成
   - 性能优化（支持8000+URL）
+- **1.4.0** (2026-02-26): 质量检查和迭代优化
+  - 添加质量检查脚本
+  - 支持反复优化工作流
+  - 添加智能拆分参数
+
+## 质量检查和迭代优化
+
+### 工作流程
+
+1. **初次分析**: 使用默认参数生成初步结果
+2. **质量检查**: 运行验证脚本发现问题
+3. **调整参数**: 根据检查结果优化参数
+4. **重新分析**: 使用新参数再次分析
+5. **重复2-4**: 直到质量满意
+
+### 质量检查规则
+
+运行质量检查脚本：
+```bash
+node scripts/validate-patterns.js ../../stock-crawler/output/lixinger-crawler/url-patterns.json
+```
+
+#### 检查规则列表
+
+1. **过大簇检查** (warning)
+   - 检查是否有URL数量 > 500 的模式
+   - 可能混合了不同类型的页面
+   - 建议: 使用 `--try-refine-top-n` 或 `--strict-top-n` 参数
+
+2. **样本一致性检查** (error)
+   - 检查样本URL的路径深度是否一致
+   - 不一致说明混合了不同结构
+   - 建议: 增加细分参数
+
+3. **重复名称检查** (warning)
+   - 检查是否有相同名称的模式
+   - 应该进一步细分或合并
+   - 建议: 调整细分参数
+
+4. **过度泛化检查** (warning)
+   - 检查路径模板参数占比是否过高（>70%）
+   - 模板过于泛化可能不准确
+   - 建议: 增加路径匹配严格度
+
+5. **不一致段检查** (error)
+   - 检查样本中是否有半固定段（2-5个不同值）
+   - 应该按这些值细分
+   - 建议: 增加 `--refine-max-values` 参数
+
+6. **模式数量检查** (info)
+   - 检查模式总数是否在合理范围
+   - <1000 URLs: 应该 <50 个模式
+   - 1000-5000 URLs: 应该 <100 个模式
+   - 5000-10000 URLs: 应该 <150 个模式
+   - >10000 URLs: 应该 <200 个模式
+
+7. **覆盖率检查** (warning)
+   - 检查分类覆盖率是否 >90%
+   - 覆盖率低说明很多URL未分类
+   - 建议: 降低 `--min-group-size` 参数
+
+8. **主导簇检查** (warning)
+   - 检查最大模式是否占比 >30%
+   - 占比过高可能需要细分
+   - 建议: 使用 `--try-refine-top-n` 参数
+
+### 迭代优化示例
+
+#### 示例1: 发现大簇问题
+
+```bash
+# 第1次分析
+node run-skill.js lixinger-crawler
+
+# 质量检查
+node scripts/validate-patterns.js ../../stock-crawler/output/lixinger-crawler/url-patterns.json
+
+# 输出: ⚠️ 模式 "analytics-chart-maker" 包含 923 个URL
+
+# 第2次分析 - 尝试拆分大簇
+node run-skill.js lixinger-crawler --try-refine-top-n 10
+
+# 再次检查
+node scripts/validate-patterns.js ../../stock-crawler/output/lixinger-crawler/url-patterns.json
+```
+
+#### 示例2: 发现样本不一致
+
+```bash
+# 质量检查发现问题
+# 输出: ❌ 模式 "detail-sz" 的样本URL路径深度不一致
+
+# 使用更激进的细分
+node run-skill.js lixinger-crawler \
+  --refine-max-values 12 \
+  --refine-min-count 5 \
+  --strict-top-n 10
+
+# 验证结果
+node scripts/validate-patterns.js ../../stock-crawler/output/lixinger-crawler/url-patterns.json
+```
+
+#### 示例3: 模式数量过多
+
+```bash
+# 质量检查
+# 输出: ℹ️ 模式数量 150 可能过多
+
+# 增加最小分组大小
+node run-skill.js lixinger-crawler --min-group-size 20
+
+# 验证结果
+node scripts/validate-patterns.js ../../stock-crawler/output/lixinger-crawler/url-patterns.json
+```
+
+### AI 使用建议
+
+作为 AI，你应该：
+
+1. **自动运行质量检查**: 每次分析后自动运行验证脚本
+2. **解读检查结果**: 理解每个警告和错误的含义
+3. **生成优化方案**: 根据问题提出具体的参数调整
+4. **反复迭代**: 最多尝试3-5次，找到最佳配置
+5. **记录过程**: 在报告中说明优化过程和最终选择
+
+### 质量标准
+
+**优秀** (可以停止迭代):
+- ✅ 无错误
+- ✅ 警告 ≤ 2个
+- ✅ 覆盖率 > 95%
+- ✅ 最大簇 < 500 个URL
+- ✅ 模式数量在合理范围
+
+**良好** (可选继续优化):
+- ✅ 无错误
+- ⚠️ 警告 3-5个
+- ✅ 覆盖率 > 90%
+- ⚠️ 最大簇 < 1000 个URL
+
+**需要优化** (必须继续):
+- ❌ 有错误
+- ⚠️ 警告 > 5个
+- ❌ 覆盖率 < 90%
+- ❌ 最大簇 > 1000 个URL
 
 ## 相关文档
 
 - [README.md](./README.md) - 详细使用说明
+- [质量检查工作流](./docs/guides/QUALITY_CHECK_WORKFLOW.md) - 反复优化指南 ⭐ 重要
+- [实用调优指南](./docs/guides/PRACTICAL_GUIDE.md) - 参数调优技巧
+- [价值导向分析](./docs/knowledge/VALUE_FOCUSED_ANALYSIS.md) - 业务价值分析
 - [lib/url-clusterer.js](./lib/url-clusterer.js) - 聚类算法实现
 - [lib/report-generator.js](./lib/report-generator.js) - 报告生成器
+- [scripts/validate-patterns.js](./scripts/validate-patterns.js) - 质量检查脚本
 
 ## 技术特点
 

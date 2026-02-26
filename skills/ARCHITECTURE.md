@@ -564,8 +564,7 @@ node skills/template-content-analyzer/scripts/test-real-pages.js
 
 ```bash
 # 测试 Skill 1
-cd skills/url-pattern-analyzer
-npm test
+npm test --prefix skills/url-pattern-analyzer
 
 # 测试 Skill 2
 cd skills/template-content-analyzer

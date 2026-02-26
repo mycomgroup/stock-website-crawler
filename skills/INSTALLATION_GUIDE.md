@@ -45,8 +45,7 @@ npm --version
 cd /path/to/your/project
 
 # 2. 安装 url-pattern-analyzer 依赖
-cd skills/url-pattern-analyzer
-npm install
+npm install --prefix skills/url-pattern-analyzer
 
 # 3. 安装 template-content-analyzer 依赖
 cd ../template-content-analyzer
@@ -97,8 +96,6 @@ npm install
 ### 验证 url-pattern-analyzer
 
 ```bash
-cd skills/url-pattern-analyzer
-
 # 运行单元测试
 npm test
 
@@ -289,8 +286,6 @@ Skill配置文件: `skills/template-content-analyzer/skill.json`
 ### 1. 分析URL模式
 
 ```bash
-cd skills/url-pattern-analyzer
-
 # 使用测试脚本
 node scripts/analyze-url-patterns.js \
   --input ../../stock-crawler/output/lixinger-crawler/links.txt \
@@ -324,8 +319,7 @@ cat stock-crawler/output/lixinger-crawler/template-rules.jsonl | jq
 ### url-pattern-analyzer 性能
 
 ```bash
-cd skills/url-pattern-analyzer
-node test/performance.test.js
+node skills/url-pattern-analyzer/test/performance.test.js
 
 # 预期结果：
 # ✓ 分析8403个URL < 10秒
@@ -370,8 +364,7 @@ cp skills/template-content-analyzer/skill.json ~/backup/
 git pull origin main
 
 # 3. 重新安装依赖
-cd skills/url-pattern-analyzer
-npm install
+npm install --prefix skills/url-pattern-analyzer
 
 cd ../template-content-analyzer
 npm install
