@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * URL Pattern Analyzer - Main Entry Point
  * 
@@ -11,10 +9,13 @@
  * 参数:
  *   linksFile   - links.txt文件路径
  *   outputFile  - 输出JSON文件路径
- *   --min-group-size <n>  - 最小分组大小（默认5）
- *   --sample-count <n>    - 每个模式的示例URL数量（默认5）
- *   --markdown            - 同时生成Markdown报告
- *   --help                - 显示帮助信息
+ *   --min-group-size <n>        - 最小分组大小（默认5）
+ *   --sample-count <n>          - 每个模式的示例URL数量（默认5）
+ *   --refine-max-values <n>     - 半固定段最大唯一值数量（默认8）
+ *   --refine-min-count <n>      - 半固定段每个值的最小出现次数（默认10）
+ *   --refine-min-groups <n>     - 半固定段最少需要几个大组才细分（默认2）
+ *   --markdown                  - 同时生成Markdown报告
+ *   --help                      - 显示帮助信息
  */
 
 const LinksReader = require('./lib/links-reader');
@@ -47,7 +48,14 @@ function parseArgs() {
     outputFile: args[1],
     minGroupSize: 5,
     sampleCount: 5,
-    generateMarkdown: false
+    generateMarkdown: false,
+    // 细分控制参数
+    refineMaxValues: 8,      // 半固定段最大唯一值数量
+    refineMinCount: 10,      // 每个值最小出现次数
+    refineMinGroups: 2,      // 最少需要几个大组才细分
+    // 严格模式参数
+    strictTopN: 0,           // 对前N个最大簇应用严格规则（0=不启用）
+    strictMatchRatio: 0.8    // 严格模式下的匹配比例
   };
   
   // 解析选项
@@ -58,6 +66,16 @@ function parseArgs() {
       config.minGroupSize = parseInt(args[++i], 10);
     } else if (arg === '--sample-count' && i + 1 < args.length) {
       config.sampleCount = parseInt(args[++i], 10);
+    } else if (arg === '--refine-max-values' && i + 1 < args.length) {
+      config.refineMaxValues = parseInt(args[++i], 10);
+    } else if (arg === '--refine-min-count' && i + 1 < args.length) {
+      config.refineMinCount = parseInt(args[++i], 10);
+    } else if (arg === '--refine-min-groups' && i + 1 < args.length) {
+      config.refineMinGroups = parseInt(args[++i], 10);
+    } else if (arg === '--strict-top-n' && i + 1 < args.length) {
+      config.strictTopN = parseInt(args[++i], 10);
+    } else if (arg === '--strict-match-ratio' && i + 1 < args.length) {
+      config.strictMatchRatio = parseFloat(args[++i]);
     } else if (arg === '--markdown') {
       config.generateMarkdown = true;
     }
@@ -80,10 +98,28 @@ URL Pattern Analyzer - 分析URL模式并生成报告
   linksFile              links.txt文件路径
   outputFile             输出JSON文件路径
 
-选项:
+基础选项:
   --min-group-size <n>   最小分组大小（默认5）
   --sample-count <n>     每个模式的示例URL数量（默认5）
   --markdown             同时生成Markdown报告
+
+细分控制选项（用于控制URL模式的细分程度）:
+  --refine-max-values <n>   半固定段最大唯一值数量（默认8）
+                            如果某个路径段的唯一值 ≤ 此值，可能被细分
+                            
+  --refine-min-count <n>    半固定段每个值的最小出现次数（默认10）
+                            只有出现次数 ≥ 此值的值才会被单独分组
+                            
+  --refine-min-groups <n>   最少需要几个大组才细分（默认2）
+                            只有至少有N个值满足min-count时才细分
+
+严格模式选项（对最大的簇应用更严格的细分规则）:
+  --strict-top-n <n>        对前N个最大簇应用严格规则（默认0，不启用）
+                            严格规则要求每个路径段要么全部固定，要么只有一个变量
+                            
+  --strict-match-ratio <f>  严格模式下的匹配比例（默认0.8，即80%）
+                            整体固定比例 >= 此值时不再细分
+  
   --help, -h             显示此帮助信息
 
 示例:
@@ -93,8 +129,36 @@ URL Pattern Analyzer - 分析URL模式并生成报告
   # 生成Markdown报告
   node main.js links.txt url-patterns.json --markdown
 
-  # 自定义参数
+  # 自定义分组参数
   node main.js links.txt url-patterns.json --min-group-size 10 --sample-count 3
+
+  # 控制细分程度（更激进的细分）
+  node main.js links.txt url-patterns.json --refine-max-values 10 --refine-min-count 5
+
+  # 控制细分程度（更保守的细分）
+  node main.js links.txt url-patterns.json --refine-max-values 5 --refine-min-count 20
+
+参数调优建议:
+  
+  1. min-group-size: 控制最终保留的模式
+     - 小型网站（<1000 URLs）: 3-5
+     - 中型网站（1000-5000 URLs）: 5-10
+     - 大型网站（>5000 URLs）: 10-20
+  
+  2. refine-max-values: 控制哪些段可以被细分
+     - 值越小，细分越保守（只细分值很少的段）
+     - 值越大，细分越激进（可以细分值较多的段）
+     - 推荐范围: 5-15
+  
+  3. refine-min-count: 控制细分后的最小组大小
+     - 值越大，只有大组才会被单独分出来
+     - 值越小，小组也会被单独分出来
+     - 推荐范围: 5-20
+  
+  4. refine-min-groups: 控制细分的触发条件
+     - 值越大，需要更多大组才会细分
+     - 值越小，更容易触发细分
+     - 推荐范围: 2-5
 
 输出:
   - JSON报告: 包含所有识别的URL模式
@@ -138,14 +202,14 @@ async function main() {
       });
     }
     
-    // 步骤2: 提取URL（只要fetched且无错误的）
-    console.log('\n步骤2: 提取有效URL');
+    // 步骤2: 提取URL（默认所有URL，可通过参数控制）
+    console.log('\n步骤2: 提取URL');
     console.log('-------------------');
     const urlStrings = reader.extractURLs(records, { 
-      status: 'fetched', 
+      // 不限制status，分析所有URL
       excludeErrors: true 
     });
-    console.log(`✓ 提取了 ${urlStrings.length} 个有效URL`);
+    console.log(`✓ 提取了 ${urlStrings.length} 个URL`);
     
     if (urlStrings.length === 0) {
       console.error('错误: 没有找到有效的URL');
@@ -155,7 +219,13 @@ async function main() {
     // 步骤3: URL聚类
     console.log('\n步骤3: URL聚类分析');
     console.log('-------------------');
-    const analyzer = new URLPatternAnalyzer();
+    const analyzer = new URLPatternAnalyzer({
+      refineMaxValues: config.refineMaxValues,
+      refineMinCount: config.refineMinCount,
+      refineMinGroups: config.refineMinGroups,
+      strictTopN: config.strictTopN,
+      strictMatchRatio: config.strictMatchRatio
+    });
     const startTime = Date.now();
     const clusters = analyzer.clusterURLs(urlStrings);
     const duration = Date.now() - startTime;
