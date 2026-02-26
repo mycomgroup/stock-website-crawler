@@ -113,6 +113,7 @@ node run-skill.js lixinger-crawler --min-group-size 10 --strict-top-n 5
 
 ## 文档
 
+- [VALUE_FOCUSED_ANALYSIS.md](./VALUE_FOCUSED_ANALYSIS.md) - 价值导向分析（重要！）
 - [PRACTICAL_GUIDE.md](./PRACTICAL_GUIDE.md) - 实用调优指南
 - [OPTIMIZATION_SUMMARY.md](./OPTIMIZATION_SUMMARY.md) - 优化总结
 - [REAL_WORLD_TEST_SUMMARY.md](./REAL_WORLD_TEST_SUMMARY.md) - 真实场景测试
@@ -124,6 +125,18 @@ node run-skill.js lixinger-crawler --min-group-size 10 --strict-top-n 5
 2. **相同模板 = 相同提取**: 同一模式的URL应该用相同方式提取数据
 3. **质量 > 数量**: 宁可少而准，不要多而乱
 4. **迭代调优**: 先用默认参数，再根据结果调整
+5. **价值导向**: 关注大簇（>50 URLs），忽略小簇（<10 URLs）
+
+### 80/20法则
+
+```
+前20%的模式 → 覆盖80%的URL → 包含80%的价值数据
+```
+
+**实用建议**:
+- 重点分析前10-20个最大的模式
+- 小簇（<10个URL）通常是低价值页面，可以归为"其他"
+- 使用 `--min-group-size 15` 过滤低价值小簇
 
 ## 技术亮点
 
