@@ -7,7 +7,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Template Analyzer System                  │
-│                         (Skills-Based)                       │
+│                         (2 Skills)                           │
 ├─────────────────────────────────────────────────────────────┤
 │                                                               │
 │  ┌──────────────────┐         ┌──────────────────┐          │
@@ -15,29 +15,25 @@
 │  │   URL Pattern    │────────▶│   Template       │          │
 │  │   Analyzer       │         │   Content        │          │
 │  │                  │         │   Analyzer       │          │
-│  └──────────────────┘         │   +              │          │
-│         │                     │   Config         │          │
-│         │                     │   Generator      │          │
-│         │                     └──────────────────┘          │
+│  └──────────────────┘         └──────────────────┘          │
+│         │                              │                     │
 │         │                              │                     │
 │         ▼                              ▼                     │
 │  ┌──────────────────┐         ┌──────────────────┐          │
 │  │   URL Patterns   │         │  template-rules  │          │
 │  │   JSON           │         │  .jsonl          │          │
 │  └──────────────────┘         └──────────────────┘          │
-│                                        │                     │
-│                                        ▼                     │
-│                               ┌──────────────────┐          │
-│                               │  Test Script:    │          │
-│                               │  Template Parser │          │
-│                               │  (验证配置)       │          │
-│                               └──────────────────┘          │
 │                                                               │
 └─────────────────────────────────────────────────────────────┘
 
 Skills位置: 项目根目录/skills/
   - skills/url-pattern-analyzer/
   - skills/template-content-analyzer/
+
+判断依据:
+  - URL正则匹配
+  - 页面是否同一个后端渲染
+  - 不使用相似度阈值
 ```
 
 ### Skills架构
@@ -66,8 +62,7 @@ skills/url-pattern-analyzer/
 ```json
 {
   "linksFile": "stock-crawler/output/lixinger-crawler/links.txt",
-  "outputFile": "stock-crawler/output/lixinger-crawler/url-patterns.json",
-  "similarityThreshold": 0.7
+  "outputFile": "stock-crawler/output/lixinger-crawler/url-patterns.json"
 }
 ```
 
@@ -87,7 +82,7 @@ skills/url-pattern-analyzer/
 }
 ```
 
-#### Skill 2: Template Content Analyzer + Config Generator
+#### Skill 2: Template Content Analyzer
 
 **位置**: `skills/template-content-analyzer/`
 
@@ -101,10 +96,7 @@ skills/template-content-analyzer/
 │   ├── content-analyzer.js      # 内容分析
 │   ├── frequency-calc.js        # 频率计算
 │   ├── structure-detector.js    # 数据结构识别
-│   ├── config-generator.js      # 配置生成器
-│   └── validator.js             # 实时验证（可选）
-├── scripts/
-│   └── test-template-parser.js  # Template Parser测试脚本
+│   └── config-generator.js      # 配置生成器
 └── test/
     └── test-analyzer.js         # 测试脚本
 ```
@@ -131,17 +123,11 @@ skills/template-content-analyzer/
 {"name":"dashboard","description":"...","extractors":[...],"filters":[...],"metadata":{...}}
 ```
 
-#### Test Script: Template Parser
-
-**位置**: `skills/template-content-analyzer/scripts/test-template-parser.js`
-
-**功能**: 
-- 加载生成的配置文件
-- 创建TemplateParser实例
-- 测试配置驱动的解析
-- 验证提取效果
-
-**不集成到现有代码**: 仅作为测试工具使用
+**判断依据**:
+- 根据模板抽取结果判断
+- URL正则匹配
+- 页面是否同一个后端渲染
+- 不使用相似度阈值
 
 #### 1. URL Pattern Analyzer（URL模式分析器）
 
@@ -161,7 +147,7 @@ class URLPatternAnalyzer {
     };
   }
   
-  // 2. 计算URL相似度
+  // 2. 计算URL相似度（不使用固定阈值）
   calculateSimilarity(url1, url2) {
     const f1 = this.extractFeatures(url1);
     const f2 = this.extractFeatures(url2);
@@ -169,14 +155,14 @@ class URLPatternAnalyzer {
     // 路径深度相同 +20分
     // 路径段匹配 +10分/段
     // 查询参数匹配 +5分/参数
-    // 总分100分，>70分认为相似
+    // 返回相似度分数，由聚类算法决定分组
   }
   
-  // 3. 聚类算法（层次聚类）
-  clusterURLs(urls, threshold = 0.7) {
+  // 3. 聚类算法（基于URL正则匹配和后端渲染判断）
+  clusterURLs(urls) {
     // 初始化：每个URL一个簇
-    // 迭代：合并最相似的两个簇
-    // 停止：相似度 < threshold
+    // 迭代：合并相似的簇
+    // 判断依据：URL正则匹配、页面是否同一个后端渲染
   }
   
   // 4. 生成正则表达式
@@ -868,7 +854,6 @@ if (fs.existsSync(configPath)) {
 {
   "linksFile": "stock-crawler/output/lixinger-crawler/links.txt",
   "outputFile": "stock-crawler/output/lixinger-crawler/url-patterns.json",
-  "similarityThreshold": 0.7,
   "minGroupSize": 5
 }
 ```
@@ -915,8 +900,7 @@ if (fs.existsSync(configPath)) {
   "frequencyThresholds": {
     "template": 0.8,
     "unique": 0.2
-  },
-  "enableValidation": true
+  }
 }
 ```
 
@@ -933,32 +917,11 @@ if (fs.existsSync(configPath)) {
       "name": "api-doc",
       "pageCount": 163,
       "extractorsGenerated": 6,
-      "filtersGenerated": 2,
-      "validated": true
+      "filtersGenerated": 2
     }
   ]
 }
 ```
-
-### Test Script: test-template-parser.js
-
-**位置**: `skills/template-content-analyzer/scripts/test-template-parser.js`
-
-**用途**: 测试生成的配置文件
-
-**运行方式**:
-```bash
-node skills/template-content-analyzer/scripts/test-template-parser.js \
-  --config stock-crawler/output/lixinger-crawler/template-rules.jsonl \
-  --test-urls stock-crawler/output/lixinger-crawler/test-urls.txt
-```
-
-**功能**:
-1. 加载配置文件
-2. 创建TemplateParser实例
-3. 对测试URL进行解析
-4. 验证提取效果
-5. 生成测试报告
 
 ## 配置设计
 
@@ -967,7 +930,6 @@ node skills/template-content-analyzer/scripts/test-template-parser.js \
 ```json
 {
   "urlAnalysis": {
-    "similarityThreshold": 0.7,
     "minGroupSize": 5,
     "maxGroups": 20
   },

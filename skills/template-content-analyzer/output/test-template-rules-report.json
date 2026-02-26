@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-02-25T13:59:38.330Z",
+  "options": {
+    "patterns": "stock-crawler/output/lixinger-crawler/url-patterns.json",
+    "pages": "stock-crawler/output/lixinger-crawler/pages",
+    "output": "skills/template-content-analyzer/output/test-template-rules.jsonl",
+    "templateThreshold": 0.8,
+    "uniqueThreshold": 0.2
+  },
+  "summary": {
+    "totalPatterns": 1,
+    "successCount": 1,
+    "failedCount": 0,
+    "skippedCount": 0,
+    "totalExtractors": 161,
+    "totalFilters": 2
+  },
+  "details": [
+    {
+      "name": "rate-of-return-rank-us",
+      "pathTemplate": "/analytics/company/dashboard/rate-of-return-rank/us",
+      "urlCount": 206,
+      "status": "success",
+      "error": null,
+      "matchedFiles": 163,
+      "analysisTime": 3482,
+      "stats": {
+        "totalPages": 163,
+        "totalBlocks": 3468,
+        "templateBlocks": 2,
+        "uniqueBlocks": 3430,
+        "mixedBlocks": 36,
+        "tableStructures": 158,
+        "codeBlockTypes": 3,
+        "listTypes": 40
+      },
+      "extractorsCount": 161,
+      "filtersCount": 2
+    }
+  ]
+}

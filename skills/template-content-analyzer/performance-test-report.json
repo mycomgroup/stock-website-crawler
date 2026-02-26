@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-02-25T14:34:08.088Z",
+  "results": [
+    {
+      "name": "小规模测试",
+      "pageCount": 10,
+      "target": 3000,
+      "withoutOptimization": 8,
+      "withOptimization": 2,
+      "improvement": 75,
+      "speedup": 4,
+      "passed": true
+    },
+    {
+      "name": "中规模测试",
+      "pageCount": 50,
+      "target": 15000,
+      "withoutOptimization": 6,
+      "withOptimization": 5,
+      "improvement": 16.7,
+      "speedup": 1.2,
+      "passed": true
+    },
+    {
+      "name": "大规模测试",
+      "pageCount": 100,
+      "target": 30000,
+      "withoutOptimization": 55,
+      "withOptimization": 10,
+      "improvement": 81.8,
+      "speedup": 5.5,
+      "passed": true
+    },
+    {
+      "name": "超大规模测试",
+      "pageCount": 200,
+      "target": 60000,
+      "withoutOptimization": 26,
+      "withOptimization": 14,
+      "improvement": 46.2,
+      "speedup": 1.86,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "totalTests": 4,
+    "passed": 4,
+    "failed": 0,
+    "passRate": 100
+  }
+}

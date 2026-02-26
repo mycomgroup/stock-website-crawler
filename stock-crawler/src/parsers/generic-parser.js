@@ -2279,7 +2279,7 @@ class GenericParser extends BaseParser {
       
       let totalClicked = 0;
       let clicked = true;
-      let maxClicks = 50; // 防止无限循环
+      let maxClicks = 10; // 防止无限循环和无意义的卡死
       
       console.log('  查找并点击展开按钮...');
       

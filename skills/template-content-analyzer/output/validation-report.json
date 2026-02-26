@@ -1,0 +1,341 @@
+{
+  "timestamp": "2026-02-26T01:06:11.715Z",
+  "summary": {
+    "configLoaded": true,
+    "parsersCreated": 1,
+    "urlMatchingPassed": true,
+    "dataExtractionPassed": false
+  },
+  "details": {
+    "step1": {
+      "success": true,
+      "configs": [
+        {
+          "name": "open-api",
+          "description": "Parser configuration for /open/api/{param2}",
+          "priority": 100,
+          "urlPattern": {
+            "pattern": "^https://www\\.lixinger\\.com/open/api/([^/]+)(\\?.*)?$",
+            "pathTemplate": "/open/api/{param2}",
+            "queryParams": [
+              "api-key",
+              "api-groups"
+            ]
+          },
+          "extractors": [
+            {
+              "field": "title",
+              "type": "text",
+              "selector": "h1, h2, title",
+              "required": true
+            },
+            {
+              "field": "mainTable",
+              "type": "table",
+              "selector": "table",
+              "columns": [
+                "_id",
+                "name",
+                "maxMemberCount",
+                "isPublic"
+              ]
+            },
+            {
+              "field": "table1",
+              "type": "table",
+              "selector": "table",
+              "columns": [
+                "_id",
+                "type",
+                "title",
+                "content",
+                "startDate",
+                "endDate",
+                "date",
+                "beginDate"
+              ]
+            },
+            {
+              "field": "table2",
+              "type": "table",
+              "selector": "table",
+              "columns": [
+                "date",
+                "type",
+                "areaCode",
+                "eff"
+              ]
+            },
+            {
+              "field": "table3",
+              "type": "table",
+              "selector": "table",
+              "columns": [
+                "参数名称",
+                "必选",
+                "数据类型",
+                "说明"
+              ]
+            },
+            {
+              "field": "table4",
+              "type": "table",
+              "selector": "table",
+              "columns": [
+                "参数名称",
+                "数据类型",
+                "说明"
+              ]
+            },
+            {
+              "field": "codeBlocks",
+              "type": "code",
+              "selector": "pre code, pre, textarea[readonly]"
+            },
+            {
+              "field": "lists",
+              "type": "list",
+              "selector": "ul, ol"
+            }
+          ],
+          "filters": [
+            {
+              "type": "remove",
+              "target": "heading",
+              "pattern": "源url",
+              "reason": "Template noise (100% frequency)"
+            },
+            {
+              "type": "remove",
+              "target": "heading",
+              "pattern": "简要描述",
+              "reason": "Template noise (91% frequency)"
+            },
+            {
+              "type": "remove",
+              "target": "heading",
+              "pattern": "请求url",
+              "reason": "Template noise (91% frequency)"
+            },
+            {
+              "type": "remove",
+              "target": "heading",
+              "pattern": "请求方式",
+              "reason": "Template noise (91% frequency)"
+            },
+            {
+              "type": "remove",
+              "target": "paragraph",
+              "pattern": "post",
+              "reason": "Template noise (91% frequency)"
+            },
+            {
+              "type": "remove",
+              "target": "heading",
+              "pattern": "参数",
+              "reason": "Template noise (91% frequency)"
+            },
+            {
+              "type": "remove",
+              "target": "heading",
+              "pattern": "api试用示例",
+              "reason": "Template noise (91% frequency)"
+            },
+            {
+              "type": "remove",
+              "target": "heading",
+              "pattern": "返回数据说明",
+              "reason": "Template noise (91% frequency)"
+            }
+          ],
+          "metadata": {
+            "generatedAt": "2026-02-25T14:14:04.414Z",
+            "pageCount": 34,
+            "version": "1.0.0"
+          }
+        }
+      ]
+    },
+    "step2": {
+      "success": true,
+      "parsers": [
+        {
+          "config": {
+            "name": "open-api",
+            "description": "Parser configuration for /open/api/{param2}",
+            "priority": 100,
+            "urlPattern": {
+              "pattern": "^https://www\\.lixinger\\.com/open/api/([^/]+)(\\?.*)?$",
+              "pathTemplate": "/open/api/{param2}",
+              "queryParams": [
+                "api-key",
+                "api-groups"
+              ]
+            },
+            "extractors": [
+              {
+                "field": "title",
+                "type": "text",
+                "selector": "h1, h2, title",
+                "required": true
+              },
+              {
+                "field": "mainTable",
+                "type": "table",
+                "selector": "table",
+                "columns": [
+                  "_id",
+                  "name",
+                  "maxMemberCount",
+                  "isPublic"
+                ]
+              },
+              {
+                "field": "table1",
+                "type": "table",
+                "selector": "table",
+                "columns": [
+                  "_id",
+                  "type",
+                  "title",
+                  "content",
+                  "startDate",
+                  "endDate",
+                  "date",
+                  "beginDate"
+                ]
+              },
+              {
+                "field": "table2",
+                "type": "table",
+                "selector": "table",
+                "columns": [
+                  "date",
+                  "type",
+                  "areaCode",
+                  "eff"
+                ]
+              },
+              {
+                "field": "table3",
+                "type": "table",
+                "selector": "table",
+                "columns": [
+                  "参数名称",
+                  "必选",
+                  "数据类型",
+                  "说明"
+                ]
+              },
+              {
+                "field": "table4",
+                "type": "table",
+                "selector": "table",
+                "columns": [
+                  "参数名称",
+                  "数据类型",
+                  "说明"
+                ]
+              },
+              {
+                "field": "codeBlocks",
+                "type": "code",
+                "selector": "pre code, pre, textarea[readonly]"
+              },
+              {
+                "field": "lists",
+                "type": "list",
+                "selector": "ul, ol"
+              }
+            ],
+            "filters": [
+              {
+                "type": "remove",
+                "target": "heading",
+                "pattern": "源url",
+                "reason": "Template noise (100% frequency)"
+              },
+              {
+                "type": "remove",
+                "target": "heading",
+                "pattern": "简要描述",
+                "reason": "Template noise (91% frequency)"
+              },
+              {
+                "type": "remove",
+                "target": "heading",
+                "pattern": "请求url",
+                "reason": "Template noise (91% frequency)"
+              },
+              {
+                "type": "remove",
+                "target": "heading",
+                "pattern": "请求方式",
+                "reason": "Template noise (91% frequency)"
+              },
+              {
+                "type": "remove",
+                "target": "paragraph",
+                "pattern": "post",
+                "reason": "Template noise (91% frequency)"
+              },
+              {
+                "type": "remove",
+                "target": "heading",
+                "pattern": "参数",
+                "reason": "Template noise (91% frequency)"
+              },
+              {
+                "type": "remove",
+                "target": "heading",
+                "pattern": "api试用示例",
+                "reason": "Template noise (91% frequency)"
+              },
+              {
+                "type": "remove",
+                "target": "heading",
+                "pattern": "返回数据说明",
+                "reason": "Template noise (91% frequency)"
+              }
+            ],
+            "metadata": {
+              "generatedAt": "2026-02-25T14:14:04.414Z",
+              "pageCount": 34,
+              "version": "1.0.0"
+            }
+          },
+          "name": "open-api",
+          "pattern": {}
+        }
+      ],
+      "errors": []
+    },
+    "step3": {
+      "success": true,
+      "results": [
+        {
+          "url": "https://www.lixinger.com/open/api/doc?api-key=cn/company",
+          "matched": true,
+          "parser": "open-api"
+        },
+        {
+          "url": "https://www.lixinger.com/open/api/doc?api-key=hk/index",
+          "matched": true,
+          "parser": "open-api"
+        },
+        {
+          "url": "https://www.lixinger.com/analytics/company/dashboard",
+          "matched": false
+        },
+        {
+          "url": "https://www.lixinger.com/other/page",
+          "matched": false
+        }
+      ]
+    },
+    "step4": {
+      "success": false,
+      "results": []
+    }
+  }
+}

@@ -4,7 +4,7 @@
 
 ```
 项目根目录/
-├── skills/                                    # Skills目录
+├── skills/                                    # Skills目录（2个skills）
 │   ├── url-pattern-analyzer/                  # Skill 1
 │   │   ├── README.md                          # 使用说明
 │   │   ├── skill.json                         # Skill配置
@@ -24,10 +24,7 @@
 │       │   ├── content-analyzer.js            # 内容分析
 │       │   ├── frequency-calc.js              # 频率计算
 │       │   ├── structure-detector.js          # 结构识别
-│       │   ├── config-generator.js            # 配置生成
-│       │   └── validator.js                   # 实时验证
-│       ├── scripts/                           # 测试脚本
-│       │   └── test-template-parser.js        # Parser测试
+│       │   └── config-generator.js            # 配置生成
 │       └── test/
 │           └── test-analyzer.js               # 测试脚本
 │
@@ -50,7 +47,6 @@
 {
   "linksFile": "stock-crawler/output/lixinger-crawler/links.txt",
   "outputFile": "stock-crawler/output/lixinger-crawler/url-patterns.json",
-  "similarityThreshold": 0.7,
   "minGroupSize": 5
 }
 ```
@@ -99,13 +95,13 @@
 ```javascript
 /**
  * URL聚类算法
- * 使用层次聚类（Hierarchical Clustering）
+ * 基于URL正则匹配和后端渲染判断
  */
 class URLClusterer {
-  cluster(urls, threshold) {
+  cluster(urls) {
     // 1. 初始化：每个URL一个簇
-    // 2. 迭代：合并最相似的两个簇
-    // 3. 停止：相似度 < threshold
+    // 2. 迭代：合并相似的簇
+    // 3. 判断依据：URL正则匹配、页面是否同一个后端渲染
   }
 }
 ```
@@ -115,13 +111,14 @@ class URLClusterer {
 /**
  * URL相似度计算
  * 基于路径结构和参数
+ * 不使用固定阈值，而是通过URL正则匹配和后端渲染判断
  */
 class SimilarityCalculator {
   calculate(url1, url2) {
     // 路径深度相同 +20分
     // 路径段匹配 +10分/段
     // 查询参数匹配 +5分/参数
-    // 总分100分，>70分认为相似
+    // 返回相似度分数，由聚类算法决定分组
   }
 }
 ```
@@ -158,8 +155,7 @@ class PatternGenerator {
   "frequencyThresholds": {
     "template": 0.8,
     "unique": 0.2
-  },
-  "enableValidation": true
+  }
 }
 ```
 
@@ -176,10 +172,15 @@ class PatternGenerator {
    - 识别数据结构（表格列名、代码块类型）
    - 生成extractors配置
    - 生成filters配置
-   - 可选：实时抓取样例验证
    - 生成完整的TemplateConfig对象
 3. 收集所有TemplateConfig
 4. 保存为JSONL格式（每行一个JSON对象）
+
+### 判断依据
+- 根据模板抽取结果判断
+- URL正则匹配
+- 页面是否同一个后端渲染
+- 不使用相似度阈值
 
 ### 输出
 ```jsonl
@@ -270,102 +271,13 @@ class ConfigGenerator {
 }
 ```
 
-#### validator.js
-```javascript
-/**
- * 配置验证器
- * 实时抓取样例验证配置效果
- */
-class ConfigValidator {
-  async validate(config, sampleUrls) {
-    // 使用Playwright抓取样例URL
-    // 应用extractors和filters
-    // 验证提取效果
-    // 返回验证结果
-  }
-}
-```
+## Test Script: Template Parser (已移除)
 
-## Test Script: test-template-parser.js
+原设计中的独立测试脚本已移除，现在只有2个skills：
+1. url-pattern-analyzer
+2. template-content-analyzer
 
-### 位置
-`skills/template-content-analyzer/scripts/test-template-parser.js`
-
-### 职责
-测试生成的配置文件，验证配置驱动的解析效果
-
-### 运行方式
-```bash
-node skills/template-content-analyzer/scripts/test-template-parser.js \
-  --config stock-crawler/output/lixinger-crawler/template-rules.jsonl \
-  --test-urls stock-crawler/output/lixinger-crawler/test-urls.txt
-```
-
-### 功能
-1. 加载template-rules.jsonl
-2. 为每个配置创建TemplateParser实例
-3. 对测试URL进行解析
-4. 验证提取效果
-5. 生成测试报告
-
-### 实现
-```javascript
-/**
- * 配置加载器
- */
-class ConfigLoader {
-  static loadConfigs(jsonlPath) {
-    const content = fs.readFileSync(jsonlPath, 'utf-8');
-    const lines = content.trim().split('\n');
-    return lines.map(line => JSON.parse(line));
-  }
-  
-  static createParsers(jsonlPath) {
-    const configs = this.loadConfigs(jsonlPath);
-    return configs.map(config => new TemplateParser(config));
-  }
-}
-
-/**
- * 模板解析器（配置驱动）
- */
-class TemplateParser {
-  constructor(config) {
-    this.config = config;
-    this.pattern = new RegExp(config.urlPattern.pattern);
-  }
-  
-  matches(url) {
-    return this.pattern.test(url);
-  }
-  
-  async parse(page, url) {
-    const result = { type: this.config.name, url };
-    
-    // 执行所有提取器
-    for (const extractor of this.config.extractors) {
-      result[extractor.field] = await this.executeExtractor(page, extractor);
-    }
-    
-    // 应用过滤器
-    return this.applyFilters(result);
-  }
-  
-  async executeExtractor(page, extractor) {
-    switch (extractor.type) {
-      case 'text': return await this.extractText(page, extractor);
-      case 'table': return await this.extractTable(page, extractor);
-      case 'code': return await this.extractCode(page, extractor);
-      default: return null;
-    }
-  }
-  
-  applyFilters(result) {
-    // 根据配置的filters移除噪音内容
-    return result;
-  }
-}
-```
+测试功能已整合到各个skill的test目录中。
 
 ## 执行流程
 
@@ -396,25 +308,25 @@ node skills/template-content-analyzer/main.js \
 
 ### 4. 测试配置
 ```bash
-# 运行测试脚本
-node skills/template-content-analyzer/scripts/test-template-parser.js \
-  --config stock-crawler/output/lixinger-crawler/template-rules.jsonl \
-  --test-urls stock-crawler/output/lixinger-crawler/test-urls.txt
+# 运行各skill的测试脚本
+node skills/url-pattern-analyzer/test/test-analyzer.js
+node skills/template-content-analyzer/test/test-analyzer.js
 ```
 
 ### 5. 验证效果
-查看测试报告，确认配置驱动的解析效果
+查看测试报告，确认配置生成效果
 
 ### 6. 后续集成（可选）
-如果测试通过，可以考虑将ConfigLoader和TemplateParser集成到爬虫系统中
+如果测试通过，可以考虑将生成的配置集成到爬虫系统中
 
 ## 优势
 
-1. **模块化**: Skills独立，易于维护和扩展
+1. **模块化**: 2个Skills独立，易于维护和扩展
 2. **AI驱动**: 由大模型执行，可以调用算法库
 3. **配置驱动**: 生成配置文件而非代码，更安全
-4. **易于测试**: 测试脚本独立，不影响现有代码
+4. **易于测试**: 测试功能集成在各skill中
 5. **灵活部署**: 先测试验证，再考虑集成
+6. **简洁架构**: 只有2个核心skills，职责清晰
 
 ## 下一步
 

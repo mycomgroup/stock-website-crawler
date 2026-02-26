@@ -1,0 +1,40 @@
+[
+  {
+    "index": 1,
+    "original": {
+      "content": "# API文档\n\n## 导航\n- 首页\n- API列表\n- 关于\n\n## 获取公司基本信息\n\n**简要描述**：获取指定公司的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/company`\n\n**请求方式**：GET\n\n**参数**：\n\n| 参数名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| stockCode | 是 | string | 股票代码 |\n| date | 否 | string | 日期 |\n\n**返回示例**：\n\n```json\n{\n  \"code\": 0,\n  \"message\": \"success\",\n  \"data\": {\n    \"stockCode\": \"600000\",\n    \"name\": \"浦发银行\"\n  }\n}\n```\n\n© 2024 理杏仁",
+      "length": 402,
+      "preview": "# API文档\n\n## 导航\n- 首页\n- API列表\n- 关于\n\n## 获取公司基本信息\n\n**简要描述**：获取指定公司的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/company`\n\n**请求方式**：GET\n\n**参数**：\n\n| 参数名称 | 必选 | 类型 | 说明 |\n|---------|------|------|-----..."
+    },
+    "cleaned": {
+      "content": "# \n\n## \n- 首页\n- API列表\n- 关于\n\n## 获取公司基本信息\n\n**简要描述**：获取指定公司的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/company`\n\n**请求方式**：GET\n\n****：\n\n| 名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| stockCode | 是 | string | 股票代码 |\n| date | 否 | string | 日期 |\n\n****：\n\n```json\n{\n  \"code\": 0,\n  \"message\": \"success\",\n  \"data\": {\n    \"stockCode\": \"600000\",\n    \"name\": \"浦发银行\"\n  }\n}\n```\n\n©",
+      "length": 378,
+      "preview": "# \n\n## \n- 首页\n- API列表\n- 关于\n\n## 获取公司基本信息\n\n**简要描述**：获取指定公司的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/company`\n\n**请求方式**：GET\n\n****：\n\n| 名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| stockC..."
+    },
+    "stats": {
+      "originalLength": 402,
+      "cleanedLength": 378,
+      "reduction": "6.0%",
+      "removedLength": 24
+    }
+  },
+  {
+    "index": 2,
+    "original": {
+      "content": "# API文档\n\n## 导航\n- 首页\n- API列表\n- 关于\n\n## 获取指数基本信息\n\n**简要描述**：获取指定指数的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/index`\n\n**请求方式**：GET\n\n**参数**：\n\n| 参数名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| indexCode | 是 | string | 指数代码 |\n| date | 否 | string | 日期 |\n\n**返回示例**：\n\n```json\n{\n  \"code\": 0,\n  \"message\": \"success\",\n  \"data\": {\n    \"indexCode\": \"000001\",\n    \"name\": \"上证指数\"\n  }\n}\n```\n\n© 2024 理杏仁",
+      "length": 400,
+      "preview": "# API文档\n\n## 导航\n- 首页\n- API列表\n- 关于\n\n## 获取指数基本信息\n\n**简要描述**：获取指定指数的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/index`\n\n**请求方式**：GET\n\n**参数**：\n\n| 参数名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|..."
+    },
+    "cleaned": {
+      "content": "# \n\n## \n- 首页\n- API列表\n- 关于\n\n## 获取指数基本信息\n\n**简要描述**：获取指定指数的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/index`\n\n**请求方式**：GET\n\n****：\n\n| 名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| indexCode | 是 | string | 指数代码 |\n| date | 否 | string | 日期 |\n\n****：\n\n```json\n{\n  \"code\": 0,\n  \"message\": \"success\",\n  \"data\": {\n    \"indexCode\": \"000001\",\n    \"name\": \"上证指数\"\n  }\n}\n```\n\n©",
+      "length": 376,
+      "preview": "# \n\n## \n- 首页\n- API列表\n- 关于\n\n## 获取指数基本信息\n\n**简要描述**：获取指定指数的基本信息\n\n**请求URL**：`https://open.lixinger.com/api/cn/index`\n\n**请求方式**：GET\n\n****：\n\n| 名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| indexCod..."
+    },
+    "stats": {
+      "originalLength": 400,
+      "cleanedLength": 376,
+      "reduction": "6.0%",
+      "removedLength": 24
+    }
+  }
+]

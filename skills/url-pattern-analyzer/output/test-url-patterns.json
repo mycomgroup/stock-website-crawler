@@ -1,0 +1,46 @@
+{
+  "summary": {
+    "totalUrls": 8,
+    "patternCount": 3,
+    "generatedAt": "2026-02-25T12:58:57.851Z"
+  },
+  "patterns": [
+    {
+      "name": "api-doc",
+      "pathTemplate": "/open/api/doc",
+      "pattern": "^https://www\\.lixinger\\.com/open/api/doc\\?api-key=([^&]+)$",
+      "queryParams": [
+        "api-key"
+      ],
+      "urlCount": 4,
+      "samples": [
+        "https://www.lixinger.com/open/api/doc?api-key=cn/company",
+        "https://www.lixinger.com/open/api/doc?api-key=hk/index",
+        "https://www.lixinger.com/open/api/doc?api-key=us/stock",
+        "https://www.lixinger.com/open/api/doc?api-key=cn/index"
+      ]
+    },
+    {
+      "name": "analytics-dashboard",
+      "pathTemplate": "/analytics/{param1}/dashboard",
+      "pattern": "^https://www\\.lixinger\\.com/analytics/([^/]+)/dashboard$",
+      "queryParams": [],
+      "urlCount": 3,
+      "samples": [
+        "https://www.lixinger.com/analytics/company/dashboard",
+        "https://www.lixinger.com/analytics/index/dashboard",
+        "https://www.lixinger.com/analytics/stock/dashboard"
+      ]
+    },
+    {
+      "name": "about",
+      "pathTemplate": "/about",
+      "pattern": "https://www\\.lixinger\\.com/about",
+      "queryParams": [],
+      "urlCount": 1,
+      "samples": [
+        "https://www.lixinger.com/about"
+      ]
+    }
+  ]
+}

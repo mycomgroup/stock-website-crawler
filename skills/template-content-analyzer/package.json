@@ -1,0 +1,17 @@
+{
+  "name": "template-content-analyzer",
+  "version": "1.0.0",
+  "description": "Analyze markdown page content to identify template patterns and unique data",
+  "main": "main.js",
+  "scripts": {
+    "test": "node test/content-analyzer.test.js && node test/config-loader.test.js && node test/template-parser.test.js && node test/template-config-generator.test.js"
+  },
+  "keywords": [
+    "template-analysis",
+    "content-analysis",
+    "frequency-analysis",
+    "markdown-parser"
+  ],
+  "author": "",
+  "license": "MIT"
+}

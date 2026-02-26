@@ -1,0 +1,21 @@
+{
+  "name": "url-pattern-analyzer",
+  "version": "1.0.0",
+  "description": "Analyze URL patterns from links.txt and generate pattern reports",
+  "main": "main.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "url-analysis",
+    "pattern-recognition",
+    "clustering"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

@@ -1,0 +1,316 @@
+{
+  "templateName": "api-doc",
+  "urlPattern": {
+    "name": "api-doc",
+    "pathTemplate": "/open/api/doc",
+    "pattern": "^https://www\\.lixinger\\.com/open/api/doc\\?api-key=(.+)$",
+    "queryParams": [
+      "api-key"
+    ],
+    "urlCount": 163
+  },
+  "metadata": {
+    "generatedAt": "2026-02-25T13:29:59.803Z",
+    "pageCount": 3,
+    "version": "1.0.0",
+    "thresholds": {
+      "template": 0.8,
+      "unique": 0.2
+    }
+  },
+  "statistics": {
+    "totalPages": 3,
+    "totalBlocks": 22,
+    "templateBlocks": 7,
+    "uniqueBlocks": 0,
+    "mixedBlocks": 15,
+    "tableStructures": 1,
+    "codeBlockTypes": 1,
+    "listTypes": 1
+  },
+  "contentClassification": {
+    "template": [
+      {
+        "type": "heading",
+        "content": "# API文档",
+        "ratio": 1,
+        "count": 3,
+        "pageCount": 3
+      },
+      {
+        "type": "heading",
+        "content": "## 导航",
+        "ratio": 1,
+        "count": 3,
+        "pageCount": 3
+      },
+      {
+        "type": "list",
+        "content": "- 首页\n- API列表\n- 关于",
+        "ratio": 1,
+        "count": 3,
+        "pageCount": 3
+      },
+      {
+        "type": "paragraph",
+        "content": "**请求方式**：GET",
+        "ratio": 1,
+        "count": 3,
+        "pageCount": 3
+      },
+      {
+        "type": "paragraph",
+        "content": "**参数**：",
+        "ratio": 1,
+        "count": 3,
+        "pageCount": 3
+      },
+      {
+        "type": "paragraph",
+        "content": "**返回示例**：",
+        "ratio": 1,
+        "count": 3,
+        "pageCount": 3
+      },
+      {
+        "type": "paragraph",
+        "content": "© 2024 理杏仁",
+        "ratio": 1,
+        "count": 3,
+        "pageCount": 3
+      }
+    ],
+    "unique": [],
+    "mixed": [
+      {
+        "type": "heading",
+        "content": "## 获取公司基本信息",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "paragraph",
+        "content": "**简要描述**：获取指定公司的基本信息",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "paragraph",
+        "content": "**请求URL**：`https://open.lixinger.com/api/cn/company`",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "table",
+        "content": "| 参数名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| stockCode | 是 | string | 股票代码 |\n| date | 否 | string | 日期 |",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "code",
+        "content": "```json\n{\n  \"code\": 0,\n  \"message\": \"success\",\n  \"data\": {\n    \"stockCode\": \"600000\",\n    \"name\": \"浦发银行\"\n  }\n}\n```",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "heading",
+        "content": "## 获取指数基本信息",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "paragraph",
+        "content": "**简要描述**：获取指定指数的基本信息",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "paragraph",
+        "content": "**请求URL**：`https://open.lixinger.com/api/cn/index`",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "table",
+        "content": "| 参数名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| indexCode | 是 | string | 指数代码 |\n| date | 否 | string | 日期 |",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "code",
+        "content": "```json\n{\n  \"code\": 0,\n  \"message\": \"success\",\n  \"data\": {\n    \"indexCode\": \"000001\",\n    \"name\": \"上证指数\"\n  }\n}\n```",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "heading",
+        "content": "## 获取行业基本信息",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "paragraph",
+        "content": "**简要描述**：获取指定行业的基本信息",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "paragraph",
+        "content": "**请求URL**：`https://open.lixinger.com/api/cn/industry`",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "table",
+        "content": "| 参数名称 | 必选 | 类型 | 说明 |\n|---------|------|------|------|\n| industryCode | 是 | string | 行业代码 |",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      },
+      {
+        "type": "code",
+        "content": "```json\n{\n  \"code\": 0,\n  \"message\": \"success\",\n  \"data\": {\n    \"industryCode\": \"001\",\n    \"name\": \"金融\"\n  }\n}\n```",
+        "ratio": 0.3333333333333333,
+        "count": 1,
+        "pageCount": 1
+      }
+    ]
+  },
+  "dataStructures": {
+    "tables": [
+      {
+        "columns": [
+          "参数名称",
+          "必选",
+          "类型",
+          "说明"
+        ],
+        "columnCount": 4,
+        "occurrences": 3,
+        "pageCount": 3
+      }
+    ],
+    "codeBlocks": [
+      {
+        "language": "json",
+        "occurrences": 3,
+        "avgLength": 101,
+        "pageCount": 3
+      }
+    ],
+    "lists": [
+      {
+        "listType": "unordered",
+        "itemCount": 3,
+        "hasNesting": false,
+        "occurrences": 3,
+        "pageCount": 3
+      }
+    ]
+  },
+  "cleaningRules": {
+    "removePatterns": [
+      {
+        "type": "remove",
+        "target": "heading",
+        "pattern": "api文档",
+        "reason": "Template noise (100% frequency)",
+        "frequency": 1
+      },
+      {
+        "type": "remove",
+        "target": "heading",
+        "pattern": "导航",
+        "reason": "Template noise (100% frequency)",
+        "frequency": 1
+      },
+      {
+        "type": "remove",
+        "target": "list",
+        "pattern": "首页  api列表  关于",
+        "reason": "Template noise (100% frequency)",
+        "frequency": 1
+      },
+      {
+        "type": "remove",
+        "target": "paragraph",
+        "pattern": "请求方式get",
+        "reason": "Template noise (100% frequency)",
+        "frequency": 1
+      },
+      {
+        "type": "remove",
+        "target": "paragraph",
+        "pattern": "参数",
+        "reason": "Template noise (100% frequency)",
+        "frequency": 1
+      },
+      {
+        "type": "remove",
+        "target": "paragraph",
+        "pattern": "返回示例",
+        "reason": "Template noise (100% frequency)",
+        "frequency": 1
+      },
+      {
+        "type": "remove",
+        "target": "paragraph",
+        "pattern": "2024 理杏仁",
+        "reason": "Template noise (100% frequency)",
+        "frequency": 1
+      }
+    ],
+    "keepPatterns": [
+      {
+        "type": "keep",
+        "target": "table",
+        "contentType": "structured_data",
+        "reason": "Structured table data"
+      },
+      {
+        "type": "keep",
+        "target": "code",
+        "contentType": "code_snippet",
+        "reason": "Code snippet or API example"
+      },
+      {
+        "type": "keep",
+        "target": "list",
+        "contentType": "list_data",
+        "reason": "List data"
+      }
+    ],
+    "removeElements": [
+      {
+        "type": "heading",
+        "text": "API文档",
+        "reason": "Template heading (100% frequency)"
+      },
+      {
+        "type": "heading",
+        "text": "导航",
+        "reason": "Template heading (100% frequency)"
+      }
+    ],
+    "summary": {
+      "totalNoisePatterns": 7,
+      "totalDataPatterns": 3,
+      "totalRemoveRules": 7,
+      "totalKeepRules": 3,
+      "totalRemoveElements": 2
+    }
+  }
+}

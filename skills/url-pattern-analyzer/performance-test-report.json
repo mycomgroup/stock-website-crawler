@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-02-25T14:33:59.906Z",
+  "results": [
+    {
+      "name": "小规模测试",
+      "urlCount": 100,
+      "target": 1000,
+      "smallBatch": 1,
+      "largeBatch": 1,
+      "withCache": 0,
+      "improvement": 0,
+      "speedup": 1,
+      "cacheSpeedup": null,
+      "passed": true
+    },
+    {
+      "name": "中规模测试",
+      "urlCount": 500,
+      "target": 5000,
+      "smallBatch": 0,
+      "largeBatch": 1,
+      "withCache": 0,
+      "improvement": null,
+      "speedup": 0,
+      "cacheSpeedup": null,
+      "passed": true
+    },
+    {
+      "name": "大规模测试",
+      "urlCount": 1000,
+      "target": 10000,
+      "smallBatch": 2,
+      "largeBatch": 1,
+      "withCache": 0,
+      "improvement": 50,
+      "speedup": 2,
+      "cacheSpeedup": null,
+      "passed": true
+    },
+    {
+      "name": "超大规模测试",
+      "urlCount": 5000,
+      "target": 50000,
+      "smallBatch": 1,
+      "largeBatch": 1,
+      "withCache": 0,
+      "improvement": 0,
+      "speedup": 1,
+      "cacheSpeedup": null,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "totalTests": 4,
+    "passed": 4,
+    "failed": 0,
+    "passRate": 100
+  }
+}
