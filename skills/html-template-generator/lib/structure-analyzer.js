@@ -73,6 +73,7 @@ export class StructureAnalyzer {
     
     // Try common class/id patterns
     const commonSelectors = [
+      '.data-booth',      // Lixinger SPA content
       '.main-content',
       '.content',
       '#content',
@@ -320,17 +321,15 @@ export class StructureAnalyzer {
       return `//*[@id='${element.id}']`;
     }
     
-    // Use class
+    // Use class - use //* instead of //tagname for JSDOM compatibility
     if (element.className) {
       const classes = element.className.trim().split(/\s+/);
-      if (classes.length === 1) {
-        return `//${element.tagName.toLowerCase()}[@class='${classes[0]}']`;
-      } else if (classes.length > 1) {
-        return `//${element.tagName.toLowerCase()}[contains(@class, '${classes[0]}')]`;
+      if (classes.length > 0) {
+        return `//*[contains(@class, '${classes[0]}')]`;
       }
     }
     
-    // Fallback to tag name
+    // Fallback to tag name with //*
     return `//${element.tagName.toLowerCase()}`;
   }
 

@@ -16,7 +16,10 @@ export class PatternReader {
       // Read and parse JSON file
       const absolutePath = resolve(patternsFile);
       const content = await readFile(absolutePath, 'utf-8');
-      const patterns = JSON.parse(content);
+      const data = JSON.parse(content);
+      
+      // Handle both array format and object format with patterns property
+      const patterns = Array.isArray(data) ? data : (data.patterns || []);
 
       // Find template by name
       const template = patterns.find(p => p.name === templateName);

@@ -1,0 +1,121 @@
+{
+  "version": "1.0.0",
+  "description": "HTML模板生成器默认配置",
+  
+  "browser": {
+    "headless": true,
+    "timeout": 30000,
+    "userDataDir": "../../../stock-crawler/chrome_user_data",
+    "channel": "chrome"
+  },
+  
+  "fetching": {
+    "maxSamples": 5,
+    "minSamples": 3,
+    "retryAttempts": 3,
+    "retryDelay": 1000,
+    "waitForSelector": null,
+    "waitTime": 2000
+  },
+  
+  "analysis": {
+    "frequencyThreshold": 0.8,
+    "minElementCount": 2,
+    "maxDepth": 10,
+    "ignoreEmptyElements": true,
+    "detectPageType": true
+  },
+  
+  "pageTypes": {
+    "list": {
+      "description": "列表页 - 包含多个相似项目的页面",
+      "indicators": {
+        "hasRepeatingItems": true,
+        "minItemCount": 5,
+        "itemSelectors": ["li", "article", "div[class*='item']", "tr"]
+      },
+      "extraction": {
+        "focusOnItems": true,
+        "extractItemStructure": true,
+        "groupByContainer": true
+      }
+    },
+    "detail": {
+      "description": "正文页 - 单个内容详情页面",
+      "indicators": {
+        "hasSingleMainContent": true,
+        "hasDetailedSections": true
+      },
+      "extraction": {
+        "focusOnMainContent": true,
+        "extractFullHierarchy": true,
+        "includeSidebar": false
+      }
+    },
+    "mixed": {
+      "description": "混排页 - 包含多种内容类型的页面",
+      "indicators": {
+        "hasMultipleContentTypes": true
+      },
+      "extraction": {
+        "extractAllSections": true,
+        "preserveLayout": true,
+        "groupBySectionType": true
+      }
+    },
+    "table": {
+      "description": "表格页 - 以表格为主的数据页面",
+      "indicators": {
+        "hasLargeTables": true,
+        "minTableRows": 10
+      },
+      "extraction": {
+        "focusOnTables": true,
+        "extractTableMetadata": true,
+        "handleComplexHeaders": true
+      }
+    }
+  },
+  
+  "xpath": {
+    "preferAttributes": ["id", "class", "data-*", "role"],
+    "avoidAttributes": ["style", "onclick"],
+    "useTextContent": true,
+    "generateRelativePaths": true,
+    "optimizeForStability": true
+  },
+  
+  "filters": {
+    "autoDetectNoise": true,
+    "removeSelectors": [
+      "nav",
+      "header",
+      "footer",
+      "aside",
+      "script",
+      "style",
+      "noscript",
+      "[class*='ad']",
+      "[class*='advertisement']",
+      "[class*='banner']",
+      "[id*='ad']"
+    ],
+    "keepSelectors": [],
+    "cleanWhitespace": true,
+    "removeEmptyElements": true
+  },
+  
+  "output": {
+    "format": "json",
+    "indent": 2,
+    "includeMetadata": true,
+    "includeStatistics": true,
+    "generatePreview": true
+  },
+  
+  "patterns": {
+    "include": [],
+    "exclude": [],
+    "priority": []
+  }
+}

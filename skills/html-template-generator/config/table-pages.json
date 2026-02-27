@@ -1,0 +1,26 @@
+{
+  "description": "表格页配置 - 优化表格数据提取",
+  
+  "analysis": {
+    "frequencyThreshold": 0.8,
+    "detectPageType": true
+  },
+  
+  "pageTypes": {
+    "table": {
+      "indicators": {
+        "hasLargeTables": true,
+        "minTableRows": 5
+      },
+      "extraction": {
+        "focusOnTables": true,
+        "extractTableMetadata": true,
+        "handleComplexHeaders": true
+      }
+    }
+  },
+  
+  "patterns": {
+    "include": ["*-data", "*-report", "*-stats", "*-table"]
+  }
+}

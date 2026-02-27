@@ -44,6 +44,7 @@ export class TemplateWriter {
   _buildTemplate(data) {
     return {
       templateName: data.templateName,
+      description: data.description || '',
       version: "1.0.0",
       generatedAt: new Date().toISOString(),
       samples: data.samples || [],

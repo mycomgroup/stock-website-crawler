@@ -1,0 +1,34 @@
+{
+  "description": "详情页配置 - 优化正文内容提取",
+  
+  "analysis": {
+    "frequencyThreshold": 0.8,
+    "detectPageType": true
+  },
+  
+  "pageTypes": {
+    "detail": {
+      "indicators": {
+        "hasSingleMainContent": true,
+        "hasDetailedSections": true
+      },
+      "extraction": {
+        "focusOnMainContent": true,
+        "extractFullHierarchy": true,
+        "includeSidebar": false
+      }
+    }
+  },
+  
+  "filters": {
+    "removeSelectors": [
+      "nav", "header", "footer", "aside",
+      ".sidebar", ".related", ".comments",
+      "[class*='ad']", "[id*='ad']"
+    ]
+  },
+  
+  "patterns": {
+    "include": ["detail-*", "*-detail", "api-*", "doc-*"]
+  }
+}

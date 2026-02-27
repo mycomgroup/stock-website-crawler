@@ -1,0 +1,24 @@
+{
+  "description": "快速测试配置 - 用于测试1-2个模板，查看效果",
+  
+  "browser": {
+    "headless": false,
+    "timeout": 60000
+  },
+  
+  "fetching": {
+    "maxSamples": 2,
+    "minSamples": 1,
+    "waitTime": 3000
+  },
+  
+  "analysis": {
+    "frequencyThreshold": 0.5,
+    "detectPageType": true
+  },
+  
+  "output": {
+    "generatePreview": true,
+    "includeStatistics": true
+  }
+}

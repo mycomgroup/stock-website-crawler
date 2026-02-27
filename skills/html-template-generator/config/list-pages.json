@@ -1,0 +1,27 @@
+{
+  "description": "列表页配置 - 优化列表项提取",
+  
+  "analysis": {
+    "frequencyThreshold": 0.7,
+    "detectPageType": true
+  },
+  
+  "pageTypes": {
+    "list": {
+      "indicators": {
+        "hasRepeatingItems": true,
+        "minItemCount": 3,
+        "itemSelectors": ["li", "article", "div[class*='item']", "div[class*='card']", "tr"]
+      },
+      "extraction": {
+        "focusOnItems": true,
+        "extractItemStructure": true,
+        "groupByContainer": true
+      }
+    }
+  },
+  
+  "patterns": {
+    "include": ["*-list", "*-index", "search-*", "*-results"]
+  }
+}

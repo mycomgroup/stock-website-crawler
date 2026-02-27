@@ -100,6 +100,7 @@ export class TemplateGenerator {
       console.log('\nStep 6: Writing template file...');
       await this.templateWriter.write(outputFile, {
         templateName,
+        description: template.description,
         samples: template.samples,
         xpaths,
         filters: xpaths.filters,

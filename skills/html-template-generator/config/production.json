@@ -1,0 +1,32 @@
+{
+  "description": "生产环境配置 - 用于批量生成，高质量要求",
+  
+  "browser": {
+    "headless": true,
+    "timeout": 30000
+  },
+  
+  "fetching": {
+    "maxSamples": 5,
+    "minSamples": 3,
+    "retryAttempts": 5,
+    "waitTime": 2000
+  },
+  
+  "analysis": {
+    "frequencyThreshold": 0.8,
+    "minElementCount": 2,
+    "detectPageType": true
+  },
+  
+  "filters": {
+    "autoDetectNoise": true,
+    "cleanWhitespace": true,
+    "removeEmptyElements": true
+  },
+  
+  "output": {
+    "generatePreview": false,
+    "includeStatistics": true
+  }
+}
