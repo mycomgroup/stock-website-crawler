@@ -2,6 +2,7 @@
 
 import { DocGenerator } from '../lib/doc-generator.js';
 import { PatternMatcher } from '../lib/pattern-matcher.js';
+import { FieldInferenceService } from '../lib/field-inference.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -40,7 +41,29 @@ async function testSkill() {
     console.log(`✓ 构建 URL: ${url}`);
   }
 
+  // 测试 URL 类型匹配
+  const urlTypeMatches = matcher.findByUrlType('company/detail');
+  console.log(`✓ URL 类型匹配找到 ${urlTypeMatches.length} 个结果`);
+  if (urlTypeMatches.length > 0) {
+    const pathParams = matcher.getPathParamNames(urlTypeMatches[0]);
+    console.log(`✓ 第一个结果路径参数: ${pathParams.join(', ') || '(无)'}`);
+  }
+
   console.log('');
+
+  // 测试字段语义推导（规则模式）
+  const inference = new FieldInferenceService({ enabled: false });
+  const fields = await inference.inferFieldMeanings({
+    pattern: {
+      name: 'detail-sh',
+      description: '公司详情',
+      pathTemplate: '/analytics/company/detail/sh/{stockCode}/{stockCode}',
+      samples: ['https://www.lixinger.com/analytics/company/detail/sh/600519/600519']
+    },
+    paramNames: ['stockCode']
+  });
+  console.log(`✓ 字段推导来源: ${fields.source}`);
+  console.log(`✓ 字段语义: ${fields.fields[0].name} -> ${fields.fields[0].meaning}`);
 
   // 测试 2: Doc Generator
   console.log('测试 2: Doc Generator');

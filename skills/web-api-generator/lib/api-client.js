@@ -67,13 +67,14 @@ export class WebApiClient {
    * 调用 API
    */
   async callApi(apiName, params = {}) {
-    const pattern = this.patternMatcher.patterns.find(p => p.name === apiName);
+    const pattern = this.patternMatcher.getPatternByName(apiName);
     
     if (!pattern) {
       throw new Error(`API 不存在: ${apiName}`);
     }
 
-    const url = this.patternMatcher.buildUrl(pattern, params);
+    const normalizedParams = this.normalizeParams(pattern, params);
+    const url = this.patternMatcher.buildUrl(pattern, normalizedParams);
     console.log(`抓取: ${url}`);
 
     const page = await this.browserManager.newPage();
@@ -101,6 +102,26 @@ export class WebApiClient {
     } finally {
       await page.close();
     }
+  }
+
+  /**
+   * 兼容参数名：支持原始 paramX 和路径模板参数名
+   */
+  normalizeParams(pattern, params = {}) {
+    const normalized = { ...params };
+    const pathParamNames = this.patternMatcher.getPathParamNames(pattern);
+
+    pathParamNames.forEach((name, index) => {
+      const fallbackName = `param${index + 1}`;
+      if (normalized[name] === undefined && normalized[fallbackName] !== undefined) {
+        normalized[name] = normalized[fallbackName];
+      }
+      if (normalized[fallbackName] === undefined && normalized[name] !== undefined) {
+        normalized[fallbackName] = normalized[name];
+      }
+    });
+
+    return normalized;
   }
 
   /**
