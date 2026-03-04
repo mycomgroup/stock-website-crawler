@@ -8,7 +8,11 @@
     "start": "node run-skill.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-    "test:e2e": "node test/test-e2e.js"
+    "test:e2e": "node test/test-e2e.js",
+    "extract": "node scripts/extract-useful-content.js",
+    "review:run": "node scripts/run-review-workflow.js",
+    "review:apply": "node scripts/apply-feedback-overrides.js",
+    "review:compare": "node scripts/compare-extracted-structures.js"
   },
   "keywords": [
     "html",

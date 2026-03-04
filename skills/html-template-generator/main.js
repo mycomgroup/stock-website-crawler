@@ -27,10 +27,11 @@ export class TemplateGenerator {
    */
   constructor(config = {}) {
     this.patternReader = new PatternReader();
+    this.config = config;
     this.browserManager = new BrowserManager(config.browser || {});
-    this.htmlFetcher = new HTMLFetcher(this.browserManager);
-    this.structureAnalyzer = new StructureAnalyzer();
-    this.xpathGenerator = new XPathGenerator();
+    this.htmlFetcher = new HTMLFetcher(this.browserManager, config.browser?.timeout || 30000);
+    this.structureAnalyzer = new StructureAnalyzer(config.analysis || {});
+    this.xpathGenerator = new XPathGenerator(config.xpath || {});
     this.templateWriter = new TemplateWriter();
   }
 
@@ -74,13 +75,14 @@ export class TemplateGenerator {
 
       // Step 3: Fetch HTML from sample URLs
       console.log('\nStep 3: Fetching sample pages...');
-      const htmlContents = await this.htmlFetcher.fetchAll(template.samples);
+      const sampleUrls = this._pickSampleUrls(template.samples);
+      const htmlContents = await this.htmlFetcher.fetchAll(sampleUrls);
       
       if (htmlContents.length === 0) {
         throw new Error('Failed to fetch any sample pages');
       }
       
-      console.log(`✓ Successfully fetched ${htmlContents.length}/${template.samples.length} pages`);
+      console.log(`✓ Successfully fetched ${htmlContents.length}/${sampleUrls.length} pages`);
 
       // Step 4: Analyze HTML structure
       console.log('\nStep 4: Analyzing HTML structure...');
@@ -119,6 +121,22 @@ export class TemplateGenerator {
       // Always close browser
       await this.browserManager.close();
     }
+  }
+
+  /**
+   * Pick sample URLs according to configuration
+   * @param {string[]} samples
+   * @returns {string[]}
+   * @private
+   */
+  _pickSampleUrls(samples = []) {
+    const maxSamples = this.config?.fetching?.maxSamples;
+    if (!maxSamples || samples.length <= maxSamples) {
+      return samples;
+    }
+
+    console.log(`  Using first ${maxSamples} samples (configured maxSamples)`);
+    return samples.slice(0, maxSamples);
   }
 
   /**
