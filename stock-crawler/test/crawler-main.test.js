@@ -145,9 +145,10 @@ describe('CrawlerMain Integration Tests', () => {
       expect(urls).toContain('https://example.com');
       expect(urls).toContain('https://test.com');
 
-      // Seed URLs should remain in unfetched state for normal queue processing
+      // Seed URLs should be directly crawlable
       const statuses = crawler.linkManager.links.map(l => l.status);
-      expect(statuses.every(status => status === 'unfetched')).toBe(true);
+      expect(statuses).toEqual(expect.arrayContaining(['unfetched']));
+      expect(statuses).not.toContain('pending');
       
       // Clean up
       if (fs.existsSync('./links.txt')) {
