@@ -724,7 +724,8 @@ class CrawlerMain {
       const pageData = await this.pageParser.parsePage(page, url, { 
         onDataChunk,
         filepath,
-        pagesDir: this.pagesDir
+        pagesDir: this.pagesDir,
+        parserMode: this.config.parser?.mode
       });
       this.logger.info(`Parsed page: ${pageData.title || 'Untitled'}`);
 
