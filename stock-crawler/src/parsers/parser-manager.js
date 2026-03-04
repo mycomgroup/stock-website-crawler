@@ -1,4 +1,5 @@
 import ApiDocParser from './api-doc-parser.js';
+import CoreContentParser from './core-content-parser.js';
 import GenericParser from './generic-parser.js';
 
 /**
@@ -14,6 +15,7 @@ class ParserManager {
    * 注册默认解析器
    */
   registerDefaultParsers() {
+    this.register(new CoreContentParser());
     this.register(new ApiDocParser());
     this.register(new GenericParser());
   }
@@ -33,9 +35,9 @@ class ParserManager {
    * @param {string} url - 页面URL
    * @returns {BaseParser} 匹配的解析器
    */
-  selectParser(url) {
+  selectParser(url, options = {}) {
     for (const parser of this.parsers) {
-      if (parser.matches(url)) {
+      if (parser.matches(url, options)) {
         return parser;
       }
     }
@@ -51,7 +53,7 @@ class ParserManager {
    * @returns {Promise<Object>} 解析后的页面数据
    */
   async parse(page, url, options = {}) {
-    const parser = this.selectParser(url);
+    const parser = this.selectParser(url, options);
     return await parser.parse(page, url, options);
   }
 }
