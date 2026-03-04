@@ -623,6 +623,30 @@ describe('LinkManager', () => {
       expect(link.status).toBe('unfetched');
     });
 
+    test('重试成功后应清除历史错误信息', () => {
+      const testUrl = 'https://example.com/error-recovery';
+
+      linkManager.addLink(testUrl, 'unfetched');
+
+      // 失败时记录错误
+      linkManager.updateLinkStatus(testUrl, 'failed', 'timeout');
+      let link = linkManager.links.find(l => l.url === testUrl);
+      expect(link.status).toBe('failed');
+      expect(link.error).toBe('timeout');
+
+      // 重试中应清除旧错误，避免误导
+      linkManager.updateLinkStatus(testUrl, 'fetching');
+      link = linkManager.links.find(l => l.url === testUrl);
+      expect(link.status).toBe('fetching');
+      expect(link.error).toBeNull();
+
+      // 成功后仍应保持无错误状态
+      linkManager.updateLinkStatus(testUrl, 'fetched');
+      link = linkManager.links.find(l => l.url === testUrl);
+      expect(link.status).toBe('fetched');
+      expect(link.error).toBeNull();
+    });
+
     /**
      * 测试 getUnfetchedLinks 只返回 unfetched 状态的链接
      */
