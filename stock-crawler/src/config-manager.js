@@ -101,6 +101,17 @@ class ConfigManager {
       throw new Error('配置字段 output.format 必须存在');
     }
 
+    // 验证 linkDiscovery（可选）
+    if ('linkDiscovery' in config) {
+      if (typeof config.linkDiscovery !== 'object' || Array.isArray(config.linkDiscovery)) {
+        throw new Error('配置字段 linkDiscovery 必须是对象类型');
+      }
+
+      if ('prioritizedPatterns' in config.linkDiscovery && !Array.isArray(config.linkDiscovery.prioritizedPatterns)) {
+        throw new Error('配置字段 linkDiscovery.prioritizedPatterns 必须是数组类型');
+      }
+    }
+
     return true;
   }
 }

@@ -546,8 +546,7 @@ class MarkdownGenerator {
     return title
       .replace(/\|/g, '_')              // 管道符转下划线
       .replace(/\s+/g, '_')             // 空格转下划线
-      .replace(/_-_理杏仁$/i, '')       // 移除网站名后缀
-      .replace(/_-_[^_]+$/i, '')        // 移除其他网站名后缀
+      .replace(/_-_[^_]+$/i, '')        // 移除常见网站名后缀
       .replace(/[\/\\?*:|"<>]/g, '_')   // 替换文件系统不允许的字符
       .replace(/_{2,}/g, '_')           // 合并多个下划线
       .replace(/^_|_$/g, '');           // 移除首尾下划线
