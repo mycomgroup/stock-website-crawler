@@ -63,55 +63,91 @@ class LinkFinder {
       }
     }
   
+
+  /**
+   * 兼容旧行为：默认优先提取 API 文档链接
+   * @returns {Array<Object>} 默认优先规则
+   */
+  getDefaultPrioritizedPatterns() {
+    return [
+      {
+        selector: 'a[href*="api-key="]',
+        requiredQueryParams: ['api-key'],
+        pathIncludes: ['/open/api/doc']
+      }
+    ];
+  }
+
   /**
    * 提取页面中的所有链接
    * @param {Page} page - Playwright页面对象
    * @param {Object} urlRules - URL过滤规则
    * @returns {string[]} URL数组
    */
-  async extractLinks(page, urlRules) {
+  async extractLinks(page, urlRules, options = {}) {
     try {
       // 获取当前页面的URL作为基础URL
       const baseUrl = page.url();
+      const prioritizedRules = Array.isArray(options.prioritizedPatterns)
+        ? options.prioritizedPatterns
+        : this.getDefaultPrioritizedPatterns();
       
       // 从页面中提取所有链接
-      // 优先查找包含 api-key 的链接（针对 lixinger.com 等API文档站点）
-      const links = await page.evaluate(() => {
+      const links = await page.evaluate((rules) => {
         const allLinks = new Set();
-        
-        // 查找所有包含 api-key 的链接
-        document.querySelectorAll('a[href*="api-key="]').forEach((a) => {
-          const href = a.getAttribute('href');
-          if (href) {
+
+        const isValidParamValue = (value) => {
+          if (typeof value !== 'string') {
+            return false;
+          }
+          const normalized = value.trim().toLowerCase();
+          return normalized !== '' && normalized !== 'undefined' && normalized !== 'null';
+        };
+
+        // 根据配置优先提取特定模式链接
+        rules.forEach((rule) => {
+          const selector = rule.selector || 'a[href]';
+          document.querySelectorAll(selector).forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href) {
+              return;
+            }
+
             try {
               const url = href.startsWith('http') ? href : new URL(href, window.location.origin).href;
-              
-              // 验证 api-key 参数的有效性
               const urlObj = new URL(url);
-              const apiKey = urlObj.searchParams.get('api-key');
-              
-              // 过滤掉无效的 api-key
-              if (!apiKey || apiKey === 'undefined' || apiKey === 'null' || apiKey.trim() === '') {
-                console.warn(`Skipped invalid api-key in URL: ${url}`);
-                return; // 跳过这个链接
+
+              const requiredQueryParams = Array.isArray(rule.requiredQueryParams)
+                ? rule.requiredQueryParams
+                : [];
+              const missingRequiredParam = requiredQueryParams.some((param) => {
+                const value = urlObj.searchParams.get(param);
+                return !isValidParamValue(value);
+              });
+              if (missingRequiredParam) {
+                return;
               }
-              
-              // 只保留 doc?api-key= 格式的链接
-              if (url.includes('/open/api/doc') && url.includes('api-key=')) {
+
+              const pathIncludes = Array.isArray(rule.pathIncludes)
+                ? rule.pathIncludes
+                : [];
+              const pathMatched = pathIncludes.length === 0 || pathIncludes.some(segment => url.includes(segment));
+
+              if (pathMatched) {
                 allLinks.add(url);
               }
             } catch (_) {}
-          }
+          });
         });
         
-        // 如果没有找到 api-key 链接，则提取所有普通链接
+        // 如果没有命中优先模式，则提取普通链接
         if (allLinks.size === 0) {
           const anchors = document.querySelectorAll('a[href]');
           anchors.forEach(a => allLinks.add(a.href));
         }
         
         return Array.from(allLinks);
-      });
+      }, prioritizedRules);
       
       // 转换为绝对URL
       const absoluteLinks = links.map(link => toAbsoluteUrl(link, baseUrl));
