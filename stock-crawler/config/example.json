@@ -27,7 +27,14 @@
   },
   "output": {
     "directory": "./output",
-    "format": "markdown"
+    "format": "markdown",
+    "storage": {
+      "type": "file",
+      "lancedb": {
+        "uri": "lancedb",
+        "table": "pages"
+      }
+    }
   },
   "linkDiscovery": {
     "prioritizedPatterns": [

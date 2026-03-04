@@ -101,6 +101,25 @@ class ConfigManager {
       throw new Error('配置字段 output.format 必须存在');
     }
 
+
+    // 验证 storage（可选）
+    if ('storage' in config.output) {
+      if (typeof config.output.storage !== 'object' || Array.isArray(config.output.storage)) {
+        throw new Error('配置字段 output.storage 必须是对象类型');
+      }
+
+      const storageType = config.output.storage.type || 'file';
+      if (!['file', 'lancedb'].includes(storageType)) {
+        throw new Error('配置字段 output.storage.type 必须是 file 或 lancedb');
+      }
+
+      if (storageType === 'lancedb' && 'lancedb' in config.output.storage) {
+        if (typeof config.output.storage.lancedb !== 'object' || Array.isArray(config.output.storage.lancedb)) {
+          throw new Error('配置字段 output.storage.lancedb 必须是对象类型');
+        }
+      }
+    }
+
     // 验证 linkDiscovery（可选）
     if ('linkDiscovery' in config) {
       if (typeof config.linkDiscovery !== 'object' || Array.isArray(config.linkDiscovery)) {
