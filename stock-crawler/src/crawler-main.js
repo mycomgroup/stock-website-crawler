@@ -68,7 +68,8 @@ class CrawlerMain {
     if (this.linkManager.links.length === 0 && this.config.seedUrls && this.config.seedUrls.length > 0) {
       this.logger.info(`Initializing with ${this.config.seedUrls.length} seed URLs`);
       this.config.seedUrls.forEach(url => {
-        this.linkManager.addLink(url, 'pending');
+        // Seed URLs must be marked as unfetched so they can enter normal processing flow
+        this.linkManager.addLink(url, 'unfetched');
       });
       this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
     }
@@ -488,7 +489,12 @@ class CrawlerMain {
       await this.linkFinder.expandCollapsibles(page);
 
       // Extract links
-      const newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules);
+      const linkDiscoveryOptions = {};
+      if (Array.isArray(this.config.linkDiscovery?.prioritizedPatterns)) {
+        linkDiscoveryOptions.prioritizedPatterns = this.config.linkDiscovery.prioritizedPatterns;
+      }
+
+      const newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules, linkDiscoveryOptions);
       
       if (newLinks.length > 0) {
         this.logger.info(`Found ${newLinks.length} new links`);
@@ -729,8 +735,13 @@ class CrawlerMain {
       });
       this.logger.info(`Parsed page: ${pageData.title || 'Untitled'}`);
 
+      // 大表格页面：仅保存为CSV
+      if (pageData.type === 'table-only') {
+        const savedCsvFiles = await this.saveTablesAsCsv(pageData, url);
+        this.logger.info(`Saved ${savedCsvFiles.length} CSV file(s) for table-only page`);
+      }
       // 如果没有使用流式写入（没有分页数据），使用传统方式
-      if (isFirstChunk) {
+      else if (isFirstChunk) {
         const markdown = this.markdownGenerator.generate(pageData);
         filename = this.markdownGenerator.safeFilename(pageData.title || 'untitled', url);
         
@@ -754,7 +765,11 @@ class CrawlerMain {
       
       // 计算处理时间
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      this.logger.success(`Saved: ${filename}.md (${duration}s)`);
+      if (pageData.type === 'table-only') {
+        this.logger.success(`Saved table CSV output (${duration}s)`);
+      } else {
+        this.logger.success(`Saved: ${filename}.md (${duration}s)`);
+      }
 
       // Close page
       await page.close();
@@ -786,6 +801,48 @@ class CrawlerMain {
       return false;
     }
   }
+
+  escapeCsvField(value) {
+    const stringValue = value == null ? '' : String(value);
+    const escaped = stringValue.replace(/"/g, '""');
+    if (/[",\n]/.test(escaped)) {
+      return `"${escaped}"`;
+    }
+    return escaped;
+  }
+
+  async saveTablesAsCsv(pageData, url) {
+    const fs = await import('fs');
+    const crypto = await import('crypto');
+
+    let baseName = this.markdownGenerator.safeFilename(pageData.title || 'table', url);
+    const urlHash = crypto.createHash('md5').update(url).digest('hex').substring(0, 8);
+    baseName = `${baseName}_${urlHash}`;
+
+    const savedFiles = [];
+    for (let i = 0; i < pageData.tables.length; i++) {
+      const table = pageData.tables[i];
+      const fileName = pageData.tables.length > 1 ? `${baseName}_table_${i + 1}.csv` : `${baseName}.csv`;
+      const filePath = `${this.pagesDir}/${fileName}`;
+
+      const lines = [];
+      if (table.headers && table.headers.length > 0) {
+        lines.push(table.headers.map(h => this.escapeCsvField(h)).join(','));
+      }
+      if (table.rows && table.rows.length > 0) {
+        table.rows.forEach(row => {
+          lines.push(row.map(cell => this.escapeCsvField(cell)).join(','));
+        });
+      }
+
+      fs.writeFileSync(filePath, lines.join('\n'), 'utf-8');
+      savedFiles.push(fileName);
+      this.logger.success(`Saved: ${fileName}`);
+    }
+
+    return savedFiles;
+  }
+
 
   /**
    * Log progress
