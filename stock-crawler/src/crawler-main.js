@@ -68,7 +68,7 @@ class CrawlerMain {
     if (this.linkManager.links.length === 0 && this.config.seedUrls && this.config.seedUrls.length > 0) {
       this.logger.info(`Initializing with ${this.config.seedUrls.length} seed URLs`);
       this.config.seedUrls.forEach(url => {
-        this.linkManager.addLink(url, 'pending');
+        this.linkManager.addLink(url, 'unfetched');
       });
       this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
     }
