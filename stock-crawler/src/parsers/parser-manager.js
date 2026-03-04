@@ -1,5 +1,6 @@
 import ApiDocParser from './api-doc-parser.js';
 import GenericParser from './generic-parser.js';
+import TableOnlyParser from './table-only-parser.js';
 
 /**
  * Parser Manager - 管理所有解析器，根据URL选择合适的解析器
@@ -15,6 +16,7 @@ class ParserManager {
    */
   registerDefaultParsers() {
     this.register(new ApiDocParser());
+    this.register(new TableOnlyParser());
     this.register(new GenericParser());
   }
 
