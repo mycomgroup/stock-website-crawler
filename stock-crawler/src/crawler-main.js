@@ -488,9 +488,12 @@ class CrawlerMain {
       await this.linkFinder.expandCollapsibles(page);
 
       // Extract links
-      const newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules, {
-        prioritizedPatterns: this.config.linkDiscovery?.prioritizedPatterns || []
-      });
+      const linkDiscoveryOptions = {};
+      if (Array.isArray(this.config.linkDiscovery?.prioritizedPatterns)) {
+        linkDiscoveryOptions.prioritizedPatterns = this.config.linkDiscovery.prioritizedPatterns;
+      }
+
+      const newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules, linkDiscoveryOptions);
       
       if (newLinks.length > 0) {
         this.logger.info(`Found ${newLinks.length} new links`);
