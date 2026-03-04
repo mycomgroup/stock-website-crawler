@@ -10,7 +10,8 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:login": "node scripts/test-login.js",
-    "test:pagination": "node scripts/test-pagination.js"
+    "test:pagination": "node scripts/test-pagination.js",
+    "template:pipeline": "node src/template-pipeline-cli.js"
   },
   "keywords": [
     "crawler",
