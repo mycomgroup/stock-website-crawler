@@ -130,7 +130,14 @@ Create a JSON configuration file with the following structure:
   },
   "output": {
     "directory": "./output",
-    "format": "markdown"
+    "format": "markdown",
+    "storage": {
+      "type": "file",
+      "lancedb": {
+        "uri": "lancedb",
+        "table": "pages"
+      }
+    }
   }
 }
 ```
@@ -166,6 +173,9 @@ Array of starting URLs for the crawler.
 #### output
 - **directory**: Output directory for Markdown files
 - **format**: Output format (currently only "markdown" supported)
+- **storage.type**: Storage backend (`file` or `lancedb`)
+- **storage.lancedb.uri**: LanceDB directory relative to project directory (used when `type=lancedb`)
+- **storage.lancedb.table**: LanceDB table name for page content
 
 ### Example: Crawling Lixinger API Documentation
 
