@@ -74,6 +74,39 @@ describe('CrawlerMain Integration Tests', () => {
       expect(crawler.browserManager).toBeDefined();
     });
 
+
+    test('should initialize seed URLs with unfetched status', async () => {
+      const config = {
+        name: 'test-crawler',
+        seedUrls: ['https://example.com'],
+        urlRules: {
+          include: ['.*'],
+          exclude: []
+        },
+        login: {
+          required: false
+        },
+        crawler: {
+          headless: true,
+          timeout: 30000,
+          waitBetweenRequests: 100,
+          maxRetries: 2
+        },
+        output: {
+          directory: testOutputDir,
+          format: 'markdown'
+        }
+      };
+
+      fs.writeFileSync(testConfigPath, JSON.stringify(config, null, 2));
+
+      await crawler.initialize(testConfigPath);
+
+      const seedLink = crawler.linkManager.links.find(l => l.url === 'https://example.com');
+      expect(seedLink).toBeDefined();
+      expect(seedLink.status).toBe('unfetched');
+    });
+
     test('should create links.txt with seed URLs if not exists', async () => {
       // Make sure links.txt doesn't exist
       if (fs.existsSync('./links.txt')) {
