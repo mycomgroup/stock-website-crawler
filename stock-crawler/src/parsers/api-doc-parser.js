@@ -104,8 +104,11 @@ class ApiDocParser extends BaseParser {
                      document.querySelector('[class*="content"]') || document.querySelector('#app') || document.body;
         
         const urlEl = root.querySelector('code, pre, [class*="url"]');
-        if (urlEl && /open\.lixinger\.com|api\.lixinger/.test(urlEl.innerText)) {
-          return urlEl.innerText.trim().split(/\s/)[0];
+        if (urlEl) {
+          const firstToken = urlEl.innerText.trim().split(/\s/)[0];
+          if (/^https?:\/\//.test(firstToken) || /^\//.test(firstToken)) {
+            return firstToken;
+          }
         }
 
         const text = root.innerText || '';
