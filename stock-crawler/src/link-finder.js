@@ -63,6 +63,21 @@ class LinkFinder {
       }
     }
   
+
+  /**
+   * 兼容旧行为：默认优先提取 API 文档链接
+   * @returns {Array<Object>} 默认优先规则
+   */
+  getDefaultPrioritizedPatterns() {
+    return [
+      {
+        selector: 'a[href*="api-key="]',
+        requiredQueryParams: ['api-key'],
+        pathIncludes: ['/open/api/doc']
+      }
+    ];
+  }
+
   /**
    * 提取页面中的所有链接
    * @param {Page} page - Playwright页面对象
@@ -75,7 +90,7 @@ class LinkFinder {
       const baseUrl = page.url();
       const prioritizedRules = Array.isArray(options.prioritizedPatterns)
         ? options.prioritizedPatterns
-        : [];
+        : this.getDefaultPrioritizedPatterns();
       
       // 从页面中提取所有链接
       const links = await page.evaluate((rules) => {

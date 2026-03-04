@@ -155,6 +155,7 @@ Array of starting URLs for the crawler.
   - **selector**: CSS selector used to find candidate links.
   - **requiredQueryParams**: Query params that must exist and be valid (not empty/`undefined`/`null`).
   - **pathIncludes**: URL substrings that must match.
+- **Backward compatibility**: If `linkDiscovery.prioritizedPatterns` is not configured, crawler keeps legacy default behavior for API-doc links (`a[href*="api-key="]` + `/open/api/doc`).
 
 #### crawler
 - **headless**: Run browser in headless mode (true/false)

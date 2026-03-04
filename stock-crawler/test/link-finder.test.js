@@ -282,6 +282,27 @@ describe('Link Finder', () => {
     });
     
 
+
+    test('keeps legacy prioritized api-doc extraction by default', async () => {
+      const html = `
+        <!DOCTYPE html>
+        <html>
+          <head><title>Legacy Priority Test</title></head>
+          <body>
+            <a href="https://example.com/open/api/doc?api-key=stock/list">API Doc</a>
+            <a href="https://example.com/page">Normal Page</a>
+          </body>
+        </html>
+      `;
+
+      await page.setContent(html);
+      const links = await linkFinder.extractLinks(page, {
+        include: ['.*example\.com.*']
+      });
+
+      expect(links).toEqual(['https://example.com/open/api/doc?api-key=stock/list']);
+    });
+
     test('supports prioritized patterns for API docs', async () => {
       const html = `
         <!DOCTYPE html>
