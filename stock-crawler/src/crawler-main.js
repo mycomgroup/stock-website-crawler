@@ -194,7 +194,10 @@ class CrawlerMain {
     for (const seedUrl of this.config.seedUrls) {
       const existingLink = this.linkManager.links.find(link => link.url === seedUrl);
       if (existingLink) {
-        seedLinks.push(existingLink);
+        // 仅将可抓取状态的种子链接加入本轮处理，避免已完成页面被重复抓取
+        if (existingLink.status === 'unfetched') {
+          seedLinks.push(existingLink);
+        }
         continue;
       }
 

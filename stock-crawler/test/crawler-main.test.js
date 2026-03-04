@@ -157,6 +157,28 @@ describe('CrawlerMain Integration Tests', () => {
     });
   });
 
+
+  describe('buildLinksToProcess', () => {
+    test('should not re-process fetched seed URLs', () => {
+      crawler.config = {
+        seedUrls: ['https://example.com/seed'],
+        crawler: { batchSize: 20 }
+      };
+      crawler.linkManager = {
+        links: [
+          { url: 'https://example.com/seed', status: 'fetched' },
+          { url: 'https://example.com/new', status: 'unfetched' }
+        ],
+        addLink: () => {}
+      };
+
+      const unfetchedLinks = [{ url: 'https://example.com/new', status: 'unfetched' }];
+      const linksToProcess = crawler.buildLinksToProcess(20, unfetchedLinks);
+
+      expect(linksToProcess.map(link => link.url)).toEqual(['https://example.com/new']);
+    });
+  });
+
   describe('processUrl', () => {
     test('should update link status on failure', async () => {
       const config = {
