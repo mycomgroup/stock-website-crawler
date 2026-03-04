@@ -11,6 +11,66 @@ export class PatternMatcher {
   }
 
   /**
+   * 根据 API 名称获取 pattern
+   */
+  getPatternByName(apiName) {
+    return this.patterns.find(pattern => pattern.name === apiName) || null;
+  }
+
+  /**
+   * 根据 URL 或路径关键词推荐 API
+   */
+  findByUrlType(urlOrPath) {
+    if (!urlOrPath) {
+      return [];
+    }
+
+    const normalized = urlOrPath.toLowerCase();
+    return this.patterns
+      .map(pattern => {
+        const sample = (pattern.samples?.[0] || '').toLowerCase();
+        const template = (pattern.pathTemplate || '').toLowerCase();
+        let score = 0;
+
+        if (sample.includes(normalized) || normalized.includes(sample)) {
+          score += 120;
+        }
+
+        if (template.includes(normalized) || normalized.includes(template)) {
+          score += 100;
+        }
+
+        const templateSegments = template.split('/').filter(Boolean);
+        const matchedSegments = templateSegments.filter(segment =>
+          !segment.startsWith('{') && normalized.includes(segment)
+        );
+        score += matchedSegments.length * 20;
+
+        if (pattern.description?.toLowerCase().includes(normalized) || pattern.name?.toLowerCase().includes(normalized)) {
+          score += 40;
+        }
+
+        return {
+          ...pattern,
+          matchScore: score
+        };
+      })
+      .filter(pattern => pattern.matchScore > 0)
+      .sort((a, b) => b.matchScore - a.matchScore);
+  }
+
+  /**
+   * 提取路径参数顺序
+   */
+  getPathParamNames(pattern) {
+    if (!pattern?.pathTemplate) {
+      return [];
+    }
+    const matches = pattern.pathTemplate.match(/\{([^}]+)\}/g) || [];
+    return matches.map(param => param.replace(/[{}]/g, ''));
+  }
+
+  /**
    * 搜索 patterns
    */
   searchPatterns(keywords) {
