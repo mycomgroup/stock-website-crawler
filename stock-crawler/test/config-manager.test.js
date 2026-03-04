@@ -196,6 +196,46 @@ describe('ConfigManager', () => {
         configManager.validateConfig(config);
       }).toThrow('配置字段 output.directory 必须存在');
     });
+
+    test('当output.storage.type非法时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: {
+          directory: './output',
+          format: 'markdown',
+          storage: { type: 'invalid-type' }
+        }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 output.storage.type 必须是 file 或 lancedb');
+    });
+
+    test('当output.storage.type为lancedb时应该允许通过校验', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: {
+          directory: './output',
+          format: 'markdown',
+          storage: {
+            type: 'lancedb',
+            lancedb: {
+              uri: 'lancedb',
+              table: 'pages'
+            }
+          }
+        }
+      };
+
+      expect(configManager.validateConfig(config)).toBe(true);
+    });
   });
 
   describe('Property-Based Tests', () => {
