@@ -97,6 +97,43 @@ node scripts/batch-generate-templates.js \
   --output-dir <templates-dir>
 ```
 
+
+### 5. Useful Content Extraction (新，生产可用)
+```bash
+node scripts/extract-useful-content.js \
+  --template <template-file> \
+  --urls-file <urls.txt|urls.json> \
+  --output <result.jsonl> \
+  --markdown-dir <preview-dir>
+```
+
+**说明**:
+- 自动抓取多个页面并按模板提取结构化信息
+- 输出 `jsonl`（方便后续入库/ETL）
+- 同时生成 `*.review.json` 人工复核清单（低置信度/关键字段缺失）
+- 可选输出逐页 Markdown，便于人工对比
+
+
+### 6. Review Workspace Workflow (新，支持人工反馈闭环)
+```bash
+node scripts/run-review-workflow.js   --jobs <review-jobs.json>   --workspace-dir <review-dir>   --max-pages-per-job <n>   --headless <true|false>   --timeout <ms>
+```
+
+**说明**:
+- 一次跑一批模板，集中输出到可评审目录
+- 自动生成 `review.json` 和 `feedback.template.json`，方便人工指出“哪里抽错了”
+- 自动生成 `structure-comparison.json`，比较同类型页面稳定结构，辅助优化模板
+
+### 7. Apply Human Feedback to Template
+```bash
+node scripts/apply-feedback-overrides.js   --template-file <template.json>   --feedback-file <feedback.json>   --output-file <optimized-template.json>
+```
+
+### 8. Compare Extracted Structures Only
+```bash
+node scripts/compare-extracted-structures.js   --input <extracted.jsonl>   --output <comparison.json>
+```
+
 ## Output Files
 
 ### Template JSON
