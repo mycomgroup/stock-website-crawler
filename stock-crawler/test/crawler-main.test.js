@@ -111,6 +111,11 @@ describe('CrawlerMain Integration Tests', () => {
       const urls = crawler.linkManager.links.map(l => l.url);
       expect(urls).toContain('https://example.com');
       expect(urls).toContain('https://test.com');
+
+      // Seed URLs should be directly crawlable
+      const statuses = crawler.linkManager.links.map(l => l.status);
+      expect(statuses).toEqual(expect.arrayContaining(['unfetched']));
+      expect(statuses).not.toContain('pending');
       
       // Clean up
       if (fs.existsSync('./links.txt')) {
