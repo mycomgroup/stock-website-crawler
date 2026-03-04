@@ -16,6 +16,8 @@ class MarkdownGenerator {
       return this.generateApiDoc(pageData);
     } else if (pageData.type === 'generic') {
       return this.generateGeneric(pageData);
+    } else if (pageData.type === 'core-content') {
+      return this.generateCoreContent(pageData);
     } else {
       // 兼容旧格式（没有type字段）
       return this.generateApiDoc(pageData);
@@ -130,6 +132,44 @@ class MarkdownGenerator {
         sections.push(pageData.responseData.description);
         sections.push('');
       }
+    }
+
+    return sections.join('\n');
+  }
+
+
+  /**
+   * 生成核心正文Markdown
+   * @param {PageData} pageData - 核心正文页面数据
+   * @returns {string} Markdown文本
+   */
+  generateCoreContent(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.mainContent && pageData.mainContent.length > 0) {
+      sections.push('## 核心正文\n');
+      pageData.mainContent.forEach(item => {
+        if (item.type === 'heading') {
+          sections.push(`${'#'.repeat(Math.min((item.level || 2) + 1, 6))} ${item.content}\n`);
+        } else {
+          sections.push(item.content);
+          sections.push('');
+        }
+      });
+    } else if (pageData.contentText) {
+      sections.push('## 核心正文\n');
+      sections.push(pageData.contentText);
+      sections.push('');
     }
 
     return sections.join('\n');
