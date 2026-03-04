@@ -201,6 +201,30 @@ cp config/lixinger.json config/my-lixinger.json
 npm run crawl config/my-lixinger.json
 ```
 
+
+
+### 抓取 hao123 全量导航并批量生成配置
+
+默认会从 `https://www.hao123.com/` 出发，递归抓取站内导航页（可通过 `--max-pages` 控制上限），并提取所有外部站点：
+
+```bash
+npm run crawl:hao123 -- --max-pages 300
+```
+
+如果当前环境无法访问外网，可使用本地镜像目录测试同样流程：
+
+```bash
+npm run crawl:hao123 -- --mirror-dir test/fixtures/hao123-mirror --max-pages 50
+npm run test:hao123-configs
+```
+
+运行后会生成：
+
+- `output/hao123/sites.json`：抓取到的站点明细（去重）
+- `output/hao123/all-sites.txt`：站点 URL 列表
+- `output/hao123/crawled-pages.txt`：已抓取的 hao123 页面列表
+- `configure/*.json`：每个网站一个独立配置
+
 ### 批量处理
 
 爬虫支持批量处理模式。在配置文件中设置 `batchSize`：
