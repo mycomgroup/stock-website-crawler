@@ -31,5 +31,18 @@
   "output": {
     "directory": "./output",
     "format": "markdown"
+  },
+  "linkDiscovery": {
+    "prioritizedPatterns": [
+      {
+        "selector": "a[href*=\"api-key=\"]",
+        "requiredQueryParams": [
+          "api-key"
+        ],
+        "pathIncludes": [
+          "/open/api/doc"
+        ]
+      }
+    ]
   }
 }
