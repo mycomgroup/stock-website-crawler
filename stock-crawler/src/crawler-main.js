@@ -118,84 +118,9 @@ class CrawlerMain {
         }
       }
 
-      // Get batch size from config (default 20)
       const batchSize = this.config.crawler.batchSize || 20;
-      
-      // Start with seed URLs - they should always be processed first in each run
-      let linksToProcess = [];
-      
-      if (this.config.seedUrls && this.config.seedUrls.length > 0) {
-        for (const seedUrl of this.config.seedUrls) {
-          const existingLink = this.linkManager.links.find(l => l.url === seedUrl);
-          if (!existingLink) {
-            // Seed URL not in list, add it
-            this.linkManager.addLink(seedUrl, 'unfetched');
-            linksToProcess.push({ url: seedUrl, status: 'unfetched' });
-          } else {
-            // Seed URL exists - add to processing list regardless of status
-            linksToProcess.push(existingLink);
-          }
-        }
-      }
-      
-      // Then get unfetched links from links.txt
       const unfetchedLinks = this.linkManager.getUnfetchedLinks();
-      
-      // Sort unfetched links by priority:
-      // 1. Path depth (fewer slashes = higher priority, usually level 1 or 2 pages)
-      // 2. URLs with numeric path segments (e.g., /product/123, /2024/report)
-      // 3. URLs without query parameters (no & or =)
-      // 4. URL length (shorter first)
-      const sortedUnfetchedLinks = unfetchedLinks.sort((a, b) => {
-        // First priority: Path depth (count slashes in path)
-        // Fewer slashes = higher level page = more important
-        const getPathDepth = (url) => {
-          try {
-            const urlObj = new URL(url);
-            // Count slashes in pathname (excluding the domain)
-            return (urlObj.pathname.match(/\//g) || []).length;
-          } catch {
-            return (url.match(/\//g) || []).length;
-          }
-        };
-        
-        const aDepth = getPathDepth(a.url);
-        const bDepth = getPathDepth(b.url);
-        
-        if (aDepth !== bDepth) {
-          return aDepth - bDepth; // Fewer slashes = higher priority
-        }
-        
-        // Second priority: URLs with numeric path segments
-        const aHasNumericSegment = /\/\d+(?:\/|$)/.test(a.url);
-        const bHasNumericSegment = /\/\d+(?:\/|$)/.test(b.url);
-        
-        if (aHasNumericSegment !== bHasNumericSegment) {
-          return aHasNumericSegment ? -1 : 1;
-        }
-        
-        // Third priority: URLs without query parameters
-        const aHasParams = a.url.includes('?') || a.url.includes('&') || a.url.includes('=');
-        const bHasParams = b.url.includes('?') || b.url.includes('&') || b.url.includes('=');
-        
-        if (aHasParams !== bHasParams) {
-          return aHasParams ? 1 : -1;
-        }
-        
-        // Final tiebreaker: sort by URL length (shorter first)
-        return a.url.length - b.url.length;
-      });
-      
-      // Add unfetched links to processing list (after seed URLs)
-      for (const link of sortedUnfetchedLinks) {
-        // Skip if already in processing list (e.g., it's a seed URL)
-        if (!linksToProcess.find(l => l.url === link.url)) {
-          linksToProcess.push(link);
-        }
-      }
-      
-      // Limit to batch size
-      linksToProcess = linksToProcess.slice(0, batchSize);
+      const linksToProcess = this.buildLinksToProcess(batchSize, unfetchedLinks);
       
       this.statsTracker.setTotalUrls(this.linkManager.links.length);
       
@@ -245,6 +170,100 @@ class CrawlerMain {
       this.logger.error('Fatal error during crawling', error);
       throw error;
     }
+  }
+
+  buildLinksToProcess(batchSize, unfetchedLinks) {
+    const linksToProcess = this.collectSeedLinks();
+    const sortedUnfetchedLinks = this.sortLinksByPriority(unfetchedLinks);
+
+    for (const link of sortedUnfetchedLinks) {
+      if (!linksToProcess.find(item => item.url === link.url)) {
+        linksToProcess.push(link);
+      }
+    }
+
+    return linksToProcess.slice(0, batchSize);
+  }
+
+  collectSeedLinks() {
+    const seedLinks = [];
+    if (!this.config.seedUrls || this.config.seedUrls.length === 0) {
+      return seedLinks;
+    }
+
+    for (const seedUrl of this.config.seedUrls) {
+      const existingLink = this.linkManager.links.find(link => link.url === seedUrl);
+      if (existingLink) {
+        seedLinks.push(existingLink);
+        continue;
+      }
+
+      this.linkManager.addLink(seedUrl, 'unfetched');
+      seedLinks.push({ url: seedUrl, status: 'unfetched' });
+    }
+
+    return seedLinks;
+  }
+
+  sortLinksByPriority(unfetchedLinks) {
+    return [...unfetchedLinks].sort((a, b) => {
+      const aDepth = this.getPathDepth(a.url);
+      const bDepth = this.getPathDepth(b.url);
+      if (aDepth !== bDepth) {
+        return aDepth - bDepth;
+      }
+
+      const aHasNumericSegment = /\/\d+(?:\/|$)/.test(a.url);
+      const bHasNumericSegment = /\/\d+(?:\/|$)/.test(b.url);
+      if (aHasNumericSegment !== bHasNumericSegment) {
+        return aHasNumericSegment ? -1 : 1;
+      }
+
+      const aHasParams = this.hasQueryParams(a.url);
+      const bHasParams = this.hasQueryParams(b.url);
+      if (aHasParams !== bHasParams) {
+        return aHasParams ? 1 : -1;
+      }
+
+      return a.url.length - b.url.length;
+    });
+  }
+
+  getPathDepth(url) {
+    try {
+      const urlObj = new URL(url);
+      return (urlObj.pathname.match(/\//g) || []).length;
+    } catch {
+      return (url.match(/\//g) || []).length;
+    }
+  }
+
+  hasQueryParams(url) {
+    return url.includes('?') || url.includes('&') || url.includes('=');
+  }
+
+  async discoverAndStoreLinks(page) {
+    const linkDiscoveryOptions = this.getLinkDiscoveryOptions();
+    const newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules, linkDiscoveryOptions);
+
+    if (newLinks.length === 0) {
+      return;
+    }
+
+    this.logger.info(`Found ${newLinks.length} new links`);
+    newLinks.forEach(link => {
+      this.linkManager.addLink(link, 'unfetched');
+    });
+    this.statsTracker.addNewLinks(newLinks.length);
+    this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
+  }
+
+  getLinkDiscoveryOptions() {
+    const options = {};
+    if (Array.isArray(this.config.linkDiscovery?.prioritizedPatterns)) {
+      options.prioritizedPatterns = this.config.linkDiscovery.prioritizedPatterns;
+    }
+    return options;
   }
 
   /**
@@ -492,22 +511,7 @@ class CrawlerMain {
       // Expand collapsible content
       await this.linkFinder.expandCollapsibles(page);
 
-      // Extract links
-      const linkDiscoveryOptions = {};
-      if (Array.isArray(this.config.linkDiscovery?.prioritizedPatterns)) {
-        linkDiscoveryOptions.prioritizedPatterns = this.config.linkDiscovery.prioritizedPatterns;
-      }
-
-      const newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules, linkDiscoveryOptions);
-      
-      if (newLinks.length > 0) {
-        this.logger.info(`Found ${newLinks.length} new links`);
-        newLinks.forEach(link => {
-          this.linkManager.addLink(link, 'unfetched');
-        });
-        this.statsTracker.addNewLinks(newLinks.length);
-        this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
-      }
+      await this.discoverAndStoreLinks(page);
 
       // Parse page content with streaming support
       let filename = null;
