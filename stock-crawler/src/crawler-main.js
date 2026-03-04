@@ -7,6 +7,7 @@ import PageParser from './page-parser.js';
 import MarkdownGenerator from './markdown-generator.js';
 import Logger from './logger.js';
 import StatsTracker from './stats-tracker.js';
+import PageStorage from './storage/page-storage.js';
 
 class CrawlerMain {
   constructor() {
@@ -19,6 +20,7 @@ class CrawlerMain {
     this.markdownGenerator = null;
     this.logger = null;
     this.statsTracker = null;
+    this.pageStorage = null;
     this.isLoggedIn = false;
   }
 
@@ -80,6 +82,8 @@ class CrawlerMain {
     this.linkFinder = new LinkFinder();
     this.pageParser = new PageParser();
     this.markdownGenerator = new MarkdownGenerator();
+    this.pageStorage = new PageStorage(this.config, this.logger);
+    await this.pageStorage.initialize(this.projectDir);
 
     this.logger.info(`Project directory: ${this.projectDir}`);
     this.logger.info(`Pages directory: ${this.pagesDir}`);
@@ -754,11 +758,24 @@ class CrawlerMain {
           this.logger.info(`File exists, using unique filename: ${filename}.md`);
         }
         
-        this.markdownGenerator.saveToFile(
+        filepath = this.markdownGenerator.saveToFile(
           markdown,
           filename,
           this.pagesDir
         );
+      }
+
+      if (pageData.type !== 'table-only' && filepath) {
+        const savedPath = await this.pageStorage.persistMarkdown({
+          filepath,
+          url,
+          title: pageData.title || pageTitle,
+          filename
+        });
+
+        if (this.pageStorage.isLanceDb()) {
+          this.logger.info(`Persisted page content to ${savedPath}`);
+        }
       }
       
       this.statsTracker.incrementFilesGenerated();
