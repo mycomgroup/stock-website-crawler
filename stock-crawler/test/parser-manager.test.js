@@ -18,4 +18,50 @@ describe('ParserManager', () => {
 
     expect(parser.constructor.name).toBe('ApiDocParser');
   });
+
+  test('should select list parser based on classification', () => {
+    const manager = new ParserManager();
+
+    const parser = manager.selectParser('https://example.com/unknown', {
+      classification: { type: 'list_page' }
+    });
+
+    expect(parser.constructor.name).toBe('ListParser');
+  });
+
+  test('should select directory parser based on classification', () => {
+    const manager = new ParserManager();
+
+    const parser = manager.selectParser('https://example.com/unknown', {
+      classification: { type: 'directory_page' }
+    });
+
+    expect(parser.constructor.name).toBe('DirectoryParser');
+  });
+
+  test('parse should attach classification metadata to output', async () => {
+    const manager = new ParserManager();
+    manager.classifier.classify = async () => ({
+      type: 'generic_page',
+      confidence: 0.4,
+      reasons: ['test'],
+      features: {}
+    });
+
+    manager.parsers = [{
+      matches: () => true,
+      parse: async () => ({ type: 'generic', title: 'mock' }),
+      getPriority: () => 0
+    }];
+
+    const data = await manager.parse({}, 'https://example.com/test', {});
+
+    expect(data.type).toBe('generic');
+    expect(data.classification).toEqual({
+      type: 'generic_page',
+      confidence: 0.4,
+      reasons: ['test'],
+      features: {}
+    });
+  });
 });

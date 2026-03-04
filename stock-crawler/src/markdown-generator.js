@@ -14,13 +14,16 @@ class MarkdownGenerator {
     // 根据页面类型选择生成方法
     if (pageData.type === 'api-doc') {
       return this.generateApiDoc(pageData);
-    } else if (pageData.type === 'generic') {
-      return this.generateGeneric(pageData);
     } else if (pageData.type === 'core-content') {
       return this.generateCoreContent(pageData);
-    } else {
-      // 兼容旧格式（没有type字段）
+    } else if (['generic', 'table-only', 'list-page', 'directory-page'].includes(pageData.type)) {
+      return this.generateGeneric(pageData);
+    } else if (!pageData.type) {
+      // 兼容旧格式（无type时按API文档结构）
       return this.generateApiDoc(pageData);
+    } else {
+      // 未识别类型默认按通用页面输出
+      return this.generateGeneric(pageData);
     }
   }
 
@@ -202,6 +205,38 @@ class MarkdownGenerator {
       sections.push('');
     }
 
+
+    if (pageData.items && pageData.items.length > 0) {
+      sections.push('## 列表条目\n');
+      pageData.items.forEach((item, index) => {
+        const title = item.title || `条目 ${index + 1}`;
+        const line = item.url ? `- [${this.escapeMarkdown(title)}](${item.url})` : `- ${this.escapeMarkdown(title)}`;
+        sections.push(line);
+        if (item.date) {
+          sections.push(`  - 时间: ${this.escapeMarkdown(item.date)}`);
+        }
+        if (item.summary) {
+          sections.push(`  - 摘要: ${this.escapeMarkdown(item.summary)}`);
+        }
+      });
+      sections.push('');
+    }
+
+    if (pageData.tree && pageData.tree.length > 0) {
+      sections.push('## 目录结构\n');
+      const renderTree = (nodes, depth = 0) => {
+        nodes.forEach((node) => {
+          const indent = '  '.repeat(depth);
+          const text = node.url ? `[${this.escapeMarkdown(node.name || '未命名')}](${node.url})` : this.escapeMarkdown(node.name || '未命名');
+          sections.push(`${indent}- ${text}`);
+          if (node.children && node.children.length > 0) {
+            renderTree(node.children, depth + 1);
+          }
+        });
+      };
+      renderTree(pageData.tree);
+      sections.push('');
+    }
     // 如果有mainContent（混排内容），优先使用它
     if (pageData.mainContent && pageData.mainContent.length > 0) {
       sections.push('## 内容\n');

@@ -10,7 +10,11 @@ class TableOnlyParser extends BaseParser {
     this.genericParser = new GenericParser();
   }
 
-  matches(url) {
+  matches(url, options = {}) {
+    if (options.classification?.type === 'table_content_page') {
+      return true;
+    }
+
     return true;
   }
 

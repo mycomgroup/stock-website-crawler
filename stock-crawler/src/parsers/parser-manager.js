@@ -1,6 +1,9 @@
 import ApiDocParser from './api-doc-parser.js';
 import CoreContentParser from './core-content-parser.js';
+import DirectoryParser from './directory-parser.js';
 import GenericParser from './generic-parser.js';
+import ListParser from './list-parser.js';
+import PageClassifier from './page-classifier.js';
 import TableOnlyParser from './table-only-parser.js';
 
 /**
@@ -9,6 +12,7 @@ import TableOnlyParser from './table-only-parser.js';
 class ParserManager {
   constructor() {
     this.parsers = [];
+    this.classifier = new PageClassifier();
     this.registerDefaultParsers();
   }
 
@@ -18,6 +22,8 @@ class ParserManager {
   registerDefaultParsers() {
     this.register(new CoreContentParser());
     this.register(new ApiDocParser());
+    this.register(new ListParser());
+    this.register(new DirectoryParser());
     this.register(new TableOnlyParser());
     this.register(new GenericParser());
   }
@@ -55,8 +61,22 @@ class ParserManager {
    * @returns {Promise<Object>} 解析后的页面数据
    */
   async parse(page, url, options = {}) {
-    const parser = this.selectParser(url, options);
-    return await parser.parse(page, url, options);
+    const classification = options.classification || await this.classifier.classify(page, url);
+
+    const parser = this.selectParser(url, {
+      ...options,
+      classification
+    });
+
+    const pageData = await parser.parse(page, url, {
+      ...options,
+      classification
+    });
+
+    return {
+      ...pageData,
+      classification
+    };
   }
 }
 
