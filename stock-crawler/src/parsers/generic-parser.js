@@ -1145,7 +1145,9 @@ class GenericParser extends BaseParser {
         return tabs;
       }
 
-      console.log(`  找到 ${tabButtons.length} 个可能的Tab (策略: ${tabButtons[0]?.strategy})`);
+      if (this.logger) {
+        this.logger.debug(`找到 ${tabButtons.length} 个可能的Tab (策略: ${tabButtons[0]?.strategy})`);
+      }
 
       if (tabButtons.length === 0) {
         return tabs;
@@ -1154,7 +1156,9 @@ class GenericParser extends BaseParser {
       // 点击每个tab并检查数据变化
       for (const btn of tabButtons) {
         try {
-          console.log(`  尝试Tab: "${btn.text.substring(0, 30)}..."`);
+          if (this.logger) {
+            this.logger.debug(`尝试Tab: "${btn.text.substring(0, 30)}..."`);
+          }
           
           // 点击tab - 根据策略使用不同的点击方法
           if (btn.strategy === 'standard') {
@@ -2314,7 +2318,9 @@ class GenericParser extends BaseParser {
                 totalClicked++;
                 maxClicks--;
                 
-                console.log(`    ✓ 点击了"${text}"按钮 (${totalClicked})`);
+                if (this.logger) {
+                  this.logger.debug(`点击了"${text}"按钮 (${totalClicked})`);
+                }
                 
                 // 每点击一个按钮就跳出内层循环，重新查找
                 break;
@@ -2333,7 +2339,9 @@ class GenericParser extends BaseParser {
       }
       
       if (totalClicked > 0) {
-        console.log(`  ✓ 共点击了 ${totalClicked} 个展开按钮`);
+        if (this.logger) {
+          this.logger.debug(`共点击了 ${totalClicked} 个展开按钮`);
+        }
         // 等待内容加载完成
         await page.waitForTimeout(2000);
       }
@@ -2419,7 +2427,9 @@ class GenericParser extends BaseParser {
       }
       
       if (scrollCount > 0) {
-        console.log(`    ✓ 滚动了 ${scrollCount} 次`);
+        if (this.logger) {
+          this.logger.debug(`滚动了 ${scrollCount} 次`);
+        }
         // 滚动回顶部
         await page.evaluate(() => window.scrollTo(0, 0));
         await page.waitForTimeout(1000);

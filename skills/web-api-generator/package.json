@@ -1,0 +1,19 @@
+{
+  "name": "web-api-generator-skill",
+  "version": "1.0.0",
+  "description": "Convert URL patterns to API docs and client",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "generate-docs": "node main.js generate-docs",
+    "list": "node main.js list",
+    "search": "node main.js search"
+  },
+  "keywords": ["skill", "web-api", "crawler"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "playwright": "^1.40.0"
+  }
+}

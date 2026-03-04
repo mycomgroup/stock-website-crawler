@@ -47,7 +47,7 @@ class CrawlerMain {
     }
     
     // Initialize logger with project-specific log directory
-    this.logger = new Logger(this.logsDir);
+    this.logger = new Logger(this.logsDir, this.config.crawler.logLevel || 'INFO');
     this.statsTracker = new StatsTracker();
     
     // Create pages directory with timestamp suffix matching log file
@@ -444,6 +444,7 @@ class CrawlerMain {
    */
   async processUrl(url) {
     const maxRetries = this.config.crawler.maxRetries || 3;
+    const startTime = Date.now(); // 记录开始时间
 
     try {
       this.logger.info(`Processing: ${url}`);
@@ -555,7 +556,7 @@ class CrawlerMain {
               }
               
               fs.appendFileSync(filepath, tableContent, 'utf-8');
-              this.logger.info(`Appended table ${chunk.tableIndex + 1}, page ${chunk.page}`);
+              this.logger.debug(`Appended table ${chunk.tableIndex + 1}, page ${chunk.page}`);
             } else if (!chunk.isLastPage && chunk.rows && chunk.rows.length > 0) {
               // 追加数据行
               let rowsContent = '';
@@ -563,7 +564,7 @@ class CrawlerMain {
                 rowsContent += '| ' + row.join(' | ') + ' |\n';
               });
               fs.appendFileSync(filepath, rowsContent, 'utf-8');
-              this.logger.info(`Appended ${chunk.rows.length} rows to table ${chunk.tableIndex + 1}, page ${chunk.page}`);
+              this.logger.debug(`Appended ${chunk.rows.length} rows to table ${chunk.tableIndex + 1}, page ${chunk.page}`);
             }
           } else if (chunk.type === 'table-new') {
             // 结构变化，新表格
@@ -634,7 +635,7 @@ class CrawlerMain {
             }
             
             fs.appendFileSync(filepath, tabContent, 'utf-8');
-            this.logger.info(`Appended tab content: ${chunk.name}`);
+            this.logger.debug(`Appended tab content: ${chunk.name}`);
           } else if (chunk.type === 'dropdown-option') {
             // 下拉框选项内容（只有数据变化时才会收到）
             let dropdownContent = `\n## 下拉框: ${chunk.dropdown} - 选项: ${chunk.option}\n\n`;
@@ -687,7 +688,7 @@ class CrawlerMain {
             }
             
             fs.appendFileSync(filepath, dropdownContent, 'utf-8');
-            this.logger.info(`Appended dropdown option: ${chunk.dropdown} - ${chunk.option}`);
+            this.logger.debug(`Appended dropdown option: ${chunk.dropdown} - ${chunk.option}`);
           } else if (chunk.type === 'date-filter') {
             // 日期筛选内容
             let dateFilterContent = `\n## 时间筛选: ${chunk.range}\n\n`;
@@ -713,7 +714,7 @@ class CrawlerMain {
             }
             
             fs.appendFileSync(filepath, dateFilterContent, 'utf-8');
-            this.logger.info(`Appended date filter data: ${chunk.range}`);
+            this.logger.debug(`Appended date filter data: ${chunk.range}`);
           }
         } catch (error) {
           this.logger.error(`Failed to write data chunk: ${error.message}`);
@@ -749,7 +750,10 @@ class CrawlerMain {
       }
       
       this.statsTracker.incrementFilesGenerated();
-      this.logger.info(`Saved: ${filename}.md`);
+      
+      // 计算处理时间
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      this.logger.success(`Saved: ${filename}.md (${duration}s)`);
 
       // Close page
       await page.close();
@@ -760,7 +764,9 @@ class CrawlerMain {
 
       return true;
     } catch (error) {
-      this.logError(url, error);
+      // 计算处理时间（即使失败也记录）
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      this.logError(url, error, duration);
 
       // Increment retry count
       const retryCount = this.linkManager.incrementRetryCount(url);
@@ -794,9 +800,11 @@ class CrawlerMain {
    * Log error
    * @param {string} url - URL that caused error
    * @param {Error} error - Error object
+   * @param {string} duration - Processing duration in seconds
    */
-  logError(url, error) {
-    this.logger.error(`Error processing ${url}`, error);
+  logError(url, error, duration = null) {
+    const durationStr = duration ? ` (${duration}s)` : '';
+    this.logger.error(`Error processing ${url}${durationStr}`, error);
   }
 
   /**
