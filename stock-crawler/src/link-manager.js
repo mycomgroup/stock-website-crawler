@@ -112,6 +112,12 @@ class LinkManager {
       if (status === 'fetched') {
         link.fetchedAt = Date.now();
       }
+
+      // 非失败状态下，清理历史错误信息，避免重试成功后仍显示旧错误
+      if (status !== 'failed' && !error) {
+        link.error = null;
+      }
+
       if (error) {
         link.error = error;
       }
