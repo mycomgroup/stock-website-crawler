@@ -281,6 +281,69 @@ describe('Link Finder', () => {
       expect(links).not.toContain('https://example.com/login');
     });
     
+
+    test('supports prioritized patterns for API docs', async () => {
+      const html = `
+        <!DOCTYPE html>
+        <html>
+          <head><title>Priority Link Test</title></head>
+          <body>
+            <a href="https://example.com/open/api/doc?api-key=stock/list">API Doc</a>
+            <a href="https://example.com/open/api/doc?api-key=undefined">Invalid API Doc</a>
+            <a href="https://example.com/page">Normal Page</a>
+          </body>
+        </html>
+      `;
+
+      await page.setContent(html);
+      const links = await linkFinder.extractLinks(
+        page,
+        { include: ['.*example\.com.*'] },
+        {
+          prioritizedPatterns: [
+            {
+              selector: 'a[href*="api-key="]',
+              requiredQueryParams: ['api-key'],
+              pathIncludes: ['/open/api/doc']
+            }
+          ]
+        }
+      );
+
+      expect(links).toEqual(['https://example.com/open/api/doc?api-key=stock/list']);
+    });
+
+    test('falls back to generic links when no prioritized match', async () => {
+      const html = `
+        <!DOCTYPE html>
+        <html>
+          <head><title>Fallback Link Test</title></head>
+          <body>
+            <a href="https://example.com/page1">Page 1</a>
+            <a href="https://example.com/page2">Page 2</a>
+          </body>
+        </html>
+      `;
+
+      await page.setContent(html);
+      const links = await linkFinder.extractLinks(
+        page,
+        { include: ['.*example\.com.*'] },
+        {
+          prioritizedPatterns: [
+            {
+              selector: 'a[href*="api-key="]',
+              requiredQueryParams: ['api-key'],
+              pathIncludes: ['/open/api/doc']
+            }
+          ]
+        }
+      );
+
+      expect(links).toHaveLength(2);
+      expect(links).toContain('https://example.com/page1');
+      expect(links).toContain('https://example.com/page2');
+    });
     test('removes duplicate links', async () => {
       const html = `
         <!DOCTYPE html>

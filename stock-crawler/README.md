@@ -113,6 +113,15 @@ Create a JSON configuration file with the following structure:
     "password": "",
     "loginUrl": ""
   },
+  "linkDiscovery": {
+    "prioritizedPatterns": [
+      {
+        "selector": "a[href*=\"api-key=\"]",
+        "requiredQueryParams": ["api-key"],
+        "pathIncludes": ["/open/api/doc"]
+      }
+    ]
+  },
   "crawler": {
     "headless": true,
     "timeout": 30000,
@@ -140,6 +149,12 @@ Array of starting URLs for the crawler.
 - **username**: Login username (phone number, email, or username)
 - **password**: Login password
 - **loginUrl**: URL of the login page
+
+#### linkDiscovery (optional)
+- **prioritizedPatterns**: Rules for prioritized link extraction before generic `<a href>` discovery.
+  - **selector**: CSS selector used to find candidate links.
+  - **requiredQueryParams**: Query params that must exist and be valid (not empty/`undefined`/`null`).
+  - **pathIncludes**: URL substrings that must match.
 
 #### crawler
 - **headless**: Run browser in headless mode (true/false)
