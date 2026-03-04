@@ -149,6 +149,76 @@ Generated templates include:
 }
 ```
 
+
+### Extract Useful Information (Production Workflow)
+
+After generating a template, you can directly extract structured useful data from a URL list:
+
+```bash
+node scripts/extract-useful-content.js \
+  --template ./output/api-doc.json \
+  --urls-file ./input/urls.txt \
+  --output ./output/api-doc-result.jsonl \
+  --markdown-dir ./output/previews
+```
+
+Outputs:
+- `*.jsonl`: machine-readable extraction results (one JSON per page)
+- `*.review.json`: human-in-loop review list (low confidence / missing critical fields)
+- `previews/*.md` (optional): page-level markdown for manual verification
+
+You can improve extraction quality by adding `manualOverrides` into template JSON, for example:
+
+```json
+{
+  "manualOverrides": {
+    "title": "//h1/text()",
+    "sections": {
+      "xpath": "//main/section"
+    }
+  }
+}
+```
+
+
+### Human-in-loop Review Workspace (参数化全流程)
+
+你可以把“一批模板”统一跑到一个评审目录，让人集中查看并提反馈（全参数，不改代码）：
+
+```bash
+node scripts/run-review-workflow.js   --jobs ./input/review-jobs.json   --workspace-dir ./output/review-workspace   --max-pages-per-job 20   --headless true   --timeout 30000
+```
+
+`review-jobs.json` 示例：
+
+```json
+[
+  {
+    "name": "api-doc",
+    "template": "./output/templates/api-doc.json",
+    "urlsFile": "./input/api-doc-urls.txt"
+  }
+]
+```
+
+每个模板目录会输出：
+- `extracted.jsonl`：抽取结果
+- `review.json`：低置信度页面
+- `structure-comparison.json`：同类型页面共性结构（辅助发现稳定模板）
+- `feedback.template.json`：给人工填写的问题模板
+
+人工填写反馈后，可把建议 XPath 合并到模板 `manualOverrides`：
+
+```bash
+node scripts/apply-feedback-overrides.js   --template-file ./output/templates/api-doc.json   --feedback-file ./output/review-workspace/api-doc/feedback.json   --output-file ./output/templates-optimized/api-doc.json
+```
+
+若仅需比较同类型页面结构：
+
+```bash
+node scripts/compare-extracted-structures.js   --input ./output/review-workspace/api-doc/extracted.jsonl   --output ./output/review-workspace/api-doc/structure-comparison.json
+```
+
 ## Documentation
 
 - [Usage Guide](docs/USAGE_GUIDE.md) - Detailed usage instructions and examples

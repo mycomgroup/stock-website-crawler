@@ -2,6 +2,10 @@
  * XPathGenerator - Generates XPath extraction rules from structure analysis
  */
 export class XPathGenerator {
+  constructor(options = {}) {
+    this.frequencyThreshold = options.frequencyThreshold || 0.8;
+  }
+
   /**
    * Generate XPath rules from structure analysis
    * @param {Object} structure - Structure analysis result from StructureAnalyzer
@@ -29,12 +33,12 @@ export class XPathGenerator {
    */
   _generateTitleXPath(headings) {
     // Prioritize h1 with high frequency
-    if (headings.h1 && headings.h1.frequency >= 0.8) {
+    if (headings.h1 && headings.h1.frequency >= this.frequencyThreshold) {
       return `${headings.h1.xpath}/text()`;
     }
     
     // Fallback to h2
-    if (headings.h2 && headings.h2.frequency >= 0.8) {
+    if (headings.h2 && headings.h2.frequency >= this.frequencyThreshold) {
       return `${headings.h2.xpath}/text()`;
     }
     
@@ -74,7 +78,7 @@ export class XPathGenerator {
    * @private
    */
   _findContentContainer(structure) {
-    if (structure.mainContent && structure.mainContent.frequency >= 0.8) {
+    if (structure.mainContent && structure.mainContent.frequency >= this.frequencyThreshold) {
       return structure.mainContent.xpath;
     }
     
@@ -90,7 +94,7 @@ export class XPathGenerator {
    * @private
    */
   _generateRelativeXPath(headings, tag) {
-    if (headings[tag] && headings[tag].frequency >= 0.8) {
+    if (headings[tag] && headings[tag].frequency >= this.frequencyThreshold) {
       const xpath = headings[tag].xpath;
       // Convert to relative path
       return xpath.replace(/^\/\//, './/') + '/text()';
@@ -107,7 +111,7 @@ export class XPathGenerator {
    */
   _generateTableXPath(tables) {
     // Find most common table
-    const commonTable = tables.find(t => t.frequency >= 0.8);
+    const commonTable = tables.find(t => t.frequency >= this.frequencyThreshold);
     
     if (!commonTable) {
       return null;
@@ -128,7 +132,7 @@ export class XPathGenerator {
    * @private
    */
   _generateCodeXPath(codeBlocks) {
-    const commonCode = codeBlocks.find(c => c.frequency >= 0.8);
+    const commonCode = codeBlocks.find(c => c.frequency >= this.frequencyThreshold);
     
     if (!commonCode) {
       return null;
@@ -144,7 +148,7 @@ export class XPathGenerator {
    * @private
    */
   _generateListXPath(lists) {
-    const commonList = lists.find(l => l.frequency >= 0.8);
+    const commonList = lists.find(l => l.frequency >= this.frequencyThreshold);
     
     if (!commonList) {
       return null;
