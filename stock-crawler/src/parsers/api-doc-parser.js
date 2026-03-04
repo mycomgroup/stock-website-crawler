@@ -10,7 +10,11 @@ class ApiDocParser extends BaseParser {
    * @param {string} url - 页面URL
    * @returns {boolean} 是否匹配
    */
-  matches(url) {
+  matches(url, options = {}) {
+    if (options.classification?.type === 'api_doc_page') {
+      return true;
+    }
+
     return /\/api\/doc/.test(url);
   }
 

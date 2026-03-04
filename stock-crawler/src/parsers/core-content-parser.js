@@ -12,7 +12,11 @@ class CoreContentParser extends BaseParser {
    * @returns {boolean} 是否匹配
    */
   matches(url, options = {}) {
-    return options.parserMode === 'core-content';
+    if (options.parserMode === 'core-content') {
+      return true;
+    }
+
+    return options.classification?.type === 'article_page';
   }
 
   /**
