@@ -7,9 +7,15 @@
   "scripts": {
     "generate-docs": "node main.js generate-docs",
     "list": "node main.js list",
-    "search": "node main.js search"
+    "search": "node main.js search",
+    "interactive": "node main.js interactive",
+    "test": "node test/test-skill.js"
   },
-  "keywords": ["skill", "web-api", "crawler"],
+  "keywords": [
+    "skill",
+    "web-api",
+    "crawler"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {

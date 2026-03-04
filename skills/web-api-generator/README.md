@@ -27,6 +27,10 @@ node main.js call \
   --api=detail-sh \
   --param4=600519 \
   --param5=600519
+
+# 交互式调用（按 URL 类型推荐）
+node main.js interactive \
+  --patterns=../../stock-crawler/output/lixinger-crawler/url-patterns.json
 ```
 
 ### 方式 2: 使用独立脚本
@@ -66,6 +70,7 @@ skills/web-api-generator/
 2. **Pattern 匹配**: 根据关键词搜索 API
 3. **实时抓取**: 按需抓取页面数据
 4. **结构化输出**: 返回 JSON 格式
+5. **字段语义推导**: interactive 模式可调用大模型自动解释参数含义并给建议值
 
 ## 配置
 
@@ -74,6 +79,11 @@ skills/web-api-generator/
 ```
 LIXINGER_USERNAME=your_username
 LIXINGER_PASSWORD=your_password
+
+# 可选：用于字段语义推导
+LLM_API_KEY=your_api_key
+LLM_API_BASE_URL=https://api.openai.com/v1
+LLM_MODEL=gpt-4o-mini
 ```
 
 ## 示例
@@ -110,6 +120,23 @@ node main.js call \
 }
 ```
 
+
+## 新增：交互式 URL 类型调用
+
+当你只知道“URL 类型”或业务语义（如 `company/detail`、`fund`、`行业`），可以使用交互式模式：
+
+```bash
+node main.js interactive --patterns=../../stock-crawler/output/lixinger-crawler/url-patterns.json
+```
+
+交互流程：
+1. 输入 URL 类型/关键词。
+2. 系统推荐匹配 API 列表。
+3. 选择 API，逐个输入路径参数。
+4. 确认后立即调用并返回结构化 JSON。
+
+同时，`call` 命令已支持“路径参数名”和`paramX`混用，方便从文档到实际调用平滑过渡。
+
 ## 集成到其他项目
 
 ```javascript
@@ -128,4 +155,11 @@ const result = await client.callApi('detail-sh', {
 });
 
 console.log(result);
+```
+
+
+### 关闭大模型推导（回退规则模式）
+
+```bash
+node main.js interactive --useLLM=false
 ```
