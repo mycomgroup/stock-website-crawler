@@ -86,15 +86,28 @@ class GenericParser extends BaseParser {
       const horizontalRules = await this.extractHorizontalRules(page);
       const videos = await this.extractVideos(page);
       const audios = await this.extractAudios(page);
+
+      // 评估是否值得执行高成本的交互提取（点击、滚动、切换等）
+      const interactiveSummary = await this.evaluateInteractivePotential(page, {
+        initialParagraphCount: initialParagraphs.length,
+        initialListCount: initialLists.length
+      });
+
+      const shouldRunInteractiveExtraction = this.shouldRunInteractiveExtraction(interactiveSummary);
+      if (!shouldRunInteractiveExtraction && this.logger) {
+        this.logger.debug(`跳过高频交互提取：controls=${interactiveSummary.interactiveControlCount}, contentScore=${interactiveSummary.contentScore}`);
+      }
       
       // 提取并保存图表（Canvas/SVG）
       const charts = await this.extractAndSaveCharts(page, options.filepath, options.pagesDir);
       
-      // 1. 先点击所有"更多/展开"按钮，展开折叠内容
-      await this.clickAllExpandButtons(page);
-      
-      // 2. 处理无限滚动加载更多内容（优化版）
-      await this.handleInfiniteScrollEnhanced(page);
+      if (shouldRunInteractiveExtraction) {
+        // 1. 先点击所有"更多/展开"按钮，展开折叠内容
+        await this.clickAllExpandButtons(page);
+        
+        // 2. 处理无限滚动加载更多内容（优化版）
+        await this.handleInfiniteScrollEnhanced(page);
+      }
       
       // 3. 提取运行时图表数据（ECharts/Highcharts）
       const chartData = await this.extractChartData(page);
@@ -106,10 +119,14 @@ class GenericParser extends BaseParser {
       const tables = await this.extractTablesWithPaginationAndVirtual(page, options.onDataChunk);
       
       // 尝试提取Tab页和下拉框内容（会检测数据变化）
-      const tabsAndDropdowns = await this.extractTabsAndDropdowns(page, options.filepath, options.onDataChunk);
+      const tabsAndDropdowns = shouldRunInteractiveExtraction
+        ? await this.extractTabsAndDropdowns(page, options.filepath, options.onDataChunk)
+        : [];
 
       // 尝试处理时间筛选（如果页面有时间筛选控件）
-      const dateFilters = await this.findAndProcessDateFilters(page, options.filepath, options.onDataChunk);
+      const dateFilters = shouldRunInteractiveExtraction
+        ? await this.findAndProcessDateFilters(page, options.filepath, options.onDataChunk)
+        : [];
 
       // 如果没有提取到表格，但有API数据，尝试从API数据生成表格
       if (tables.length === 0 && apiData.length > 0) {
@@ -159,6 +176,82 @@ class GenericParser extends BaseParser {
         apiData: 0
       };
     }
+  }
+
+  /**
+   * 评估页面是否存在值得交互探索的控件
+   * @param {Page} page - Playwright页面对象
+   * @param {Object} initialData - 初始内容统计
+   * @returns {Promise<Object>} 评估结果
+   */
+  async evaluateInteractivePotential(page, initialData = {}) {
+    try {
+      const pageSignals = await page.evaluate(() => {
+        const interactiveSelector = [
+          '[role="tab"]',
+          'select',
+          'input[type="date"]',
+          'button',
+          'a',
+          '[class*="dropdown"]',
+          '[class*="tab"]',
+          '[class*="expand"]',
+          '[class*="more"]'
+        ].join(',');
+
+        const controls = Array.from(document.querySelectorAll(interactiveSelector));
+        const keywordControls = controls.filter(el => {
+          const text = (el.textContent || '').trim().toLowerCase();
+          return /(展开|更多|加载更多|tab|筛选|查询|历史|明细|more|expand|filter|query|date)/i.test(text);
+        });
+
+        return {
+          tableCount: document.querySelectorAll('table').length,
+          interactiveControlCount: controls.length,
+          keywordControlCount: keywordControls.length,
+          bodyTextLength: (document.body?.innerText || '').trim().length
+        };
+      });
+
+      const contentScore =
+        (initialData.initialParagraphCount || 0) +
+        (initialData.initialListCount || 0) +
+        pageSignals.tableCount;
+
+      return {
+        ...pageSignals,
+        contentScore
+      };
+    } catch (error) {
+      return {
+        tableCount: 0,
+        interactiveControlCount: 0,
+        keywordControlCount: 0,
+        bodyTextLength: 0,
+        contentScore: 0
+      };
+    }
+  }
+
+  /**
+   * 是否需要执行高成本交互提取
+   * @param {Object} summary - 页面信号
+   * @returns {boolean}
+   */
+  shouldRunInteractiveExtraction(summary = {}) {
+    const {
+      interactiveControlCount = 0,
+      keywordControlCount = 0,
+      contentScore = 0,
+      bodyTextLength = 0
+    } = summary;
+
+    if (keywordControlCount >= 2) return true;
+    if (interactiveControlCount >= 20 && contentScore < 8) return true;
+    if (contentScore >= 12 && keywordControlCount === 0) return false;
+    if (bodyTextLength > 15000 && keywordControlCount === 0) return false;
+
+    return keywordControlCount > 0;
   }
 
   /**
@@ -1153,8 +1246,9 @@ class GenericParser extends BaseParser {
         return tabs;
       }
 
-      // 点击每个tab并检查数据变化
-      for (const btn of tabButtons) {
+      // 点击每个tab并检查数据变化（限制尝试次数，避免无效操作）
+      const maxTabAttempts = 6;
+      for (const btn of tabButtons.slice(0, maxTabAttempts)) {
         try {
           if (this.logger) {
             this.logger.debug(`尝试Tab: "${btn.text.substring(0, 30)}..."`);
@@ -1327,8 +1421,10 @@ class GenericParser extends BaseParser {
         console.log(`  检测到 ${dropdownCount} 个下拉框，使用标准遍历模式`);
       }
 
+      const maxDropdownsToProcess = 2;
+
       // 处理每个下拉框
-      for (const dropdown of dropdownElements) {
+      for (const dropdown of dropdownElements.slice(0, maxDropdownsToProcess)) {
         try {
           const dropdownData = {
             type: 'dropdown',
@@ -1336,8 +1432,10 @@ class GenericParser extends BaseParser {
             options: []
           };
           
+          const maxOptionsPerDropdown = 5;
+
           // 尝试每个选项
-          for (const option of dropdown.options) {
+          for (const option of dropdown.options.slice(0, maxOptionsPerDropdown)) {
             try {
               // 选择选项
               await page.evaluate((args) => {
@@ -1477,8 +1575,8 @@ class GenericParser extends BaseParser {
         return results;
       }
       
-      // 处理每个日期筛选控件
-      for (const control of dateControls) {
+      // 处理每个日期筛选控件（通常一个有效控件即可）
+      for (const control of dateControls.slice(0, 1)) {
         try {
           await this.processDateRangeFilter(page, control, filepath, onDataChunk);
           results.push(control);
@@ -1514,7 +1612,7 @@ class GenericParser extends BaseParser {
       { label: '最近1年', startYear: today.getFullYear() - 1 }
     ];
     
-    for (const range of dateRanges) {
+    for (const range of dateRanges.slice(0, 2)) {
       try {
         const startDate = `${range.startYear}-01-01`;
         
@@ -2283,7 +2381,7 @@ class GenericParser extends BaseParser {
       
       let totalClicked = 0;
       let clicked = true;
-      let maxClicks = 10; // 防止无限循环和无意义的卡死
+      let maxClicks = 3; // 防止无意义的频繁点击
       
       console.log('  查找并点击展开按钮...');
       
@@ -2365,7 +2463,7 @@ class GenericParser extends BaseParser {
       // 1. 识别滚动容器
       const scrollContainer = await this.findScrollContainer(page);
       
-      const maxScrolls = 30;
+      const maxScrolls = 8;
       const scrollTimeout = 60000;
       const startTime = Date.now();
       
