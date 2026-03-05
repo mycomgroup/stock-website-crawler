@@ -9,6 +9,9 @@ import Logger from './logger.js';
 import StatsTracker from './stats-tracker.js';
 import PageStorage from './storage/page-storage.js';
 import LLMDataExtractor from './llm-data-extractor.js';
+import CrawlJobService from './application/crawl-job-service.js';
+import UrlProcessingService from './application/url-processing-service.js';
+import MetricsAdapter from './infrastructure/metrics-adapter.js';
 
 class CrawlerMain {
   constructor() {
@@ -24,6 +27,9 @@ class CrawlerMain {
     this.pageStorage = null;
     this.llmDataExtractor = null;
     this.isLoggedIn = false;
+    this.crawlJobService = null;
+    this.urlProcessingService = null;
+    this.metricsAdapter = null;
   }
 
   /**
@@ -87,6 +93,17 @@ class CrawlerMain {
     this.pageStorage = new PageStorage(this.config, this.logger);
     await this.pageStorage.initialize(this.projectDir);
     this.llmDataExtractor = new LLMDataExtractor(this.config.llmExtraction || {}, this.logger);
+    this.crawlJobService = new CrawlJobService({
+      linkManager: this.linkManager,
+      config: this.config,
+      logger: this.logger
+    });
+    this.urlProcessingService = new UrlProcessingService(
+      this.linkManager,
+      this.logger,
+      this.config.crawler.maxRetries || 3
+    );
+    this.metricsAdapter = new MetricsAdapter(this.logger);
 
     this.logger.info(`Project directory: ${this.projectDir}`);
     this.logger.info(`Pages directory: ${this.pagesDir}`);
@@ -122,13 +139,12 @@ class CrawlerMain {
       }
 
       const batchSize = this.config.crawler.batchSize || 20;
-      const unfetchedLinks = this.linkManager.getUnfetchedLinks();
-      const linksToProcess = this.buildLinksToProcess(batchSize, unfetchedLinks);
+      const linksToProcess = this.buildLinksToProcess(batchSize);
       
       this.statsTracker.setTotalUrls(this.linkManager.links.length);
       let linksDirty = false;
       
-      const totalUnfetched = unfetchedLinks.length + (this.config.seedUrls?.length || 0);
+      const totalUnfetched = this.linkManager.getUnfetchedLinks().length + (this.config.seedUrls?.length || 0);
       this.logger.info(`Found ${totalUnfetched} URLs to process (including ${this.config.seedUrls?.length || 0} seed URLs), processing ${linksToProcess.length} URLs in this batch`);
 
       // Process each URL
@@ -137,7 +153,7 @@ class CrawlerMain {
         this.logProgress(i + 1, linksToProcess.length);
         
         // Mark as fetching
-        this.linkManager.updateLinkStatus(link.url, 'fetching');
+        this.urlProcessingService.markFetching(link.url);
         linksDirty = true;
         
         const success = await this.processUrl(link.url);
@@ -185,77 +201,15 @@ class CrawlerMain {
     }
   }
 
-  buildLinksToProcess(batchSize, unfetchedLinks) {
-    const linksToProcess = this.collectSeedLinks();
-    const sortedUnfetchedLinks = this.sortLinksByPriority(unfetchedLinks);
-
-    for (const link of sortedUnfetchedLinks) {
-      if (!linksToProcess.find(item => item.url === link.url)) {
-        linksToProcess.push(link);
-      }
+  buildLinksToProcess(batchSize) {
+    if (!this.crawlJobService) {
+      this.crawlJobService = new CrawlJobService({
+        linkManager: this.linkManager,
+        config: this.config,
+        logger: this.logger || console
+      });
     }
-
-    return linksToProcess.slice(0, batchSize);
-  }
-
-  collectSeedLinks() {
-    const seedLinks = [];
-    if (!this.config.seedUrls || this.config.seedUrls.length === 0) {
-      return seedLinks;
-    }
-
-    for (const seedUrl of this.config.seedUrls) {
-      const existingLink = this.linkManager.links.find(link => link.url === seedUrl);
-      if (existingLink) {
-        // 仅将可抓取状态的种子链接加入本轮处理，避免已完成页面被重复抓取
-        if (existingLink.status === 'unfetched') {
-          seedLinks.push(existingLink);
-        }
-        continue;
-      }
-
-      this.linkManager.addLink(seedUrl, 'unfetched');
-      seedLinks.push({ url: seedUrl, status: 'unfetched' });
-    }
-
-    return seedLinks;
-  }
-
-  sortLinksByPriority(unfetchedLinks) {
-    return [...unfetchedLinks].sort((a, b) => {
-      const aDepth = this.getPathDepth(a.url);
-      const bDepth = this.getPathDepth(b.url);
-      if (aDepth !== bDepth) {
-        return aDepth - bDepth;
-      }
-
-      const aHasNumericSegment = /\/\d+(?:\/|$)/.test(a.url);
-      const bHasNumericSegment = /\/\d+(?:\/|$)/.test(b.url);
-      if (aHasNumericSegment !== bHasNumericSegment) {
-        return aHasNumericSegment ? -1 : 1;
-      }
-
-      const aHasParams = this.hasQueryParams(a.url);
-      const bHasParams = this.hasQueryParams(b.url);
-      if (aHasParams !== bHasParams) {
-        return aHasParams ? 1 : -1;
-      }
-
-      return a.url.length - b.url.length;
-    });
-  }
-
-  getPathDepth(url) {
-    try {
-      const urlObj = new URL(url);
-      return (urlObj.pathname.match(/\//g) || []).length;
-    } catch {
-      return (url.match(/\//g) || []).length;
-    }
-  }
-
-  hasQueryParams(url) {
-    return url.includes('?') || url.includes('&') || url.includes('=');
+    return this.crawlJobService.buildLinksToProcess(batchSize);
   }
 
   async discoverAndStoreLinks(page) {
@@ -482,7 +436,6 @@ class CrawlerMain {
    * @returns {boolean} Success status
    */
   async processUrl(url) {
-    const maxRetries = this.config.crawler.maxRetries || 3;
     const startTime = Date.now(); // 记录开始时间
 
     try {
@@ -834,7 +787,8 @@ ${JSON.stringify(pageData.llmExtraction, null, 2)}
       await page.close();
 
       // Update link status to fetched
-      this.linkManager.updateLinkStatus(url, 'fetched');
+      this.urlProcessingService.markFetched(url);
+      this.metricsAdapter.increment('crawl_success_total');
 
       return true;
     } catch (error) {
@@ -842,18 +796,8 @@ ${JSON.stringify(pageData.llmExtraction, null, 2)}
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
       this.logError(url, error, duration);
 
-      // Increment retry count
-      const retryCount = this.linkManager.incrementRetryCount(url);
-      
-      if (retryCount < maxRetries) {
-        // Not reached max retries, set back to unfetched for next run
-        this.logger.warn(`Retry ${retryCount}/${maxRetries}, setting back to unfetched`);
-        this.linkManager.updateLinkStatus(url, 'unfetched');
-      } else {
-        // Reached max retries, mark as failed
-        this.logger.error(`Failed after ${maxRetries} retries, marking as failed`);
-        this.linkManager.updateLinkStatus(url, 'failed', error.message);
-      }
+      this.urlProcessingService.handleFailure(url, error);
+      this.metricsAdapter.increment('crawl_failed_total');
       
       return false;
     }
