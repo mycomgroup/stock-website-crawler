@@ -123,6 +123,7 @@ class CrawlerMain {
       const linksToProcess = this.buildLinksToProcess(batchSize, unfetchedLinks);
       
       this.statsTracker.setTotalUrls(this.linkManager.links.length);
+      let linksDirty = false;
       
       const totalUnfetched = unfetchedLinks.length + (this.config.seedUrls?.length || 0);
       this.logger.info(`Found ${totalUnfetched} URLs to process (including ${this.config.seedUrls?.length || 0} seed URLs), processing ${linksToProcess.length} URLs in this batch`);
@@ -134,7 +135,7 @@ class CrawlerMain {
         
         // Mark as fetching
         this.linkManager.updateLinkStatus(link.url, 'fetching');
-        this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
+        linksDirty = true;
         
         const success = await this.processUrl(link.url);
         
@@ -148,6 +149,10 @@ class CrawlerMain {
         if (i < linksToProcess.length - 1) {
           await this.sleep(this.config.crawler.waitBetweenRequests);
         }
+      }
+
+      if (linksDirty) {
+        this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
       }
 
       // Close browser
@@ -167,6 +172,11 @@ class CrawlerMain {
 
       this.logger.info('Crawling completed successfully');
     } catch (error) {
+      try {
+        this.linkManager?.saveLinks(this.linksFile, this.linkManager.links);
+      } catch (saveError) {
+        this.logger.error('Failed to persist links after fatal error', saveError);
+      }
       this.logger.error('Fatal error during crawling', error);
       throw error;
     }
@@ -258,7 +268,6 @@ class CrawlerMain {
       this.linkManager.addLink(link, 'unfetched');
     });
     this.statsTracker.addNewLinks(newLinks.length);
-    this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
   }
 
   getLinkDiscoveryOptions() {
@@ -800,7 +809,6 @@ class CrawlerMain {
 
       // Update link status to fetched
       this.linkManager.updateLinkStatus(url, 'fetched');
-      this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
 
       return true;
     } catch (error) {
@@ -821,7 +829,6 @@ class CrawlerMain {
         this.linkManager.updateLinkStatus(url, 'failed', error.message);
       }
       
-      this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
       return false;
     }
   }

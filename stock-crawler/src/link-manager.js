@@ -7,6 +7,14 @@ import { isValidUrl } from './url-utils.js';
 class LinkManager {
   constructor() {
     this.links = [];
+    this.linkIndex = new Map();
+  }
+
+  rebuildIndex() {
+    this.linkIndex = new Map();
+    this.links.forEach((link, index) => {
+      this.linkIndex.set(link.url, index);
+    });
   }
 
   /**
@@ -18,6 +26,7 @@ class LinkManager {
     // 如果文件不存在，返回空数组
     if (!fs.existsSync(filePath)) {
       this.links = [];
+      this.rebuildIndex();
       return this.links;
     }
 
@@ -41,6 +50,8 @@ class LinkManager {
           };
         }
       });
+
+      this.rebuildIndex();
 
       return this.links;
     } catch (error) {
@@ -79,8 +90,7 @@ class LinkManager {
     const urlWithoutAnchor = url.split('#')[0];
     
     // 检查链接是否已存在
-    const existingLink = this.links.find(link => link.url === urlWithoutAnchor);
-    if (existingLink) {
+    if (this.linkIndex.has(urlWithoutAnchor)) {
       return; // 已存在，不添加
     }
 
@@ -94,6 +104,7 @@ class LinkManager {
     };
 
     this.links.push(newLink);
+    this.linkIndex.set(urlWithoutAnchor, this.links.length - 1);
   }
 
   /**
@@ -106,7 +117,8 @@ class LinkManager {
     // 去掉URL中的锚点（#后面的部分）
     const urlWithoutAnchor = url.split('#')[0];
     
-    const link = this.links.find(l => l.url === urlWithoutAnchor);
+    const linkIndex = this.linkIndex.get(urlWithoutAnchor);
+    const link = linkIndex !== undefined ? this.links[linkIndex] : null;
     if (link) {
       link.status = status;
       if (status === 'fetched') {
@@ -139,7 +151,8 @@ class LinkManager {
    */
   incrementRetryCount(url) {
     const urlWithoutAnchor = url.split('#')[0];
-    const link = this.links.find(l => l.url === urlWithoutAnchor);
+    const linkIndex = this.linkIndex.get(urlWithoutAnchor);
+    const link = linkIndex !== undefined ? this.links[linkIndex] : null;
     if (link) {
       link.retryCount++;
       return link.retryCount;
@@ -163,6 +176,7 @@ class LinkManager {
     this.links = Array.from(uniqueLinksMap.values()).sort((a, b) => {
       return a.url.localeCompare(b.url);
     });
+    this.rebuildIndex();
   }
 }
 
