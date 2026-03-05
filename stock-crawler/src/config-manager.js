@@ -120,6 +120,22 @@ class ConfigManager {
       }
     }
 
+
+    // 验证 llmExtraction（可选）
+    if ('llmExtraction' in config) {
+      if (typeof config.llmExtraction !== 'object' || Array.isArray(config.llmExtraction)) {
+        throw new Error('配置字段 llmExtraction 必须是对象类型');
+      }
+
+      if ('enabled' in config.llmExtraction && typeof config.llmExtraction.enabled !== 'boolean') {
+        throw new Error('配置字段 llmExtraction.enabled 必须是布尔类型');
+      }
+
+      if ('maxRecords' in config.llmExtraction && (!Number.isInteger(config.llmExtraction.maxRecords) || config.llmExtraction.maxRecords <= 0)) {
+        throw new Error('配置字段 llmExtraction.maxRecords 必须是正整数');
+      }
+    }
+
     // 验证 linkDiscovery（可选）
     if ('linkDiscovery' in config) {
       if (typeof config.linkDiscovery !== 'object' || Array.isArray(config.linkDiscovery)) {
