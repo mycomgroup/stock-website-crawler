@@ -8,6 +8,7 @@ import MarkdownGenerator from './markdown-generator.js';
 import Logger from './logger.js';
 import StatsTracker from './stats-tracker.js';
 import PageStorage from './storage/page-storage.js';
+import LLMDataExtractor from './llm-data-extractor.js';
 
 class CrawlerMain {
   constructor() {
@@ -21,6 +22,7 @@ class CrawlerMain {
     this.logger = null;
     this.statsTracker = null;
     this.pageStorage = null;
+    this.llmDataExtractor = null;
     this.isLoggedIn = false;
   }
 
@@ -84,6 +86,7 @@ class CrawlerMain {
     this.markdownGenerator = new MarkdownGenerator();
     this.pageStorage = new PageStorage(this.config, this.logger);
     await this.pageStorage.initialize(this.projectDir);
+    this.llmDataExtractor = new LLMDataExtractor(this.config.llmExtraction || {}, this.logger);
 
     this.logger.info(`Project directory: ${this.projectDir}`);
     this.logger.info(`Pages directory: ${this.pagesDir}`);
@@ -755,6 +758,14 @@ class CrawlerMain {
       });
       this.logger.info(`Parsed page: ${pageData.title || 'Untitled'}`);
 
+      if (this.llmDataExtractor?.isEnabled()) {
+        const llmExtraction = await this.llmDataExtractor.extract(pageData, { url });
+        if (llmExtraction) {
+          pageData.llmExtraction = llmExtraction;
+          this.logger.info(`LLM数据抽取完成: ${llmExtraction.records.length} 条记录`);
+        }
+      }
+
       // 大表格页面：仅保存为CSV
       if (pageData.type === 'table-only') {
         const savedCsvFiles = await this.saveTablesAsCsv(pageData, url);
@@ -779,6 +790,21 @@ class CrawlerMain {
           filename,
           this.pagesDir
         );
+      }
+
+
+      if (pageData.llmExtraction && filepath) {
+        const fs = await import('fs');
+        const llmSection = `
+## LLM结构化抽取
+
+模型: ${pageData.llmExtraction.model}
+
+\`\`\`json
+${JSON.stringify(pageData.llmExtraction, null, 2)}
+\`\`\`
+`;
+        fs.appendFileSync(filepath, llmSection, 'utf-8');
       }
 
       if (pageData.type !== 'table-only' && filepath) {
