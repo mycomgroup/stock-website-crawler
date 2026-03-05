@@ -187,3 +187,4 @@ npx playwright install
 - [README.md](README.md) - 完整文档
 - [doc/LOGIN_FLOW.md](doc/LOGIN_FLOW.md) - 登录流程说明
 - [doc/IMPLEMENTATION_SUMMARY.md](doc/IMPLEMENTATION_SUMMARY.md) - 实现总结
+- [doc/SYSTEMATIC_TEST_PLAN.md](doc/SYSTEMATIC_TEST_PLAN.md) - 大规模系统化测试计划
