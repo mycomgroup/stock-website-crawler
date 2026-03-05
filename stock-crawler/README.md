@@ -54,6 +54,10 @@ cd stock-crawler
 npm install
 ```
 
+## Documentation
+
+- [API 文档全量抓取与本地存储优化指南](doc/API_DOC_CRAWL_OPTIMIZATION_GUIDE.md)
+
 ## Dependencies
 
 - **playwright**: Browser automation for crawling dynamic websites
