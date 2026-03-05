@@ -1,8 +1,7 @@
 class CrawlJobService {
-  constructor({ linkManager, config, logger }) {
+  constructor({ linkManager, config }) {
     this.linkManager = linkManager;
     this.config = config;
-    this.logger = logger;
   }
 
   buildLinksToProcess(batchSize) {
