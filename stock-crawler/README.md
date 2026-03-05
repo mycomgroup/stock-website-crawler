@@ -38,7 +38,6 @@ stock-crawler/
 │   ├── application/       # Application orchestration services
 │   ├── domain/            # Domain models and state machine
 │   ├── infrastructure/    # Infrastructure adapters
-│   ├── plugins/           # Plugin contracts
 │   └── url-utils.js       # URL utilities
 ├── config/                # Configuration files
 │   ├── example.json       # Example configuration
@@ -60,6 +59,7 @@ npm install
 
 ## Documentation
 
+- [并行开发10模块迭代计划](doc/PARALLEL_WORKSTREAMS_10_MODULES.md)
 - [架构评估与升级路线图](doc/ARCHITECTURE_REVIEW_AND_ROADMAP.md)
 - [API 文档全量抓取与本地存储优化指南](doc/API_DOC_CRAWL_OPTIMIZATION_GUIDE.md)
 

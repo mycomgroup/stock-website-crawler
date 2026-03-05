@@ -95,8 +95,7 @@ class CrawlerMain {
     this.llmDataExtractor = new LLMDataExtractor(this.config.llmExtraction || {}, this.logger);
     this.crawlJobService = new CrawlJobService({
       linkManager: this.linkManager,
-      config: this.config,
-      logger: this.logger
+      config: this.config
     });
     this.urlProcessingService = new UrlProcessingService(
       this.linkManager,
@@ -205,10 +204,10 @@ class CrawlerMain {
     if (!this.crawlJobService) {
       this.crawlJobService = new CrawlJobService({
         linkManager: this.linkManager,
-        config: this.config,
-        logger: this.logger || console
+        config: this.config
       });
     }
+
     return this.crawlJobService.buildLinksToProcess(batchSize);
   }
 
@@ -886,6 +885,11 @@ ${JSON.stringify(pageData.llmExtraction, null, 2)}
     this.logger.info(`New Links Found: ${stats.newLinksFound}`);
     this.logger.info(`Files Generated: ${stats.filesGenerated}`);
     this.logger.info(`Duration: ${stats.duration}s`);
+
+    const metrics = this.metricsAdapter.snapshot();
+    if (Object.keys(metrics).length > 0) {
+      this.logger.info(`Metrics: ${JSON.stringify(metrics)}`);
+    }
   }
 
   /**
