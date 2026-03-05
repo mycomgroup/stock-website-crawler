@@ -323,6 +323,8 @@ The project includes both unit tests and property-based tests:
 - **Unit Tests**: Test specific examples and edge cases
 - **Property Tests**: Verify universal properties across all inputs
 
+For large-scale validation workflows, see `doc/SYSTEMATIC_TEST_PLAN.md`.
+
 ## Development
 
 ### Module Overview
