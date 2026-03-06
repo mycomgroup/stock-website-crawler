@@ -1,17 +1,7 @@
-import ConfigManager from './config-manager.js';
-import LinkManager from './link-manager.js';
-import BrowserManager from './browser-manager.js';
-import LoginHandler from './login-handler.js';
-import LinkFinder from './link-finder.js';
-import PageParser from './page-parser.js';
-import MarkdownGenerator from './markdown-generator.js';
-import Logger from './logger.js';
-import StatsTracker from './stats-tracker.js';
-import PageStorage from './storage/page-storage.js';
-import LLMDataExtractor from './llm-data-extractor.js';
 import CrawlJobService from './application/crawl-job-service.js';
-import UrlProcessingService from './application/url-processing-service.js';
-import MetricsAdapter from './infrastructure/metrics-adapter.js';
+import CrawlerBootstrapService from './application/crawler-bootstrap-service.js';
+import LoginOrchestrationService from './application/login-orchestration-service.js';
+import PageOutputService from './application/page-output-service.js';
 
 class CrawlerMain {
   constructor() {
@@ -30,6 +20,9 @@ class CrawlerMain {
     this.crawlJobService = null;
     this.urlProcessingService = null;
     this.metricsAdapter = null;
+    this.bootstrapService = new CrawlerBootstrapService();
+    this.loginOrchestrationService = null;
+    this.pageOutputService = null;
   }
 
   /**
@@ -37,77 +30,20 @@ class CrawlerMain {
    * @param {string} configPath - Path to configuration file
    */
   async initialize(configPath) {
-    // Load configuration first
-    const configManager = new ConfigManager();
-    this.config = configManager.loadConfig(configPath);
-    
-    // Setup project directory structure
-    // output/project-name/
-    this.projectDir = `${this.config.output.directory}/${this.config.name}`;
-    this.logsDir = `${this.projectDir}/logs`;
-    this.linksFile = `${this.projectDir}/links.txt`;
-    
-    // Create directories if they don't exist
-    const fs = await import('fs');
-    if (!fs.existsSync(this.projectDir)) {
-      fs.mkdirSync(this.projectDir, { recursive: true });
-    }
-    if (!fs.existsSync(this.logsDir)) {
-      fs.mkdirSync(this.logsDir, { recursive: true });
-    }
-    
-    // Initialize logger with project-specific log directory
-    this.logger = new Logger(this.logsDir, this.config.crawler.logLevel || 'INFO');
-    this.statsTracker = new StatsTracker();
-    
-    // Create pages directory with timestamp suffix matching log file
-    const timestamp = this.logger.getTimestamp();
-    this.pagesDir = `${this.projectDir}/pages-${timestamp}`;
-    if (!fs.existsSync(this.pagesDir)) {
-      fs.mkdirSync(this.pagesDir, { recursive: true });
-    }
-    
-    this.logger.info(`Loaded configuration: ${this.config.name}`);
-
-    // Initialize link manager
-    this.linkManager = new LinkManager();
-    this.linkManager.loadLinks(this.linksFile);
-    this.logger.info(`Loaded ${this.linkManager.links.length} links from ${this.linksFile}`);
-    
-    // If no links loaded, initialize with seed URLs
-    if (this.linkManager.links.length === 0 && this.config.seedUrls && this.config.seedUrls.length > 0) {
-      this.logger.info(`Initializing with ${this.config.seedUrls.length} seed URLs`);
-      this.config.seedUrls.forEach(url => {
-        // Seed URLs must be marked as unfetched so they can enter normal processing flow
-        this.linkManager.addLink(url, 'unfetched');
-      });
-      this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
-    }
-
-    // Initialize other modules
-    this.browserManager = new BrowserManager();
-    this.loginHandler = new LoginHandler();
-    this.linkFinder = new LinkFinder();
-    this.pageParser = new PageParser();
-    this.markdownGenerator = new MarkdownGenerator();
-    this.pageStorage = new PageStorage(this.config, this.logger);
-    await this.pageStorage.initialize(this.projectDir);
-    this.llmDataExtractor = new LLMDataExtractor(this.config.llmExtraction || {}, this.logger);
-    this.crawlJobService = new CrawlJobService({
-      linkManager: this.linkManager,
+    const initialized = await this.bootstrapService.initialize(configPath);
+    Object.assign(this, initialized);
+    this.loginOrchestrationService = new LoginOrchestrationService({
+      browserManager: this.browserManager,
+      loginHandler: this.loginHandler,
+      logger: this.logger,
       config: this.config
     });
-    this.urlProcessingService = new UrlProcessingService(
-      this.linkManager,
-      this.logger,
-      this.config.crawler.maxRetries || 3
-    );
-    this.metricsAdapter = new MetricsAdapter(this.logger);
-
-    this.logger.info(`Project directory: ${this.projectDir}`);
-    this.logger.info(`Pages directory: ${this.pagesDir}`);
-    this.logger.info(`Logs directory: ${this.logsDir}`);
-    this.logger.info('Crawler initialized successfully');
+    this.pageOutputService = new PageOutputService({
+      logger: this.logger,
+      markdownGenerator: this.markdownGenerator,
+      pageStorage: this.pageStorage,
+      pagesDir: this.pagesDir
+    });
   }
 
   /**
@@ -240,193 +176,7 @@ class CrawlerMain {
    * @returns {Promise<boolean>} Success status
    */
   async attemptLogin() {
-    let page = null;
-    try {
-      page = await this.browserManager.newPage();
-      
-      // Strategy 1: Try the configured login URL or first seed URL
-      const targetUrl = this.config.login.loginUrl || this.config.seedUrls[0];
-      this.logger.info(`Strategy 1: Visiting target URL: ${targetUrl}`);
-      
-      await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout);
-      await page.waitForTimeout(3000); // Wait for any redirects or dynamic content
-      
-      // Check current URL - might have been redirected to login page
-      const currentUrl = page.url();
-      this.logger.info(`Current URL after navigation: ${currentUrl}`);
-      
-      // Check if we're on a login page or if there's a password field
-      const needsLogin = currentUrl.includes('login') || (await page.locator('input[type="password"]').count()) > 0;
-      
-      if (!needsLogin) {
-        // Try to find and click login link
-        this.logger.info('Not on login page, looking for login link...');
-        const loginLink = page.locator('text=登录').first();
-        if (await loginLink.count() > 0) {
-          this.logger.info('Found login link, clicking...');
-          await loginLink.click();
-          await page.waitForTimeout(2000);
-        }
-      }
-      
-      // Now check if we need to login
-      const hasPasswordField = await page.locator('input[type="password"]').count() > 0;
-      
-      if (hasPasswordField) {
-        this.logger.info('Login form detected, attempting to log in...');
-        const success = await this.loginHandler.login(page, {
-          username: this.config.login.username,
-          password: this.config.login.password
-        });
-        
-        if (success) {
-          this.logger.info('Login successful');
-          await page.waitForTimeout(2000);
-          await page.close();
-          return true;
-        } else {
-          this.logger.warn('Login failed on target page');
-        }
-      } else {
-        this.logger.info('No login form found, may already be logged in or page is accessible');
-        await page.close();
-        return true;
-      }
-      
-      // Strategy 2: Try to find login link on the main page
-      this.logger.info('Strategy 2: Looking for login link on main page');
-      const mainUrl = this.config.seedUrls[0];
-      
-      // Reuse the same page if still open, otherwise create new one
-      if (!page || page.isClosed()) {
-        page = await this.browserManager.newPage();
-      }
-      
-      await this.browserManager.goto(page, mainUrl, this.config.crawler.timeout);
-      await page.waitForTimeout(2000);
-      
-      // Check if already needs login on this page
-      const needsLoginNow = await this.loginHandler.needsLogin(page);
-      if (needsLoginNow) {
-        this.logger.info('Login form found on main page');
-        const success = await this.loginHandler.login(page, {
-          username: this.config.login.username,
-          password: this.config.login.password
-        });
-        
-        if (success) {
-          this.logger.info('Login successful');
-          await page.waitForTimeout(2000);
-          await page.close();
-          return true;
-        }
-      }
-      
-      // Look for login links using locator API
-      const loginLinkSelectors = [
-        'text=登录',
-        'text=登錄',
-        'text=Login',
-        'text=Sign in',
-        'a[href*="login"]',
-        'a[href*="signin"]',
-        'button:has-text("登录")',
-        'button:has-text("登錄")'
-      ];
-      
-      for (const selector of loginLinkSelectors) {
-        try {
-          const loginLink = page.locator(selector).first();
-          const count = await loginLink.count();
-          if (count > 0) {
-            this.logger.info(`Found login link with selector: ${selector}`);
-            await loginLink.click();
-            await page.waitForTimeout(2000);
-            
-            const needsLogin = await this.loginHandler.needsLogin(page);
-            if (needsLogin) {
-              this.logger.info('Login form appeared after clicking link');
-              const success = await this.loginHandler.login(page, {
-                username: this.config.login.username,
-                password: this.config.login.password
-              });
-              
-              if (success) {
-                this.logger.info('Login successful');
-                await page.waitForTimeout(2000);
-                await page.close();
-                return true;
-              }
-            }
-          }
-        } catch (error) {
-          // Continue to next selector
-          continue;
-        }
-      }
-      
-      // Strategy 3: Try common login URL patterns
-      this.logger.info('Strategy 3: Trying common login URL patterns');
-      const baseUrl = new URL(mainUrl).origin;
-      const commonLoginPaths = [
-        '/login',
-        '/signin',
-        '/user/login',
-        '/account/login',
-        '/auth/login',
-        '/member/login'
-      ];
-      
-      for (const path of commonLoginPaths) {
-        try {
-          const loginUrl = baseUrl + path;
-          this.logger.info(`Trying: ${loginUrl}`);
-          
-          // Reuse the same page if still open
-          if (!page || page.isClosed()) {
-            page = await this.browserManager.newPage();
-          }
-          
-          await this.browserManager.goto(page, loginUrl, this.config.crawler.timeout);
-          await page.waitForTimeout(2000);
-          
-          const needsLogin = await this.loginHandler.needsLogin(page);
-          if (needsLogin) {
-            this.logger.info(`Found login form at: ${loginUrl}`);
-            const success = await this.loginHandler.login(page, {
-              username: this.config.login.username,
-              password: this.config.login.password
-            });
-            
-            if (success) {
-              this.logger.info('Login successful');
-              await page.waitForTimeout(2000);
-              await page.close();
-              return true;
-            }
-          }
-        } catch (error) {
-          // Continue to next path
-          continue;
-        }
-      }
-      
-      if (page && !page.isClosed()) {
-        await page.close();
-      }
-      this.logger.warn('All login strategies failed');
-      return false;
-    } catch (error) {
-      this.logger.error('Error during login attempt', error);
-      if (page && !page.isClosed()) {
-        try {
-          await page.close();
-        } catch (e) {
-          // Ignore close errors
-        }
-      }
-      return false;
-    }
+    return this.loginOrchestrationService.attemptLogin();
   }
 
   /**
@@ -435,22 +185,18 @@ class CrawlerMain {
    * @returns {boolean} Success status
    */
   async processUrl(url) {
-    const startTime = Date.now(); // 记录开始时间
+    const startTime = Date.now();
 
     try {
       this.logger.info(`Processing: ${url}`);
 
-      // Create new page
       const page = await this.browserManager.newPage();
-
-      // Navigate to URL
       await this.browserManager.goto(page, url, this.config.crawler.timeout);
       this.logger.info(`Loaded: ${url}`);
 
-      // Handle login if needed
       if (this.config.login.required && !this.isLoggedIn) {
         const needsLogin = await this.loginHandler.needsLogin(page);
-        
+
         if (needsLogin) {
           this.logger.info('Login required on this page, attempting to log in...');
           const loginSuccess = await this.loginHandler.login(page, {
@@ -461,8 +207,7 @@ class CrawlerMain {
           if (loginSuccess) {
             this.logger.info('Login successful');
             this.isLoggedIn = true;
-            
-            // Navigate to original URL after login
+
             if (page.url() !== url) {
               await this.browserManager.goto(page, url, this.config.crawler.timeout);
             }
@@ -472,239 +217,20 @@ class CrawlerMain {
         }
       }
 
-      // Wait for page to load
       await this.browserManager.waitForLoad(page, this.config.crawler.timeout);
-
-      // Expand collapsible content
       await this.linkFinder.expandCollapsibles(page);
-
       await this.discoverAndStoreLinks(page);
 
-      // Parse page content with streaming support
-      let filename = null;
-      let filepath = null;
-      let isFirstChunk = true;
-      let pageTitle = null;
-      
-      // 先提取页面标题以确定文件名
-      pageTitle = await page.evaluate(() => {
+      const pageTitle = await page.evaluate(() => {
         return document.title || '';
       });
-      
-      // 生成文件名和路径
-      const fs = await import('fs');
-      const crypto = await import('crypto');
-      
-      filename = this.markdownGenerator.safeFilename(pageTitle || 'untitled', url);
-      filepath = `${this.pagesDir}/${filename}.md`;
-      
-      // 检查文件是否存在，如果存在则添加hash
-      if (fs.existsSync(filepath)) {
-        const urlHash = crypto.createHash('md5').update(url).digest('hex').substring(0, 8);
-        filename = `${filename}_${urlHash}`;
-        filepath = `${this.pagesDir}/${filename}.md`;
-      }
-      
-      const onDataChunk = async (chunk) => {
-        try {
-          const fs = await import('fs');
-          
-          // 初始化文件（第一次）
-          if (isFirstChunk) {
-            // 写入文件头
-            const header = `# ${pageTitle || 'Untitled'}\n\n## 源URL\n\n${url}\n\n`;
-            fs.writeFileSync(filepath, header, 'utf-8');
-            isFirstChunk = false;
-          }
-          
-          // 追加数据块
-          if (chunk.type === 'table') {
-            if (chunk.isFirstPage) {
-              // 新表格开始
-              let tableContent = `\n## 表格 ${chunk.tableIndex + 1}\n\n`;
-              
-              // 表头
-              if (chunk.headers && chunk.headers.length > 0) {
-                tableContent += '| ' + chunk.headers.join(' | ') + ' |\n';
-                tableContent += '| ' + chunk.headers.map(() => '---').join(' | ') + ' |\n';
-              }
-              
-              // 数据行
-              if (chunk.rows && chunk.rows.length > 0) {
-                chunk.rows.forEach(row => {
-                  tableContent += '| ' + row.join(' | ') + ' |\n';
-                });
-              }
-              
-              fs.appendFileSync(filepath, tableContent, 'utf-8');
-              this.logger.debug(`Appended table ${chunk.tableIndex + 1}, page ${chunk.page}`);
-            } else if (!chunk.isLastPage && chunk.rows && chunk.rows.length > 0) {
-              // 追加数据行
-              let rowsContent = '';
-              chunk.rows.forEach(row => {
-                rowsContent += '| ' + row.join(' | ') + ' |\n';
-              });
-              fs.appendFileSync(filepath, rowsContent, 'utf-8');
-              this.logger.debug(`Appended ${chunk.rows.length} rows to table ${chunk.tableIndex + 1}, page ${chunk.page}`);
-            }
-          } else if (chunk.type === 'table-new') {
-            // 结构变化，新表格
-            let tableContent = `\n## 表格 ${chunk.tableIndex + 1} (结构变化)\n\n`;
-            
-            if (chunk.headers && chunk.headers.length > 0) {
-              tableContent += '| ' + chunk.headers.join(' | ') + ' |\n';
-              tableContent += '| ' + chunk.headers.map(() => '---').join(' | ') + ' |\n';
-            }
-            
-            if (chunk.rows && chunk.rows.length > 0) {
-              chunk.rows.forEach(row => {
-                tableContent += '| ' + row.join(' | ') + ' |\n';
-              });
-            }
-            
-            fs.appendFileSync(filepath, tableContent, 'utf-8');
-            this.logger.info(`Started new table ${chunk.tableIndex + 1} due to structure change`);
-          } else if (chunk.type === 'tab') {
-            // Tab页内容（只有数据变化时才会收到）
-            let tabContent = `\n## Tab页: ${chunk.name}\n\n`;
-            
-            // 添加段落
-            if (chunk.data.paragraphs && chunk.data.paragraphs.length > 0) {
-              chunk.data.paragraphs.forEach(p => {
-                if (p.trim()) {
-                  tabContent += p + '\n\n';
-                }
-              });
-            }
-            
-            // 添加列表
-            if (chunk.data.lists && chunk.data.lists.length > 0) {
-              chunk.data.lists.forEach(list => {
-                list.items.forEach((item, i) => {
-                  if (list.type === 'ol') {
-                    tabContent += `${i + 1}. ${item}\n`;
-                  } else {
-                    tabContent += `- ${item}\n`;
-                  }
-                });
-                tabContent += '\n';
-              });
-            }
-            
-            // 添加表格
-            if (chunk.data.tables && chunk.data.tables.length > 0) {
-              chunk.data.tables.forEach(table => {
-                if (table.headers && table.headers.length > 0) {
-                  tabContent += '| ' + table.headers.join(' | ') + ' |\n';
-                  tabContent += '| ' + table.headers.map(() => '---').join(' | ') + ' |\n';
-                  
-                  if (table.rows && table.rows.length > 0) {
-                    table.rows.forEach(row => {
-                      tabContent += '| ' + row.join(' | ') + ' |\n';
-                    });
-                  }
-                  tabContent += '\n';
-                }
-              });
-            }
-            
-            // 添加代码块
-            if (chunk.data.codeBlocks && chunk.data.codeBlocks.length > 0) {
-              chunk.data.codeBlocks.forEach(block => {
-                tabContent += `\`\`\`${block.language}\n${block.code}\n\`\`\`\n\n`;
-              });
-            }
-            
-            fs.appendFileSync(filepath, tabContent, 'utf-8');
-            this.logger.debug(`Appended tab content: ${chunk.name}`);
-          } else if (chunk.type === 'dropdown-option') {
-            // 下拉框选项内容（只有数据变化时才会收到）
-            let dropdownContent = `\n## 下拉框: ${chunk.dropdown} - 选项: ${chunk.option}\n\n`;
-            
-            // 添加段落
-            if (chunk.data.paragraphs && chunk.data.paragraphs.length > 0) {
-              chunk.data.paragraphs.forEach(p => {
-                if (p.trim()) {
-                  dropdownContent += p + '\n\n';
-                }
-              });
-            }
-            
-            // 添加列表
-            if (chunk.data.lists && chunk.data.lists.length > 0) {
-              chunk.data.lists.forEach(list => {
-                list.items.forEach((item, i) => {
-                  if (list.type === 'ol') {
-                    dropdownContent += `${i + 1}. ${item}\n`;
-                  } else {
-                    dropdownContent += `- ${item}\n`;
-                  }
-                });
-                dropdownContent += '\n';
-              });
-            }
-            
-            // 添加表格
-            if (chunk.data.tables && chunk.data.tables.length > 0) {
-              chunk.data.tables.forEach(table => {
-                if (table.headers && table.headers.length > 0) {
-                  dropdownContent += '| ' + table.headers.join(' | ') + ' |\n';
-                  dropdownContent += '| ' + table.headers.map(() => '---').join(' | ') + ' |\n';
-                  
-                  if (table.rows && table.rows.length > 0) {
-                    table.rows.forEach(row => {
-                      dropdownContent += '| ' + row.join(' | ') + ' |\n';
-                    });
-                  }
-                  dropdownContent += '\n';
-                }
-              });
-            }
-            
-            // 添加代码块
-            if (chunk.data.codeBlocks && chunk.data.codeBlocks.length > 0) {
-              chunk.data.codeBlocks.forEach(block => {
-                dropdownContent += `\`\`\`${block.language}\n${block.code}\n\`\`\`\n\n`;
-              });
-            }
-            
-            fs.appendFileSync(filepath, dropdownContent, 'utf-8');
-            this.logger.debug(`Appended dropdown option: ${chunk.dropdown} - ${chunk.option}`);
-          } else if (chunk.type === 'date-filter') {
-            // 日期筛选内容
-            let dateFilterContent = `\n## 时间筛选: ${chunk.range}\n\n`;
-            dateFilterContent += `时间范围: ${chunk.startDate} 至 ${chunk.endDate}\n\n`;
-            
-            // 添加表格数据
-            if (chunk.tables && chunk.tables.length > 0) {
-              chunk.tables.forEach((table, idx) => {
-                dateFilterContent += `### 表格 ${idx + 1}\n\n`;
-                
-                if (table.headers && table.headers.length > 0) {
-                  dateFilterContent += '| ' + table.headers.join(' | ') + ' |\n';
-                  dateFilterContent += '| ' + table.headers.map(() => '---').join(' | ') + ' |\n';
-                  
-                  if (table.rows && table.rows.length > 0) {
-                    table.rows.forEach(row => {
-                      dateFilterContent += '| ' + row.join(' | ') + ' |\n';
-                    });
-                  }
-                  dateFilterContent += '\n';
-                }
-              });
-            }
-            
-            fs.appendFileSync(filepath, dateFilterContent, 'utf-8');
-            this.logger.debug(`Appended date filter data: ${chunk.range}`);
-          }
-        } catch (error) {
-          this.logger.error(`Failed to write data chunk: ${error.message}`);
-        }
-      };
-      
-      const pageData = await this.pageParser.parsePage(page, url, { 
+
+      const outputContext = this.pageOutputService.createOutputContext(pageTitle, url);
+      const onDataChunk = this.pageOutputService.createChunkWriter(outputContext, url);
+
+      const pageData = await this.pageParser.parsePage(page, url, {
         onDataChunk,
-        filepath,
+        filepath: outputContext.filepath,
         pagesDir: this.pagesDir,
         parserMode: this.config.parser?.mode
       });
@@ -718,131 +244,51 @@ class CrawlerMain {
         }
       }
 
-      // 大表格页面：仅保存为CSV
       if (pageData.type === 'table-only') {
-        const savedCsvFiles = await this.saveTablesAsCsv(pageData, url);
+        const savedCsvFiles = await this.pageOutputService.saveTablesAsCsv(pageData, url);
         this.logger.info(`Saved ${savedCsvFiles.length} CSV file(s) for table-only page`);
+      } else if (outputContext.isFirstChunk) {
+        this.pageOutputService.writeFallbackMarkdown(pageData, url, outputContext);
       }
-      // 如果没有使用流式写入（没有分页数据），使用传统方式
-      else if (isFirstChunk) {
-        const markdown = this.markdownGenerator.generate(pageData);
-        filename = this.markdownGenerator.safeFilename(pageData.title || 'untitled', url);
-        
-        const fs = await import('fs');
-        filepath = `${this.pagesDir}/${filename}.md`;
-        if (fs.existsSync(filepath)) {
-          const crypto = await import('crypto');
-          const urlHash = crypto.createHash('md5').update(url).digest('hex').substring(0, 8);
-          filename = `${filename}_${urlHash}`;
-          this.logger.info(`File exists, using unique filename: ${filename}.md`);
-        }
-        
-        filepath = this.markdownGenerator.saveToFile(
-          markdown,
-          filename,
-          this.pagesDir
+
+      if (pageData.llmExtraction && outputContext.filepath) {
+        this.pageOutputService.appendLlmSection(outputContext.filepath, pageData.llmExtraction);
+      }
+
+      if (pageData.type !== 'table-only' && outputContext.filepath) {
+        await this.pageOutputService.persistMarkdown(
+          outputContext.filepath,
+          url,
+          pageData.title || pageTitle,
+          outputContext.filename
         );
       }
 
-
-      if (pageData.llmExtraction && filepath) {
-        const fs = await import('fs');
-        const llmSection = `
-## LLM结构化抽取
-
-模型: ${pageData.llmExtraction.model}
-
-\`\`\`json
-${JSON.stringify(pageData.llmExtraction, null, 2)}
-\`\`\`
-`;
-        fs.appendFileSync(filepath, llmSection, 'utf-8');
-      }
-
-      if (pageData.type !== 'table-only' && filepath) {
-        const savedPath = await this.pageStorage.persistMarkdown({
-          filepath,
-          url,
-          title: pageData.title || pageTitle,
-          filename
-        });
-
-        if (this.pageStorage.isLanceDb()) {
-          this.logger.info(`Persisted page content to ${savedPath}`);
-        }
-      }
-      
       this.statsTracker.incrementFilesGenerated();
-      
-      // 计算处理时间
+
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
       if (pageData.type === 'table-only') {
         this.logger.success(`Saved table CSV output (${duration}s)`);
       } else {
-        this.logger.success(`Saved: ${filename}.md (${duration}s)`);
+        this.logger.success(`Saved: ${outputContext.filename}.md (${duration}s)`);
       }
 
-      // Close page
       await page.close();
 
-      // Update link status to fetched
       this.urlProcessingService.markFetched(url);
       this.metricsAdapter.increment('crawl_success_total');
 
       return true;
     } catch (error) {
-      // 计算处理时间（即使失败也记录）
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
       this.logError(url, error, duration);
 
       this.urlProcessingService.handleFailure(url, error);
       this.metricsAdapter.increment('crawl_failed_total');
-      
+
       return false;
     }
   }
-
-  escapeCsvField(value) {
-    const stringValue = value == null ? '' : String(value);
-    const escaped = stringValue.replace(/"/g, '""');
-    if (/[",\n]/.test(escaped)) {
-      return `"${escaped}"`;
-    }
-    return escaped;
-  }
-
-  async saveTablesAsCsv(pageData, url) {
-    const fs = await import('fs');
-    const crypto = await import('crypto');
-
-    let baseName = this.markdownGenerator.safeFilename(pageData.title || 'table', url);
-    const urlHash = crypto.createHash('md5').update(url).digest('hex').substring(0, 8);
-    baseName = `${baseName}_${urlHash}`;
-
-    const savedFiles = [];
-    for (let i = 0; i < pageData.tables.length; i++) {
-      const table = pageData.tables[i];
-      const fileName = pageData.tables.length > 1 ? `${baseName}_table_${i + 1}.csv` : `${baseName}.csv`;
-      const filePath = `${this.pagesDir}/${fileName}`;
-
-      const lines = [];
-      if (table.headers && table.headers.length > 0) {
-        lines.push(table.headers.map(h => this.escapeCsvField(h)).join(','));
-      }
-      if (table.rows && table.rows.length > 0) {
-        table.rows.forEach(row => {
-          lines.push(row.map(cell => this.escapeCsvField(cell)).join(','));
-        });
-      }
-
-      fs.writeFileSync(filePath, lines.join('\n'), 'utf-8');
-      savedFiles.push(fileName);
-      this.logger.success(`Saved: ${fileName}`);
-    }
-
-    return savedFiles;
-  }
-
 
   /**
    * Log progress
