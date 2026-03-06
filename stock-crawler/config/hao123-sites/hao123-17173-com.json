@@ -1,0 +1,40 @@
+{
+  "name": "hao123-17173-com",
+  "seedUrls": [
+    "https://www.17173.com/"
+  ],
+  "urlRules": {
+    "include": [
+      "^https?://([a-z0-9-]+\\.)*www\\.17173\\.com(/.*)?$"
+    ],
+    "exclude": [
+      ".*\\.(jpg|jpeg|png|gif|svg|webp|ico|pdf|zip|rar|7z)$",
+      ".*(logout|signout|register|signup).*"
+    ]
+  },
+  "login": {
+    "required": false,
+    "username": "",
+    "password": "",
+    "loginUrl": ""
+  },
+  "crawler": {
+    "headless": true,
+    "timeout": 30000,
+    "waitBetweenRequests": 300,
+    "maxRetries": 2,
+    "batchSize": 10,
+    "maxDepth": 3
+  },
+  "output": {
+    "directory": "./output",
+    "format": "markdown",
+    "storage": {
+      "type": "file"
+    }
+  },
+  "metadata": {
+    "source": "hao123.com",
+    "title": "17173"
+  }
+}

@@ -1,7 +1,7 @@
 import fc from 'fast-check';
 import fs from 'fs';
 import path from 'path';
-import MarkdownGenerator from '../src/markdown-generator.js';
+import MarkdownGenerator from '../src/parsers/markdown-generator.js';
 
 describe('MarkdownGenerator', () => {
   let generator;

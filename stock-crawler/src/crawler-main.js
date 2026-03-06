@@ -1,14 +1,12 @@
 import ConfigManager from './config-manager.js';
 import LinkManager from './link-manager.js';
-import BrowserManager from './browser-manager.js';
-import LoginHandler from './login-handler.js';
 import LinkFinder from './link-finder.js';
 import PageParser from './page-parser.js';
-import MarkdownGenerator from './markdown-generator.js';
+import MarkdownGenerator from './parsers/markdown-generator.js';
 import Logger from './logger.js';
 import StatsTracker from './stats-tracker.js';
 import PageStorage from './storage/page-storage.js';
-import LLMDataExtractor from './llm-data-extractor.js';
+import LLMDataExtractor from './parsers/llm-data-extractor.js';
 import CrawlJobService from './application/crawl-job-service.js';
 import UrlProcessingService from './application/url-processing-service.js';
 import MetricsAdapter from './infrastructure/metrics-adapter.js';
@@ -19,8 +17,6 @@ class CrawlerMain {
   constructor() {
     this.config = null;
     this.linkManager = null;
-    this.browserManager = null;
-    this.loginHandler = null;
     this.linkFinder = null;
     this.pageParser = null;
     this.markdownGenerator = null;
@@ -28,7 +24,6 @@ class CrawlerMain {
     this.statsTracker = null;
     this.pageStorage = null;
     this.llmDataExtractor = null;
-    this.isLoggedIn = false;
     this.crawlJobService = null;
     this.urlProcessingService = null;
     this.metricsAdapter = null;
@@ -61,19 +56,15 @@ class CrawlerMain {
       this.statsTracker.start();
 
       // Launch browser
-      await this.browserManager.launch({
-        headless: this.config.crawler.headless,
-        userDataDir: this.config.crawler.userDataDir // Use Chrome user data directory if provided
-      });
+      await this.browserCrawlProcessor.launch();
       this.logger.info(`Browser launched (headless: ${this.config.crawler.headless})`);
 
       // Attempt login at the start if required
       if (this.config.login.required) {
         this.logger.info('Login is required, attempting to login at start...');
-        const loginSuccess = await this.attemptLogin();
+        const loginSuccess = await this.browserCrawlProcessor.attemptInitialLogin();
         if (loginSuccess) {
           this.logger.info('Login successful at start');
-          this.isLoggedIn = true;
         } else {
           this.logger.warn('Login failed at start, will retry on individual pages if needed');
         }
@@ -97,7 +88,7 @@ class CrawlerMain {
         this.urlProcessingService.markFetching(link.url);
         linksDirty = true;
         
-        const success = await this.processUrl(link.url);
+        const success = await this.browserCrawlProcessor.processUrl(link.url);
         
         if (success) {
           this.statsTracker.incrementCrawled();
@@ -116,7 +107,7 @@ class CrawlerMain {
       }
 
       // Close browser
-      await this.browserManager.close();
+      await this.browserCrawlProcessor.close();
       this.logger.info('Browser closed');
 
       // Generate and display stats
