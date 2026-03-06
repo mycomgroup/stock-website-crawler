@@ -33,6 +33,7 @@ class LoginOrchestrationService {
       }
 
       const hasPasswordField = await page.locator('input[type="password"]').count() > 0;
+
       if (hasPasswordField) {
         this.logger.info('Login form detected, attempting to log in...');
         const success = await this.loginHandler.login(page, {
@@ -174,7 +175,7 @@ class LoginOrchestrationService {
       if (page && !page.isClosed()) {
         try {
           await page.close();
-        } catch (closeError) {
+        } catch (e) {
           // Ignore close errors
         }
       }

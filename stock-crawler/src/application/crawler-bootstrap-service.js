@@ -23,15 +23,21 @@ class CrawlerBootstrapService {
     const logsDir = `${projectDir}/logs`;
     const linksFile = `${projectDir}/links.txt`;
 
-    fs.mkdirSync(projectDir, { recursive: true });
-    fs.mkdirSync(logsDir, { recursive: true });
+    if (!fs.existsSync(projectDir)) {
+      fs.mkdirSync(projectDir, { recursive: true });
+    }
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
 
     const logger = new Logger(logsDir, config.crawler.logLevel || 'INFO');
     const statsTracker = new StatsTracker();
 
     const timestamp = logger.getTimestamp();
     const pagesDir = `${projectDir}/pages-${timestamp}`;
-    fs.mkdirSync(pagesDir, { recursive: true });
+    if (!fs.existsSync(pagesDir)) {
+      fs.mkdirSync(pagesDir, { recursive: true });
+    }
 
     logger.info(`Loaded configuration: ${config.name}`);
 
@@ -55,7 +61,10 @@ class CrawlerBootstrapService {
     const pageStorage = new PageStorage(config, logger);
     await pageStorage.initialize(projectDir);
     const llmDataExtractor = new LLMDataExtractor(config.llmExtraction || {}, logger);
-    const crawlJobService = new CrawlJobService({ linkManager, config });
+    const crawlJobService = new CrawlJobService({
+      linkManager,
+      config
+    });
     const urlProcessingService = new UrlProcessingService(
       linkManager,
       logger,
@@ -72,8 +81,8 @@ class CrawlerBootstrapService {
       config,
       projectDir,
       logsDir,
-      pagesDir,
       linksFile,
+      pagesDir,
       logger,
       statsTracker,
       linkManager,
