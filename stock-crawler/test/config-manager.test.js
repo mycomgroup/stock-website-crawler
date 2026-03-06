@@ -264,6 +264,64 @@ describe('ConfigManager', () => {
       expect(configManager.validateConfig(config)).toBe(true);
     });
 
+
+    test('当parser.urlPatternOverrides有效时应该通过校验', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        parser: {
+          mode: 'auto',
+          urlPatternOverrides: [
+            { pattern: '.*/open/api/doc.*', parser: 'ApiDocParser' }
+          ]
+        }
+      };
+
+      expect(configManager.validateConfig(config)).toBe(true);
+    });
+
+    test('当parser.urlPatternOverrides.pattern无效正则时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        parser: {
+          urlPatternOverrides: [
+            { pattern: '*invalid-regex', parser: 'ApiDocParser' }
+          ]
+        }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 parser.urlPatternOverrides[0].pattern 不是有效正则');
+    });
+
+    test('当parser.urlPatternOverrides.parser缺失时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        parser: {
+          urlPatternOverrides: [
+            { pattern: '.*/docs/.*' }
+          ]
+        }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 parser.urlPatternOverrides[0].parser 必须是非空字符串');
+    });
+
+
     test('当output.storage.type为lancedb时应该允许通过校验', () => {
       const config = {
         name: 'test',

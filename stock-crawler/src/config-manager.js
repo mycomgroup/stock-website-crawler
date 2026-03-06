@@ -121,6 +121,43 @@ class ConfigManager {
     }
 
 
+    // 验证 parser（可选）
+    if ('parser' in config) {
+      if (typeof config.parser !== 'object' || Array.isArray(config.parser)) {
+        throw new Error('配置字段 parser 必须是对象类型');
+      }
+
+      if ('mode' in config.parser && typeof config.parser.mode !== 'string') {
+        throw new Error('配置字段 parser.mode 必须是字符串类型');
+      }
+
+      if ('urlPatternOverrides' in config.parser) {
+        if (!Array.isArray(config.parser.urlPatternOverrides)) {
+          throw new Error('配置字段 parser.urlPatternOverrides 必须是数组类型');
+        }
+
+        config.parser.urlPatternOverrides.forEach((rule, index) => {
+          if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
+            throw new Error(`配置字段 parser.urlPatternOverrides[${index}] 必须是对象类型`);
+          }
+
+          if (typeof rule.pattern !== 'string' || !rule.pattern.trim()) {
+            throw new Error(`配置字段 parser.urlPatternOverrides[${index}].pattern 必须是非空字符串`);
+          }
+
+          if (typeof rule.parser !== 'string' || !rule.parser.trim()) {
+            throw new Error(`配置字段 parser.urlPatternOverrides[${index}].parser 必须是非空字符串`);
+          }
+
+          try {
+            new RegExp(rule.pattern);
+          } catch (error) {
+            throw new Error(`配置字段 parser.urlPatternOverrides[${index}].pattern 不是有效正则: ${error.message}`);
+          }
+        });
+      }
+    }
+
     // 验证 llmExtraction（可选）
     if ('llmExtraction' in config) {
       if (typeof config.llmExtraction !== 'object' || Array.isArray(config.llmExtraction)) {
