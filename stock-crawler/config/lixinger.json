@@ -44,5 +44,13 @@
         ]
       }
     ]
+  },
+  "parser": {
+    "urlPatternOverrides": [
+      {
+        "pattern": ".*/open/api/doc.*",
+        "parser": "ApiDocParser"
+      }
+    ]
   }
 }
