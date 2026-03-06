@@ -706,7 +706,8 @@ class CrawlerMain {
         onDataChunk,
         filepath,
         pagesDir: this.pagesDir,
-        parserMode: this.config.parser?.mode
+        parserMode: this.config.parser?.mode,
+        parserUrlPatternOverrides: this.config.parser?.urlPatternOverrides
       });
       this.logger.info(`Parsed page: ${pageData.title || 'Untitled'}`);
 
