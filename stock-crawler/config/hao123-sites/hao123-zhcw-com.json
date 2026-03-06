@@ -1,0 +1,40 @@
+{
+  "name": "hao123-zhcw-com",
+  "seedUrls": [
+    "https://www.zhcw.com/"
+  ],
+  "urlRules": {
+    "include": [
+      "^https?://([a-z0-9-]+\\.)*www\\.zhcw\\.com(/.*)?$"
+    ],
+    "exclude": [
+      ".*\\.(jpg|jpeg|png|gif|svg|webp|ico|pdf|zip|rar|7z)$",
+      ".*(logout|signout|register|signup).*"
+    ]
+  },
+  "login": {
+    "required": false,
+    "username": "",
+    "password": "",
+    "loginUrl": ""
+  },
+  "crawler": {
+    "headless": true,
+    "timeout": 30000,
+    "waitBetweenRequests": 300,
+    "maxRetries": 2,
+    "batchSize": 10,
+    "maxDepth": 3
+  },
+  "output": {
+    "directory": "./output",
+    "format": "markdown",
+    "storage": {
+      "type": "file"
+    }
+  },
+  "metadata": {
+    "source": "hao123.com",
+    "title": "中彩网"
+  }
+}
