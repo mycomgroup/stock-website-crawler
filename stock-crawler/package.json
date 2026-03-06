@@ -13,7 +13,9 @@
     "test:pagination": "node scripts/test-pagination.js",
     "template:pipeline": "node src/template-pipeline-cli.js",
     "crawl:hao123": "node scripts/crawl-hao123.js",
-    "test:hao123-configs": "node scripts/test-hao123-configs.js"
+    "test:hao123-configs": "node scripts/test-hao123-configs.js",
+    "bootstrap:hao123": "node scripts/bootstrap-hao123-sites.js",
+    "test:all-hao123": "node scripts/test-all-hao123-sites.js"
   },
   "keywords": [
     "crawler",
