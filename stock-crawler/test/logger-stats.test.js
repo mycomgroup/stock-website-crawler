@@ -44,8 +44,8 @@ describe('Logger and Stats', () => {
             // Should contain error message
             expect(logContent).toContain(errorMessage);
 
-            // Should contain timestamp (ISO format)
-            expect(logContent).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+            // Should contain timestamp (format: YYYY-MM-DD HH:MM:SS)
+            expect(logContent).toMatch(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/);
 
             // Should contain ERROR level
             expect(logContent).toContain('[ERROR]');
