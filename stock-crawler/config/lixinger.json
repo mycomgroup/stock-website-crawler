@@ -1,7 +1,7 @@
 {
   "name": "lixinger-crawler",
   "seedUrls": [
-    "https://www.lixinger.com/wiki/csv-export-encoding-issue"
+    "https://www.lixinger.com/profile/center/my-followed/latest-messages"
   ],
   "urlRules": {
     "include": [
@@ -24,7 +24,7 @@
     "timeout": 30000,
     "waitBetweenRequests": 1000,
     "maxRetries": 3,
-    "batchSize": 3,
+    "batchSize": 100,
     "userDataDir": "./chrome_user_data"
   },
   "output": {

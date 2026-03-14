@@ -1,41 +1,58 @@
-# URL优先级排序规则
+# URL 优先级排序规则
 
 ## 概述
 
-爬虫在选择要抓取的URL时，会按照以下优先级规则进行排序，确保先抓取最重要的页面。
+爬虫在选择要抓取的 URL 时，会按照以下优先级规则进行排序，确保先抓取最重要的页面。
 
 ## 排序规则（从高到低）
 
-### 0. 种子URL（最高优先级）
+### 0. 种子 URL（最高优先级）
 
 配置文件中的 `seedUrls` 总是最先处理，无论其状态如何。
 
-### 1. 路径深度（Path Depth）
+### 1. URL长度
+
+**规则**：URL 字符串越短，优先级越高
+
+**原因**：
+- 较短的 URL 通常是更高层级的页面或主要入口
+- 作为最直观的优先级判断标准，可以快速筛选出重要页面
+
+**示例**：
+```
+优先级从高到低：
+1. https://example.com/company
+2. https://example.com/analytics/macro
+3. https://example.com/analytics/macro/cpi
+4. https://example.com/company/600519/detail
+```
+
+### 2. 路径深度（Path Depth）
 
 **规则**：路径中 `/` 的数量越少，优先级越高
 
 **原因**：
 - 路径越浅的页面通常是一级或二级导航页面
 - 这些页面是网站的入口，包含大量指向其他页面的链接
-- 优先抓取这些页面可以快速发现更多有价值的URL
+- 优先抓取这些页面可以快速发现更多有价值的 URL
 
 **示例**：
 ```
 优先级从高到低：
-1. https://example.com/company                    (2个/)
-2. https://example.com/analytics/macro            (3个/)
-3. https://example.com/analytics/macro/cpi        (4个/)
-4. https://example.com/company/600519/detail      (4个/)
+1. https://example.com/company                    (2 个/)
+2. https://example.com/analytics/macro            (3 个/)
+3. https://example.com/analytics/macro/cpi        (4 个/)
+4. https://example.com/company/600519/detail      (4 个/)
 ```
 
-### 2. 包含数字路径段的URL
+### 3. 包含数字路径段的URL
 
-**规则**：路径中包含纯数字段的URL优先
+**规则**：路径中包含纯数字段的URL 优先
 
 **匹配模式**：`/数字/` 或 `/数字` 结尾
 
 **原因**：
-- 这类URL通常是具体的数据页面（如公司详情、产品页面）
+- 这类 URL 通常是具体的数据页面（如公司详情、产品页面）
 - 包含实际的业务数据，而非导航页面
 
 **示例**：
@@ -46,12 +63,12 @@
 ✗ /company/list
 ```
 
-### 3. 不含查询参数的URL
+### 4. 不含查询参数的URL
 
-**规则**：不包含 `?`, `&`, `=` 的URL优先
+**规则**：不包含 `?`, `&`, `=` 的 URL 优先
 
 **原因**：
-- 这类URL通常是主要页面，而非筛选或过滤后的结果
+- 这类 URL 通常是主要页面，而非筛选或过滤后的结果
 - 避免重复抓取相似内容（如不同筛选条件的搜索结果）
 
 **示例**：
@@ -60,38 +77,30 @@
 次要：/search?keyword=股票&page=2
 ```
 
-### 4. URL长度
-
-**规则**：在其他条件相同时，较短的URL优先
-
-**原因**：
-- 较短的URL通常是更高层级的页面
-- 作为最后的排序依据
-
 ## 完整排序示例
 
-假设有以下URL：
+假设有以下 URL：
 
 ```
-A. https://example.com/company                           (2个/, 无数字, 无参数, 短)
-B. https://example.com/analytics/macro                   (3个/, 无数字, 无参数, 中)
-C. https://example.com/company/600519                    (3个/, 有数字, 无参数, 中)
-D. https://example.com/analytics/macro/cpi               (4个/, 无数字, 无参数, 长)
-E. https://example.com/company/600519/detail             (4个/, 有数字, 无参数, 长)
-F. https://example.com/search?q=test                     (2个/, 无数字, 有参数, 短)
-G. https://example.com/analytics/macro/cpi?year=2024     (4个/, 无数字, 有参数, 长)
+A. https://example.com/company                           (长度短，2 个/, 无数字，无参数)
+B. https://example.com/analytics/macro                   (长度中，3 个/, 无数字，无参数)
+C. https://example.com/company/600519                    (长度中，3 个/, 有数字，无参数)
+D. https://example.com/analytics/macro/cpi               (长度长，4 个/, 无数字，无参数)
+E. https://example.com/company/600519/detail             (长度长，4 个/, 有数字，无参数)
+F. https://example.com/search?q=test                     (长度短，2 个/, 无数字，有参数)
+G. https://example.com/analytics/macro/cpi?year=2024     (长度长，4 个/, 无数字，有参数)
 ```
 
-排序后的顺序：
+排序后的顺序（**注意**：现在 **URL长度**是第一优先级）：
 
 ```
-1. A - https://example.com/company                       (深度2, 无数字, 无参数)
-2. F - https://example.com/search?q=test                 (深度2, 无数字, 有参数)
-3. C - https://example.com/company/600519                (深度3, 有数字, 无参数)
-4. B - https://example.com/analytics/macro               (深度3, 无数字, 无参数)
-5. E - https://example.com/company/600519/detail         (深度4, 有数字, 无参数)
-6. D - https://example.com/analytics/macro/cpi           (深度4, 无数字, 无参数)
-7. G - https://example.com/analytics/macro/cpi?year=2024 (深度4, 无数字, 有参数)
+1. A - https://example.com/company                       (长度最短，深度 2, 无数字，无参数)
+2. F - https://example.com/search?q=test                 (长度短，深度 2, 无数字，有参数)
+3. B - https://example.com/analytics/macro               (长度中等，深度 3, 无数字，无参数)
+4. C - https://example.com/company/600519                (长度中等，深度 3, 有数字，无参数)
+5. D - https://example.com/analytics/macro/cpi           (长度较长，深度 4, 无数字，无参数)
+6. E - https://example.com/company/600519/detail         (长度较长，深度 4, 有数字，无参数)
+7. G - https://example.com/analytics/macro/cpi?year=2024 (长度最长，深度 4, 无数字，有参数)
 ```
 
 ## 实现细节

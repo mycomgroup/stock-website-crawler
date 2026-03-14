@@ -142,7 +142,15 @@ class CrawlerMain {
       // 3. URLs without query parameters (no & or =)
       // 4. URL length (shorter first)
       const sortedUnfetchedLinks = unfetchedLinks.sort((a, b) => {
-        // First priority: Path depth (count slashes in path)
+        // First priority: URL length (shorter first)
+        const aLength = a.url.length;
+        const bLength = b.url.length;
+        
+        if (aLength !== bLength) {
+          return aLength - bLength; // Shorter URLs = higher priority
+        }
+        
+        // Second priority: Path depth (count slashes in path)
         // Fewer slashes = higher level page = more important
         const getPathDepth = (url) => {
           try {
@@ -161,7 +169,7 @@ class CrawlerMain {
           return aDepth - bDepth; // Fewer slashes = higher priority
         }
         
-        // Second priority: URLs with numeric path segments
+        // Third priority: URLs with numeric path segments
         const aHasNumericSegment = /\/\d+(?:\/|$)/.test(a.url);
         const bHasNumericSegment = /\/\d+(?:\/|$)/.test(b.url);
         
@@ -169,7 +177,7 @@ class CrawlerMain {
           return aHasNumericSegment ? -1 : 1;
         }
         
-        // Third priority: URLs without query parameters
+        // Fourth priority: URLs without query parameters
         const aHasParams = a.url.includes('?') || a.url.includes('&') || a.url.includes('=');
         const bHasParams = b.url.includes('?') || b.url.includes('&') || b.url.includes('=');
         
@@ -177,8 +185,8 @@ class CrawlerMain {
           return aHasParams ? 1 : -1;
         }
         
-        // Final tiebreaker: sort by URL length (shorter first)
-        return a.url.length - b.url.length;
+        // All criteria are equal, maintain original order
+        return 0;
       });
       
       // Add unfetched links to processing list (after seed URLs)
@@ -629,7 +637,11 @@ class CrawlerMain {
             // 添加代码块
             if (chunk.data.codeBlocks && chunk.data.codeBlocks.length > 0) {
               chunk.data.codeBlocks.forEach(block => {
-                tabContent += `\`\`\`${block.language}\n${block.code}\n\`\`\`\n\n`;
+                tabContent += `\`\`\`${block.language}
+${block.code}
+\`\`\`
+
+`;
               });
             }
             
@@ -682,7 +694,11 @@ class CrawlerMain {
             // 添加代码块
             if (chunk.data.codeBlocks && chunk.data.codeBlocks.length > 0) {
               chunk.data.codeBlocks.forEach(block => {
-                dropdownContent += `\`\`\`${block.language}\n${block.code}\n\`\`\`\n\n`;
+                dropdownContent += `\`\`\`${block.language}
+${block.code}
+\`\`\`
+
+`;
               });
             }
             
