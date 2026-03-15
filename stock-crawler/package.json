@@ -10,7 +10,12 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:login": "node scripts/test-login.js",
-    "test:pagination": "node scripts/test-pagination.js"
+    "test:pagination": "node scripts/test-pagination.js",
+    "template:pipeline": "node src/template-pipeline-cli.js",
+    "crawl:hao123": "node scripts/crawl-hao123.js",
+    "test:hao123-configs": "node scripts/test-hao123-configs.js",
+    "bootstrap:hao123": "node scripts/bootstrap-hao123-sites.js",
+    "test:all-hao123": "node scripts/test-all-hao123-sites.js"
   },
   "keywords": [
     "crawler",
@@ -21,7 +26,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "playwright": "^1.40.0"
+    "playwright": "^1.40.0",
+    "@lancedb/lancedb": "^0.14.0"
   },
   "devDependencies": {
     "fast-check": "^3.15.0",

@@ -196,6 +196,153 @@ describe('ConfigManager', () => {
         configManager.validateConfig(config);
       }).toThrow('配置字段 output.directory 必须存在');
     });
+
+    test('当output.storage.type非法时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: {
+          directory: './output',
+          format: 'markdown',
+          storage: { type: 'invalid-type' }
+        }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 output.storage.type 必须是 file 或 lancedb');
+    });
+
+
+    test('当llmExtraction.enabled不是布尔值时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        llmExtraction: { enabled: 'yes' }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 llmExtraction.enabled 必须是布尔类型');
+    });
+
+    test('当llmExtraction.maxRecords不是正整数时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        llmExtraction: { enabled: true, maxRecords: 0 }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 llmExtraction.maxRecords 必须是正整数');
+    });
+
+    test('当llmExtraction配置有效时应该通过校验', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        llmExtraction: {
+          enabled: true,
+          endpoint: 'https://api.openai.com/v1/chat/completions',
+          model: 'gpt-4o-mini',
+          maxRecords: 100
+        }
+      };
+
+      expect(configManager.validateConfig(config)).toBe(true);
+    });
+
+
+    test('当parser.urlPatternOverrides有效时应该通过校验', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        parser: {
+          mode: 'auto',
+          urlPatternOverrides: [
+            { pattern: '.*/open/api/doc.*', parser: 'ApiDocParser' }
+          ]
+        }
+      };
+
+      expect(configManager.validateConfig(config)).toBe(true);
+    });
+
+    test('当parser.urlPatternOverrides.pattern无效正则时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        parser: {
+          urlPatternOverrides: [
+            { pattern: '*invalid-regex', parser: 'ApiDocParser' }
+          ]
+        }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 parser.urlPatternOverrides[0].pattern 不是有效正则');
+    });
+
+    test('当parser.urlPatternOverrides.parser缺失时应该抛出错误', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: { directory: './output', format: 'markdown' },
+        parser: {
+          urlPatternOverrides: [
+            { pattern: '.*/docs/.*' }
+          ]
+        }
+      };
+
+      expect(() => {
+        configManager.validateConfig(config);
+      }).toThrow('配置字段 parser.urlPatternOverrides[0].parser 必须是非空字符串');
+    });
+
+
+    test('当output.storage.type为lancedb时应该允许通过校验', () => {
+      const config = {
+        name: 'test',
+        seedUrls: ['https://example.com'],
+        urlRules: { include: [], exclude: [] },
+        crawler: { headless: true, timeout: 30000, waitBetweenRequests: 500, maxRetries: 3 },
+        output: {
+          directory: './output',
+          format: 'markdown',
+          storage: {
+            type: 'lancedb',
+            lancedb: {
+              uri: 'lancedb',
+              table: 'pages'
+            }
+          }
+        }
+      };
+
+      expect(configManager.validateConfig(config)).toBe(true);
+    });
   });
 
   describe('Property-Based Tests', () => {

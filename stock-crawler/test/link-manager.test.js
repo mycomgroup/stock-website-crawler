@@ -29,6 +29,38 @@ describe('LinkManager', () => {
     }
   });
 
+
+  describe('Index optimization behavior', () => {
+    test('should keep index in sync when loading and adding links', () => {
+      const tempFilePath = path.join(testLinksDir, `indexed-links-${Date.now()}.txt`);
+      const rawLinks = [
+        { url: 'https://example.com/a', status: 'unfetched', addedAt: Date.now(), fetchedAt: null, retryCount: 0, error: null },
+        { url: 'https://example.com/b', status: 'unfetched', addedAt: Date.now(), fetchedAt: null, retryCount: 0, error: null }
+      ];
+
+      try {
+        linkManager.saveLinks(tempFilePath, rawLinks);
+        linkManager.loadLinks(tempFilePath);
+
+        linkManager.updateLinkStatus('https://example.com/a', 'fetched');
+        linkManager.incrementRetryCount('https://example.com/b');
+        linkManager.addLink('https://example.com/c', 'unfetched');
+
+        const linkA = linkManager.links.find(link => link.url === 'https://example.com/a');
+        const linkB = linkManager.links.find(link => link.url === 'https://example.com/b');
+        const linkC = linkManager.links.find(link => link.url === 'https://example.com/c');
+
+        expect(linkA.status).toBe('fetched');
+        expect(linkB.retryCount).toBe(1);
+        expect(linkC).toBeDefined();
+      } finally {
+        if (fs.existsSync(tempFilePath)) {
+          fs.unlinkSync(tempFilePath);
+        }
+      }
+    });
+  });
+
   describe('Property-Based Tests', () => {
     /**
      * **Property 5: 链接文件读写一致性**
@@ -621,6 +653,30 @@ describe('LinkManager', () => {
       linkManager.updateLinkStatus(testUrl, 'unfetched');
       link = linkManager.links.find(l => l.url === testUrl);
       expect(link.status).toBe('unfetched');
+    });
+
+    test('重试成功后应清除历史错误信息', () => {
+      const testUrl = 'https://example.com/error-recovery';
+
+      linkManager.addLink(testUrl, 'unfetched');
+
+      // 失败时记录错误
+      linkManager.updateLinkStatus(testUrl, 'failed', 'timeout');
+      let link = linkManager.links.find(l => l.url === testUrl);
+      expect(link.status).toBe('failed');
+      expect(link.error).toBe('timeout');
+
+      // 重试中应清除旧错误，避免误导
+      linkManager.updateLinkStatus(testUrl, 'fetching');
+      link = linkManager.links.find(l => l.url === testUrl);
+      expect(link.status).toBe('fetching');
+      expect(link.error).toBeNull();
+
+      // 成功后仍应保持无错误状态
+      linkManager.updateLinkStatus(testUrl, 'fetched');
+      link = linkManager.links.find(l => l.url === testUrl);
+      expect(link.status).toBe('fetched');
+      expect(link.error).toBeNull();
     });
 
     /**
