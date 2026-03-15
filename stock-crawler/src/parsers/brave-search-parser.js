@@ -114,6 +114,23 @@ class BraveSearchParser extends BaseParser {
               if (code.length > 5) {
                 section.codeBlocks.push(code);
               }
+            } else if (sibling.tagName === 'DIV') {
+              // 处理卡片式内容（如 pricing 页面的定价卡片）
+              const divText = sibling.textContent.trim();
+              // 检查是否包含定价或特殊信息
+              if (divText.length > 20 && divText.length < 2000) {
+                // 检查是否是定价卡片（包含 $ 符号或特定关键词）
+                const hasPrice = divText.includes('$') || divText.includes('per') || divText.includes('requests');
+                const isCard = sibling.className && (
+                  sibling.className.includes('card') ||
+                  sibling.className.includes('plan') ||
+                  sibling.className.includes('pricing') ||
+                  sibling.className.includes('tier')
+                );
+                if (hasPrice || isCard || divText.length < 500) {
+                  section.content.push(divText);
+                }
+              }
             }
             sibling = sibling.nextElementSibling;
           }
@@ -205,6 +222,15 @@ class BraveSearchParser extends BaseParser {
             allText.push(text);
           }
         });
+
+        // 对于卡片式页面（如 pricing），也提取卡片内容
+        document.querySelectorAll('div[class*="card"], div[class*="plan"], div[class*="pricing"], div[class*="tier"]').forEach(el => {
+          const text = el.textContent.trim();
+          if (text && text.length > 20 && text.length < 2000 && !allText.some(t => t.includes(text.slice(0, 50)))) {
+            allText.push(text);
+          }
+        });
+
         result.rawContent = allText.join('\n\n');
 
         // 如果没有提取到足够内容，尝试从主内容区域提取所有文本

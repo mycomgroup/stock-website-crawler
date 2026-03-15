@@ -433,11 +433,32 @@ class TiingoApiParser extends BaseParser {
                 if (rows.length > 1) result.tables.push(rows);
               });
 
-              // 提取代码示例
+              // 提取代码示例 - 过滤掉无意义的短代码块
               const codeBlocks = contentEl.querySelectorAll('pre');
               codeBlocks.forEach(pre => {
                 const code = pre.textContent.trim();
-                if (code.length > 5) result.codeExamples.push(code);
+                // 过滤条件：
+                // 1. 长度至少50字符（提高阈值）
+                // 2. 或者包含多行（包含换行符）
+                // 3. 或者包含 URL
+                // 4. 或者包含代码关键词
+                // 5. 排除简单的赋值公式（如 "a = b/c"）
+                const isSimpleFormula = /^[a-zA-Z_]+\s*=\s*[a-zA-Z_./]+$/.test(code);
+                const isValidCode = !isSimpleFormula && (
+                  code.length >= 50 ||
+                  code.includes('\n') ||
+                  code.includes('http://') ||
+                  code.includes('https://') ||
+                  code.includes('import ') ||
+                  code.includes('function') ||
+                  code.includes('const ') ||
+                  code.includes('var ') ||
+                  code.includes('<?php') ||
+                  code.includes('require') ||
+                  (code.includes('{') && code.includes('}')) ||
+                  (code.includes('[') && code.includes(']'))
+                );
+                if (isValidCode) result.codeExamples.push(code);
               });
 
               return result;

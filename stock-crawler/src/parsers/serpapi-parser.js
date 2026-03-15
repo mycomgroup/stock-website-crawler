@@ -141,7 +141,15 @@ class SerpApiParser extends BaseParser {
             // 提取示例描述
             const paraDiv = wrapper.querySelector('.docu-para');
             if (paraDiv) {
-              example.description = paraDiv.textContent.trim();
+              // 使用 innerHTML 替换 <br> 为换行，然后提取文本
+              let html = paraDiv.innerHTML;
+              html = html.replace(/<br\s*\/?>/gi, '\n');
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = html;
+              example.description = tempDiv.textContent
+                .replace(/\n+/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
             }
 
             // 提取请求参数（从 data-react-props）
@@ -176,7 +184,16 @@ class SerpApiParser extends BaseParser {
         const infoBoxes = document.querySelectorAll('.box-wrapper.main-text, .docu-para');
         const importantNotes = [];
         infoBoxes.forEach(box => {
-          const text = box.textContent.trim();
+          // 使用 innerHTML 替换 <br> 为换行，然后提取文本
+          let html = box.innerHTML;
+          html = html.replace(/<br\s*\/?>/gi, '\n');
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+          const text = tempDiv.textContent
+            .replace(/\n+/g, '\n')
+            .replace(/\n/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
           if (text.includes('page_token') || text.includes('serpapi_link') ||
               text.includes('extra request') || text.includes('expire')) {
             importantNotes.push(text);

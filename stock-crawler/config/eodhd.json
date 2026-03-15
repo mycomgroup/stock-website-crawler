@@ -1,19 +1,17 @@
 {
-  "name": "serpapi-ai-overview",
+  "name": "eodhd-api-docs",
   "seedUrls": [
-    "https://serpapi.com/ai-overview"
+    "https://eodhd.com/financial-apis"
   ],
   "urlRules": {
     "include": [
-      "^https://serpapi\\.com/.*"
+      "^https://eodhd\\.com/financial-apis.*"
     ],
     "exclude": [
-      "/playground",
-      "/account",
-      "/login",
-      "/signup",
-      "/pricing",
-      "/status"
+      "/page/\\d+",
+      "\\?s=",
+      "/feed",
+      "/wp-"
     ]
   },
   "login": {
@@ -24,11 +22,11 @@
   },
   "crawler": {
     "headless": true,
-    "timeout": 60000,
-    "waitBetweenRequests": 2000,
+    "timeout": 90000,
+    "waitBetweenRequests": 3000,
     "maxRetries": 3,
-    "batchSize": 10,
-    "userDataDir": "./chrome_user_data"
+    "batchSize": 30,
+    "userDataDir": "./chrome_user_data_eodhd"
   },
   "output": {
     "directory": "./output",

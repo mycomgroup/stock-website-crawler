@@ -89,20 +89,17 @@ class ModelscopeMcpParser extends BaseParser {
       const serverPath = this.extractServerPath(url);
       const isServerDetail = serverPath.startsWith('servers/');
 
-      const data = await page.evaluate(() => {
+      // 先获取页面原始数据
+      const rawData = await page.evaluate(() => {
         const result = {
           title: '',
           description: '',
           serverInfo: {},
-          tools: [],
-          prompts: [],
-          installation: '',
-          configuration: '',
+          tags: [],
           codeBlocks: [],
           tables: [],
           rawContent: '',
-          links: [],
-          tags: []
+          links: []
         };
 
         // 获取 main 元素作为主要内容容器
@@ -117,7 +114,7 @@ class ModelscopeMcpParser extends BaseParser {
           result.title = h1.textContent.trim();
         }
 
-        // 提取描述 - 通常是 h1 后的第一段或特定描述区域
+        // 提取描述
         const descriptionEl = main.querySelector('.acss-j8jmz5') ||
                               main.querySelector('[class*="description"]');
         if (descriptionEl) {
@@ -125,7 +122,6 @@ class ModelscopeMcpParser extends BaseParser {
         }
 
         // 提取服务器基本信息
-        // 服务器名称和路径
         const serverNameEl = main.querySelector('.acss-cyoggp');
         const serverPathEl = main.querySelector('.acss-149f9ri');
         if (serverNameEl) {
@@ -135,85 +131,50 @@ class ModelscopeMcpParser extends BaseParser {
           result.serverInfo['路径'] = serverPathEl.textContent.trim();
         }
 
-        // 提取标签
-        const tags = main.querySelectorAll('.antd5-tag');
-        tags.forEach(tag => {
-          const tagText = tag.textContent.trim();
-          if (tagText && !tagText.includes('License') && !tagText.includes('Developer')) {
-            // 过滤掉一些不需要的标签
-            if (tagText.length > 2 && tagText.length < 30) {
-              result.tags.push(tagText);
-            }
-          }
-        });
+        // 提取原始内容
+        result.rawContent = main.innerText || '';
 
         // 提取许可证信息
-        const licenseLabel = Array.from(main.querySelectorAll('*')).find(el =>
-          el.textContent?.trim() === 'License:'
-        );
-        if (licenseLabel) {
-          const licenseValue = licenseLabel.closest('.antd5-tag')?.querySelector('.acss-1m97cav')?.textContent.trim();
-          if (licenseValue) {
-            result.serverInfo['许可证'] = licenseValue;
-          }
+        const licenseMatch = result.rawContent.match(/License[:\s]+([A-Za-z\s]+)/i);
+        if (licenseMatch) {
+          result.serverInfo['许可证'] = licenseMatch[1].trim();
         }
 
-        // 提取所有标题和内容段落
-        const allText = main.innerText;
-        result.rawContent = allText;
-
-        // 提取工具信息
-        // 查找 "Available Tools" 或 "工具" 部分
-        const sections = allText.split(/\n(?=[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\n)/);
-        sections.forEach(section => {
-          const lines = section.trim().split('\n');
-          if (lines.length > 0) {
-            const sectionTitle = lines[0].trim();
-            if (sectionTitle === 'Available Tools' || sectionTitle.includes('Tools')) {
-              // 提取工具信息
-              const toolMatch = section.match(/(\w+)\s*-\s*(.+?)(?:\n|$)/g);
-              if (toolMatch) {
-                toolMatch.forEach(match => {
-                  const [, name, desc] = match.match(/(\w+)\s*-\s*(.+)/) || [];
-                  if (name && desc) {
-                    result.tools.push({ name, description: desc.trim() });
-                  }
-                });
-              }
-            }
+        // 提取标签
+        const tags = main.querySelectorAll('.antd5-tag');
+        const seenTags = new Set();
+        tags.forEach(tag => {
+          const tagText = tag.textContent.trim();
+          if (tagText &&
+              !tagText.includes('License') &&
+              !tagText.includes('Developer') &&
+              !tagText.includes('Hosted') &&
+              !tagText.includes('Deployable') &&
+              tagText.length > 2 &&
+              tagText.length < 30 &&
+              !seenTags.has(tagText)) {
+            result.tags.push(tagText);
+            seenTags.add(tagText);
           }
         });
 
-        // 从原始内容提取工具和参数
-        const toolRegex = /(\w+)\s*-\s*(.+?)(?:\n|$)/g;
-        let toolMatch;
-        while ((toolMatch = toolRegex.exec(allText)) !== null) {
-          const [, name, desc] = toolMatch;
-          if (name && desc && !result.tools.find(t => t.name === name)) {
-            result.tools.push({ name, description: desc.trim() });
-          }
-        }
-
-        // 提取代码块
-        const codeElements = main.querySelectorAll('pre, code');
+        // 提取真正的代码块（只保留多行代码）
+        const codeElements = main.querySelectorAll('pre');
         codeElements.forEach(el => {
           const code = el.textContent.trim();
-          if (code && code.length > 10) {
-            // 避免重复
+          if (code && (code.split('\n').length >= 3 || code.length > 50)) {
             let language = 'text';
-            const classList = el.className || '';
 
-            if (classList.includes('language-json') || code.startsWith('{')) {
+            if (code.startsWith('{') || code.startsWith('"mcpServers"')) {
               language = 'json';
-            } else if (classList.includes('language-python') || code.includes('pip ') || code.includes('python ')) {
+            } else if (code.includes('pip ') || code.includes('python ') || code.includes('import ')) {
+              language = 'python';
+            } else if (code.includes('npm ') || code.includes('npx ') || code.includes('node ')) {
               language = 'bash';
-            } else if (classList.includes('language-javascript') || code.includes('npm ') || code.includes('npx ')) {
-              language = 'bash';
-            } else if (code.startsWith('pip ') || code.startsWith('python ') || code.startsWith('npm ') || code.startsWith('npx ') || code.startsWith('cd ') || code.includes('docker ')) {
+            } else if (code.includes('docker ')) {
               language = 'bash';
             }
 
-            // 检查是否已经存在相同的代码块
             if (!result.codeBlocks.find(b => b.code === code)) {
               result.codeBlocks.push({ language, code });
             }
@@ -226,14 +187,12 @@ class ModelscopeMcpParser extends BaseParser {
           const headers = [];
           const rows = [];
 
-          // 提取表头
           const headerRow = table.querySelector('thead tr') || table.querySelector('tr');
           if (headerRow) {
             const headerCells = headerRow.querySelectorAll('th, td');
             headerCells.forEach(cell => headers.push(cell.textContent.trim()));
           }
 
-          // 提取数据行
           const bodyRows = table.querySelectorAll('tbody tr');
           const rowsToProcess = bodyRows.length > 0 ? bodyRows : table.querySelectorAll('tr');
 
@@ -246,11 +205,6 @@ class ModelscopeMcpParser extends BaseParser {
               cells.forEach((cell, cellIndex) => {
                 const headerName = headers[cellIndex] || `column_${cellIndex}`;
                 rowData[headerName] = cell.textContent.trim();
-
-                const link = cell.querySelector('a');
-                if (link) {
-                  rowData[`${headerName}_link`] = link.href;
-                }
               });
               rows.push(rowData);
             }
@@ -263,42 +217,42 @@ class ModelscopeMcpParser extends BaseParser {
 
         // 提取 MCP 相关链接
         const links = main.querySelectorAll('a[href*="/mcp"]');
+        const seenLinks = new Set();
         links.forEach(link => {
           const href = link.href;
           const text = link.textContent.trim();
-          if (text && !result.links.find(l => l.href === href)) {
+          if (text && !seenLinks.has(href)) {
             result.links.push({ text, href });
+            seenLinks.add(href);
           }
         });
 
         return result;
       });
 
-      // 解析原始内容，提取安装和配置部分
-      if (data.rawContent) {
-        const sections = this.parseSections(data.rawContent);
-        data.installation = sections.installation;
-        data.configuration = sections.configuration;
-        data.prompts = sections.prompts;
-      }
+      // 在 evaluate 外部解析工具信息
+      const tools = this.parseToolsFromText(rawData.rawContent);
+
+      // 从原始内容提取安装和配置部分
+      const installation = this.parseInstallation(rawData.rawContent);
+      const configuration = this.parseConfiguration(rawData.rawContent);
 
       return {
         type: 'modelscope-mcp-server',
         url,
         serverPath,
         isServerDetail,
-        title: data.title,
-        description: data.description,
-        serverInfo: data.serverInfo,
-        tools: data.tools,
-        prompts: data.prompts,
-        tags: data.tags,
-        installation: data.installation,
-        configuration: data.configuration,
-        codeBlocks: data.codeBlocks,
-        tables: data.tables,
-        links: data.links,
-        rawContent: data.rawContent,
+        title: rawData.title,
+        description: rawData.description,
+        serverInfo: rawData.serverInfo,
+        tools,
+        tags: rawData.tags,
+        installation,
+        configuration,
+        codeBlocks: rawData.codeBlocks,
+        tables: rawData.tables,
+        links: rawData.links,
+        rawContent: rawData.rawContent,
         suggestedFilename: this.generateFilename(url)
       };
     } catch (error) {
@@ -312,7 +266,6 @@ class ModelscopeMcpParser extends BaseParser {
         description: '',
         serverInfo: {},
         tools: [],
-        prompts: [],
         tags: [],
         installation: '',
         configuration: '',
@@ -326,34 +279,156 @@ class ModelscopeMcpParser extends BaseParser {
   }
 
   /**
-   * 解析原始内容，提取各个部分
+   * 从文本中解析工具信息
+   * 根据实际格式解析:
+   * 地理编码 map_geocode
+   * 将地址解析为对应的位置坐标
+   * 输入: address 地址信息
+   * 输出: location
    */
-  parseSections(rawContent) {
-    const result = {
-      installation: '',
-      configuration: '',
-      prompts: []
-    };
+  parseToolsFromText(text) {
+    if (!text) return [];
 
-    // 提取安装部分
-    const installMatch = rawContent.match(/Installation\s*([\s\S]*?)(?=Configuration|Debugging|Contributing|License|$)/i);
-    if (installMatch) {
-      result.installation = installMatch[1].trim();
+    const tools = [];
+
+    // 查找"工具"部分，直到遇到"开始"、"安装"、"配置"等结束标记
+    // 使用更精确的正则，避免匹配到其他内容
+    const toolsSectionMatch = text.match(/(?:^|\n)工具[\s\n]+([\s\S]*?)(?=(?:\n(?:开始|Getting Started|安装|Installation|配置|Configuration|Service|Prompts|Python|Typescript|授权|许可|反馈|更新|版本|功能说明|$))|$)/i);
+
+    if (!toolsSectionMatch) {
+      return tools;
     }
 
-    // 提取配置部分
-    const configMatch = rawContent.match(/Configuration\s*([\s\S]*?)(?=Debugging|Contributing|License|Service configuration|$)/i);
-    if (configMatch) {
-      result.configuration = configMatch[1].trim();
+    const toolsSection = toolsSectionMatch[1];
+    const lines = toolsSection.split('\n');
+    let currentTool = null;
+    let lastInputLine = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (!line) {
+        lastInputLine = false;
+        continue;
+      }
+
+      // 跳过"工具"标题行
+      if (line === '工具' || line.match(/^Available\s*Tools$/i)) {
+        continue;
+      }
+
+      // 检测工具定义行: 中文名称(必须包含中文) + 工具英文名(必须是小写字母、数字、下划线)
+      // 例如: 地理编码 map_geocode
+      const toolNameMatch = line.match(/^([\u4e00-\u9fa5][\u4e00-\u9fa5\w\s]*?)\s+([a-z][a-z0-9_]*)$/);
+      if (toolNameMatch) {
+        if (currentTool) {
+          tools.push(currentTool);
+        }
+        currentTool = {
+          name: toolNameMatch[2],
+          displayName: toolNameMatch[1].trim(),
+          description: '',
+          inputs: [],
+          outputs: []
+        };
+        lastInputLine = false;
+        continue;
+      }
+
+      // 检测纯英文名的工具格式: tool_name - 描述
+      const englishToolMatch = line.match(/^([a-z][a-z0-9_]*)\s*[-–]\s*(.+)$/);
+      if (englishToolMatch && !line.includes(':')) {
+        if (currentTool) {
+          tools.push(currentTool);
+        }
+        currentTool = {
+          name: englishToolMatch[1],
+          displayName: englishToolMatch[1],
+          description: englishToolMatch[2],
+          inputs: [],
+          outputs: []
+        };
+        lastInputLine = false;
+        continue;
+      }
+
+      // 检测描述行 - 非特殊格式的行
+      if (currentTool &&
+          !line.startsWith('输入') &&
+          !line.startsWith('输出') &&
+          !line.match(/^[a-z_][a-z0-9_]*\s*[-–]/i) &&
+          !line.match(/^[a-z_][a-z0-9_]*\s+[\u4e00-\u9fa5]/)) {
+        // 如果这行看起来像是描述（包含中文且长度适中）
+        if (line.match(/[\u4e00-\u9fa5]/) && line.length > 3 && line.length < 100) {
+          if (!currentTool.description) {
+            currentTool.description = line;
+          }
+        }
+      }
+
+      // 检测输入参数: 输入: param_name 描述
+      if (line.startsWith('输入:') || line.startsWith('输入：')) {
+        const inputContent = line.replace(/^输入[:：]\s*/, '');
+        const paramMatch = inputContent.match(/^(\w+)\s*(.*)$/);
+        if (paramMatch && currentTool) {
+          currentTool.inputs.push({
+            name: paramMatch[1],
+            description: paramMatch[2] || ''
+          });
+        }
+        lastInputLine = true;
+        continue;
+      }
+
+      // 检测输出: 输出: value1, value2
+      if (line.startsWith('输出:') || line.startsWith('输出：')) {
+        const outputContent = line.replace(/^输出[:：]\s*/, '');
+        if (currentTool) {
+          currentTool.outputs = outputContent.split(',').map(o => o.trim()).filter(o => o);
+        }
+        lastInputLine = false;
+        continue;
+      }
+
+      // 续行的输入参数（在输入块内的参数定义）
+      // 格式: param_name 描述
+      if (lastInputLine && currentTool) {
+        const paramMatch = line.match(/^([a-z_][a-z0-9_]*)\s+(.+)$/i);
+        if (paramMatch && paramMatch[2].match(/[\u4e00-\u9fa5]/)) {
+          currentTool.inputs.push({
+            name: paramMatch[1],
+            description: paramMatch[2]
+          });
+        }
+      }
     }
 
-    // 提取 Prompts 部分
-    const promptsMatch = rawContent.match(/Prompts\s*([\s\S]*?)(?=Installation|Configuration|Debugging|Contributing|License|$)/i);
-    if (promptsMatch) {
-      result.prompts = [promptsMatch[1].trim()];
+    if (currentTool) {
+      tools.push(currentTool);
     }
 
-    return result;
+    // 过滤掉无效的工具（名称太短或没有实际内容）
+    return tools.filter(t => t.name && t.name.length > 3 && t.name.includes('_'));
+  }
+
+  /**
+   * 解析安装部分
+   */
+  parseInstallation(text) {
+    if (!text) return '';
+
+    const installMatch = text.match(/(?:开始|Getting Started|安装|Installation)[\s\S]*?(?=(?:配置|Configuration|Service|$))/i);
+    return installMatch ? installMatch[0].trim() : '';
+  }
+
+  /**
+   * 解析配置部分
+   */
+  parseConfiguration(text) {
+    if (!text) return '';
+
+    const configMatch = text.match(/(?:配置|Configuration)[\s\S]*?(?=(?:Service|授权|许可|反馈|更新|$))/i);
+    return configMatch ? configMatch[0].trim() : '';
   }
 }
 

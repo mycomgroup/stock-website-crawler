@@ -116,7 +116,8 @@ class QverisApiParser extends BaseParser {
           const code = block.textContent.trim();
           // 使用内容的 hash 去重
           const codeHash = code.substring(0, 100);
-          if (code && code.length > 5 && !seenCode.has(codeHash)) {
+          // 过滤掉太短的代码片段（通常是标签或短文本）
+          if (code && code.length > 30 && !seenCode.has(codeHash)) {
             seenCode.add(codeHash);
             // 尝试检测语言
             let language = 'text';
@@ -172,9 +173,20 @@ class QverisApiParser extends BaseParser {
               sibling = sibling.nextElementSibling;
               if (content.length > 2000) break; // 限制长度
             }
+            // 清理内容中的格式化残留
+            let cleanedContent = content.trim()
+              .replace(/Line NumbersThemeCopy/g, '')
+              .replace(/JSONBashPythonTypeScript/g, '')
+              .replace(/BashPythonTypeScript/g, '')
+              .replace(/JSONLine NumbersThemeCopy/g, '')
+              // 移除行首的 JSON、bash、Python 等语言标签
+              .replace(/^JSON\s*/gm, '')
+              .replace(/^bash\s*/gmi, '')
+              .replace(/^Python\s*\d/gm, '')
+              .replace(/\n{3,}/g, '\n\n');
             result.sections.push({
               title,
-              content: content.trim().substring(0, 1000)
+              content: cleanedContent.substring(0, 1000)
             });
           }
         });

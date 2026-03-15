@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { formatApiDoc } from './formatters/api-doc-formatter.js';
 
 /**
  * Markdown Generator - 负责将解析的页面数据转换为Markdown格式
@@ -11,7 +12,7 @@ class MarkdownGenerator {
    * @returns {string} Markdown文本
    */
   generate(pageData) {
-    // 根据页面类型选择生成方法
+    // 根据页面类型选择生成方法（优先检查特定类型）
     if (pageData.type === 'alphavantage-api') {
       return this.generateAlphavantageApi(pageData);
     } else if (pageData.type === 'eulerpool-api') {
@@ -46,10 +47,124 @@ class MarkdownGenerator {
       return this.generateTickdbApi(pageData);
     } else if (pageData.type === 'modelscope-mcp-server') {
       return this.generateModelscopeMcp(pageData);
-    } else {
-      // 兼容旧格式（没有type字段）
-      return this.generateApiDoc(pageData);
+    } else if (pageData.type === 'itick-doc') {
+      return this.generateItickDoc(pageData);
     }
+
+    // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
+    if (pageData.api && typeof pageData.api === 'object') {
+      return this.generateUnified(pageData);
+    }
+
+    // 尝试转换为统一格式
+    const unifiedData = formatApiDoc(pageData);
+    if (unifiedData.api.endpoint || unifiedData.parameters.length > 0 || unifiedData.codeExamples.length > 0) {
+      return this.generateUnified(unifiedData);
+    }
+
+    // 兼容旧格式（没有type字段）
+    return this.generateApiDoc(pageData);
+  }
+
+  /**
+   * 生成统一格式的 Markdown 文档
+   * @param {Object} data - 统一格式的文档数据
+   * @returns {string} Markdown文本
+   */
+  generateUnified(data) {
+    const sections = [];
+
+    // 标题
+    if (data.title) {
+      sections.push(`# ${data.title}\n`);
+    }
+
+    // 源 URL
+    if (data.url) {
+      sections.push('## 源URL\n');
+      sections.push(data.url);
+      sections.push('');
+    }
+
+    // 描述
+    if (data.description) {
+      sections.push('## 描述\n');
+      sections.push(data.description);
+      sections.push('');
+    }
+
+    // API 端点信息
+    if (data.api) {
+      sections.push('## API 端点\n');
+      if (data.api.method) {
+        sections.push(`**Method**: \`${data.api.method}\``);
+      }
+      if (data.api.endpoint) {
+        sections.push(`**Endpoint**: \`${data.api.endpoint}\``);
+      }
+      if (data.api.baseUrl) {
+        sections.push(`**Base URL**: \`${data.api.baseUrl}\``);
+      }
+      sections.push('');
+    }
+
+    // 参数表格
+    if (data.parameters && data.parameters.length > 0) {
+      sections.push('## 参数\n');
+      sections.push('| 参数名 | 类型 | 必需 | 默认值 | 描述 |');
+      sections.push('|--------|------|------|--------|------|');
+      data.parameters.forEach(p => {
+        const name = this.escapeMarkdown(p.name || '');
+        const type = this.escapeMarkdown(p.type || '-');
+        const required = p.required ? '是' : '否';
+        const defaultVal = p.default ? this.escapeMarkdown(p.default) : '-';
+        const desc = this.escapeMarkdown(p.description || '-');
+        sections.push(`| \`${name}\` | ${type} | ${required} | ${defaultVal} | ${desc} |`);
+      });
+      sections.push('');
+    }
+
+    // 响应字段表格
+    if (data.responseFields && data.responseFields.length > 0) {
+      sections.push('## 响应字段\n');
+      sections.push('| 字段名 | 类型 | 描述 |');
+      sections.push('|--------|------|------|');
+      data.responseFields.forEach(f => {
+        const name = this.escapeMarkdown(f.name || '');
+        const type = this.escapeMarkdown(f.type || '-');
+        const desc = this.escapeMarkdown(f.description || '-');
+        sections.push(`| \`${name}\` | ${type} | ${desc} |`);
+      });
+      sections.push('');
+    }
+
+    // 代码示例
+    if (data.codeExamples && data.codeExamples.length > 0) {
+      sections.push('## 代码示例\n');
+      data.codeExamples.forEach((example, index) => {
+        if (data.codeExamples.length > 1) {
+          const lang = example.language || 'text';
+          sections.push(`### 示例 ${index + 1} (${lang})\n`);
+        }
+        const lang = example.language || 'text';
+        sections.push(`\`\`\`${lang}`);
+        sections.push(example.code || '');
+        sections.push('```\n');
+      });
+    }
+
+    // 原始内容（作为后备）
+    if (data.rawContent && sections.join('\n').length < data.rawContent.length * 0.5) {
+      sections.push('## 详细内容\n');
+      const cleaned = data.rawContent
+        .replace(/\n{3,}/g, '\n\n')
+        .trim()
+        .substring(0, 5000);
+      sections.push(cleaned);
+      sections.push('');
+    }
+
+    return sections.join('\n');
   }
 
   /**
@@ -507,6 +622,18 @@ class MarkdownGenerator {
 
     // 添加 tab 内容（Request、Examples 等）
     if (pageData.tabContents && pageData.tabContents.length > 0) {
+      // 收集主体内容中的所有表格，用于去重
+      const mainTables = [];
+      if (pageData.sections) {
+        pageData.sections.forEach(section => {
+          section.content.forEach(item => {
+            if (item.type === 'table' && item.data) {
+              mainTables.push(this.tableSignature(item.data));
+            }
+          });
+        });
+      }
+
       // 按 sectionTitle 分组
       const groupedBySection = {};
       pageData.tabContents.forEach(tab => {
@@ -519,9 +646,28 @@ class MarkdownGenerator {
 
       // 输出每个 section 的 tab 内容
       Object.entries(groupedBySection).forEach(([sectionTitle, tabs]) => {
+        // 过滤掉与主体内容完全重复的tab组
+        const filteredTabs = tabs.map(tab => {
+          // 过滤掉重复的表格
+          const filteredTables = (tab.tables || []).filter(table => {
+            const sig = this.tableSignature(table);
+            return !mainTables.includes(sig);
+          });
+          return { ...tab, tables: filteredTables };
+        }).filter(tab => {
+          // 只保留有实际内容的tab
+          const hasTables = tab.tables && tab.tables.length > 0;
+          const hasCode = tab.codeExamples && tab.codeExamples.length > 0;
+          const hasContent = tab.content && tab.content.trim().length > 50;
+          return hasTables || hasCode || hasContent;
+        });
+
+        // 如果所有tab都被过滤掉了，跳过整个section
+        if (filteredTabs.length === 0) return;
+
         sections.push(`### ${sectionTitle} - Tab 内容\n`);
 
-        tabs.forEach((tab, tabIndex) => {
+        filteredTabs.forEach((tab, tabIndex) => {
           // 使用实际的 tab label，如果没有则使用索引
           const tabLabel = tab.label || `Tab ${tab.tabIndex + 1}`;
           sections.push(`#### ${tabLabel}\n`);
@@ -610,6 +756,20 @@ class MarkdownGenerator {
         sections.push('');
         break;
     }
+  }
+
+  /**
+   * 辅助方法：生成表格签名，用于比较表格是否重复
+   * @param {Array} table - 表格数据
+   * @returns {string} 表格签名
+   */
+  tableSignature(table) {
+    if (!table || table.length === 0) return '';
+    // 只使用表头和前两行数据作为签名
+    const header = table[0] ? table[0].join('|') : '';
+    const row1 = table[1] ? table[1].join('|') : '';
+    const row2 = table[2] ? table[2].join('|') : '';
+    return `${header}||${row1}||${row2}`;
   }
 
   /**
@@ -1044,7 +1204,18 @@ class MarkdownGenerator {
       pageData.sections.forEach(section => {
         sections.push(`### ${section.title}\n`);
         if (section.content) {
-          sections.push(section.content);
+          // 清理格式化残留
+          const cleanedContent = section.content
+            .replace(/Line NumbersThemeCopy/g, '')
+            .replace(/JSONBashPythonTypeScript/g, '')
+            .replace(/BashPythonTypeScript/g, '')
+            .replace(/JSONLine NumbersThemeCopy/g, '')
+            // 移除行首的 JSON、bash、Python 等语言标签
+            .replace(/^JSON\s*/gm, '')
+            .replace(/^bash\s*/gmi, '')
+            .replace(/^Python\s*\d/gm, '')
+            .replace(/\n{3,}/g, '\n\n');
+          sections.push(cleanedContent);
           sections.push('');
         }
       });
@@ -2470,11 +2641,15 @@ class MarkdownGenerator {
     // 添加参数表格
     if (pageData.parameters && pageData.parameters.length > 0) {
       sections.push('## 参数\n');
-      sections.push('| 名称 | 类型 | 必需 | 描述 |');
-      sections.push('|------|------|------|------|');
+      sections.push('| 参数名 | 类型 | 必需 | 默认值 | 描述 |');
+      sections.push('|--------|------|------|--------|------|');
       pageData.parameters.forEach(param => {
         const required = param.required ? '是' : '否';
-        sections.push(`| ${param.name || '-'} | ${param.type || '-'} | ${required} | ${param.description || '-'} |`);
+        const defaultVal = param.default || '-';
+        const name = param.name || '-';
+        const type = param.type || '-';
+        const desc = param.description || '-';
+        sections.push(`| \`${name}\` | ${type} | ${required} | ${defaultVal} | ${desc} |`);
       });
       sections.push('');
     }
@@ -2525,6 +2700,20 @@ class MarkdownGenerator {
           case 'blockquote':
             sections.push(`> ${item.content}`);
             sections.push('');
+            break;
+
+          case 'parameter':
+            if (item.name) {
+              let paramLine = `- **\`${item.name}\`**`;
+              if (item.paramType) {
+                paramLine += ` (${item.paramType})`;
+              }
+              sections.push(paramLine);
+              if (item.description) {
+                sections.push(`  ${item.description}`);
+              }
+              sections.push('');
+            }
             break;
         }
       });
@@ -2757,12 +2946,34 @@ class MarkdownGenerator {
     if (pageData.tools && pageData.tools.length > 0) {
       sections.push('## 可用工具\n');
       pageData.tools.forEach(tool => {
-        sections.push(`### ${tool.name}`);
+        const toolTitle = tool.displayName ? `${tool.displayName} (\`${tool.name}\`)` : `\`${tool.name}\``;
+        sections.push(`### ${toolTitle}`);
         if (tool.description) {
           sections.push('');
           sections.push(tool.description);
         }
-        if (tool.parameters && tool.parameters.length > 0) {
+
+        // 输入参数
+        if (tool.inputs && tool.inputs.length > 0) {
+          sections.push('');
+          sections.push('**输入参数:**');
+          sections.push('');
+          sections.push('| 参数名 | 描述 |');
+          sections.push('|--------|------|');
+          tool.inputs.forEach(param => {
+            sections.push(`| \`${param.name}\` | ${param.description || ''} |`);
+          });
+        }
+
+        // 输出
+        if (tool.outputs && tool.outputs.length > 0) {
+          sections.push('');
+          sections.push('**输出:**');
+          sections.push(tool.outputs.map(o => `\`${o}\``).join(', '));
+        }
+
+        // 兼容旧的 parameters 格式
+        if (tool.parameters && tool.parameters.length > 0 && !tool.inputs) {
           sections.push('');
           sections.push('| 参数 | 类型 | 必需 | 描述 |');
           sections.push('|------|------|------|------|');
@@ -2850,6 +3061,56 @@ class MarkdownGenerator {
         sections.push('```');
         sections.push('');
       }
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 iTick 普通文档的 Markdown
+   * @param {Object} pageData - 页面数据
+   * @returns {string} Markdown文本
+   */
+  generateItickDoc(pageData) {
+    const sections = [];
+
+    // 添加标题
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    // 添加源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 添加描述
+    if (pageData.description) {
+      sections.push('## 描述\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    // 添加章节内容
+    if (pageData.sections && pageData.sections.length > 0) {
+      pageData.sections.forEach(section => {
+        if (section.title) {
+          sections.push(`## ${section.title}\n`);
+        }
+        if (section.content) {
+          sections.push(section.content);
+          sections.push('');
+        }
+      });
+    }
+
+    // 如果没有章节内容，使用原始内容
+    if ((!pageData.sections || pageData.sections.length === 0) && pageData.rawContent) {
+      sections.push('## 内容\n');
+      sections.push(pageData.rawContent);
+      sections.push('');
     }
 
     return sections.join('\n');

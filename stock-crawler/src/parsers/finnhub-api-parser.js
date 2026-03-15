@@ -151,15 +151,37 @@ class FinnhubApiParser extends BaseParser {
             break;
           }
 
-          // 其次：标题包含完整目标词（目标词完整出现在标题中）
-          // 例如：目标 "search filter" 能匹配标题 "Search Filter Premium"
-          const targetWords = targetCore.split(/\s+/).filter(w => w.length > 2);
-          const matchCount = targetWords.filter(w => firstLineCore.includes(w)).length;
-          if (targetWords.length > 0 && matchCount === targetWords.length) {
-            result.rawContent = text + getCodeBlocks(docText);
-            result.title = text.split('\n')[0].trim();
-            break;
+          // 其次：标题的核心词都出现在 URL 中
+          const titleWords = firstLineCore.split(/\s+/).filter(w => w.length > 2);
+          const titleMatchCount = titleWords.filter(w => targetCore.includes(w)).length;
+
+          if (titleWords.length >= 2 && titleMatchCount === titleWords.length) {
+            const titleStr = firstLineCore.replace(/ /g, '');
+            const targetStr = targetCore.replace(/ /g, '');
+
+            // 连续匹配优先
+            if (targetStr.includes(titleStr)) {
+              // 计算匹配位置，优先选择匹配 URL 末尾的
+              const matchIndex = targetStr.indexOf(titleStr);
+
+              // 如果还没有结果，或者新的匹配位置更靠后
+              if (!result.rawContent || matchIndex > (result._matchIndex || -1)) {
+                result.rawContent = text + getCodeBlocks(docText);
+                result.title = text.split('\n')[0].trim();
+                result._matchIndex = matchIndex;
+              }
+
+              // 如果匹配在 URL 的最后部分，直接退出
+              if (matchIndex + titleStr.length >= targetStr.length - 3) {
+                break;
+              }
+            }
           }
+        }
+
+        // 清理临时字段
+        if (result._matchIndex !== undefined) {
+          delete result._matchIndex;
         }
 
         // 策略1.5：如果没找到，尝试通过 URL 到标题的映射

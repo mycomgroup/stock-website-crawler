@@ -188,7 +188,8 @@ class FinancialDatasetsApiParser extends BaseParser {
             'application', 'json', 'Available', 'options', 'Hide', 'child', 'attributes',
             'Analyst', 'Estimates', 'Company', 'Earnings', 'Financial', 'Metrics', 'Statements',
             'Insider', 'Trades', 'News', 'Institutional', 'Ownership', 'Interest', 'Rates',
-            'Search', 'SEC', 'Filings', 'Segmented', 'Stock', 'Prices'];
+            'Search', 'SEC', 'Filings', 'Segmented', 'Stock', 'Prices', 'financials',
+            'income_statements', 'balance_sheets', 'cash_flow_statements'];
 
           for (let i = 0; i < blocks.length; i++) {
             const block = blocks[i].trim();
@@ -219,9 +220,11 @@ class FinancialDatasetsApiParser extends BaseParser {
               // 检查类型格式
               // 支持格式：string, stringrequired, string required, enum<string>, enum<string>required 等
               // 还要支持 stringheaderrequired (Mintlify 把 header 参数类型显示为 "stringheaderrequired")
+              // 还要支持 integer<int32>, string<date> 等带泛型的类型
               const typeBlock = typeLine.replace(/\s+/g, ''); // 移除空格便于匹配
               // 匹配类型，允许后面跟着 "required"、"headerrequired" 等
-              const typeMatch = typeBlock.match(/^(string|boolean|number|integer|object|array|enum(?:<[^>]+>)?)(header)?(required)?$/i);
+              // 类型可以是 string, integer, enum<string>, integer<int32>, string<date> 等
+              const typeMatch = typeBlock.match(/^(string|boolean|number|integer|object|array|enum)(?:<[^>]+>)?(header)?(required)?$/i);
 
               if (typeMatch) {
                 // 找到描述 - 在下一个块中

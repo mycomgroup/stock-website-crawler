@@ -188,6 +188,113 @@ class TavilyApiParser extends BaseParser {
           }
         }
 
+        // ========== 提取 Mintlify 参数结构 ==========
+        // Mintlify 使用 param-field 类来标记参数
+        // 格式: ​paramNametype[default:value][required][header]Description...
+        const extractMintlifyParams = () => {
+          const params = [];
+          const paramSelectors = [
+            '[class*="primitive-param-field"]',
+            '[class*="object-param-field"]',
+            '[class*="array-param-field"]'
+          ];
+
+          // 已知的类型关键字（按长度降序排列，确保优先匹配更长的类型）
+          const typePatterns = [
+            'enum(?:<[^>]+>)?',
+            'string\\[\\]',      // string[] 数组类型
+            'integer',
+            'number(?:<[^>]+>)?',
+            'boolean',
+            'string',
+            'object',
+            'array'
+          ];
+
+          paramSelectors.forEach(selector => {
+            const paramFields = document.querySelectorAll(selector);
+            paramFields.forEach(field => {
+              const text = field.textContent || '';
+
+              // Mintlify 文本格式解析:
+              // 零宽度空格 + 参数名 + 类型 + [default:xxx] + [required] + [header/body/query] + 描述
+
+              // 移除开头的零宽度空格
+              let cleanText = text.replace(/^[\u200B\u200C\u200D]+/, '');
+
+              // 移除可能混入的 CSS 内容
+              if (cleanText.includes('#opt-') || cleanText.includes(':has(') || cleanText.includes('display:')) {
+                cleanText = cleanText.split(/#opt-|:has\(|display:/)[0];
+              }
+
+              // 使用动态构建的正则，类型按长度排序确保正确匹配
+              const typeGroup = typePatterns.join('|');
+              // 参数名不能以已知类型关键字结尾
+              const paramPattern = new RegExp(
+                `^([a-zA-Z_][a-zA-Z0-9_\\[\\]\\.]*?)(${typeGroup})(header|body|query|path)?(required)?(?:default:([^\\s\\u200B]+))?([\\s\\S]*)$`,
+                'i'
+              );
+
+              const match = cleanText.match(paramPattern);
+
+              if (match) {
+                let paramName = match[1];
+                const paramType = match[2];
+                const location = match[3] || '';
+                const isRequired = !!match[4];
+                const defaultValue = (match[5] || '').replace(/[\u200B\u200C\u200D]+/g, '').trim();
+                let description = match[6] || '';
+
+                // 清理描述
+                description = description
+                  .replace(/^[\u200B\u200C\u200D\s:]+/, '')
+                  .replace(/[\u200B\u200C\u200D]+/g, ' ')
+                  .trim()
+                  .substring(0, 500);
+
+                // 验证参数名不以类型关键字结尾（避免错误分割）
+                const typeCheckPattern = new RegExp(`(${typePatterns.join('|')})$`, 'i');
+                if (typeCheckPattern.test(paramName)) {
+                  // 参数名以类型结尾，这是错误的分割，跳过
+                  console.log('Skipping invalid param split:', paramName, paramType);
+                } else if (paramName && description.length > 5) {
+                  const param = {
+                    name: paramName,
+                    type: paramType.toLowerCase(),
+                    required: isRequired,
+                    default: defaultValue,
+                    description: description
+                  };
+                  if (location) {
+                    param.location = location.toLowerCase();
+                  }
+                  params.push(param);
+                }
+              } else {
+                // 回退：尝试简单提取参数名（以空格或特殊字符结束）
+                const simpleMatch = cleanText.match(/^([a-zA-Z_][a-zA-Z0-9_\[\]\.]{2,40}?)(?=[A-Z][a-z]|\\s|\\u200B|$)/);
+                if (simpleMatch) {
+                  params.push({
+                    name: simpleMatch[1],
+                    type: '',
+                    required: false,
+                    default: '',
+                    description: cleanText.substring(simpleMatch[1].length).substring(0, 500)
+                  });
+                }
+              }
+            });
+          });
+
+          return params;
+        };
+
+        // 提取参数
+        const mintlifyParams = extractMintlifyParams();
+        if (mintlifyParams.length > 0) {
+          result.parameters = mintlifyParams;
+        }
+
         // 提取混排内容（按顺序）
         if (mainContentDiv) {
           // 用于过滤导航/UI文本
@@ -228,6 +335,55 @@ class TavilyApiParser extends BaseParser {
               if (classList.includes('nav') || classList.includes('sidebar') ||
                   classList.includes('menu') || classList.includes('toc')) {
                 return;
+              }
+
+              // Mintlify 参数结构检测
+              // Mintlify 使用特定的类名模式来标记参数
+              if (classList.includes('param') || classList.includes('property') ||
+                  classList.includes('request-body') || classList.includes('field')) {
+                const paramName = el.querySelector('code, [class*="name"], [class*="key"]');
+                const paramType = el.querySelector('[class*="type"]');
+                const paramDesc = el.querySelector('[class*="desc"], [class*="description"]');
+
+                if (paramName || paramDesc) {
+                  const name = paramName ? paramName.textContent.trim() : '';
+                  const type = paramType ? paramType.textContent.trim() : '';
+                  const desc = paramDesc ? paramDesc.textContent.trim() : el.textContent.trim();
+
+                  items.push({
+                    type: 'parameter',
+                    name,
+                    paramType: type,
+                    description: desc
+                  });
+                  return; // 不再递归处理这个元素
+                }
+              }
+
+              // 检测 Mintlify 的参数列表结构
+              // 通常是 div 容器包含参数名（code 元素）和描述
+              const paramCode = el.querySelector(':scope > code, :scope > strong > code');
+              if (paramCode && tagName === 'DIV') {
+                const paramName = paramCode.textContent.trim();
+                const siblings = Array.from(el.children);
+                let description = '';
+
+                // 收集参数名之后的文本作为描述
+                siblings.forEach(sibling => {
+                  if (sibling !== paramCode && sibling.tagName !== 'CODE') {
+                    description += ' ' + sibling.textContent.trim();
+                  }
+                });
+                description = description.trim() || el.textContent.replace(paramName, '').trim();
+
+                if (paramName && description) {
+                  items.push({
+                    type: 'parameter',
+                    name: paramName,
+                    description: description
+                  });
+                  return;
+                }
               }
 
               // 标题

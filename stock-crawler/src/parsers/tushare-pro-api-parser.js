@@ -214,8 +214,13 @@ class TushareProApiParser extends BaseParser {
           });
 
           // 提取表格 - 输入参数和输出参数
+          // 预期的表头格式
+          const inputParamHeaders = ['名称', '类型', '必选', '描述'];
+          const outputParamHeaders = ['名称', '类型', '默认显示', '描述'];
+
           const tables = content.querySelectorAll('table');
           let foundInputParams = false;
+          let foundOutputParams = false;
 
           tables.forEach((table, index) => {
             const headers = [];
@@ -251,28 +256,58 @@ class TushareProApiParser extends BaseParser {
               }
             });
 
-            // 根据表格前的文字判断是输入参数还是输出参数
-            // 查找表格前最近的段落标题
+            // 根据表头判断表格类型（优先）
+            // 然后根据表格前的文字判断（次要）
             let tableType = 'unknown';
+
+            // 检查表头是否匹配输入参数格式
+            const headerStr = headers.join(',');
+            const hasInputHeaders = inputParamHeaders.every(h => headerStr.includes(h)) ||
+                                    (headers.includes('名称') && headers.includes('类型') && headers.includes('必选'));
+            const hasOutputHeaders = outputParamHeaders.every(h => headerStr.includes(h)) ||
+                                     (headers.includes('名称') && headers.includes('类型') && headers.includes('默认显示'));
+
+            // 查找表格前最近的段落标题（限制搜索距离，只看前面2个元素）
             let prevElement = table.previousElementSibling;
-            while (prevElement) {
+            let searchCount = 0;
+            const maxSearch = 3;
+            let prevHasInput = false;
+            let prevHasOutput = false;
+
+            while (prevElement && searchCount < maxSearch) {
               const prevText = prevElement.textContent.trim();
               if (prevText.includes('输入参数')) {
-                tableType = 'input';
+                prevHasInput = true;
                 break;
               } else if (prevText.includes('输出参数')) {
-                tableType = 'output';
+                prevHasOutput = true;
                 break;
               }
               prevElement = prevElement.previousElementSibling;
+              searchCount++;
+            }
+
+            // 综合判断表格类型
+            if (hasInputHeaders && !foundInputParams) {
+              tableType = 'input';
+            } else if (hasOutputHeaders && !foundOutputParams) {
+              tableType = 'output';
+            } else if (prevHasInput && !foundInputParams && rows.length > 0) {
+              // 前面有"输入参数"标题，且表头不完全匹配但还没找到输入参数表
+              tableType = 'input';
+            } else if (prevHasOutput && !foundOutputParams && rows.length > 0) {
+              // 前面有"输出参数"标题，且还没找到输出参数表
+              tableType = 'output';
             }
 
             const tableData = { headers, rows };
 
             if (tableType === 'input') {
               result.inputParams = rows;
+              foundInputParams = true;
             } else if (tableType === 'output') {
               result.outputParams = rows;
+              foundOutputParams = true;
             }
           });
 

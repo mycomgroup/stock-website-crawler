@@ -8,6 +8,7 @@ table-debug.html
 stock-crawler/output/
 stock-crawler/chrome_user_data/
 stock-crawler/chrome_user_data_test/
+stock-crawler/chrome_user_data_*/
 
 # 日志文件
 *.log

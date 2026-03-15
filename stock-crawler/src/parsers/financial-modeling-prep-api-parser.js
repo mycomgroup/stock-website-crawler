@@ -50,6 +50,9 @@ class FinancialModelingPrepApiParser extends BaseParser {
 
   /**
    * 解析 Financial Modeling Prep API 文档页面
+   * 支持两种页面类型：
+   * 1. 主页面（documentationWrapper）- 包含所有 API 列表
+   * 2. 子页面（singleDocument_root）- 单个 API 详情
    * @param {Page} page - Playwright页面对象
    * @param {string} url - 页面URL
    * @param {Object} options - 解析选项
@@ -65,142 +68,228 @@ class FinancialModelingPrepApiParser extends BaseParser {
         const result = {
           title: '',
           description: '',
-          sections: []
+          sections: [],
+          isSubPage: false
         };
 
-        // 查找主内容区域
-        const wrapper = document.querySelector('[class*="documentationWrapper"]');
-        if (!wrapper) {
-          return result;
-        }
+        // 首先尝试子页面结构（singleDocument_root）
+        const singleRoot = document.querySelector('[class*="singleDocument_root"]');
+        if (singleRoot) {
+          result.isSubPage = true;
 
-        // 提取标题
-        const h1 = wrapper.querySelector('h1');
-        if (h1) {
-          result.title = h1.textContent.trim();
-        }
+          // 提取标题
+          const h1 = singleRoot.querySelector('h1');
+          if (h1) {
+            result.title = h1.textContent.trim();
+          }
 
-        // 提取描述（h1 后的第一段文本）
-        if (h1) {
-          let sibling = h1.nextElementSibling;
-          while (sibling) {
-            if (sibling.tagName.toLowerCase() === 'p') {
-              const text = sibling.textContent.trim();
-              if (text.length > 30 && !text.startsWith('Endpoint:')) {
-                result.description = text;
-                break;
+          // 提取描述（h1 后的文本）
+          if (h1) {
+            const parent = h1.closest('[class*="singleDocument_section"]') || h1.parentElement;
+            if (parent) {
+              const descDiv = parent.querySelector('[class*="udocDescription"]');
+              if (descDiv) {
+                result.description = descDiv.textContent.trim();
               }
             }
-            sibling = sibling.nextElementSibling;
-          }
-        }
-
-        // 遍历所有子元素
-        const children = Array.from(wrapper.children);
-
-        for (const child of children) {
-          const tagName = child.tagName.toLowerCase();
-          const text = child.textContent?.trim() || '';
-          const className = child.className || '';
-
-          // H4 是小节标题（如 Authorization）
-          if (tagName === 'h4') {
-            result.sections.push({
-              type: 'section',
-              title: text,
-              content: ''
-            });
-            continue;
           }
 
-          // P 标签可能是描述
-          if (tagName === 'p' && result.sections.length > 0) {
-            const lastSection = result.sections[result.sections.length - 1];
-            if (lastSection.type === 'section' && text.length > 10 && !text.startsWith('Endpoint:')) {
-              lastSection.content += (lastSection.content ? '\n\n' : '') + text;
-            }
-          }
+          // 遍历所有子元素
+          const sections = singleRoot.querySelectorAll('[class*="singleDocument_section"]');
+          for (const section of sections) {
+            const h2 = section.querySelector('h2');
+            const h3 = section.querySelector('h3');
+            const title = h2 || h3;
 
-          // DIV 没有类名的包含 API 分类
-          if (tagName === 'div' && !className) {
-            const h2 = child.querySelector('h2');
-            if (h2) {
-              const categoryTitle = h2.textContent.trim();
+            if (title) {
+              const sectionTitle = title.textContent.trim();
 
-              // 提取该分类下的完整文本内容
-              // API 条目的结构: 标题DIV -> 描述DIV -> 端点DIV -> P(Parameters) -> 空DIV -> 空DIV -> 下一个API...
-              const apis = [];
-              const apiChildren = Array.from(child.children);
+              // 跳过某些不需要的部分
+              if (sectionTitle.includes('How it works') || sectionTitle.includes('Sign Up')) {
+                continue;
+              }
 
-              // 跳过 H2 标题
-              let i = 1;
-              while (i < apiChildren.length) {
-                const apiChild = apiChildren[i];
-                const apiTag = apiChild.tagName.toLowerCase();
-                const apiText = apiChild.textContent?.trim() || '';
-                const apiClass = apiChild.className || '';
+              // 提取描述
+              const descDiv = section.querySelector('[class*="udocDescription"]');
+              const description = descDiv ? descDiv.textContent.trim() : '';
 
-                // 跳过空 DIV（响应占位符）
-                if (apiTag === 'div' && !apiText) {
-                  i++;
-                  continue;
+              // 提取端点
+              const endpointDiv = section.querySelector('[class*="infoBlockBlank"]');
+              let endpoint = '';
+              if (endpointDiv) {
+                const endpointText = endpointDiv.textContent.trim();
+                const match = endpointText.match(/Endpoint:\s*(https?:\/\/[^\s]+)/);
+                if (match) {
+                  endpoint = match[1];
                 }
+              }
 
-                // 检测 API 标题：以 "API" 结尾且不太长的文本
-                if (apiTag === 'div' && apiText.includes('API') && apiText.length < 80) {
-                  const currentApi = {
-                    title: apiText,
-                    description: '',
-                    endpoint: ''
-                  };
-
-                  // 下一个 DIV 应该是描述
-                  if (i + 1 < apiChildren.length) {
-                    const nextDiv = apiChildren[i + 1];
-                    if (nextDiv.tagName === 'DIV') {
-                      const nextText = nextDiv.textContent?.trim() || '';
-                      // 描述通常很长
-                      if (nextText.length > 50 && !nextText.startsWith('Endpoint:')) {
-                        currentApi.description = nextText;
-                        i++; // 跳过已处理的描述
-                      }
-                    }
-                  }
-
-                  // 再下一个 DIV 应该是端点
-                  if (i + 1 < apiChildren.length) {
-                    const endpointDiv = apiChildren[i + 1];
-                    if (endpointDiv.tagName === 'DIV') {
-                      const endpointText = endpointDiv.textContent?.trim() || '';
-                      if (endpointText.startsWith('Endpoint:')) {
-                        const match = endpointText.match(/Endpoint:\s*(https?:\/\/[^\s]+)/);
-                        if (match) {
-                          currentApi.endpoint = match[1];
-                          i++; // 跳过已处理的端点
-                        }
-                      }
-                    }
-                  }
-
-                  apis.push(currentApi);
+              // 提取相关 API
+              const relatedApis = [];
+              const relatedItems = section.querySelectorAll('[class*="relatedCard"]');
+              for (const item of relatedItems) {
+                const apiTitle = item.querySelector('h4, [class*="relatedTitle"]')?.textContent?.trim() || '';
+                const apiDesc = item.querySelector('[class*="relatedDesc"]')?.textContent?.trim() || '';
+                if (apiTitle) {
+                  relatedApis.push({ title: apiTitle, description: apiDesc });
                 }
+              }
 
-                // 跳过 Parameters P 标签
-                if (apiTag === 'p' && apiText === 'Parameters') {
-                  // 下两个应该是空的响应占位符
-                  i += 2;
+              // 提取列表内容（如功能列表）
+              const lists = [];
+              const ulElements = section.querySelectorAll('ul');
+              for (const ul of ulElements) {
+                const items = Array.from(ul.querySelectorAll('li')).map(li => li.textContent.trim());
+                if (items.length > 0) {
+                  lists.push(items);
                 }
-
-                i++;
               }
 
               result.sections.push({
-                type: 'category',
-                title: categoryTitle,
-                apis: apis.filter(api => api.title && !api.title.includes('Stock Directory')) // 过滤无效条目
+                type: 'subpage-section',
+                title: sectionTitle,
+                content: description,
+                endpoint: endpoint,
+                relatedApis: relatedApis,
+                lists: lists
               });
             }
           }
+
+          return result;
+        }
+
+        // 然后尝试主页面结构（documentationWrapper）
+        const wrapper = document.querySelector('[class*="documentationWrapper"]');
+        if (wrapper) {
+          // 提取标题
+          const h1 = wrapper.querySelector('h1');
+          if (h1) {
+            result.title = h1.textContent.trim();
+          }
+
+          // 提取描述（h1 后的第一段文本）
+          if (h1) {
+            let sibling = h1.nextElementSibling;
+            while (sibling) {
+              if (sibling.tagName.toLowerCase() === 'p') {
+                const text = sibling.textContent.trim();
+                if (text.length > 30 && !text.startsWith('Endpoint:')) {
+                  result.description = text;
+                  break;
+                }
+              }
+              sibling = sibling.nextElementSibling;
+            }
+          }
+
+          // 遍历所有子元素
+          const children = Array.from(wrapper.children);
+
+          for (const child of children) {
+            const tagName = child.tagName.toLowerCase();
+            const text = child.textContent?.trim() || '';
+            const className = child.className || '';
+
+            // H4 是小节标题（如 Authorization）
+            if (tagName === 'h4') {
+              result.sections.push({
+                type: 'section',
+                title: text,
+                content: ''
+              });
+              continue;
+            }
+
+            // P 标签可能是描述
+            if (tagName === 'p' && result.sections.length > 0) {
+              const lastSection = result.sections[result.sections.length - 1];
+              if (lastSection.type === 'section' && text.length > 10 && !text.startsWith('Endpoint:')) {
+                lastSection.content += (lastSection.content ? '\n\n' : '') + text;
+              }
+            }
+
+            // DIV 没有类名的包含 API 分类
+            if (tagName === 'div' && !className) {
+              const h2 = child.querySelector('h2');
+              if (h2) {
+                const categoryTitle = h2.textContent.trim();
+
+                // 提取该分类下的完整文本内容
+                const apis = [];
+                const apiChildren = Array.from(child.children);
+
+                // 跳过 H2 标题
+                let i = 1;
+                while (i < apiChildren.length) {
+                  const apiChild = apiChildren[i];
+                  const apiTag = apiChild.tagName.toLowerCase();
+                  const apiText = apiChild.textContent?.trim() || '';
+
+                  // 跳过空 DIV（响应占位符）
+                  if (apiTag === 'div' && !apiText) {
+                    i++;
+                    continue;
+                  }
+
+                  // 检测 API 标题：以 "API" 结尾且不太长的文本
+                  if (apiTag === 'div' && apiText.includes('API') && apiText.length < 80) {
+                    const currentApi = {
+                      title: apiText,
+                      description: '',
+                      endpoint: ''
+                    };
+
+                    // 下一个 DIV 应该是描述
+                    if (i + 1 < apiChildren.length) {
+                      const nextDiv = apiChildren[i + 1];
+                      if (nextDiv.tagName === 'DIV') {
+                        const nextText = nextDiv.textContent?.trim() || '';
+                        // 描述通常很长
+                        if (nextText.length > 50 && !nextText.startsWith('Endpoint:')) {
+                          currentApi.description = nextText;
+                          i++; // 跳过已处理的描述
+                        }
+                      }
+                    }
+
+                    // 再下一个 DIV 应该是端点
+                    if (i + 1 < apiChildren.length) {
+                      const endpointDiv = apiChildren[i + 1];
+                      if (endpointDiv.tagName === 'DIV') {
+                        const endpointText = endpointDiv.textContent?.trim() || '';
+                        if (endpointText.startsWith('Endpoint:')) {
+                          const match = endpointText.match(/Endpoint:\s*(https?:\/\/[^\s]+)/);
+                          if (match) {
+                            currentApi.endpoint = match[1];
+                            i++; // 跳过已处理的端点
+                          }
+                        }
+                      }
+                    }
+
+                    apis.push(currentApi);
+                  }
+
+                  // 跳过 Parameters P 标签
+                  if (apiTag === 'p' && apiText === 'Parameters') {
+                    // 下两个应该是空的响应占位符
+                    i += 2;
+                  }
+
+                  i++;
+                }
+
+                result.sections.push({
+                  type: 'category',
+                  title: categoryTitle,
+                  apis: apis.filter(api => api.title && !api.title.includes('Stock Directory')) // 过滤无效条目
+                });
+              }
+            }
+          }
+
+          return result;
         }
 
         return result;
@@ -251,7 +340,7 @@ class FinancialModelingPrepApiParser extends BaseParser {
     // 各部分
     for (const section of data.sections) {
       if (section.type === 'category') {
-        // 分类标题
+        // 分类标题（主页面）
         lines.push('', `## ${section.title}`, '');
 
         // 该分类下的 API
@@ -273,8 +362,44 @@ class FinancialModelingPrepApiParser extends BaseParser {
           }
           lines.push('---', '');
         }
+      } else if (section.type === 'subpage-section') {
+        // 子页面小节
+        lines.push('', `## ${section.title}`, '');
+
+        // 描述
+        if (section.content) {
+          lines.push(section.content, '');
+        }
+
+        // 端点
+        if (section.endpoint) {
+          lines.push('**Endpoint:**', '');
+          lines.push('```text');
+          lines.push(section.endpoint);
+          lines.push('```', '');
+        }
+
+        // 列表
+        for (const list of section.lists || []) {
+          for (const item of list) {
+            lines.push(`- ${item}`);
+          }
+          lines.push('');
+        }
+
+        // 相关 API
+        if (section.relatedApis && section.relatedApis.length > 0) {
+          lines.push('**Related APIs:**', '');
+          for (const api of section.relatedApis) {
+            lines.push(`- **${api.title}**`);
+            if (api.description) {
+              lines.push(`  ${api.description}`);
+            }
+          }
+          lines.push('');
+        }
       } else if (section.type === 'section') {
-        // 小节标题
+        // 小节标题（主页面）
         lines.push('', `#### ${section.title}`, '');
         if (section.content) {
           lines.push(section.content, '');
