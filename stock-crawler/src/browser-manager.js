@@ -32,9 +32,18 @@ class BrowserManager {
       const persistentOptions = {
         headless,
         timeout,
-        channel: 'chrome'
+        channel: 'chrome',
+        viewport: { width: 1920, height: 1080 },
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        locale: 'en-US',
+        args: [
+          '--disable-blink-features=AutomationControlled',
+          '--disable-features=IsolateOrigins,site-per-process',
+          '--no-sandbox',
+          '--disable-setuid-sandbox'
+        ]
       };
-      
+
       try {
         this.context = await chromium.launchPersistentContext(userDataDir, persistentOptions);
         this.browser = this.context.browser();
@@ -63,7 +72,11 @@ class BrowserManager {
     }
     
     // Create a browser context with persistent storage
-    const contextOptions = {};
+    const contextOptions = {
+      viewport: { width: 1920, height: 1080 },
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      locale: 'en-US'
+    };
     
     // Load saved cookies/storage if exists
     if (this.storageStatePath && fs.existsSync(this.storageStatePath)) {
@@ -146,13 +159,19 @@ class BrowserManager {
    */
   async waitForLoad(page, timeout) {
     const actualTimeout = timeout || this.defaultTimeout;
-    
+
     try {
-      await page.waitForLoadState('networkidle', {
+      // 使用 load 而不是 networkidle，对于 SPA 更可靠
+      await page.waitForLoadState('load', {
         timeout: actualTimeout
       });
     } catch (error) {
-      throw new Error(`Timeout waiting for page load: ${error.message}`);
+      // 如果 load 也超时，尝试 domcontentloaded
+      try {
+        await page.waitForLoadState('domcontentloaded', { timeout: 5000 });
+      } catch (e) {
+        // 忽略，页面可能已经加载
+      }
     }
   }
 

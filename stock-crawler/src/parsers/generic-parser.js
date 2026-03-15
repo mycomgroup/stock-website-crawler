@@ -106,7 +106,9 @@ class GenericParser extends BaseParser {
       const tables = await this.extractTablesWithPaginationAndVirtual(page, options.onDataChunk);
       
       // 尝试提取Tab页和下拉框内容（会检测数据变化）
-      const tabsAndDropdowns = await this.extractTabsAndDropdowns(page, options.filepath, options.onDataChunk);
+      // TODO: 临时注释掉，等待修复
+      // const tabsAndDropdowns = await this.extractTabsAndDropdowns(page, options.filepath, options.onDataChunk);
+      const tabsAndDropdowns = [];
 
       // 尝试处理时间筛选（如果页面有时间筛选控件）
       const dateFilters = await this.findAndProcessDateFilters(page, options.filepath, options.onDataChunk);
@@ -1155,7 +1157,10 @@ class GenericParser extends BaseParser {
       for (const btn of tabButtons) {
         try {
           console.log(`  尝试Tab: "${btn.text.substring(0, 30)}..."`);
-          
+
+          // 记录点击前的URL
+          const urlBeforeClick = page.url();
+
           // 点击tab - 根据策略使用不同的点击方法
           if (btn.strategy === 'standard') {
             await page.evaluate((args) => {
@@ -1169,34 +1174,44 @@ class GenericParser extends BaseParser {
             // 对于自定义tab，尝试多种点击方式
             const clicked = await page.evaluate((args) => {
               const { text, index } = args;
-              
+
               // 方法1: 通过文本内容查找并点击
               const allClickable = Array.from(document.querySelectorAll('button, a, [onclick], [role="button"], div, span'));
               const matching = allClickable.filter(el => el.textContent.trim() === text);
-              
+
               if (matching[index]) {
                 matching[index].click();
                 return true;
               }
-              
+
               // 方法2: 通过部分文本匹配
               const partialMatch = allClickable.filter(el => el.textContent.trim().includes(text.substring(0, 10)));
               if (partialMatch[index]) {
                 partialMatch[index].click();
                 return true;
               }
-              
+
               return false;
             }, { text: btn.text, index: btn.index });
-            
+
             if (!clicked) {
               console.log(`    无法点击Tab: "${btn.text}"`);
               continue;
             }
           }
-          
+
           // 等待内容加载
           await page.waitForTimeout(1000);
+
+          // 检查URL是否变化，如果跳转到其他页面则跳过此tab
+          const urlAfterClick = page.url();
+          if (urlAfterClick !== urlBeforeClick) {
+            console.log(`    Tab点击导致页面跳转，跳过此Tab: ${urlBeforeClick} -> ${urlAfterClick}`);
+            // 返回原页面
+            await page.goto(urlBeforeClick, { waitUntil: 'domcontentloaded' });
+            await page.waitForTimeout(500);
+            continue;
+          }
           
           // 提取当前数据
           const currentParagraphs = await this.extractParagraphs(page);

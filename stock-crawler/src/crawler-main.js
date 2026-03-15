@@ -97,6 +97,7 @@ class CrawlerMain {
       // Launch browser
       await this.browserManager.launch({
         headless: this.config.crawler.headless,
+        timeout: this.config.crawler.timeout,
         userDataDir: this.config.crawler.userDataDir // Use Chrome user data directory if provided
       });
       this.logger.info(`Browser launched (headless: ${this.config.crawler.headless})`);
@@ -494,9 +495,18 @@ class CrawlerMain {
       // Expand collapsible content
       await this.linkFinder.expandCollapsibles(page);
 
-      // Extract links
-      const newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules);
-      
+      // Check if the parser supports custom link discovery
+      const parser = this.pageParser.parserManager.selectParser(url);
+      let newLinks = [];
+
+      if (parser.supportsLinkDiscovery && parser.supportsLinkDiscovery()) {
+        this.logger.info('Using parser-based link discovery');
+        newLinks = await parser.discoverLinks(page);
+      } else {
+        // Standard link extraction
+        newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules);
+      }
+
       if (newLinks.length > 0) {
         this.logger.info(`Found ${newLinks.length} new links`);
         newLinks.forEach(link => {
@@ -746,7 +756,12 @@ ${block.code}
       // 如果没有使用流式写入（没有分页数据），使用传统方式
       if (isFirstChunk) {
         const markdown = this.markdownGenerator.generate(pageData);
-        filename = this.markdownGenerator.safeFilename(pageData.title || 'untitled', url);
+        // 优先使用 parser 建议的文件名（如基于 URL 路径的文件名）
+        if (pageData.suggestedFilename) {
+          filename = pageData.suggestedFilename;
+        } else {
+          filename = this.markdownGenerator.safeFilename(pageData.title || 'untitled', url);
+        }
         
         const fs = await import('fs');
         filepath = `${this.pagesDir}/${filename}.md`;

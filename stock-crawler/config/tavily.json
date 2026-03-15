@@ -1,0 +1,30 @@
+{
+  "name": "tavily-api-docs",
+  "seedUrls": [
+    "https://docs.tavily.com/documentation/api-reference/introduction"
+  ],
+  "urlRules": {
+    "include": [
+      "^https://docs\\.tavily\\.com/documentation/api-reference/.*"
+    ],
+    "exclude": []
+  },
+  "login": {
+    "required": false,
+    "username": "",
+    "password": "",
+    "loginUrl": ""
+  },
+  "crawler": {
+    "headless": true,
+    "timeout": 60000,
+    "waitBetweenRequests": 1000,
+    "maxRetries": 3,
+    "batchSize": 10,
+    "userDataDir": "./chrome_user_data_tavily"
+  },
+  "output": {
+    "directory": "./output",
+    "format": "markdown"
+  }
+}

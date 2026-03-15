@@ -1,0 +1,14 @@
+2026/03/15-15:43:04.195 df3b85 Reusing MANIFEST /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_fmp/Default/IndexedDB/https_site.financialmodelingprep.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/15-15:43:04.195 df3b85 Recovering log #138
+2026/03/15-15:43:04.195 df3b85 Reusing old log /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_fmp/Default/IndexedDB/https_site.financialmodelingprep.com_0.indexeddb.leveldb/000138.log 
+2026/03/15-15:43:04.195 df3b85 Delete type=2 #136
+2026/03/15-15:43:04.215 df3b85 Level-0 table #143: started
+2026/03/15-15:43:04.216 df3b85 Level-0 table #143: 945 bytes OK
+2026/03/15-15:43:04.220 df3b85 Delete type=0 #138
+2026/03/15-15:43:04.220 df3b85 Manual compaction at level-0 from '\x00.\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00/\x00\x00\x00' @ 0 : 0; will stop at '\x00.\x00\x00\x05' @ 1530 : 1
+2026/03/15-15:43:04.220 df3b85 Compacting 1@0 + 1@1 files
+2026/03/15-15:43:04.225 df3b85 Generated table #144@0: 21 keys, 1144 bytes
+2026/03/15-15:43:04.226 df3b85 Compacted 1@0 + 1@1 files => 1144 bytes
+2026/03/15-15:43:04.228 df3b85 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/03/15-15:43:04.228 df3b85 Delete type=2 #143
+2026/03/15-15:43:04.228 df3b85 Manual compaction at level-0 from '\x00.\x00\x00\x05' @ 1530 : 1 .. '\x00/\x00\x00\x00' @ 0 : 0; will stop at (end)

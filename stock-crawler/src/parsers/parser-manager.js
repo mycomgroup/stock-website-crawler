@@ -1,4 +1,19 @@
 import ApiDocParser from './api-doc-parser.js';
+import AlphavantageApiParser from './alphavantage-api-parser.js';
+import BraveSearchParser from './brave-search-parser.js';
+import EulerpoolApiParser from './eulerpool-api-parser.js';
+import FinnhubApiParser from './finnhub-api-parser.js';
+import FinancialDatasetsApiParser from './financial-datasets-api-parser.js';
+import FinancialModelingPrepApiParser from './financial-modeling-prep-api-parser.js';
+import MassiveApiParser from './massive-api-parser.js';
+import ModelscopeMcpParser from './modelscope-mcp-parser.js';
+import TiingoApiParser from './tiingo-api-parser.js';
+import RsshubParser from './rsshub-parser.js';
+import SerpApiParser from './serpapi-parser.js';
+import TavilyApiParser from './tavily-api-parser.js';
+import TickdbApiParser from './tickdb-api-parser.js';
+import TushareProApiParser from './tushare-pro-api-parser.js';
+import QverisApiParser from './qveris-api-parser.js';
 import GenericParser from './generic-parser.js';
 
 /**
@@ -15,6 +30,21 @@ class ParserManager {
    */
   registerDefaultParsers() {
     this.register(new ApiDocParser());
+    this.register(new AlphavantageApiParser());
+    this.register(new BraveSearchParser());
+    this.register(new EulerpoolApiParser());
+    this.register(new FinnhubApiParser());
+    this.register(new FinancialDatasetsApiParser());
+    this.register(new FinancialModelingPrepApiParser());
+    this.register(new MassiveApiParser());
+    this.register(new ModelscopeMcpParser());
+    this.register(new TiingoApiParser());
+    this.register(new RsshubParser());
+    this.register(new SerpApiParser());
+    this.register(new TavilyApiParser());
+    this.register(new TickdbApiParser());
+    this.register(new TushareProApiParser());
+    this.register(new QverisApiParser());
     this.register(new GenericParser());
   }
 
