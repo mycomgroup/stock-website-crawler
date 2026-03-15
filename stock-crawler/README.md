@@ -35,6 +35,9 @@ stock-crawler/
 │   ├── markdown-generator.js # Markdown generation
 │   ├── logger.js          # Logging utilities
 │   ├── stats-tracker.js   # Statistics tracking
+│   ├── application/       # Application orchestration services
+│   ├── domain/            # Domain models and state machine
+│   ├── infrastructure/    # Infrastructure adapters
 │   └── url-utils.js       # URL utilities
 ├── config/                # Configuration files
 │   ├── example.json       # Example configuration
@@ -53,6 +56,12 @@ stock-crawler/
 cd stock-crawler
 npm install
 ```
+
+## Documentation
+
+- [并行开发10模块迭代计划](doc/PARALLEL_WORKSTREAMS_10_MODULES.md)
+- [架构评估与升级路线图](doc/ARCHITECTURE_REVIEW_AND_ROADMAP.md)
+- [API 文档全量抓取与本地存储优化指南](doc/API_DOC_CRAWL_OPTIMIZATION_GUIDE.md)
 
 ## Dependencies
 
@@ -113,6 +122,15 @@ Create a JSON configuration file with the following structure:
     "password": "",
     "loginUrl": ""
   },
+  "linkDiscovery": {
+    "prioritizedPatterns": [
+      {
+        "selector": "a[href*=\"api-key=\"]",
+        "requiredQueryParams": ["api-key"],
+        "pathIncludes": ["/open/api/doc"]
+      }
+    ]
+  },
   "crawler": {
     "headless": true,
     "timeout": 30000,
@@ -121,7 +139,14 @@ Create a JSON configuration file with the following structure:
   },
   "output": {
     "directory": "./output",
-    "format": "markdown"
+    "format": "markdown",
+    "storage": {
+      "type": "file",
+      "lancedb": {
+        "uri": "lancedb",
+        "table": "pages"
+      }
+    }
   }
 }
 ```
@@ -141,6 +166,13 @@ Array of starting URLs for the crawler.
 - **password**: Login password
 - **loginUrl**: URL of the login page
 
+#### linkDiscovery (optional)
+- **prioritizedPatterns**: Rules for prioritized link extraction before generic `<a href>` discovery.
+  - **selector**: CSS selector used to find candidate links.
+  - **requiredQueryParams**: Query params that must exist and be valid (not empty/`undefined`/`null`).
+  - **pathIncludes**: URL substrings that must match.
+- **Backward compatibility**: If `linkDiscovery.prioritizedPatterns` is not configured, crawler keeps legacy default behavior for API-doc links (`a[href*="api-key="]` + `/open/api/doc`).
+
 #### crawler
 - **headless**: Run browser in headless mode (true/false)
 - **timeout**: Page load timeout in milliseconds
@@ -150,6 +182,9 @@ Array of starting URLs for the crawler.
 #### output
 - **directory**: Output directory for Markdown files
 - **format**: Output format (currently only "markdown" supported)
+- **storage.type**: Storage backend (`file` or `lancedb`)
+- **storage.lancedb.uri**: LanceDB directory relative to project directory (used when `type=lancedb`)
+- **storage.lancedb.table**: LanceDB table name for page content
 
 ### Example: Crawling Lixinger API Documentation
 
@@ -174,6 +209,30 @@ cp config/lixinger.json config/my-lixinger.json
 ```bash
 npm run crawl config/my-lixinger.json
 ```
+
+
+
+### 抓取 hao123 全量导航并批量生成配置
+
+默认会从 `https://www.hao123.com/` 出发，递归抓取站内导航页（可通过 `--max-pages` 控制上限），并提取所有外部站点：
+
+```bash
+npm run crawl:hao123 -- --max-pages 300
+```
+
+如果当前环境无法访问外网，可使用本地镜像目录测试同样流程：
+
+```bash
+npm run crawl:hao123 -- --mirror-dir test/fixtures/hao123-mirror --max-pages 50
+npm run test:hao123-configs
+```
+
+运行后会生成：
+
+- `output/hao123/sites.json`：抓取到的站点明细（去重）
+- `output/hao123/all-sites.txt`：站点 URL 列表
+- `output/hao123/crawled-pages.txt`：已抓取的 hao123 页面列表
+- `configure/*.json`：每个网站一个独立配置
 
 ### 批量处理
 
@@ -268,6 +327,8 @@ npm test -- config-manager.test.js
 The project includes both unit tests and property-based tests:
 - **Unit Tests**: Test specific examples and edge cases
 - **Property Tests**: Verify universal properties across all inputs
+
+For large-scale validation workflows, see `doc/SYSTEMATIC_TEST_PLAN.md`.
 
 ## Development
 

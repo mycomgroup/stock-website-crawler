@@ -76,6 +76,7 @@ npm start
 - [Persistent Login](stock-crawler/doc/PERSISTENT_LOGIN.md)
 - [URL Prioritization](stock-crawler/doc/URL_PRIORITIZATION.md)
 - [Logging System](stock-crawler/doc/LOGGING.md)
+- [API Doc Crawl Optimization Guide](stock-crawler/doc/API_DOC_CRAWL_OPTIMIZATION_GUIDE.md)
 
 ## 🔧 Recent Improvements
 

@@ -4,8 +4,14 @@
     "https://example.com/api/docs"
   ],
   "urlRules": {
-    "include": [".*api.*", ".*docs.*"],
-    "exclude": [".*login.*", ".*logout.*"]
+    "include": [
+      ".*api.*",
+      ".*docs.*"
+    ],
+    "exclude": [
+      ".*login.*",
+      ".*logout.*"
+    ]
   },
   "login": {
     "required": false,
@@ -21,6 +27,34 @@
   },
   "output": {
     "directory": "./output",
-    "format": "markdown"
+    "format": "markdown",
+    "storage": {
+      "type": "file",
+      "lancedb": {
+        "uri": "lancedb",
+        "table": "pages"
+      }
+    }
+  },
+  "linkDiscovery": {
+    "prioritizedPatterns": [
+      {
+        "selector": "a[href*=\"api-key=\"]",
+        "requiredQueryParams": [
+          "api-key"
+        ],
+        "pathIncludes": [
+          "/open/api/doc"
+        ]
+      }
+    ]
+  },
+  "parser": {
+    "urlPatternOverrides": [
+      {
+        "pattern": ".*/open/api/doc.*",
+        "parser": "ApiDocParser"
+      }
+    ]
   }
 }

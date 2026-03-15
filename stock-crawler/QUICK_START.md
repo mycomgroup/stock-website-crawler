@@ -62,6 +62,23 @@ npm start -- config/lixinger.json
 }
 ```
 
+
+## 模板化抓取流水线（新模块）
+
+当你只输入一个站点 URL，需要先自动抓 3-5 层链接、生成 URL Pattern、再分类并生成模板时，可以使用：
+
+```bash
+npm run template:pipeline -- https://example.com ./output/example-site
+```
+
+该命令会在 `output/<site>/template-pipeline/` 下生成：
+- `links.txt`：3-5 层发现到的链接（JSONL）
+- `url-patterns.json`：基于 skill 的 URL Pattern 分析结果
+- `classified-patterns.json`：带页面分类标签的 Pattern
+- `templates/`：按 Pattern 自动生成的抓取模板
+
+后续你可以直接复用 `templates/` 做模板化抓取，减少页面差异带来的抽取误差。
+
 ## 常用选项
 
 ### 批量处理
@@ -170,3 +187,4 @@ npx playwright install
 - [README.md](README.md) - 完整文档
 - [doc/LOGIN_FLOW.md](doc/LOGIN_FLOW.md) - 登录流程说明
 - [doc/IMPLEMENTATION_SUMMARY.md](doc/IMPLEMENTATION_SUMMARY.md) - 实现总结
+- [doc/SYSTEMATIC_TEST_PLAN.md](doc/SYSTEMATIC_TEST_PLAN.md) - 大规模系统化测试计划

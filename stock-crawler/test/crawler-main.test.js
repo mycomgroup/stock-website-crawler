@@ -74,6 +74,39 @@ describe('CrawlerMain Integration Tests', () => {
       expect(crawler.browserManager).toBeDefined();
     });
 
+
+    test('should initialize seed URLs with unfetched status', async () => {
+      const config = {
+        name: 'test-crawler',
+        seedUrls: ['https://example.com'],
+        urlRules: {
+          include: ['.*'],
+          exclude: []
+        },
+        login: {
+          required: false
+        },
+        crawler: {
+          headless: true,
+          timeout: 30000,
+          waitBetweenRequests: 100,
+          maxRetries: 2
+        },
+        output: {
+          directory: testOutputDir,
+          format: 'markdown'
+        }
+      };
+
+      fs.writeFileSync(testConfigPath, JSON.stringify(config, null, 2));
+
+      await crawler.initialize(testConfigPath);
+
+      const seedLink = crawler.linkManager.links.find(l => l.url === 'https://example.com');
+      expect(seedLink).toBeDefined();
+      expect(seedLink.status).toBe('unfetched');
+    });
+
     test('should create links.txt with seed URLs if not exists', async () => {
       // Make sure links.txt doesn't exist
       if (fs.existsSync('./links.txt')) {
@@ -111,11 +144,38 @@ describe('CrawlerMain Integration Tests', () => {
       const urls = crawler.linkManager.links.map(l => l.url);
       expect(urls).toContain('https://example.com');
       expect(urls).toContain('https://test.com');
+
+      // Seed URLs should be directly crawlable
+      const statuses = crawler.linkManager.links.map(l => l.status);
+      expect(statuses).toEqual(expect.arrayContaining(['unfetched']));
+      expect(statuses).not.toContain('pending');
       
       // Clean up
       if (fs.existsSync('./links.txt')) {
         fs.unlinkSync('./links.txt');
       }
+    });
+  });
+
+
+  describe('buildLinksToProcess', () => {
+    test('should not re-process fetched seed URLs', () => {
+      crawler.config = {
+        seedUrls: ['https://example.com/seed'],
+        crawler: { batchSize: 20 }
+      };
+      crawler.linkManager = {
+        links: [
+          { url: 'https://example.com/seed', status: 'fetched' },
+          { url: 'https://example.com/new', status: 'unfetched' }
+        ],
+        addLink: () => {}
+      };
+
+      const unfetchedLinks = [{ url: 'https://example.com/new', status: 'unfetched' }];
+      const linksToProcess = crawler.buildLinksToProcess(20, unfetchedLinks);
+
+      expect(linksToProcess.map(link => link.url)).toEqual(['https://example.com/new']);
     });
   });
 
