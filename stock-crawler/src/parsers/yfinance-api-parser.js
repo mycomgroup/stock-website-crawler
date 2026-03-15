@@ -313,70 +313,70 @@ class YfinanceApiParser extends BaseParser {
       // 首先展开所有折叠内容
       await this.expandSidebar(page);
 
-      const links = await page.evaluate(() => {
+      // 获取当前页面URL作为base
+      const currentUrl = page.url();
+      const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+
+      const links = await page.evaluate((base) => {
         const foundLinks = [];
         const seenUrls = new Set();
 
-        // 提取所有 yfinance 相关链接的通用函数
+        // 使用 URL 构造器正确解析相对路径
         const addLink = (href) => {
           if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
 
-          let fullUrl = href;
-          if (href.startsWith('/')) {
-            fullUrl = `https://www.aidoczh.com${href}`;
-          } else if (!href.startsWith('http')) {
-            // 相对路径
-            fullUrl = `https://www.aidoczh.com/yfinance/${href}`;
-          }
+          try {
+            // 使用 URL 构造器正确解析相对路径
+            const fullUrl = new URL(href, base).href;
 
-          // 过滤只保留 yfinance 相关链接，排除静态资源
-          if (fullUrl.includes('/yfinance/') &&
-              !seenUrls.has(fullUrl) &&
-              !fullUrl.match(/\.(png|jpg|jpeg|gif|svg|css|js|ico|woff|woff2|ttf|eot)$/i) &&
-              !fullUrl.includes('_static/') &&
-              !fullUrl.includes('_sources/')) {
-            seenUrls.add(fullUrl);
-            foundLinks.push(fullUrl);
+            // 过滤只保留 yfinance 相关链接，排除静态资源
+            if (fullUrl.includes('/yfinance/') &&
+                !seenUrls.has(fullUrl) &&
+                !fullUrl.match(/\.(png|jpg|jpeg|gif|svg|css|js|ico|woff|woff2|ttf|eot|py|pyc|txt|pdf|zip)$/i) &&
+                !fullUrl.includes('_static/') &&
+                !fullUrl.includes('_sources/') &&
+                !fullUrl.includes('#')) {
+              seenUrls.add(fullUrl);
+              foundLinks.push(fullUrl);
+            }
+          } catch (e) {
+            // URL 解析失败，跳过
           }
         };
 
-        // 提取所有 a 标签
-        document.querySelectorAll('a[href]').forEach(link => {
-          addLink(link.getAttribute('href'));
-        });
-
-        // 特定选择器 - Sphinx 文档侧边栏
-        const selectors = [
+        // 主要侧边栏选择器 - PyData Sphinx Theme
+        const sidebarSelectors = [
+          '.bd-sidebar a',
           '.wy-menu-vertical a',
           '.wy-menu a',
           '.sidebar a',
-          'nav a',
+          'nav.bd-links a',
+          '.nav.bd-links a'
+        ];
+
+        // 从侧边栏提取链接
+        for (const selector of sidebarSelectors) {
+          document.querySelectorAll(selector).forEach(link => {
+            addLink(link.getAttribute('href'));
+          });
+        }
+
+        // 也提取页面内容中的链接
+        const contentSelectors = [
           '.toctree-wrapper a',
           '.local-toc a',
           '#bd-docs-nav a',
-          '.bd-sidebar a',
-          '.nav-links a',
-          // PyData Sphinx Theme 选择器
-          '.bd-links a',
-          '.nav.bd-links a',
-          // 内容区域的目录
-          '.contents a',
-          '.toctree a',
-          // API 参考链接
-          '.api a',
-          '.reference a',
-          'dt a',
-          'code a'
+          '.bd-content a'
         ];
 
-        for (const selector of selectors) {
+        for (const selector of contentSelectors) {
           document.querySelectorAll(selector).forEach(link => {
             addLink(link.getAttribute('href'));
           });
         }
 
         return foundLinks;
-      });
+      }, baseUrl);
 
       console.log(`YFinance parser discovered ${links.length} links`);
       return links;
