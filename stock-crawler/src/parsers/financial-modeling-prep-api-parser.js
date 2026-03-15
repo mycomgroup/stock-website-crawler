@@ -113,8 +113,8 @@ class FinancialModelingPrepApiParser extends BaseParser {
               const descDiv = section.querySelector('[class*="udocDescription"]');
               const description = descDiv ? descDiv.textContent.trim() : '';
 
-              // 提取端点
-              const endpointDiv = section.querySelector('[class*="infoBlockBlank"]');
+              // 提取端点 - 支持两种 class 名称
+              const endpointDiv = section.querySelector('[class*="infoBlockBlank"], [class*="udocInfoBoxWrapper"]');
               let endpoint = '';
               if (endpointDiv) {
                 const endpointText = endpointDiv.textContent.trim();
