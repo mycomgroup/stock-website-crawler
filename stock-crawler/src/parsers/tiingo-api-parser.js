@@ -46,34 +46,47 @@ class TiingoApiParser extends BaseParser {
       // 等待侧边栏加载
       await page.waitForSelector('.side-bar-link-container', { timeout: 5000 });
 
-      // 获取所有侧边栏项目的数量
-      const itemCount = await page.evaluate(() => {
-        return document.querySelectorAll('.side-bar-link-container').length;
-      });
+      // Tiingo 的侧栏在 headless 环境中经常被覆盖层影响，ElementHandle.click 可能超时。
+      // 这里改为在页面上下文中直接 dispatch click，显著提高链接发现稳定性。
+      // 同时进行多轮扫描，确保展开后的项目也会被遍历到。
+      const maxPasses = 3;
+      for (let pass = 0; pass < maxPasses; pass++) {
+        // 避免在前一轮点击后跳出文档页（例如跳到首页），确保每轮都从文档页面继续扫描
+        if (!page.url().includes('/documentation/')) {
+          await page.goto(currentUrl);
+          await this.waitForContent(page);
+        }
 
-      console.log(`[TiingoParser] Found ${itemCount} sidebar items`);
+        const itemCount = await page.evaluate(() => {
+          return document.querySelectorAll('.side-bar-link-container').length;
+        });
 
-      // 点击每个侧边栏项目并记录 URL
-      for (let i = 0; i < itemCount; i++) {
-        try {
-          // 每次重新获取元素（因为导航会改变 DOM）
-          const items = await page.$$('.side-bar-link-container');
-          if (i >= items.length) break;
+        console.log(`[TiingoParser] Pass ${pass + 1}/${maxPasses}: ${itemCount} sidebar items`);
 
-          const item = items[i];
-          const text = await item.evaluate(el => el.textContent?.trim());
+        for (let i = 0; i < itemCount; i++) {
+          try {
+            await page.evaluate((index) => {
+              const items = document.querySelectorAll('.side-bar-link-container');
+              const item = items[index];
+              if (!item) return;
 
-          // 点击项目
-          await item.click();
-          await page.waitForTimeout(500);
+              item.scrollIntoView({ block: 'center', inline: 'nearest' });
+              item.dispatchEvent(new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+              }));
+            }, i);
 
-          // 获取当前 URL
-          const newUrl = page.url();
-          if (newUrl.includes('/documentation/') && newUrl !== currentUrl) {
-            discoveredUrls.add(newUrl);
+            await page.waitForTimeout(700);
+
+            const newUrl = page.url();
+            if (newUrl.includes('/documentation/') && newUrl !== currentUrl) {
+              discoveredUrls.add(newUrl);
+            }
+          } catch (e) {
+            // 忽略单个项目错误，继续扫描
           }
-        } catch (e) {
-          // 忽略单个项目的错误
         }
       }
 
