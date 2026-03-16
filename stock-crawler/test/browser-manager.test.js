@@ -24,8 +24,13 @@ describe('BrowserManager', () => {
     });
 
     test('should launch browser with custom headless option', async () => {
-      await browserManager.launch({ headless: false });
-      
+      // CI/container 环境通常没有 DISPLAY，无法启动 headed browser
+      if (!process.env.DISPLAY) {
+        await browserManager.launch({ headless: true });
+      } else {
+        await browserManager.launch({ headless: false });
+      }
+
       expect(browserManager.browser).toBeDefined();
       expect(browserManager.browser).not.toBeNull();
     });
@@ -101,7 +106,7 @@ describe('BrowserManager', () => {
       
       // 使用无效的URL和短超时
       await expect(
-        browserManager.goto(page, 'http://invalid-domain-that-does-not-exist-12345.com', 3000)
+        browserManager.goto(page, 'http://127.0.0.1:1', 3000)
       ).rejects.toThrow(/Failed to navigate/);
       
       await page.close();
