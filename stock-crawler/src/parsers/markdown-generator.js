@@ -222,8 +222,20 @@ class MarkdownGenerator {
       });
     }
 
+    // 页面正文（优先使用解析器提供的结构化 markdown）
+    if (data.markdownContent && data.type !== 'itick-api') {
+      const cleanedMarkdownContent = data.markdownContent
+        .replace(/^#\s*.+\n/, '')
+        .trim();
+      if (cleanedMarkdownContent) {
+        sections.push('## 文档正文\n');
+        sections.push(cleanedMarkdownContent);
+        sections.push('');
+      }
+    }
+
     // 原始内容（作为后备）
-    if (data.rawContent && sections.join('\n').length < data.rawContent.length * 0.5) {
+    if (data.rawContent && !data.markdownContent && sections.join('\n').length < data.rawContent.length * 0.5) {
       sections.push('## 详细内容\n');
       const cleaned = data.rawContent
         .replace(/\n{3,}/g, '\n\n')
@@ -3743,6 +3755,18 @@ class MarkdownGenerator {
       sections.push('## 描述\n');
       sections.push(pageData.description);
       sections.push('');
+    }
+
+    // 优先使用解析器生成的结构化 Markdown 内容
+    if (pageData.markdownContent) {
+      const content = pageData.markdownContent
+        .replace(/^#\s*.+\n/, '')
+        .trim();
+      if (content) {
+        sections.push(content);
+        sections.push('');
+        return sections.join('\n');
+      }
     }
 
     // 添加章节内容
