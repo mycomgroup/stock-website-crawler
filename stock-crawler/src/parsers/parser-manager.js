@@ -1,4 +1,5 @@
 import ApiDocParser from './api-doc-parser.js';
+import ApifyActorParser from './apify-actor-parser.js';
 import AlphavantageApiParser from './alphavantage-api-parser.js';
 import AlltickApiParser from './alltick-api-parser.js';
 import ApifyApiParser from './apify-api-parser.js';
@@ -41,6 +42,7 @@ class ParserManager {
    */
   registerDefaultParsers() {
     this.register(new ApiDocParser());
+    this.register(new ApifyActorParser());
     this.register(new AlphavantageApiParser());
     this.register(new AlltickApiParser());
     this.register(new ApifyApiParser());
