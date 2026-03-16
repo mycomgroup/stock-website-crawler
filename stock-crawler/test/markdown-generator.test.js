@@ -202,6 +202,36 @@ describe('MarkdownGenerator', () => {
       expect(markdown).toContain('Test description');
     });
 
+
+
+    test('should sanitize rsshub container markers and keep sourceCode field', () => {
+      const pageData = {
+        type: 'rsshub-route',
+        url: 'https://docs.rsshub.app/routes/ft',
+        title: 'Financial Times',
+        routePath: 'ft',
+        routeInfo: {
+          path: '/ft/myft/:key',
+          author: 'HenryQW',
+          example: 'https://rsshub.app/ft/myft/rss-key',
+          sourceCode: 'https://github.com/DIYgod/RSSHub'
+        },
+        parameters: [
+          { name: 'key', required: true, default: '', description: 'the key' }
+        ],
+        lists: [
+          { type: 'ul', items: ['Importing', ':::', '::: tip', 'Visit ft.com'] }
+        ],
+        routes: [],
+        codeBlocks: [],
+        rawContent: 'Intro\n::: tip\ncontent\n:::',
+      };
+
+      const markdown = generator.generate(pageData);
+
+      expect(markdown).toContain('**源代码**: https://github.com/DIYgod/RSSHub');
+      expect(markdown).not.toContain('\n:::');
+    });
     test('should convert table to markdown format', () => {
       const table = {
         headers: ['Name', 'Age'],
