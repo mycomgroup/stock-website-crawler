@@ -259,6 +259,18 @@ describe('MarkdownGenerator', () => {
       expect(generator.safeFilename(null)).toBe('untitled');
     });
 
+
+    test('should add H1 title when parser markdown has no heading', () => {
+      const markdown = generator.normalizeMarkdownOutput('纯文本内容\n\n第二段', { title: '统一标题测试' });
+      expect(markdown.startsWith('# 统一标题测试')).toBe(true);
+      expect(markdown).toContain('纯文本内容');
+    });
+
+    test('should normalize extra blank lines in generated markdown', () => {
+      const markdown = generator.normalizeMarkdownOutput('# 已有标题\n\n\n\n正文', { title: '空行标准化测试' });
+      expect(markdown).toContain('# 已有标题');
+      expect(markdown).not.toContain('\n\n\n');
+    });
     test('should save markdown to file', () => {
       const content = '# Test\n\nContent';
       const filename = 'test.md';
