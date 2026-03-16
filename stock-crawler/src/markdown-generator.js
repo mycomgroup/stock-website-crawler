@@ -3222,6 +3222,20 @@ class MarkdownGenerator {
       sections.push('');
     }
 
+    // 添加限量说明
+    if (pageData.limit) {
+      sections.push('## 限量\n');
+      sections.push(pageData.limit);
+      sections.push('');
+    }
+
+    // 添加权限说明
+    if (pageData.permission) {
+      sections.push('## 权限\n');
+      sections.push(pageData.permission);
+      sections.push('');
+    }
+
     // 添加积分要求
     if (pageData.pointsRequired) {
       sections.push('## 积分要求\n');
