@@ -55,6 +55,8 @@ class MarkdownGenerator {
       return this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
       return this.generateEodhdApi(pageData);
+    } else if (pageData.type === '60s-api-doc') {
+      return this.generate60sApiDoc(pageData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
@@ -70,6 +72,55 @@ class MarkdownGenerator {
 
     // 兼容旧格式（没有type字段）
     return this.generateApiDoc(pageData);
+  }
+
+  generate60sApiDoc(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.description) {
+      sections.push('## 描述\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    if (pageData.content && pageData.content.length > 0) {
+      sections.push('## 文档内容\n');
+      pageData.content.forEach((item) => {
+        if (item.type === 'heading') {
+          sections.push(`### ${item.content}`);
+        } else if (item.type === 'table' && item.rows?.length > 0) {
+          const [header, ...rows] = item.rows;
+          sections.push(`| ${header.join(' | ')} |`);
+          sections.push(`| ${header.map(() => '---').join(' | ')} |`);
+          rows.forEach((row) => sections.push(`| ${row.join(' | ')} |`));
+        } else {
+          sections.push(item.content || '');
+        }
+      });
+      sections.push('');
+    }
+
+    if (pageData.codeBlocks && pageData.codeBlocks.length > 0) {
+      sections.push('## 代码示例\n');
+      pageData.codeBlocks.forEach((block, index) => {
+        sections.push(`### 示例 ${index + 1}`);
+        sections.push(`\`\`\`${block.language || 'text'}`);
+        sections.push(block.code || '');
+        sections.push('```\n');
+      });
+    }
+
+    return sections.join('\n');
   }
 
   /**

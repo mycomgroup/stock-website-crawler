@@ -1,6 +1,7 @@
 import ApiDocParser from './api-doc-parser.js';
 import AlphavantageApiParser from './alphavantage-api-parser.js';
 import AlltickApiParser from './alltick-api-parser.js';
+import Api60sDocsParser from './api60s-docs-parser.js';
 import BraveSearchParser from './brave-search-parser.js';
 import EodhdApiParser from './eodhd-api-parser.js';
 import EulerpoolApiParser from './eulerpool-api-parser.js';
@@ -22,6 +23,7 @@ import TushareProApiParser from './tushare-pro-api-parser.js';
 import QverisApiParser from './qveris-api-parser.js';
 import SanhulianghuaParser from './sanhulianghua-parser.js';
 import YfinanceApiParser from './yfinance-api-parser.js';
+import XiaohongshuApifoxParser from './xiaohongshu-apifox-parser.js';
 import GenericParser from './generic-parser.js';
 
 /**
@@ -40,6 +42,7 @@ class ParserManager {
     this.register(new ApiDocParser());
     this.register(new AlphavantageApiParser());
     this.register(new AlltickApiParser());
+    this.register(new Api60sDocsParser());
     this.register(new BraveSearchParser());
     this.register(new EodhdApiParser());
     this.register(new EulerpoolApiParser());
@@ -61,6 +64,7 @@ class ParserManager {
     this.register(new QverisApiParser());
     this.register(new SanhulianghuaParser());
     this.register(new YfinanceApiParser());
+    this.register(new XiaohongshuApifoxParser());
     this.register(new GenericParser());
   }
 
