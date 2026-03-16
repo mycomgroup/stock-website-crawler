@@ -42,7 +42,8 @@ class GoogleDiscoveryParser extends BaseParser {
           batchPath: discovery.batchPath || ''
         },
         urlRuleInterfaces: methods,
-        rawContent: jsonText.slice(0, 15000)
+        // 保留完整 Discovery JSON，避免后续生成 Markdown 时出现文档内容缺失
+        rawContent: jsonText
       };
     } catch (error) {
       console.error('Failed to parse Google Discovery doc:', error.message);
