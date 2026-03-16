@@ -55,6 +55,8 @@ class MarkdownGenerator {
       return this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
       return this.generateEodhdApi(pageData);
+    } else if (pageData.type === 'apitracker-category' || pageData.type === 'apitracker-api-detail') {
+      return this.generateApiTracker(pageData);
     } else if (pageData.type === 'google-discovery-doc') {
       return this.generateGoogleDiscoveryDoc(pageData);
     } else if (pageData.type === '60s-api-doc') {
@@ -3015,6 +3017,105 @@ class MarkdownGenerator {
                            pageData.examples?.length > 0;
     if (!hasRealContent && pageData.rawContent && pageData.rawContent.length > 100) {
       sections.push('## 页面内容\n');
+      sections.push(pageData.rawContent);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 ApiTracker 页面 Markdown
+   * @param {PageData} pageData
+   * @returns {string}
+   */
+  generateApiTracker(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}`);
+      sections.push('');
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL');
+      sections.push('');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.type === 'apitracker-category') {
+      if (pageData.category) {
+        sections.push(`**分类**: \`${pageData.category}\``);
+        sections.push('');
+      }
+      const entries = Array.isArray(pageData.entries) ? pageData.entries : [];
+      sections.push(`**入口数量**: ${entries.length}`);
+      sections.push('');
+      if (entries.length > 0) {
+        sections.push('## 入口列表');
+        sections.push('');
+        entries.forEach((entry, index) => {
+          const name = this.escapeMarkdown(entry.name || entry.slug || `entry-${index + 1}`);
+          sections.push(`${index + 1}. [${name}](${entry.url})`);
+        });
+        sections.push('');
+      }
+    }
+
+    if (pageData.type === 'apitracker-api-detail') {
+      if (pageData.companyName) sections.push(`**公司**: ${this.escapeMarkdown(pageData.companyName)}`);
+      if (pageData.slug) sections.push(`**Slug**: \`${pageData.slug}\``);
+      if (pageData.apiBaseEndpoint) sections.push(`**API Base Endpoint**: \`${pageData.apiBaseEndpoint}\``);
+      if (pageData.graphqlEndpoint) sections.push(`**GraphQL Endpoint**: \`${pageData.graphqlEndpoint}\``);
+      sections.push('');
+
+      const docs = Array.isArray(pageData.docsEntrances) ? pageData.docsEntrances : [];
+      if (docs.length > 0) {
+        sections.push('## 文档入口');
+        sections.push('');
+        docs.forEach((doc, i) => sections.push(`${i + 1}. ${doc}`));
+        sections.push('');
+      }
+
+      const specs = Array.isArray(pageData.apiSpecs) ? pageData.apiSpecs : [];
+      if (specs.length > 0) {
+        sections.push('## API 规格链接');
+        sections.push('');
+        specs.forEach((spec) => {
+          const left = [spec.type, spec.format].filter(Boolean).join(' / ') || 'spec';
+          sections.push(`- ${this.escapeMarkdown(left)}: ${spec.url}`);
+        });
+        sections.push('');
+      }
+
+      const postman = Array.isArray(pageData.postmanCollections) ? pageData.postmanCollections : [];
+      if (postman.length > 0) {
+        sections.push('## Postman 集合');
+        sections.push('');
+        postman.forEach((item) => {
+          const label = this.escapeMarkdown(item.name || 'collection');
+          sections.push(`- ${label}: ${item.url}`);
+        });
+        sections.push('');
+      }
+
+      if (pageData.urlRules) {
+        sections.push('## URL 规则建议');
+        sections.push('');
+        if (Array.isArray(pageData.urlRules.include) && pageData.urlRules.include.length > 0) {
+          sections.push('### include');
+          pageData.urlRules.include.forEach((rule) => sections.push(`- \`${rule}\``));
+          sections.push('');
+        }
+        if (Array.isArray(pageData.urlRules.exclude) && pageData.urlRules.exclude.length > 0) {
+          sections.push('### exclude');
+          pageData.urlRules.exclude.forEach((rule) => sections.push(`- \`${rule}\``));
+          sections.push('');
+        }
+      }
+    }
+
+    if (sections.length === 0 && pageData.rawContent) {
       sections.push(pageData.rawContent);
     }
 
