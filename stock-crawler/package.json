@@ -15,7 +15,8 @@
     "crawl:hao123": "node scripts/crawl-hao123.js",
     "test:hao123-configs": "node scripts/test-hao123-configs.js",
     "bootstrap:hao123": "node scripts/bootstrap-hao123-sites.js",
-    "test:all-hao123": "node scripts/test-all-hao123-sites.js"
+    "test:all-hao123": "node scripts/test-all-hao123-sites.js",
+    "crawl:apify-google-finance": "node scripts/run-apify-google-finance-task.mjs"
   },
   "keywords": [
     "crawler",
