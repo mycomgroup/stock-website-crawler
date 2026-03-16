@@ -536,6 +536,32 @@ class MarkdownGenerator {
   generateFinnhubApi(pageData) {
     const sections = [];
 
+    const normalizeLang = (lang = 'text') => {
+      const normalized = String(lang).toLowerCase();
+      if (normalized === 'curl') return 'bash';
+      if (normalized === 'c#') return 'csharp';
+      if (normalized === 'node.js') return 'javascript';
+      return normalized;
+    };
+
+    const mergeCodeExamples = (primary = [], fallback = []) => {
+      const merged = [];
+      const seen = new Set();
+
+      for (const example of [...primary, ...fallback]) {
+        if (!example || !example.code) continue;
+        const language = example.language || 'text';
+        const code = String(example.code).trim();
+        if (!code) continue;
+        const key = `${language.toLowerCase()}::${code}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        merged.push({ language, code });
+      }
+
+      return merged;
+    };
+
     // 添加标题
     if (pageData.title) {
       sections.push(`# ${pageData.title}\n`);
@@ -602,13 +628,14 @@ class MarkdownGenerator {
         sections.push('');
       }
 
-      // 代码示例
-      if (parsed.codeExamples.length > 0) {
+      // 代码示例（优先结构化字段，回退 rawContent）
+      const codeExamples = mergeCodeExamples(pageData.codeExamples, parsed.codeExamples);
+      if (codeExamples.length > 0) {
         sections.push('## 代码示例\n');
-        parsed.codeExamples.forEach(example => {
+        codeExamples.forEach(example => {
           if (example.language && example.code) {
             sections.push(`### ${example.language}`);
-            sections.push(`\`\`\`${example.language.toLowerCase()}`);
+            sections.push(`\`\`\`${normalizeLang(example.language)}`);
             sections.push(example.code);
             sections.push('```');
             sections.push('');
@@ -617,10 +644,11 @@ class MarkdownGenerator {
       }
 
       // 响应示例
-      if (parsed.sampleResponse) {
+      const sampleResponse = pageData.sampleResponse || parsed.sampleResponse;
+      if (sampleResponse) {
         sections.push('## 响应示例\n');
         sections.push('```json');
-        sections.push(parsed.sampleResponse);
+        sections.push(sampleResponse);
         sections.push('```');
         sections.push('');
       }
@@ -844,9 +872,7 @@ class MarkdownGenerator {
               });
               codeBuffer = [];
             }
-            if (!currentCodeLang) {
-              currentCodeLang = line;
-            }
+            currentCodeLang = line;
           } else if (currentCodeLang) {
             const isCode = line.startsWith('import ') || line.startsWith('from ') ||
                 line.includes('finnhub') || line.includes('Client') ||
