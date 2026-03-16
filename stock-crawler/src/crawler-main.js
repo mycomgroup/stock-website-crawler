@@ -99,7 +99,7 @@ class CrawlerMain {
         headless: this.config.crawler.headless,
         timeout: this.config.crawler.timeout,
         userDataDir: this.config.crawler.userDataDir, // Use Chrome user data directory if provided
-        ignoreHTTPSErrors: this.config.crawler.ignoreHTTPSErrors === true
+        ignoreHTTPSErrors: !!this.config.crawler.ignoreHTTPSErrors
       });
       this.logger.info(`Browser launched (headless: ${this.config.crawler.headless})`);
 
@@ -756,7 +756,7 @@ ${block.code}
 
       // 如果没有使用流式写入（没有分页数据），使用传统方式
       console.log(`[CRAWLER DEBUG] isFirstChunk: ${isFirstChunk}, pageData.type: ${pageData.type}`);
-      if (isFirstChunk) {
+      if (isFirstChunk && !pageData.skipDefaultMarkdownOutput) {
         console.log(`[CRAWLER DEBUG] Calling markdownGenerator.generate()`);
         const markdown = this.markdownGenerator.generate(pageData);
         console.log(`[CRAWLER DEBUG] Generated markdown length: ${markdown.length}`);
@@ -784,8 +784,12 @@ ${block.code}
         );
       }
       
-      this.statsTracker.incrementFilesGenerated();
-      this.logger.info(`Saved: ${filename}.md`);
+      if (pageData.skipDefaultMarkdownOutput) {
+        this.logger.info('Saved: Tsanghi per-menu markdown files');
+      } else {
+        this.statsTracker.incrementFilesGenerated();
+        this.logger.info(`Saved: ${filename}.md`);
+      }
 
       // Close page
       await page.close();

@@ -23,7 +23,13 @@ class BrowserManager {
    * @returns {Promise<void>}
    */
   async launch(options = {}) {
-    const { headless = true, timeout = 30000, storageStatePath = null, userDataDir = null, ignoreHTTPSErrors = false } = options;
+    const {
+      headless = true,
+      timeout = 30000,
+      storageStatePath = null,
+      userDataDir = null,
+      ignoreHTTPSErrors = false
+    } = options;
     
     this.storageStatePath = storageStatePath;
     
