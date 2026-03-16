@@ -1,4 +1,5 @@
 import ApiDocParser from './api-doc-parser.js';
+import ApiTrackerParser from './apitracker-parser.js';
 import AlphavantageApiParser from './alphavantage-api-parser.js';
 import AlltickApiParser from './alltick-api-parser.js';
 import BraveSearchParser from './brave-search-parser.js';
@@ -38,6 +39,7 @@ class ParserManager {
    */
   registerDefaultParsers() {
     this.register(new ApiDocParser());
+    this.register(new ApiTrackerParser());
     this.register(new AlphavantageApiParser());
     this.register(new AlltickApiParser());
     this.register(new BraveSearchParser());
