@@ -8,6 +8,67 @@ import BaseParser from './base-parser.js';
  */
 class ModelscopeMcpParser extends BaseParser {
   /**
+   * ModelScope MCP 页面需要在解析器内部做额外等待后才能稳定拿到链接
+   */
+  supportsLinkDiscovery() {
+    return true;
+  }
+
+  /**
+   * 自定义链接发现：
+   * - 复用 waitForContent，确保动态内容加载后再抽取链接
+   * - 优先抽取 /mcp/servers/ 详情页
+   * - 回退抽取所有 /mcp 站内链接
+   */
+  async discoverLinks(page) {
+    try {
+      await this.waitForContent(page);
+
+      const links = await page.evaluate(() => {
+        const toAbsoluteUrl = (href) => {
+          try {
+            return new URL(href, window.location.origin).toString().split('#')[0];
+          } catch (e) {
+            return null;
+          }
+        };
+
+        const candidates = new Set();
+
+        // 1) 先抓详情页
+        document.querySelectorAll('a[href*="/mcp/servers/"]').forEach((a) => {
+          const absoluteUrl = toAbsoluteUrl(a.getAttribute('href') || a.href);
+          if (absoluteUrl) candidates.add(absoluteUrl);
+        });
+
+        // 2) 再抓所有 MCP 站内页面
+        document.querySelectorAll('a[href*="/mcp"]').forEach((a) => {
+          const absoluteUrl = toAbsoluteUrl(a.getAttribute('href') || a.href);
+          if (absoluteUrl) candidates.add(absoluteUrl);
+        });
+
+        // 3) 某些卡片不是标准 a 标签，尝试 data-href
+        document.querySelectorAll('[data-href*="/mcp"]').forEach((el) => {
+          const absoluteUrl = toAbsoluteUrl(el.getAttribute('data-href'));
+          if (absoluteUrl) candidates.add(absoluteUrl);
+        });
+
+        return Array.from(candidates);
+      });
+
+      // 保留 modelscope.cn/mcp* 站内链接，统一去重
+      const normalizedLinks = Array.from(new Set(
+        links.filter(link => /^https?:\/\/modelscope\.cn\/mcp/.test(link))
+      ));
+
+      return normalizedLinks;
+    } catch (error) {
+      console.warn('[ModelscopeMcpParser] discoverLinks failed:', error.message);
+      return [];
+    }
+  }
+
+  /**
    * 匹配 ModelScope MCP 页面
    * @param {string} url - 页面URL
    * @returns {boolean} 是否匹配
@@ -66,10 +127,22 @@ class ModelscopeMcpParser extends BaseParser {
    */
   async waitForContent(page) {
     try {
-      await page.waitForLoadState('networkidle', { timeout: 30000 });
+      await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
       // 等待主内容区域
       await page.waitForSelector('main', { timeout: 15000 });
+      await page.waitForFunction(() => {
+        const text = document.body?.innerText || '';
+        return text.includes('ModelScope MCP') || text.includes('MCP Server');
+      }, { timeout: 15000 });
       await page.waitForTimeout(2000); // 额外等待动态内容
+
+      // 主动滚动触发懒加载
+      for (let i = 0; i < 5; i++) {
+        await page.mouse.wheel(0, 2400);
+        await page.waitForTimeout(400);
+      }
+      await page.mouse.wheel(0, -12000);
+      await page.waitForTimeout(600);
 
       // 处理登录弹窗
       await this.handleLoginModal(page);
