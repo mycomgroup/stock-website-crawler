@@ -15,6 +15,7 @@ import InfowayApiParser from './infoway-api-parser.js';
 import InvestodayApiParser from './investoday-api-parser.js';
 import ItickApiParser from './itick-api-parser.js';
 import KuaishouApifoxParser from './kuaishou-apifox-parser.js';
+import LanyunMcpParser from './lanyun-mcp-parser.js';
 import MassiveApiParser from './massive-api-parser.js';
 import ModelscopeMcpParser from './modelscope-mcp-parser.js';
 import PolyrouterParser from './polyrouter-parser.js';
@@ -62,6 +63,7 @@ class ParserManager {
     this.register(new InvestodayApiParser());
     this.register(new ItickApiParser());
     this.register(new KuaishouApifoxParser());
+    this.register(new LanyunMcpParser());
     this.register(new MassiveApiParser());
     this.register(new ModelscopeMcpParser());
     this.register(new PolyrouterParser());
