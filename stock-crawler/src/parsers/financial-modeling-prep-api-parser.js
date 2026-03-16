@@ -312,6 +312,69 @@ class FinancialModelingPrepApiParser extends BaseParser {
           return result;
         }
 
+        // 兜底：提取语义化文档结构，避免因 className 变化导致空内容
+        const contentRoot = document.querySelector('main, article, [role="main"], .docs-content, .content') || document.body;
+        const titleEl = contentRoot.querySelector('h1') || document.querySelector('h1');
+        if (titleEl) {
+          result.title = titleEl.textContent.trim();
+        }
+
+        const sectionNodes = contentRoot.querySelectorAll('h2, h3');
+        if (sectionNodes.length > 0) {
+          for (const heading of sectionNodes) {
+            const sectionTitle = heading.textContent?.trim();
+            if (!sectionTitle) continue;
+
+            const section = {
+              type: 'section',
+              title: sectionTitle,
+              content: '',
+              endpoint: '',
+              codeBlocks: [],
+              bulletItems: []
+            };
+
+            let sibling = heading.nextElementSibling;
+            while (sibling && !['H2', 'H3'].includes(sibling.tagName)) {
+              const siblingText = sibling.textContent?.trim() || '';
+
+              if (['P', 'DIV'].includes(sibling.tagName) && siblingText) {
+                if (/^endpoint\s*:/i.test(siblingText)) {
+                  const endpointMatch = siblingText.match(/endpoint\s*:\s*([^\s].*)/i);
+                  if (endpointMatch) {
+                    section.endpoint = endpointMatch[1].trim();
+                  }
+                } else {
+                  section.content += (section.content ? '\n\n' : '') + siblingText;
+                }
+              }
+
+              sibling.querySelectorAll?.('pre code').forEach(code => {
+                const codeText = code.textContent?.trim();
+                if (codeText) section.codeBlocks.push(codeText);
+              });
+
+              sibling.querySelectorAll?.('li').forEach(li => {
+                const item = li.textContent?.trim();
+                if (item) section.bulletItems.push(item);
+              });
+
+              sibling = sibling.nextElementSibling;
+            }
+
+            if (section.content || section.endpoint || section.codeBlocks.length > 0 || section.bulletItems.length > 0) {
+              result.sections.push(section);
+            }
+          }
+        }
+
+        if (!result.description) {
+          const firstParagraph = contentRoot.querySelector('p');
+          if (firstParagraph) {
+            result.description = firstParagraph.textContent?.trim() || '';
+          }
+        }
+
         return result;
       });
 
@@ -432,11 +495,25 @@ class FinancialModelingPrepApiParser extends BaseParser {
         if (section.content) {
           lines.push(section.content, '');
         }
+        if (section.bulletItems && section.bulletItems.length > 0) {
+          const uniqueItems = [...new Set(section.bulletItems)];
+          for (const item of uniqueItems) {
+            lines.push(`- ${item}`);
+          }
+          lines.push('');
+        }
         if (section.endpoint) {
           lines.push('**Endpoint:**', '');
           lines.push('```text');
           lines.push(section.endpoint);
           lines.push('```', '');
+        }
+        if (section.codeBlocks && section.codeBlocks.length > 0) {
+          for (const block of section.codeBlocks) {
+            lines.push('```');
+            lines.push(block);
+            lines.push('```', '');
+          }
         }
       }
     }
