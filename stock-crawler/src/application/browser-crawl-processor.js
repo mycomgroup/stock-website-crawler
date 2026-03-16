@@ -31,7 +31,8 @@ class BrowserCrawlProcessor {
   async launch() {
     await this.browserManager.launch({
       headless: this.config.crawler.headless,
-      userDataDir: this.config.crawler.userDataDir
+      userDataDir: this.config.crawler.userDataDir,
+      ignoreHTTPSErrors: this.config.crawler.ignoreHTTPSErrors === true
     });
   }
 

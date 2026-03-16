@@ -93,6 +93,11 @@ class ConfigManager {
       }
     }
 
+
+    if ('ignoreHTTPSErrors' in config.crawler && typeof config.crawler.ignoreHTTPSErrors !== 'boolean') {
+      throw new Error('配置字段 crawler.ignoreHTTPSErrors 必须是布尔类型');
+    }
+
     // 验证 output 必需字段
     if (!('directory' in config.output)) {
       throw new Error('配置字段 output.directory 必须存在');

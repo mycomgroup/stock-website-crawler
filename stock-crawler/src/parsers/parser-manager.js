@@ -1,7 +1,10 @@
 import ApiDocParser from './api-doc-parser.js';
 import ApiTrackerParser from './apitracker-parser.js';
+import ApifyActorParser from './apify-actor-parser.js';
 import AlphavantageApiParser from './alphavantage-api-parser.js';
 import AlltickApiParser from './alltick-api-parser.js';
+import ApifyApiParser from './apify-api-parser.js';
+import Api60sDocsParser from './api60s-docs-parser.js';
 import BraveSearchParser from './brave-search-parser.js';
 import EodhdApiParser from './eodhd-api-parser.js';
 import EulerpoolApiParser from './eulerpool-api-parser.js';
@@ -10,6 +13,7 @@ import FinancialDatasetsApiParser from './financial-datasets-api-parser.js';
 import FinancialModelingPrepApiParser from './financial-modeling-prep-api-parser.js';
 import InfowayApiParser from './infoway-api-parser.js';
 import ItickApiParser from './itick-api-parser.js';
+import KuaishouApifoxParser from './kuaishou-apifox-parser.js';
 import MassiveApiParser from './massive-api-parser.js';
 import ModelscopeMcpParser from './modelscope-mcp-parser.js';
 import PolyrouterParser from './polyrouter-parser.js';
@@ -23,6 +27,8 @@ import TushareProApiParser from './tushare-pro-api-parser.js';
 import QverisApiParser from './qveris-api-parser.js';
 import SanhulianghuaParser from './sanhulianghua-parser.js';
 import YfinanceApiParser from './yfinance-api-parser.js';
+import GoogleDiscoveryParser from './google-discovery-parser.js';
+import XiaohongshuApifoxParser from './xiaohongshu-apifox-parser.js';
 import GenericParser from './generic-parser.js';
 
 /**
@@ -40,8 +46,11 @@ class ParserManager {
   registerDefaultParsers() {
     this.register(new ApiDocParser());
     this.register(new ApiTrackerParser());
+    this.register(new ApifyActorParser());
     this.register(new AlphavantageApiParser());
     this.register(new AlltickApiParser());
+    this.register(new ApifyApiParser());
+    this.register(new Api60sDocsParser());
     this.register(new BraveSearchParser());
     this.register(new EodhdApiParser());
     this.register(new EulerpoolApiParser());
@@ -50,6 +59,7 @@ class ParserManager {
     this.register(new FinancialModelingPrepApiParser());
     this.register(new InfowayApiParser());
     this.register(new ItickApiParser());
+    this.register(new KuaishouApifoxParser());
     this.register(new MassiveApiParser());
     this.register(new ModelscopeMcpParser());
     this.register(new PolyrouterParser());
@@ -63,6 +73,8 @@ class ParserManager {
     this.register(new QverisApiParser());
     this.register(new SanhulianghuaParser());
     this.register(new YfinanceApiParser());
+    this.register(new GoogleDiscoveryParser());
+    this.register(new XiaohongshuApifoxParser());
     this.register(new GenericParser());
   }
 
