@@ -126,3 +126,27 @@ url规则就是https://apis.alltick.co/
 和/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/src/parsers
 API 文档按标准格式
 正常的文档要核心内容
+
+
+入口是这个https://docs.polyrouter.io/
+url规则就是https://docs.polyrouter.io/
+写/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/config 
+和/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/src/parsers
+API 文档按标准格式
+正常的文档要核心内容
+
+
+入口是这个https://tsanghi.com/fin/doc
+url规则就是https://tsanghi.com/fin/doc
+写/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/config 
+和/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/src/parsers
+API 文档按标准格式
+正常的文档要核心内容
+
+http://www.sanhulianghua.com/index.php?do=page_base_hsa_gupiao
+入口是这个http://www.sanhulianghua.com/index.php?do=page_base_hsa_gupiao
+url规则就是http://www.sanhulianghua.com/index.php下面
+写/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/config 
+和/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/src/parsers
+API 文档按标准格式
+正常的文档要核心内容

@@ -281,14 +281,66 @@ class QverisApiParser extends BaseParser {
   }
 
   /**
-   * 等待页面内容加载完成
+   * 等待页面内容加载完成并切换到 API tab
    * @param {Page} page - Playwright页面对象
    */
   async waitForContent(page) {
     try {
       await page.waitForLoadState('networkidle', { timeout: 30000 });
       // 等待 Next.js 渲染
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(2000);
+
+      // 尝试点击 API tab 以显示完整的 API 文档
+      try {
+        // 查找 API tab - 可能是按钮、链接或 tab 组件
+        const apiTabSelectors = [
+          'button:has-text("API")',
+          'a:has-text("API")',
+          '[role="tab"]:has-text("API")',
+          '[role="tabbutton"]:has-text("API")',
+          'div[role="tablist"] button:has-text("API")',
+          '.tab:has-text("API")',
+          '[class*="tab"]:has-text("API")'
+        ];
+
+        let tabClicked = false;
+        for (const selector of apiTabSelectors) {
+          try {
+            const tab = await page.$(selector);
+            if (tab) {
+              // 检查是否已经是激活状态
+              const isActive = await tab.evaluate(el => {
+                return el.getAttribute('aria-selected') === 'true' ||
+                       el.classList.contains('active') ||
+                       el.classList.contains('selected') ||
+                       el.getAttribute('data-state') === 'active';
+              });
+
+              if (!isActive) {
+                await tab.click();
+                console.log('Clicked API tab');
+                tabClicked = true;
+                // 等待 tab 内容加载
+                await page.waitForTimeout(2000);
+              } else {
+                console.log('API tab already active');
+              }
+              break;
+            }
+          } catch (e) {
+            // 继续尝试下一个选择器
+          }
+        }
+
+        if (!tabClicked) {
+          console.log('Could not find API tab, proceeding with default content');
+        }
+      } catch (tabError) {
+        console.warn('Error switching to API tab:', tabError.message);
+      }
+
+      // 额外等待确保动态内容完全加载
+      await page.waitForTimeout(1500);
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);
     }

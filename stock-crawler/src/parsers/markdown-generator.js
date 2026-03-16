@@ -21,13 +21,15 @@ class MarkdownGenerator {
       return this.generateFinnhubApi(pageData);
     } else if (pageData.type === 'tiingo-api') {
       return this.generateTiingoApi(pageData);
+    } else if (pageData.type === 'polyrouter-api' || pageData.type === 'polyrouter-doc') {
+      return this.generatePolyrouterApi(pageData);
     } else if (pageData.type === 'financial-modeling-prep-api') {
       return this.generateFinancialModelingPrepApi(pageData);
     } else if (pageData.type === 'financial-datasets-api') {
       return this.generateFinancialDatasetsApi(pageData);
     } else if (pageData.type === 'massive-api') {
       return this.generateMassiveApi(pageData);
-    } else if (pageData.type === 'serpapi-ai-overview') {
+    } else if (pageData.type === 'serpapi-ai-overview' || pageData.type === 'serpapi-doc') {
       return this.generateSerpApi(pageData);
     } else if (pageData.type === 'brave-search-api') {
       return this.generateBraveSearchApi(pageData);
@@ -49,6 +51,10 @@ class MarkdownGenerator {
       return this.generateModelscopeMcp(pageData);
     } else if (pageData.type === 'itick-doc') {
       return this.generateItickDoc(pageData);
+    } else if (pageData.type === 'eodhd-blog') {
+      return this.generateEodhdBlog(pageData);
+    } else if (pageData.type === 'eodhd-api') {
+      return this.generateEodhdApi(pageData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
@@ -479,14 +485,80 @@ class MarkdownGenerator {
       sections.push('');
     }
 
-    // 如果有原始内容，直接使用原始内容
+    // 如果有原始内容，解析并格式化
     if (pageData.rawContent) {
-      // 移除标题（已经添加了）
-      const contentLines = pageData.rawContent.split('\n').slice(1);
-      const content = contentLines.join('\n').trim();
+      const parsed = this.parseFinnhubRawContent(pageData.rawContent);
 
-      if (content) {
-        sections.push(content);
+      // 描述
+      if (parsed.description) {
+        sections.push('## 描述\n');
+        sections.push(parsed.description);
+        sections.push('');
+      }
+
+      // API 信息
+      if (parsed.method || parsed.endpoints.length > 0) {
+        sections.push('## API 端点\n');
+        if (parsed.method) {
+          sections.push(`**Method**: \`${parsed.method}\``);
+          sections.push('');
+        }
+        if (parsed.endpoints.length > 0) {
+          sections.push('**Endpoints**:');
+          sections.push('```text');
+          parsed.endpoints.forEach(ep => sections.push(ep));
+          sections.push('```');
+          sections.push('');
+        }
+        if (parsed.premium) {
+          sections.push(`> ⚠️ ${parsed.premium}`);
+          sections.push('');
+        }
+      }
+
+      // 参数表格
+      if (parsed.parameters.length > 0) {
+        sections.push('## 参数\n');
+        sections.push('| 参数名 | 必需 | 描述 |');
+        sections.push('|--------|------|------|');
+        parsed.parameters.forEach(p => {
+          const required = p.required ? '是' : '否';
+          sections.push(`| \`${p.name}\` | ${required} | ${this.escapeMarkdown(p.description || '')} |`);
+        });
+        sections.push('');
+      }
+
+      // 响应字段表格
+      if (parsed.responseFields.length > 0) {
+        sections.push('## 响应字段\n');
+        sections.push('| 字段名 | 描述 |');
+        sections.push('|--------|------|');
+        parsed.responseFields.forEach(f => {
+          sections.push(`| \`${f.name}\` | ${this.escapeMarkdown(f.description || '')} |`);
+        });
+        sections.push('');
+      }
+
+      // 代码示例
+      if (parsed.codeExamples.length > 0) {
+        sections.push('## 代码示例\n');
+        parsed.codeExamples.forEach(example => {
+          if (example.language && example.code) {
+            sections.push(`### ${example.language}`);
+            sections.push(`\`\`\`${example.language.toLowerCase()}`);
+            sections.push(example.code);
+            sections.push('```');
+            sections.push('');
+          }
+        });
+      }
+
+      // 响应示例
+      if (parsed.sampleResponse) {
+        sections.push('## 响应示例\n');
+        sections.push('```json');
+        sections.push(parsed.sampleResponse);
+        sections.push('```');
         sections.push('');
       }
     } else {
@@ -558,6 +630,231 @@ class MarkdownGenerator {
     }
 
     return sections.join('\n');
+  }
+
+  /**
+   * 解析 Finnhub 原始内容
+   * @param {string} rawContent - 原始内容
+   * @returns {Object} 解析后的结构化数据
+   */
+  parseFinnhubRawContent(rawContent) {
+    const result = {
+      description: '',
+      method: '',
+      endpoints: [],
+      premium: '',
+      parameters: [],
+      responseFields: [],
+      codeExamples: [],
+      sampleResponse: ''
+    };
+
+    if (!rawContent) return result;
+
+    const lines = rawContent.split('\n').map(l => l.trim()).filter(l => l);
+
+    let currentSection = '';
+    let currentParam = null;
+    let currentResponseField = null;
+    let currentCodeLang = '';
+    let codeBuffer = [];
+    let jsonResponseBuffer = [];
+    let inJsonResponse = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const lowerLine = line.toLowerCase();
+
+      // 检测 section 标题
+      if (lowerLine === 'method:' || lowerLine.startsWith('method: ')) {
+        currentSection = 'method';
+        const methodMatch = lowerLine.match(/^method:\s*(GET|POST|PUT|DELETE|PATCH)$/i);
+        if (methodMatch) {
+          result.method = methodMatch[1].toUpperCase();
+        }
+        continue;
+      }
+      if (lowerLine === 'examples:' || lowerLine.startsWith('examples:')) {
+        currentSection = 'examples';
+        continue;
+      }
+      if (lowerLine === 'premium:' || lowerLine.startsWith('premium:')) {
+        currentSection = 'premium';
+        const premiumMatch = line.match(/^premium:\s*(.+)$/i);
+        if (premiumMatch) {
+          result.premium = premiumMatch[1].trim();
+        }
+        continue;
+      }
+      if (lowerLine === 'arguments:' || lowerLine.startsWith('arguments:')) {
+        currentSection = 'arguments';
+        continue;
+      }
+      if (lowerLine.startsWith('response attributes')) {
+        currentSection = 'response';
+        continue;
+      }
+      if (lowerLine === 'sample code') {
+        currentSection = 'code';
+        continue;
+      }
+      if (lowerLine === 'sample response') {
+        currentSection = 'json';
+        inJsonResponse = false;
+        jsonResponseBuffer = [];
+        continue;
+      }
+
+      // 根据 section 处理内容
+      switch (currentSection) {
+        case '':
+          // 描述部分
+          if (!result.description && line.length > 10 && !lowerLine.startsWith('method') && !lowerLine.startsWith('premium')) {
+            if (line !== lines[0] && !line.match(/^[A-Z][a-z]+\s+[A-Z]/)) {
+              result.description = line;
+            }
+          }
+          break;
+
+        case 'method':
+          if (['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(line.toUpperCase())) {
+            result.method = line.toUpperCase();
+          }
+          break;
+
+        case 'examples':
+          if (line.startsWith('/')) {
+            result.endpoints.push(line);
+          }
+          break;
+
+        case 'premium':
+          if (!result.premium) {
+            result.premium = line;
+          }
+          break;
+
+        case 'arguments':
+          const paramMatch = line.match(/^([a-zA-Z_][a-zA-Z0-9_]*?)(REQUIRED|optional)$/i);
+          if (paramMatch) {
+            if (currentParam) {
+              result.parameters.push(currentParam);
+            }
+            currentParam = {
+              name: paramMatch[1],
+              required: paramMatch[2]?.toUpperCase() === 'REQUIRED',
+              description: ''
+            };
+          } else if (currentParam && !line.match(/^[A-Z]+\s*$/) && line.length > 2) {
+            if (currentParam.description) {
+              currentParam.description += ' ' + line;
+            } else {
+              currentParam.description = line;
+            }
+          }
+          break;
+
+        case 'response':
+          if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(line) && line.length < 30) {
+            if (currentResponseField) {
+              result.responseFields.push(currentResponseField);
+            }
+            currentResponseField = {
+              name: line,
+              description: ''
+            };
+          } else if (currentResponseField && !line.match(/^[A-Z]+\s*$/)) {
+            if (currentResponseField.description) {
+              currentResponseField.description += ' ' + line;
+            } else {
+              currentResponseField.description = line;
+            }
+          }
+          break;
+
+        case 'code':
+          if (['cURL', 'Python', 'Javascript', 'JavaScript', 'Go', 'Ruby', 'Kotlin', 'PHP', 'Rust', 'Java', 'C#', 'Swift', 'TypeScript', 'Node.js'].includes(line)) {
+            if (currentCodeLang && codeBuffer.length > 0) {
+              result.codeExamples.push({
+                language: currentCodeLang,
+                code: codeBuffer.join('\n')
+              });
+              codeBuffer = [];
+            }
+            if (!currentCodeLang) {
+              currentCodeLang = line;
+            }
+          } else if (currentCodeLang) {
+            const isCode = line.startsWith('import ') || line.startsWith('from ') ||
+                line.includes('finnhub') || line.includes('Client') ||
+                line.startsWith('curl ') || line.startsWith('http ') ||
+                line.includes('http') ||
+                (line.includes('(') && (line.includes('print') || line.includes('console') || line.includes('fetch'))) ||
+                line.includes('finnhub_client') || line.includes('api_key') ||
+                line.includes('def ') || line.includes('async ') ||
+                line.includes('await ') || line.includes('.then(') ||
+                line.includes(' => ') || line.includes('->') ||
+                line.startsWith('const ') || line.startsWith('let ') ||
+                line.startsWith('var ') || line.startsWith('func ') ||
+                line.includes('fmt.') || line.includes('Net::') ||
+                line.includes('requests.') || line.includes('axios');
+
+            if (isCode) {
+              if (line.includes('import finnhub') || line.includes('finnhub_client') || line.includes('finnhub.')) {
+                currentCodeLang = 'Python';
+              } else if (line.includes('curl ')) {
+                currentCodeLang = 'cURL';
+              } else if (line.includes('console.') || line.includes('fetch(') || line.includes('axios')) {
+                currentCodeLang = 'JavaScript';
+              } else if (line.includes('fmt.')) {
+                currentCodeLang = 'Go';
+              } else if (line.includes('Net::')) {
+                currentCodeLang = 'Ruby';
+              }
+              codeBuffer.push(line);
+            }
+          }
+          break;
+
+        case 'json':
+          if (line.startsWith('{') || line.startsWith('[')) {
+            inJsonResponse = true;
+          }
+          if (inJsonResponse) {
+            jsonResponseBuffer.push(line);
+          }
+          break;
+      }
+    }
+
+    // 保存最后一个参数和字段
+    if (currentParam) {
+      result.parameters.push(currentParam);
+    }
+    if (currentResponseField) {
+      result.responseFields.push(currentResponseField);
+    }
+
+    // 保存最后的代码块
+    if (currentCodeLang && codeBuffer.length > 0) {
+      result.codeExamples.push({
+        language: currentCodeLang,
+        code: codeBuffer.join('\n')
+      });
+    }
+
+    // 格式化 JSON 响应
+    if (jsonResponseBuffer.length > 0) {
+      try {
+        const jsonStr = jsonResponseBuffer.join('\n');
+        const parsed = JSON.parse(jsonStr);
+        result.sampleResponse = JSON.stringify(parsed, null, 2);
+      } catch {
+        result.sampleResponse = jsonResponseBuffer.join('\n');
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -648,17 +945,26 @@ class MarkdownGenerator {
       Object.entries(groupedBySection).forEach(([sectionTitle, tabs]) => {
         // 过滤掉与主体内容完全重复的tab组
         const filteredTabs = tabs.map(tab => {
+          // 记录原始表格数量
+          const originalTableCount = (tab.tables || []).length;
           // 过滤掉重复的表格
           const filteredTables = (tab.tables || []).filter(table => {
             const sig = this.tableSignature(table);
             return !mainTables.includes(sig);
           });
-          return { ...tab, tables: filteredTables };
+          // 返回包含原始表格数量信息的对象
+          return {
+            ...tab,
+            tables: filteredTables,
+            _originalTableCount: originalTableCount,
+            _tablesFiltered: originalTableCount > 0 && filteredTables.length === 0
+          };
         }).filter(tab => {
           // 只保留有实际内容的tab
           const hasTables = tab.tables && tab.tables.length > 0;
           const hasCode = tab.codeExamples && tab.codeExamples.length > 0;
-          const hasContent = tab.content && tab.content.trim().length > 50;
+          // 如果表格被过滤掉了，不把原始内容当作有效内容
+          const hasContent = !tab._tablesFiltered && tab.content && tab.content.trim().length > 50;
           return hasTables || hasCode || hasContent;
         });
 
@@ -697,8 +1003,9 @@ class MarkdownGenerator {
             });
           }
 
-          // 输出原始内容（如果没有表格和代码）
-          if ((!tab.tables || tab.tables.length === 0) && (!tab.codeExamples || tab.codeExamples.length === 0)) {
+          // 输出原始内容（如果没有表格和代码，且表格没有被过滤掉）
+          const hasTablesOrCode = (tab.tables && tab.tables.length > 0) || (tab.codeExamples && tab.codeExamples.length > 0);
+          if (!hasTablesOrCode && !tab._tablesFiltered) {
             if (tab.content && tab.content.trim()) {
               sections.push(tab.content);
               sections.push('');
@@ -770,6 +1077,159 @@ class MarkdownGenerator {
     const row1 = table[1] ? table[1].join('|') : '';
     const row2 = table[2] ? table[2].join('|') : '';
     return `${header}||${row1}||${row2}`;
+  }
+
+  /**
+   * 生成 PolyRouter API 文档 Markdown
+   * @param {PageData} pageData - PolyRouter API 文档页面数据
+   * @returns {string} Markdown文本
+   */
+  generatePolyrouterApi(pageData) {
+    const sections = [];
+
+    // 添加标题
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    // 添加源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 添加描述（优先使用 description，其次使用 subtitle）
+    const description = pageData.description || pageData.subtitle;
+    if (description) {
+      sections.push('## 描述\n');
+      sections.push(description);
+      sections.push('');
+    }
+
+    // 添加 API 端点信息
+    if (pageData.endpoint) {
+      sections.push('## API 端点\n');
+      sections.push(`**方法**: \`${pageData.endpoint.method}\``);
+      sections.push(`**路径**: \`${pageData.endpoint.path}\``);
+      sections.push('');
+    }
+
+    // 添加章节内容
+    if (pageData.sections && pageData.sections.length > 0) {
+      sections.push('## 章节\n');
+      pageData.sections.forEach(section => {
+        const prefix = '#'.repeat(section.level + 1);
+        sections.push(`${prefix} ${section.text}`);
+      });
+      sections.push('');
+    }
+
+    // 添加参数表格
+    if (pageData.parameters && pageData.parameters.length > 0) {
+      sections.push('## 参数\n');
+      pageData.parameters.forEach((param, index) => {
+        if (param.headers && param.headers.length > 0 && param.rows && param.rows.length > 0) {
+          if (pageData.parameters.length > 1) {
+            sections.push(`### 参数表 ${index + 1}\n`);
+          }
+          // 表头
+          sections.push('| ' + param.headers.join(' | ') + ' |');
+          sections.push('| ' + param.headers.map(() => '---').join(' | ') + ' |');
+          // 数据行
+          param.rows.forEach(row => {
+            const values = param.headers.map(h => row[h] || '-');
+            sections.push('| ' + values.join(' | ') + ' |');
+          });
+          sections.push('');
+        }
+      });
+    }
+
+    // 添加代码示例
+    if (pageData.codeExamples && pageData.codeExamples.length > 0) {
+      sections.push('## 代码示例\n');
+      pageData.codeExamples.forEach((example, index) => {
+        if (pageData.codeExamples.length > 1) {
+          sections.push(`### 示例 ${index + 1} (${example.language || 'text'})\n`);
+        }
+        sections.push(`\`\`\`${example.language || 'text'}`);
+        sections.push(example.code);
+        sections.push('```');
+        sections.push('');
+      });
+    }
+
+    // 添加响应示例
+    if (pageData.responses && pageData.responses.length > 0) {
+      sections.push('## 响应示例\n');
+      pageData.responses.forEach((response, index) => {
+        if (pageData.responses.length > 1) {
+          sections.push(`### 响应 ${index + 1}\n`);
+        }
+        if (response.status) {
+          sections.push(`**状态码**: ${response.status}`);
+        }
+        sections.push('```json');
+        if (response.body) {
+          sections.push(JSON.stringify(response.body, null, 2));
+        } else if (response.raw) {
+          sections.push(response.raw);
+        }
+        sections.push('```');
+        sections.push('');
+      });
+    }
+
+    // 添加警告
+    if (pageData.warnings && pageData.warnings.length > 0) {
+      sections.push('## 警告\n');
+      pageData.warnings.forEach(warning => {
+        sections.push(`> ⚠️ ${warning}`);
+      });
+      sections.push('');
+    }
+
+    // 添加提示
+    if (pageData.notes && pageData.notes.length > 0) {
+      sections.push('## 提示\n');
+      pageData.notes.forEach(note => {
+        sections.push(`> 💡 ${note}`);
+      });
+      sections.push('');
+    }
+
+    // 添加提示框
+    if (pageData.callouts && pageData.callouts.length > 0) {
+      sections.push('## 注意事项\n');
+      pageData.callouts.forEach(callout => {
+        const icon = callout.type === 'warning' ? '⚠️' : (callout.type === 'info' ? '💡' : '📝');
+        sections.push(`> ${icon} ${callout.content}`);
+      });
+      sections.push('');
+    }
+
+    // 添加原始内容作为后备 - 仅在没有足够的结构化数据时添加
+    const hasStructuredData = (pageData.codeExamples && pageData.codeExamples.length > 0) ||
+                               (pageData.parameters && pageData.parameters.length > 0) ||
+                               pageData.endpoint ||
+                               (pageData.sections && pageData.sections.length > 0);
+    if (pageData.rawContent && !hasStructuredData) {
+      // 清理 rawContent，移除可能的重复内容
+      let cleanedContent = pageData.rawContent;
+      // 移除可能的 UI 残留
+      cleanedContent = cleanedContent
+        .replace(/^(GET|POST|PUT|DELETE|PATCH)\s+/gm, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+      if (cleanedContent.length > 100) {
+        sections.push('## 详细内容\n');
+        sections.push(cleanedContent);
+        sections.push('');
+      }
+    }
+
+    return sections.join('\n');
   }
 
   /**
@@ -1023,16 +1483,23 @@ class MarkdownGenerator {
       }
     }
 
-    // 添加原始内容（清理后）
+    // 添加原始内容（清理后）- 仅在没有足够的结构化数据时添加
     if (pageData.rawContent) {
-      const cleanedContent = this.cleanRawContent(pageData.rawContent);
-      if (cleanedContent.length > 100) {
-        sections.push('---\n');
-        sections.push('## 详细文档\n');
-        sections.push('```');
-        sections.push(cleanedContent);
-        sections.push('```');
-        sections.push('');
+      // 检查是否已有足够的结构化数据
+      const hasStructuredData = (pageData.requestParams && pageData.requestParams.length > 0) ||
+                                 (pageData.responseFields && pageData.responseFields.length > 0) ||
+                                 (pageData.codeExamples && pageData.codeExamples.length > 0) ||
+                                 pageData.endpoint;
+      if (!hasStructuredData) {
+        const cleanedContent = this.cleanRawContent(pageData.rawContent);
+        if (cleanedContent.length > 100) {
+          sections.push('---\n');
+          sections.push('## 详细文档\n');
+          sections.push('```');
+          sections.push(cleanedContent);
+          sections.push('```');
+          sections.push('');
+        }
       }
     }
 
@@ -2847,6 +3314,29 @@ class MarkdownGenerator {
       sections.push('');
     }
 
+    // 添加其他表格（如参考表格）
+    if (pageData.additionalTables && pageData.additionalTables.length > 0) {
+      pageData.additionalTables.forEach(table => {
+        // 添加表格标题
+        if (table.title) {
+          sections.push(`## ${table.title}\n`);
+        }
+        // 添加表头
+        if (table.headers && table.headers.length > 0) {
+          sections.push(`| ${table.headers.join(' | ')} |`);
+          sections.push(`| ${table.headers.map(() => '---').join(' | ')} |`);
+          // 添加数据行
+          if (table.rows && table.rows.length > 0) {
+            table.rows.forEach(row => {
+              const values = table.headers.map(h => row[h] || '');
+              sections.push(`| ${values.join(' | ')} |`);
+            });
+          }
+          sections.push('');
+        }
+      });
+    }
+
     // 添加接口示例
     if (pageData.codeExample) {
       sections.push('## 接口示例\n');
@@ -3111,6 +3601,70 @@ class MarkdownGenerator {
       sections.push('## 内容\n');
       sections.push(pageData.rawContent);
       sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 EODHD 博客文章 Markdown
+   * @param {PageData} pageData - EODHD 博客页面数据
+   * @returns {string} Markdown文本
+   */
+  generateEodhdBlog(pageData) {
+    const sections = [];
+
+    // 添加标题
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    // 添加源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 如果解析器已经生成了 markdownContent，直接使用
+    if (pageData.markdownContent) {
+      // 移除标题（已经添加过了）
+      const content = pageData.markdownContent
+        .replace(/^#\s*.+\n/, '')
+        .replace(/^##\s*源URL\n.+?\n\n/s, '');
+      sections.push(content);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 EODHD API 文档 Markdown
+   * @param {PageData} pageData - EODHD API 文档页面数据
+   * @returns {string} Markdown文本
+   */
+  generateEodhdApi(pageData) {
+    const sections = [];
+
+    // 添加标题
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    // 添加源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 如果解析器已经生成了 markdownContent，直接使用
+    if (pageData.markdownContent) {
+      // 移除标题和源URL（已经添加过了）
+      const content = pageData.markdownContent
+        .replace(/^#\s*.+\n/, '')
+        .replace(/^##\s*源URL\n.+?\n\n/s, '');
+      sections.push(content);
     }
 
     return sections.join('\n');

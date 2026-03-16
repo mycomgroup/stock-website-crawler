@@ -9,11 +9,12 @@ import BaseParser from './base-parser.js';
 class BraveSearchParser extends BaseParser {
   /**
    * 匹配 Brave Search API 文档页面
+   * 支持 /documentation 和 /api-reference 两种路径
    * @param {string} url - 页面URL
    * @returns {boolean} 是否匹配
    */
   matches(url) {
-    return /^https?:\/\/api-dashboard\.search\.brave\.com\/documentation/.test(url);
+    return /^https?:\/\/api-dashboard\.search\.brave\.com\/(documentation|api-reference)/.test(url);
   }
 
   /**

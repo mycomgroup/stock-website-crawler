@@ -4,7 +4,7 @@ import BrowserManager from './browser-manager.js';
 import LoginHandler from './login-handler.js';
 import LinkFinder from './link-finder.js';
 import PageParser from './page-parser.js';
-import MarkdownGenerator from './markdown-generator.js';
+import MarkdownGenerator from './parsers/markdown-generator.js';
 import Logger from './logger.js';
 import StatsTracker from './stats-tracker.js';
 
@@ -754,8 +754,12 @@ ${block.code}
       this.logger.info(`Parsed page: ${pageData.title || 'Untitled'}`);
 
       // 如果没有使用流式写入（没有分页数据），使用传统方式
+      console.log(`[CRAWLER DEBUG] isFirstChunk: ${isFirstChunk}, pageData.type: ${pageData.type}`);
       if (isFirstChunk) {
+        console.log(`[CRAWLER DEBUG] Calling markdownGenerator.generate()`);
         const markdown = this.markdownGenerator.generate(pageData);
+        console.log(`[CRAWLER DEBUG] Generated markdown length: ${markdown.length}`);
+        console.log(`[CRAWLER DEBUG] Markdown first 200 chars: ${markdown.substring(0, 200)}`);
         // 优先使用 parser 建议的文件名（如基于 URL 路径的文件名）
         if (pageData.suggestedFilename) {
           filename = pageData.suggestedFilename;

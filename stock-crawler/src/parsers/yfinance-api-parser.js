@@ -24,6 +24,17 @@ class YfinanceApiParser extends BaseParser {
   }
 
   /**
+   * 清理标题，移除 Sphinx 文档中的 permalink 符号 (#)
+   * @param {string} title - 原始标题
+   * @returns {string} 清理后的标题
+   */
+  cleanTitle(title) {
+    if (!title) return '';
+    // 移除 Sphinx 文档标题末尾的 # 符号（permalink）
+    return title.replace(/#+$/, '').trim();
+  }
+
+  /**
    * 根据 URL 生成有意义的文件名
    * @param {string} url - 页面URL
    * @param {string} apiName - API 名称
@@ -34,13 +45,10 @@ class YfinanceApiParser extends BaseParser {
       const urlObj = new URL(url);
       const pathParts = urlObj.pathname.split('/').filter(p => p);
 
+      // 优先使用 apiName（从标题提取的类名/方法名）
       if (apiName) {
-        const safeName = apiName
-          .toLowerCase()
-          .replace(/[^a-z0-9_]/g, '_')
-          .replace(/_+/g, '_')
-          .replace(/^_|_$/g, '');
-        return safeName;
+        // 保持原有的大小写和点号结构
+        return apiName.replace(/[^a-zA-Z0-9._]/g, '');
       }
 
       // 从路径生成文件名
@@ -93,6 +101,7 @@ class YfinanceApiParser extends BaseParser {
           title: '',
           apiName: '',
           description: '',
+          signature: '',
           parameters: [],
           returns: [],
           attributes: [],
@@ -102,22 +111,37 @@ class YfinanceApiParser extends BaseParser {
           seeAlso: [],
           category: '',
           sidebarLinks: [],
+          tables: [],
           rawContent: ''
         };
 
-        // 提取标题
-        const h1 = document.querySelector('h1');
+        // 提取主要内容区域 - PyData Sphinx Theme 优先
+        const mainContent = document.querySelector('.bd-article, article.bd-article, .wy-nav-content, .document, main, article, .content');
+
+        // 提取标题 - 优先从主内容区域获取 h1
+        let h1 = null;
+        if (mainContent) {
+          h1 = mainContent.querySelector('h1');
+        }
+        // 如果主内容区域没有 h1，尝试从整个文档获取
+        if (!h1) {
+          h1 = document.querySelector('main h1, article h1, .bd-content h1, .wy-nav-content h1, h1');
+        }
         if (h1) {
-          result.title = h1.textContent.trim();
-          // 从标题提取 API 名称
-          const titleMatch = result.title.match(/^(\w+(?:\.\w+)*)/);
+          let titleText = h1.textContent.trim();
+          // 移除 Sphinx 文档标题末尾的 # 符号（permalink）
+          titleText = titleText.replace(/#+$/, '').trim();
+          result.title = titleText;
+
+          // 从标题提取 API 名称 (如 yfinance.market, Ticker 等)
+          const titleMatch = result.title.match(/^([a-zA-Z_]\w*(?:\.\w+)*)/);
           if (titleMatch) {
             result.apiName = titleMatch[1];
           }
         }
 
         // 提取侧边栏导航链接
-        const sidebarLinks = document.querySelectorAll('.wy-menu-vertical a, .sidebar a, nav a');
+        const sidebarLinks = document.querySelectorAll('.bd-sidebar a, .wy-menu-vertical a, .sidebar a, nav.bd-links a');
         sidebarLinks.forEach(link => {
           const href = link.getAttribute('href');
           if (href) {
@@ -128,45 +152,57 @@ class YfinanceApiParser extends BaseParser {
           }
         });
 
-        // 提取主要内容区域
-        const mainContent = document.querySelector('.wy-nav-content, .document, main, article, .content');
-
         if (mainContent) {
-          // 提取描述（第一个段落）
-          const firstParagraph = mainContent.querySelector('p');
-          if (firstParagraph) {
-            result.description = firstParagraph.textContent.trim();
+          // 提取 API 签名（如 "Ticker.history(*args, **kwargs) → DataFrame"）
+          const sigElement = mainContent.querySelector('.sig, dl.class > dt, dl.method > dt, dl.function > dt, dl.py-method > dt, dl.py-function > dt');
+          if (sigElement) {
+            let sig = sigElement.textContent.trim();
+            // 移除末尾的 # 符号
+            sig = sig.replace(/#+$/, '').trim();
+            result.signature = sig;
           }
 
-          // 提取参数表格
+          // 提取描述（第一个有意义的段落）
+          const paragraphs = mainContent.querySelectorAll('p');
+          for (const p of paragraphs) {
+            const text = p.textContent.trim();
+            // 跳过空段落和太短的段落
+            if (text.length > 10 && !text.startsWith('>>>') && !text.startsWith('Copy to clipboard')) {
+              if (!result.description) {
+                result.description = text;
+              }
+              // 收集其他段落作为示例说明
+              if (text !== result.description && text.length > 20) {
+                result.examples.push(text);
+              }
+            }
+          }
+
+          // 提取所有表格
           const tables = mainContent.querySelectorAll('table');
-          tables.forEach(table => {
+          tables.forEach((table, tableIndex) => {
             const headers = [];
             const rows = [];
 
             // 提取表头
             const headerCells = table.querySelectorAll('thead th, thead td');
             if (headerCells.length > 0) {
-              headerCells.forEach(cell => headers.push(cell.textContent.trim().toLowerCase()));
+              headerCells.forEach(cell => {
+                let headerText = cell.textContent.trim().toLowerCase();
+                // 清理表头文本
+                headerText = headerText.replace(/#+$/, '').trim();
+                headers.push(headerText);
+              });
             } else {
+              // 尝试从第一行提取表头
               const firstRow = table.querySelector('tr');
               if (firstRow) {
                 const cells = firstRow.querySelectorAll('th, td');
-                cells.forEach(cell => headers.push(cell.textContent.trim().toLowerCase()));
-              }
-            }
-
-            // 判断表格类型
-            let tableType = 'unknown';
-            const prevHeading = table.previousElementSibling;
-            if (prevHeading) {
-              const prevText = prevHeading.textContent.toLowerCase();
-              if (prevText.includes('参数') || prevText.includes('parameter')) {
-                tableType = 'parameters';
-              } else if (prevText.includes('返回') || prevText.includes('return')) {
-                tableType = 'returns';
-              } else if (prevText.includes('属性') || prevText.includes('attribute')) {
-                tableType = 'attributes';
+                cells.forEach(cell => {
+                  let headerText = cell.textContent.trim().toLowerCase();
+                  headerText = headerText.replace(/#+$/, '').trim();
+                  headers.push(headerText);
+                });
               }
             }
 
@@ -175,20 +211,34 @@ class YfinanceApiParser extends BaseParser {
             const rowsToProcess = bodyRows.length > 0 ? bodyRows : table.querySelectorAll('tr');
 
             rowsToProcess.forEach((row, rowIndex) => {
-              if (rowIndex === 0 && bodyRows.length === 0 && headers.length > 0) return;
+              // 如果没有 tbody，跳过第一行（表头行）
+              if (bodyRows.length === 0 && rowIndex === 0 && headers.length > 0) return;
 
               const cells = Array.from(row.querySelectorAll('td, th'));
               if (cells.length > 0) {
                 const rowData = {};
                 cells.forEach((cell, cellIndex) => {
                   const headerName = headers[cellIndex] || `col_${cellIndex}`;
-                  rowData[headerName] = cell.textContent.trim();
+                  let cellText = cell.textContent.trim();
+                  // 清理单元格文本
+                  cellText = cellText.replace(/#+$/, '').trim();
+                  rowData[headerName] = cellText;
                 });
                 rows.push(rowData);
               }
             });
 
-            // 根据类型存储
+            // 存储表格信息
+            if (headers.length > 0 || rows.length > 0) {
+              result.tables.push({
+                headers,
+                rows,
+                index: tableIndex
+              });
+            }
+
+            // 判断表格类型并分配到相应字段
+            const tableType = this.determineTableType(table, headers);
             if (tableType === 'parameters') {
               result.parameters = rows;
             } else if (tableType === 'returns') {
@@ -198,16 +248,19 @@ class YfinanceApiParser extends BaseParser {
             }
           });
 
-          // 提取代码示例
-          const codeBlocks = mainContent.querySelectorAll('pre code, pre');
+          // 提取代码示例 - PyData Sphinx Theme 使用 pre 标签
+          const codeBlocks = mainContent.querySelectorAll('pre');
           codeBlocks.forEach(block => {
             const code = block.textContent.trim();
-            if (code.length > 10) {
+            // 过滤掉太短的代码和 "Copy to clipboard" 文本
+            if (code.length > 10 && !code.includes('Copy to clipboard')) {
               let language = 'python';
               const classList = block.className || '';
               const langMatch = classList.match(/language-(\w+)/);
               if (langMatch) {
                 language = langMatch[1];
+              } else if (code.includes('import ') || code.includes('def ') || code.includes('class ')) {
+                language = 'python';
               }
 
               result.codeExamples.push({
@@ -229,15 +282,6 @@ class YfinanceApiParser extends BaseParser {
             });
           });
 
-          // 提取段落内容
-          const paragraphs = mainContent.querySelectorAll('p');
-          paragraphs.forEach((p, index) => {
-            const text = p.textContent.trim();
-            if (index > 0 && text.length > 20 && !text.startsWith('>>>')) {
-              result.examples.push(text);
-            }
-          });
-
           // 提取 "See Also" 部分
           const seeAlsoSection = mainContent.querySelector('.see-also, #see-also');
           if (seeAlsoSection) {
@@ -249,27 +293,36 @@ class YfinanceApiParser extends BaseParser {
               });
             });
           }
+
+          // 提取原始文本内容（作为备份）
+          result.rawContent = mainContent.textContent.trim().substring(0, 5000);
         }
 
         return result;
       });
 
+      // 清理标题
+      const cleanTitle = this.cleanTitle(data.title);
+
       return {
         type: 'yfinance-api',
         url,
         pageType: this.extractPageType(url),
-        title: data.title,
+        title: cleanTitle,
         apiName: data.apiName,
         description: data.description,
+        signature: data.signature,
         parameters: data.parameters,
         returns: data.returns,
         attributes: data.attributes,
+        tables: data.tables,
         codeExamples: data.codeExamples,
         notes: data.notes,
         examples: data.examples,
         seeAlso: data.seeAlso,
         category: data.category,
         sidebarLinks: data.sidebarLinks,
+        rawContent: data.rawContent,
         suggestedFilename: this.generateFilename(url, data.apiName)
       };
     } catch (error) {
@@ -281,18 +334,63 @@ class YfinanceApiParser extends BaseParser {
         title: '',
         apiName: '',
         description: '',
+        signature: '',
         parameters: [],
         returns: [],
         attributes: [],
+        tables: [],
         codeExamples: [],
         notes: [],
         examples: [],
         seeAlso: [],
         category: '',
         sidebarLinks: [],
+        rawContent: '',
         suggestedFilename: this.generateFilename(url)
       };
     }
+  }
+
+  /**
+   * 判断表格类型
+   * @param {Element} table - 表格元素
+   * @param {string[]} headers - 表头列表
+   * @returns {string} 表格类型
+   */
+  determineTableType(table, headers) {
+    // 检查表头
+    const headerText = headers.join(' ').toLowerCase();
+    if (headerText.includes('参数') || headerText.includes('parameter') || headerText.includes('name') && headerText.includes('type')) {
+      return 'parameters';
+    }
+    if (headerText.includes('返回') || headerText.includes('return') || headerText.includes('response')) {
+      return 'returns';
+    }
+    if (headerText.includes('属性') || headerText.includes('attribute') || headerText.includes('field')) {
+      return 'attributes';
+    }
+
+    // 检查表格前面的标题
+    let prevElement = table.previousElementSibling;
+    while (prevElement) {
+      const text = prevElement.textContent.toLowerCase();
+      if (text.includes('参数') || text.includes('parameter')) {
+        return 'parameters';
+      }
+      if (text.includes('返回') || text.includes('return')) {
+        return 'returns';
+      }
+      if (text.includes('属性') || text.includes('attribute')) {
+        return 'attributes';
+      }
+      // 只检查最近的几个兄弟元素
+      if (prevElement.tagName === 'H2' || prevElement.tagName === 'H3') {
+        break;
+      }
+      prevElement = prevElement.previousElementSibling;
+    }
+
+    return 'unknown';
   }
 
   /**
@@ -310,12 +408,27 @@ class YfinanceApiParser extends BaseParser {
    */
   async discoverLinks(page) {
     try {
-      // 首先展开所有折叠内容
-      await this.expandSidebar(page);
-
-      // 获取当前页面URL作为base
+      // 确保我们在正确的页面上
       const currentUrl = page.url();
-      const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+      const expectedBase = 'https://www.aidoczh.com/yfinance/reference/';
+
+      // 如果当前 URL 不在 reference 目录，导航到正确页面
+      if (!currentUrl.includes('/yfinance/reference/')) {
+        console.log(`YFinance parser: redirecting from ${currentUrl} to reference/index.html`);
+        await page.goto(expectedBase + 'index.html', {
+          waitUntil: 'networkidle',
+          timeout: 60000
+        });
+      }
+
+      // 获取当前页面URL
+      const finalUrl = page.url();
+      console.log(`YFinance parser current page URL: ${finalUrl}`);
+
+      // Sphinx 文档的侧边栏链接是相对于文档根目录的，不是相对于当前页面
+      // 所以我们使用固定的 base URL
+      const baseUrl = 'https://www.aidoczh.com/yfinance/reference/';
+      console.log(`YFinance parser using baseUrl: ${baseUrl}`);
 
       const links = await page.evaluate((base) => {
         const foundLinks = [];
@@ -356,20 +469,6 @@ class YfinanceApiParser extends BaseParser {
 
         // 从侧边栏提取链接
         for (const selector of sidebarSelectors) {
-          document.querySelectorAll(selector).forEach(link => {
-            addLink(link.getAttribute('href'));
-          });
-        }
-
-        // 也提取页面内容中的链接
-        const contentSelectors = [
-          '.toctree-wrapper a',
-          '.local-toc a',
-          '#bd-docs-nav a',
-          '.bd-content a'
-        ];
-
-        for (const selector of contentSelectors) {
           document.querySelectorAll(selector).forEach(link => {
             addLink(link.getAttribute('href'));
           });
@@ -474,7 +573,8 @@ class YfinanceApiParser extends BaseParser {
   async waitForContent(page) {
     try {
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
-      await page.waitForSelector('h1, .wy-nav-content, main, article', { timeout: 15000 });
+      // 等待 PyData Sphinx Theme 的主内容区域
+      await page.waitForSelector('.bd-article, h1, .wy-nav-content, main, article', { timeout: 15000 });
       await page.waitForTimeout(2000);
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);

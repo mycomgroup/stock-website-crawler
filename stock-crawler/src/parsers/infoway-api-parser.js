@@ -188,6 +188,10 @@ class InfowayApiParser extends BaseParser {
         const contentElements = mainContent.querySelectorAll('h1, h2, h3, h4, p, pre, table, ul, ol, [class*="CodeBlock"]');
 
         let currentSection = null;
+        const processedCodeHashes = new Set(); // 用于代码块去重
+
+        // 需要过滤的无用标题
+        const skipTitles = ['Authorizations', 'Query Parameters', 'Path Parameters', 'Headers', 'Request Body', 'Responses'];
 
         contentElements.forEach(el => {
           const tagName = el.tagName.toLowerCase();
@@ -195,20 +199,31 @@ class InfowayApiParser extends BaseParser {
 
           // 标题处理
           if (tagName === 'h2' || tagName === 'h3' || tagName === 'h4') {
+            const titleText = el.textContent.trim();
+            // 跳过无用的标题
+            if (skipTitles.some(skip => titleText.includes(skip))) {
+              return;
+            }
             if (currentSection) {
               result.sections.push(currentSection);
             }
             currentSection = {
               type: 'heading',
               level: parseInt(tagName.charAt(1)),
-              title: el.textContent.trim(),
+              title: titleText,
               content: []
             };
           }
           // 段落处理
           else if (tagName === 'p') {
             const text = el.textContent.trim();
-            if (text) {
+            // 过滤交互按钮文本和无意义内容
+            if (text && text.length > 3 &&
+                !text.match(/^Hide\s+(child\s+)?attributes?$/i) &&
+                !text.match(/^Show\s+(child\s+)?attributes?$/i) &&
+                !text.match(/^"[^"]*"$/) && // 排除纯引号包裹的值
+                text !== 'Successful response' &&
+                text !== 'Error response') {
               if (currentSection) {
                 currentSection.content.push({ type: 'text', value: text });
               } else {
@@ -220,10 +235,17 @@ class InfowayApiParser extends BaseParser {
           else if (tagName === 'pre' || className.includes('CodeBlock') || className.includes('code')) {
             const code = el.textContent.trim();
             if (code && code.length > 10) {
+              // 代码块去重
+              const codeHash = code.replace(/\s+/g, '').substring(0, 100);
+              if (processedCodeHashes.has(codeHash)) {
+                return;
+              }
+              processedCodeHashes.add(codeHash);
+
               // 尝试识别代码语言
               let language = 'text';
               if (code.includes('curl') || code.includes('http')) {
-                language = 'http';
+                language = 'bash';
               } else if (code.startsWith('{') || code.startsWith('[')) {
                 language = 'json';
               } else if (code.includes('import ') || code.includes('def ') || code.includes('class ')) {

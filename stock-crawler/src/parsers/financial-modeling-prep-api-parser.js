@@ -69,8 +69,28 @@ class FinancialModelingPrepApiParser extends BaseParser {
           title: '',
           description: '',
           sections: [],
+          responseExample: '',
           isSubPage: false
         };
+
+        // 首先提取 JSON 响应示例（通用提取，适用于所有页面类型）
+        const responseBlock = document.querySelector('[class*="widgets_responseBlock"]');
+        if (responseBlock) {
+          // 查找所有 code 元素，找到包含 JSON 的那个
+          const codeElements = responseBlock.querySelectorAll('code');
+          for (const codeElement of codeElements) {
+            const codeText = codeElement.textContent;
+            // 检查是否包含 JSON 数据（花括号或方括号）
+            if (codeText.includes('{') || codeText.includes('[')) {
+              // 尝试提取纯 JSON 部分
+              const jsonMatch = codeText.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
+              if (jsonMatch) {
+                result.responseExample = jsonMatch[1];
+                break;
+              }
+            }
+          }
+        }
 
         // 首先尝试子页面结构（singleDocument_root）
         const singleRoot = document.querySelector('[class*="singleDocument_root"]');
@@ -337,6 +357,14 @@ class FinancialModelingPrepApiParser extends BaseParser {
       lines.push(data.description, '');
     }
 
+    // JSON 响应示例（在描述之后、各部分之前）
+    if (data.responseExample) {
+      lines.push('**Response Example:**', '');
+      lines.push('```json');
+      lines.push(data.responseExample);
+      lines.push('```', '');
+    }
+
     // 各部分
     for (const section of data.sections) {
       if (section.type === 'category') {
@@ -421,9 +449,13 @@ class FinancialModelingPrepApiParser extends BaseParser {
    */
   async waitForContent(page) {
     try {
+      // 等待网络基本完成
+      await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
-      await page.waitForSelector('h1, h2', { timeout: 15000 });
-      await page.waitForTimeout(3000);
+      // 等待主要内容容器出现
+      await page.waitForSelector('[class*="singleDocument_root"], [class*="documentationWrapper"], h1', { timeout: 20000 });
+      // 额外等待 JavaScript 渲染
+      await page.waitForTimeout(5000);
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);
     }
