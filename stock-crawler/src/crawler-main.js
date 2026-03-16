@@ -118,7 +118,7 @@ class CrawlerMain {
       // Get batch size from config (default 20)
       const batchSize = this.config.crawler.batchSize || 20;
       
-      // Start with seed URLs - they should always be processed first in each run
+      // Start with seed URLs - only process when still unfetched/failed
       let linksToProcess = [];
       
       if (this.config.seedUrls && this.config.seedUrls.length > 0) {
@@ -128,8 +128,8 @@ class CrawlerMain {
             // Seed URL not in list, add it
             this.linkManager.addLink(seedUrl, 'unfetched');
             linksToProcess.push({ url: seedUrl, status: 'unfetched' });
-          } else {
-            // Seed URL exists - add to processing list regardless of status
+          } else if (existingLink.status !== 'fetched' && existingLink.status !== 'fetching') {
+            // Seed URL exists and still pending, prioritize it
             linksToProcess.push(existingLink);
           }
         }
@@ -204,8 +204,15 @@ class CrawlerMain {
       
       this.statsTracker.setTotalUrls(this.linkManager.links.length);
       
-      const totalUnfetched = unfetchedLinks.length + (this.config.seedUrls?.length || 0);
-      this.logger.info(`Found ${totalUnfetched} URLs to process (including ${this.config.seedUrls?.length || 0} seed URLs), processing ${linksToProcess.length} URLs in this batch`);
+      const seedUrlsPending = linksToProcess.filter(link =>
+        (this.config.seedUrls || []).includes(link.url)
+      ).length;
+
+      this.logger.info(`Found ${unfetchedLinks.length} unfetched URLs (including ${seedUrlsPending} pending seed URLs), processing ${linksToProcess.length} URLs in this batch`);
+
+      if (linksToProcess.length === 0) {
+        this.logger.info('No URLs to process in this batch. Crawling is up to date.');
+      }
 
       // Process each URL
       for (let i = 0; i < linksToProcess.length; i++) {
