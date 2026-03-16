@@ -12,6 +12,7 @@ import FinnhubApiParser from './finnhub-api-parser.js';
 import FinancialDatasetsApiParser from './financial-datasets-api-parser.js';
 import FinancialModelingPrepApiParser from './financial-modeling-prep-api-parser.js';
 import InfowayApiParser from './infoway-api-parser.js';
+import InvestodayApiParser from './investoday-api-parser.js';
 import ItickApiParser from './itick-api-parser.js';
 import KuaishouApifoxParser from './kuaishou-apifox-parser.js';
 import MassiveApiParser from './massive-api-parser.js';
@@ -58,6 +59,7 @@ class ParserManager {
     this.register(new FinancialDatasetsApiParser());
     this.register(new FinancialModelingPrepApiParser());
     this.register(new InfowayApiParser());
+    this.register(new InvestodayApiParser());
     this.register(new ItickApiParser());
     this.register(new KuaishouApifoxParser());
     this.register(new MassiveApiParser());
