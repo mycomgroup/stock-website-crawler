@@ -46,7 +46,7 @@ const FIELD_MAPPINGS = {
   method: ['method', 'requestMethod', 'httpMethod'],
   endpoint: ['endpoint', 'apiPath'],
   parameters: ['parameters', 'inputParams', 'requestParams'],
-  responseFields: ['responseFields', 'responseAttributes', 'outputParams'],
+  responseFields: ['responseFields', 'responseAttributes', 'outputParams', 'responses'],
   codeExamples: ['codeExamples', 'examples'],
   rawContent: ['rawContent'],
   markdownContent: ['markdownContent']
@@ -242,6 +242,9 @@ export function formatApiDoc(rawData) {
   // 提取核心字段
   const method = findValue(rawData, FIELD_MAPPINGS.method) || '';
   const endpoint = findValue(rawData, FIELD_MAPPINGS.endpoint) || '';
+  const endpointFromList = Array.isArray(rawData.endpoints) && rawData.endpoints.length > 0
+    ? (rawData.endpoints[0].url || rawData.endpoints[0])
+    : '';
   const parameters = findValue(rawData, FIELD_MAPPINGS.parameters) || [];
   const responseFields = findValue(rawData, FIELD_MAPPINGS.responseFields) || [];
   const codeExamples = findValue(rawData, FIELD_MAPPINGS.codeExamples) || [];
@@ -260,7 +263,7 @@ export function formatApiDoc(rawData) {
     // API 核心
     api: {
       method: method.toUpperCase(),
-      endpoint: endpoint,
+      endpoint: endpoint || endpointFromList,
       baseUrl: rawData.baseUrl || ''
     },
 
@@ -316,11 +319,14 @@ function generateMarkdownFromRaw(rawContent, data) {
   // API 端点信息
   const method = findValue(data, FIELD_MAPPINGS.method) || '';
   const endpoint = findValue(data, FIELD_MAPPINGS.endpoint) || '';
+  const endpointFromList = Array.isArray(data.endpoints) && data.endpoints.length > 0
+    ? (data.endpoints[0].url || data.endpoints[0])
+    : '';
 
-  if (method || endpoint) {
+  if (method || endpoint || endpointFromList) {
     lines.push('## API 端点', '');
     if (method) lines.push(`**Method:** \`${method.toUpperCase()}\``);
-    if (endpoint) lines.push(`**Endpoint:** \`${endpoint}\``);
+    if (endpoint || endpointFromList) lines.push(`**Endpoint:** \`${endpoint || endpointFromList}\``);
     lines.push('');
   }
 

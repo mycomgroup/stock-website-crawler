@@ -5,7 +5,7 @@
   ],
   "urlRules": {
     "include": [
-      "^http://www\\.sanhulianghua\\.com/index\\.php\\?do="
+      "^http://www\\.sanhulianghua\\.com/index\\.php\\?do=page_(base|real|lshq|jszb)_"
     ],
     "exclude": [
       "do=page_user_",
