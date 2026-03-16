@@ -52,6 +52,75 @@ class SanhulianghuaParser extends BaseParser {
       await this.waitForContent(page);
 
       const data = await page.evaluate(() => {
+        const parseParameterTable = (table) => {
+          if (!table || table.length < 2) return [];
+
+          const headers = table[0];
+          const params = [];
+
+          const nameIdx = headers.findIndex(h => h.includes('参数名称') || h.includes('名称'));
+          const descIdx = headers.findIndex(h => h.includes('描述'));
+          const typeIdx = headers.findIndex(h => h.includes('类型'));
+          const defaultIdx = headers.findIndex(h => h.includes('默认'));
+          const requiredIdx = headers.findIndex(h => h.includes('必须'));
+          const rangeIdx = headers.findIndex(h => h.includes('取值'));
+          const exampleIdx = headers.findIndex(h => h.includes('示例'));
+
+          for (let i = 1; i < table.length; i++) {
+            const row = table[i];
+            if (row.length > 0) {
+              const param = {
+                name: nameIdx >= 0 ? row[nameIdx] || '' : row[0] || '',
+                description: descIdx >= 0 ? row[descIdx] || '' : '',
+                type: typeIdx >= 0 ? row[typeIdx] || 'string' : 'string',
+                required: requiredIdx >= 0 ? row[requiredIdx] === '是' : false,
+                default: defaultIdx >= 0 ? row[defaultIdx] || '' : '',
+                example: exampleIdx >= 0 ? row[exampleIdx] || '' : ''
+              };
+
+              if (rangeIdx >= 0 && row[rangeIdx]) {
+                param.range = row[rangeIdx];
+              }
+
+              params.push(param);
+            }
+          }
+
+          return params;
+        };
+
+        const parseResponseTable = (table) => {
+          if (!table || table.length < 2) return [];
+
+          const headers = table[0];
+          const fields = [];
+
+          const nameIdx = headers.findIndex(h => h.includes('数据名称') || h.includes('名称') || h.includes('字段'));
+          const descIdx = headers.findIndex(h => h.includes('描述'));
+          const typeIdx = headers.findIndex(h => h.includes('类型'));
+          const exampleIdx = headers.findIndex(h => h.includes('示例'));
+          const noteIdx = headers.findIndex(h => h.includes('备注'));
+
+          for (let i = 1; i < table.length; i++) {
+            const row = table[i];
+            if (row.length > 0) {
+              const name = nameIdx >= 0 ? row[nameIdx] || '' : row[0] || '';
+              const isNested = name.startsWith('-');
+              const fieldName = isNested ? name.replace(/^-+\s*/, '') : name;
+
+              fields.push({
+                name: fieldName,
+                description: descIdx >= 0 ? row[descIdx] || '' : '',
+                type: typeIdx >= 0 ? row[typeIdx] || 'string' : 'string',
+                example: exampleIdx >= 0 ? row[exampleIdx] || '' : '',
+                note: noteIdx >= 0 ? row[noteIdx] || '' : '',
+                isNested
+              });
+            }
+          }
+
+          return fields;
+        };
         const result = {
           title: '',
           description: '',
@@ -107,23 +176,7 @@ class SanhulianghuaParser extends BaseParser {
           }
         });
 
-        // 提取表格 - 请求参数和返回数据
-        const tables = [];
-        document.querySelectorAll('table').forEach(table => {
-          const rows = [];
-          table.querySelectorAll('tr').forEach(tr => {
-            const cells = Array.from(tr.querySelectorAll('th, td')).map(c => c.textContent.trim());
-            if (cells.length > 0) {
-              rows.push(cells);
-            }
-          });
-          if (rows.length > 0) {
-            tables.push(rows);
-          }
-        });
-
         // 根据表格标题判断类型
-        let currentTableType = '';
         document.querySelectorAll('h2').forEach(h2 => {
           const title = h2.textContent.trim();
 
@@ -149,9 +202,9 @@ class SanhulianghuaParser extends BaseParser {
 
           // 根据标题分类表格
           if (title.includes('请求参数') && sectionTables.length > 0) {
-            result.parameters = this.parseParameterTable(sectionTables[0]);
+            result.parameters = parseParameterTable(sectionTables[0]);
           } else if (title.includes('返回数据') && sectionTables.length > 0) {
-            result.responses = this.parseResponseTable(sectionTables[0]);
+            result.responses = parseResponseTable(sectionTables[0]);
           }
         });
 
@@ -189,89 +242,6 @@ class SanhulianghuaParser extends BaseParser {
         suggestedFilename: this.generateFilename(url)
       };
     }
-  }
-
-  /**
-   * 解析参数表格
-   * @param {Array} table - 表格数据
-   * @returns {Array} 参数列表
-   */
-  parseParameterTable(table) {
-    if (!table || table.length < 2) return [];
-
-    const headers = table[0];
-    const params = [];
-
-    // 找到各列的索引
-    const nameIdx = headers.findIndex(h => h.includes('参数名称') || h.includes('名称'));
-    const descIdx = headers.findIndex(h => h.includes('描述'));
-    const typeIdx = headers.findIndex(h => h.includes('类型'));
-    const defaultIdx = headers.findIndex(h => h.includes('默认'));
-    const requiredIdx = headers.findIndex(h => h.includes('必须'));
-    const rangeIdx = headers.findIndex(h => h.includes('取值'));
-    const exampleIdx = headers.findIndex(h => h.includes('示例'));
-
-    for (let i = 1; i < table.length; i++) {
-      const row = table[i];
-      if (row.length > 0) {
-        const param = {
-          name: nameIdx >= 0 ? row[nameIdx] || '' : row[0] || '',
-          description: descIdx >= 0 ? row[descIdx] || '' : '',
-          type: typeIdx >= 0 ? row[typeIdx] || 'string' : 'string',
-          required: requiredIdx >= 0 ? row[requiredIdx] === '是' : false,
-          default: defaultIdx >= 0 ? row[defaultIdx] || '' : '',
-          example: exampleIdx >= 0 ? row[exampleIdx] || '' : ''
-        };
-        if (rangeIdx >= 0 && row[rangeIdx]) {
-          param.range = row[rangeIdx];
-        }
-        params.push(param);
-      }
-    }
-
-    return params;
-  }
-
-  /**
-   * 解析返回数据表格
-   * @param {Array} table - 表格数据
-   * @returns {Array} 返回字段列表
-   */
-  parseResponseTable(table) {
-    if (!table || table.length < 2) return [];
-
-    const headers = table[0];
-    const fields = [];
-
-    // 找到各列的索引
-    const nameIdx = headers.findIndex(h => h.includes('数据名称') || h.includes('名称') || h.includes('字段'));
-    const descIdx = headers.findIndex(h => h.includes('描述'));
-    const typeIdx = headers.findIndex(h => h.includes('类型'));
-    const exampleIdx = headers.findIndex(h => h.includes('示例'));
-    const noteIdx = headers.findIndex(h => h.includes('备注'));
-
-    for (let i = 1; i < table.length; i++) {
-      const row = table[i];
-      if (row.length > 0) {
-        const name = nameIdx >= 0 ? row[nameIdx] || '' : row[0] || '';
-
-        // 处理嵌套字段（以 - 开头）
-        const isNested = name.startsWith('-');
-        const fieldName = isNested ? name.replace(/^-+\s*/, '') : name;
-
-        const field = {
-          name: fieldName,
-          description: descIdx >= 0 ? row[descIdx] || '' : '',
-          type: typeIdx >= 0 ? row[typeIdx] || 'string' : 'string',
-          example: exampleIdx >= 0 ? row[exampleIdx] || '' : '',
-          note: noteIdx >= 0 ? row[noteIdx] || '' : '',
-          isNested: isNested
-        };
-        fields.push(field);
-      }
-    }
-
-    return fields;
   }
 
   /**

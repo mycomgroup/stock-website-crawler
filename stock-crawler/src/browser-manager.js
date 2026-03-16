@@ -1,6 +1,8 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 
 /**
  * Browser Manager - 管理Playwright浏览器实例
@@ -11,6 +13,7 @@ class BrowserManager {
     this.browser = null;
     this.context = null;
     this.storageStatePath = null;
+    this.execFileAsync = promisify(execFile);
   }
 
   /**
@@ -24,9 +27,9 @@ class BrowserManager {
    */
   async launch(options = {}) {
     const { headless = true, timeout = 30000, storageStatePath = null, userDataDir = null } = options;
-    
+
     this.storageStatePath = storageStatePath;
-    
+
     // If userDataDir is provided, use persistent context to reuse browser profile
     if (userDataDir) {
       const persistentOptions = {
@@ -36,6 +39,7 @@ class BrowserManager {
         viewport: { width: 1920, height: 1080 },
         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
         locale: 'en-US',
+        ignoreHTTPSErrors: true,
         args: [
           '--disable-blink-features=AutomationControlled',
           '--disable-features=IsolateOrigins,site-per-process',
@@ -54,13 +58,13 @@ class BrowserManager {
         // Fall through to regular launch
       }
     }
-    
+
     // Regular launch mode
     const launchOptions = {
       headless,
       timeout
     };
-    
+
     // Try to use system Chrome if available, fallback to Chromium
     try {
       launchOptions.channel = 'chrome';
@@ -70,14 +74,15 @@ class BrowserManager {
       delete launchOptions.channel;
       this.browser = await chromium.launch(launchOptions);
     }
-    
+
     // Create a browser context with persistent storage
     const contextOptions = {
       viewport: { width: 1920, height: 1080 },
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-      locale: 'en-US'
+      locale: 'en-US',
+      ignoreHTTPSErrors: true
     };
-    
+
     // Load saved cookies/storage if exists
     if (this.storageStatePath && fs.existsSync(this.storageStatePath)) {
       try {
@@ -87,9 +92,9 @@ class BrowserManager {
         console.warn('Failed to load storage state:', error.message);
       }
     }
-    
+
     this.context = await this.browser.newContext(contextOptions);
-    
+
     this.defaultTimeout = timeout;
   }
 
@@ -105,7 +110,7 @@ class BrowserManager {
         if (!fs.existsSync(dir)) {
           fs.mkdirSync(dir, { recursive: true });
         }
-        
+
         await this.context.storageState({ path: this.storageStatePath });
       } catch (error) {
         console.warn('Failed to save storage state:', error.message);
@@ -122,9 +127,35 @@ class BrowserManager {
     if (!this.context) {
       throw new Error('Browser not launched. Call launch() first.');
     }
-    
+
     const page = await this.context.newPage();
     return page;
+  }
+
+  async fallbackLoadHtml(page, url, timeout) {
+    const { stdout } = await this.execFileAsync('curl', [
+      '-L',
+      '--max-time',
+      String(Math.ceil(timeout / 1000)),
+      '--fail',
+      url
+    ], {
+      maxBuffer: 10 * 1024 * 1024
+    });
+
+    if (!stdout || !stdout.trim()) {
+      throw new Error('Fallback curl returned empty html');
+    }
+
+    const withBase = stdout.includes('<head')
+      ? stdout.replace(/<head(.*?)>/i, `<head$1><base href="${url}">`)
+      : `<base href="${url}">${stdout}`;
+
+    await page.goto(url, { timeout: Math.min(timeout, 10000), waitUntil: 'commit' });
+    await page.setContent(withBase, {
+      timeout,
+      waitUntil: 'domcontentloaded'
+    });
   }
 
   /**
@@ -137,15 +168,44 @@ class BrowserManager {
    */
   async goto(page, url, timeout) {
     const actualTimeout = timeout || this.defaultTimeout;
-    
+    const domReadyTimeout = Math.min(actualTimeout, 15000);
+
     try {
       const response = await page.goto(url, {
-        timeout: actualTimeout,
+        timeout: domReadyTimeout,
         waitUntil: 'domcontentloaded'
       });
-      
+
       return response;
     } catch (error) {
+      if (error?.message?.includes('Timeout')) {
+        try {
+          const response = await page.goto(url, {
+            timeout: actualTimeout,
+            waitUntil: 'commit'
+          });
+
+          // commit 后若 DOM 依然为空，改用 HTML 兜底注入
+          const hasContent = await page.evaluate(() => {
+            return Boolean(document.body && document.body.querySelector('*'));
+          }).catch(() => false);
+
+          if (!hasContent) {
+            await this.fallbackLoadHtml(page, url, actualTimeout);
+            return null;
+          }
+
+          return response;
+        } catch (fallbackError) {
+          try {
+            await this.fallbackLoadHtml(page, url, actualTimeout);
+            return null;
+          } catch (htmlError) {
+            throw new Error(`Failed to navigate to ${url}: ${fallbackError.message}; HTML fallback failed: ${htmlError.message}`);
+          }
+        }
+      }
+
       throw new Error(`Failed to navigate to ${url}: ${error.message}`);
     }
   }
