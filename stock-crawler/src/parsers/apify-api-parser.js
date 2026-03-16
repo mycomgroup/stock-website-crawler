@@ -4,6 +4,28 @@ import BaseParser from './base-parser.js';
  * Apify API Parser - 解析 Apify API v2 文档与 OpenAPI 文件
  */
 class ApifyApiParser extends BaseParser {
+  async fetchCanonicalMarkdown() {
+    const canonicalUrl = 'https://docs.apify.com/api/v2.md';
+
+    try {
+      const response = await fetch(canonicalUrl, {
+        headers: {
+          Accept: 'text/markdown,text/plain;q=0.9,*/*;q=0.8'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const text = await response.text();
+      return text?.trim() || '';
+    } catch (error) {
+      this.logger?.debug?.(`Apify canonical markdown fetch failed: ${error.message}`);
+      return '';
+    }
+  }
+
   /**
    * 匹配 Apify API 文档相关 URL
    * @param {string} url - 页面URL
@@ -36,7 +58,9 @@ class ApifyApiParser extends BaseParser {
   }
 
   async parseApiDoc(page, url) {
-    const data = await page.evaluate(() => {
+    const canonicalMarkdown = await this.fetchCanonicalMarkdown();
+
+    const data = await page.evaluate(async () => {
       const title = document.querySelector('h1')?.textContent?.trim() || document.title || 'Apify API';
       const description = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
 
@@ -55,14 +79,46 @@ class ApifyApiParser extends BaseParser {
           .filter(href => href.startsWith('#/reference/'))
       ));
 
+      let canonicalMarkdown = '';
+      try {
+        const response = await fetch('https://docs.apify.com/api/v2.md', {
+          headers: {
+            Accept: 'text/markdown,text/plain;q=0.9,*/*;q=0.8'
+          }
+        });
+        if (response.ok) {
+          canonicalMarkdown = (await response.text())?.trim() || '';
+        }
+      } catch (_) {
+        // ignore and fallback to DOM text
+      }
+
       return {
         title,
         description,
         openapiLinks,
         referenceRoutes,
-        rawContent: document.body?.innerText || ''
+        rawContent: document.body?.innerText || '',
+        canonicalMarkdown
       };
     });
+
+    const markdownOpenApiLinks = Array.from(
+      new Set(
+        (canonicalMarkdown.match(/https?:\/\/docs\.apify\.com\/api\/openapi\.(?:json|yaml)/g) || [])
+      )
+    );
+
+    const markdownReferenceRoutes = Array.from(
+      new Set(
+        (canonicalMarkdown.match(/#\/reference\/[A-Za-z0-9\-_/]+/g) || [])
+      )
+    );
+
+    const mergedOpenApiLinks = Array.from(new Set([...data.openapiLinks, ...markdownOpenApiLinks]));
+    const mergedReferenceRoutes = Array.from(new Set([...data.referenceRoutes, ...markdownReferenceRoutes]));
+
+    const normalizedRawContent = canonicalMarkdown || data.canonicalMarkdown || data.rawContent;
 
     return {
       type: 'apify-api-doc',
@@ -76,9 +132,9 @@ class ApifyApiParser extends BaseParser {
       },
       entryPoints: [
         'https://docs.apify.com/api/v2',
-        ...data.openapiLinks
+        ...mergedOpenApiLinks
       ],
-      referenceRoutes: data.referenceRoutes,
+      referenceRoutes: mergedReferenceRoutes,
       urlRules: {
         include: [
           '^https://docs\\.apify\\.com/api/v2(?:\\.md)?(?:[?#].*)?$',
@@ -86,7 +142,7 @@ class ApifyApiParser extends BaseParser {
         ],
         exclude: ['\\?(?:.*&)?utm_', '#/?(?!/reference/)']
       },
-      rawContent: data.rawContent
+      rawContent: normalizedRawContent
     };
   }
 

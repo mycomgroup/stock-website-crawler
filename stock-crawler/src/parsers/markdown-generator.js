@@ -225,10 +225,15 @@ class MarkdownGenerator {
     // 原始内容（作为后备）
     if (data.rawContent && sections.join('\n').length < data.rawContent.length * 0.5) {
       sections.push('## 详细内容\n');
-      const cleaned = data.rawContent
+      let cleaned = data.rawContent
         .replace(/\n{3,}/g, '\n\n')
-        .trim()
-        .substring(0, 5000);
+        .trim();
+
+      const maxRawContentLength = data.rawContentMaxLength || 50000;
+      if (cleaned.length > maxRawContentLength) {
+        cleaned = `${cleaned.substring(0, maxRawContentLength)}\n\n... (内容已截断)`;
+      }
+
       sections.push(cleaned);
       sections.push('');
     }
