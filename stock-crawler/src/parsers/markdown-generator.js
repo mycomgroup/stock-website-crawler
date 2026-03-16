@@ -57,6 +57,10 @@ class MarkdownGenerator {
       return this.generateEodhdApi(pageData);
     } else if (pageData.type === 'apitracker-category' || pageData.type === 'apitracker-api-detail') {
       return this.generateApiTracker(pageData);
+    } else if (pageData.type === 'google-discovery-doc') {
+      return this.generateGoogleDiscoveryDoc(pageData);
+    } else if (pageData.type === '60s-api-doc') {
+      return this.generate60sApiDoc(pageData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
@@ -72,6 +76,55 @@ class MarkdownGenerator {
 
     // 兼容旧格式（没有type字段）
     return this.generateApiDoc(pageData);
+  }
+
+  generate60sApiDoc(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.description) {
+      sections.push('## 描述\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    if (pageData.content && pageData.content.length > 0) {
+      sections.push('## 文档内容\n');
+      pageData.content.forEach((item) => {
+        if (item.type === 'heading') {
+          sections.push(`### ${item.content}`);
+        } else if (item.type === 'table' && item.rows?.length > 0) {
+          const [header, ...rows] = item.rows;
+          sections.push(`| ${header.join(' | ')} |`);
+          sections.push(`| ${header.map(() => '---').join(' | ')} |`);
+          rows.forEach((row) => sections.push(`| ${row.join(' | ')} |`));
+        } else {
+          sections.push(item.content || '');
+        }
+      });
+      sections.push('');
+    }
+
+    if (pageData.codeBlocks && pageData.codeBlocks.length > 0) {
+      sections.push('## 代码示例\n');
+      pageData.codeBlocks.forEach((block, index) => {
+        sections.push(`### 示例 ${index + 1}`);
+        sections.push(`\`\`\`${block.language || 'text'}`);
+        sections.push(block.code || '');
+        sections.push('```\n');
+      });
+    }
+
+    return sections.join('\n');
   }
 
   /**
@@ -3766,6 +3819,57 @@ class MarkdownGenerator {
         .replace(/^#\s*.+\n/, '')
         .replace(/^##\s*源URL\n.+?\n\n/s, '');
       sections.push(content);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 Google Discovery 文档 Markdown
+   * @param {PageData} pageData - Discovery 页面数据
+   * @returns {string} Markdown文本
+   */
+  generateGoogleDiscoveryDoc(pageData) {
+    const sections = [];
+
+    sections.push(`# ${pageData.title || 'Google Discovery Document'}\n`);
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    sections.push('## 入口信息\n');
+    sections.push(`- Service Name: \`${pageData.serviceName || '-'}\``);
+    sections.push(`- Version: \`${pageData.version || '-'}\``);
+    sections.push(`- Root URL: \`${pageData.rootUrl || '-'}\``);
+    sections.push(`- Service Path: \`${pageData.servicePath || '-'}\``);
+    sections.push(`- Batch Path: \`${pageData.batchPath || '-'}\``);
+    if (pageData.mtlsRootUrl) {
+      sections.push(`- mTLS Root URL: \`${pageData.mtlsRootUrl}\``);
+    }
+    sections.push('');
+
+    const interfaces = pageData.urlRuleInterfaces || [];
+    sections.push(`## URL规则接口（共 ${interfaces.length} 个）\n`);
+
+    if (interfaces.length > 0) {
+      sections.push('| 资源 | 方法ID | HTTP | Path | Full URL Template | 参数 |');
+      sections.push('|------|--------|------|------|-------------------|------|');
+      interfaces.forEach((item) => {
+        const params = (item.parameterNames || []).join(', ');
+        sections.push(`| ${this.escapeMarkdown(item.resource || '-')} | \`${this.escapeMarkdown(item.id || item.methodName || '-')}\` | \`${this.escapeMarkdown(item.httpMethod || '-')}\` | \`${this.escapeMarkdown(item.path || '-')}\` | \`${this.escapeMarkdown(item.fullUrlTemplate || '-')}\` | ${this.escapeMarkdown(params || '-')} |`);
+      });
+      sections.push('');
+    }
+
+    if (pageData.rawContent) {
+      sections.push('## Discovery 原始片段\n');
+      sections.push('```json');
+      sections.push(pageData.rawContent.substring(0, 3000));
+      sections.push('```');
+      sections.push('');
     }
 
     return sections.join('\n');
