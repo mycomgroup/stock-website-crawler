@@ -12,70 +12,78 @@ class MarkdownGenerator {
    * @returns {string} Markdown文本
    */
   generate(pageData) {
+    let markdown = '';
+
     // 根据页面类型选择生成方法（优先检查特定类型）
     if (pageData.type === 'alphavantage-api') {
-      return this.generateAlphavantageApi(pageData);
+      markdown = this.generateAlphavantageApi(pageData);
     } else if (pageData.type === 'eulerpool-api') {
-      return this.generateEulerpoolApi(pageData);
+      markdown = this.generateEulerpoolApi(pageData);
     } else if (pageData.type === 'finnhub-api') {
-      return this.generateFinnhubApi(pageData);
+      markdown = this.generateFinnhubApi(pageData);
     } else if (pageData.type === 'tiingo-api') {
-      return this.generateTiingoApi(pageData);
+      markdown = this.generateTiingoApi(pageData);
     } else if (pageData.type === 'polyrouter-api' || pageData.type === 'polyrouter-doc') {
-      return this.generatePolyrouterApi(pageData);
+      markdown = this.generatePolyrouterApi(pageData);
     } else if (pageData.type === 'financial-modeling-prep-api') {
-      return this.generateFinancialModelingPrepApi(pageData);
+      markdown = this.generateFinancialModelingPrepApi(pageData);
     } else if (pageData.type === 'financial-datasets-api') {
-      return this.generateFinancialDatasetsApi(pageData);
+      markdown = this.generateFinancialDatasetsApi(pageData);
     } else if (pageData.type === 'massive-api') {
-      return this.generateMassiveApi(pageData);
+      markdown = this.generateMassiveApi(pageData);
     } else if (pageData.type === 'serpapi-ai-overview' || pageData.type === 'serpapi-doc') {
-      return this.generateSerpApi(pageData);
+      markdown = this.generateSerpApi(pageData);
     } else if (pageData.type === 'brave-search-api') {
-      return this.generateBraveSearchApi(pageData);
+      markdown = this.generateBraveSearchApi(pageData);
     } else if (pageData.type === 'api-doc') {
-      return this.generateApiDoc(pageData);
+      markdown = this.generateApiDoc(pageData);
     } else if (pageData.type === 'generic') {
-      return this.generateGeneric(pageData);
+      markdown = this.generateGeneric(pageData);
     } else if (pageData.type === 'qveris-api') {
-      return this.generateQverisApi(pageData);
+      markdown = this.generateQverisApi(pageData);
     } else if (pageData.type === 'rsshub-route') {
-      return this.generateRsshubRoute(pageData);
+      markdown = this.generateRsshubRoute(pageData);
     } else if (pageData.type === 'tavily-api') {
-      return this.generateTavilyApi(pageData);
+      markdown = this.generateTavilyApi(pageData);
     } else if (pageData.type === 'tushare-pro-api') {
-      return this.generateTushareProApi(pageData);
+      markdown = this.generateTushareProApi(pageData);
     } else if (pageData.type === 'tickdb-api') {
-      return this.generateTickdbApi(pageData);
+      markdown = this.generateTickdbApi(pageData);
     } else if (pageData.type === 'modelscope-mcp-server') {
-      return this.generateModelscopeMcp(pageData);
+      markdown = this.generateModelscopeMcp(pageData);
     } else if (pageData.type === 'itick-doc') {
-      return this.generateItickDoc(pageData);
+      markdown = this.generateItickDoc(pageData);
     } else if (pageData.type === 'eodhd-blog') {
-      return this.generateEodhdBlog(pageData);
+      markdown = this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
-      return this.generateEodhdApi(pageData);
+      markdown = this.generateEodhdApi(pageData);
     } else if (pageData.type === 'apitracker-category' || pageData.type === 'apitracker-api-detail') {
-      return this.generateApiTracker(pageData);
+      markdown = this.generateApiTracker(pageData);
     } else if (pageData.type === 'google-discovery-doc') {
-      return this.generateGoogleDiscoveryDoc(pageData);
+      markdown = this.generateGoogleDiscoveryDoc(pageData);
     } else if (pageData.type === '60s-api-doc') {
-      return this.generate60sApiDoc(pageData);
+      markdown = this.generate60sApiDoc(pageData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
-    if (pageData.api && typeof pageData.api === 'object') {
-      return this.generateUnified(pageData);
+    if (!markdown && pageData.api && typeof pageData.api === 'object') {
+      markdown = this.generateUnified(pageData);
     }
 
     // 尝试转换为统一格式
-    const unifiedData = formatApiDoc(pageData);
-    if (unifiedData.api.endpoint || unifiedData.parameters.length > 0 || unifiedData.codeExamples.length > 0) {
-      return this.generateUnified(unifiedData);
+    if (!markdown) {
+      const unifiedData = formatApiDoc(pageData);
+      if (unifiedData.api.endpoint || unifiedData.parameters.length > 0 || unifiedData.codeExamples.length > 0) {
+        markdown = this.generateUnified(unifiedData);
+      }
     }
 
     // 兼容旧格式（没有type字段）
-    return this.generateApiDoc(pageData);
+    if (!markdown) {
+      markdown = this.generateApiDoc(pageData);
+    }
+
+    return this.normalizeMarkdownOutput(markdown, pageData);
   }
 
   generate60sApiDoc(pageData) {
@@ -3873,6 +3881,27 @@ class MarkdownGenerator {
     }
 
     return sections.join('\n');
+  }
+
+  normalizeMarkdownOutput(markdown, pageData = {}) {
+    const normalized = (markdown || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/[\u200B\u200C\u200D]/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    const lines = normalized ? normalized.split('\n') : [];
+    const hasH1 = lines.some((line) => /^#\s+/.test(line));
+
+    if (!hasH1) {
+      const title = (pageData?.title || pageData?.api?.name || 'Untitled').toString().trim();
+      if (normalized) {
+        return `# ${this.escapeMarkdown(title)}\n\n${normalized}\n`;
+      }
+      return `# ${this.escapeMarkdown(title)}\n`;
+    }
+
+    return `${normalized}\n`;
   }
 
   /**
