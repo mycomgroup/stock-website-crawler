@@ -48,8 +48,8 @@ class ItickApiParser extends BaseParser {
   async waitForContent(page) {
     try {
       await page.waitForLoadState('networkidle', { timeout: 30000 });
-      // 等待主要内容区域
-      await page.waitForSelector('main, article, .content, [class*="content"], [class*="doc"], [class*="api"]', { timeout: 15000 });
+      // 等待主要内容区域（尽量避免命中导航类容器）
+      await page.waitForSelector('main article, main h1, article h1, .vp-doc h1, .theme-doc-markdown h1, pre code, table', { timeout: 15000 });
       await page.waitForTimeout(3000); // 额外等待动态内容
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);
@@ -69,6 +69,110 @@ class ItickApiParser extends BaseParser {
 
       // 提取页面内容
       const data = await page.evaluate(() => {
+        const NOISE_SELECTOR = [
+          'script', 'style', 'noscript', 'svg[aria-hidden="true"]',
+          'header', 'footer', 'nav', 'aside',
+          '[role="navigation"]', '[role="banner"]', '[role="contentinfo"]',
+          '[class*="nav"]', '[class*="sidebar"]', '[class*="menu"]',
+          '[class*="footer"]', '[class*="breadcrumb"]', '[class*="toc"]'
+        ].join(', ');
+
+        const cleanText = (value) => (value || '').replace(/\s+/g, ' ').trim();
+
+        const pickBestContentRoot = () => {
+          const candidates = Array.from(document.querySelectorAll('main article, article, main, .vp-doc, .theme-doc-markdown, .markdown, [class*="doc"]'));
+          if (candidates.length === 0) return document.body;
+
+          let best = candidates[0];
+          let bestScore = 0;
+
+          for (const node of candidates) {
+            const clone = node.cloneNode(true);
+            clone.querySelectorAll(NOISE_SELECTOR).forEach(el => el.remove());
+            const headingCount = clone.querySelectorAll('h1, h2, h3').length;
+            const paragraphCount = clone.querySelectorAll('p').length;
+            const codeCount = clone.querySelectorAll('pre').length;
+            const tableCount = clone.querySelectorAll('table').length;
+            const textLen = cleanText(clone.textContent).length;
+            const score = textLen + headingCount * 300 + paragraphCount * 120 + codeCount * 120 + tableCount * 180;
+            if (score > bestScore) {
+              best = node;
+              bestScore = score;
+            }
+          }
+
+          return best;
+        };
+
+        const toMarkdownFromNode = (root) => {
+          const clone = root.cloneNode(true);
+          clone.querySelectorAll(NOISE_SELECTOR).forEach(el => el.remove());
+
+          const lines = [];
+          const push = (text = '') => {
+            if (!text && lines[lines.length - 1] === '') return;
+            lines.push(text);
+          };
+
+          const tableToMarkdown = (table) => {
+            const rows = Array.from(table.querySelectorAll('tr'))
+              .map(tr => Array.from(tr.querySelectorAll('th, td')).map(td => cleanText(td.textContent).replace(/\|/g, '\\|')))
+              .filter(row => row.length > 0 && row.some(Boolean));
+            if (rows.length === 0) return [];
+
+            const header = rows[0];
+            const body = rows.slice(1);
+            const out = [
+              `| ${header.join(' | ')} |`,
+              `| ${header.map(() => '---').join(' | ')} |`
+            ];
+            body.forEach(row => out.push(`| ${row.join(' | ')} |`));
+            return out;
+          };
+
+          const convertElement = (el) => {
+            const tag = (el.tagName || '').toUpperCase();
+            const text = cleanText(el.textContent);
+            if (!text && tag !== 'PRE' && tag !== 'TABLE') return;
+
+            if (tag === 'H1') push(`# ${text}`);
+            else if (tag === 'H2') push(`## ${text}`);
+            else if (tag === 'H3') push(`### ${text}`);
+            else if (tag === 'H4') push(`#### ${text}`);
+            else if (tag === 'P') push(text);
+            else if (tag === 'UL') {
+              Array.from(el.querySelectorAll(':scope > li')).forEach(li => push(`- ${cleanText(li.textContent)}`));
+            } else if (tag === 'OL') {
+              Array.from(el.querySelectorAll(':scope > li')).forEach((li, idx) => push(`${idx + 1}. ${cleanText(li.textContent)}`));
+            } else if (tag === 'PRE') {
+              const codeEl = el.querySelector('code');
+              const code = (codeEl ? codeEl.textContent : el.textContent || '').trim();
+              if (!code) return;
+              const className = `${el.className || ''} ${codeEl?.className || ''}`;
+              let language = '';
+              if (/json/i.test(className)) language = 'json';
+              else if (/bash|shell/i.test(className)) language = 'bash';
+              else if (/javascript|\bjs\b/i.test(className)) language = 'javascript';
+              else if (/python|py/.test(className)) language = 'python';
+              push(`\`\`\`${language}`.trim());
+              push(code);
+              push('```');
+            } else if (tag === 'TABLE') {
+              tableToMarkdown(el).forEach(line => push(line));
+            }
+            push('');
+          };
+
+          const allowed = new Set(['H1', 'H2', 'H3', 'H4', 'P', 'UL', 'OL', 'PRE', 'TABLE']);
+          Array.from(clone.querySelectorAll('h1, h2, h3, h4, p, ul, ol, pre, table'))
+            .forEach(el => {
+              if (!allowed.has((el.tagName || '').toUpperCase())) return;
+              convertElement(el);
+            });
+
+          return lines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+        };
+
         const result = {
           title: '',
           description: '',
@@ -78,7 +182,8 @@ class ItickApiParser extends BaseParser {
           responseFields: [],
           codeExamples: [],
           rawContent: '',
-          sections: []
+          sections: [],
+          markdownContent: ''
         };
 
         // 辅助函数：获取元素的文本内容
@@ -102,6 +207,14 @@ class ItickApiParser extends BaseParser {
           return 'GET';
         };
 
+        const isValidEndpoint = (value) => {
+          if (!value) return false;
+          const endpoint = value.trim();
+          if (endpoint.length < 4) return false;
+          if (/^[=:.,;]+$/.test(endpoint)) return false;
+          return endpoint.startsWith('http') || endpoint.startsWith('/') || endpoint.includes('/');
+        };
+
         // 辅助函数：提取 API 端点 URL
         const extractEndpoint = (text) => {
           const patterns = [
@@ -118,9 +231,10 @@ class ItickApiParser extends BaseParser {
         };
 
         // 1. 提取标题
-        const h1 = document.querySelector('h1');
+        const contentRoot = pickBestContentRoot();
+        const h1 = contentRoot.querySelector('h1') || document.querySelector('h1');
         if (h1) {
-          result.title = h1.textContent.trim();
+          result.title = cleanText(h1.textContent);
         }
 
         // 2. 提取描述（h1 后的第一段或 meta description）
@@ -128,7 +242,7 @@ class ItickApiParser extends BaseParser {
           let sibling = h1.nextElementSibling;
           while (sibling) {
             if (sibling.tagName === 'P') {
-              const text = sibling.textContent.trim();
+              const text = cleanText(sibling.textContent);
               if (text.length > 30 && !text.includes('Endpoint') && !text.includes('http')) {
                 result.description = text;
                 break;
@@ -142,7 +256,7 @@ class ItickApiParser extends BaseParser {
         if (!result.description) {
           const metaDesc = document.querySelector('meta[name="description"]');
           if (metaDesc) {
-            result.description = metaDesc.getAttribute('content') || '';
+            result.description = cleanText(metaDesc.getAttribute('content') || '');
           }
         }
 
@@ -177,7 +291,7 @@ class ItickApiParser extends BaseParser {
             // 提取端点
             if (!result.endpoint) {
               const endpoint = extractEndpoint(text);
-              if (endpoint) {
+              if (isValidEndpoint(endpoint)) {
                 result.endpoint = endpoint;
               }
             }
@@ -251,7 +365,7 @@ class ItickApiParser extends BaseParser {
         }
 
         // 5. 提取代码示例
-        const codeBlocks = document.querySelectorAll('pre, code');
+        const codeBlocks = contentRoot.querySelectorAll('pre, code');
         for (const block of codeBlocks) {
           const code = block.textContent.trim();
           if (code.length > 30) {
@@ -276,7 +390,7 @@ class ItickApiParser extends BaseParser {
         }
 
         // 6. 提取章节内容（用于非 API 文档页面）
-        const mainContent = document.querySelector('main, article, .content, [class*="content"]');
+        const mainContent = contentRoot;
         if (mainContent) {
           const headings = mainContent.querySelectorAll('h2, h3');
           for (const heading of headings) {
@@ -303,7 +417,8 @@ class ItickApiParser extends BaseParser {
         }
 
         // 7. 提取原始内容作为后备
-        result.rawContent = document.body.innerText;
+        result.markdownContent = toMarkdownFromNode(contentRoot);
+        result.rawContent = cleanText(contentRoot.innerText || document.body.innerText);
 
         return result;
       });
@@ -330,6 +445,7 @@ class ItickApiParser extends BaseParser {
           parameters: data.parameters,
           responseFields: data.responseFields,
           codeExamples: data.codeExamples,
+          markdownContent: data.markdownContent,
           rawContent: data.rawContent,
           suggestedFilename: this.generateFilename(url)
         };
@@ -341,6 +457,7 @@ class ItickApiParser extends BaseParser {
           title: data.title,
           description: data.description,
           sections: data.sections,
+          markdownContent: data.markdownContent,
           rawContent: data.rawContent,
           suggestedFilename: this.generateFilename(url)
         };
