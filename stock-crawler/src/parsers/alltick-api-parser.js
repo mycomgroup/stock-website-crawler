@@ -41,14 +41,16 @@ class AlltickApiParser extends BaseParser {
     const baseUrl = 'https://apis.alltick.co';
 
     try {
-      // 等待侧边栏加载
-      await page.waitForSelector('[class*="Sidebar"]', { timeout: 10000 });
+      // GitBook 新版已不再使用 Sidebar class，改为等待任一可用导航容器
+      await page.waitForSelector('aside a[href], [role="navigation"] a[href], a[href^="/"]', { timeout: 15000 });
 
       // 提取侧边栏中的所有链接
       const links = await page.evaluate(() => {
         const urls = [];
-        // GitBook 侧边栏链接选择器
-        const sidebarLinks = document.querySelectorAll('[class*="Sidebar"] a[href], nav a[href]');
+        // GitBook 兼容选择器（新版以 aside + role=navigation 为主）
+        const sidebarLinks = document.querySelectorAll(
+          'aside a[href], [role="navigation"] a[href], a[href^="/"]'
+        );
 
         sidebarLinks.forEach(link => {
           const href = link.getAttribute('href');
@@ -75,9 +77,13 @@ class AlltickApiParser extends BaseParser {
 
       // 转换为完整 URL
       for (const link of links) {
+        if (!link || link.startsWith('#') || link.startsWith('mailto:') || link.startsWith('tel:')) {
+          continue;
+        }
+
         if (link.startsWith('/')) {
           discoveredUrls.add(baseUrl + link);
-        } else if (link.startsWith('http')) {
+        } else if (link.startsWith('http') && link.includes('apis.alltick.co')) {
           discoveredUrls.add(link);
         }
       }
@@ -140,6 +146,12 @@ class AlltickApiParser extends BaseParser {
 
       // 提取 GitBook 页面内容
       const data = await page.evaluate(() => {
+        const normalizeText = (input = '') => input
+          .replace(/\s+/g, ' ')
+          .replace(/arrow-up-right/g, '')
+          .replace(/^hashtag\s*/i, '')
+          .trim();
+
         const result = {
           title: '',
           description: '',
@@ -151,20 +163,22 @@ class AlltickApiParser extends BaseParser {
           rawContent: ''
         };
 
-        // GitBook 主内容区域选择器
-        const mainContent = document.querySelector('[class*="Content"] article, [class*="PageContent"], main article, [data-testid="page.contentEditor"]');
+        // GitBook 主内容区域选择器（兼容新版）
+        const mainContent = document.querySelector(
+          'main, [class*="PageContent"], [class*="Content"], article, [data-testid="page.contentEditor"]'
+        );
 
         if (!mainContent) {
           // 回退方案：获取整个页面的文本
           result.title = document.title;
-          result.rawContent = document.body.innerText;
+          result.rawContent = (document.body && document.body.innerText) ? document.body.innerText : '';
           return result;
         }
 
         // 提取标题
         const h1 = mainContent.querySelector('h1');
         if (h1) {
-          result.title = h1.textContent.trim();
+          result.title = normalizeText(h1.textContent || '');
         } else {
           result.title = document.title.split('|')[0].trim();
         }
@@ -176,7 +190,7 @@ class AlltickApiParser extends BaseParser {
             if (nextEl.tagName === 'P') {
               const text = nextEl.textContent.trim();
               if (text.length > 20) {
-                result.description = text;
+                result.description = normalizeText(text);
                 break;
               }
             }
@@ -185,7 +199,7 @@ class AlltickApiParser extends BaseParser {
         }
 
         // 遍历所有内容块
-        const contentElements = mainContent.querySelectorAll('h1, h2, h3, h4, p, pre, table, ul, ol, [class*="CodeBlock"]');
+        const contentElements = mainContent.querySelectorAll('h1, h2, h3, h4, p, pre, code, table, ul, ol, [class*="CodeBlock"], [class*="code"]');
 
         let currentSection = null;
 
@@ -201,13 +215,17 @@ class AlltickApiParser extends BaseParser {
             currentSection = {
               type: 'heading',
               level: parseInt(tagName.charAt(1)),
-              title: el.textContent.trim(),
+              title: normalizeText(el.textContent || ''),
               content: []
             };
           }
           // 段落处理
           else if (tagName === 'p') {
-            const text = el.textContent.trim();
+            if (el.closest('li')) {
+              return;
+            }
+
+            const text = normalizeText(el.textContent || '');
             if (text) {
               if (currentSection) {
                 currentSection.content.push({ type: 'text', value: text });
@@ -217,8 +235,8 @@ class AlltickApiParser extends BaseParser {
             }
           }
           // 代码块处理
-          else if (tagName === 'pre' || className.includes('CodeBlock') || className.includes('code')) {
-            const code = el.textContent.trim();
+          else if (tagName === 'pre' || tagName === 'code' || className.includes('CodeBlock') || className.includes('code')) {
+            const code = (el.textContent || '').trim();
             if (code && code.length > 10) {
               // 尝试识别代码语言
               let language = 'text';
@@ -274,7 +292,11 @@ class AlltickApiParser extends BaseParser {
           else if (tagName === 'ul' || tagName === 'ol') {
             const items = Array.from(el.querySelectorAll('li')).map(li => li.textContent.trim()).filter(t => t);
             if (items.length > 0) {
-              const list = { type: 'list', ordered: tagName === 'ol', items };
+              const list = {
+                type: 'list',
+                ordered: tagName === 'ol',
+                items: items.map(item => normalizeText(item))
+              };
               if (currentSection) {
                 currentSection.content.push(list);
               } else {
@@ -290,7 +312,24 @@ class AlltickApiParser extends BaseParser {
         }
 
         // 提取原始内容
-        result.rawContent = mainContent.innerText;
+        result.rawContent = mainContent.innerText || '';
+
+        // 兜底：如果结构化提取过少，至少保留正文段落，保证文档可读性
+        if (result.sections.length === 0 || result.rawContent.length > 300 && result.sections.length < 3) {
+          const paragraphs = Array.from(mainContent.querySelectorAll('p'))
+            .map(p => p.textContent.trim())
+            .filter(Boolean);
+
+          if (paragraphs.length > 0) {
+            result.sections = paragraphs.map(text => ({ type: 'text', value: text }));
+          } else if (result.rawContent) {
+            result.sections = result.rawContent
+              .split('\n')
+              .map(line => line.trim())
+              .filter(line => line.length > 0)
+              .map(line => ({ type: 'text', value: line }));
+          }
+        }
 
         return result;
       });
@@ -418,7 +457,7 @@ class AlltickApiParser extends BaseParser {
     try {
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
       // 等待 GitBook 内容区域加载
-      await page.waitForSelector('[class*="Content"] article, [class*="PageContent"], main article, h1', { timeout: 15000 });
+      await page.waitForSelector('main, [class*="PageContent"], [class*="Content"], article, h1', { timeout: 20000 });
       // GitBook 是 SPA，需要额外等待渲染
       await page.waitForTimeout(2000);
     } catch (error) {
