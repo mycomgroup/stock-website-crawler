@@ -25,6 +25,7 @@ import TavilyApiParser from './tavily-api-parser.js';
 import TickdbApiParser from './tickdb-api-parser.js';
 import TsanghiApiParser from './tsanghi-api-parser.js';
 import TushareProApiParser from './tushare-pro-api-parser.js';
+import TokenfluxParser from './tokenflux-parser.js';
 import QverisApiParser from './qveris-api-parser.js';
 import SanhulianghuaParser from './sanhulianghua-parser.js';
 import YfinanceApiParser from './yfinance-api-parser.js';
@@ -72,6 +73,7 @@ class ParserManager {
     this.register(new TickdbApiParser());
     this.register(new TsanghiApiParser());
     this.register(new TushareProApiParser());
+    this.register(new TokenfluxParser());
     this.register(new QverisApiParser());
     this.register(new SanhulianghuaParser());
     this.register(new YfinanceApiParser());
