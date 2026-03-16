@@ -98,7 +98,8 @@ class CrawlerMain {
       await this.browserManager.launch({
         headless: this.config.crawler.headless,
         timeout: this.config.crawler.timeout,
-        userDataDir: this.config.crawler.userDataDir // Use Chrome user data directory if provided
+        userDataDir: this.config.crawler.userDataDir, // Use Chrome user data directory if provided
+        ignoreHTTPSErrors: this.config.crawler.ignoreHTTPSErrors === true
       });
       this.logger.info(`Browser launched (headless: ${this.config.crawler.headless})`);
 
