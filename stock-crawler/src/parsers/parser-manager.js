@@ -26,6 +26,7 @@ import TushareProApiParser from './tushare-pro-api-parser.js';
 import QverisApiParser from './qveris-api-parser.js';
 import SanhulianghuaParser from './sanhulianghua-parser.js';
 import YfinanceApiParser from './yfinance-api-parser.js';
+import GoogleDiscoveryParser from './google-discovery-parser.js';
 import XiaohongshuApifoxParser from './xiaohongshu-apifox-parser.js';
 import GenericParser from './generic-parser.js';
 
@@ -70,6 +71,7 @@ class ParserManager {
     this.register(new QverisApiParser());
     this.register(new SanhulianghuaParser());
     this.register(new YfinanceApiParser());
+    this.register(new GoogleDiscoveryParser());
     this.register(new XiaohongshuApifoxParser());
     this.register(new GenericParser());
   }

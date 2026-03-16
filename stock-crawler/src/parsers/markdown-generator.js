@@ -55,6 +55,8 @@ class MarkdownGenerator {
       return this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
       return this.generateEodhdApi(pageData);
+    } else if (pageData.type === 'google-discovery-doc') {
+      return this.generateGoogleDiscoveryDoc(pageData);
     } else if (pageData.type === '60s-api-doc') {
       return this.generate60sApiDoc(pageData);
     }
@@ -3716,6 +3718,57 @@ class MarkdownGenerator {
         .replace(/^#\s*.+\n/, '')
         .replace(/^##\s*源URL\n.+?\n\n/s, '');
       sections.push(content);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 Google Discovery 文档 Markdown
+   * @param {PageData} pageData - Discovery 页面数据
+   * @returns {string} Markdown文本
+   */
+  generateGoogleDiscoveryDoc(pageData) {
+    const sections = [];
+
+    sections.push(`# ${pageData.title || 'Google Discovery Document'}\n`);
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    sections.push('## 入口信息\n');
+    sections.push(`- Service Name: \`${pageData.serviceName || '-'}\``);
+    sections.push(`- Version: \`${pageData.version || '-'}\``);
+    sections.push(`- Root URL: \`${pageData.rootUrl || '-'}\``);
+    sections.push(`- Service Path: \`${pageData.servicePath || '-'}\``);
+    sections.push(`- Batch Path: \`${pageData.batchPath || '-'}\``);
+    if (pageData.mtlsRootUrl) {
+      sections.push(`- mTLS Root URL: \`${pageData.mtlsRootUrl}\``);
+    }
+    sections.push('');
+
+    const interfaces = pageData.urlRuleInterfaces || [];
+    sections.push(`## URL规则接口（共 ${interfaces.length} 个）\n`);
+
+    if (interfaces.length > 0) {
+      sections.push('| 资源 | 方法ID | HTTP | Path | Full URL Template | 参数 |');
+      sections.push('|------|--------|------|------|-------------------|------|');
+      interfaces.forEach((item) => {
+        const params = (item.parameterNames || []).join(', ');
+        sections.push(`| ${this.escapeMarkdown(item.resource || '-')} | \`${this.escapeMarkdown(item.id || item.methodName || '-')}\` | \`${this.escapeMarkdown(item.httpMethod || '-')}\` | \`${this.escapeMarkdown(item.path || '-')}\` | \`${this.escapeMarkdown(item.fullUrlTemplate || '-')}\` | ${this.escapeMarkdown(params || '-')} |`);
+      });
+      sections.push('');
+    }
+
+    if (pageData.rawContent) {
+      sections.push('## Discovery 原始片段\n');
+      sections.push('```json');
+      sections.push(pageData.rawContent.substring(0, 3000));
+      sections.push('```');
+      sections.push('');
     }
 
     return sections.join('\n');
