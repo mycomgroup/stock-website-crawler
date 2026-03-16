@@ -32,6 +32,7 @@ import SanhulianghuaParser from './sanhulianghua-parser.js';
 import YfinanceApiParser from './yfinance-api-parser.js';
 import GoogleDiscoveryParser from './google-discovery-parser.js';
 import XiaohongshuApifoxParser from './xiaohongshu-apifox-parser.js';
+import Ai302DocsParser from './ai302-docs-parser.js';
 import GenericParser from './generic-parser.js';
 
 /**
@@ -81,6 +82,7 @@ class ParserManager {
     this.register(new YfinanceApiParser());
     this.register(new GoogleDiscoveryParser());
     this.register(new XiaohongshuApifoxParser());
+    this.register(new Ai302DocsParser());
     this.register(new GenericParser());
   }
 
