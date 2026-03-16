@@ -69,7 +69,13 @@ class BrowserManager {
     // Regular launch mode
     const launchOptions = {
       headless,
-      timeout
+      timeout,
+      args: [
+        '--disable-blink-features=AutomationControlled',
+        '--disable-features=IsolateOrigins,site-per-process',
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
+      ]
     };
 
     // Try to use system Chrome if available, fallback to Chromium
