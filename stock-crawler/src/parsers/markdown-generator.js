@@ -2572,6 +2572,9 @@ class MarkdownGenerator {
       if (pageData.routeInfo.example) {
         sections.push(`**示例**: ${pageData.routeInfo.example}\n`);
       }
+      if (pageData.routeInfo.sourceCode) {
+        sections.push(`**源代码**: ${pageData.routeInfo.sourceCode}\n`);
+      }
       sections.push('');
     }
 
@@ -2672,10 +2675,14 @@ class MarkdownGenerator {
             sections.push(`### 列表 ${index + 1}\n`);
           }
           list.items.forEach((item, i) => {
+            const cleanedItem = this.sanitizeRsshubText(item);
+            if (!cleanedItem) {
+              return;
+            }
             if (list.type === 'ol') {
-              sections.push(`${i + 1}. ${item}`);
+              sections.push(`${i + 1}. ${cleanedItem}`);
             } else {
-              sections.push(`- ${item}`);
+              sections.push(`- ${cleanedItem}`);
             }
           });
           sections.push('');
@@ -2690,11 +2697,23 @@ class MarkdownGenerator {
       let cleaned = pageData.rawContent
         .replace(/\n{3,}/g, '\n\n')
         .trim();
-      sections.push(cleaned);
+      cleaned = this.sanitizeRsshubText(cleaned);
+      if (cleaned) {
+        sections.push(cleaned);
+      }
       sections.push('');
     }
 
     return sections.join('\n');
+  }
+
+  sanitizeRsshubText(text = '') {
+    return text
+      .split('\n')
+      .map(line => line.trimEnd())
+      .filter(line => !/^:::(\s+\w+)?\s*$/.test(line.trim()))
+      .join('\n')
+      .trim();
   }
 
   /**
