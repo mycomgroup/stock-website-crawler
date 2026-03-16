@@ -20,10 +20,11 @@ class BrowserManager {
    * @param {number} options.timeout - 默认超时时间（毫秒），默认30000
    * @param {string} options.storageStatePath - Cookie存储路径，用于保持登录状态
    * @param {string} options.userDataDir - Chrome用户数据目录，用于复用当前浏览器的登录状态
+   * @param {boolean} options.ignoreHTTPSErrors - 是否忽略HTTPS证书错误，默认false
    * @returns {Promise<void>}
    */
   async launch(options = {}) {
-    const { headless = true, timeout = 30000, storageStatePath = null, userDataDir = null } = options;
+    const { headless = true, timeout = 30000, storageStatePath = null, userDataDir = null, ignoreHTTPSErrors = false } = options;
     
     this.storageStatePath = storageStatePath;
     
@@ -36,6 +37,7 @@ class BrowserManager {
         viewport: { width: 1920, height: 1080 },
         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
         locale: 'en-US',
+        ignoreHTTPSErrors,
         args: [
           '--disable-blink-features=AutomationControlled',
           '--disable-features=IsolateOrigins,site-per-process',
@@ -75,7 +77,8 @@ class BrowserManager {
     const contextOptions = {
       viewport: { width: 1920, height: 1080 },
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-      locale: 'en-US'
+      locale: 'en-US',
+      ignoreHTTPSErrors
     };
     
     // Load saved cookies/storage if exists
