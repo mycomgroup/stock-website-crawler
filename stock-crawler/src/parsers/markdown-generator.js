@@ -55,6 +55,12 @@ class MarkdownGenerator {
       return this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
       return this.generateEodhdApi(pageData);
+    } else if (pageData.type === 'apitracker-category' || pageData.type === 'apitracker-api-detail') {
+      return this.generateApiTracker(pageData);
+    } else if (pageData.type === 'google-discovery-doc') {
+      return this.generateGoogleDiscoveryDoc(pageData);
+    } else if (pageData.type === '60s-api-doc') {
+      return this.generate60sApiDoc(pageData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
@@ -70,6 +76,55 @@ class MarkdownGenerator {
 
     // 兼容旧格式（没有type字段）
     return this.generateApiDoc(pageData);
+  }
+
+  generate60sApiDoc(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.description) {
+      sections.push('## 描述\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    if (pageData.content && pageData.content.length > 0) {
+      sections.push('## 文档内容\n');
+      pageData.content.forEach((item) => {
+        if (item.type === 'heading') {
+          sections.push(`### ${item.content}`);
+        } else if (item.type === 'table' && item.rows?.length > 0) {
+          const [header, ...rows] = item.rows;
+          sections.push(`| ${header.join(' | ')} |`);
+          sections.push(`| ${header.map(() => '---').join(' | ')} |`);
+          rows.forEach((row) => sections.push(`| ${row.join(' | ')} |`));
+        } else {
+          sections.push(item.content || '');
+        }
+      });
+      sections.push('');
+    }
+
+    if (pageData.codeBlocks && pageData.codeBlocks.length > 0) {
+      sections.push('## 代码示例\n');
+      pageData.codeBlocks.forEach((block, index) => {
+        sections.push(`### 示例 ${index + 1}`);
+        sections.push(`\`\`\`${block.language || 'text'}`);
+        sections.push(block.code || '');
+        sections.push('```\n');
+      });
+    }
+
+    return sections.join('\n');
   }
 
   /**
@@ -2969,6 +3024,105 @@ class MarkdownGenerator {
   }
 
   /**
+   * 生成 ApiTracker 页面 Markdown
+   * @param {PageData} pageData
+   * @returns {string}
+   */
+  generateApiTracker(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}`);
+      sections.push('');
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL');
+      sections.push('');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.type === 'apitracker-category') {
+      if (pageData.category) {
+        sections.push(`**分类**: \`${pageData.category}\``);
+        sections.push('');
+      }
+      const entries = Array.isArray(pageData.entries) ? pageData.entries : [];
+      sections.push(`**入口数量**: ${entries.length}`);
+      sections.push('');
+      if (entries.length > 0) {
+        sections.push('## 入口列表');
+        sections.push('');
+        entries.forEach((entry, index) => {
+          const name = this.escapeMarkdown(entry.name || entry.slug || `entry-${index + 1}`);
+          sections.push(`${index + 1}. [${name}](${entry.url})`);
+        });
+        sections.push('');
+      }
+    }
+
+    if (pageData.type === 'apitracker-api-detail') {
+      if (pageData.companyName) sections.push(`**公司**: ${this.escapeMarkdown(pageData.companyName)}`);
+      if (pageData.slug) sections.push(`**Slug**: \`${pageData.slug}\``);
+      if (pageData.apiBaseEndpoint) sections.push(`**API Base Endpoint**: \`${pageData.apiBaseEndpoint}\``);
+      if (pageData.graphqlEndpoint) sections.push(`**GraphQL Endpoint**: \`${pageData.graphqlEndpoint}\``);
+      sections.push('');
+
+      const docs = Array.isArray(pageData.docsEntrances) ? pageData.docsEntrances : [];
+      if (docs.length > 0) {
+        sections.push('## 文档入口');
+        sections.push('');
+        docs.forEach((doc, i) => sections.push(`${i + 1}. ${doc}`));
+        sections.push('');
+      }
+
+      const specs = Array.isArray(pageData.apiSpecs) ? pageData.apiSpecs : [];
+      if (specs.length > 0) {
+        sections.push('## API 规格链接');
+        sections.push('');
+        specs.forEach((spec) => {
+          const left = [spec.type, spec.format].filter(Boolean).join(' / ') || 'spec';
+          sections.push(`- ${this.escapeMarkdown(left)}: ${spec.url}`);
+        });
+        sections.push('');
+      }
+
+      const postman = Array.isArray(pageData.postmanCollections) ? pageData.postmanCollections : [];
+      if (postman.length > 0) {
+        sections.push('## Postman 集合');
+        sections.push('');
+        postman.forEach((item) => {
+          const label = this.escapeMarkdown(item.name || 'collection');
+          sections.push(`- ${label}: ${item.url}`);
+        });
+        sections.push('');
+      }
+
+      if (pageData.urlRules) {
+        sections.push('## URL 规则建议');
+        sections.push('');
+        if (Array.isArray(pageData.urlRules.include) && pageData.urlRules.include.length > 0) {
+          sections.push('### include');
+          pageData.urlRules.include.forEach((rule) => sections.push(`- \`${rule}\``));
+          sections.push('');
+        }
+        if (Array.isArray(pageData.urlRules.exclude) && pageData.urlRules.exclude.length > 0) {
+          sections.push('### exclude');
+          pageData.urlRules.exclude.forEach((rule) => sections.push(`- \`${rule}\``));
+          sections.push('');
+        }
+      }
+    }
+
+    if (sections.length === 0 && pageData.rawContent) {
+      sections.push(pageData.rawContent);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
    * 生成安全的文件名
    * @param {string} title - 原始标题
    * @param {string} url - 页面URL（可选，用于生成更好的文件名）
@@ -3665,6 +3819,57 @@ class MarkdownGenerator {
         .replace(/^#\s*.+\n/, '')
         .replace(/^##\s*源URL\n.+?\n\n/s, '');
       sections.push(content);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 Google Discovery 文档 Markdown
+   * @param {PageData} pageData - Discovery 页面数据
+   * @returns {string} Markdown文本
+   */
+  generateGoogleDiscoveryDoc(pageData) {
+    const sections = [];
+
+    sections.push(`# ${pageData.title || 'Google Discovery Document'}\n`);
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    sections.push('## 入口信息\n');
+    sections.push(`- Service Name: \`${pageData.serviceName || '-'}\``);
+    sections.push(`- Version: \`${pageData.version || '-'}\``);
+    sections.push(`- Root URL: \`${pageData.rootUrl || '-'}\``);
+    sections.push(`- Service Path: \`${pageData.servicePath || '-'}\``);
+    sections.push(`- Batch Path: \`${pageData.batchPath || '-'}\``);
+    if (pageData.mtlsRootUrl) {
+      sections.push(`- mTLS Root URL: \`${pageData.mtlsRootUrl}\``);
+    }
+    sections.push('');
+
+    const interfaces = pageData.urlRuleInterfaces || [];
+    sections.push(`## URL规则接口（共 ${interfaces.length} 个）\n`);
+
+    if (interfaces.length > 0) {
+      sections.push('| 资源 | 方法ID | HTTP | Path | Full URL Template | 参数 |');
+      sections.push('|------|--------|------|------|-------------------|------|');
+      interfaces.forEach((item) => {
+        const params = (item.parameterNames || []).join(', ');
+        sections.push(`| ${this.escapeMarkdown(item.resource || '-')} | \`${this.escapeMarkdown(item.id || item.methodName || '-')}\` | \`${this.escapeMarkdown(item.httpMethod || '-')}\` | \`${this.escapeMarkdown(item.path || '-')}\` | \`${this.escapeMarkdown(item.fullUrlTemplate || '-')}\` | ${this.escapeMarkdown(params || '-')} |`);
+      });
+      sections.push('');
+    }
+
+    if (pageData.rawContent) {
+      sections.push('## Discovery 原始片段\n');
+      sections.push('```json');
+      sections.push(pageData.rawContent.substring(0, 3000));
+      sections.push('```');
+      sections.push('');
     }
 
     return sections.join('\n');
