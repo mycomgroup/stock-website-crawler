@@ -22,10 +22,14 @@
     "waitBetweenRequests": 2000,
     "maxRetries": 3,
     "batchSize": 20,
-    "userDataDir": "./chrome_user_data_tsanghi"
+    "userDataDir": "./chrome_user_data_tsanghi",
+    "ignoreHTTPSErrors": true
   },
   "output": {
     "directory": "./output",
     "format": "markdown"
+  },
+  "parser": {
+    "mode": "tsanghi-split-docs"
   }
 }
