@@ -3873,9 +3873,9 @@ class MarkdownGenerator {
     }
 
     if (pageData.rawContent) {
-      sections.push('## Discovery 原始片段\n');
+      sections.push('## Discovery 原始内容\n');
       sections.push('```json');
-      sections.push(pageData.rawContent.substring(0, 3000));
+      sections.push(pageData.rawContent);
       sections.push('```');
       sections.push('');
     }
