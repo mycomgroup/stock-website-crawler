@@ -2131,7 +2131,7 @@ class MarkdownGenerator {
       pageData.mainContent.forEach(item => {
         switch (item.type) {
           case 'heading':
-            sections.push(`${'#'.repeat(item.level + 1)} ${item.content}\n`);
+            sections.push(`${'#'.repeat(item.level + 1)} ${this.cleanGenericHeadingContent(item.content)}\n`);
             break;
             
           case 'paragraph':
@@ -2692,6 +2692,22 @@ class MarkdownGenerator {
     return text
       .replace(/\|/g, '\\|')
       .replace(/\n/g, '<br>');
+  }
+
+  /**
+   * 清理通用解析器里的标题内容，移除空锚文本链接和不可见字符
+   * @param {string} text
+   * @returns {string}
+   */
+  cleanGenericHeadingContent(text) {
+    if (typeof text !== 'string') {
+      return '';
+    }
+
+    return text
+      .replace(/[\u200B-\u200D\uFEFF]/g, '')
+      .replace(/^\s*\[\]\([^)]*\)\s*/g, '')
+      .trim();
   }
 
   /**
