@@ -94,6 +94,8 @@ class TushareProApiParser extends BaseParser {
           title: '',
           apiName: '',
           description: '',
+          limit: '',
+          permission: '',
           pointsRequired: '',
           inputParams: [],
           outputParams: [],
@@ -140,6 +142,23 @@ class TushareProApiParser extends BaseParser {
         // 提取接口信息（接口、描述、积分等）
         const content = document.querySelector('.content');
         if (content) {
+          const contentText = content.innerText || '';
+
+          // 提取限量和权限（通常在页面头部说明中）
+          const limitMatch = contentText.match(/限量[：:]\s*([^\n]+)/);
+          if (limitMatch) {
+            result.limit = limitMatch[1].trim();
+          }
+
+          const permissionMatch = contentText.match(/权限[：:]\s*([^\n]+)/);
+          if (permissionMatch) {
+            result.permission = permissionMatch[1].trim();
+            const pointsMatch = result.permission.match(/(\d+)\s*积分/);
+            if (pointsMatch) {
+              result.pointsRequired = pointsMatch[1];
+            }
+          }
+
           const paragraphs = content.querySelectorAll('p');
           paragraphs.forEach(p => {
             const text = p.textContent.trim();
@@ -160,8 +179,8 @@ class TushareProApiParser extends BaseParser {
               }
             }
 
-            // 提取积分要求
-            if (text.includes('积分')) {
+            // 提取积分要求（向后兼容旧格式：至少xxx积分）
+            if (text.includes('积分') && !result.pointsRequired) {
               const pointsMatch = text.match(/至少\s*(\d+)\s*积分/);
               if (pointsMatch) {
                 result.pointsRequired = pointsMatch[1];
@@ -389,6 +408,8 @@ class TushareProApiParser extends BaseParser {
         title: data.title,
         apiName: data.apiName,
         description: data.description,
+        limit: data.limit,
+        permission: data.permission,
         pointsRequired: data.pointsRequired,
         category: data.category,
         inputParams: data.inputParams,
@@ -411,6 +432,8 @@ class TushareProApiParser extends BaseParser {
         title: '',
         apiName: '',
         description: '',
+        limit: '',
+        permission: '',
         pointsRequired: '',
         category: '',
         inputParams: [],
