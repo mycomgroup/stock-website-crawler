@@ -39,20 +39,37 @@ class InfowayApiParser extends BaseParser {
   async discoverLinks(page) {
     const discoveredUrls = new Set();
     const baseUrl = 'https://docs.infoway.io';
+    const sidebarSelector = [
+      '[class*="Sidebar"]',
+      '[class*="sidebar"]',
+      'aside',
+      'main a[href^="/"]'
+    ].join(', ');
 
     try {
-      // 等待侧边栏加载
-      await page.waitForSelector('[class*="Sidebar"]', { timeout: 10000 });
+      // 等待导航/正文链接加载（GitBook 在不同主题下 class 命名不同）
+      await page.waitForSelector(sidebarSelector, { timeout: 15000 });
 
-      // 提取侧边栏中的所有链接
+      // 提取文档导航中的所有链接
       const links = await page.evaluate(() => {
         const urls = [];
-        // GitBook 侧边栏链接选择器
-        const sidebarLinks = document.querySelectorAll('[class*="Sidebar"] a[href], nav a[href]');
+        const navSelectors = [
+          '[class*="Sidebar"] a[href]',
+          '[class*="sidebar"] a[href]',
+          'aside a[href]',
+          'main a[href^="/"]'
+        ].join(', ');
+
+        const sidebarLinks = document.querySelectorAll(navSelectors);
 
         sidebarLinks.forEach(link => {
           const href = link.getAttribute('href');
-          if (href && !href.includes('~gitbook') && !href.includes('~image')) {
+          if (
+            href &&
+            !href.includes('~gitbook') &&
+            !href.includes('~image') &&
+            !href.startsWith('#')
+          ) {
             urls.push(href);
           }
         });
@@ -77,8 +94,14 @@ class InfowayApiParser extends BaseParser {
       for (const link of links) {
         if (link.startsWith('/')) {
           discoveredUrls.add(baseUrl + link);
-        } else if (link.startsWith('http')) {
+        } else if (link.startsWith(baseUrl)) {
           discoveredUrls.add(link);
+        } else if (/^[a-z0-9][a-z0-9\-_/]+$/i.test(link)) {
+          discoveredUrls.add(`${baseUrl}/${link.replace(/^\//, '')}`);
+        } else if (link.startsWith('http')) {
+          if (link.includes('docs.infoway.io')) {
+            discoveredUrls.add(link);
+          }
         }
       }
 
@@ -152,12 +175,17 @@ class InfowayApiParser extends BaseParser {
         };
 
         // GitBook 主内容区域选择器
-        const mainContent = document.querySelector('[class*="Content"] article, [class*="PageContent"], main article, [data-testid="page.contentEditor"]');
+        const mainContent = document.querySelector(
+          '[class*="Content"] article, [class*="PageContent"], main article, [data-testid="page.contentEditor"], main'
+        );
 
         if (!mainContent) {
           // 回退方案：获取整个页面的文本
           result.title = document.title;
           result.rawContent = document.body.innerText;
+          if (result.rawContent?.trim()) {
+            result.sections.push({ type: 'text', value: result.rawContent.trim() });
+          }
           return result;
         }
 
@@ -312,7 +340,20 @@ class InfowayApiParser extends BaseParser {
         }
 
         // 提取原始内容
-        result.rawContent = mainContent.innerText;
+        result.rawContent = (mainContent.innerText || '').trim();
+
+        // 若主内容过短，使用 body 文本兜底（避免 SPA 延迟导致正文缺失）
+        if (result.rawContent.length < 120) {
+          const bodyText = (document.body?.innerText || '').trim();
+          if (bodyText.length > result.rawContent.length) {
+            result.rawContent = bodyText;
+          }
+        }
+
+        // 兜底：若结构化提取为空但原文存在，则保留正文全文
+        if (result.sections.length === 0 && result.rawContent?.trim()) {
+          result.sections.push({ type: 'text', value: result.rawContent.trim() });
+        }
 
         return result;
       });
@@ -404,6 +445,20 @@ class InfowayApiParser extends BaseParser {
       }
     }
 
+    // 最终兜底：如果没有提取到结构化内容，至少保留正文文本
+    const hasBodyContent = lines.some(line => line && !line.startsWith('#'));
+    if (!hasBodyContent && data.rawContent?.trim()) {
+      lines.push('## 正文', '');
+      const paragraphs = data.rawContent
+        .split(/\n{2,}/)
+        .map(p => p.trim())
+        .filter(p => p.length > 0);
+
+      for (const paragraph of paragraphs) {
+        lines.push(paragraph, '');
+      }
+    }
+
     return lines.join('\n');
   }
 
@@ -440,7 +495,14 @@ class InfowayApiParser extends BaseParser {
     try {
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
       // 等待 GitBook 内容区域加载
-      await page.waitForSelector('[class*="Content"] article, [class*="PageContent"], main article, h1', { timeout: 15000 });
+      await page.waitForSelector('[class*="Content"] article, [class*="PageContent"], main, h1', { timeout: 20000 });
+      // 等待正文文本稳定
+      await page.waitForFunction(() => {
+        const main = document.querySelector('main');
+        if (!main) return false;
+        const text = (main.innerText || '').trim();
+        return text.length > 120 || document.querySelectorAll('main a[href]').length > 10;
+      }, { timeout: 15000 });
       // GitBook 是 SPA，需要额外等待渲染
       await page.waitForTimeout(2000);
     } catch (error) {
