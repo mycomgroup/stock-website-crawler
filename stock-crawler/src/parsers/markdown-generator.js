@@ -1016,8 +1016,15 @@ class MarkdownGenerator {
       pageData.sections.forEach((section, index) => {
         // 跳过第一个章节标题（已作为主标题）
         if (index === 0 && section.title === pageData.title) {
-          // 只输出内容，不重复标题
-          section.content.forEach(item => {
+          // 只输出内容，不重复标题/描述（描述已在「## 描述」输出）
+          const filteredContent = section.content.filter((item, itemIndex) => {
+            if (item.type !== 'text') return true;
+            if (!pageData.description) return true;
+            // 仅对首个段落去重，避免把正文里合法重复段落误删
+            return !(itemIndex === 0 && item.content.trim() === pageData.description.trim());
+          });
+
+          filteredContent.forEach(item => {
             this.addTiingoContentItem(sections, item);
           });
         } else {
