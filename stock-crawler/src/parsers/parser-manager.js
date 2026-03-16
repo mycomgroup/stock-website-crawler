@@ -3,6 +3,7 @@ import ApiTrackerParser from './apitracker-parser.js';
 import ApifyActorParser from './apify-actor-parser.js';
 import AlphavantageApiParser from './alphavantage-api-parser.js';
 import AlltickApiParser from './alltick-api-parser.js';
+import AliyunBailianMcpParser from './aliyun-bailian-mcp-parser.js';
 import ApifyApiParser from './apify-api-parser.js';
 import Api60sDocsParser from './api60s-docs-parser.js';
 import BraveSearchParser from './brave-search-parser.js';
@@ -53,6 +54,7 @@ class ParserManager {
     this.register(new ApifyActorParser());
     this.register(new AlphavantageApiParser());
     this.register(new AlltickApiParser());
+    this.register(new AliyunBailianMcpParser());
     this.register(new ApifyApiParser());
     this.register(new Api60sDocsParser());
     this.register(new BraveSearchParser());
