@@ -49,6 +49,8 @@ class MarkdownGenerator {
       markdown = this.generateTushareProApi(pageData);
     } else if (pageData.type === 'tickdb-api') {
       markdown = this.generateTickdbApi(pageData);
+    } else if (pageData.type === 'infoway-api') {
+      markdown = this.generateInfowayApi(pageData);
     } else if (pageData.type === 'modelscope-mcp-server') {
       markdown = this.generateModelscopeMcp(pageData);
     } else if (pageData.type === 'itick-doc') {
@@ -133,6 +135,23 @@ class MarkdownGenerator {
     }
 
     return sections.join('\n');
+  }
+
+  generateInfowayApi(pageData) {
+    const sections = [];
+
+    if (pageData.markdownContent) {
+      sections.push(pageData.markdownContent.trim());
+      sections.push('');
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    return sections.join('\n').trim() + '\n';
   }
 
   /**
