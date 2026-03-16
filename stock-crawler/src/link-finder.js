@@ -132,6 +132,12 @@ class LinkFinder {
       // 获取当前页面的URL作为基础URL
       const baseUrl = page.url();
 
+      // 针对动态站点，等待链接元素渲染
+      await page.waitForFunction(
+        () => document.querySelectorAll('a[href]').length > 0 || (document.body?.innerText || '').length > 400,
+        { timeout: 12000 }
+      ).catch(() => {});
+
       // 检查是否需要无限滚动（针对 finnhub 等 SPA 页面）
       if (baseUrl.includes('finnhub.io/docs/api')) {
         // 对 finnhub 的侧边栏进行无限滚动 (#side-bar 是滚动容器)
