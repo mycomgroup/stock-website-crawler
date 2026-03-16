@@ -62,6 +62,8 @@ class MarkdownGenerator {
       return this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
       return this.generateEodhdApi(pageData);
+    } else if (pageData.type === 'alltick-api') {
+      return this.generateAlltickApi(pageData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
@@ -3760,6 +3762,40 @@ class MarkdownGenerator {
         .replace(/^#\s*.+\n/, '')
         .replace(/^##\s*源URL\n.+?\n\n/s, '');
       sections.push(content);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 AllTick API 文档 Markdown
+   * @param {PageData} pageData - AllTick API 文档页面数据
+   * @returns {string} Markdown文本
+   */
+  generateAlltickApi(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.markdownContent) {
+      const content = pageData.markdownContent
+        .replace(/^#\s*.+\n/, '')
+        .replace(/^##\s*源URL\n.+?\n\n/s, '')
+        .trim();
+
+      if (content) {
+        sections.push(content);
+      }
+    } else if (pageData.rawContent) {
+      sections.push(pageData.rawContent);
     }
 
     return sections.join('\n');

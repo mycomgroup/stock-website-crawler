@@ -59,6 +59,8 @@ class MarkdownGenerator {
       markdown = this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
       markdown = this.generateEodhdApi(pageData);
+    } else if (pageData.type === 'alltick-api') {
+      markdown = this.generateAlltickApi(pageData);
     } else if (pageData.type === 'apitracker-category' || pageData.type === 'apitracker-api-detail') {
       markdown = this.generateApiTracker(pageData);
     } else if (pageData.type === 'google-discovery-doc') {
@@ -3862,6 +3864,40 @@ class MarkdownGenerator {
         .replace(/^#\s*.+\n/, '')
         .replace(/^##\s*源URL\n.+?\n\n/s, '');
       sections.push(content);
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 AllTick API 文档 Markdown
+   * @param {PageData} pageData - AllTick API 页面数据
+   * @returns {string} Markdown文本
+   */
+  generateAlltickApi(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.markdownContent) {
+      const content = pageData.markdownContent
+        .replace(/^#\s*.+\n/, '')
+        .replace(/^##\s*源URL\n.+?\n\n/s, '')
+        .trim();
+
+      if (content) {
+        sections.push(content);
+      }
+    } else if (pageData.rawContent) {
+      sections.push(pageData.rawContent);
     }
 
     return sections.join('\n');
