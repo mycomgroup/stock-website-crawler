@@ -1,11 +1,13 @@
 {
   "name": "brave-search-api-docs",
   "seedUrls": [
-    "https://api-dashboard.search.brave.com/documentation"
+    "https://api-dashboard.search.brave.com/documentation",
+    "https://api-dashboard.search.brave.com/api-reference/web/search/get"
   ],
   "urlRules": {
     "include": [
-      "^https://api-dashboard\\.search\\.brave\\.com/documentation.*"
+      "^https://api-dashboard\\.search\\.brave\\.com/documentation.*",
+      "^https://api-dashboard\\.search\\.brave\\.com/api-reference.*"
     ],
     "exclude": []
   },

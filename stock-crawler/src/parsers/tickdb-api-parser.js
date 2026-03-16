@@ -133,7 +133,8 @@ class TickdbApiParser extends BaseParser {
 
             case 'h3':
               const h3Text = el.textContent.trim().replace(/[​\u200B]/g, '');
-              if (h3Text) {
+              // 过滤掉无用的标题
+              if (h3Text && !['Authorizations', 'Query Parameters', 'Response', 'Path Parameters', 'Headers', 'Request Body'].includes(h3Text)) {
                 line = `\n### ${h3Text}`;
               }
               break;
@@ -143,20 +144,28 @@ class TickdbApiParser extends BaseParser {
             case 'h6':
               const hText = el.textContent.trim().replace(/[​\u200B]/g, '');
               const level = parseInt(tagName.charAt(1));
-              if (hText) {
+              // 过滤掉无用的标题
+              if (hText && !['Authorizations', 'Query Parameters', 'Response', 'Path Parameters', 'Headers', 'Request Body'].includes(hText)) {
                 line = `\n${'#'.repeat(level)} ${hText}`;
               }
               break;
 
             case 'p':
               const pText = el.textContent.trim();
-              // 过滤导航相关文本
+              // 过滤导航相关文本和交互按钮文本
               if (pText && pText.length > 3 &&
                   !pText.includes('Skip to main content') &&
                   !pText.includes('Search') &&
                   !pText.match(/^(GET|POST|PUT|DELETE)\s+[A-Z]/) && // 排除导航中的 API 标签
                   !el.closest('nav') &&
-                  !el.closest('[class*="sidebar"]')) {
+                  !el.closest('[class*="sidebar"]') &&
+                  // 过滤交互按钮文本
+                  !pText.match(/^Hide\s+(child\s+)?attributes?$/i) &&
+                  !pText.match(/^Show\s+(child\s+)?attributes?$/i) &&
+                  // 过滤无意义的示例值
+                  !pText.match(/^"[^"]*"$/) && // 排除纯引号包裹的值如 "700.HK"
+                  pText !== 'Stock symbol' &&
+                  pText !== 'Successful response') {
                 line = '\n' + processInlineElements(el);
               }
               break;
@@ -164,7 +173,7 @@ class TickdbApiParser extends BaseParser {
             case 'pre':
               const code = el.textContent.trim();
               // 去重
-              const codeHash = code.substring(0, 50);
+              const codeHash = code.substring(0, 100); // 增加哈希长度
               if (code && !processedCode.has(codeHash)) {
                 processedCode.add(codeHash);
 
@@ -181,6 +190,12 @@ class TickdbApiParser extends BaseParser {
                   }
                 } else if (code.startsWith('{') || code.startsWith('[')) {
                   lang = 'json';
+                  // 检查是否与已有代码块重复（比较去掉空格后的内容）
+                  const normalizedCode = code.replace(/\s+/g, '');
+                  const isDuplicate = result.codeExamples.some(existing => {
+                    return existing.code.replace(/\s+/g, '') === normalizedCode;
+                  });
+                  if (isDuplicate) break; // 跳过重复的 JSON
                 } else if (code.includes('import ') || code.includes('def ')) {
                   lang = 'python';
                 }

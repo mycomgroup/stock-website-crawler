@@ -69,9 +69,105 @@ class ModelscopeMcpParser extends BaseParser {
       await page.waitForLoadState('networkidle', { timeout: 30000 });
       // 等待主内容区域
       await page.waitForSelector('main', { timeout: 15000 });
-      await page.waitForTimeout(3000); // 额外等待动态内容
+      await page.waitForTimeout(2000); // 额外等待动态内容
+
+      // 处理登录弹窗
+      await this.handleLoginModal(page);
+
+      // 展开所有折叠的工具信息
+      await this.expandCollapsedContent(page);
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);
+    }
+  }
+
+  /**
+   * 展开所有折叠的内容
+   * 使用 JavaScript 直接点击，避免被遮罩层阻挡
+   */
+  async expandCollapsedContent(page) {
+    try {
+      // 使用 JavaScript 直接点击展开按钮，避免被遮罩层阻挡
+      const clickedCount = await page.evaluate(() => {
+        let count = 0;
+        // 查找所有展开按钮
+        const selectors = [
+          '.antd5-typography-expand',
+          '[aria-label="展开"]',
+          '[class*="expand"]',
+          '[class*="Expand"]'
+        ];
+
+        selectors.forEach(selector => {
+          try {
+            document.querySelectorAll(selector).forEach(btn => {
+              try {
+                btn.click();
+                count++;
+              } catch (e) {}
+            });
+          } catch (e) {}
+        });
+
+        return count;
+      });
+
+      if (clickedCount > 0) {
+        console.log(`Expanded ${clickedCount} collapsed sections`);
+        await page.waitForTimeout(1000);
+      }
+    } catch (error) {
+      // 忽略错误
+    }
+  }
+
+  /**
+   * 处理登录弹窗
+   * 关闭可能出现的登录提示框
+   */
+  async handleLoginModal(page) {
+    try {
+      // 检查是否有登录弹窗或遮罩层
+      const modalSelectors = [
+        '.antd5-modal-close',
+        '.ant-modal-close',
+        '[class*="modal"] [class*="close"]',
+        '[class*="Modal"] [class*="close"]',
+        'button[aria-label="Close"]',
+        '.close-btn'
+      ];
+
+      for (const selector of modalSelectors) {
+        const closeButton = await page.$(selector);
+        if (closeButton) {
+          const isVisible = await closeButton.isVisible();
+          if (isVisible) {
+            await closeButton.click();
+            await page.waitForTimeout(500);
+            console.log('Closed login modal');
+            break;
+          }
+        }
+      }
+
+      // 也尝试点击遮罩层关闭弹窗
+      const overlaySelectors = [
+        '.antd5-modal-wrap',
+        '.ant-modal-wrap',
+        '[class*="modal-mask"]'
+      ];
+
+      for (const selector of overlaySelectors) {
+        const overlay = await page.$(selector);
+        if (overlay) {
+          // 按 Escape 键关闭
+          await page.keyboard.press('Escape');
+          await page.waitForTimeout(500);
+          break;
+        }
+      }
+    } catch (error) {
+      // 忽略错误，继续处理
     }
   }
 
@@ -280,27 +376,16 @@ class ModelscopeMcpParser extends BaseParser {
 
   /**
    * 从文本中解析工具信息
-   * 根据实际格式解析:
-   * 地理编码 map_geocode
-   * 将地址解析为对应的位置坐标
-   * 输入: address 地址信息
-   * 输出: location
+   * 支持多种格式:
+   * 1. 主页面格式: 中文名称 tool_name (例如: 地理编码 map_geocode)
+   * 2. /tools 页面格式: Tool_name 后跟描述 (例如: List_console_messages)
+   * 3. 英文格式: tool_name - 描述
    */
   parseToolsFromText(text) {
     if (!text) return [];
 
     const tools = [];
-
-    // 查找"工具"部分，直到遇到"开始"、"安装"、"配置"等结束标记
-    // 使用更精确的正则，避免匹配到其他内容
-    const toolsSectionMatch = text.match(/(?:^|\n)工具[\s\n]+([\s\S]*?)(?=(?:\n(?:开始|Getting Started|安装|Installation|配置|Configuration|Service|Prompts|Python|Typescript|授权|许可|反馈|更新|版本|功能说明|$))|$)/i);
-
-    if (!toolsSectionMatch) {
-      return tools;
-    }
-
-    const toolsSection = toolsSectionMatch[1];
-    const lines = toolsSection.split('\n');
+    const lines = text.split('\n');
     let currentTool = null;
     let lastInputLine = false;
 
@@ -312,21 +397,20 @@ class ModelscopeMcpParser extends BaseParser {
         continue;
       }
 
-      // 跳过"工具"标题行
+      // 跳过标题行
       if (line === '工具' || line.match(/^Available\s*Tools$/i)) {
         continue;
       }
 
-      // 检测工具定义行: 中文名称(必须包含中文) + 工具英文名(必须是小写字母、数字、下划线)
-      // 例如: 地理编码 map_geocode
-      const toolNameMatch = line.match(/^([\u4e00-\u9fa5][\u4e00-\u9fa5\w\s]*?)\s+([a-z][a-z0-9_]*)$/);
-      if (toolNameMatch) {
+      // 格式1: 中文名称 + 工具英文名 (例如: 地理编码 map_geocode)
+      const chineseToolMatch = line.match(/^([\u4e00-\u9fa5][\u4e00-\u9fa5\w\s]*?)\s+([a-z][a-z0-9_]*)$/);
+      if (chineseToolMatch) {
         if (currentTool) {
           tools.push(currentTool);
         }
         currentTool = {
-          name: toolNameMatch[2],
-          displayName: toolNameMatch[1].trim(),
+          name: chineseToolMatch[2],
+          displayName: chineseToolMatch[1].trim(),
           description: '',
           inputs: [],
           outputs: []
@@ -335,7 +419,29 @@ class ModelscopeMcpParser extends BaseParser {
         continue;
       }
 
-      // 检测纯英文名的工具格式: tool_name - 描述
+      // 格式2: /tools 页面格式 - PascalCase 或大写开头的工具名 (例如: List_console_messages, Click, Fill_form)
+      // 匹配: 单独一行，工具名后没有中文，下一行是描述
+      const toolsPageMatch = line.match(/^([A-Z][a-zA-Z0-9_]*)$/);
+      if (toolsPageMatch) {
+        // 检查下一行是否是描述（有实际内容，不是另一个工具名）
+        const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : '';
+        if (nextLine && !nextLine.match(/^([A-Z][a-zA-Z0-9_]*)$/) && !nextLine.match(/^[\u4e00-\u9fa5]+\s+[a-z]/)) {
+          if (currentTool) {
+            tools.push(currentTool);
+          }
+          currentTool = {
+            name: toolsPageMatch[1],
+            displayName: toolsPageMatch[1],
+            description: '',
+            inputs: [],
+            outputs: []
+          };
+          lastInputLine = false;
+          continue;
+        }
+      }
+
+      // 格式3: 纯英文名的工具格式: tool_name - 描述
       const englishToolMatch = line.match(/^([a-z][a-z0-9_]*)\s*[-–]\s*(.+)$/);
       if (englishToolMatch && !line.includes(':')) {
         if (currentTool) {
@@ -352,15 +458,16 @@ class ModelscopeMcpParser extends BaseParser {
         continue;
       }
 
-      // 检测描述行 - 非特殊格式的行
-      if (currentTool &&
-          !line.startsWith('输入') &&
-          !line.startsWith('输出') &&
-          !line.match(/^[a-z_][a-z0-9_]*\s*[-–]/i) &&
-          !line.match(/^[a-z_][a-z0-9_]*\s+[\u4e00-\u9fa5]/)) {
-        // 如果这行看起来像是描述（包含中文且长度适中）
-        if (line.match(/[\u4e00-\u9fa5]/) && line.length > 3 && line.length < 100) {
-          if (!currentTool.description) {
+      // 检测描述行 - 为当前工具添加描述
+      if (currentTool && !currentTool.description) {
+        // 描述行：非特殊格式，长度适中
+        if (!line.startsWith('输入') &&
+            !line.startsWith('输出') &&
+            !line.match(/^[A-Z][a-zA-Z0-9_]*$/) &&
+            !line.match(/^[a-z_][a-z0-9_]*\s*[-–]/i) &&
+            !line.match(/^[a-z_][a-z0-9_]*\s+[\u4e00-\u9fa5]/)) {
+          // 描述通常是较长的句子
+          if (line.length > 10 && line.length < 300) {
             currentTool.description = line;
           }
         }
@@ -391,7 +498,6 @@ class ModelscopeMcpParser extends BaseParser {
       }
 
       // 续行的输入参数（在输入块内的参数定义）
-      // 格式: param_name 描述
       if (lastInputLine && currentTool) {
         const paramMatch = line.match(/^([a-z_][a-z0-9_]*)\s+(.+)$/i);
         if (paramMatch && paramMatch[2].match(/[\u4e00-\u9fa5]/)) {
@@ -407,8 +513,22 @@ class ModelscopeMcpParser extends BaseParser {
       tools.push(currentTool);
     }
 
-    // 过滤掉无效的工具（名称太短或没有实际内容）
-    return tools.filter(t => t.name && t.name.length > 3 && t.name.includes('_'));
+    // 过滤掉无效的工具
+    // 1. 排除常见非工具词和 UI 元素
+    const nonToolWords = ['Local', 'Hosted', 'GitHub', 'GitLab', 'Gitee', 'Deployable', 'Discussions', 'Feedback', 'Tools', 'Service', 'Config', 'Setup', 'Install', 'Update', 'Version', 'License', 'Developer', 'Description', 'Collapse', 'Expand', 'Show', 'Hide', 'More', 'Less'];
+
+    return tools.filter(t => {
+      if (!t.name || t.name.length < 3) return false;
+
+      // 排除非工具词
+      if (nonToolWords.includes(t.name)) return false;
+
+      // 工具名必须包含下划线，或者是纯大写首字母的驼峰式命名（如 Click, Drag, Fill）
+      const hasUnderscore = t.name.includes('_');
+      const isShortToolName = /^[A-Z][a-z]+$/.test(t.name); // 如 Click, Drag, Hover
+
+      return hasUnderscore || isShortToolName;
+    });
   }
 
   /**

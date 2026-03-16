@@ -340,6 +340,18 @@ class FinancialDatasetsApiParser extends BaseParser {
               description: cells[3]?.textContent.trim() || cells[2]?.textContent.trim() || ''
             };
 
+            // 过滤无效参数：Hide child attributes 等是响应字段的UI元素
+            if (rowData.description.includes('Hide child attributes') ||
+                rowData.description.includes('Show child attributes') ||
+                rowData.name.includes('child attributes')) {
+              continue;
+            }
+
+            // 过滤响应字段格式的参数（如 snapshot.xxx）
+            if (rowData.name.includes('.') && !rowData.name.startsWith('report_period')) {
+              continue;
+            }
+
             if (isRequestParams && !isResponseTable && rowData.name) {
               result.requestParams.push(rowData);
             } else if (isResponseTable && rowData.name) {

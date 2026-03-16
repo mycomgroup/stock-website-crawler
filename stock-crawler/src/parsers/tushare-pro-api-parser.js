@@ -97,6 +97,7 @@ class TushareProApiParser extends BaseParser {
           pointsRequired: '',
           inputParams: [],
           outputParams: [],
+          additionalTables: [],
           codeExample: '',
           dataExample: '',
           category: '',
@@ -221,6 +222,7 @@ class TushareProApiParser extends BaseParser {
           const tables = content.querySelectorAll('table');
           let foundInputParams = false;
           let foundOutputParams = false;
+          const additionalTables = []; // 用于存储其他表格（如参考表格）
 
           tables.forEach((table, index) => {
             const headers = [];
@@ -300,7 +302,20 @@ class TushareProApiParser extends BaseParser {
               tableType = 'output';
             }
 
-            const tableData = { headers, rows };
+            const tableData = { headers, rows, title: '' };
+
+            // 查找表格前的标题
+            let prevEl = table.previousElementSibling;
+            let titleSearchCount = 0;
+            while (prevEl && titleSearchCount < 3) {
+              const text = prevEl.textContent.trim();
+              if (text && text.length < 50 && !text.includes('输入参数') && !text.includes('输出参数')) {
+                tableData.title = text;
+                break;
+              }
+              prevEl = prevEl.previousElementSibling;
+              titleSearchCount++;
+            }
 
             if (tableType === 'input') {
               result.inputParams = rows;
@@ -308,6 +323,9 @@ class TushareProApiParser extends BaseParser {
             } else if (tableType === 'output') {
               result.outputParams = rows;
               foundOutputParams = true;
+            } else if (rows.length > 0) {
+              // 其他表格（如参考表格）
+              additionalTables.push(tableData);
             }
           });
 
@@ -357,6 +375,7 @@ class TushareProApiParser extends BaseParser {
 
           result.codeExample = uniqueInterface.join('\n\n');
           result.dataExample = uniqueData.join('\n\n');
+          result.additionalTables = additionalTables;
         }
 
         return result;
@@ -374,6 +393,7 @@ class TushareProApiParser extends BaseParser {
         category: data.category,
         inputParams: data.inputParams,
         outputParams: data.outputParams,
+        additionalTables: data.additionalTables,
         codeExample: data.codeExample,
         dataExample: data.dataExample,
         paragraphs: data.paragraphs,

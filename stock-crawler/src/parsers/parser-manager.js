@@ -11,13 +11,16 @@ import InfowayApiParser from './infoway-api-parser.js';
 import ItickApiParser from './itick-api-parser.js';
 import MassiveApiParser from './massive-api-parser.js';
 import ModelscopeMcpParser from './modelscope-mcp-parser.js';
+import PolyrouterParser from './polyrouter-parser.js';
 import TiingoApiParser from './tiingo-api-parser.js';
 import RsshubParser from './rsshub-parser.js';
 import SerpApiParser from './serpapi-parser.js';
 import TavilyApiParser from './tavily-api-parser.js';
 import TickdbApiParser from './tickdb-api-parser.js';
+import TsanghiApiParser from './tsanghi-api-parser.js';
 import TushareProApiParser from './tushare-pro-api-parser.js';
 import QverisApiParser from './qveris-api-parser.js';
+import SanhulianghuaParser from './sanhulianghua-parser.js';
 import YfinanceApiParser from './yfinance-api-parser.js';
 import GenericParser from './generic-parser.js';
 
@@ -47,13 +50,16 @@ class ParserManager {
     this.register(new ItickApiParser());
     this.register(new MassiveApiParser());
     this.register(new ModelscopeMcpParser());
+    this.register(new PolyrouterParser());
     this.register(new TiingoApiParser());
     this.register(new RsshubParser());
     this.register(new SerpApiParser());
     this.register(new TavilyApiParser());
     this.register(new TickdbApiParser());
+    this.register(new TsanghiApiParser());
     this.register(new TushareProApiParser());
     this.register(new QverisApiParser());
+    this.register(new SanhulianghuaParser());
     this.register(new YfinanceApiParser());
     this.register(new GenericParser());
   }

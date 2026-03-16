@@ -1,5 +1,6 @@
-2026/03/15-15:37:26.255 df04f8 Creating DB /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_modelscope/Default/Local Storage/leveldb since it was missing.
-2026/03/15-15:37:26.262 df04f8 Reusing MANIFEST /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_modelscope/Default/Local Storage/leveldb/MANIFEST-000001
-2026/03/15-15:37:36.413 df04fb Level-0 table #5: started
-2026/03/15-15:37:36.415 df04fb Level-0 table #5: 84756 bytes OK
-2026/03/15-15:37:36.416 df04fb Delete type=0 #3
+2026/03/16-10:29:29.526 1264f66 Reusing MANIFEST /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_modelscope/Default/Local Storage/leveldb/MANIFEST-000001
+2026/03/16-10:29:29.528 1264f66 Recovering log #6
+2026/03/16-10:29:29.530 1264f66 Reusing old log /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_modelscope/Default/Local Storage/leveldb/000006.log 
+2026/03/16-10:32:12.000 1264f69 Level-0 table #10: started
+2026/03/16-10:32:12.001 1264f69 Level-0 table #10: 27037 bytes OK
+2026/03/16-10:32:12.006 1264f69 Delete type=0 #6

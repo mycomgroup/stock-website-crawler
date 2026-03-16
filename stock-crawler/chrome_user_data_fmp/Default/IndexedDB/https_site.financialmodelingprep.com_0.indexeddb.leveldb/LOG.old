@@ -1,14 +1,7 @@
-2026/03/15-15:42:50.604 df3b87 Reusing MANIFEST /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_fmp/Default/IndexedDB/https_site.financialmodelingprep.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/03/15-15:42:50.604 df3b87 Recovering log #134
-2026/03/15-15:42:50.604 df3b87 Reusing old log /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_fmp/Default/IndexedDB/https_site.financialmodelingprep.com_0.indexeddb.leveldb/000134.log 
-2026/03/15-15:42:50.605 df3b87 Delete type=2 #132
-2026/03/15-15:42:50.614 df3b85 Level-0 table #139: started
-2026/03/15-15:42:50.615 df3b85 Level-0 table #139: 943 bytes OK
-2026/03/15-15:42:50.616 df3b85 Delete type=0 #134
-2026/03/15-15:42:50.616 df3b85 Manual compaction at level-0 from '\x00-\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00.\x00\x00\x00' @ 0 : 0; will stop at '\x00-\x00\x00\x05' @ 1497 : 1
-2026/03/15-15:42:50.616 df3b85 Compacting 1@0 + 1@1 files
-2026/03/15-15:42:50.617 df3b85 Generated table #140@0: 21 keys, 1143 bytes
-2026/03/15-15:42:50.617 df3b85 Compacted 1@0 + 1@1 files => 1143 bytes
-2026/03/15-15:42:50.618 df3b85 compacted to: files[ 0 1 1 0 0 0 0 ]
-2026/03/15-15:42:50.618 df3b85 Delete type=2 #139
-2026/03/15-15:42:50.618 df3b85 Manual compaction at level-0 from '\x00-\x00\x00\x05' @ 1497 : 1 .. '\x00.\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/03/16-10:09:59.240 124ff4b Reusing MANIFEST /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_fmp/Default/IndexedDB/https_site.financialmodelingprep.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/03/16-10:09:59.240 124ff4b Recovering log #4
+2026/03/16-10:09:59.241 124ff4b Reusing old log /Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/chrome_user_data_fmp/Default/IndexedDB/https_site.financialmodelingprep.com_0.indexeddb.leveldb/000004.log 
+2026/03/16-10:09:59.252 124ff4e Level-0 table #8: started
+2026/03/16-10:09:59.253 124ff4e Level-0 table #8: 3484 bytes OK
+2026/03/16-10:09:59.254 124ff4e Delete type=0 #4
+2026/03/16-10:09:59.255 124ff4b Manual compaction at level-0 from '\x00\x07\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x08\x00\x00\x00' @ 0 : 0; will stop at (end)
