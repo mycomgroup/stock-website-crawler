@@ -1,4 +1,6 @@
 import BaseParser from './base-parser.js';
+import fs from 'fs/promises';
+import path from 'path';
 
 /**
  * Tsanghi API Parser - 专门解析沧海数据金融 API 文档页面
@@ -9,6 +11,21 @@ class TsanghiApiParser extends BaseParser {
   constructor() {
     super();
     this.processedMenus = new Set();
+  }
+
+  /**
+   * 是否支持自定义链接发现
+   * Tsanghi 是单页应用，菜单点击不会改变 URL，因此需要解析器内部遍历菜单。
+   */
+  supportsLinkDiscovery() {
+    return true;
+  }
+
+  /**
+   * 单页应用返回当前 URL，避免被通用链接提取逻辑误伤
+   */
+  async discoverLinks(page) {
+    return [page.url()];
   }
 
   /**
@@ -67,10 +84,16 @@ class TsanghiApiParser extends BaseParser {
       // 获取所有菜单项并遍历获取内容
       const pages = await this.crawlAllPages(page);
 
+      // 如果提供了输出目录，则为每个文档单独写 Markdown
+      if (options.pagesDir && pages.length > 0) {
+        await this.writePagesAsMarkdown(pages, url, options.pagesDir);
+      }
+
       return {
         type: 'tsanghi-api',
         url,
         pages: pages,
+        skipDefaultMarkdownOutput: true,
         suggestedFilename: this.generateFilename(url)
       };
     } catch (error) {
@@ -79,6 +102,7 @@ class TsanghiApiParser extends BaseParser {
         type: 'tsanghi-api',
         url,
         pages: [],
+        skipDefaultMarkdownOutput: true,
         suggestedFilename: this.generateFilename(url)
       };
     }
@@ -125,6 +149,8 @@ class TsanghiApiParser extends BaseParser {
    */
   async extractPageContent(page) {
     return await page.evaluate(() => {
+      const normalizeText = (text = '') => text.replace(/\s+/g, ' ').trim();
+
       // 获取右侧内容区域
       const elMain = document.querySelector('.el-main');
       if (!elMain) return null;
@@ -141,27 +167,21 @@ class TsanghiApiParser extends BaseParser {
 
       if (!rightCol) return null;
 
-      // 获取面包屑导航
-      const breadcrumb = rightCol.querySelector('.el-breadcrumb, .breadcrumb');
-      let breadcrumbText = '';
-      if (breadcrumb) {
-        breadcrumbText = breadcrumb.textContent.trim();
-      } else {
-        // 尝试从文本中提取路径
-        const text = rightCol.textContent;
-        const match = text.match(/([^\n]+)\s*>\s*([^\n]+)/);
-        if (match) {
-          breadcrumbText = `${match[1]} > ${match[2]}`;
-        }
-      }
+      // 获取面包屑导航（优先使用结构化节点，避免把整页文本拼进去）
+      const breadcrumbItems = Array.from(
+        rightCol.querySelectorAll('.el-breadcrumb .el-breadcrumb__item span, .el-breadcrumb .el-breadcrumb__item a, .breadcrumb .breadcrumb-item')
+      )
+        .map(el => normalizeText(el.textContent || ''))
+        .filter(Boolean);
+      const breadcrumbText = breadcrumbItems.join(' > ');
 
       // 获取标题
-      const titleEl = rightCol.querySelector('h1, h2, .title, .el-heading');
-      let title = titleEl ? titleEl.textContent.trim() : '';
+      const titleEl = rightCol.querySelector('h1, h2, .el-page-header__title, .doc-title, .content-title');
+      let title = titleEl ? normalizeText(titleEl.textContent || '') : '';
 
       // 如果没有标题，从面包屑提取
       if (!title && breadcrumbText) {
-        const parts = breadcrumbText.split(' > ');
+        const parts = breadcrumbText.split(/\s*>\s*/);
         title = parts[parts.length - 1];
       }
 
@@ -238,6 +258,32 @@ class TsanghiApiParser extends BaseParser {
     });
   }
 
+  async getMenuPath(item) {
+    return item.evaluate((el) => {
+      const normalizeText = (text = '') => text.replace(/\s+/g, ' ').trim();
+      const menuTitle = normalizeText(el.textContent || '');
+      const path = [];
+
+      let node = el.parentElement;
+      while (node) {
+        if (node.classList?.contains('el-submenu')) {
+          const submenuTitleEl = node.querySelector(':scope > .el-submenu__title');
+          const submenuTitle = normalizeText(submenuTitleEl?.textContent || '');
+          if (submenuTitle) {
+            path.push(submenuTitle);
+          }
+        }
+        node = node.parentElement;
+      }
+
+      path.reverse();
+      if (menuTitle) {
+        path.push(menuTitle);
+      }
+      return path.join(' > ');
+    });
+  }
+
   /**
    * 遍历所有菜单并收集内容
    */
@@ -259,24 +305,33 @@ class TsanghiApiParser extends BaseParser {
 
         const item = currentItems[i];
 
+        const menuPath = await this.getMenuPath(item);
+
         // 点击菜单项
-        await item.click();
+        await item.click({ timeout: 3000 });
         await page.waitForTimeout(1000);
 
         // 获取内容
         const content = await this.extractPageContent(page);
 
-        if (content && content.title && content.breadcrumb) {
-          // 使用面包屑作为唯一标识
-          const key = content.breadcrumb;
+        if (content) {
+          const breadcrumb = content.breadcrumb || menuPath;
+          const title = content.title || (menuPath ? menuPath.split(/\s*>\s*/).pop() : '');
+
+          if (!title || !breadcrumb) {
+            continue;
+          }
+
+          // 使用菜单路径作为唯一标识
+          const key = breadcrumb;
 
           if (!visitedBreadcrumb.has(key)) {
             visitedBreadcrumb.add(key);
 
             results.push({
               menuIndex: i,
-              breadcrumb: content.breadcrumb,
-              title: content.title,
+              breadcrumb,
+              title,
               apiUrl: content.apiUrl,
               httpMethod: content.httpMethod,
               tables: content.tables,
@@ -291,6 +346,96 @@ class TsanghiApiParser extends BaseParser {
     }
 
     return results;
+  }
+
+  sanitizeFilename(value) {
+    return (value || '')
+      .replace(/\s*>\s*/g, '_')
+      .replace(/[\\/:*?"<>|]/g, '_')
+      .replace(/\s+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 100);
+  }
+
+  buildSinglePageMarkdown(pageItem, sourceUrl) {
+    const sections = [];
+    const pageTitle = pageItem.title || pageItem.breadcrumb || 'Untitled';
+
+    sections.push(`# ${pageTitle}`);
+    sections.push('');
+
+    if (pageItem.breadcrumb) {
+      sections.push(`> 路径: ${pageItem.breadcrumb}`);
+      sections.push('');
+    }
+
+    sections.push('## 源URL');
+    sections.push('');
+    sections.push(sourceUrl);
+    sections.push('');
+
+    if (pageItem.apiUrl) {
+      sections.push('## API 端点');
+      sections.push('');
+      if (pageItem.httpMethod) {
+        sections.push(`**Method**: ${pageItem.httpMethod}`);
+        sections.push('');
+      }
+      sections.push('```');
+      sections.push(pageItem.apiUrl);
+      sections.push('```');
+      sections.push('');
+    }
+
+    if (pageItem.content) {
+      sections.push('## 接口说明');
+      sections.push('');
+      sections.push(pageItem.content);
+      sections.push('');
+    }
+
+    if (pageItem.tables?.length) {
+      sections.push('## 参数');
+      sections.push('');
+      pageItem.tables.forEach(table => {
+        if (!table?.length) return;
+        sections.push(`| ${table[0].join(' | ')} |`);
+        sections.push(`| ${table[0].map(() => '---').join(' | ')} |`);
+        for (let i = 1; i < table.length; i++) {
+          sections.push(`| ${table[i].join(' | ')} |`);
+        }
+        sections.push('');
+      });
+    }
+
+    if (pageItem.codeExamples?.length) {
+      sections.push('## 代码示例');
+      sections.push('');
+      pageItem.codeExamples.forEach(example => {
+        sections.push(`\`\`\`${example.language || 'text'}`);
+        sections.push(example.code || '');
+        sections.push('```');
+        sections.push('');
+      });
+    }
+
+    return sections.join('\n');
+  }
+
+  async writePagesAsMarkdown(pages, sourceUrl, pagesDir) {
+    await fs.mkdir(pagesDir, { recursive: true });
+    const filenameCounter = new Map();
+
+    for (const pageItem of pages) {
+      const baseName = this.sanitizeFilename(pageItem.breadcrumb || pageItem.title) || `doc_${pageItem.menuIndex}`;
+      const seen = filenameCounter.get(baseName) || 0;
+      filenameCounter.set(baseName, seen + 1);
+      const filename = seen === 0 ? baseName : `${baseName}_${seen + 1}`;
+      const filePath = path.join(pagesDir, `${filename}.md`);
+      const markdown = this.buildSinglePageMarkdown(pageItem, sourceUrl);
+      await fs.writeFile(filePath, markdown, 'utf-8');
+    }
   }
 }
 
