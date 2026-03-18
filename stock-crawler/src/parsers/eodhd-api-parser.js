@@ -26,6 +26,55 @@ class EodhdApiParser extends BaseParser {
   }
 
   /**
+   * 检测是否为 Marketplace 页面（第三方 API 产品）
+   * 检查 URL 或页面内容特征
+   * @param {string} url - 页面URL
+   * @returns {boolean} 是否为 Marketplace 页面
+   */
+  isMarketplacePage(url) {
+    return url.includes('/marketplace/') || url.includes('esg-data-api');
+  }
+
+  /**
+   * 检测页面是否具有 Marketplace 特征（运行时检测）
+   * @param {Page} page - Playwright页面对象
+   * @returns {Promise<boolean>} 是否为 Marketplace 页面
+   */
+  async detectMarketplacePage(page) {
+    try {
+      return await page.evaluate(() => {
+        // 检查是否有 post_content 容器但没有 entry-content
+        const hasPostContent = !!document.querySelector('.post_content');
+        const hasEntryContent = !!document.querySelector('.entry-content');
+        // 检查是否有 Marketplace 特征
+        const bodyText = document.body.innerText;
+        const hasMarketplaceText = bodyText.includes('Marketplace') ||
+                                    bodyText.includes('$') && bodyText.includes('/mo');
+        // 如果有 post_content 但没有 entry-content，很可能是 Marketplace 页面
+        return hasPostContent && !hasEntryContent;
+      });
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 检测页面是否为博客列表/归档页面
+   * @param {string} url - 页面URL
+   * @returns {boolean} 是否为列表页面
+   */
+  isListPage(url) {
+    // 博客列表页
+    if (url.match(/\/financial-apis-blog\/?$/)) return true;
+    // API 文档分类页、标签页、分页
+    if (url.includes('/category/') || url.includes('/tag/') || url.includes('/page/')) return true;
+    // 检查是否为 API 根目录（概览页可能是一个列表）
+    const urlObj = new URL(url);
+    if (urlObj.pathname === '/financial-apis/' || urlObj.pathname === '/financial-apis') return true;
+    return false;
+  }
+
+  /**
    * 获取优先级
    * @returns {number} 优先级
    */
@@ -68,22 +117,36 @@ class EodhdApiParser extends BaseParser {
    */
   async parse(page, url, options = {}) {
     const isBlog = this.isBlogPage(url);
+    const isList = this.isListPage(url);
+    let isMarketplace = this.isMarketplacePage(url);
 
     try {
       // 等待页面加载完成
       await this.waitForContent(page);
 
-      if (isBlog) {
+      // 运行时检测是否为 Marketplace 页面（基于页面内容特征）
+      if (!isMarketplace && !isBlog) {
+        isMarketplace = await this.detectMarketplacePage(page);
+      }
+
+      if (isList) {
+        // 列表/归档页面解析
+        return await this.parseListPage(page, url);
+      } else if (isBlog && !isList) {
         // 博客文章解析
         return await this.parseBlogArticle(page, url);
+      } else if (isMarketplace) {
+        // Marketplace 产品页面解析
+        return await this.parseMarketplacePage(page, url);
       } else {
         // API 文档解析
         return await this.parseApiDoc(page, url);
       }
     } catch (error) {
       console.error('Failed to parse EODHD page:', error.message);
+      const type = isList ? 'eodhd-list' : (isBlog ? 'eodhd-blog' : (isMarketplace ? 'eodhd-marketplace' : 'eodhd-api'));
       return {
-        type: isBlog ? 'eodhd-blog' : 'eodhd-api',
+        type,
         url,
         title: '',
         description: '',
@@ -94,6 +157,79 @@ class EodhdApiParser extends BaseParser {
         suggestedFilename: this.generateFilename(url)
       };
     }
+  }
+
+  /**
+   * 解析列表/归档页面（如博客列表、分类页面）
+   */
+  async parseListPage(page, url) {
+    const data = await page.evaluate(() => {
+      const result = {
+        title: '',
+        items: []
+      };
+
+      // 提取标题
+      const h1 = document.querySelector('h1');
+      if (h1) {
+        result.title = h1.textContent.trim();
+      }
+
+      // 提取博客文章列表
+      const articles = document.querySelectorAll('article, .post, .blog-post, .entry');
+      const seenLinks = new Set();
+      
+      for (const article of articles) {
+        const titleEl = article.querySelector('h2 a, h3 a, .entry-title a, a[rel="bookmark"]');
+        const title = titleEl?.textContent?.trim() || '';
+        const link = titleEl?.href || '';
+        const dateEl = article.querySelector('time, .published, .post-date');
+        const date = dateEl?.textContent?.trim() || dateEl?.getAttribute('datetime') || '';
+        const excerptEl = article.querySelector('.entry-summary, .excerpt, p');
+        const excerpt = excerptEl?.textContent?.trim()?.substring(0, 200) || '';
+
+        if (title && link && !seenLinks.has(link)) {
+          seenLinks.add(link);
+          result.items.push({ title, link, date, excerpt });
+        }
+      }
+
+      // 如果没找到文章，尝试其他选择器
+      if (result.items.length === 0) {
+        const links = document.querySelectorAll('a[href*="/financial-apis-blog/"], a[href*="/financial-apis/"]');
+        for (const link of links) {
+          const title = link.textContent.trim();
+          const href = link.href;
+          // 排除导航链接和分类标签链接
+          if (title && href && 
+              !href.endsWith('/financial-apis-blog/') && 
+              !href.endsWith('/financial-apis/') &&
+              !href.includes('/category/') &&
+              !href.includes('/tag/') &&
+              title.length > 5 &&
+              !seenLinks.has(href)) {
+            seenLinks.add(href);
+            result.items.push({ title, link: href });
+          }
+        }
+      }
+
+      return result;
+    });
+
+    const markdown = this.convertListToMarkdown(data);
+
+    return {
+      type: 'eodhd-list',
+      url,
+      title: data.title,
+      description: `共 ${data.items.length} 篇文章`,
+      endpoint: '',
+      parameters: [],
+      markdownContent: markdown,
+      rawContent: '',
+      suggestedFilename: this.generateFilename(url)
+    };
   }
 
   /**
@@ -209,6 +345,84 @@ class EodhdApiParser extends BaseParser {
   }
 
   /**
+   * 解析 Marketplace 产品页面（第三方 API 产品）
+   */
+  async parseMarketplacePage(page, url) {
+    const data = await page.evaluate(() => {
+      const result = {
+        title: '',
+        provider: '',
+        providerUrl: '',
+        description: '',
+        price: '',
+        features: [],
+        sections: [],
+        apiDocLink: ''
+      };
+
+      // 提取标题
+      const h1 = document.querySelector('h1');
+      if (h1) {
+        result.title = h1.textContent.trim();
+      }
+
+      // 提取提供商信息
+      const providerEl = document.querySelector('.provider__description');
+      if (providerEl) {
+        result.provider = providerEl.textContent.trim();
+      }
+
+      // 提取提供商网址
+      const providerLink = document.querySelector('.provider a[href]');
+      if (providerLink) {
+        result.providerUrl = providerLink.href;
+      }
+
+      // 提取主要内容
+      const postContent = document.querySelector('.post_content');
+      if (postContent) {
+        result.description = postContent.innerText.trim();
+      }
+
+      // 提取价格
+      const priceEl = document.querySelector('[class*="price"]');
+      if (priceEl) {
+        result.price = priceEl.textContent.trim();
+      }
+
+      // 查找 API 文档链接
+      const docLinks = document.querySelectorAll('a');
+      for (const link of docLinks) {
+        const text = link.textContent.toLowerCase();
+        const href = link.href;
+        if ((text.includes('documentation') || text.includes('api doc')) && href) {
+          result.apiDocLink = href;
+          break;
+        }
+      }
+
+      return result;
+    });
+
+    const markdown = this.convertMarketplaceToMarkdown(data);
+
+    return {
+      type: 'eodhd-marketplace',
+      url,
+      title: data.title,
+      description: data.description.substring(0, 200),
+      endpoint: data.apiDocLink,
+      parameters: [],
+      markdownContent: markdown,
+      rawContent: '',
+      suggestedFilename: this.generateFilename(url),
+      provider: data.provider,
+      providerUrl: data.providerUrl,
+      price: data.price
+    };
+  }
+
+  /**
    * 解析 API 文档页面
    */
   async parseApiDoc(page, url) {
@@ -237,13 +451,39 @@ class EodhdApiParser extends BaseParser {
         result.title = h1.textContent.trim();
       }
 
-      // 提取描述（标题后的第一段）
+      // 提取描述（标题后的第一段有意义的文本）
+      // 过滤掉按钮文本、导航链接等 UI 元素
+      const skipTextPatterns = [
+        /^sign\s*up/i,
+        /^get\s*data/i,
+        /^subscribe/i,
+        /^learn\s*more/i,
+        /^read\s*more/i,
+        /^click\s*here/i,
+        /^\d+\s*(min|hour|day|week|month|year)/i,
+        /^by\s+/i,
+        /^posted\s+on/i,
+        /^last\s+updated/i
+      ];
+
       if (h1) {
         const articleContent = h1.closest('article') || document.querySelector('.article-content, .entry-content');
         if (articleContent) {
-          const firstP = articleContent.querySelector('p');
-          if (firstP) {
-            result.description = firstP.textContent.trim();
+          const allParagraphs = articleContent.querySelectorAll('p');
+          for (const p of allParagraphs) {
+            const text = p.textContent.trim();
+            // 跳过空文本和太短的文本
+            if (!text || text.length < 20) continue;
+            // 跳过匹配跳过模式的文本
+            if (skipTextPatterns.some(pattern => pattern.test(text))) continue;
+            // 跳过在按钮内的段落
+            if (p.closest('button, .btn, .button, [role="button"]')) continue;
+            // 跳过包含太多链接的段落（通常是导航）
+            const links = p.querySelectorAll('a');
+            if (links.length > 2) continue;
+
+            result.description = text;
+            break;
           }
         }
       }
@@ -322,7 +562,7 @@ class EodhdApiParser extends BaseParser {
       }
 
       // 提取主要章节内容
-      const articleContent = document.querySelector('.article-content, .entry-content, article');
+      const articleContent = document.querySelector('.article-content, .entry-content, article, main, .page-content, .post-content');
       if (articleContent) {
         const headings = articleContent.querySelectorAll('h2, h3');
         for (const heading of headings) {
@@ -332,12 +572,18 @@ class EodhdApiParser extends BaseParser {
             continue;
           }
 
-          // 提取章节内容
+          // 提取章节内容 - 过滤 UI 元素
           let content = '';
           let sibling = heading.nextElementSibling;
           while (sibling && sibling.tagName.toLowerCase() !== 'h2' && sibling.tagName.toLowerCase() !== 'h3') {
             if (sibling.tagName.toLowerCase() === 'p') {
-              content += sibling.textContent.trim() + '\n\n';
+              const text = sibling.textContent.trim();
+              // 跳过 UI 按钮文本
+              if (text.length > 15 &&
+                  !text.match(/^(sign\s*up|get\s*data|subscribe|learn\s*more)/i) &&
+                  !sibling.closest('button, .btn, .button, [role="button"]')) {
+                content += text + '\n\n';
+              }
             }
             sibling = sibling.nextElementSibling;
           }
@@ -384,6 +630,80 @@ class EodhdApiParser extends BaseParser {
       rawContent: '',
       suggestedFilename: this.generateFilename(url)
     };
+  }
+
+  /**
+   * 将列表数据转换为 Markdown
+   */
+  convertListToMarkdown(data) {
+    const lines = [];
+
+    // 主标题
+    if (data.title) {
+      lines.push(`# ${data.title}`, '');
+    }
+
+    // 文章列表
+    if (data.items && data.items.length > 0) {
+      lines.push(`## 文章列表 (${data.items.length} 篇)`, '');
+      for (const item of data.items) {
+        if (item.link) {
+          lines.push(`- [${item.title}](${item.link})`);
+        } else {
+          lines.push(`- ${item.title}`);
+        }
+        if (item.date) {
+          lines.push(`  - 日期: ${item.date}`);
+        }
+        if (item.excerpt) {
+          lines.push(`  - 摘要: ${item.excerpt}`);
+        }
+      }
+      lines.push('');
+    }
+
+    return lines.join('\n');
+  }
+
+  /**
+   * 将 Marketplace 数据转换为 Markdown
+   */
+  convertMarketplaceToMarkdown(data) {
+    const lines = [];
+
+    // 主标题
+    if (data.title) {
+      lines.push(`# ${data.title}`, '');
+    }
+
+    // 提供商信息
+    if (data.provider || data.providerUrl || data.price) {
+      lines.push('## 产品信息', '');
+      if (data.provider) {
+        lines.push(`- 提供商: ${data.provider}`);
+      }
+      if (data.providerUrl) {
+        lines.push(`- 提供商网址: ${data.providerUrl}`);
+      }
+      if (data.price) {
+        lines.push(`- 价格: ${data.price}`);
+      }
+      lines.push('');
+    }
+
+    // 描述内容
+    if (data.description) {
+      lines.push('## 产品描述', '');
+      lines.push(data.description, '');
+    }
+
+    // API 文档链接
+    if (data.apiDocLink) {
+      lines.push('## API 文档', '');
+      lines.push(`- [查看 API 文档](${data.apiDocLink})`, '');
+    }
+
+    return lines.join('\n');
   }
 
   /**
@@ -517,8 +837,8 @@ class EodhdApiParser extends BaseParser {
     try {
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
       await page.waitForSelector('h1', { timeout: 15000 });
-      // 等待内容区域加载
-      await page.waitForSelector('.entry-content', { timeout: 10000 }).catch(() => {});
+      // 等待内容区域加载（API 文档用 entry-content，Marketplace 用 post_content）
+      await page.waitForSelector('.entry-content, .post_content', { timeout: 10000 }).catch(() => {});
       await page.waitForTimeout(3000); // 额外等待动态内容
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);

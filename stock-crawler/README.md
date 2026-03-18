@@ -135,7 +135,8 @@ Create a JSON configuration file with the following structure:
     "headless": true,
     "timeout": 30000,
     "waitBetweenRequests": 500,
-    "maxRetries": 3
+    "maxRetries": 3,
+    "fetchMethod": "playwright"
   },
   "output": {
     "directory": "./output",
@@ -178,6 +179,7 @@ Array of starting URLs for the crawler.
 - **timeout**: Page load timeout in milliseconds
 - **waitBetweenRequests**: Delay between requests in milliseconds
 - **maxRetries**: Maximum retry attempts for failed requests
+- **fetchMethod**: Method to fetch pages. Use "playwright" (default) for rendering full JS or "request" for fast direct HTTP requests.
 
 #### output
 - **directory**: Output directory for Markdown files

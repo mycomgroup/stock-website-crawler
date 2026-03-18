@@ -1,182 +1,71 @@
 # Implementation Summary
 
-## Completed Tasks (Tasks 13-16)
+This document describes the **current** implementation as it exists in the codebase (not a historical task checklist).
 
-### Task 13: Main Controller ✅
-- **13.1**: Created `crawler-main.js` implementing the main orchestration logic
-  - `initialize()`: Loads configuration and initializes all modules
-  - `start()`: Executes the complete crawling workflow
-  - `processUrl()`: Processes individual URLs with retry logic
-  - `logProgress()`: Tracks and displays crawling progress
-  - `logError()`: Handles and logs errors
-  - `generateStats()`: Generates crawling statistics
-  
-- **13.2**: Created comprehensive integration tests
-  - Tests for initialization with valid/invalid configs
-  - Tests for URL processing with error handling
-  - Tests for statistics generation
-  - Tests for progress and error logging
-  - All tests passing (6/6)
+## Project Entry Points
 
-### Task 14: CLI Entry and Config Examples ✅
-- **14.1**: Created `index.js` as CLI entry point
-  - Command-line argument parsing
-  - Help message display
-  - Error handling for uncaught exceptions
-  - Process exit codes
-  
-- **14.2**: Created configuration file examples
-  - `config/example.json`: General purpose example
-  - `config/lixinger.json`: Lixinger-specific configuration
-  
-- **14.3**: Created comprehensive `README.md` documentation
-  - Project overview and features
-  - Installation instructions
-  - Usage examples
-  - Configuration format documentation
-  - Troubleshooting guide
-  - Module architecture overview
+- `src/index.js` - CLI entry point for crawling via config file.
+- `src/template-pipeline-cli.js` - CLI for the template crawl pipeline.
+- `src/crawler-main.js` - Main orchestration class used by the CLI.
 
-### Task 15: Code Migration ✅
-- **15.1**: Analyzed existing code functionality
-  - Reviewed `crawl-doc-to-md.js` and `debug-find-all-links.js`
-  - Identified reusable patterns and logic
-  
-- **15.2**: Integrated existing code logic into new modules
-  - Login logic → `login-handler.js`
-  - Link discovery → `link-finder.js`
-  - Page parsing → `page-parser.js`
-  - Markdown generation → `markdown-generator.js`
-  
-- **15.3**: Created migration scripts
-  - `scripts/migrate-links.js`: Converts old links.txt format to new JSON format
-  - `scripts/migrate-output.js`: Moves old output files to new directory structure
+## Core Modules (Top-Level `src/`)
 
-### Task 16: Final Checkpoint ✅
-- **All Tests Passing**: 149/149 tests passing across 10 test suites
-- **Project Structure Verified**: All modules and files in correct locations
-- **CLI Functionality Verified**: Help command and argument parsing working
-- **Configuration Files Ready**: Example configs available for immediate use
+- `src/config-manager.js` - Loads and validates crawl configuration.
+- `src/link-manager.js` - Manages URL state and crawl progress.
+- `src/browser-manager.js` - Playwright browser/session lifecycle.
+- `src/login-handler.js` - Login page detection and session handling.
+- `src/link-finder.js` - In-page link discovery and filtering.
+- `src/page-parser.js` - Coordinates parser selection and extraction.
+- `src/markdown-generator.js` - Markdown output assembly.
+- `src/logger.js` - Logging and structured summaries.
+- `src/stats-tracker.js` - Crawl statistics tracking.
+- `src/url-utils.js` - URL normalization and utilities.
+- `src/template-crawl-pipeline.js` - Template-driven crawling pipeline.
 
-## Project Statistics
+## Application Layer (`src/application/`)
 
-### Code Modules (12 files)
-1. `index.js` - CLI entry point
-2. `crawler-main.js` - Main controller
-3. `config-manager.js` - Configuration management
-4. `link-manager.js` - URL list management
-5. `browser-manager.js` - Browser automation
-6. `login-handler.js` - Login detection and handling
-7. `link-finder.js` - Link discovery
-8. `page-parser.js` - Page content parsing
-9. `markdown-generator.js` - Markdown generation
-10. `logger.js` - Logging utilities
-11. `stats-tracker.js` - Statistics tracking
-12. `url-utils.js` - URL utilities
+- `crawler-bootstrap-service.js` - Bootstraps crawl runtime and dependencies.
+- `crawl-job-service.js` - Runs crawl jobs and manages lifecycle.
+- `url-processing-service.js` - URL processing workflow (fetch, parse, store).
+- `browser-crawl-processor.js` - Browser-based crawl execution.
+- `login-orchestration-service.js` - Orchestrates login flow when required.
 
-### Test Coverage
-- **10 test suites** covering all modules
-- **149 tests total** (all passing)
-- **Unit tests** for specific functionality
-- **Property-based tests** for universal properties
-- **Integration tests** for complete workflows
+## Domain Layer (`src/domain/`)
 
-### Configuration Files
-- `config/example.json` - General purpose template
-- `config/lixinger.json` - Lixinger website configuration
+- `retry-policy.js` - Retry strategy and backoff behavior.
+- `url-state-machine.js` - URL state transitions and status control.
 
-### Documentation
-- `README.md` - Comprehensive user guide (6,800+ words)
-- `IMPLEMENTATION_SUMMARY.md` - This file
+## Storage Layer (`src/storage/`)
 
-### Migration Scripts
-- `scripts/migrate-links.js` - Links format migration
-- `scripts/migrate-output.js` - Output directory migration
+- `page-storage.js` + `index.js` - Storage interface and registry.
+- `file-page-storage.js` - File-based page output.
+- `sqlite-link-storage-json.js` / `sqlite-link-storage-row.js` - SQLite link storage.
+- `lancedb-page-storage.js` - LanceDB page storage option.
 
-## Key Features Implemented
+## Parsers and Formatters
 
-### 1. Modular Architecture
-- Clean separation of concerns
-- Each module has a single responsibility
-- Easy to test and maintain
+- `src/parsers/` - Parser implementations and routing via `parser-manager.js`.
+  - Base + generic parsers (`base-parser.js`, `generic-parser.js`, `core-content-parser.js`).
+  - Domain-specific parsers (e.g., `finnhub-api-parser.js`, `yfinance-api-parser.js`, etc.).
+  - Support parsers such as `mintlify-parser.js`, `list-parser.js`, `directory-parser.js`.
+- `src/formatters/` - Output formatters (e.g., `api-doc-formatter.js`).
 
-### 2. Configuration-Driven
-- JSON-based configuration
-- No code changes needed for different websites
-- Flexible URL filtering rules
+## Configuration
 
-### 3. Robust Error Handling
-- Retry logic with exponential backoff
-- Graceful degradation
-- Comprehensive error logging
+- Configs live under `config/` (e.g., `example.json`, `lixinger.json`, and many site-specific configs).
+- The crawler is configuration-driven; URLs, filters, parsers, and outputs are defined per config.
 
-### 4. Progress Tracking
-- Real-time progress updates
-- Detailed statistics
-- Status tracking for each URL
+## Tests
 
-### 5. Resumable Crawling
-- Persistent link state in `links.txt`
-- Can resume from interruption
-- No duplicate crawling
+- Jest configuration: `jest.config.js`.
+- Unit and integration tests live under `test/` and cover core modules, parsers, and pipelines.
 
-### 6. Automatic Login
-- Detects login pages automatically
-- Supports multiple form formats
-- Maintains session state
+## Scripts and Utilities
 
-### 7. Content Extraction
-- Tables → Markdown tables
-- Code blocks → Syntax-highlighted blocks
-- Structured content preservation
+- `scripts/` contains helper tasks for crawling/validation and site-specific runs.
+- Root-level `.mjs` utilities are used for inspection, debugging, and regeneration.
 
-## Usage Examples
+## Notes
 
-### Basic Usage
-```bash
-cd stock-crawler
-npm start config/example.json
-```
-
-### With Custom Configuration
-```bash
-node src/index.js config/lixinger.json
-```
-
-### Running Tests
-```bash
-npm test
-```
-
-### Migration
-```bash
-# Migrate old links.txt
-node scripts/migrate-links.js ../links.txt
-
-# Migrate old output files
-node scripts/migrate-output.js ../api-docs ./output
-```
-
-## Next Steps
-
-The crawler is now fully functional and ready for use. Potential enhancements:
-
-1. **Rate Limiting**: Add more sophisticated rate limiting
-2. **Proxy Support**: Add proxy configuration for IP rotation
-3. **Parallel Crawling**: Support concurrent URL processing
-4. **Custom Parsers**: Plugin system for custom page parsers
-5. **Database Storage**: Option to store results in database
-6. **API Mode**: Expose crawler as REST API
-7. **Scheduling**: Built-in scheduler for periodic crawling
-8. **Notifications**: Email/webhook notifications on completion
-
-## Conclusion
-
-All tasks (13-16) have been successfully completed. The stock website crawler is:
-- ✅ Fully implemented with modular architecture
-- ✅ Thoroughly tested (149 tests passing)
-- ✅ Well documented
-- ✅ Ready for production use
-- ✅ Easy to extend and maintain
-
-The project follows best practices for Node.js development, includes comprehensive error handling, and provides a clean API for future enhancements.
+- This summary intentionally avoids hard-coded test counts or "all tests passing" claims; refer to `npm test` for current results.
+- If new modules are added, update this summary to keep it aligned with code structure.

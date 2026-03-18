@@ -1,120 +1,85 @@
 import ParserManager from '../src/parsers/parser-manager.js';
+import GenericParser from '../src/parsers/generic-parser.js';
 
 describe('ParserManager', () => {
-  test('should use GenericParser when parserMode is core-content but no precise classification', () => {
-    const manager = new ParserManager();
+  let manager;
 
-    const parser = manager.selectParser('https://example.com/article/1', {
-      parserMode: 'core-content'
-    });
+  beforeEach(() => {
+    manager = new ParserManager();
+  });
 
+  test('should register all default parsers', () => {
+    expect(manager.parsers.length).toBeGreaterThan(0);
+  });
+
+  test('should return GenericParser for unknown URLs', () => {
+    const parser = manager.selectParser('https://example.com/unknown/page');
+    expect(parser).toBeInstanceOf(GenericParser);
+  });
+
+  test('should select parser based on URL pattern match', () => {
+    // Test with a known parser URL pattern
+    const finnhubUrl = 'https://finnhub.io/docs/api/some-endpoint';
+    const parser = manager.selectParser(finnhubUrl);
+
+    // Should match FinnhubApiParser
+    expect(parser.constructor.name).toBe('FinnhubApiParser');
+  });
+
+  test('should return GenericParser as fallback', () => {
+    const parser = manager.selectParser('https://random-site.com/page');
     expect(parser.constructor.name).toBe('GenericParser');
   });
 
-  test('should use GenericParser when url matches api doc but no precise classification', () => {
-    const manager = new ParserManager();
-
-    const parser = manager.selectParser('https://example.com/api/doc/test', {});
-
-    expect(parser.constructor.name).toBe('GenericParser');
+  test('parsers should be sorted by priority', () => {
+    for (let i = 0; i < manager.parsers.length - 1; i++) {
+      const currentPriority = manager.parsers[i].getPriority();
+      const nextPriority = manager.parsers[i + 1].getPriority();
+      expect(currentPriority).toBeGreaterThanOrEqual(nextPriority);
+    }
   });
 
-  test('should select list parser based on high-confidence classification', () => {
-    const manager = new ParserManager();
+  test('register should add parser and maintain priority order', () => {
+    const initialCount = manager.parsers.length;
 
-    const parser = manager.selectParser('https://example.com/unknown', {
-      classification: { type: 'list_page', confidence: 0.88 }
-    });
-
-    expect(parser.constructor.name).toBe('ListParser');
-  });
-
-  test('should select directory parser based on high-confidence classification', () => {
-    const manager = new ParserManager();
-
-    const parser = manager.selectParser('https://example.com/unknown', {
-      classification: { type: 'directory_page', confidence: 0.92 }
-    });
-
-    expect(parser.constructor.name).toBe('DirectoryParser');
-  });
-
-  test('should use parser override when url matches configured pattern', () => {
-    const manager = new ParserManager();
-
-    const parser = manager.selectParser('https://example.com/special/endpoint', {
-      classification: { type: 'list_page', confidence: 0.95 },
-      parserUrlPatternOverrides: [
-        { pattern: '.*/special/.*', parser: 'DirectoryParser' }
-      ]
-    });
-
-    expect(parser.constructor.name).toBe('DirectoryParser');
-  });
-
-  test('should fallback to GenericParser when classification confidence is low', () => {
-    const manager = new ParserManager();
-
-    const parser = manager.selectParser('https://example.com/list/page=1', {
-      classification: { type: 'list_page', confidence: 0.3 }
-    });
-
-    expect(parser.constructor.name).toBe('GenericParser');
-  });
-
-  test('parse should skip classification when parser override matches', async () => {
-    const manager = new ParserManager();
-    let classifyCallCount = 0;
-    manager.classifier.classify = async () => {
-      classifyCallCount += 1;
-      return { type: 'api_doc_page', confidence: 0.99, reasons: ['mock'], features: {} };
+    // Create a mock parser with high priority
+    const mockParser = {
+      matches: () => false,
+      parse: async () => ({ type: 'mock' }),
+      getPriority: () => 1000
     };
 
-    manager.parsers = [{
-      constructor: { name: 'ApiDocParser' },
-      matches: () => false,
-      parse: async () => ({ type: 'api-doc', title: 'forced' }),
-      getPriority: () => 100
-    }, {
-      constructor: { name: 'GenericParser' },
-      matches: () => true,
-      parse: async () => ({ type: 'generic', title: 'fallback' }),
-      getPriority: () => 0
-    }];
+    manager.register(mockParser);
 
-    const result = await manager.parse({}, 'https://example.com/open/api/doc/1', {
-      parserUrlPatternOverrides: [{ pattern: '.*/open/api/doc/.*', parser: 'ApiDocParser' }]
-    });
-
-    expect(classifyCallCount).toBe(0);
-    expect(result.type).toBe('api-doc');
-    expect(result.classification).toBeNull();
+    expect(manager.parsers.length).toBe(initialCount + 1);
+    expect(manager.parsers[0]).toBe(mockParser); // Highest priority should be first
   });
 
-  test('parse should attach classification metadata to output', async () => {
-    const manager = new ParserManager();
-    manager.classifier.classify = async () => ({
-      type: 'generic_page',
-      confidence: 0.4,
-      reasons: ['test'],
-      features: {}
-    });
+  test('selectParser should return first matching parser', () => {
+    // GenericParser matches everything but has lowest priority
+    const genericUrl = 'https://example.com/generic/page';
+    const parser = manager.selectParser(genericUrl);
 
-    manager.parsers = [{
-      constructor: { name: 'GenericParser' },
-      matches: () => true,
-      parse: async () => ({ type: 'generic', title: 'mock' }),
-      getPriority: () => 0
-    }];
+    // Should return GenericParser since no specific parser matches
+    expect(parser.constructor.name).toBe('GenericParser');
+  });
 
-    const data = await manager.parse({}, 'https://example.com/test', {});
+  test('parse should delegate to selected parser', async () => {
+    const mockPage = {};
+    const url = 'https://example.com/test';
 
-    expect(data.type).toBe('generic');
-    expect(data.classification).toEqual({
-      type: 'generic_page',
-      confidence: 0.4,
-      reasons: ['test'],
-      features: {}
-    });
+    // Get the selected parser
+    const selectedParser = manager.selectParser(url);
+
+    // Mock the parse method
+    const originalParse = selectedParser.parse;
+    selectedParser.parse = async () => ({ type: 'test', url });
+
+    const result = await manager.parse(mockPage, url, {});
+
+    expect(result.url).toBe(url);
+
+    // Restore original parse
+    selectedParser.parse = originalParse;
   });
 });

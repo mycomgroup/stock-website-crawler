@@ -1,48 +1,48 @@
 /**
- * Debug script to test yfinance parser
+ * Debug script to test eodhd parser for UI noise filtering
  */
 import { chromium } from 'playwright';
-import ParserManager from './src/parsers/parser-manager.js';
+import EodhdApiParser from './src/parsers/eodhd-api-parser.js';
 
 async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
-  const testUrl = 'https://www.aidoczh.com/yfinance/reference/api/yfinance.Ticker.balance_sheet.html';
+  const parser = new EodhdApiParser();
+  const testUrl = 'https://eodhd.com/financial-apis/live-realtime-stocks-api/';
 
   console.log(`Loading: ${testUrl}`);
-  await page.goto(testUrl, { waitUntil: 'networkidle' });
+  await page.goto(testUrl, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('h1', { timeout: 15000 });
+  await page.waitForTimeout(3000);
   console.log('Page loaded');
-
-  // Test parser selection
-  const parserManager = new ParserManager();
-  const parser = parserManager.selectParser(testUrl);
-  console.log(`Selected parser: ${parser.constructor.name}`);
-  console.log(`Parser priority: ${parser.getPriority()}`);
 
   // Parse the page
   const result = await parser.parse(page, testUrl, {});
   console.log('\n=== Parse Result ===');
   console.log(`type: ${result.type}`);
   console.log(`title: ${result.title}`);
-  console.log(`apiName: ${result.apiName}`);
-  console.log(`suggestedFilename: ${result.suggestedFilename}`);
-  console.log(`signature: ${result.signature}`);
-  console.log(`parameters count: ${result.parameters?.length || 0}`);
-  console.log(`returns count: ${result.returns?.length || 0}`);
-  console.log(`attributes count: ${result.attributes?.length || 0}`);
-  console.log(`tables count: ${result.tables?.length || 0}`);
-  console.log(`codeExamples count: ${result.codeExamples?.length || 0}`);
+  console.log(`description: ${result.description?.substring(0, 200)}...`);
 
-  // Print first few parameters if any
-  if (result.parameters && result.parameters.length > 0) {
-    console.log('\nFirst 3 parameters:', JSON.stringify(result.parameters.slice(0, 3), null, 2));
+  // Check for UI noise
+  const hasSignUp = result.description?.toLowerCase().includes('sign up');
+  const hasGetData = result.description?.toLowerCase().includes('get data') && result.description?.length < 50;
+  const markdownHasUINoise = result.markdownContent?.includes('Sign up & Get Data');
+
+  console.log('\n=== UI Noise Check ===');
+  console.log(`Description has "sign up": ${hasSignUp}`);
+  console.log(`Description has short "get data": ${hasGetData}`);
+  console.log(`Markdown has "Sign up & Get Data": ${markdownHasUINoise}`);
+
+  if (markdownHasUINoise) {
+    const lines = result.markdownContent.split('\n');
+    const noiseLines = lines.filter(l => l.includes('Sign up') || l.includes('Get Data'));
+    console.log('\nLines with UI noise:');
+    noiseLines.forEach(l => console.log(`  "${l}"`));
   }
 
-  // Print first few methods if any
-  if (result.returns && result.returns.length > 0) {
-    console.log('\nFirst 3 returns/methods:', JSON.stringify(result.returns.slice(0, 3), null, 2));
-  }
+  console.log('\n=== Markdown Content (first 1500 chars) ===');
+  console.log(result.markdownContent?.substring(0, 1500));
 
   await browser.close();
 }

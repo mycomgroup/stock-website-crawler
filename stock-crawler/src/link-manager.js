@@ -85,17 +85,21 @@ class LinkManager {
       console.warn(`Skipped invalid URL when adding: ${url}`);
       return;
     }
-    
-    // 去掉URL中的锚点（#后面的部分）
-    const urlWithoutAnchor = url.split('#')[0];
-    
+
+    // 对于SPA应用的hash路由，保留hash部分
+    // 检查URL是否包含有意义的hash路由（如 #/mcp-market/detail/）
+    const hasHashRoute = /#\/[^/]+\//.test(url);
+
+    // 只有当URL没有有意义的hash路由时，才去掉锚点
+    const urlKey = hasHashRoute ? url : url.split('#')[0];
+
     // 检查链接是否已存在
-    if (this.linkIndex.has(urlWithoutAnchor)) {
+    if (this.linkIndex.has(urlKey)) {
       return; // 已存在，不添加
     }
 
     const newLink = {
-      url: urlWithoutAnchor,
+      url: urlKey,
       status,
       addedAt: Date.now(),
       fetchedAt: null,
@@ -104,7 +108,7 @@ class LinkManager {
     };
 
     this.links.push(newLink);
-    this.linkIndex.set(urlWithoutAnchor, this.links.length - 1);
+    this.linkIndex.set(urlKey, this.links.length - 1);
   }
 
   /**
@@ -114,10 +118,11 @@ class LinkManager {
    * @param {string} error - 错误信息（可选）
    */
   updateLinkStatus(url, status, error = null) {
-    // 去掉URL中的锚点（#后面的部分）
-    const urlWithoutAnchor = url.split('#')[0];
-    
-    const linkIndex = this.linkIndex.get(urlWithoutAnchor);
+    // 对于SPA应用的hash路由，保留hash部分
+    const hasHashRoute = /#\/[^/]+\//.test(url);
+    const urlKey = hasHashRoute ? url : url.split('#')[0];
+
+    const linkIndex = this.linkIndex.get(urlKey);
     const link = linkIndex !== undefined ? this.links[linkIndex] : null;
     if (link) {
       link.status = status;
@@ -150,8 +155,11 @@ class LinkManager {
    * @returns {number} 当前重试次数
    */
   incrementRetryCount(url) {
-    const urlWithoutAnchor = url.split('#')[0];
-    const linkIndex = this.linkIndex.get(urlWithoutAnchor);
+    // 对于SPA应用的hash路由，保留hash部分
+    const hasHashRoute = /#\/[^/]+\//.test(url);
+    const urlKey = hasHashRoute ? url : url.split('#')[0];
+
+    const linkIndex = this.linkIndex.get(urlKey);
     const link = linkIndex !== undefined ? this.links[linkIndex] : null;
     if (link) {
       link.retryCount++;

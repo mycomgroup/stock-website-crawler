@@ -32,10 +32,12 @@ class BrowserManager {
       timeout = 30000,
       storageStatePath = null,
       userDataDir = null,
-      ignoreHTTPSErrors = false
+      ignoreHTTPSErrors = false,
+      fetchMethod = 'playwright'
     } = options;
     
     this.storageStatePath = storageStatePath;
+    this.fetchMethod = fetchMethod;
 
     // If userDataDir is provided, use persistent context to reuse browser profile
     if (userDataDir) {
@@ -164,7 +166,8 @@ class BrowserManager {
       ? stdout.replace(/<head(.*?)>/i, `<head$1><base href="${url}">`)
       : `<base href="${url}">${stdout}`;
 
-    await page.goto(url, { timeout: Math.min(timeout, 10000), waitUntil: 'commit' });
+    // 使用 about:blank 避免导航超时
+    await page.goto('about:blank', { timeout: 5000 });
     await page.setContent(withBase, {
       timeout,
       waitUntil: 'domcontentloaded'
@@ -176,11 +179,41 @@ class BrowserManager {
    * @param {Page} page - 页面对象
    * @param {string} url - 目标URL
    * @param {number} timeout - 超时时间（毫秒），可选
+   * @param {Object} options - 导航选项
    * @returns {Promise<Response>} 页面响应对象
    * @throws {Error} 如果导航失败或超时
    */
-  async goto(page, url, timeout) {
+  async goto(page, url, timeout, options = {}) {
     const actualTimeout = timeout || this.defaultTimeout;
+    const forcePlaywright = options.forcePlaywright || false;
+
+    // 如果配置为直接请求模式，拦截请求并只加载HTML（阻止所有JS/CSS/图片等资源以提升性能）
+    if (this.fetchMethod === 'request' && !forcePlaywright) {
+      try {
+        await page.route('**/*', async (route) => {
+          const request = route.request();
+          if (request.resourceType() === 'document') {
+            // 对主文档放行，使用Playwright内置的网络请求
+            await route.continue();
+          } else {
+            // 阻止所有非文档资源（如 scripts, stylesheets, images, xhr）
+            await route.abort();
+          }
+        });
+
+        const response = await page.goto(url, {
+          timeout: actualTimeout,
+          waitUntil: 'domcontentloaded'
+        });
+        
+        return response;
+      } catch (error) {
+        console.warn(`Request mode failed for ${url}, falling back to Playwright full mode: ${error.message}`);
+        // 解除拦截以备回退
+        await page.unroute('**/*');
+      }
+    }
+
     const domReadyTimeout = Math.min(actualTimeout, 15000);
 
     try {

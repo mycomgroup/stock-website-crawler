@@ -1,40 +1,9 @@
-import ApiDocParser from './api-doc-parser.js';
-import ApiTrackerParser from './apitracker-parser.js';
-import ApifyActorParser from './apify-actor-parser.js';
-import AlphavantageApiParser from './alphavantage-api-parser.js';
-import AlltickApiParser from './alltick-api-parser.js';
-import AliyunBailianMcpParser from './aliyun-bailian-mcp-parser.js';
-import ApifyApiParser from './apify-api-parser.js';
-import Api60sDocsParser from './api60s-docs-parser.js';
-import BraveSearchParser from './brave-search-parser.js';
-import EodhdApiParser from './eodhd-api-parser.js';
-import EulerpoolApiParser from './eulerpool-api-parser.js';
-import FinnhubApiParser from './finnhub-api-parser.js';
-import FinancialDatasetsApiParser from './financial-datasets-api-parser.js';
-import FinancialModelingPrepApiParser from './financial-modeling-prep-api-parser.js';
-import InfowayApiParser from './infoway-api-parser.js';
-import InvestodayApiParser from './investoday-api-parser.js';
-import ItickApiParser from './itick-api-parser.js';
-import KuaishouApifoxParser from './kuaishou-apifox-parser.js';
-import LanyunMcpParser from './lanyun-mcp-parser.js';
-import MassiveApiParser from './massive-api-parser.js';
-import ModelscopeMcpParser from './modelscope-mcp-parser.js';
-import PolyrouterParser from './polyrouter-parser.js';
-import TiingoApiParser from './tiingo-api-parser.js';
-import RsshubParser from './rsshub-parser.js';
-import SerpApiParser from './serpapi-parser.js';
-import TavilyApiParser from './tavily-api-parser.js';
-import TickdbApiParser from './tickdb-api-parser.js';
-import TsanghiApiParser from './tsanghi-api-parser.js';
-import TushareProApiParser from './tushare-pro-api-parser.js';
-import TokenfluxParser from './tokenflux-parser.js';
-import QverisApiParser from './qveris-api-parser.js';
-import SanhulianghuaParser from './sanhulianghua-parser.js';
-import YfinanceApiParser from './yfinance-api-parser.js';
-import GoogleDiscoveryParser from './google-discovery-parser.js';
-import XiaohongshuApifoxParser from './xiaohongshu-apifox-parser.js';
-import Ai302DocsParser from './ai302-docs-parser.js';
-import GenericParser from './generic-parser.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Parser Manager - 管理所有解析器，根据URL选择合适的解析器
@@ -42,50 +11,45 @@ import GenericParser from './generic-parser.js';
 class ParserManager {
   constructor() {
     this.parsers = [];
-    this.registerDefaultParsers();
+    this.initialized = false;
+    this.initPromise = null;
   }
 
   /**
-   * 注册默认解析器
+   * 动态扫描并加载所有解析器
    */
-  registerDefaultParsers() {
-    this.register(new ApiDocParser());
-    this.register(new ApiTrackerParser());
-    this.register(new ApifyActorParser());
-    this.register(new AlphavantageApiParser());
-    this.register(new AlltickApiParser());
-    this.register(new AliyunBailianMcpParser());
-    this.register(new ApifyApiParser());
-    this.register(new Api60sDocsParser());
-    this.register(new BraveSearchParser());
-    this.register(new EodhdApiParser());
-    this.register(new EulerpoolApiParser());
-    this.register(new FinnhubApiParser());
-    this.register(new FinancialDatasetsApiParser());
-    this.register(new FinancialModelingPrepApiParser());
-    this.register(new InfowayApiParser());
-    this.register(new InvestodayApiParser());
-    this.register(new ItickApiParser());
-    this.register(new KuaishouApifoxParser());
-    this.register(new LanyunMcpParser());
-    this.register(new MassiveApiParser());
-    this.register(new ModelscopeMcpParser());
-    this.register(new PolyrouterParser());
-    this.register(new TiingoApiParser());
-    this.register(new RsshubParser());
-    this.register(new SerpApiParser());
-    this.register(new TavilyApiParser());
-    this.register(new TickdbApiParser());
-    this.register(new TsanghiApiParser());
-    this.register(new TushareProApiParser());
-    this.register(new TokenfluxParser());
-    this.register(new QverisApiParser());
-    this.register(new SanhulianghuaParser());
-    this.register(new YfinanceApiParser());
-    this.register(new GoogleDiscoveryParser());
-    this.register(new XiaohongshuApifoxParser());
-    this.register(new Ai302DocsParser());
-    this.register(new GenericParser());
+  async init() {
+    if (this.initialized) return;
+    if (this.initPromise) return this.initPromise;
+
+    this.initPromise = (async () => {
+      try {
+        const files = fs.readdirSync(__dirname);
+        const parserFiles = files.filter(file => 
+          file.endsWith('-parser.js') && 
+          file !== 'base-parser.js' && 
+          file !== 'parser-manager.js'
+        );
+
+        for (const file of parserFiles) {
+          try {
+            const module = await import(`./${file}`);
+            const ParserClass = module.default;
+            if (ParserClass && typeof ParserClass === 'function') {
+              this.register(new ParserClass());
+            }
+          } catch (e) {
+            console.warn(`[ParserManager] Failed to load parser from ${file}:`, e.message);
+          }
+        }
+        
+        this.initialized = true;
+      } catch (e) {
+        console.error('[ParserManager] Error during initialization:', e.message);
+      }
+    })();
+
+    return this.initPromise;
   }
 
   /**
@@ -95,7 +59,11 @@ class ParserManager {
   register(parser) {
     this.parsers.push(parser);
     // 按优先级排序（高优先级在前）
-    this.parsers.sort((a, b) => b.getPriority() - a.getPriority());
+    this.parsers.sort((a, b) => {
+      const priorityA = typeof a.getPriority === 'function' ? a.getPriority() : 0;
+      const priorityB = typeof b.getPriority === 'function' ? b.getPriority() : 0;
+      return priorityB - priorityA;
+    });
   }
 
   /**
@@ -103,14 +71,70 @@ class ParserManager {
    * @param {string} url - 页面URL
    * @returns {BaseParser} 匹配的解析器
    */
-  selectParser(url) {
+  async selectParser(url) {
+    await this.init();
     for (const parser of this.parsers) {
-      if (parser.matches(url)) {
+      if (typeof parser.matches === 'function' && parser.matches(url)) {
         return parser;
       }
     }
-    // 理论上不会到这里，因为GenericParser匹配所有URL
-    return this.parsers[this.parsers.length - 1];
+    // 默认返回最后一个（GenericParser 的优先级为 0）
+    return this.parsers.find(p => p.constructor.name === 'GenericParser') || this.parsers[this.parsers.length - 1];
+  }
+
+  /**
+   * 异步选择解析器（支持内容特征检测）
+   * 选择流程：
+   * 1. 先尝试 URL 模式匹配
+   * 2. 如果 URL 不匹配 GenericParser，尝试内容特征检测
+   * 3. 最后用 GenericParser 兜底
+   * @param {Page} page - Playwright页面对象
+   * @param {string} url - 页面URL
+   * @returns {Promise<BaseParser>} 匹配的解析器
+   */
+  async selectParserAsync(page, url) {
+    await this.init();
+    
+    // 1. 先尝试 URL 匹配
+    for (const parser of this.parsers) {
+      if (typeof parser.matches === 'function' && parser.matches(url)) {
+        // 如果是 GenericParser，继续尝试内容检测
+        if (parser.constructor.name === 'GenericParser') {
+          break;
+        }
+        return parser;
+      }
+    }
+
+    // 2. URL 不匹配（会落入 GenericParser），尝试内容特征检测
+    let bestParser = null;
+    let bestScore = 0;
+    const minScoreThreshold = 50; // 置信度阈值
+
+    for (const parser of this.parsers) {
+      // 跳过 GenericParser
+      if (parser.constructor.name === 'GenericParser') continue;
+
+      if (parser.detectByContent && typeof parser.detectByContent === 'function') {
+        try {
+          const score = await parser.detectByContent(page);
+          if (score > bestScore && score >= minScoreThreshold) {
+            bestScore = score;
+            bestParser = parser;
+          }
+        } catch (error) {
+          // 忽略检测错误
+        }
+      }
+    }
+
+    // 3. 返回最佳匹配或 GenericParser
+    if (bestParser) {
+      console.log(`[ParserManager] 内容检测匹配: ${bestParser.constructor.name} (置信度: ${bestScore})`);
+      return bestParser;
+    }
+
+    return this.parsers.find(p => p.constructor.name === 'GenericParser') || this.parsers[this.parsers.length - 1];
   }
 
   /**
@@ -121,7 +145,8 @@ class ParserManager {
    * @returns {Promise<Object>} 解析后的页面数据
    */
   async parse(page, url, options = {}) {
-    const parser = this.selectParser(url);
+    await this.init();
+    const parser = await this.selectParserAsync(page, url);
     return await parser.parse(page, url, options);
   }
 }

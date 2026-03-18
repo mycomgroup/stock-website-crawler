@@ -186,7 +186,9 @@ class TickdbApiParser extends BaseParser {
                     try {
                       const urlObj = new URL(urlMatch[1]);
                       result.apiPath = urlObj.pathname;
-                    } catch (e) {}
+                    } catch {
+                      // URL 解析失败，跳过
+                    }
                   }
                 } else if (code.startsWith('{') || code.startsWith('[')) {
                   lang = 'json';

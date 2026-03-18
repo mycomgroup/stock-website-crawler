@@ -10,8 +10,13 @@
  */
 function isValidUrl(url) {
   try {
+    // 过滤掉空链接、javascript: 链接
+    if (!url || typeof url !== 'string') return false;
+    if (url.startsWith('javascript:')) return false;
+    if (url === '#' || url === '') return false;
+
     const urlObj = new URL(url);
-    
+
     // 检查所有查询参数的值
     for (const [key, value] of urlObj.searchParams.entries()) {
       // 过滤掉无效的参数值
@@ -19,10 +24,92 @@ function isValidUrl(url) {
         return false;
       }
     }
-    
+
     return true;
   } catch (error) {
     // URL格式无效
+    return false;
+  }
+}
+
+/**
+ * 常见广告/追踪域名列表
+ */
+const AD_DOMAINS = [
+  // 广告联盟
+  'googlesyndication.com',
+  'doubleclick.net',
+  'googleadservices.com',
+  'googleads.com',
+  'adclick.g.doubleclick.net',
+
+  // 国内广告平台
+  'web-cps.gamersky.com',  // 游民星空CPS广告
+  'ad.toutiao.com',
+  'ad.oceanengine.com',
+  'e.qq.com',
+  'pos.baidu.com',
+  'cpro.baidu.com',
+  'hm.baidu.com',
+  'eclick.baidu.com',
+  'adsame.com',
+  'tanx.com',
+  'mmstat.com',
+  'atm.youku.com',
+  'adsmogo.com',
+  'ads.mopub.com',
+
+  // 联盟推广
+  'union.jd.com',
+  'cps.360buy.com',
+  'affiliates.alibaba.com',
+
+  // 追踪/统计
+  'beacon.tingyun.com',
+  'track.uc.cn',
+  'stat.m.jd.com',
+  'tvc.home.news.cn',
+];
+
+/**
+ * 检查URL是否为广告/追踪链接
+ * @param {string} url - 要检查的URL
+ * @returns {boolean} 是否为广告链接
+ */
+function isAdUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname.toLowerCase();
+
+    // 检查是否匹配广告域名
+    for (const adDomain of AD_DOMAINS) {
+      if (hostname === adDomain || hostname.endsWith('.' + adDomain)) {
+        return true;
+      }
+    }
+
+    // 检查URL路径中的广告标识
+    const adPathPatterns = [
+      /\/ad\//i,
+      /\/ads\//i,
+      /\/adclick/i,
+      /\/adserver/i,
+      /\/affiliate/i,
+      /\/tracking/i,
+      /\/track\//i,
+      /\/click\//i,
+      /\/banner/i,
+      /\/promo\//i,
+    ];
+
+    for (const pattern of adPathPatterns) {
+      if (pattern.test(urlObj.pathname)) {
+        return true;
+      }
+    }
+
+    return false;
+  } catch {
     return false;
   }
 }
@@ -75,27 +162,31 @@ function filterLinks(urls, urlRules) {
   if (!urls || !Array.isArray(urls)) {
     return [];
   }
-  
+
   const { include = [], exclude = [] } = urlRules || {};
-  
+
   return urls.filter(url => {
     // 首先验证URL的有效性
     if (!isValidUrl(url)) {
-      console.warn(`Filtered out invalid URL: ${url}`);
       return false;
     }
-    
+
+    // 过滤广告链接
+    if (isAdUrl(url)) {
+      return false;
+    }
+
     // 如果没有include规则，默认包含所有URL
-    const matchesInclude = include.length === 0 || 
+    const matchesInclude = include.length === 0 ||
       include.some(pattern => matchesPattern(url, pattern));
-    
+
     // 检查是否匹配任何exclude规则
-    const matchesExclude = exclude.length > 0 && 
+    const matchesExclude = exclude.length > 0 &&
       exclude.some(pattern => matchesPattern(url, pattern));
-    
+
     // 必须匹配include且不匹配exclude
     return matchesInclude && !matchesExclude;
   });
 }
 
-export { toAbsoluteUrl, matchesPattern, filterLinks, isValidUrl };
+export { toAbsoluteUrl, matchesPattern, filterLinks, isValidUrl, isAdUrl, AD_DOMAINS };

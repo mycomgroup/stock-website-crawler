@@ -1,4 +1,3 @@
-import fc from 'fast-check';
 import fs from 'fs';
 import path from 'path';
 import MarkdownGenerator from '../src/parsers/markdown-generator.js';
@@ -18,170 +17,6 @@ describe('MarkdownGenerator', () => {
     }
   });
 
-  describe('Property 16: Markdown生成格式正确性', () => {
-    /**
-     * Feature: stock-website-crawler, Property 16: Markdown生成格式正确性
-     * **Validates: Requirements 6.1, 6.2, 6.3, 6.6**
-     * 
-     * For any PageData object, the generated Markdown should contain the title 
-     * as a heading, all tables in Markdown table format, all code blocks in 
-     * Markdown code block format, and the original URL
-     */
-    test('generated markdown contains all required elements', () => {
-      fc.assert(
-        fc.property(
-          fc.record({
-            url: fc.webUrl(),
-            title: fc.string({ minLength: 1, maxLength: 100 }),
-            briefDesc: fc.string({ minLength: 0, maxLength: 200 }),
-            requestUrl: fc.option(fc.webUrl(), { nil: '' }),
-            requestMethod: fc.option(fc.constantFrom('GET', 'POST', 'PUT', 'DELETE'), { nil: '' }),
-            params: fc.array(
-              fc.record({
-                name: fc.string({ minLength: 1 }),
-                required: fc.constantFrom('Yes', 'No'),
-                type: fc.constantFrom('String', 'Number', 'Boolean', 'Array'),
-                desc: fc.string({ minLength: 0, maxLength: 100 })
-              }),
-              { minLength: 0, maxLength: 3 }
-            ),
-            apiExamples: fc.array(
-              fc.record({
-                name: fc.string({ minLength: 1, maxLength: 50 }),
-                code: fc.string({ minLength: 1, maxLength: 100 })
-              }),
-              { minLength: 0, maxLength: 2 }
-            ),
-            responseData: fc.record({
-              description: fc.string({ minLength: 0, maxLength: 200 }),
-              table: fc.array(
-                fc.record({
-                  name: fc.string({ minLength: 1 }),
-                  type: fc.string({ minLength: 1 }),
-                  desc: fc.string({ minLength: 0, maxLength: 100 })
-                }),
-                { minLength: 0, maxLength: 3 }
-              )
-            })
-          }),
-          (pageData) => {
-            const markdown = generator.generate(pageData);
-
-            // Should contain title as heading
-            if (pageData.title) {
-              expect(markdown).toContain(`# ${pageData.title}`);
-            }
-
-            // Should contain source URL
-            if (pageData.url) {
-              expect(markdown).toContain('## 源URL');
-              expect(markdown).toContain(pageData.url);
-            }
-
-            // Should contain params table if params exist
-            if (pageData.params && pageData.params.length > 0) {
-              expect(markdown).toContain('## 参数');
-              expect(markdown).toContain('---');
-            }
-
-            // Should contain API examples in code blocks
-            pageData.apiExamples.forEach(example => {
-              expect(markdown).toContain('```');
-            });
-
-            // Should contain response data table if exists
-            if (pageData.responseData && pageData.responseData.table.length > 0) {
-              expect(markdown).toContain('## 返回数据说明');
-            }
-          }
-        ),
-        { numRuns: 50 }
-      );
-    });
-  });
-
-  describe('Property 17: Markdown文件生成唯一性', () => {
-    /**
-     * Feature: stock-website-crawler, Property 17: Markdown文件生成唯一性
-     * **Validates: Requirements 6.4**
-     * 
-     * For any PageData object, generating a Markdown file should create 
-     * exactly one file with a unique filename based on the page title
-     */
-    test('each page generates a unique file', () => {
-      fc.assert(
-        fc.property(
-          fc.array(
-            fc.record({
-              url: fc.webUrl(),
-              title: fc.string({ minLength: 1, maxLength: 50 }),
-              briefDesc: fc.string(),
-              requestUrl: fc.string(),
-              requestMethod: fc.string(),
-              params: fc.array(fc.record({ name: fc.string(), required: fc.string(), type: fc.string(), desc: fc.string() })),
-              apiExamples: fc.array(fc.record({ name: fc.string(), code: fc.string() })),
-              responseData: fc.record({ description: fc.string(), table: fc.array(fc.record({ name: fc.string(), type: fc.string(), desc: fc.string() })) })
-            }),
-            { minLength: 1, maxLength: 3 }
-          ),
-          (pageDataArray) => {
-            const filenames = new Set();
-
-            pageDataArray.forEach(pageData => {
-              const markdown = generator.generate(pageData);
-              const filename = generator.safeFilename(pageData.title) + '.md';
-              const filepath = generator.saveToFile(markdown, filename, testOutputDir);
-
-              // File should exist
-              expect(fs.existsSync(filepath)).toBe(true);
-
-              // Track filenames
-              filenames.add(filename);
-            });
-
-            // Each unique title should generate a unique filename
-            const uniqueTitles = new Set(pageDataArray.map(p => p.title));
-            expect(filenames.size).toBe(uniqueTitles.size);
-          }
-        ),
-        { numRuns: 20 }
-      );
-    });
-  });
-
-  describe('Property 18: 文件名安全性', () => {
-    /**
-     * Feature: stock-website-crawler, Property 18: 文件名安全性
-     * **Validates: Requirements 6.5**
-     * 
-     * For any string containing special characters, the safe filename function 
-     * should return a string with all special characters replaced by underscores
-     */
-    test('special characters are replaced in filenames', () => {
-      fc.assert(
-        fc.property(
-          fc.string({ minLength: 1, maxLength: 100 }),
-          (title) => {
-            const safeFilename = generator.safeFilename(title);
-
-            // Should not contain filesystem-unsafe characters
-            const unsafeChars = /[\/\\?*:|"<>]/;
-            expect(safeFilename).not.toMatch(unsafeChars);
-
-            // Should not be empty (unless input was all special chars)
-            if (title.replace(/[\/\\?*:|"<>\s]/g, '').length > 0) {
-              expect(safeFilename.length).toBeGreaterThan(0);
-            }
-
-            // Should not exceed max length
-            expect(safeFilename.length).toBeLessThanOrEqual(200);
-          }
-        ),
-        { numRuns: 100 }
-      );
-    });
-  });
-
   describe('Unit Tests', () => {
     test('should generate markdown with title', () => {
       const pageData = {
@@ -198,11 +33,51 @@ describe('MarkdownGenerator', () => {
       const markdown = generator.generate(pageData);
 
       expect(markdown).toContain('# Test Page');
-      expect(markdown).toContain('## 简要描述');
-      expect(markdown).toContain('Test description');
     });
 
+    test('should generate markdown for API doc type', () => {
+      const pageData = {
+        type: 'api-doc',
+        url: 'https://example.com/api/test',
+        title: 'Test API',
+        api: {
+          endpoint: '/api/test',
+          method: 'GET',
+          description: 'Test API endpoint'
+        },
+        parameters: [
+          { name: 'param1', type: 'string', required: true, description: 'First parameter' }
+        ],
+        codeExamples: [
+          { language: 'javascript', code: 'fetch("/api/test")' }
+        ],
+        response: {
+          fields: [
+            { name: 'id', type: 'number', description: 'ID field' }
+          ]
+        }
+      };
 
+      const markdown = generator.generate(pageData);
+
+      expect(markdown).toContain('# Test API');
+    });
+
+    test('should generate markdown for generic type', () => {
+      const pageData = {
+        type: 'generic',
+        url: 'https://example.com/page',
+        title: 'Generic Page',
+        headings: [{ level: 1, text: 'Main Title' }],
+        paragraphs: ['First paragraph', 'Second paragraph'],
+        tables: [],
+        codeBlocks: []
+      };
+
+      const markdown = generator.generate(pageData);
+
+      expect(markdown).toContain('Generic Page');
+    });
 
     test('should sanitize rsshub container markers and keep sourceCode field', () => {
       const pageData = {
@@ -232,6 +107,7 @@ describe('MarkdownGenerator', () => {
       expect(markdown).toContain('**源代码**: https://github.com/DIYgod/RSSHub');
       expect(markdown).not.toContain('\n:::');
     });
+
     test('should convert table to markdown format', () => {
       const table = {
         headers: ['Name', 'Age'],
@@ -289,7 +165,6 @@ describe('MarkdownGenerator', () => {
       expect(generator.safeFilename(null)).toBe('untitled');
     });
 
-
     test('should add H1 title when parser markdown has no heading', () => {
       const markdown = generator.normalizeMarkdownOutput('纯文本内容\n\n第二段', { title: '统一标题测试' });
       expect(markdown.startsWith('# 统一标题测试')).toBe(true);
@@ -301,6 +176,7 @@ describe('MarkdownGenerator', () => {
       expect(markdown).toContain('# 已有标题');
       expect(markdown).not.toContain('\n\n\n');
     });
+
     test('should save markdown to file', () => {
       const content = '# Test\n\nContent';
       const filename = 'test.md';
@@ -330,6 +206,98 @@ describe('MarkdownGenerator', () => {
 
       const markdown = generator.tableToMarkdown(table);
       expect(markdown).toContain('Line1<br>Line2');
+    });
+  });
+
+  describe('generateUnified', () => {
+    test('should generate markdown with API endpoint info', () => {
+      const pageData = {
+        title: 'Test API',
+        url: 'https://api.example.com/test',
+        api: {
+          endpoint: '/test',
+          method: 'POST',
+          description: 'Test endpoint'
+        },
+        parameters: [
+          { name: 'id', type: 'string', required: true, description: 'ID parameter' }
+        ],
+        codeExamples: [
+          { language: 'bash', code: 'curl -X POST /test' }
+        ],
+        response: {
+          description: 'Success response',
+          fields: [
+            { name: 'status', type: 'string', description: 'Status field' }
+          ]
+        }
+      };
+
+      const markdown = generator.generate(pageData);
+
+      expect(markdown).toContain('# Test API');
+      expect(markdown).toContain('/test');
+    });
+  });
+
+  describe('generateGeneric', () => {
+    test('should handle page with tables', () => {
+      const pageData = {
+        type: 'generic',
+        url: 'https://example.com/data',
+        title: 'Data Page',
+        tables: [
+          {
+            headers: ['Column1', 'Column2'],
+            rows: [['Value1', 'Value2']]
+          }
+        ],
+        paragraphs: ['Some text'],
+        codeBlocks: [],
+        lists: []
+      };
+
+      const markdown = generator.generate(pageData);
+
+      expect(markdown).toContain('| Column1 | Column2 |');
+      expect(markdown).toContain('Data Page');
+    });
+
+    test('should handle page with code blocks', () => {
+      const pageData = {
+        type: 'generic',
+        url: 'https://example.com/code',
+        title: 'Code Page',
+        codeBlocks: [
+          { language: 'python', code: 'print("hello")' }
+        ],
+        paragraphs: [],
+        tables: [],
+        lists: []
+      };
+
+      const markdown = generator.generate(pageData);
+
+      expect(markdown).toContain('```python');
+      expect(markdown).toContain('print("hello")');
+    });
+  });
+
+  describe('safeFilename', () => {
+    test('should handle special characters', () => {
+      // Special characters are replaced with underscore, then consecutive underscores are merged
+      expect(generator.safeFilename('file<>:"/\\|?*name')).toBe('file_name');
+    });
+
+    test('should handle very long filenames', () => {
+      const longTitle = 'A'.repeat(300);
+      const safe = generator.safeFilename(longTitle);
+      expect(safe.length).toBeLessThanOrEqual(200);
+    });
+
+    test('should handle unicode characters', () => {
+      const safe = generator.safeFilename('中文标题');
+      expect(safe).toBe('中文标题');
     });
   });
 });

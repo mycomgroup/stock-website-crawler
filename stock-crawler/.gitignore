@@ -3,11 +3,11 @@ node_modules/
 package-lock.json
 
 # Output files
-output/
+output*/
 logs/
 
 # Browser user data (persistent login state)
-chrome_user_data/
+chrome_user_data*/
 
 # Environment variables
 .env

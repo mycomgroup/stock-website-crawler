@@ -23,7 +23,8 @@
     "headless": true,
     "timeout": 30000,
     "waitBetweenRequests": 500,
-    "maxRetries": 3
+    "maxRetries": 3,
+    "fetchMethod": "playwright"
   },
   "output": {
     "directory": "./output",

@@ -58,12 +58,20 @@ url规则就是https://tushare.pro/document/下面的
 写/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/config 
 和/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/src/parsers
 
-
-入口是这个https://api-dashboard.search.brave.com/documentation
+https://api-dashboard.search.brave.com/api-reference/web/search/get
+入口是这个https://api-dashboard.search.brave.com/documentation
 url规则就是https://api-dashboard.search.brave.com/documentation下面的
 例如：https://api-dashboard.search.brave.com/documentation/services/web-search
 写/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/config 
 和/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/src/parsers
+
+入口是这个https://api-dashboard.search.brave.com/api-reference/web/search/get
+url规则就是https://api-dashboard.search.brave.com/api-reference下面的
+例如：https://api-dashboard.search.brave.com/documentation/services/web-search
+写/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/config 
+和/Users/yuping/Downloads/git/stock-website-crawler/stock-crawler/src/parsers
+
+
 
 入口是这个https://docs.tavily.com/documentation/api-reference/introduction
 url规则就是https://docs.tavily.com/documentation/api-reference/

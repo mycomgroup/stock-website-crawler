@@ -21,14 +21,29 @@ const UNIFIED_SCHEMA = {
     baseUrl: ''       // 基础 URL
   },
 
-  // 参数
-  parameters: [],     // [{name, type, required, description}]
+  // 请求
+  requestHeaders: [],   // [{name, type, required, description}]
+  parameters: [],       // [{name, type, required, default, description}]
+  requestBody: {},      // {description, schema, example}
 
   // 响应
-  responseFields: [], // [{name, type, description}]
+  responseStatuses: [], // [{code, description}]
+  responseFields: [],   // [{name, type, description}]
 
   // 示例
-  codeExamples: [],   // [{language, code}]
+  requestExamples: [],  // [{language, code}]
+  responseExamples: [], // [{language, code}]
+  codeExamples: [],     // [{language, code}]
+
+  // 其他信息
+  authentication: '',   // 认证方式说明
+  rateLimit: '',        // 速率限制说明
+  errors: [],           // [{code, description, solution}]
+
+  // 附加
+  notes: [],            // [{type, content}]
+  relatedLinks: [],     // [{title, url}]
+  changelog: [],        // [{version, date, changes}]
 
   // 内容
   markdownContent: '',
@@ -45,11 +60,22 @@ const UNIFIED_SCHEMA = {
 const FIELD_MAPPINGS = {
   method: ['method', 'requestMethod', 'httpMethod'],
   endpoint: ['endpoint', 'apiPath'],
-  parameters: ['parameters', 'inputParams', 'requestParams'],
-  responseFields: ['responseFields', 'responseAttributes', 'outputParams', 'responses'],
-  codeExamples: ['codeExamples', 'examples'],
+  parameters: ['parameters', 'inputParams', 'requestParams', 'params'],
+  responseFields: ['responseFields', 'responseAttributes', 'outputParams', 'responses', 'returns', 'attributes'],
+  codeExamples: ['codeExamples', 'examples', 'signature'],
   rawContent: ['rawContent'],
-  markdownContent: ['markdownContent']
+  markdownContent: ['markdownContent'],
+  requestHeaders: ['requestHeaders', 'headers'],
+  requestBody: ['requestBody', 'body'],
+  responseStatuses: ['responseStatuses', 'statusCodes'],
+  requestExamples: ['requestExamples', 'requestExample'],
+  responseExamples: ['responseExamples', 'responseExample'],
+  authentication: ['authentication', 'auth', 'authMethod'],
+  rateLimit: ['rateLimit', 'rateLimits', 'rate'],
+  errors: ['errors', 'errorCodes'],
+  notes: ['notes', 'warnings', 'importantNotes'],
+  relatedLinks: ['relatedLinks', 'related', 'links', 'seeAlso'],
+  changelog: ['changelog', 'versionHistory', 'versions']
 };
 
 /**
@@ -136,6 +162,159 @@ function normalizeResponseFields(fields) {
 }
 
 /**
+ * 统一请求头格式
+ * @param {Array} headers - 原始请求头数组
+ * @returns {Array} 统一格式的请求头数组
+ */
+function normalizeRequestHeaders(headers) {
+  if (!Array.isArray(headers) || headers.length === 0) {
+    return [];
+  }
+
+  return headers.map(h => {
+    if (typeof h === 'string') {
+      return { name: h, type: '', required: false, description: '' };
+    }
+
+    return {
+      name: h.name || h.headerName || h.key || '',
+      type: h.type || h.dataType || 'string',
+      required: h.required === true || h.required === 'true' || h.required === '是',
+      description: h.description || h.desc || ''
+    };
+  }).filter(h => h.name);
+}
+
+/**
+ * 统一请求体格式
+ * @param {Object} body - 原始请求体
+ * @returns {Object} 统一格式的请求体
+ */
+function normalizeRequestBody(body) {
+  if (!body || typeof body !== 'object') {
+    return {};
+  }
+
+  return {
+    description: body.description || body.desc || '',
+    schema: body.schema || body.type || '',
+    example: body.example || body.sample || ''
+  };
+}
+
+/**
+ * 统一响应状态格式
+ * @param {Array} statuses - 原始状态数组
+ * @returns {Array} 统一格式的状态数组
+ */
+function normalizeResponseStatuses(statuses) {
+  if (!Array.isArray(statuses) || statuses.length === 0) {
+    return [];
+  }
+
+  return statuses.map(s => {
+    if (typeof s === 'string') {
+      return { code: s, description: '' };
+    }
+
+    return {
+      code: s.code || s.statusCode || s.status || '',
+      description: s.description || s.desc || s.message || ''
+    };
+  }).filter(s => s.code);
+}
+
+/**
+ * 统一错误格式
+ * @param {Array} errors - 原始错误数组
+ * @returns {Array} 统一格式的错误数组
+ */
+function normalizeErrors(errors) {
+  if (!Array.isArray(errors) || errors.length === 0) {
+    return [];
+  }
+
+  return errors.map(e => {
+    if (typeof e === 'string') {
+      return { code: '', description: e, solution: '' };
+    }
+
+    return {
+      code: e.code || e.errorCode || '',
+      description: e.description || e.desc || e.message || '',
+      solution: e.solution || e.resolution || ''
+    };
+  });
+}
+
+/**
+ * 统一注意事项格式
+ * @param {Array} notes - 原始注意事项数组
+ * @returns {Array} 统一格式的注意事项数组
+ */
+function normalizeNotes(notes) {
+  if (!Array.isArray(notes) || notes.length === 0) {
+    return [];
+  }
+
+  return notes.map(n => {
+    if (typeof n === 'string') {
+      return { type: 'info', content: n };
+    }
+
+    return {
+      type: n.type || n.level || 'info',
+      content: n.content || n.text || n.message || ''
+    };
+  }).filter(n => n.content);
+}
+
+/**
+ * 统一相关链接格式
+ * @param {Array} links - 原始链接数组
+ * @returns {Array} 统一格式的链接数组
+ */
+function normalizeRelatedLinks(links) {
+  if (!Array.isArray(links) || links.length === 0) {
+    return [];
+  }
+
+  return links.map(l => {
+    if (typeof l === 'string') {
+      return { title: l, url: l };
+    }
+
+    return {
+      title: l.title || l.name || l.text || '',
+      url: l.url || l.href || l.link || ''
+    };
+  }).filter(l => l.url);
+}
+
+/**
+ * 统一更新日志格式
+ * @param {Array} changelog - 原始更新日志数组
+ * @returns {Array} 统一格式的更新日志数组
+ */
+function normalizeChangelog(changelog) {
+  if (!Array.isArray(changelog) || changelog.length === 0) {
+    return [];
+  }
+
+  return changelog.map(c => {
+    if (typeof c === 'string') {
+      return { version: '', date: '', changes: c };
+    }
+
+    return {
+      version: c.version || c.ver || '',
+      date: c.date || c.updatedAt || '',
+      changes: c.changes || c.description || c.desc || ''
+    };
+  });
+}
+
+/**
  * 统一代码示例格式
  * @param {Array} examples - 原始示例数组
  * @param {Object} rawData - 原始数据（用于提取 curlExample/jsonExample）
@@ -213,11 +392,23 @@ function extractExtraFields(data) {
     'type', 'url', 'title', 'description', 'suggestedFilename',
     'method', 'requestMethod', 'httpMethod',
     'endpoint', 'apiPath', 'baseUrl',
-    'parameters', 'inputParams', 'requestParams',
-    'responseFields', 'responseAttributes', 'outputParams', 'responses',
-    'codeExamples', 'examples', 'curlExample', 'jsonExample',
+    'parameters', 'inputParams', 'requestParams', 'params',
+    'responseFields', 'responseAttributes', 'outputParams', 'responses', 'returns', 'attributes',
+    'codeExamples', 'examples', 'curlExample', 'jsonExample', 'signature',
+    'requestHeaders', 'headers',
+    'requestBody', 'body',
+    'responseStatuses', 'statusCodes',
+    'requestExamples', 'requestExample',
+    'responseExamples', 'responseExample',
+    'authentication', 'auth', 'authMethod',
+    'rateLimit', 'rateLimits', 'rate',
+    'errors', 'errorCodes',
+    'notes', 'warnings', 'importantNotes',
+    'relatedLinks', 'related', 'links', 'seeAlso',
+    'changelog', 'versionHistory', 'versions',
     'markdownContent', 'rawContent', 'mainContent',
-    'sections', 'tables', 'headings', 'paragraphs', 'lists'
+    'sections', 'tables', 'headings', 'paragraphs', 'lists',
+    'apiName', 'pageType', 'isClassPage', 'apiMembers', 'skipDefaultMarkdownOutput'
   ]);
 
   const extra = {};
@@ -251,6 +442,19 @@ export function formatApiDoc(rawData) {
   const rawContent = findValue(rawData, FIELD_MAPPINGS.rawContent) || '';
   const markdownContent = findValue(rawData, FIELD_MAPPINGS.markdownContent) || '';
 
+  // 提取新增字段
+  const requestHeaders = findValue(rawData, FIELD_MAPPINGS.requestHeaders) || [];
+  const requestBody = findValue(rawData, FIELD_MAPPINGS.requestBody) || {};
+  const responseStatuses = findValue(rawData, FIELD_MAPPINGS.responseStatuses) || [];
+  const requestExamples = findValue(rawData, FIELD_MAPPINGS.requestExamples) || [];
+  const responseExamples = findValue(rawData, FIELD_MAPPINGS.responseExamples) || [];
+  const authentication = findValue(rawData, FIELD_MAPPINGS.authentication) || '';
+  const rateLimit = findValue(rawData, FIELD_MAPPINGS.rateLimit) || '';
+  const errors = findValue(rawData, FIELD_MAPPINGS.errors) || [];
+  const notes = findValue(rawData, FIELD_MAPPINGS.notes) || [];
+  const relatedLinks = findValue(rawData, FIELD_MAPPINGS.relatedLinks) || [];
+  const changelog = findValue(rawData, FIELD_MAPPINGS.changelog) || [];
+
   // 构建统一格式对象
   const result = {
     // 必需字段
@@ -267,14 +471,29 @@ export function formatApiDoc(rawData) {
       baseUrl: rawData.baseUrl || ''
     },
 
-    // 参数（统一格式）
+    // 请求
+    requestHeaders: normalizeRequestHeaders(requestHeaders),
     parameters: normalizeParameters(parameters),
+    requestBody: normalizeRequestBody(requestBody),
 
-    // 响应字段（统一格式）
+    // 响应
+    responseStatuses: normalizeResponseStatuses(responseStatuses),
     responseFields: normalizeResponseFields(responseFields),
 
-    // 代码示例（统一格式）
+    // 示例
+    requestExamples: normalizeCodeExamples(requestExamples, {}),
+    responseExamples: normalizeCodeExamples(responseExamples, {}),
     codeExamples: normalizeCodeExamples(codeExamples, rawData),
+
+    // 其他信息
+    authentication: authentication,
+    rateLimit: rateLimit,
+    errors: normalizeErrors(errors),
+
+    // 附加
+    notes: normalizeNotes(notes),
+    relatedLinks: normalizeRelatedLinks(relatedLinks),
+    changelog: normalizeChangelog(changelog),
 
     // 内容
     markdownContent: markdownContent || generateMarkdownFromRaw(rawContent, rawData),
@@ -286,10 +505,10 @@ export function formatApiDoc(rawData) {
 
   // 处理 responses 字段（如果有）
   if (rawData.responses && Array.isArray(rawData.responses)) {
-    result.responses = rawData.responses.map(r => ({
-      statusCode: r.code || r.statusCode || r.status || '',
+    result.responseStatuses = normalizeResponseStatuses(rawData.responses.map(r => ({
+      code: r.code || r.statusCode || r.status || '',
       description: r.description || ''
-    }));
+    })));
   }
 
   return result;

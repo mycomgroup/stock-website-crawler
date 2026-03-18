@@ -177,9 +177,13 @@ class ModelscopeMcpParser extends BaseParser {
               try {
                 btn.click();
                 count++;
-              } catch (e) {}
+              } catch {
+                // 元素点击可能失败（不可见/禁用），忽略继续
+              }
             });
-          } catch (e) {}
+          } catch {
+            // 选择器查询失败，忽略继续
+          }
         });
 
         return count;
