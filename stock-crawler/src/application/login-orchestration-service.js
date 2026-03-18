@@ -14,7 +14,7 @@ class LoginOrchestrationService {
       const targetUrl = this.config.login.loginUrl || this.config.seedUrls[0];
       this.logger.info(`Strategy 1: Visiting target URL: ${targetUrl}`);
 
-      await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout);
+      await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout, { forcePlaywright: true });
       await page.waitForTimeout(3000);
 
       const currentUrl = page.url();
@@ -62,7 +62,7 @@ class LoginOrchestrationService {
         page = await this.browserManager.newPage();
       }
 
-      await this.browserManager.goto(page, mainUrl, this.config.crawler.timeout);
+      await this.browserManager.goto(page, mainUrl, this.config.crawler.timeout, { forcePlaywright: true });
       await page.waitForTimeout(2000);
 
       const needsLoginNow = await this.loginHandler.needsLogin(page);
@@ -142,7 +142,7 @@ class LoginOrchestrationService {
             page = await this.browserManager.newPage();
           }
 
-          await this.browserManager.goto(page, loginUrl, this.config.crawler.timeout);
+          await this.browserManager.goto(page, loginUrl, this.config.crawler.timeout, { forcePlaywright: true });
           await page.waitForTimeout(2000);
 
           const formNeedsLogin = await this.loginHandler.needsLogin(page);

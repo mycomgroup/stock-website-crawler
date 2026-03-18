@@ -5,12 +5,13 @@
   ],
   "urlRules": {
     "include": [
-      "^https://bailian\\.console\\.aliyun\\.com/cn-beijing/\\?tab=mcp(?:#.*)?$"
+      "^https://bailian\\.console\\.aliyun\\.com/cn-beijing/\\?tab=(mcp|app)#.*$"
     ],
     "exclude": [
       ".*logout.*",
       ".*sign.*",
-      ".*passport.*"
+      ".*passport.*",
+      ".*/login.*"
     ]
   },
   "login": {
@@ -34,7 +35,7 @@
   "parser": {
     "urlPatternOverrides": [
       {
-        "pattern": "^https://bailian\\.console\\.aliyun\\.com/cn-beijing/\\?tab=mcp(?:#.*)?$",
+        "pattern": "^https://bailian\\.console\\.aliyun\\.com/cn-beijing/\\?tab=(mcp|app)(?:#.*)?$",
         "parser": "AliyunBailianMcpParser"
       }
     ]

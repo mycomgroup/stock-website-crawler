@@ -1,6 +1,72 @@
 import fs from 'fs';
 import path from 'path';
 import { formatApiDoc } from './formatters/api-doc-formatter.js';
+import { formatMcpDoc } from './formatters/mcp-doc-formatter.js';
+
+/**
+ * API 文档类型列表 - 这些类型应该使用统一格式
+ */
+const API_DOC_TYPES = new Set([
+  'alphavantage-api',
+  'eulerpool-api',
+  'finnhub-api',
+  'tiingo-api',
+  'polyrouter-api',
+  'polyrouter-doc',
+  'financial-modeling-prep-api',
+  'financial-datasets-api',
+  'massive-api',
+  'serpapi-ai-overview',
+  'serpapi-doc',
+  'brave-search-api',
+  'api-doc',
+  'qveris-api',
+  'tavily-api',
+  'tickdb-api',
+  'infoway-api',
+  'itick-doc',
+  'itick-api',
+  'eodhd-api',
+  'alltick-api',
+  'apitracker-category',
+  'apitracker-api-detail',
+  'google-discovery-doc',
+  '60s-api-doc',
+  // 新增的 API 类型
+  'yfinance-api',
+  'apify-openapi',
+  'apify-api-doc',
+  'investoday-api-doc',
+  'tsanghi-api'
+]);
+
+/**
+ * MCP 文档类型列表 - 这些类型应该使用统一 MCP 格式
+ */
+const MCP_DOC_TYPES = new Set([
+  'modelscope-mcp-server',
+  'aliyun-bailian-mcp-list',
+  'aliyun-bailian-mcp-detail',
+  'lanyun-mcp',
+  'tokenflux-mcp'
+]);
+
+/**
+ * 非 API 文档类型 - 这些类型有特定的生成器
+ */
+const NON_API_TYPES = new Set([
+  'portal',
+  'list-page',
+  'article',
+  'search-result',
+  'ecommerce-product',
+  'ecommerce-list',
+  'rsshub-route',
+  'eodhd-blog',
+  'tokenflux-doc',
+  'tushare-pro-api',
+  'generic'
+]);
 
 /**
  * Markdown Generator - 负责将解析的页面数据转换为Markdown格式
@@ -14,64 +80,31 @@ class MarkdownGenerator {
   generate(pageData) {
     let markdown = '';
 
-    // 根据页面类型选择生成方法（优先检查特定类型）
-    if (pageData.type === 'alphavantage-api') {
-      markdown = this.generateAlphavantageApi(pageData);
-    } else if (pageData.type === 'eulerpool-api') {
-      markdown = this.generateEulerpoolApi(pageData);
-    } else if (pageData.type === 'finnhub-api') {
-      markdown = this.generateFinnhubApi(pageData);
-    } else if (pageData.type === 'tiingo-api') {
-      markdown = this.generateTiingoApi(pageData);
-    } else if (pageData.type === 'polyrouter-api' || pageData.type === 'polyrouter-doc') {
-      markdown = this.generatePolyrouterApi(pageData);
-    } else if (pageData.type === 'financial-modeling-prep-api') {
-      markdown = this.generateFinancialModelingPrepApi(pageData);
-    } else if (pageData.type === 'financial-datasets-api') {
-      markdown = this.generateFinancialDatasetsApi(pageData);
-    } else if (pageData.type === 'massive-api') {
-      markdown = this.generateMassiveApi(pageData);
-    } else if (pageData.type === 'serpapi-ai-overview' || pageData.type === 'serpapi-doc') {
-      markdown = this.generateSerpApi(pageData);
-    } else if (pageData.type === 'brave-search-api') {
-      markdown = this.generateBraveSearchApi(pageData);
-    } else if (pageData.type === 'api-doc') {
-      markdown = this.generateApiDoc(pageData);
-    } else if (pageData.type === 'generic') {
-      markdown = this.generateGeneric(pageData);
-    } else if (pageData.type === 'qveris-api') {
-      markdown = this.generateQverisApi(pageData);
-    } else if (pageData.type === 'rsshub-route') {
-      markdown = this.generateRsshubRoute(pageData);
-    } else if (pageData.type === 'tavily-api') {
-      markdown = this.generateTavilyApi(pageData);
-    } else if (pageData.type === 'tushare-pro-api') {
-      markdown = this.generateTushareProApi(pageData);
-    } else if (pageData.type === 'tickdb-api') {
-      markdown = this.generateTickdbApi(pageData);
-    } else if (pageData.type === 'infoway-api') {
-      markdown = this.generateInfowayApi(pageData);
-    } else if (pageData.type === 'modelscope-mcp-server') {
-      markdown = this.generateModelscopeMcp(pageData);
-    } else if (pageData.type === 'itick-doc') {
-      markdown = this.generateItickDoc(pageData);
-    } else if (pageData.type === 'eodhd-blog') {
-      markdown = this.generateEodhdBlog(pageData);
-    } else if (pageData.type === 'eodhd-api') {
-      markdown = this.generateEodhdApi(pageData);
-    } else if (pageData.type === 'alltick-api') {
-      markdown = this.generateAlltickApi(pageData);
-    } else if (pageData.type === 'apitracker-category' || pageData.type === 'apitracker-api-detail') {
-      markdown = this.generateApiTracker(pageData);
-    } else if (pageData.type === 'google-discovery-doc') {
-      markdown = this.generateGoogleDiscoveryDoc(pageData);
-    } else if (pageData.type === '60s-api-doc') {
-      markdown = this.generate60sApiDoc(pageData);
+    // MCP 文档类型使用统一 MCP 格式
+    if (MCP_DOC_TYPES.has(pageData.type)) {
+      const unifiedMcpData = formatMcpDoc(pageData);
+      markdown = this.generateUnifiedMcp(unifiedMcpData);
+    }
+
+    // 非 API 类型使用特定生成器
+    if (!markdown && NON_API_TYPES.has(pageData.type)) {
+      markdown = this.generateNonApi(pageData);
+    }
+
+    // API 文档类型使用统一格式
+    if (!markdown && API_DOC_TYPES.has(pageData.type)) {
+      const unifiedData = formatApiDoc(pageData);
+      markdown = this.generateUnified(unifiedData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
     if (!markdown && pageData.api && typeof pageData.api === 'object') {
       markdown = this.generateUnified(pageData);
+    }
+
+    // 如果已经是统一 MCP 格式（有 mcp 字段），直接使用 MCP 生成方法
+    if (!markdown && pageData.mcp && typeof pageData.mcp === 'object') {
+      markdown = this.generateUnifiedMcp(pageData);
     }
 
     // 尝试转换为统一格式
@@ -82,12 +115,46 @@ class MarkdownGenerator {
       }
     }
 
-    // 兼容旧格式（没有type字段）
+    // 兼容旧格式（没有type字段）- 作为最后的后备
     if (!markdown) {
-      markdown = this.generateApiDoc(pageData);
+      markdown = this.generateGeneric(pageData);
     }
 
     return this.normalizeMarkdownOutput(markdown, pageData);
+  }
+
+  /**
+   * 处理非 API 类型的文档
+   * @param {PageData} pageData - 页面数据
+   * @returns {string} Markdown文本
+   */
+  generateNonApi(pageData) {
+    switch (pageData.type) {
+      case 'portal':
+        return this.generatePortal(pageData);
+      case 'list-page':
+        return this.generateListPage(pageData);
+      case 'article':
+        return this.generateArticle(pageData);
+      case 'search-result':
+        return this.generateSearchResult(pageData);
+      case 'ecommerce-product':
+        return this.generateEcommerceProduct(pageData);
+      case 'ecommerce-list':
+        return this.generateEcommerceList(pageData);
+      case 'rsshub-route':
+        return this.generateRsshubRoute(pageData);
+      case 'eodhd-blog':
+        return this.generateEodhdBlog(pageData);
+      case 'tokenflux-doc':
+        return this.generateTokenfluxDoc(pageData);
+      case 'tushare-pro-api':
+        return this.generateTushareProApi(pageData);
+      case 'generic':
+        return this.generateGeneric(pageData);
+      default:
+        return '';
+    }
   }
 
   generate60sApiDoc(pageData) {
@@ -139,6 +206,252 @@ class MarkdownGenerator {
     return sections.join('\n');
   }
 
+  generateTokenfluxDoc(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    if (pageData.description) {
+      sections.push('## 描述\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    // 处理 API 端点数据
+    const apiEndpoints = pageData.metadata?.apiEndpoints || [];
+    if (apiEndpoints.length > 0) {
+      sections.push('## API 端点\n');
+
+      apiEndpoints.forEach((endpoint, index) => {
+        sections.push(`### ${endpoint.name || `端点 ${index + 1}`}\n`);
+
+        if (endpoint.description) {
+          sections.push(`${endpoint.description}\n`);
+        }
+
+        if (endpoint.method || endpoint.endpoint) {
+          sections.push('| 属性 | 值 |');
+          sections.push('|------|-----|');
+          if (endpoint.method) {
+            sections.push(`| Method | \`${endpoint.method}\` |`);
+          }
+          if (endpoint.endpoint) {
+            sections.push(`| Endpoint | \`${endpoint.endpoint}\` |`);
+          }
+          sections.push('');
+        }
+
+        // 参数表格
+        if (endpoint.parameters && endpoint.parameters.length > 0) {
+          sections.push('#### 请求参数\n');
+          sections.push('| 参数名 | 类型 | 必需 | 默认值 | 描述 |');
+          sections.push('|--------|------|------|--------|------|');
+
+          endpoint.parameters.forEach(param => {
+            const name = param.name || '';
+            const type = param.type || '-';
+            const required = param.required ? '是' : '否';
+            const defaultVal = param.default !== undefined ? String(param.default) : '-';
+            let desc = (param.description || '-').replace(/\n/g, ' ');
+            // 截断过长的描述
+            if (desc.length > 100) {
+              desc = desc.substring(0, 100) + '...';
+            }
+            sections.push(`| \`${name}\` | ${type} | ${required} | ${defaultVal} | ${desc} |`);
+          });
+          sections.push('');
+
+          // 如果有枚举值，添加选项说明
+          const enumParams = endpoint.parameters.filter(p => p.enum && p.enum.length > 0);
+          if (enumParams.length > 0) {
+            sections.push('#### 参数选项\n');
+            enumParams.forEach(param => {
+              sections.push(`**${param.name}** 可选值:`);
+              sections.push(param.enum.slice(0, 10).map(e => `- \`${e}\``).join('\n'));
+              if (param.enum.length > 10) {
+                sections.push(`- ... 等 ${param.enum.length} 个选项`);
+              }
+              sections.push('');
+            });
+          }
+        }
+      });
+    }
+
+    // 处理内容数组（保留兼容性）
+    if (pageData.content && pageData.content.length > 0) {
+      // 如果有 API 端点数据，跳过重复的内容
+      const hasApiEndpoints = apiEndpoints.length > 0;
+
+      sections.push('## 文档内容\n');
+      pageData.content.forEach((item) => {
+        if (item.type === 'heading') {
+          // 如果已有 API 端点数据，跳过工具名称标题
+          if (hasApiEndpoints && item.content?.startsWith('EXA_AI__')) {
+            return;
+          }
+          sections.push(`### ${item.content}\n`);
+        } else if (item.type === 'text') {
+          sections.push(item.content || '');
+          sections.push('');
+        } else if (item.type === 'list' && item.items?.length > 0) {
+          item.items.forEach((listItem) => {
+            sections.push(`- ${listItem}`);
+          });
+          sections.push('');
+        } else if (item.type === 'code') {
+          const lang = item.language || 'text';
+          sections.push(`\`\`\`${lang}`);
+          sections.push(item.code || '');
+          sections.push('```\n');
+        }
+      });
+    }
+
+    // 认证信息
+    if (pageData.metadata?.securitySchemes?.api_key) {
+      const auth = pageData.metadata.securitySchemes.api_key;
+      sections.push('## 认证方式\n');
+      sections.push(`API Key 认证：通过 ${auth.location} 传递 \`${auth.name}\``);
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  generateAliyunBailianMcp(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 列表页处理
+    if (pageData.type === 'aliyun-bailian-mcp-list') {
+      if (pageData.totalTools) {
+        sections.push(`## MCP 工具总数\n`);
+        sections.push(`共发现 ${pageData.totalTools} 个 MCP 工具\n`);
+      }
+
+      if (pageData.categories && pageData.categories.length > 0) {
+        sections.push('## 分类\n');
+        sections.push(pageData.categories.slice(0, 20).join(' | '));
+        sections.push('\n');
+      }
+
+      if (pageData.tools && pageData.tools.length > 0) {
+        sections.push('## MCP 工具列表\n');
+        pageData.tools.forEach((tool, index) => {
+          sections.push(`### ${index + 1}. ${tool.name || '未命名工具'}\n`);
+          if (tool.provider) {
+            sections.push(`**提供者**: ${tool.provider}\n`);
+          }
+          if (tool.category) {
+            sections.push(`**分类**: ${tool.category}\n`);
+          }
+          if (tool.description) {
+            sections.push(`**描述**: ${tool.description}\n`);
+          }
+          if (tool.stats && tool.stats.length > 0) {
+            sections.push(`**统计**: ${tool.stats.join(', ')}\n`);
+          }
+          if (tool.toolId) {
+            sections.push(`**工具ID**: ${tool.toolId}\n`);
+          }
+          if (tool.detailUrl) {
+            sections.push(`**详情页**: ${tool.detailUrl}\n`);
+          }
+          sections.push('');
+        });
+      }
+
+      // 添加发现的新链接摘要
+      if (pageData.detailLinks && pageData.detailLinks.length > 0) {
+        sections.push('## 发现的详情页链接\n');
+        sections.push(`共 ${pageData.detailLinks.length} 个详情页链接可供爬取\n`);
+        pageData.detailLinks.slice(0, 10).forEach(link => {
+          sections.push(`- ${link}`);
+        });
+        if (pageData.detailLinks.length > 10) {
+          sections.push(`- ... 还有 ${pageData.detailLinks.length - 10} 个链接`);
+        }
+        sections.push('');
+      }
+    }
+
+    // 详情页处理
+    if (pageData.type === 'aliyun-bailian-mcp-detail') {
+      if (pageData.toolId) {
+        sections.push(`## 工具ID\n`);
+        sections.push(pageData.toolId);
+        sections.push('');
+      }
+
+      if (pageData.provider) {
+        sections.push(`## 提供者\n`);
+        sections.push(pageData.provider);
+        sections.push('');
+      }
+
+      if (pageData.stats && Object.keys(pageData.stats).length > 0) {
+        sections.push('## 统计数据\n');
+        Object.entries(pageData.stats).forEach(([key, value]) => {
+          sections.push(`- **${key}**: ${value}`);
+        });
+        sections.push('');
+      }
+
+      if (pageData.serviceIntro && pageData.serviceIntro.length > 0) {
+        sections.push('## 服务介绍\n');
+        pageData.serviceIntro.forEach(intro => {
+          sections.push(intro);
+          sections.push('\n');
+        });
+      }
+
+      if (pageData.toolList && pageData.toolList.length > 0) {
+        sections.push('## 工具列表\n');
+        pageData.toolList.forEach((tool, index) => {
+          sections.push(`### ${index + 1}. ${tool.name}`);
+          if (tool.description) {
+            sections.push(`${tool.description}`);
+          }
+          sections.push('');
+        });
+      }
+
+      if (pageData.tabs && pageData.tabs.length > 0) {
+        sections.push('## 标签页\n');
+        sections.push(pageData.tabs.join(' | '));
+        sections.push('\n');
+      }
+
+      if (pageData.bodyText) {
+        sections.push('## 页面内容\n');
+        // 清理多余空行
+        const cleanedText = pageData.bodyText.replace(/\n{3,}/g, '\n\n');
+        sections.push(cleanedText.slice(0, 5000));
+        sections.push('');
+      }
+    }
+
+    return sections.join('\n');
+  }
+
   generateInfowayApi(pageData) {
     const sections = [];
 
@@ -184,7 +497,7 @@ class MarkdownGenerator {
     }
 
     // API 端点信息
-    if (data.api) {
+    if (data.api && (data.api.method || data.api.endpoint || data.api.baseUrl)) {
       sections.push('## API 端点\n');
       if (data.api.method) {
         sections.push(`**Method**: \`${data.api.method}\``);
@@ -198,9 +511,24 @@ class MarkdownGenerator {
       sections.push('');
     }
 
-    // 参数表格
+    // 请求头
+    if (data.requestHeaders && data.requestHeaders.length > 0) {
+      sections.push('## 请求头\n');
+      sections.push('| 名称 | 类型 | 必需 | 描述 |');
+      sections.push('|------|------|------|------|');
+      data.requestHeaders.forEach(h => {
+        const name = this.escapeMarkdown(h.name || '');
+        const type = this.escapeMarkdown(h.type || '-');
+        const required = h.required ? '是' : '否';
+        const desc = this.escapeMarkdown(h.description || '-');
+        sections.push(`| \`${name}\` | ${type} | ${required} | ${desc} |`);
+      });
+      sections.push('');
+    }
+
+    // 请求参数
     if (data.parameters && data.parameters.length > 0) {
-      sections.push('## 参数\n');
+      sections.push('## 请求参数\n');
       sections.push('| 参数名 | 类型 | 必需 | 默认值 | 描述 |');
       sections.push('|--------|------|------|--------|------|');
       data.parameters.forEach(p => {
@@ -214,7 +542,45 @@ class MarkdownGenerator {
       sections.push('');
     }
 
-    // 响应字段表格
+    // 请求体
+    if (data.requestBody && (data.requestBody.description || data.requestBody.schema || data.requestBody.example)) {
+      sections.push('## 请求体\n');
+      if (data.requestBody.description) {
+        sections.push(data.requestBody.description);
+        sections.push('');
+      }
+      if (data.requestBody.schema) {
+        sections.push('**Schema**:');
+        sections.push('```json');
+        sections.push(typeof data.requestBody.schema === 'string'
+          ? data.requestBody.schema
+          : JSON.stringify(data.requestBody.schema, null, 2));
+        sections.push('```\n');
+      }
+      if (data.requestBody.example) {
+        sections.push('**Example**:');
+        sections.push('```json');
+        sections.push(typeof data.requestBody.example === 'string'
+          ? data.requestBody.example
+          : JSON.stringify(data.requestBody.example, null, 2));
+        sections.push('```\n');
+      }
+    }
+
+    // 响应状态
+    if (data.responseStatuses && data.responseStatuses.length > 0) {
+      sections.push('## 响应状态\n');
+      sections.push('| 状态码 | 描述 |');
+      sections.push('|--------|------|');
+      data.responseStatuses.forEach(s => {
+        const code = this.escapeMarkdown(s.code || '');
+        const desc = this.escapeMarkdown(s.description || '-');
+        sections.push(`| ${code} | ${desc} |`);
+      });
+      sections.push('');
+    }
+
+    // 响应字段
     if (data.responseFields && data.responseFields.length > 0) {
       sections.push('## 响应字段\n');
       sections.push('| 字段名 | 类型 | 描述 |');
@@ -226,6 +592,36 @@ class MarkdownGenerator {
         sections.push(`| \`${name}\` | ${type} | ${desc} |`);
       });
       sections.push('');
+    }
+
+    // 请求示例
+    if (data.requestExamples && data.requestExamples.length > 0) {
+      sections.push('## 请求示例\n');
+      data.requestExamples.forEach((example, index) => {
+        if (data.requestExamples.length > 1) {
+          const lang = example.language || 'text';
+          sections.push(`### 示例 ${index + 1} (${lang})\n`);
+        }
+        const lang = example.language || 'text';
+        sections.push(`\`\`\`${lang}`);
+        sections.push(example.code || '');
+        sections.push('```\n');
+      });
+    }
+
+    // 响应示例
+    if (data.responseExamples && data.responseExamples.length > 0) {
+      sections.push('## 响应示例\n');
+      data.responseExamples.forEach((example, index) => {
+        if (data.responseExamples.length > 1) {
+          const lang = example.language || 'text';
+          sections.push(`### 示例 ${index + 1} (${lang})\n`);
+        }
+        const lang = example.language || 'json';
+        sections.push(`\`\`\`${lang}`);
+        sections.push(example.code || '');
+        sections.push('```\n');
+      });
     }
 
     // 代码示例
@@ -243,7 +639,67 @@ class MarkdownGenerator {
       });
     }
 
-    // 页面正文（优先使用解析器提供的结构化 markdown）
+    // 认证方式
+    if (data.authentication) {
+      sections.push('## 认证方式\n');
+      sections.push(data.authentication);
+      sections.push('');
+    }
+
+    // 速率限制
+    if (data.rateLimit) {
+      sections.push('## 速率限制\n');
+      sections.push(data.rateLimit);
+      sections.push('');
+    }
+
+    // 错误处理
+    if (data.errors && data.errors.length > 0) {
+      sections.push('## 错误处理\n');
+      sections.push('| 错误码 | 描述 | 处理建议 |');
+      sections.push('|--------|------|----------|');
+      data.errors.forEach(e => {
+        const code = this.escapeMarkdown(e.code || '-');
+        const desc = this.escapeMarkdown(e.description || '-');
+        const solution = this.escapeMarkdown(e.solution || '-');
+        sections.push(`| ${code} | ${desc} | ${solution} |`);
+      });
+      sections.push('');
+    }
+
+    // 注意事项
+    if (data.notes && data.notes.length > 0) {
+      sections.push('## 注意事项\n');
+      data.notes.forEach(n => {
+        const prefix = n.type === 'warning' ? '⚠️ ' : n.type === 'important' ? '❗ ' : '- ';
+        sections.push(`${prefix}${n.content}`);
+      });
+      sections.push('');
+    }
+
+    // 相关链接
+    if (data.relatedLinks && data.relatedLinks.length > 0) {
+      sections.push('## 相关链接\n');
+      data.relatedLinks.forEach(l => {
+        const title = l.title || l.url;
+        sections.push(`- [${title}](${l.url})`);
+      });
+      sections.push('');
+    }
+
+    // 更新日志
+    if (data.changelog && data.changelog.length > 0) {
+      sections.push('## 更新日志\n');
+      data.changelog.forEach(c => {
+        const version = c.version ? `${c.version}` : '';
+        const date = c.date ? ` - ${c.date}` : '';
+        const changes = c.changes || '';
+        sections.push(`${version}${date}: ${changes}`);
+      });
+      sections.push('');
+    }
+
+    // 文档正文（优先使用解析器提供的结构化 markdown）
     if (data.markdownContent && data.type !== 'itick-api') {
       const cleanedMarkdownContent = data.markdownContent
         .replace(/^#\s*.+\n/, '')
@@ -255,7 +711,7 @@ class MarkdownGenerator {
       }
     }
 
-    // 原始内容（作为后备）
+    // 详细内容（原始内容作为后备）
     if (data.rawContent && !data.markdownContent && sections.join('\n').length < data.rawContent.length * 0.5) {
       sections.push('## 详细内容\n');
       let cleaned = data.rawContent
@@ -267,6 +723,204 @@ class MarkdownGenerator {
         cleaned = `${cleaned.substring(0, maxRawContentLength)}\n\n... (内容已截断)`;
       }
 
+      sections.push(cleaned);
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成统一格式的 MCP 文档 Markdown
+   * @param {Object} data - 统一格式的 MCP 文档数据
+   * @returns {string} Markdown文本
+   */
+  generateUnifiedMcp(data) {
+    const sections = [];
+
+    // 标题
+    if (data.title) {
+      sections.push(`# ${data.title}\n`);
+    }
+
+    // 源 URL
+    if (data.url) {
+      sections.push('## 源URL\n');
+      sections.push(data.url);
+      sections.push('');
+    }
+
+    // MCP 核心信息
+    if (data.mcp && (data.mcp.serverId || data.mcp.provider || data.mcp.category)) {
+      sections.push('## MCP 信息\n');
+      if (data.mcp.serverId) {
+        sections.push(`- **服务器ID**: ${data.mcp.serverId}`);
+      }
+      if (data.mcp.provider) {
+        sections.push(`- **提供者**: ${data.mcp.provider}`);
+      }
+      if (data.mcp.category) {
+        sections.push(`- **分类**: ${data.mcp.category}`);
+      }
+      if (data.mcp.version) {
+        sections.push(`- **版本**: ${data.mcp.version}`);
+      }
+      sections.push('');
+    }
+
+    // 兼容旧格式：工具ID 在顶层
+    if (!data.mcp?.serverId && data.serverId) {
+      sections.push('## 工具ID\n');
+      sections.push(data.serverId);
+      sections.push('');
+    }
+
+    // 兼容旧格式：提供者在顶层
+    if (!data.mcp?.provider && data.provider) {
+      sections.push('## 提供者\n');
+      sections.push(data.provider);
+      sections.push('');
+    }
+
+    // 统计数据
+    if (data.stats && Object.keys(data.stats).some(k => data.stats[k])) {
+      sections.push('## 统计数据\n');
+      if (data.stats.users) sections.push(`- **users**: ${data.stats.users}`);
+      if (data.stats.calls) sections.push(`- **calls**: ${data.stats.calls}`);
+      if (data.stats.avgTime) sections.push(`- **avgTime**: ${data.stats.avgTime}`);
+      if (data.stats.toolCount) sections.push(`- **toolCount**: ${data.stats.toolCount}`);
+      sections.push('');
+    }
+
+    // 描述/简介
+    if (data.description) {
+      sections.push('## 简介\n');
+      sections.push(data.description);
+      sections.push('');
+    }
+
+    // 标签
+    if (data.tags && data.tags.length > 0) {
+      sections.push('## 标签\n');
+      sections.push(data.tags.map(tag => `\`${tag}\``).join(' '));
+      sections.push('');
+    }
+
+    // 服务介绍
+    if (data.serviceIntro && data.serviceIntro.length > 0) {
+      sections.push('## 服务介绍\n');
+      data.serviceIntro.forEach(intro => {
+        sections.push(intro);
+        sections.push('\n');
+      });
+    }
+
+    // 工具列表
+    if (data.tools && data.tools.length > 0) {
+      sections.push('## 可用工具\n');
+      data.tools.forEach((tool, index) => {
+        const toolTitle = tool.displayName ? `${tool.displayName} (\`${tool.name}\`)` : `\`${tool.name}\``;
+        sections.push(`### ${index + 1}. ${toolTitle}`);
+        if (tool.description) {
+          sections.push('');
+          sections.push(tool.description);
+        }
+
+        // 输入参数
+        if (tool.inputs && tool.inputs.length > 0) {
+          sections.push('');
+          sections.push('**输入参数:**');
+          sections.push('');
+          sections.push('| 参数名 | 类型 | 必需 | 描述 |');
+          sections.push('|--------|------|------|------|');
+          tool.inputs.forEach(param => {
+            sections.push(`| \`${param.name}\` | ${param.type || 'string'} | ${param.required ? '是' : '否'} | ${param.description || ''} |`);
+          });
+        }
+
+        // 输出
+        if (tool.outputs && tool.outputs.length > 0) {
+          sections.push('');
+          sections.push('**输出:**');
+          sections.push(tool.outputs.map(o => typeof o === 'string' ? `\`${o}\`` : `\`${o.name || ''}\``).join(', '));
+        }
+
+        sections.push('');
+      });
+    }
+
+    // 安装说明
+    if (data.installation) {
+      sections.push('## 安装\n');
+      sections.push(data.installation);
+      sections.push('');
+    }
+
+    // 配置说明
+    if (data.configuration) {
+      sections.push('## 配置\n');
+      sections.push(data.configuration);
+      sections.push('');
+    }
+
+    // 代码示例
+    if (data.codeExamples && data.codeExamples.length > 0) {
+      sections.push('## 代码示例\n');
+      data.codeExamples.forEach((example, index) => {
+        sections.push(`### 示例 ${index + 1}`);
+        sections.push('');
+        sections.push(`\`\`\`${example.language || 'text'}`);
+        sections.push(example.code || '');
+        sections.push('```');
+        sections.push('');
+      });
+    }
+
+    // 服务器详细信息
+    if (data.serverInfo && Object.keys(data.serverInfo).length > 0) {
+      sections.push('## 服务器信息\n');
+      Object.entries(data.serverInfo).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          sections.push(`- **${key}**: ${value}`);
+        }
+      });
+      sections.push('');
+    }
+
+    // 注意事项
+    if (data.notes && data.notes.length > 0) {
+      sections.push('## 注意事项\n');
+      data.notes.forEach(note => {
+        if (typeof note === 'string') {
+          sections.push(`- ${note}`);
+        } else if (note.content) {
+          sections.push(`- **${note.type || '注意'}**: ${note.content}`);
+        }
+      });
+      sections.push('');
+    }
+
+    // 相关链接
+    if (data.relatedLinks && data.relatedLinks.length > 0) {
+      sections.push('## 相关链接\n');
+      data.relatedLinks.forEach(link => {
+        if (typeof link === 'string') {
+          sections.push(`- ${link}`);
+        } else if (link.url) {
+          sections.push(`- [${link.title || link.url}](${link.url})`);
+        }
+      });
+      sections.push('');
+    }
+
+    // 原始 Markdown 内容
+    if (data.markdownContent && data.markdownContent.length > 100) {
+      const cleaned = data.markdownContent
+        .replace(/<[^>]+>/g, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim()
+        .substring(0, 5000);
+      sections.push('## 详细内容\n');
       sections.push(cleaned);
       sections.push('');
     }
@@ -2275,6 +2929,84 @@ class MarkdownGenerator {
   }
 
   /**
+   * 检查内容是否为低价值内容（应过滤掉）
+   * @param {string} content - 要检查的内容
+   * @returns {boolean} 是否为低价值内容
+   */
+  isLowValueContent(content) {
+    if (!content || typeof content !== 'string') return false;
+
+    const text = content.toLowerCase().trim();
+
+    // 跳过太短的内容
+    if (text.length < 5) return true;
+
+    // 热搜/热点/趋势相关（动态内容，无价值）
+    const hotSearchPatterns = [
+      /热搜[榜列表]?/,
+      /热点[新闻资讯]?/,
+      /trending/,
+      /热门[推荐搜索]/,
+      /\d+后\s*$/, // 数字后缀（如"0厚植..."这种热搜排名）
+      /^[\s]*-?\d+/, // 特殊字符开头的数字（热搜排名格式）
+    ];
+
+    for (const pattern of hotSearchPatterns) {
+      if (pattern.test(text)) return true;
+    }
+
+    // 备案/许可信息（法律文本，无价值）
+    const filingPatterns = [
+      /备案[信息号]/,
+      /icp[证备]/,
+      /京公网安备/,
+      /网安备/,
+      /网文[〔\(].*[\)〕]/,
+      /许可证[编号]/,
+      /营业执照/,
+      /药品.*备案/,
+      /医疗器械.*备案/,
+      /宗教信息.*许可/,
+      /视听节目.*许可/,
+      /网络文化.*许可/,
+    ];
+
+    for (const pattern of filingPatterns) {
+      if (pattern.test(text)) return true;
+    }
+
+    // 版权/公司信息（无价值）
+    const copyrightPatterns = [
+      /版权所有/,
+      /copyright/,
+      /©\s*\d+/,
+      /all rights reserved/i,
+      /^©?\s*\d{4}\s*baidu/i,
+    ];
+
+    for (const pattern of copyrightPatterns) {
+      if (pattern.test(text)) return true;
+    }
+
+    // 检查是否是纯链接到搜索引擎搜索结果（如百度搜索链接）
+    if (text.includes('baidu.com/s?wd=') ||
+        text.includes('baidu.com/s?wd=')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * 过滤低价值内容的列表项
+   * @param {string} item - 列表项内容
+   * @returns {boolean} 是否应该保留
+   */
+  shouldKeepListItem(item) {
+    return !this.isLowValueContent(item);
+  }
+
+  /**
    * 生成通用页面Markdown
    * @param {PageData} pageData - 通用页面数据
    * @returns {string} Markdown文本
@@ -2327,7 +3059,11 @@ class MarkdownGenerator {
             break;
             
           case 'list':
-            item.items.forEach((listItem, i) => {
+            // 过滤低价值内容（热搜、备案信息等）
+            const filteredItems = item.items.filter(listItem => this.shouldKeepListItem(listItem));
+            if (filteredItems.length === 0) break; // 如果过滤后没有内容，跳过
+
+            filteredItems.forEach((listItem, i) => {
               if (item.listType === 'ol') {
                 sections.push(`${i + 1}. ${listItem}`);
               } else {
@@ -4049,6 +4785,621 @@ class MarkdownGenerator {
     return sections.join('\n');
   }
 
+  /**
+   * 生成门户首页的 Markdown
+   * @param {Object} pageData - 门户页面数据
+   * @returns {string} Markdown文本
+   */
+  generatePortal(pageData) {
+    const sections = [];
+
+    // 标题
+    sections.push(`# ${pageData.title || '门户首页'}\n`);
+
+    // 源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 站点描述
+    if (pageData.description) {
+      sections.push('## 站点简介\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    // 关键词
+    if (pageData.keywords) {
+      sections.push('## 关键词\n');
+      sections.push(pageData.keywords);
+      sections.push('');
+    }
+
+    // 导航菜单
+    if (pageData.navigation && pageData.navigation.length > 0) {
+      sections.push('## 导航菜单\n');
+      pageData.navigation.forEach((nav) => {
+        if (nav.items && nav.items.length > 0) {
+          sections.push(`### ${nav.type === 'main' ? '主导航' : nav.type === 'top' ? '顶部导航' : nav.type === 'channel' ? '频道导航' : '导航'}\n`);
+          const links = nav.items.map((item) => `[${this.escapeMarkdown(item.text)}](${item.href})`);
+          sections.push(links.join(' | '));
+          sections.push('');
+        }
+      });
+    }
+
+    // 热门榜单
+    if (pageData.hotTopics && pageData.hotTopics.length > 0) {
+      sections.push('## 热门榜单\n');
+      pageData.hotTopics.forEach((topic) => {
+        sections.push(`### ${this.escapeMarkdown(topic.title)}\n`);
+        if (topic.items && topic.items.length > 0) {
+          topic.items.forEach((item) => {
+            const link = item.href ? `[${this.escapeMarkdown(item.text)}](${item.href})` : this.escapeMarkdown(item.text);
+            const hot = item.hotScore ? ` 🔥${item.hotScore}` : '';
+            sections.push(`${item.rank}. ${link}${hot}`);
+          });
+          sections.push('');
+        }
+      });
+    }
+
+    // 内容区块
+    if (pageData.contentBlocks && pageData.contentBlocks.length > 0) {
+      sections.push('## 内容区块\n');
+      pageData.contentBlocks.forEach((block) => {
+        sections.push(`### ${this.escapeMarkdown(block.title)}\n`);
+        if (block.items && block.items.length > 0) {
+          block.items.forEach((item) => {
+            const link = `[${this.escapeMarkdown(item.text)}](${item.href})`;
+            if (item.summary) {
+              sections.push(`- ${link}`);
+              sections.push(`  > ${this.escapeMarkdown(item.summary.slice(0, 150))}${item.summary.length > 150 ? '...' : ''}`);
+            } else {
+              sections.push(`- ${link}`);
+            }
+          });
+          sections.push('');
+        }
+      });
+    }
+
+    // 频道分类
+    if (pageData.channels && pageData.channels.length > 0) {
+      sections.push('## 频道分类\n');
+      pageData.channels.forEach((channel) => {
+        if (channel.items && channel.items.length > 0) {
+          sections.push(`### ${this.escapeMarkdown(channel.title)}\n`);
+          const links = channel.items.map((item) => `[${this.escapeMarkdown(item.text)}](${item.href})`);
+          sections.push(links.join(' | '));
+          sections.push('');
+        }
+      });
+    }
+
+    // 快捷入口
+    if (pageData.quickLinks && pageData.quickLinks.length > 0) {
+      sections.push('## 快捷入口\n');
+      pageData.quickLinks.forEach((quick) => {
+        if (quick.items && quick.items.length > 0) {
+          sections.push(`### ${this.escapeMarkdown(quick.title)}\n`);
+          const links = quick.items.map((item) => `[${this.escapeMarkdown(item.text)}](${item.href})`);
+          sections.push(links.join(' | '));
+          sections.push('');
+        }
+      });
+    }
+
+    // 侧边栏
+    if (pageData.sidebars && pageData.sidebars.length > 0) {
+      sections.push('## 侧边栏\n');
+      pageData.sidebars.forEach((sidebar) => {
+        sections.push(`### ${this.escapeMarkdown(sidebar.title)}\n`);
+        if (sidebar.items && sidebar.items.length > 0) {
+          sidebar.items.slice(0, 15).forEach((item) => {
+            sections.push(`- [${this.escapeMarkdown(item.text)}](${item.href})`);
+          });
+          sections.push('');
+        }
+      });
+    }
+
+    // 关键图片（限制数量）
+    if (pageData.images && pageData.images.length > 0) {
+      sections.push('## 页面截图\n');
+      pageData.images.slice(0, 5).forEach((img) => {
+        if (img.localPath) {
+          sections.push(`![${this.escapeMarkdown(img.alt || '页面图片')}](${img.localPath})`);
+        }
+      });
+      sections.push('');
+    }
+
+    // 底部信息
+    if (pageData.footer) {
+      const footer = pageData.footer;
+      sections.push('## 底部信息\n');
+
+      if (footer.copyright) {
+        sections.push(`**版权信息**: ${this.escapeMarkdown(footer.copyright)}`);
+      }
+
+      if (footer.icp) {
+        sections.push(`**ICP备案**: ${this.escapeMarkdown(footer.icp)}`);
+      }
+
+      if (footer.contact) {
+        sections.push(`**联系方式**: ${this.escapeMarkdown(footer.contact)}`);
+      }
+
+      if (footer.links && footer.links.length > 0) {
+        sections.push('\n**底部链接**:\n');
+        const links = footer.links.slice(0, 20).map((item) => `[${this.escapeMarkdown(item.text)}](${item.href})`);
+        sections.push(links.join(' | '));
+      }
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成列表页Markdown
+   */
+  generateListPage(pageData) {
+    const sections = [];
+
+    // 标题
+    sections.push(`# ${pageData.listTitle || pageData.title || '列表页'}\n`);
+
+    // 源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 页面描述
+    if (pageData.description) {
+      sections.push('## 页面简介\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    // 筛选器
+    if (pageData.filters && pageData.filters.length > 0) {
+      sections.push('## 筛选分类\n');
+      pageData.filters.forEach((filter) => {
+        sections.push(`### ${this.escapeMarkdown(filter.title)}\n`);
+        if (filter.options && filter.options.length > 0) {
+          const links = filter.options.slice(0, 15).map((opt) =>
+            opt.href ? `[${this.escapeMarkdown(opt.text)}](${opt.href})` : this.escapeMarkdown(opt.text)
+          );
+          sections.push(links.join(' | '));
+          sections.push('');
+        }
+      });
+    }
+
+    // 列表项
+    if (pageData.listItems && pageData.listItems.length > 0) {
+      sections.push('## 列表内容\n');
+      pageData.listItems.forEach((item) => {
+        const link = `[${this.escapeMarkdown(item.title)}](${item.href})`;
+        sections.push(`### ${item.index}. ${link}\n`);
+
+        if (item.time) {
+          sections.push(`**时间**: ${this.escapeMarkdown(item.time)}`);
+        }
+        if (item.source) {
+          sections.push(`**来源**: ${this.escapeMarkdown(item.source)}`);
+        }
+        if (item.price) {
+          sections.push(`**价格**: ${this.escapeMarkdown(item.price)}`);
+        }
+        if (item.tags && item.tags.length > 0) {
+          sections.push(`**标签**: ${item.tags.map((t) => this.escapeMarkdown(t)).join(', ')}`);
+        }
+        if (item.summary) {
+          sections.push(`\n> ${this.escapeMarkdown(item.summary.slice(0, 200))}${item.summary.length > 200 ? '...' : ''}`);
+        }
+        sections.push('');
+      });
+    }
+
+    // 分页信息
+    if (pageData.pagination) {
+      const pagination = pageData.pagination;
+      if (pagination.total > 1) {
+        sections.push('## 分页信息\n');
+        sections.push(`当前第 ${pagination.current} 页，共 ${pagination.total} 页`);
+        if (pagination.pages && pagination.pages.length > 0) {
+          sections.push(`，页码: ${pagination.pages.join(', ')}`);
+        }
+        sections.push('');
+      }
+    }
+
+    // 侧边栏
+    if (pageData.sidebar) {
+      if (pageData.sidebar.hotItems && pageData.sidebar.hotItems.length > 0) {
+        sections.push('## 热门推荐\n');
+        pageData.sidebar.hotItems.forEach((item) => {
+          sections.push(`- [${this.escapeMarkdown(item.text)}](${item.href})`);
+        });
+        sections.push('');
+      }
+      if (pageData.sidebar.categories && pageData.sidebar.categories.length > 0) {
+        sections.push('## 相关分类\n');
+        const links = pageData.sidebar.categories.map((item) => `[${this.escapeMarkdown(item.text)}](${item.href})`);
+        sections.push(links.join(' | '));
+        sections.push('');
+      }
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成文章页Markdown
+   */
+  generateArticle(pageData) {
+    const sections = [];
+
+    // 标题
+    sections.push(`# ${pageData.title || '文章详情'}\n`);
+
+    // 源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 文章元信息
+    sections.push('## 文章信息\n');
+    if (pageData.publishTime) {
+      sections.push(`**发布时间**: ${this.escapeMarkdown(pageData.publishTime)}`);
+    }
+    if (pageData.source) {
+      sections.push(`**来源**: ${this.escapeMarkdown(pageData.source)}`);
+    }
+    if (pageData.views) {
+      sections.push(`**阅读量**: ${this.escapeMarkdown(pageData.views)}`);
+    }
+    sections.push('');
+
+    // 作者信息
+    if (pageData.author && pageData.author.name) {
+      sections.push('## 作者\n');
+      sections.push(`**${this.escapeMarkdown(pageData.author.name)}**`);
+      if (pageData.author.profile) {
+        sections.push(` [作者主页](${pageData.author.profile})`);
+      }
+      if (pageData.author.bio) {
+        sections.push(`\n> ${this.escapeMarkdown(pageData.author.bio)}`);
+      }
+      sections.push('');
+    }
+
+    // 关键词/标签
+    if (pageData.keywords) {
+      sections.push('## 关键词\n');
+      sections.push(pageData.keywords);
+      sections.push('');
+    }
+    if (pageData.tags && pageData.tags.length > 0) {
+      sections.push('## 标签\n');
+      sections.push(pageData.tags.map((t) => `\`${this.escapeMarkdown(t)}\``).join(' '));
+      sections.push('');
+    }
+
+    // 文章摘要
+    if (pageData.description) {
+      sections.push('## 摘要\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    // 文章正文
+    if (pageData.content) {
+      sections.push('## 正文内容\n');
+      sections.push(pageData.content);
+      sections.push('');
+    }
+
+    // 评论信息
+    if (pageData.comments && pageData.comments.enabled) {
+      sections.push('## 评论区\n');
+      if (pageData.comments.count > 0) {
+        sections.push(`共 ${pageData.comments.count} 条评论`);
+      } else {
+        sections.push('暂无评论');
+      }
+      sections.push('');
+    }
+
+    // 相关文章
+    if (pageData.relatedArticles && pageData.relatedArticles.length > 0) {
+      sections.push('## 相关文章\n');
+      pageData.relatedArticles.forEach((article) => {
+        sections.push(`- [${this.escapeMarkdown(article.title)}](${article.href})`);
+      });
+      sections.push('');
+    }
+
+    // 内容图片
+    if (pageData.images && pageData.images.length > 0) {
+      sections.push('## 文章图片\n');
+      pageData.images.slice(0, 10).forEach((img) => {
+        if (img.localPath) {
+          sections.push(`![${this.escapeMarkdown(img.alt || '图片')}](${img.localPath})`);
+        } else if (img.src) {
+          sections.push(`![${this.escapeMarkdown(img.alt || '图片')}](${img.src})`);
+        }
+      });
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成搜索结果页Markdown
+   */
+  generateSearchResult(pageData) {
+    const sections = [];
+
+    // 标题
+    sections.push(`# 搜索结果: ${pageData.query || '搜索'}\n`);
+
+    // 源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 搜索信息
+    sections.push('## 搜索信息\n');
+    sections.push(`**搜索词**: ${this.escapeMarkdown(pageData.query || '')}`);
+    if (pageData.totalResults > 0) {
+      sections.push(`\n**结果数**: 约 ${pageData.totalResults.toLocaleString()} 条`);
+    }
+    if (pageData.searchTime) {
+      sections.push(`\n**搜索耗时**: ${this.escapeMarkdown(pageData.searchTime)}`);
+    }
+    sections.push('');
+
+    // 搜索结果
+    if (pageData.results && pageData.results.length > 0) {
+      sections.push('## 搜索结果\n');
+      pageData.results.forEach((result) => {
+        const adMark = result.isAd ? ' [广告]' : '';
+        sections.push(`### ${result.rank}. ${this.escapeMarkdown(result.title)}${adMark}\n`);
+
+        if (result.displayUrl) {
+          sections.push(`**链接**: [${this.escapeMarkdown(result.displayUrl)}](${result.href})`);
+        } else {
+          sections.push(`**链接**: [${result.href}](${result.href})`);
+        }
+
+        if (result.snippet) {
+          sections.push(`\n> ${this.escapeMarkdown(result.snippet)}`);
+        }
+        sections.push('');
+      });
+    }
+
+    // 相关搜索
+    if (pageData.relatedSearches && pageData.relatedSearches.length > 0) {
+      sections.push('## 相关搜索\n');
+      const links = pageData.relatedSearches.map((item) => `[${this.escapeMarkdown(item.text)}](${item.href})`);
+      sections.push(links.join(' | '));
+      sections.push('');
+    }
+
+    // 广告
+    if (pageData.ads && pageData.ads.length > 0) {
+      sections.push('## 广告推广\n');
+      pageData.ads.forEach((ad) => {
+        sections.push(`- [${this.escapeMarkdown(ad.title)}](${ad.href})`);
+      });
+      sections.push('');
+    }
+
+    // 分页
+    if (pageData.pagination && pageData.pagination.total > 1) {
+      sections.push('## 分页\n');
+      sections.push(`当前第 ${pageData.pagination.current} 页，共 ${pageData.pagination.total} 页`);
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成电商商品详情页Markdown
+   */
+  generateEcommerceProduct(pageData) {
+    const sections = [];
+
+    // 标题
+    sections.push(`# ${pageData.title || '商品详情'}\n`);
+
+    // 源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 商品基本信息
+    sections.push('## 商品信息\n');
+    if (pageData.subtitle) {
+      sections.push(`**副标题**: ${this.escapeMarkdown(pageData.subtitle)}`);
+    }
+    if (pageData.brand) {
+      sections.push(`**品牌**: ${this.escapeMarkdown(pageData.brand)}`);
+    }
+    if (pageData.category) {
+      sections.push(`**分类**: ${this.escapeMarkdown(pageData.category)}`);
+    }
+    sections.push('');
+
+    // 价格信息
+    if (pageData.price) {
+      sections.push('## 价格信息\n');
+      if (pageData.price.current) {
+        sections.push(`**当前价格**: ${pageData.price.currency || '¥'}${pageData.price.current}`);
+      }
+      if (pageData.price.original) {
+        sections.push(`**原价**: ${pageData.price.currency || '¥'}${pageData.price.original}`);
+      }
+      if (pageData.price.discount) {
+        sections.push(`**优惠**: ${this.escapeMarkdown(pageData.price.discount)}`);
+      }
+      sections.push('');
+    }
+
+    // SKU信息
+    if (pageData.sku && pageData.sku.options && pageData.sku.options.length > 0) {
+      sections.push('## 规格选择\n');
+      pageData.sku.options.forEach((option) => {
+        sections.push(`**${this.escapeMarkdown(option.name)}**: ${option.values.map((v) => this.escapeMarkdown(v)).join(' / ')}`);
+      });
+      sections.push('');
+    }
+
+    // 卖家信息
+    if (pageData.seller && pageData.seller.name) {
+      sections.push('## 店铺信息\n');
+      sections.push(`**店铺名**: ${this.escapeMarkdown(pageData.seller.name)}`);
+      if (pageData.seller.type) {
+        sections.push(`\n**店铺类型**: ${this.escapeMarkdown(pageData.seller.type)}`);
+      }
+      if (pageData.seller.rating) {
+        sections.push(`\n**店铺评分**: ${this.escapeMarkdown(pageData.seller.rating)}`);
+      }
+      if (pageData.seller.location) {
+        sections.push(`\n**所在地**: ${this.escapeMarkdown(pageData.seller.location)}`);
+      }
+      sections.push('');
+    }
+
+    // 评价信息
+    if (pageData.reviews) {
+      sections.push('## 商品评价\n');
+      if (pageData.reviews.count > 0) {
+        sections.push(`**评价数**: ${pageData.reviews.count}`);
+        if (pageData.reviews.avgScore > 0) {
+          sections.push(`\n**平均评分**: ${pageData.reviews.avgScore}`);
+        }
+        if (pageData.reviews.goodRate) {
+          sections.push(`\n**好评率**: ${this.escapeMarkdown(pageData.reviews.goodRate)}`);
+        }
+      } else {
+        sections.push('暂无评价');
+      }
+      sections.push('');
+    }
+
+    // 商品描述
+    if (pageData.description) {
+      sections.push('## 商品详情\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    // 商品图片
+    if (pageData.images && pageData.images.length > 0) {
+      sections.push('## 商品图片\n');
+      pageData.images.forEach((img) => {
+        if (img.localPath) {
+          sections.push(`![${this.escapeMarkdown(img.alt || '商品图片')}](${img.localPath})`);
+        } else if (img.src) {
+          sections.push(`![${this.escapeMarkdown(img.alt || '商品图片')}](${img.src})`);
+        }
+      });
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成电商商品列表页Markdown
+   */
+  generateEcommerceList(pageData) {
+    const sections = [];
+
+    // 标题
+    sections.push(`# ${pageData.title || '商品列表'}\n`);
+
+    // 源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 页面描述
+    if (pageData.description) {
+      sections.push('## 页面简介\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    // 筛选器
+    if (pageData.filters && pageData.filters.length > 0) {
+      sections.push('## 筛选条件\n');
+      pageData.filters.forEach((filter) => {
+        sections.push(`### ${this.escapeMarkdown(filter.name)}\n`);
+        if (filter.values && filter.values.length > 0) {
+          const links = filter.values.slice(0, 15).map((val) =>
+            val.href ? `[${this.escapeMarkdown(val.text)}](${val.href})` : this.escapeMarkdown(val.text)
+          );
+          sections.push(links.join(' | '));
+          sections.push('');
+        }
+      });
+    }
+
+    // 商品列表
+    if (pageData.products && pageData.products.length > 0) {
+      sections.push('## 商品列表\n');
+      pageData.products.forEach((product) => {
+        const link = `[${this.escapeMarkdown(product.title)}](${product.href})`;
+        sections.push(`### ${product.rank}. ${link}\n`);
+
+        if (product.price) {
+          sections.push(`**价格**: ¥${product.price}`);
+        }
+        if (product.shop) {
+          sections.push(`**店铺**: ${this.escapeMarkdown(product.shop)}`);
+        }
+        if (product.img) {
+          sections.push(`\n![商品图](${product.img})`);
+        }
+        sections.push('');
+      });
+    }
+
+    // 分页
+    if (pageData.pagination) {
+      const pagination = pageData.pagination;
+      if (pagination.total > 1) {
+        sections.push('## 分页信息\n');
+        sections.push(`当前第 ${pagination.current} 页，共 ${pagination.total} 页`);
+        sections.push('');
+      }
+    }
+
+    return sections.join('\n');
+  }
+
   normalizeMarkdownOutput(markdown, pageData = {}) {
     const normalized = (markdown || '')
       .replace(/\r\n/g, '\n')
@@ -4059,15 +5410,130 @@ class MarkdownGenerator {
     const lines = normalized ? normalized.split('\n') : [];
     const hasH1 = lines.some((line) => /^#\s+/.test(line));
 
+    let finalMarkdown = normalized;
     if (!hasH1) {
       const title = (pageData?.title || pageData?.api?.name || 'Untitled').toString().trim();
       if (normalized) {
-        return `# ${this.escapeMarkdown(title)}\n\n${normalized}\n`;
+        finalMarkdown = `# ${this.escapeMarkdown(title)}\n\n${normalized}`;
+      } else {
+        finalMarkdown = `# ${this.escapeMarkdown(title)}`;
       }
-      return `# ${this.escapeMarkdown(title)}\n`;
     }
 
-    return `${normalized}\n`;
+    // 生成统一的 YAML Frontmatter
+    const frontmatter = this.generateFrontmatter(pageData);
+    
+    return `${frontmatter}\n\n${finalMarkdown}\n`;
+  }
+
+  /**
+   * 生成统一的 YAML Frontmatter
+   */
+  generateFrontmatter(pageData) {
+    if (!pageData) return '';
+
+    const frontmatter = [];
+    frontmatter.push('---');
+    
+    // Core common fields
+    const id = pageData.id || this.generateId(pageData.url);
+    const type = this.determineType(pageData.type);
+    const title = pageData.title || pageData?.api?.name || pageData?.mcp?.name || 'Untitled';
+    const url = pageData.url || '';
+    const description = pageData.description || pageData?.api?.description || pageData?.mcp?.description || '';
+    const source = pageData.source || pageData.domain || '';
+    const tags = Array.isArray(pageData.tags) ? pageData.tags : [];
+    const crawl_time = pageData.crawl_time || new Date().toISOString();
+    
+    frontmatter.push(`id: ${JSON.stringify(id)}`);
+    frontmatter.push(`type: ${JSON.stringify(type)}`);
+    frontmatter.push(`title: ${JSON.stringify(title)}`);
+    frontmatter.push(`url: ${JSON.stringify(url)}`);
+    frontmatter.push(`description: ${JSON.stringify(description)}`);
+    frontmatter.push(`source: ${JSON.stringify(source)}`);
+    frontmatter.push(`tags: ${JSON.stringify(tags)}`);
+    frontmatter.push(`crawl_time: ${JSON.stringify(crawl_time)}`);
+    
+    // Extract remaining fields into metadata
+    const metadata = {};
+    const excludeKeys = new Set(['id', 'type', 'title', 'url', 'description', 'source', 'tags', 'crawl_time', 'html', 'markdown', 'content', 'screenshot']);
+    
+    for (const [key, value] of Object.entries(pageData)) {
+      if (!excludeKeys.has(key) && value !== undefined && value !== null) {
+        metadata[key] = value;
+      }
+    }
+    
+    if (Object.keys(metadata).length > 0) {
+      frontmatter.push('metadata:');
+      const metadataLines = this.serializeToYaml(metadata, 1);
+      frontmatter.push(metadataLines);
+    }
+    
+    frontmatter.push('---');
+    return frontmatter.join('\n');
+  }
+
+  generateId(url) {
+    if (!url) return `id-${Date.now()}`;
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) {
+      const char = url.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return `url-${Math.abs(hash).toString(16)}`;
+  }
+
+  determineType(rawType) {
+    if (!rawType) return 'website';
+    if (rawType.includes('api')) return 'api';
+    if (rawType.includes('mcp')) return 'mcp';
+    if (rawType.includes('rss')) return 'rss';
+    return 'website';
+  }
+
+  serializeToYaml(obj, indentLevel = 0) {
+    const indent = '  '.repeat(indentLevel);
+    let lines = [];
+    
+    if (Array.isArray(obj)) {
+      if (obj.length === 0) return '[]';
+      for (const item of obj) {
+        if (typeof item === 'object' && item !== null) {
+          lines.push(`${indent}- ${JSON.stringify(item)}`);
+        } else {
+          lines.push(`${indent}- ${JSON.stringify(item)}`);
+        }
+      }
+    } else if (typeof obj === 'object' && obj !== null) {
+      if (Object.keys(obj).length === 0) return '{}';
+      for (const [key, value] of Object.entries(obj)) {
+        if (typeof value === 'object' && value !== null) {
+          if (Array.isArray(value)) {
+            if (value.length === 0) {
+              lines.push(`${indent}${key}: []`);
+            } else {
+              lines.push(`${indent}${key}:`);
+              lines.push(this.serializeToYaml(value, indentLevel + 1));
+            }
+          } else {
+            if (Object.keys(value).length === 0) {
+              lines.push(`${indent}${key}: {}`);
+            } else {
+              lines.push(`${indent}${key}:`);
+              lines.push(this.serializeToYaml(value, indentLevel + 1));
+            }
+          }
+        } else {
+          lines.push(`${indent}${key}: ${JSON.stringify(value)}`);
+        }
+      }
+    } else {
+      return `${indent}${JSON.stringify(obj)}`;
+    }
+    
+    return lines.join('\n');
   }
 
   /**

@@ -1,9 +1,12 @@
 import BaseParser from './base-parser.js';
+import fs from 'fs/promises';
+import path from 'path';
 
 /**
  * YFinance API Parser - 专门解析 yfinance API 文档页面
  * YFinance 是一个用于获取 Yahoo Finance 数据的 Python 库
  * URL 格式: https://www.aidoczh.com/yfinance/...
+ * 支持类页面（包含多个属性/方法）和单独的 API 页面
  */
 class YfinanceApiParser extends BaseParser {
   /**
@@ -51,16 +54,76 @@ class YfinanceApiParser extends BaseParser {
         return apiName.replace(/[^a-zA-Z0-9._]/g, '');
       }
 
-      // 从路径生成文件名
+      // 从路径生成文件名 - 使用完整路径结构
       if (pathParts.length > 1) {
-        const lastPart = pathParts[pathParts.length - 1].replace('.html', '');
-        return lastPart;
+        // 移除 .html 后缀
+        const processedParts = pathParts.map(part => part.replace('.html', ''));
+
+        // 对于 API 文档页面，构建有意义的文件名
+        // 例如: /yfinance/reference/yfinance.ticker.history.html -> yfinance.Ticker.history
+        // 例如: /yfinance/reference/api/yfinance.Ticker.html -> api_yfinance.Ticker
+        if (processedParts.length >= 3) {
+          // 获取最后有意义的部分
+          const lastPart = processedParts[processedParts.length - 1];
+
+          // 如果最后部分是 index，使用倒数第二部分
+          if (lastPart === 'index' && processedParts.length >= 4) {
+            return processedParts[processedParts.length - 2];
+          }
+
+          return lastPart;
+        }
+
+        return processedParts[processedParts.length - 1] || 'yfinance_doc';
       }
 
       return 'yfinance_doc';
     } catch (e) {
       return 'yfinance_doc';
     }
+  }
+
+  /**
+   * 从页面提取更有意义的标题
+   * 优先使用 URL 路径中的类名/方法名
+   * @param {string} url - 页面URL
+   * @param {string} extractedTitle - 从页面提取的原始标题
+   * @param {string} apiName - 从页面提取的 API 名称
+   * @returns {string} 最终使用的标题
+   */
+  generateTitle(url, extractedTitle, apiName) {
+    // 如果提取到了 API 名称（如 yfinance.Ticker.history），直接使用
+    if (apiName && apiName.includes('.')) {
+      return apiName;
+    }
+
+    // 如果标题有意义且不是通用的"API参考"，使用原标题
+    if (extractedTitle &&
+        extractedTitle !== 'API参考' &&
+        extractedTitle !== 'API Reference' &&
+        !extractedTitle.match(/^[A-Za-z\s]{1,10}$/)) {
+      return extractedTitle;
+    }
+
+    // 从 URL 路径提取有意义的标题
+    try {
+      const urlObj = new URL(url);
+      const pathname = urlObj.pathname;
+      const pathParts = pathname.split('/').filter(p => p && p !== 'reference' && p !== 'api');
+
+      if (pathParts.length > 0) {
+        const lastPart = pathParts[pathParts.length - 1].replace('.html', '');
+        if (lastPart && lastPart !== 'index') {
+          // 将路径转换为标题格式 (yfinance.ticker.history -> yfinance.Ticker.history)
+          return lastPart;
+        }
+      }
+    } catch {
+      // URL 解析失败，返回默认标题
+    }
+
+    // 最后使用原标题
+    return extractedTitle || 'Untitled';
   }
 
   /**
@@ -153,33 +216,105 @@ class YfinanceApiParser extends BaseParser {
         });
 
         if (mainContent) {
-          // 提取 API 签名（如 "Ticker.history(*args, **kwargs) → DataFrame"）
-          const sigElement = mainContent.querySelector('.sig, dl.class > dt, dl.method > dt, dl.function > dt, dl.py-method > dt, dl.py-function > dt');
+          // 检测页面类型：类页面、方法页面、属性页面
+          const classDl = mainContent.querySelector('dl.py.class');
+          const methodDl = mainContent.querySelector('dl.py.method, dl.py.function');
+          const propertyDl = mainContent.querySelector('dl.py.property');
+          const isClassPage = !!classDl;
+
+          // 存储所有 API 成员（属性和方法）
+          result.apiMembers = [];
+          result.isClassPage = isClassPage;
+
+          if (isClassPage) {
+            // 类页面：提取所有属性和方法
+            const classSignature = classDl.querySelector('dt.sig');
+            if (classSignature) {
+              result.signature = classSignature.textContent.replace(/#+$/, '').trim();
+            }
+
+            // 提取所有属性
+            const attributeDls = mainContent.querySelectorAll('dl.py.attribute');
+            attributeDls.forEach(dl => {
+              const dt = dl.querySelector('dt.sig');
+              const dd = dl.querySelector('dd');
+              if (dt) {
+                const nameEl = dt.querySelector('.sig-name .pre, .descname');
+                const name = nameEl ? nameEl.textContent.trim() : dt.textContent.split('#')[0].trim();
+                const desc = dd ? dd.textContent.trim() : '';
+                result.apiMembers.push({
+                  type: 'attribute',
+                  name: name,
+                  signature: dt.textContent.replace(/#+$/, '').trim(),
+                  description: desc
+                });
+              }
+            });
+
+            // 提取所有方法
+            const methodDls = mainContent.querySelectorAll('dl.py.method');
+            methodDls.forEach(dl => {
+              const dt = dl.querySelector('dt.sig');
+              const dd = dl.querySelector('dd');
+              if (dt) {
+                const nameEl = dt.querySelector('.sig-name .pre, .descname');
+                const name = nameEl ? nameEl.textContent.trim() : dt.textContent.split('(')[0].trim().split('.').pop();
+                const sig = dt.textContent.replace(/#+$/, '').trim();
+                const desc = dd ? dd.textContent.trim() : '';
+
+                // 提取方法参数
+                const params = [];
+                const paramEls = dt.querySelectorAll('.sig-param');
+                paramEls.forEach(p => {
+                  params.push(p.textContent.trim());
+                });
+
+                result.apiMembers.push({
+                  type: 'method',
+                  name: name,
+                  signature: sig,
+                  description: desc,
+                  parameters: params
+                });
+              }
+            });
+          } else {
+            // 单独的 API 页面
+          const sigElement = mainContent.querySelector('.sig, dl.class > dt, dl.method > dt, dl.function > dt, dl.py-method > dt, dl.py-function > dt, dl.py-property > dt, dl.py-attribute > dt');
           if (sigElement) {
             let sig = sigElement.textContent.trim();
-            // 移除末尾的 # 符号
             sig = sig.replace(/#+$/, '').trim();
             result.signature = sig;
           }
+        }
 
-          // 提取描述（第一个有意义的段落）
-          const paragraphs = mainContent.querySelectorAll('p');
-          for (const p of paragraphs) {
-            const text = p.textContent.trim();
-            // 跳过空段落和太短的段落
-            if (text.length > 10 && !text.startsWith('>>>') && !text.startsWith('Copy to clipboard')) {
-              if (!result.description) {
-                result.description = text;
-              }
-              // 收集其他段落作为示例说明
-              if (text !== result.description && text.length > 20) {
-                result.examples.push(text);
-              }
+        // 提取描述（第一个有意义的段落）
+        // 避免提取页脚、侧边栏或版权声明中的段落
+        const paragraphs = mainContent.querySelectorAll('p');
+        for (const p of paragraphs) {
+          // 排除包含在页脚或版权声明中的段落
+          if (p.closest('footer') || p.closest('.bd-footer-content') || p.closest('.wy-footer') || p.closest('.copyright')) {
+            continue;
+          }
+          
+          const text = p.textContent.trim();
+          // 排除已知的无用样板文本
+          if (text.includes('Yahoo!') && text.includes('注册商标')) {
+            continue;
+          }
+          
+          if (text.length > 10 && !text.startsWith('>>>') && !text.startsWith('Copy to clipboard')) {
+            if (!result.description) {
+              result.description = text;
+            }
+            if (text !== result.description && text.length > 20) {
+              result.examples.push(text);
             }
           }
+        }
 
-          // 提取所有表格
-          const tables = mainContent.querySelectorAll('table');
+        // 提取所有表格
+        const tables = mainContent.querySelectorAll('table');
           tables.forEach((table, tableIndex) => {
             const headers = [];
             const rows = [];
@@ -237,8 +372,17 @@ class YfinanceApiParser extends BaseParser {
               });
             }
 
-            // 判断表格类型并分配到相应字段
-            const tableType = this.determineTableType(table, headers);
+            // 判断表格类型并分配到相应字段（内联逻辑，因为在 browser context 中无法调用类方法）
+            const headerText = headers.join(' ').toLowerCase();
+            let tableType = 'unknown';
+            if (headerText.includes('参数') || headerText.includes('parameter') || (headerText.includes('name') && headerText.includes('type'))) {
+              tableType = 'parameters';
+            } else if (headerText.includes('返回') || headerText.includes('return') || headerText.includes('response')) {
+              tableType = 'returns';
+            } else if (headerText.includes('属性') || headerText.includes('attribute') || headerText.includes('field')) {
+              tableType = 'attributes';
+            }
+
             if (tableType === 'parameters') {
               result.parameters = rows;
             } else if (tableType === 'returns') {
@@ -249,8 +393,14 @@ class YfinanceApiParser extends BaseParser {
           });
 
           // 提取代码示例 - PyData Sphinx Theme 使用 pre 标签
+          // 排除侧边栏中的代码示例，避免所有页面提取到一样的通用示例
           const codeBlocks = mainContent.querySelectorAll('pre');
           codeBlocks.forEach(block => {
+            // 排除在侧边栏、页脚等无关区域的代码块
+            if (block.closest('.bd-sidebar') || block.closest('.bd-toc') || block.closest('.sidebar') || block.closest('footer')) {
+              return;
+            }
+            
             const code = block.textContent.trim();
             // 过滤掉太短的代码和 "Copy to clipboard" 文本
             if (code.length > 10 && !code.includes('Copy to clipboard')) {
@@ -295,20 +445,27 @@ class YfinanceApiParser extends BaseParser {
           }
 
           // 提取原始文本内容（作为备份）
-          result.rawContent = mainContent.textContent.trim().substring(0, 5000);
+          result.rawContent = mainContent.textContent.trim().substring(0, 10000);
         }
 
         return result;
       });
 
-      // 清理标题
-      const cleanTitle = this.cleanTitle(data.title);
+      // 生成有意义的标题（优先使用 API 名称或 URL 路径，而非通用的"API参考"）
+      const finalTitle = this.generateTitle(url, data.title, data.apiName);
+
+      // 如果是类页面且有多个成员，且有输出目录，则为每个成员单独写 Markdown
+      if (data.isClassPage && data.apiMembers && data.apiMembers.length > 0 && options.pagesDir) {
+        await this.writeApiMembersAsMarkdown(data.apiMembers, url, options.pagesDir, finalTitle, data.description, data.codeExamples);
+      }
+
+      const skipDefault = data.isClassPage && data.apiMembers && data.apiMembers.length > 0;
 
       return {
         type: 'yfinance-api',
         url,
         pageType: this.extractPageType(url),
-        title: cleanTitle,
+        title: finalTitle,
         apiName: data.apiName,
         description: data.description,
         signature: data.signature,
@@ -323,6 +480,10 @@ class YfinanceApiParser extends BaseParser {
         category: data.category,
         sidebarLinks: data.sidebarLinks,
         rawContent: data.rawContent,
+        apiMembers: data.apiMembers,
+        isClassPage: data.isClassPage,
+        // 如果是类页面且已单独写入成员文件，跳过默认输出
+        skipDefaultMarkdownOutput: skipDefault,
         suggestedFilename: this.generateFilename(url, data.apiName)
       };
     } catch (error) {
@@ -408,26 +569,12 @@ class YfinanceApiParser extends BaseParser {
    */
   async discoverLinks(page) {
     try {
-      // 确保我们在正确的页面上
       const currentUrl = page.url();
-      const expectedBase = 'https://www.aidoczh.com/yfinance/reference/';
 
-      // 如果当前 URL 不在 reference 目录，导航到正确页面
-      if (!currentUrl.includes('/yfinance/reference/')) {
-        console.log(`YFinance parser: redirecting from ${currentUrl} to reference/index.html`);
-        await page.goto(expectedBase + 'index.html', {
-          waitUntil: 'networkidle',
-          timeout: 60000
-        });
-      }
-
-      // 获取当前页面URL
-      const finalUrl = page.url();
-      console.log(`YFinance parser current page URL: ${finalUrl}`);
-
-      // Sphinx 文档的侧边栏链接是相对于文档根目录的，不是相对于当前页面
-      // 所以我们使用固定的 base URL
+      // Sphinx 文档的侧边栏链接是相对于文档根目录的
+      // 使用当前页面的 URL 作为 base 来解析相对路径
       const baseUrl = 'https://www.aidoczh.com/yfinance/reference/';
+      console.log(`YFinance parser current page URL: ${currentUrl}`);
       console.log(`YFinance parser using baseUrl: ${baseUrl}`);
 
       const links = await page.evaluate((base) => {
@@ -516,7 +663,9 @@ class YfinanceApiParser extends BaseParser {
         document.querySelectorAll('.wy-menu-vertical .caption, .wy-menu-vertical .toctree-l1 > a').forEach(el => {
           try {
             el.click();
-          } catch (_) {}
+          } catch {
+            // 点击可能失败（元素不可交互），忽略继续
+          }
         });
 
         // 点击可能有子菜单的项目
@@ -526,7 +675,9 @@ class YfinanceApiParser extends BaseParser {
             if (link) {
               try {
                 link.click();
-              } catch (_) {}
+              } catch {
+                // 点击可能失败（元素不可交互），忽略继续
+              }
             }
           }
         });
@@ -535,7 +686,9 @@ class YfinanceApiParser extends BaseParser {
         document.querySelectorAll('.bd-links .nav-link, .nav.bd-links a').forEach(el => {
           try {
             el.click();
-          } catch (_) {}
+          } catch {
+            // 点击可能失败（元素不可交互），忽略继续
+          }
         });
       });
 
@@ -579,6 +732,152 @@ class YfinanceApiParser extends BaseParser {
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);
     }
+  }
+
+  /**
+   * 清理文件名
+   * @param {string} value - 原始值
+   * @returns {string} 清理后的文件名
+   */
+  sanitizeFilename(value) {
+    return (value || '')
+      .replace(/[\\/:*?"<>|]/g, '_')
+      .replace(/\s+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 80);
+  }
+
+  /**
+   * 构建单个 API 成员的 Markdown 内容
+   * @param {Object} member - API 成员对象
+   * @param {string} className - 类名
+   * @param {string} sourceUrl - 源 URL
+   * @returns {string} Markdown 内容
+   */
+  buildSingleMemberMarkdown(member, className, sourceUrl) {
+    const sections = [];
+
+    // 从签名中提取实际的类名和方法名
+    let actualClassName = className;
+    if (member.signature) {
+      const sigMatch = member.signature.match(/([a-zA-Z_][\w.]*)\.[a-zA-Z_]\w*/);
+      if (sigMatch) {
+        actualClassName = sigMatch[1];
+      }
+    }
+
+    const title = member.type === 'method' ? `${actualClassName}.${member.name}()` : `${actualClassName}.${member.name}`;
+    sections.push(`# ${title}\n`);
+
+    sections.push('## 源URL\n');
+    sections.push(`${sourceUrl}\n`);
+
+    sections.push('## 类型\n');
+    sections.push(member.type === 'method' ? '方法 (Method)' : '属性 (Property)');
+    sections.push('\n');
+
+    if (member.signature) {
+      sections.push('## 签名\n');
+      sections.push(`\`\`\`python\n${member.signature}\n\`\`\`\n`);
+    }
+
+    if (member.description) {
+      sections.push('## 描述\n');
+      sections.push(member.description);
+      sections.push('\n');
+    }
+
+    if (member.parameters && member.parameters.length > 0) {
+      sections.push('## 参数\n');
+      member.parameters.forEach(param => {
+        sections.push(`- \`${param}\``);
+      });
+      sections.push('\n');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 将每个 API 成员写入单独的 Markdown 文件
+   * @param {Array} apiMembers - API 成员数组
+   * @param {string} sourceUrl - 源 URL
+   * @param {string} pagesDir - 输出目录
+   * @param {string} className - 类名
+   * @param {string} classDescription - 类描述
+   * @param {Array} codeExamples - 代码示例
+   */
+  async writeApiMembersAsMarkdown(apiMembers, sourceUrl, pagesDir, className, classDescription, codeExamples) {
+    await fs.mkdir(pagesDir, { recursive: true });
+    const filenameCounter = new Map();
+
+    // 从 URL 提取实际的类名
+    let actualClassName = className;
+    try {
+      const urlObj = new URL(sourceUrl);
+      const match = urlObj.pathname.match(/\/([a-zA-Z_][\w.]+)\.html$/);
+      if (match) {
+        actualClassName = match[1];
+      }
+    } catch {
+      // URL 解析失败，使用原始类名
+    }
+
+    // 写入概览文件
+    const overviewSections = [];
+    overviewSections.push(`# ${actualClassName}\n`);
+    overviewSections.push('## 源URL\n');
+    overviewSections.push(`${sourceUrl}\n`);
+    if (classDescription) {
+      overviewSections.push('## 描述\n');
+      overviewSections.push(`${classDescription}\n`);
+    }
+    overviewSections.push('## 成员列表\n');
+
+    // 按类型分组
+    const attributes = apiMembers.filter(m => m.type === 'attribute');
+    const methods = apiMembers.filter(m => m.type === 'method');
+
+    if (attributes.length > 0) {
+      overviewSections.push('\n### 属性\n');
+      attributes.forEach(attr => {
+        const filename = this.sanitizeFilename(attr.name);
+        overviewSections.push(`- [${attr.name}](${filename}.md)${attr.description ? ` - ${attr.description.substring(0, 100)}${attr.description.length > 100 ? '...' : ''}` : ''}`);
+      });
+    }
+
+    if (methods.length > 0) {
+      overviewSections.push('\n### 方法\n');
+      methods.forEach(method => {
+        const filename = this.sanitizeFilename(method.name);
+        overviewSections.push(`- [${method.name}()](${filename}.md)${method.description ? ` - ${method.description.substring(0, 100)}${method.description.length > 100 ? '...' : ''}` : ''}`);
+      });
+    }
+
+    if (codeExamples && codeExamples.length > 0) {
+      overviewSections.push('\n## 代码示例\n');
+      codeExamples.forEach(example => {
+        overviewSections.push(`\`\`\`${example.language || 'python'}\n${example.code}\n\`\`\`\n`);
+      });
+    }
+
+    const overviewPath = path.join(pagesDir, 'README.md');
+    await fs.writeFile(overviewPath, overviewSections.join('\n'), 'utf-8');
+    console.log(`  Saved: README.md (${apiMembers.length} members)`);
+
+    // 写入每个成员的单独文件
+    for (const member of apiMembers) {
+      const baseName = this.sanitizeFilename(member.name);
+      const seen = filenameCounter.get(baseName) || 0;
+      filenameCounter.set(baseName, seen + 1);
+      const filename = seen === 0 ? baseName : `${baseName}_${seen + 1}`;
+      const filePath = path.join(pagesDir, `${filename}.md`);
+      const markdown = this.buildSingleMemberMarkdown(member, actualClassName, sourceUrl);
+      await fs.writeFile(filePath, markdown, 'utf-8');
+    }
+
+    console.log(`  Saved ${apiMembers.length} member files`);
   }
 }
 

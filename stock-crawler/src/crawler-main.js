@@ -99,9 +99,10 @@ class CrawlerMain {
         headless: this.config.crawler.headless,
         timeout: this.config.crawler.timeout,
         userDataDir: this.config.crawler.userDataDir, // Use Chrome user data directory if provided
-        ignoreHTTPSErrors: this.config.crawler.ignoreHTTPSErrors === true
+        ignoreHTTPSErrors: this.config.crawler.ignoreHTTPSErrors === true,
+        fetchMethod: this.config.crawler.fetchMethod || 'playwright'
       });
-      this.logger.info(`Browser launched (headless: ${this.config.crawler.headless})`);
+      this.logger.info(`Browser launched (headless: ${this.config.crawler.headless}, fetchMethod: ${this.config.crawler.fetchMethod || 'playwright'})`);
 
       // Attempt login at the start if required
       if (this.config.login.required) {
@@ -273,7 +274,7 @@ class CrawlerMain {
       const targetUrl = this.config.login.loginUrl || this.config.seedUrls[0];
       this.logger.info(`Strategy 1: Visiting target URL: ${targetUrl}`);
       
-      await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout);
+      await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout, { forcePlaywright: true });
       await page.waitForTimeout(3000); // Wait for any redirects or dynamic content
       
       // Check current URL - might have been redirected to login page
@@ -327,7 +328,7 @@ class CrawlerMain {
         page = await this.browserManager.newPage();
       }
       
-      await this.browserManager.goto(page, mainUrl, this.config.crawler.timeout);
+      await this.browserManager.goto(page, mainUrl, this.config.crawler.timeout, { forcePlaywright: true });
       await page.waitForTimeout(2000);
       
       // Check if already needs login on this page
@@ -412,7 +413,7 @@ class CrawlerMain {
             page = await this.browserManager.newPage();
           }
           
-          await this.browserManager.goto(page, loginUrl, this.config.crawler.timeout);
+          await this.browserManager.goto(page, loginUrl, this.config.crawler.timeout, { forcePlaywright: true });
           await page.waitForTimeout(2000);
           
           const needsLogin = await this.loginHandler.needsLogin(page);
@@ -500,8 +501,10 @@ class CrawlerMain {
       // Wait for page to load
       await this.browserManager.waitForLoad(page, this.config.crawler.timeout);
 
-      // Expand collapsible content
-      await this.linkFinder.expandCollapsibles(page);
+      // Expand collapsible content (only useful if JS is running)
+      if (this.config.crawler.fetchMethod !== 'request') {
+        await this.linkFinder.expandCollapsibles(page);
+      }
 
       // Check if the parser supports custom link discovery
       const parser = this.pageParser.parserManager.selectParser(url);
@@ -512,7 +515,9 @@ class CrawlerMain {
         newLinks = await parser.discoverLinks(page);
       } else {
         // Standard link extraction
-        newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules);
+        newLinks = await this.linkFinder.extractLinks(page, this.config.urlRules, {
+          fetchMethod: this.config.crawler.fetchMethod
+        });
       }
 
       if (newLinks.length > 0) {
@@ -565,21 +570,34 @@ class CrawlerMain {
           if (chunk.type === 'table') {
             if (chunk.isFirstPage) {
               // 新表格开始
-              let tableContent = `\n## 表格 ${chunk.tableIndex + 1}\n\n`;
-              
+              let tableContent = '\n';
+
+              // 输出表格前的标题和说明文字
+              if (chunk.precedingContent && chunk.precedingContent.length > 0) {
+                chunk.precedingContent.forEach(item => {
+                  if (item.type === 'heading') {
+                    tableContent += `${'#'.repeat(item.level)} ${item.content}\n\n`;
+                  } else if (item.type === 'paragraph') {
+                    tableContent += `${item.content}\n\n`;
+                  }
+                });
+              }
+
+              tableContent += `## 表格 ${chunk.tableIndex + 1}\n\n`;
+
               // 表头
               if (chunk.headers && chunk.headers.length > 0) {
                 tableContent += '| ' + chunk.headers.join(' | ') + ' |\n';
                 tableContent += '| ' + chunk.headers.map(() => '---').join(' | ') + ' |\n';
               }
-              
+
               // 数据行
               if (chunk.rows && chunk.rows.length > 0) {
                 chunk.rows.forEach(row => {
                   tableContent += '| ' + row.join(' | ') + ' |\n';
                 });
               }
-              
+
               fs.appendFileSync(filepath, tableContent, 'utf-8');
               this.logger.info(`Appended table ${chunk.tableIndex + 1}, page ${chunk.page}`);
             } else if (!chunk.isLastPage && chunk.rows && chunk.rows.length > 0) {
@@ -757,17 +775,14 @@ ${block.code}
       const pageData = await this.pageParser.parsePage(page, url, { 
         onDataChunk,
         filepath,
-        pagesDir: this.pagesDir
+        pagesDir: this.pagesDir,
+        extractionConfig: this.config.extraction || {}
       });
       this.logger.info(`Parsed page: ${pageData.title || 'Untitled'}`);
 
       // 如果没有使用流式写入（没有分页数据），使用传统方式
-      console.log(`[CRAWLER DEBUG] isFirstChunk: ${isFirstChunk}, pageData.type: ${pageData.type}`);
       if (isFirstChunk && !pageData.skipDefaultMarkdownOutput) {
-        console.log(`[CRAWLER DEBUG] Calling markdownGenerator.generate()`);
         const markdown = this.markdownGenerator.generate(pageData);
-        console.log(`[CRAWLER DEBUG] Generated markdown length: ${markdown.length}`);
-        console.log(`[CRAWLER DEBUG] Markdown first 200 chars: ${markdown.substring(0, 200)}`);
         // 优先使用 parser 建议的文件名（如基于 URL 路径的文件名）
         if (pageData.suggestedFilename) {
           filename = pageData.suggestedFilename;

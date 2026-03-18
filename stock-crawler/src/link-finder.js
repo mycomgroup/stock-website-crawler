@@ -26,37 +26,46 @@ class LinkFinder {
         // 更激进的展开策略 - 点击所有可能的展开元素
         await page.evaluate(() => {
           // 点击所有可能的折叠菜单（排除details和summary，因为已经处理过了）
-          document.querySelectorAll('[class*="collapse"]:not(details):not(summary), [class*="expand"]:not(details):not(summary)').forEach((el) => {
+          // 同时排除 a 标签，避免点击导航链接导致页面跳转
+          document.querySelectorAll('[class*="collapse"]:not(details):not(summary):not(a), [class*="expand"]:not(details):not(summary):not(a)').forEach((el) => {
             try {
               el.click();
-            } catch (_) {}
+            } catch {
+              // 点击可能因元素不可见/不可交互而失败，忽略继续
+            }
           });
 
-          // 点击所有包含展开文本的按钮、链接、span、div
-          document.querySelectorAll('button, a, span, div').forEach((el) => {
+          // 点击所有包含展开文本的按钮、span、div（排除 a 标签）
+          document.querySelectorAll('button, span, div').forEach((el) => {
             const text = el.textContent || '';
             const className = el.className || '';
-            if (text.includes('展开') || text.includes('▶') || text.includes('>') ||
+            // 排除包含单个 > 的情况（通常是导航箭头），只匹配明确的展开文本
+            if (text.includes('展开') || text.includes('▶') ||
                 className.includes('expand') || className.includes('collapse')) {
               try {
                 el.click();
-              } catch (_) {}
+              } catch {
+                // 点击可能因元素不可见/不可交互而失败，忽略继续
+              }
             }
           });
         });
 
-        await page.waitForTimeout(1500);
+        // 短暂等待让 DOM 更新
+        await page.waitForTimeout(300);
 
-        // 再次尝试展开
+        // 再次尝试展开（排除 a 标签）
         await page.evaluate(() => {
-          document.querySelectorAll('[class*="collapse"]:not(details):not(summary), [class*="expand"]:not(details):not(summary)').forEach((el) => {
+          document.querySelectorAll('[class*="collapse"]:not(details):not(summary):not(a), [class*="expand"]:not(details):not(summary):not(a)').forEach((el) => {
             try {
               el.click();
-            } catch (_) {}
+            } catch {
+              // 点击可能因元素不可见/不可交互而失败，忽略继续
+            }
           });
         });
 
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(100);
       } catch (error) {
         // 展开失败不影响后续流程
         console.warn('Failed to expand collapsibles:', error.message);
@@ -125,21 +134,24 @@ class LinkFinder {
    * 提取页面中的所有链接
    * @param {Page} page - Playwright页面对象
    * @param {Object} urlRules - URL过滤规则
+   * @param {Object} options - 额外选项
    * @returns {string[]} URL数组
    */
-  async extractLinks(page, urlRules) {
+  async extractLinks(page, urlRules, options = {}) {
     try {
       // 获取当前页面的URL作为基础URL
       const baseUrl = page.url();
 
       // 针对动态站点，等待链接元素渲染
-      await page.waitForFunction(
-        () => document.querySelectorAll('a[href]').length > 0 || (document.body?.innerText || '').length > 400,
-        { timeout: 12000 }
-      ).catch(() => {});
+      if (options.fetchMethod !== 'request') {
+        await page.waitForFunction(
+          () => document.querySelectorAll('a[href]').length > 0 || (document.body?.innerText || '').length > 400,
+          { timeout: 12000 }
+        ).catch(() => {});
+      }
 
       // 检查是否需要无限滚动（针对 finnhub 等 SPA 页面）
-      if (baseUrl.includes('finnhub.io/docs/api')) {
+      if (baseUrl.includes('finnhub.io/docs/api') && options.fetchMethod !== 'request') {
         // 对 finnhub 的侧边栏进行无限滚动 (#side-bar 是滚动容器)
         await this.performInfiniteScroll(page, {
           scrollSelector: '#side-bar',
@@ -182,7 +194,9 @@ class LinkFinder {
               if (url.includes('/open/api/doc') && url.includes('api-key=')) {
                 allLinks.add(url);
               }
-            } catch (_) {}
+            } catch {
+              // URL 解析失败，跳过无效链接
+            }
           }
         });
 
@@ -190,7 +204,29 @@ class LinkFinder {
         if (allLinks.size === 0) {
           // 提取普通 href 链接
           const anchors = document.querySelectorAll('a[href]');
-          anchors.forEach(a => allLinks.add(a.href));
+
+          anchors.forEach(a => {
+            const href = a.getAttribute('href');
+            if (!href) return;
+
+            // 过滤掉 javascript: 链接和空链接
+            if (href.startsWith('javascript:')) return;
+            if (href === '#' || href === '') return;
+
+            // 过滤掉看起来像广告的链接（onclick 中包含跳转逻辑）
+            const onclick = a.getAttribute('onclick') || '';
+            if (onclick.includes('track') || onclick.includes('adclick')) return;
+
+            try {
+              // 转换为绝对URL
+              const absoluteUrl = href.startsWith('http')
+                ? href
+                : new URL(href, window.location.origin).href;
+              allLinks.add(absoluteUrl);
+            } catch {
+              // URL 解析失败，跳过
+            }
+          });
 
           // 提取 Angular routerLink 属性
           document.querySelectorAll('[routerlink]').forEach(el => {
@@ -202,7 +238,9 @@ class LinkFinder {
                   ? routerLink
                   : new URL(routerLink, window.location.origin).href;
                 allLinks.add(url);
-              } catch (_) {}
+              } catch {
+                // routerLink 解析失败，跳过无效链接
+              }
             }
           });
 
@@ -215,23 +253,25 @@ class LinkFinder {
                   ? routerLink
                   : new URL(routerLink, window.location.origin).href;
                 allLinks.add(url);
-              } catch (_) {}
+              } catch {
+                // routerLink 解析失败，跳过无效链接
+              }
             }
           });
         }
 
         return Array.from(allLinks);
       });
-      
+
       // 转换为绝对URL
       const absoluteLinks = links.map(link => toAbsoluteUrl(link, baseUrl));
-      
+
       // 去重
       const uniqueLinks = [...new Set(absoluteLinks)];
-      
-      // 过滤链接
+
+      // 过滤链接（包含广告过滤）
       const filteredLinks = filterLinks(uniqueLinks, urlRules);
-      
+
       return filteredLinks;
     } catch (error) {
       console.error('Failed to extract links:', error.message);

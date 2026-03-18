@@ -189,6 +189,32 @@ class ConfigManager {
       }
     }
 
+    // 验证 extraction（可选）
+    if ('extraction' in config) {
+      if (typeof config.extraction !== 'object' || Array.isArray(config.extraction)) {
+        throw new Error('配置字段 extraction 必须是对象类型');
+      }
+      
+      const booleanFields = [
+        'extractTabsAndDropdowns',
+        'autoAdjustPageSize',
+        'sortTraversal',
+        'expandRows',
+        'filterCartesianProduct',
+        'extractHoverData',
+        'infiniteScroll',
+        'extractChartData',
+        'extractDateFilters',
+        'extractCharts'
+      ];
+      
+      for (const field of booleanFields) {
+        if (field in config.extraction && typeof config.extraction[field] !== 'boolean') {
+          throw new Error(`配置字段 extraction.${field} 必须是布尔类型`);
+        }
+      }
+    }
+
     return true;
   }
 }

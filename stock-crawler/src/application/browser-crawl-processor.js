@@ -32,7 +32,8 @@ class BrowserCrawlProcessor {
     await this.browserManager.launch({
       headless: this.config.crawler.headless,
       userDataDir: this.config.crawler.userDataDir,
-      ignoreHTTPSErrors: this.config.crawler.ignoreHTTPSErrors === true
+      ignoreHTTPSErrors: this.config.crawler.ignoreHTTPSErrors === true,
+      fetchMethod: this.config.crawler.fetchMethod || 'playwright'
     });
   }
 
@@ -52,7 +53,7 @@ class BrowserCrawlProcessor {
       const targetUrl = this.config.login.loginUrl || this.config.seedUrls[0];
       this.logger.info(`Strategy 1: Visiting target URL: ${targetUrl}`);
 
-      await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout);
+      await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout, { forcePlaywright: true });
       await page.waitForTimeout(3000);
 
       const currentUrl = page.url();
@@ -101,7 +102,7 @@ class BrowserCrawlProcessor {
         page = await this.browserManager.newPage();
       }
 
-      await this.browserManager.goto(page, mainUrl, this.config.crawler.timeout);
+      await this.browserManager.goto(page, mainUrl, this.config.crawler.timeout, { forcePlaywright: true });
       await page.waitForTimeout(2000);
 
       const needsLoginNow = await this.loginHandler.needsLogin(page);
@@ -176,7 +177,7 @@ class BrowserCrawlProcessor {
             page = await this.browserManager.newPage();
           }
 
-          await this.browserManager.goto(page, loginUrl, this.config.crawler.timeout);
+          await this.browserManager.goto(page, loginUrl, this.config.crawler.timeout, { forcePlaywright: true });
           await page.waitForTimeout(2000);
 
           const needsLoginAtPath = await this.loginHandler.needsLogin(page);
@@ -250,7 +251,12 @@ class BrowserCrawlProcessor {
       }
 
       await this.browserManager.waitForLoad(page, this.config.crawler.timeout);
-      await this.linkFinder.expandCollapsibles(page);
+      
+      // If we're in request mode, we can optionally skip some JS-heavy wait logic in linkFinder
+      if (this.config.crawler.fetchMethod !== 'request') {
+        await this.linkFinder.expandCollapsibles(page);
+      }
+      
       await this.discoverAndStoreLinks(page);
 
       let filename = null;
@@ -282,7 +288,20 @@ class BrowserCrawlProcessor {
 
           if (chunk.type === 'table') {
             if (chunk.isFirstPage) {
-              let tableContent = `\n## 表格 ${chunk.tableIndex + 1}\n\n`;
+              let tableContent = '\n';
+
+              // 输出表格前的标题和说明文字
+              if (chunk.precedingContent && chunk.precedingContent.length > 0) {
+                chunk.precedingContent.forEach(item => {
+                  if (item.type === 'heading') {
+                    tableContent += `${'#'.repeat(item.level)} ${item.content}\n\n`;
+                  } else if (item.type === 'paragraph') {
+                    tableContent += `${item.content}\n\n`;
+                  }
+                });
+              }
+
+              tableContent += `## 表格 ${chunk.tableIndex + 1}\n\n`;
               if (chunk.headers && chunk.headers.length > 0) {
                 tableContent += '| ' + chunk.headers.join(' | ') + ' |\n';
                 tableContent += '| ' + chunk.headers.map(() => '---').join(' | ') + ' |\n';

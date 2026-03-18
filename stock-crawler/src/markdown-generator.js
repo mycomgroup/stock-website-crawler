@@ -12,73 +12,198 @@ class MarkdownGenerator {
    * @returns {string} Markdown文本
    */
   generate(pageData) {
-    // Debug logging
-    console.log(`[DEBUG] generate() called with type: ${pageData.type}, markdownContent length: ${pageData.markdownContent?.length || 0}`);
-
+    let markdown = '';
+    
     // 根据页面类型选择生成方法（优先检查特定类型）
     if (pageData.type === 'alphavantage-api') {
-      return this.generateAlphavantageApi(pageData);
+      markdown = this.generateAlphavantageApi(pageData);
     } else if (pageData.type === 'eulerpool-api') {
-      return this.generateEulerpoolApi(pageData);
+      markdown = this.generateEulerpoolApi(pageData);
     } else if (pageData.type === 'finnhub-api') {
-      return this.generateFinnhubApi(pageData);
+      markdown = this.generateFinnhubApi(pageData);
     } else if (pageData.type === 'tiingo-api') {
-      return this.generateTiingoApi(pageData);
+      markdown = this.generateTiingoApi(pageData);
     } else if (pageData.type === 'financial-modeling-prep-api') {
-      return this.generateFinancialModelingPrepApi(pageData);
+      markdown = this.generateFinancialModelingPrepApi(pageData);
     } else if (pageData.type === 'financial-datasets-api') {
-      return this.generateFinancialDatasetsApi(pageData);
+      markdown = this.generateFinancialDatasetsApi(pageData);
     } else if (pageData.type === 'massive-api') {
-      return this.generateMassiveApi(pageData);
+      markdown = this.generateMassiveApi(pageData);
     } else if (pageData.type === 'serpapi-ai-overview') {
-      return this.generateSerpApi(pageData);
+      markdown = this.generateSerpApi(pageData);
     } else if (pageData.type === 'brave-search-api') {
-      return this.generateBraveSearchApi(pageData);
+      markdown = this.generateBraveSearchApi(pageData);
     } else if (pageData.type === 'api-doc') {
-      return this.generateApiDoc(pageData);
+      markdown = this.generateApiDoc(pageData);
     } else if (pageData.type === 'generic') {
-      return this.generateGeneric(pageData);
+      markdown = this.generateGeneric(pageData);
     } else if (pageData.type === 'qveris-api') {
-      return this.generateQverisApi(pageData);
+      markdown = this.generateQverisApi(pageData);
     } else if (pageData.type === 'rsshub-route') {
-      return this.generateRsshubRoute(pageData);
+      markdown = this.generateRsshubRoute(pageData);
     } else if (pageData.type === 'tavily-api') {
-      return this.generateTavilyApi(pageData);
+      markdown = this.generateTavilyApi(pageData);
     } else if (pageData.type === 'tushare-pro-api') {
-      return this.generateTushareProApi(pageData);
+      markdown = this.generateTushareProApi(pageData);
     } else if (pageData.type === 'tickdb-api') {
-      return this.generateTickdbApi(pageData);
+      markdown = this.generateTickdbApi(pageData);
     } else if (pageData.type === 'infoway-api') {
-      return this.generateInfowayApi(pageData);
+      markdown = this.generateInfowayApi(pageData);
     } else if (pageData.type === 'modelscope-mcp-server') {
-      return this.generateModelscopeMcp(pageData);
+      markdown = this.generateModelscopeMcp(pageData);
     } else if (pageData.type === 'itick-doc') {
-      return this.generateItickDoc(pageData);
+      markdown = this.generateItickDoc(pageData);
     } else if (pageData.type === 'tsanghi-api') {
-      return this.generateTsanghiApi(pageData);
+      markdown = this.generateTsanghiApi(pageData);
     } else if (pageData.type === 'sanhulianghua-api') {
-      return this.generateSanhulianghuaApi(pageData);
+      markdown = this.generateSanhulianghuaApi(pageData);
     } else if (pageData.type === 'eodhd-blog') {
-      return this.generateEodhdBlog(pageData);
+      markdown = this.generateEodhdBlog(pageData);
     } else if (pageData.type === 'eodhd-api') {
-      return this.generateEodhdApi(pageData);
+      markdown = this.generateEodhdApi(pageData);
     } else if (pageData.type === 'alltick-api') {
-      return this.generateAlltickApi(pageData);
+      markdown = this.generateAlltickApi(pageData);
+    } else if (pageData.type === 'portal') {
+      markdown = this.generatePortal(pageData);
+    } else if (pageData.type === 'article') {
+      markdown = this.generateArticle(pageData);
+    } else if (pageData.type === 'ecommerce') {
+      markdown = this.generateEcommerce(pageData);
+    } else if (pageData.type === 'list-page') {
+      markdown = this.generateListPage(pageData);
+    } else if (pageData.type === 'search-result') {
+      markdown = this.generateSearchResult(pageData);
     }
 
     // 如果已经是统一格式（有 api 字段），直接使用统一生成方法
-    if (pageData.api && typeof pageData.api === 'object') {
-      return this.generateUnified(pageData);
+    if (!markdown && pageData.api && typeof pageData.api === 'object') {
+      markdown = this.generateUnified(pageData);
     }
 
     // 尝试转换为统一格式
-    const unifiedData = formatApiDoc(pageData);
-    if (unifiedData.api.endpoint || unifiedData.parameters.length > 0 || unifiedData.codeExamples.length > 0) {
-      return this.generateUnified(unifiedData);
+    if (!markdown) {
+      const unifiedData = formatApiDoc(pageData);
+      if (unifiedData.api.endpoint || unifiedData.parameters.length > 0 || unifiedData.codeExamples.length > 0) {
+        markdown = this.generateUnified(unifiedData);
+      }
     }
 
     // 兼容旧格式（没有type字段）
-    return this.generateApiDoc(pageData);
+    if (!markdown) {
+      markdown = this.generateApiDoc(pageData);
+    }
+
+    return this.wrapWithFrontmatter(markdown, pageData);
+  }
+
+  wrapWithFrontmatter(markdown, pageData) {
+    const frontmatter = this.generateFrontmatter(pageData);
+    return `${frontmatter}\n\n${markdown || ''}\n`;
+  }
+
+  generateFrontmatter(pageData) {
+    if (!pageData) return '';
+
+    const frontmatter = [];
+    frontmatter.push('---');
+    
+    const id = pageData.id || this.generateId(pageData.url);
+    const type = this.determineType(pageData.type);
+    const title = pageData.title || pageData?.api?.name || pageData?.mcp?.name || 'Untitled';
+    const url = pageData.url || '';
+    const description = pageData.description || pageData?.api?.description || pageData?.mcp?.description || '';
+    const source = pageData.source || pageData.domain || '';
+    const tags = Array.isArray(pageData.tags) ? pageData.tags : [];
+    const crawl_time = pageData.crawl_time || new Date().toISOString();
+    
+    frontmatter.push(`id: ${JSON.stringify(id)}`);
+    frontmatter.push(`type: ${JSON.stringify(type)}`);
+    frontmatter.push(`title: ${JSON.stringify(title)}`);
+    frontmatter.push(`url: ${JSON.stringify(url)}`);
+    frontmatter.push(`description: ${JSON.stringify(description)}`);
+    frontmatter.push(`source: ${JSON.stringify(source)}`);
+    frontmatter.push(`tags: ${JSON.stringify(tags)}`);
+    frontmatter.push(`crawl_time: ${JSON.stringify(crawl_time)}`);
+    
+    const metadata = {};
+    const excludeKeys = new Set(['id', 'type', 'title', 'url', 'description', 'source', 'tags', 'crawl_time', 'html', 'markdown', 'content', 'screenshot']);
+    
+    for (const [key, value] of Object.entries(pageData)) {
+      if (!excludeKeys.has(key) && value !== undefined && value !== null) {
+        metadata[key] = value;
+      }
+    }
+    
+    if (Object.keys(metadata).length > 0) {
+      frontmatter.push('metadata:');
+      const metadataLines = this.serializeToYaml(metadata, 1);
+      frontmatter.push(metadataLines);
+    }
+    
+    frontmatter.push('---');
+    return frontmatter.join('\n');
+  }
+
+  generateId(url) {
+    if (!url) return `id-${Date.now()}`;
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) {
+      const char = url.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return `url-${Math.abs(hash).toString(16)}`;
+  }
+
+  determineType(rawType) {
+    if (!rawType) return 'website';
+    if (rawType.includes('api')) return 'api';
+    if (rawType.includes('mcp')) return 'mcp';
+    if (rawType.includes('rss')) return 'rss';
+    return 'website';
+  }
+
+  serializeToYaml(obj, indentLevel = 0) {
+    const indent = '  '.repeat(indentLevel);
+    let lines = [];
+    
+    if (Array.isArray(obj)) {
+      if (obj.length === 0) return '[]';
+      for (const item of obj) {
+        if (typeof item === 'object' && item !== null) {
+          lines.push(`${indent}- ${JSON.stringify(item)}`);
+        } else {
+          lines.push(`${indent}- ${JSON.stringify(item)}`);
+        }
+      }
+    } else if (typeof obj === 'object' && obj !== null) {
+      if (Object.keys(obj).length === 0) return '{}';
+      for (const [key, value] of Object.entries(obj)) {
+        if (typeof value === 'object' && value !== null) {
+          if (Array.isArray(value)) {
+            if (value.length === 0) {
+              lines.push(`${indent}${key}: []`);
+            } else {
+              lines.push(`${indent}${key}:`);
+              lines.push(this.serializeToYaml(value, indentLevel + 1));
+            }
+          } else {
+            if (Object.keys(value).length === 0) {
+              lines.push(`${indent}${key}: {}`);
+            } else {
+              lines.push(`${indent}${key}:`);
+              lines.push(this.serializeToYaml(value, indentLevel + 1));
+            }
+          }
+        } else {
+          lines.push(`${indent}${key}: ${JSON.stringify(value)}`);
+        }
+      }
+    } else {
+      return `${indent}${JSON.stringify(obj)}`;
+    }
+    
+    return lines.join('\n');
   }
 
   /**
@@ -485,12 +610,6 @@ class MarkdownGenerator {
   generateFinnhubApi(pageData) {
     const sections = [];
 
-    // Debug: 打印接收到的数据
-    console.log('[DEBUG] generateFinnhubApi called');
-    console.log('[DEBUG] pageData.rawContent length:', pageData.rawContent?.length || 0);
-    console.log('[DEBUG] pageData.title:', pageData.title);
-    console.log('[DEBUG] pageData.description:', pageData.description?.substring(0, 50));
-
     // 添加标题
     if (pageData.title) {
       sections.push(`# ${pageData.title}\n`);
@@ -505,16 +624,7 @@ class MarkdownGenerator {
 
     // 如果有原始内容，解析并格式化
     if (pageData.rawContent) {
-      console.log('[DEBUG] Parsing rawContent...');
       const parsed = this.parseFinnhubRawContent(pageData.rawContent);
-      console.log('[DEBUG] Parsed result:', JSON.stringify({
-        description: parsed.description?.substring(0, 50),
-        method: parsed.method,
-        endpointsCount: parsed.endpoints.length,
-        parametersCount: parsed.parameters.length,
-        responseFieldsCount: parsed.responseFields.length,
-        codeExamplesCount: parsed.codeExamples.length
-      }));
 
       // 描述
       if (parsed.description) {
@@ -2188,6 +2298,18 @@ class MarkdownGenerator {
             break;
             
           case 'table':
+            // 先输出表格前的标题和说明文字
+            if (item.precedingContent && item.precedingContent.length > 0) {
+              item.precedingContent.forEach(pc => {
+                if (pc.type === 'heading') {
+                  sections.push(`${'#'.repeat(pc.level + 1)} ${pc.content}\n`);
+                } else if (pc.type === 'paragraph') {
+                  sections.push(pc.content);
+                  sections.push('');
+                }
+              });
+            }
+
             if (item.headers && item.headers.length > 0) {
               sections.push('| ' + item.headers.join(' | ') + ' |');
               sections.push('| ' + item.headers.map(() => '---').join(' | ') + ' |');
@@ -2305,6 +2427,18 @@ class MarkdownGenerator {
       if (pageData.tables && pageData.tables.length > 0) {
         sections.push('## 表格\n');
         pageData.tables.forEach((table, index) => {
+          // 先输出表格前的标题和说明文字
+          if (table.precedingContent && table.precedingContent.length > 0) {
+            table.precedingContent.forEach(item => {
+              if (item.type === 'heading') {
+                sections.push(`${'#'.repeat(item.level)} ${item.content}\n`);
+              } else if (item.type === 'paragraph') {
+                sections.push(item.content);
+                sections.push('');
+              }
+            });
+          }
+
           if (pageData.tables.length > 1) {
             sections.push(`### 表格 ${index + 1}\n`);
           }
@@ -3823,7 +3957,504 @@ class MarkdownGenerator {
   }
 
   /**
+   * 生成 Portal 门户页面 Markdown
+   * @param {PageData} pageData - 门户页面数据
+   * @returns {string} Markdown文本
+   */
+  generatePortal(pageData) {
+    const sections = [];
+
+    // 添加标题
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    // 添加源URL
+    if (pageData.url) {
+      sections.push('## 源URL\n');
+      sections.push(pageData.url);
+      sections.push('');
+    }
+
+    // 站点描述和Logo
+    if (pageData.description || pageData.logo) {
+      sections.push('## 站点信息\n');
+      if (pageData.logo) {
+        sections.push(`![Logo](${pageData.logo.src})`);
+        sections.push('');
+      }
+      if (pageData.description) {
+        sections.push(pageData.description);
+        sections.push('');
+      }
+      if (pageData.keywords) {
+        sections.push(`**关键字**: ${pageData.keywords}`);
+        sections.push('');
+      }
+    }
+
+    // 导航菜单
+    if (pageData.navigation && pageData.navigation.length > 0) {
+      sections.push('## 导航菜单\n');
+      pageData.navigation.forEach(nav => {
+        let typeName = '主导航';
+        if (nav.type === 'top') typeName = '顶部导航';
+        if (nav.type === 'channel') typeName = '频道导航';
+        
+        sections.push(`### ${typeName}\n`);
+        const links = nav.items.map(item => `[${item.text}](${item.href})`);
+        sections.push(links.join(' | '));
+        sections.push('');
+      });
+    }
+
+    // 频道分类
+    if (pageData.channels && pageData.channels.length > 0) {
+      sections.push('## 频道分类\n');
+      pageData.channels.forEach(channel => {
+        sections.push(`### ${channel.title}\n`);
+        const links = channel.items.map(item => `[${item.text}](${item.href})`);
+        sections.push(links.join(' | '));
+        sections.push('');
+      });
+    }
+
+    // 热门话题/热搜
+    if (pageData.hotTopics && pageData.hotTopics.length > 0) {
+      sections.push('## 热门趋势\n');
+      pageData.hotTopics.forEach(hot => {
+        sections.push(`### ${hot.title}\n`);
+        hot.items.forEach(item => {
+          let line = `- `;
+          if (item.rank) line += `**${item.rank}**. `;
+          line += `[${item.text}](${item.href})`;
+          if (item.hotScore) line += ` (${item.hotScore})`;
+          sections.push(line);
+        });
+        sections.push('');
+      });
+    }
+
+    // 快捷入口
+    if (pageData.quickLinks && pageData.quickLinks.length > 0) {
+      sections.push('## 快捷服务\n');
+      pageData.quickLinks.forEach(quick => {
+        sections.push(`### ${quick.title}\n`);
+        const links = quick.items.map(item => `[${item.text}](${item.href})`);
+        sections.push(links.join(' | '));
+        sections.push('');
+      });
+    }
+
+    // 内容区块
+    if (pageData.contentBlocks && pageData.contentBlocks.length > 0) {
+      sections.push('## 主要内容\n');
+      pageData.contentBlocks.forEach(block => {
+        sections.push(`### ${block.title}\n`);
+        block.items.forEach(item => {
+          sections.push(`#### [${item.text}](${item.href})\n`);
+          if (item.summary) {
+            sections.push(`> ${item.summary}\n`);
+          }
+          if (item.img) {
+            sections.push(`![${item.img.alt || '配图'}](${item.img.src})`);
+            sections.push('');
+          }
+        });
+      });
+    }
+
+    // 侧边栏
+    if (pageData.sidebars && pageData.sidebars.length > 0) {
+      sections.push('## 侧边栏内容\n');
+      pageData.sidebars.forEach(sidebar => {
+        sections.push(`### ${sidebar.title}\n`);
+        const links = sidebar.items.map(item => `- [${item.text}](${item.href})`);
+        sections.push(links.join('\n'));
+        sections.push('');
+      });
+    }
+
+    // 图片
+    if (pageData.images && pageData.images.length > 0) {
+      sections.push('## 关键图片\n');
+      pageData.images.forEach(img => {
+        const alt = img.alt || `图片 ${img.index || ''}`;
+        const src = img.localPath || img.src;
+        sections.push(`![${alt}](${src})`);
+        sections.push('');
+      });
+    }
+
+    // 底部信息
+    if (pageData.footer && Object.keys(pageData.footer).length > 0) {
+      sections.push('## 底部信息\n');
+      if (pageData.footer.copyright) {
+        sections.push(`**版权**: ${pageData.footer.copyright}\n`);
+      }
+      if (pageData.footer.contact) {
+        sections.push(`**联系方式**: ${pageData.footer.contact}\n`);
+      }
+      if (pageData.footer.icp) {
+        sections.push(`**ICP备案**: ${pageData.footer.icp}\n`);
+      }
+      if (pageData.footer.links && pageData.footer.links.length > 0) {
+        const links = pageData.footer.links.map(item => `[${item.text}](${item.href})`);
+        sections.push(`**底部链接**: ${links.join(' | ')}\n`);
+      }
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 Article 文章页面 Markdown
+   * @param {PageData} pageData - 文章页面数据
+   * @returns {string} Markdown文本
+   */
+  generateArticle(pageData) {
+    const sections = [];
+
+    // 标题
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    // 元数据
+    const meta = [];
+    if (pageData.publishTime) meta.push(`**发布时间**: ${pageData.publishTime}`);
+    if (pageData.source) meta.push(`**来源**: ${pageData.source}`);
+    if (pageData.views) meta.push(`**阅读量**: ${pageData.views}`);
+    if (pageData.author && pageData.author.name) meta.push(`**作者**: ${pageData.author.name}`);
+    if (pageData.url) meta.push(`**原文链接**: [点击查看](${pageData.url})`);
+    
+    if (meta.length > 0) {
+      sections.push(meta.join(' | '));
+      sections.push('\n---\n');
+    }
+
+    // 正文
+    if (pageData.content) {
+      sections.push('## 正文内容\n');
+      sections.push(pageData.content);
+      sections.push('');
+    }
+
+    // 标签
+    if (pageData.tags && pageData.tags.length > 0) {
+      sections.push('**标签**: ' + pageData.tags.map(t => `\`${t}\``).join(', '));
+      sections.push('');
+    }
+
+    // 评论信息
+    if (pageData.comments) {
+      if (pageData.comments.count !== undefined) {
+        sections.push(`**评论数**: ${pageData.comments.count}`);
+      }
+      sections.push('');
+    }
+
+    // 相关文章
+    if (pageData.relatedArticles && pageData.relatedArticles.length > 0) {
+      sections.push('## 相关文章\n');
+      pageData.relatedArticles.forEach(item => {
+        sections.push(`- [${item.title}](${item.href})`);
+      });
+      sections.push('');
+    }
+
+    // 图片
+    if (pageData.images && pageData.images.length > 0) {
+      sections.push('## 提取图片\n');
+      pageData.images.forEach(img => {
+        const alt = img.alt || `图片 ${img.index || ''}`;
+        const src = img.localPath || img.src;
+        if (src) {
+          sections.push(`![${alt}](${src})`);
+          sections.push('');
+        }
+      });
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 Ecommerce 电商页面 Markdown
+   * @param {PageData} pageData - 电商页面数据
+   * @returns {string} Markdown文本
+   */
+  generateEcommerce(pageData) {
+    const sections = [];
+
+    if (pageData.product && pageData.product.title) {
+      sections.push(`# ${pageData.product.title}\n`);
+    } else if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push(`> [商品链接](${pageData.url})\n`);
+    }
+
+    if (pageData.product) {
+      sections.push('## 商品信息\n');
+      if (pageData.product.price) sections.push(`- **价格**: ${pageData.product.price}`);
+      if (pageData.product.originalPrice) sections.push(`- **原价**: ~~${pageData.product.originalPrice}~~`);
+      if (pageData.product.sales) sections.push(`- **销量**: ${pageData.product.sales}`);
+      if (pageData.product.stock) sections.push(`- **库存**: ${pageData.product.stock}`);
+      if (pageData.product.brand) sections.push(`- **品牌**: ${pageData.product.brand}`);
+      if (pageData.product.model) sections.push(`- **型号**: ${pageData.product.model}`);
+      sections.push('');
+    }
+
+    if (pageData.sku && pageData.sku.length > 0) {
+      sections.push('## SKU规格\n');
+      pageData.sku.forEach(sku => {
+        sections.push(`- **${sku.name}**: ${sku.options.join(', ')}`);
+      });
+      sections.push('');
+    }
+
+    if (pageData.shop) {
+      sections.push('## 店铺信息\n');
+      if (pageData.shop.name) sections.push(`- **店铺名称**: ${pageData.shop.name}`);
+      if (pageData.shop.rating) sections.push(`- **评分**: ${pageData.shop.rating}`);
+      if (pageData.shop.followers) sections.push(`- **粉丝数**: ${pageData.shop.followers}`);
+      if (pageData.shop.url) sections.push(`- **店铺链接**: [进入店铺](${pageData.shop.url})`);
+      sections.push('');
+    }
+
+    if (pageData.reviews) {
+      sections.push('## 评价信息\n');
+      if (pageData.reviews.count) sections.push(`- **评价总数**: ${pageData.reviews.count}`);
+      if (pageData.reviews.rating) sections.push(`- **综合评分**: ${pageData.reviews.rating}`);
+      if (pageData.reviews.tags && pageData.reviews.tags.length > 0) {
+        sections.push(`- **评价标签**: ${pageData.reviews.tags.join(', ')}`);
+      }
+      sections.push('');
+    }
+
+    if (pageData.details) {
+      sections.push('## 图文详情\n');
+      sections.push(pageData.details);
+      sections.push('');
+    }
+
+    if (pageData.images && pageData.images.length > 0) {
+      sections.push('## 商品图片\n');
+      pageData.images.forEach(img => {
+        const alt = img.alt || `图片 ${img.index || ''}`;
+        const src = img.localPath || img.src;
+        if (src) {
+          sections.push(`![${alt}](${src})`);
+          sections.push('');
+        }
+      });
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 List Page 列表页面 Markdown
+   * @param {PageData} pageData - 列表页面数据
+   * @returns {string} Markdown文本
+   */
+  generateListPage(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push(`> [列表页链接](${pageData.url})\n`);
+    }
+
+    if (pageData.categories && pageData.categories.length > 0) {
+      sections.push('## 分类\n');
+      pageData.categories.forEach(cat => {
+        sections.push(`- [${cat.name}](${cat.url})`);
+      });
+      sections.push('');
+    }
+
+    if (pageData.filters && pageData.filters.length > 0) {
+      sections.push('## 筛选条件\n');
+      pageData.filters.forEach(filter => {
+        sections.push(`### ${filter.name}\n`);
+        const options = filter.options.map(opt => `[${opt.name}](${opt.url})`);
+        sections.push(options.join(' | '));
+        sections.push('');
+      });
+    }
+
+    if (pageData.items && pageData.items.length > 0) {
+      sections.push('## 列表项\n');
+      pageData.items.forEach((item, index) => {
+        sections.push(`### ${index + 1}. [${item.title}](${item.url})\n`);
+        if (item.price) sections.push(`- **价格**: ${item.price}`);
+        if (item.sales) sections.push(`- **销量**: ${item.sales}`);
+        if (item.shop) sections.push(`- **店铺**: ${item.shop}`);
+        if (item.author) sections.push(`- **作者**: ${item.author}`);
+        if (item.time) sections.push(`- **时间**: ${item.time}`);
+        if (item.summary) {
+          sections.push(`\n> ${item.summary}\n`);
+        }
+        if (item.image) {
+          sections.push(`![配图](${item.image})`);
+        }
+        sections.push('');
+      });
+    }
+
+    if (pageData.pagination) {
+      sections.push('## 分页信息\n');
+      if (pageData.pagination.currentPage) sections.push(`- **当前页**: ${pageData.pagination.currentPage}`);
+      if (pageData.pagination.totalPages) sections.push(`- **总页数**: ${pageData.pagination.totalPages}`);
+      if (pageData.pagination.hasNext) sections.push(`- **是否有下一页**: 是`);
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 Search Result 搜索结果页面 Markdown
+   * @param {PageData} pageData - 搜索结果页面数据
+   * @returns {string} Markdown文本
+   */
+  generateSearchResult(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push(`> [搜索链接](${pageData.url})\n`);
+    }
+
+    if (pageData.keyword) {
+      sections.push(`**搜索关键词**: \`${pageData.keyword}\`\n`);
+    }
+
+    if (pageData.resultCount) {
+      sections.push(`**搜索结果数**: ${pageData.resultCount}\n`);
+    }
+
+    if (pageData.relatedSearches && pageData.relatedSearches.length > 0) {
+      sections.push('## 相关搜索\n');
+      const related = pageData.relatedSearches.map(item => `[${item.text}](${item.url})`);
+      sections.push(related.join(' | '));
+      sections.push('');
+    }
+
+    if (pageData.results && pageData.results.length > 0) {
+      sections.push('## 搜索结果\n');
+      pageData.results.forEach((item, index) => {
+        sections.push(`### ${index + 1}. [${item.title}](${item.url})\n`);
+        if (item.source) sections.push(`- **来源**: ${item.source}`);
+        if (item.time) sections.push(`- **时间**: ${item.time}`);
+        if (item.summary) {
+          sections.push(`\n> ${item.summary}\n`);
+        }
+        sections.push('');
+      });
+    }
+
+    if (pageData.pagination) {
+      sections.push('## 分页信息\n');
+      if (pageData.pagination.currentPage) sections.push(`- **当前页**: ${pageData.pagination.currentPage}`);
+      if (pageData.pagination.totalPages) sections.push(`- **总页数**: ${pageData.pagination.totalPages}`);
+      if (pageData.pagination.hasNext) sections.push(`- **是否有下一页**: 是`);
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
+   * 生成 Generic 通用页面 Markdown
+   * @param {PageData} pageData - 通用页面数据
+   * @returns {string} Markdown文本
+   */
+  generateGeneric(pageData) {
+    const sections = [];
+
+    if (pageData.title) {
+      sections.push(`# ${pageData.title}\n`);
+    }
+
+    if (pageData.url) {
+      sections.push(`> [源链接](${pageData.url})\n`);
+    }
+
+    if (pageData.description) {
+      sections.push('## 描述\n');
+      sections.push(pageData.description);
+      sections.push('');
+    }
+
+    if (pageData.keywords) {
+      sections.push(`**关键字**: ${pageData.keywords}\n`);
+    }
+
+    // 结构化正文（如果存在）
+    if (pageData.content && typeof pageData.content === 'string') {
+      sections.push('## 页面内容\n');
+      sections.push(pageData.content);
+      sections.push('');
+    } else if (pageData.mainContent) {
+      sections.push('## 主要内容\n');
+      pageData.mainContent.forEach(item => {
+        if (item.type === 'heading') {
+          sections.push(`${'#'.repeat(item.level + 1)} ${item.text}\n`);
+        } else if (item.type === 'paragraph') {
+          sections.push(`${item.text}\n`);
+        } else if (item.type === 'list') {
+          item.items.forEach(li => {
+            sections.push(`- ${li}`);
+          });
+          sections.push('');
+        } else if (item.type === 'code') {
+          sections.push(`\`\`\`${item.language || ''}\n${item.code}\n\`\`\`\n`);
+        } else if (item.type === 'image' && item.src) {
+          sections.push(`![${item.alt || '图片'}](${item.src})\n`);
+        }
+      });
+    }
+
+    // 表格（如果存在）
+    if (pageData.tables && pageData.tables.length > 0) {
+      sections.push('## 数据表格\n');
+      pageData.tables.forEach((table, index) => {
+        if (pageData.tables.length > 1) {
+          sections.push(`### 表格 ${index + 1}\n`);
+        }
+        const markdown = this.tableToMarkdown(table);
+        if (markdown) {
+          sections.push(markdown);
+          sections.push('');
+        }
+      });
+    }
+
+    // 备用：原始内容
+    if (!pageData.content && !pageData.mainContent && pageData.rawContent) {
+      sections.push('## 原始内容\n');
+      let cleaned = pageData.rawContent.replace(/\n{3,}/g, '\n\n').trim();
+      sections.push(cleaned);
+      sections.push('');
+    }
+
+    return sections.join('\n');
+  }
+
+  /**
    * 保存Markdown文件
+
    * @param {string} content - Markdown内容
    * @param {string} filename - 文件名（不含扩展名）
    * @param {string} outputDir - 输出目录
