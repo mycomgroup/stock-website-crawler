@@ -5,7 +5,7 @@
  * 测试脚本：验证pages目录时间戳功能
  */
 
-import Logger from '../src/logger.js';
+import Logger from '../stock-crawler/src/logger.js';
 import fs from 'fs';
 import path from 'path';
 

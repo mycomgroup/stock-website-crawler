@@ -2,7 +2,7 @@
  * 测试分页抓取功能
  */
 import { chromium } from 'playwright';
-import GenericParser from '../src/parsers/generic-parser.js';
+import GenericParser from '../stock-crawler/src/parsers/generic-parser.js';
 
 async function testPagination() {
   console.log('Testing pagination extraction...\n');

@@ -4,7 +4,7 @@
  * 测试Logger的北京时间功能
  */
 
-import Logger from '../src/logger.js';
+import Logger from '../stock-crawler/src/logger.js';
 import fs from 'fs';
 
 console.log('='.repeat(80));

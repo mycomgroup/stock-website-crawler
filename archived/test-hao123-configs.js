@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import ConfigManager from '../src/config-manager.js';
+import ConfigManager from '../stock-crawler/src/config-manager.js';
 
 const PROJECT_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const CONFIGURE_DIR = path.join(PROJECT_ROOT, 'configure');
