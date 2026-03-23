@@ -5,7 +5,7 @@
  */
 
 import { chromium } from 'playwright';
-import GenericParser from '../src/parsers/generic-parser.js';
+import GenericParser from '../stock-crawler/src/parsers/generic-parser.js';
 import path from 'path';
 import fs from 'fs';
 

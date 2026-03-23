@@ -7,7 +7,7 @@
  * Useful for debugging login issues.
  */
 
-import CrawlerMain from '../src/crawler-main.js';
+import CrawlerMain from '../stock-crawler/src/crawler-main.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
