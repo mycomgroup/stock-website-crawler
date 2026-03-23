@@ -2,8 +2,8 @@
  * 测试 hao123 导航站链接的解析效果
  */
 import { chromium } from 'playwright';
-import ParserManager from './src/parsers/parser-manager.js';
-import MarkdownGenerator from './src/parsers/markdown-generator.js';
+import ParserManager from '../stock-crawler/src/parsers/parser-manager.js';
+import MarkdownGenerator from '../stock-crawler/src/parsers/markdown-generator.js';
 
 // 限制测试数量，避免耗时过长
 const MAX_LINKS = 30;

@@ -2,7 +2,7 @@
  * 测试脚本：检查 EODHD 解析器提取的内容
  */
 import { chromium } from 'playwright';
-import EodhdApiParser from './src/parsers/eodhd-api-parser.js';
+import EodhdApiParser from '../stock-crawler/src/parsers/eodhd-api-parser.js';
 
 async function testParser() {
   const browser = await chromium.launch({ headless: true });

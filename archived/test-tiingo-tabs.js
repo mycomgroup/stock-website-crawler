@@ -1,7 +1,7 @@
 // Test multiple Tiingo pages with tabs
 import { chromium } from 'playwright';
-import TiingoApiParser from './src/parsers/tiingo-api-parser.js';
-import MarkdownGenerator from './src/markdown-generator.js';
+import TiingoApiParser from '../stock-crawler/src/parsers/tiingo-api-parser.js';
+import MarkdownGenerator from '../stock-crawler/src/markdown-generator.js';
 import fs from 'fs';
 import path from 'path';
 

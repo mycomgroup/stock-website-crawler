@@ -1,8 +1,8 @@
 /**
  * Debug script to test tokenflux parser for parameter extraction
  */
-import TokenfluxParser from './src/parsers/tokenflux-parser.js';
-import MarkdownGenerator from './src/parsers/markdown-generator.js';
+import TokenfluxParser from '../stock-crawler/src/parsers/tokenflux-parser.js';
+import MarkdownGenerator from '../stock-crawler/src/parsers/markdown-generator.js';
 
 async function main() {
   const parser = new TokenfluxParser();

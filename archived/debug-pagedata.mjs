@@ -1,5 +1,5 @@
 // Debug script to check pageData structure
-import XiaohongshuApifoxParser from './src/parsers/xiaohongshu-apifox-parser.js';
+import XiaohongshuApifoxParser from '../stock-crawler/src/parsers/xiaohongshu-apifox-parser.js';
 import { chromium } from 'playwright';
 
 async function debug() {

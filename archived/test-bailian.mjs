@@ -1,5 +1,5 @@
-import AliyunBailianMcpParser from './src/parsers/aliyun-bailian-mcp-parser.js';
-import MarkdownGenerator from './src/parsers/markdown-generator.js';
+import AliyunBailianMcpParser from '../stock-crawler/src/parsers/aliyun-bailian-mcp-parser.js';
+import MarkdownGenerator from '../stock-crawler/src/parsers/markdown-generator.js';
 import { chromium } from 'playwright';
 
 async function test() {
