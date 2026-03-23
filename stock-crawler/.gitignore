@@ -5,6 +5,7 @@ package-lock.json
 # Output files
 output*/
 logs/
+hao123-sites/
 
 # Browser user data (persistent login state)
 chrome_user_data*/

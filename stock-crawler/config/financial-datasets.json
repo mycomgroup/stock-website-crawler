@@ -21,7 +21,7 @@
     "timeout": 60000,
     "waitBetweenRequests": 1000,
     "maxRetries": 3,
-    "batchSize": 10,
+    "batchSize": 100,
     "userDataDir": "./chrome_user_data"
   },
   "output": {
