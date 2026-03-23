@@ -5,8 +5,8 @@
  */
 
 import { chromium } from 'playwright';
-import TushareProApiParser from './src/parsers/tushare-pro-api-parser.js';
-import MarkdownGenerator from './src/markdown-generator.js';
+import TushareProApiParser from '../stock-crawler/src/parsers/tushare-pro-api-parser.js';
+import MarkdownGenerator from '../stock-crawler/src/markdown-generator.js';
 import fs from 'fs';
 import path from 'path';
 

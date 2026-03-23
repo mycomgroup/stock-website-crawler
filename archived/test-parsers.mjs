@@ -2,8 +2,8 @@
  * Test script for different page type parsers
  */
 import { chromium } from 'playwright';
-import ParserManager from './src/parsers/parser-manager.js';
-import MarkdownGenerator from './src/parsers/markdown-generator.js';
+import ParserManager from '../stock-crawler/src/parsers/parser-manager.js';
+import MarkdownGenerator from '../stock-crawler/src/parsers/markdown-generator.js';
 
 const testUrls = [
   // 门户首页

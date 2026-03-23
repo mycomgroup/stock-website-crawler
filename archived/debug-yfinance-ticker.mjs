@@ -1,6 +1,6 @@
 
 import { chromium } from 'playwright';
-import YfinanceApiParser from './src/parsers/yfinance-api-parser.js';
+import YfinanceApiParser from '../stock-crawler/src/parsers/yfinance-api-parser.js';
 import fs from 'fs/promises';
 import path from 'path';
 

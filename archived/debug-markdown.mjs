@@ -1,6 +1,6 @@
 // Debug script to trace markdown generation
-import XiaohongshuApifoxParser from './src/parsers/xiaohongshu-apifox-parser.js';
-import MarkdownGenerator from './src/markdown-generator.js';
+import XiaohongshuApifoxParser from '../stock-crawler/src/parsers/xiaohongshu-apifox-parser.js';
+import MarkdownGenerator from '../stock-crawler/src/markdown-generator.js';
 import { chromium } from 'playwright';
 
 async function debug() {

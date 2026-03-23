@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
-import MassiveApiParser from './src/parsers/massive-api-parser.js';
-import MarkdownGenerator from './src/markdown-generator.js';
+import MassiveApiParser from '../stock-crawler/src/parsers/massive-api-parser.js';
+import MarkdownGenerator from '../stock-crawler/src/markdown-generator.js';
 import fs from 'fs';
 import path from 'path';
 

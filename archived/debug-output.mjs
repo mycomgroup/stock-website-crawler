@@ -1,4 +1,4 @@
-import MarkdownGenerator from './src/markdown-generator.js';
+import MarkdownGenerator from '../stock-crawler/src/markdown-generator.js';
 
 const gen = new MarkdownGenerator();
 

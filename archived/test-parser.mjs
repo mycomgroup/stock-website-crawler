@@ -2,7 +2,7 @@
  * Debug script to test eodhd parser for UI noise filtering
  */
 import { chromium } from 'playwright';
-import EodhdApiParser from './src/parsers/eodhd-api-parser.js';
+import EodhdApiParser from '../stock-crawler/src/parsers/eodhd-api-parser.js';
 
 async function main() {
   const browser = await chromium.launch({ headless: true });
