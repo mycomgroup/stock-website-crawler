@@ -507,7 +507,7 @@ class CrawlerMain {
       }
 
       // Check if the parser supports custom link discovery
-      const parser = this.pageParser.parserManager.selectParser(url);
+      const parser = await this.pageParser.parserManager.selectParser(url);
       let newLinks = [];
 
       if (parser.supportsLinkDiscovery && parser.supportsLinkDiscovery()) {

@@ -233,49 +233,77 @@ class YfinanceApiParser extends BaseParser {
               result.signature = classSignature.textContent.replace(/#+$/, '').trim();
             }
 
-            // 提取所有属性
-            const attributeDls = mainContent.querySelectorAll('dl.py.attribute');
-            attributeDls.forEach(dl => {
+            // 提取所有成员（属性、方法、属性装饰器）
+            // 改进提取逻辑，支持更多选择器
+            const memberDls = mainContent.querySelectorAll('dl.py.attribute, dl.py.method, dl.py.property, dl.py.function');
+            
+            memberDls.forEach(dl => {
               const dt = dl.querySelector('dt.sig');
               const dd = dl.querySelector('dd');
               if (dt) {
-                const nameEl = dt.querySelector('.sig-name .pre, .descname');
-                const name = nameEl ? nameEl.textContent.trim() : dt.textContent.split('#')[0].trim();
-                const desc = dd ? dd.textContent.trim() : '';
-                result.apiMembers.push({
-                  type: 'attribute',
-                  name: name,
-                  signature: dt.textContent.replace(/#+$/, '').trim(),
-                  description: desc
-                });
-              }
-            });
+                // 确定类型
+                let type = 'attribute';
+                if (dl.classList.contains('method') || dl.classList.contains('function')) {
+                  type = 'method';
+                } else if (dl.classList.contains('property')) {
+                  type = 'property';
+                }
 
-            // 提取所有方法
-            const methodDls = mainContent.querySelectorAll('dl.py.method');
-            methodDls.forEach(dl => {
-              const dt = dl.querySelector('dt.sig');
-              const dd = dl.querySelector('dd');
-              if (dt) {
+                // 提取名称
                 const nameEl = dt.querySelector('.sig-name .pre, .descname');
-                const name = nameEl ? nameEl.textContent.trim() : dt.textContent.split('(')[0].trim().split('.').pop();
+                let name = '';
+                if (nameEl) {
+                  name = nameEl.textContent.trim();
+                } else {
+                  // 回退策略：从 dt 文本中提取
+                  const fullSig = dt.textContent.split('#')[0].trim();
+                  // 移除括号和参数
+                  name = fullSig.split('(')[0].trim().split('.').pop();
+                }
+
+                if (!name) return;
+
                 const sig = dt.textContent.replace(/#+$/, '').trim();
-                const desc = dd ? dd.textContent.trim() : '';
+                
+                // 提取描述：在 dd 中排除嵌套的 dl (子成员)
+                let desc = '';
+                if (dd) {
+                  // 克隆 dd 以便在不影响原始 DOM 的情况下移除子成员
+                  const ddClone = dd.cloneNode(true);
+                  ddClone.querySelectorAll('dl').forEach(childDl => childDl.remove());
+                  desc = ddClone.textContent.trim();
+                }
 
-                // 提取方法参数
-                const params = [];
-                const paramEls = dt.querySelectorAll('.sig-param');
-                paramEls.forEach(p => {
-                  params.push(p.textContent.trim());
-                });
-
-                result.apiMembers.push({
-                  type: 'method',
+                const memberData = {
+                  type: type,
                   name: name,
                   signature: sig,
-                  description: desc,
-                  parameters: params
-                });
+                  description: desc
+                };
+
+                // 避免重复成员（Sphinx 有时会列出两次，一次在摘要，一次在详细描述）
+                // 优先保留有详细签名的版本
+                const existingIndex = result.apiMembers.findIndex(m => m.name === name);
+                if (existingIndex !== -1) {
+                  const existing = result.apiMembers[existingIndex];
+                  // 如果新成员有更长的签名或更长的描述，替换旧的
+                  if (sig.length > existing.signature.length || desc.length > existing.description.length) {
+                    result.apiMembers[existingIndex] = memberData;
+                  }
+                  return;
+                }
+
+                // 提取方法参数
+                if (type === 'method') {
+                  const params = [];
+                  const paramEls = dt.querySelectorAll('.sig-param');
+                  paramEls.forEach(p => {
+                    params.push(p.textContent.trim());
+                  });
+                  memberData.parameters = params;
+                }
+
+                result.apiMembers.push(memberData);
               }
             });
           } else {
@@ -809,7 +837,11 @@ class YfinanceApiParser extends BaseParser {
    * @param {Array} codeExamples - 代码示例
    */
   async writeApiMembersAsMarkdown(apiMembers, sourceUrl, pagesDir, className, classDescription, codeExamples) {
-    await fs.mkdir(pagesDir, { recursive: true });
+    // 为类创建一个子目录
+    const classDirName = this.sanitizeFilename(className);
+    const classDir = path.join(pagesDir, classDirName);
+    await fs.mkdir(classDir, { recursive: true });
+
     const filenameCounter = new Map();
 
     // 从 URL 提取实际的类名
@@ -836,7 +868,7 @@ class YfinanceApiParser extends BaseParser {
     overviewSections.push('## 成员列表\n');
 
     // 按类型分组
-    const attributes = apiMembers.filter(m => m.type === 'attribute');
+    const attributes = apiMembers.filter(m => m.type === 'attribute' || m.type === 'property');
     const methods = apiMembers.filter(m => m.type === 'method');
 
     if (attributes.length > 0) {
@@ -862,9 +894,9 @@ class YfinanceApiParser extends BaseParser {
       });
     }
 
-    const overviewPath = path.join(pagesDir, 'README.md');
+    const overviewPath = path.join(classDir, 'README.md');
     await fs.writeFile(overviewPath, overviewSections.join('\n'), 'utf-8');
-    console.log(`  Saved: README.md (${apiMembers.length} members)`);
+    console.log(`  Saved: ${classDirName}/README.md (${apiMembers.length} members)`);
 
     // 写入每个成员的单独文件
     for (const member of apiMembers) {
@@ -872,12 +904,12 @@ class YfinanceApiParser extends BaseParser {
       const seen = filenameCounter.get(baseName) || 0;
       filenameCounter.set(baseName, seen + 1);
       const filename = seen === 0 ? baseName : `${baseName}_${seen + 1}`;
-      const filePath = path.join(pagesDir, `${filename}.md`);
+      const filePath = path.join(classDir, `${filename}.md`);
       const markdown = this.buildSingleMemberMarkdown(member, actualClassName, sourceUrl);
       await fs.writeFile(filePath, markdown, 'utf-8');
     }
 
-    console.log(`  Saved ${apiMembers.length} member files`);
+    console.log(`  Saved ${apiMembers.length} member files to ${classDirName}/`);
   }
 }
 
