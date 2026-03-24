@@ -1,0 +1,60 @@
+{
+  "areaCode": "cn",
+  "ranges": {
+    "market": "a",
+    "stockBourseTypes": [],
+    "mutualMarkets": {
+      "selectedMutualMarkets": [],
+      "selectType": "include"
+    },
+    "multiMarketListedType": {
+      "selectedMultiMarketListedTypes": [],
+      "selectType": "include"
+    },
+    "excludeBlacklist": false,
+    "excludeDelisted": false,
+    "excludeBourseType": false,
+    "excludeSpecialTreatment": false,
+    "constituentsPerspectiveType": "history",
+    "specialTreatmentOnly": false
+  },
+  "filterList": [
+    {
+      "id": "pm.d_pe_ttm.y10.cvpos",
+      "min": 0,
+      "max": 0.3,
+      "value": "all",
+      "date": "latest"
+    },
+    {
+      "id": "pm.pb_wo_gw.y10.cvpos",
+      "min": 0,
+      "max": 0.3,
+      "value": "all",
+      "date": "latest"
+    },
+    {
+      "id": "pm.dyr",
+      "min": 0.02,
+      "value": "all",
+      "date": "latest"
+    },
+    {
+      "id": "pm.mc",
+      "value": "all",
+      "date": "latest"
+    },
+    {
+      "id": "pm.ipoDate",
+      "max": "2015-01-01",
+      "value": "all"
+    }
+  ],
+  "customFilterList": [],
+  "industrySource": "sw_2021",
+  "industryLevel": "three",
+  "sortName": "pm.latest.d_pe_ttm.y10.cvpos",
+  "sortOrder": "desc",
+  "pageIndex": 0,
+  "pageSize": 5
+}

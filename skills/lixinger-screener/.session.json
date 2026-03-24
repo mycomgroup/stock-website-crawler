@@ -2,7 +2,7 @@
   "cookies": [
     {
       "name": "jwt",
-      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjU5OTg1ZDYwMmFmMDY0MjY0Mzc3MDQiLCJpYXQiOjE3NzQzNTczMjYsImV4cCI6MTgwMDI3NzMyNn0.4qip9SXR-QAey3kdBLRJ0eadDVN0D6HgV1CxvsvOb3A",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjU5OTg1ZDYwMmFmMDY0MjY0Mzc3MDQiLCJpYXQiOjE3NzQzNTc2NDgsImV4cCI6MTgwMDI3NzY0OH0.3K4jxNP3sTJ7_7UCmNh_-Z3EyrWIluYF_N4KbKTdGu4",
       "domain": ".lixinger.com",
       "path": "/",
       "expires": -1,
