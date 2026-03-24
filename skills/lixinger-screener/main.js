@@ -124,6 +124,8 @@ const LIXINGER_URL = 'https://www.lixinger.com';
 const LOGIN_URL = 'https://www.lixinger.com/login';
 const SCREENER_URL = 'https://www.lixinger.com/analytics/screener/company-fundamental/cn';
 const PAGE_TIMEOUT = 30_000;
+// Use existing Chrome user data directory to avoid re-login
+const CHROME_USER_DATA = '/Users/fengzhi/Downloads/git/testlixingren/stock-crawler/chrome_user_data';
 
 /**
  * Loads existing session or creates a new one via login.
@@ -131,7 +133,7 @@ const PAGE_TIMEOUT = 30_000;
  * @returns {Promise<import('playwright').BrowserContext>}
  */
 export async function loadOrCreateSession(browser) {
-  // Try loading existing session
+  // Try loading existing session from storage state
   if (existsSync(SESSION_FILE)) {
     const context = await browser.newContext({ storageState: SESSION_FILE });
     const page = await context.newPage();
@@ -152,7 +154,35 @@ export async function loadOrCreateSession(browser) {
     await context.close();
   }
 
-  // Fresh login
+  // Try using Chrome user data directory (persistent login)
+  try {
+    console.log('尝试使用 Chrome 用户数据目录...');
+    const context = await chromium.launchPersistentContext(CHROME_USER_DATA, {
+      viewport: null,
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      headless: false
+    });
+    
+    const page = await context.newPage();
+    await page.goto(SCREENER_URL, { timeout: PAGE_TIMEOUT, waitUntil: 'domcontentloaded' });
+    const url = page.url();
+    
+    if (!url.includes('/login')) {
+      console.log('✓ 使用 Chrome 用户数据目录成功，已登录状态');
+      await page.close();
+      return context;
+    } else {
+      console.log('Chrome 用户数据目录未保持登录，尝试自动登录...');
+      await page.close();
+      await context.close();
+    }
+  } catch (err) {
+    console.log('使用 Chrome 用户数据目录失败:', err.message);
+    // Fall through to manual login
+  }
+
+  // Fallback: Fresh login with username/password
+  console.log('使用账号密码登录...');
   const username = process.env.LIXINGER_USERNAME;
   const password = process.env.LIXINGER_PASSWORD;
   if (!username || !password) {
@@ -165,10 +195,44 @@ export async function loadOrCreateSession(browser) {
   try {
     await page.goto(LOGIN_URL, { timeout: PAGE_TIMEOUT, waitUntil: 'domcontentloaded' });
 
+    // Wait for login form to be visible
+    await page.waitForLoadState('networkidle', { timeout: PAGE_TIMEOUT }).catch(() => {});
+    await page.waitForTimeout(2000); // Wait for dynamic content
+
+    // Take a screenshot for debugging (optional)
+    // await page.screenshot({ path: 'login-debug.png' });
+
     // Fill credentials — lixinger login form uses phone/email + password inputs
-    await page.fill('input[type="text"], input[type="email"], input[type="tel"]', username, { timeout: PAGE_TIMEOUT });
-    await page.fill('input[type="password"]', password, { timeout: PAGE_TIMEOUT });
-    await page.click('button[type="submit"]', { timeout: PAGE_TIMEOUT });
+    // Try multiple selector strategies
+    const usernameInput = page.locator(
+      'input[placeholder*="手机"], input[placeholder*="邮箱"], input[placeholder*="账号"], '
+      + 'input[type="text"]#username, input[name="username"], input[data-qa="username"], '
+      + '.login-form input[type="text"]'
+    ).first();
+    
+    const passwordInput = page.locator(
+      'input[type="password"], input[placeholder*="密码"], input[name="password"], '
+      + 'input[data-qa="password"], .login-form input[type="password"]'
+    ).first();
+
+    const submitButton = page.locator(
+      'button[type="submit"], button:has-text("登录"), input[type="submit"], '
+      + '.login-button, button[class*="login"]'
+    ).first();
+
+    // Fill username
+    await usernameInput.waitFor({ state: 'visible', timeout: PAGE_TIMEOUT });
+    await usernameInput.fill(username, { timeout: PAGE_TIMEOUT });
+    await page.waitForTimeout(500);
+
+    // Fill password
+    await passwordInput.waitFor({ state: 'visible', timeout: PAGE_TIMEOUT });
+    await passwordInput.fill(password, { timeout: PAGE_TIMEOUT });
+    await page.waitForTimeout(500);
+
+    // Click submit
+    await submitButton.waitFor({ state: 'visible', timeout: PAGE_TIMEOUT });
+    await submitButton.click({ timeout: PAGE_TIMEOUT });
 
     // Wait for navigation away from login page
     await page.waitForURL(url => !url.includes('/login'), { timeout: PAGE_TIMEOUT });

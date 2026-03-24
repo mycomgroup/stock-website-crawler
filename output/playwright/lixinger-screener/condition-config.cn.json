@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-24T03:30:10.269Z",
+  "generatedAt": "2026-03-24T06:42:32.836Z",
   "basedOnCatalogGeneratedAt": "2026-03-24T02:30:37.952Z",
   "sourceUrl": "https://www.lixinger.com/analytics/screener/company-fundamental/cn",
   "areaCode": "cn",
@@ -7,7 +7,8 @@
     "这个文件是给人手工填写或程序生成 simple-input 用的，更偏规则化和可读性。",
     "百分比沿用页面输入习惯，例如 30 表示 30%，脚本会自动转换为 0.3。",
     "市值沿用“亿”作为输入单位，例如 100 表示 100 亿。",
-    "遇到同名指标时，建议同时填写 category 以避免歧义。"
+    "遇到同名指标时，建议同时填写 category 以避免歧义。",
+    "动态可选项请优先查看 dynamic-options-index.cn.json，再按分类拆分文件查看。"
   ],
   "simpleInputSchema": {
     "name": "自定义筛选名称",
@@ -83,8 +84,8 @@
           "10年",
           "分位点%"
         ],
-        "min": 0,
-        "max": 30
+        "min": 30,
+        "max": 50
       },
       {
         "metric": "PB(不含商誉)统计值",
@@ -92,12 +93,12 @@
           "10年",
           "分位点%"
         ],
-        "min": 0,
-        "max": 30
+        "min": 30,
+        "max": 50
       },
       {
         "metric": "股息率",
-        "min": 2
+        "min": 1
       },
       {
         "metric": "市值"
@@ -76410,5 +76411,6 @@
         "notes": "需要页面内手工定义，当前目录不展开。"
       }
     ]
-  }
+  },
+  "dynamicOptionsIndex": null
 }
