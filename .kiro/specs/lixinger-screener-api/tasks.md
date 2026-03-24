@@ -105,13 +105,13 @@
   - 将三个阶段串联为 `main(options)` 函数：`validateEnv` → `queryToScreenerQuery` → `validateScreenerQuery` → `loadOrCreateSession` → `applyFilters` → `scrapeAllPages` → `applyLimit` → `formatCsv` → 写入文件
   - _需求：2.1–2.5、3.1–3.6、4.1–4.6、5.1–5.3_
 
-- [ ] 8. 实现 run-skill.js CLI 入口
+- [x] 8. 实现 run-skill.js CLI 入口
   - 解析 `--query`、`--headless`（默认 true）、`--limit` 参数
   - 加载 `.env`，调用 `validateEnv()`，缺失时输出错误并以退出码 1 退出
   - 调用 `main(options)` 并输出结果路径
   - _需求：6.1、6.2、6.3、6.4_
 
-- [ ] 9. 最终检查点 - 确保所有测试通过
+- [x] 9. 最终检查点 - 确保所有测试通过
   - 确保所有测试通过，如有问题请告知。
 
 ## 备注

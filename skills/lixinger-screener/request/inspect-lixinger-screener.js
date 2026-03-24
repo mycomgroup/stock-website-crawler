@@ -1,10 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright';
-import LoginHandler from '../src/login-handler.js';
+import '../load-env.js';
+import { LIXINGER_OUTPUT_DIR } from '../paths.js';
+import LoginHandler from '../../../stock-crawler/src/login-handler.js';
 
 const DEFAULT_URL = 'https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d';
-const OUTPUT_DIR = path.resolve(process.cwd(), 'output/playwright/lixinger-screener');
+const OUTPUT_DIR = LIXINGER_OUTPUT_DIR;
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'network-capture.json');
 const STORAGE_STATE_FILE = '/tmp/lixinger-latest-storage-state.json';
 

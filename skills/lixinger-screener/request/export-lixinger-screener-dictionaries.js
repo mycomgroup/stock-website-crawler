@@ -1,9 +1,11 @@
 import fs from 'fs';
 import path from 'path';
+import '../load-env.js';
+import { LIXINGER_OUTPUT_DIR } from '../paths.js';
 
 const DEFAULT_AREA_CODE = 'cn';
 const DEFAULT_PAGE_URL = `https://www.lixinger.com/analytics/screener/company-fundamental/${DEFAULT_AREA_CODE}`;
-const DEFAULT_OUTPUT_DIR = path.resolve(process.cwd(), 'output/playwright/lixinger-screener');
+const DEFAULT_OUTPUT_DIR = LIXINGER_OUTPUT_DIR;
 
 function saveJson(filePath, data) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });

@@ -1,7 +1,9 @@
 import fs from 'fs';
 import path from 'path';
+import '../load-env.js';
+import { LIXINGER_OUTPUT_DIR } from '../paths.js';
 
-const DEFAULT_OUTPUT_DIR = path.resolve(process.cwd(), 'output/playwright/lixinger-screener');
+const DEFAULT_OUTPUT_DIR = LIXINGER_OUTPUT_DIR;
 const DEFAULT_CATALOG_PATH = path.join(DEFAULT_OUTPUT_DIR, 'condition-catalog.cn.json');
 const DEFAULT_TEMPLATE_PATH = path.join(DEFAULT_OUTPUT_DIR, 'simple-input-template.cn.json');
 const DEFAULT_OUTPUT_PATH = path.join(DEFAULT_OUTPUT_DIR, 'condition-config.cn.json');

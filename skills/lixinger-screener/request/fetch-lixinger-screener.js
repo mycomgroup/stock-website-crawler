@@ -1,11 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import '../load-env.js';
+import { LIXINGER_OUTPUT_DIR } from '../paths.js';
 
 const DEFAULT_URL = 'https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d';
-const DEFAULT_CATALOG_PATH = path.resolve(
-  process.cwd(),
-  'output/playwright/lixinger-screener/condition-catalog.cn.json'
-);
+const DEFAULT_CATALOG_PATH = path.join(LIXINGER_OUTPUT_DIR, 'condition-catalog.cn.json');
 
 const DEFAULT_RANGES = {
   market: 'a',
@@ -28,6 +27,41 @@ const SPECIAL_METRIC_ALIASES = {
     notes: '当前脚本只支持“上市时间”这一种子条件。'
   }
 };
+
+function showHelp() {
+  process.stdout.write(
+    [
+      '用法：node request/fetch-lixinger-screener.js [选项]',
+      '',
+      '常用方式：',
+      '  1. 直接读取理杏仁已保存筛选器',
+      '     --url <筛选器页面 URL>',
+      '     --screener-id <筛选器 ID>',
+      '',
+      '  2. 直接使用抓包后的请求体',
+      '     --request-body-file <request-body.json>',
+      '',
+      '  3. 使用简化输入配置生成请求体',
+      '     --simple-input-file <simple-input.json>',
+      '     --catalog-file <condition-catalog.cn.json>',
+      '',
+      '常用选项：',
+      '  --output <table-json|markdown|csv|raw>   输出格式，默认 table-json',
+      '  --page-size <数字>                        每页数量',
+      '  --page-index <数字>                       起始页，默认 0',
+      '  --save-request-body <文件路径>            保存最终请求体',
+      '  --help                                   显示帮助',
+      '',
+      '环境变量：',
+      '  LIXINGER_USERNAME',
+      '  LIXINGER_PASSWORD',
+      '',
+      '示例：',
+      '  node request/fetch-lixinger-screener.js --url "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d" --output markdown',
+      '  node request/fetch-lixinger-screener.js --simple-input-file output/playwright/lixinger-screener/simple-input-template.cn.json --output csv'
+    ].join('\n') + '\n'
+  );
+}
 
 function parseArgs(argv) {
   const args = {};
@@ -549,6 +583,11 @@ async function fetchAllScreenerRows(cookie, body) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args.help || args.h) {
+    showHelp();
+    return;
+  }
+
   const username = process.env.LIXINGER_USERNAME;
   const password = process.env.LIXINGER_PASSWORD;
 
