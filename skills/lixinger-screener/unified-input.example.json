@@ -1,0 +1,33 @@
+{
+  "name": "低估值高股息示例",
+  "areaCode": "cn",
+  "industrySource": "sw_2021",
+  "industryLevel": "three",
+  "pageSize": 100,
+  "conditions": [
+    {
+      "metric": "PE-TTM(扣非)统计值",
+      "selectors": ["10年", "分位点%"],
+      "min": 0,
+      "max": 30
+    },
+    {
+      "metric": "PB(不含商誉)统计值",
+      "selectors": ["10年", "分位点%"],
+      "min": 0,
+      "max": 30
+    },
+    {
+      "metric": "股息率",
+      "min": 2
+    },
+    {
+      "metric": "上市日期",
+      "max": "2015-01-01"
+    }
+  ],
+  "sort": {
+    "metric": "股息率",
+    "order": "desc"
+  }
+}

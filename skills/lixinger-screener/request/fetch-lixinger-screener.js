@@ -2,9 +2,21 @@ import fs from 'fs';
 import path from 'path';
 import '../load-env.js';
 import { LIXINGER_OUTPUT_DIR } from '../paths.js';
+import {
+  DEFAULT_CONDITION_CATALOG_PATH,
+  loadConditionCatalog,
+  resolveCatalogPath
+} from '../shared/catalog.js';
+import { queryToUnifiedInput, validateUnifiedQuery } from '../shared/natural-language.js';
+import {
+  buildRequestPlanFromScreener as buildSharedRequestPlanFromScreener,
+  buildRequestPlanFromUnifiedInput as buildSharedRequestPlanFromUnifiedInput,
+  mergeUnifiedInputs,
+  normalizeUnifiedInput
+} from '../shared/unified-input.js';
 
 const DEFAULT_URL = 'https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d';
-const DEFAULT_CATALOG_PATH = path.join(LIXINGER_OUTPUT_DIR, 'condition-catalog.cn.json');
+const DEFAULT_CATALOG_PATH = DEFAULT_CONDITION_CATALOG_PATH;
 
 const DEFAULT_RANGES = {
   market: 'a',
@@ -41,8 +53,13 @@ function showHelp() {
       '  2. 直接使用抓包后的请求体',
       '     --request-body-file <request-body.json>',
       '',
-      '  3. 使用简化输入配置生成请求体',
-      '     --simple-input-file <simple-input.json>',
+      '  3. 使用统一参数文件生成请求体',
+      '     --input-file <input.json>',
+      '     --simple-input-file <simple-input.json>   # 兼容旧参数名',
+      '     --catalog-file <condition-catalog.cn.json>',
+      '',
+      '  4. 直接输入自然语言',
+      '     --query "<自然语言筛选条件>"',
       '     --catalog-file <condition-catalog.cn.json>',
       '',
       '常用选项：',
@@ -50,6 +67,7 @@ function showHelp() {
       '  --page-size <数字>                        每页数量',
       '  --page-index <数字>                       起始页，默认 0',
       '  --save-request-body <文件路径>            保存最终请求体',
+      '  --catalog-file <文件路径>                 条件目录，默认 output/playwright/lixinger-screener/condition-catalog.cn.json',
       '  --help                                   显示帮助',
       '',
       '环境变量：',
@@ -58,7 +76,8 @@ function showHelp() {
       '',
       '示例：',
       '  node request/fetch-lixinger-screener.js --url "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d" --output markdown',
-      '  node request/fetch-lixinger-screener.js --simple-input-file output/playwright/lixinger-screener/simple-input-template.cn.json --output csv'
+      '  node request/fetch-lixinger-screener.js --input-file output/playwright/lixinger-screener/simple-input-template.cn.json --output csv',
+      '  node request/fetch-lixinger-screener.js --query "PE-TTM(扣非)统计值10年分位点小于30%，股息率大于2%" --output markdown'
     ].join('\n') + '\n'
   );
 }
@@ -599,6 +618,7 @@ async function main() {
   const screenerUrl = args.url || DEFAULT_URL;
   const parsedUrl = parseScreenerUrl(screenerUrl);
   const screenerId = args['screener-id'] || parsedUrl.screenerId;
+  const catalogPath = resolveCatalogPath(args['catalog-file'], process.cwd());
   const saveRequestBodyPath = args['save-request-body']
     ? path.resolve(process.cwd(), args['save-request-body'])
     : null;
@@ -615,15 +635,31 @@ async function main() {
       columnSpecs: [],
       summary: {}
     };
-  } else if (args['simple-input-file']) {
-    const simpleInputPath = path.resolve(process.cwd(), args['simple-input-file']);
-    const catalogPath = path.resolve(
-      process.cwd(),
-      args['catalog-file'] || DEFAULT_CATALOG_PATH
-    );
-    const simpleInput = loadJson(simpleInputPath);
-    const catalog = loadJson(catalogPath);
-    requestPlan = buildRequestPlanFromSimpleInput(simpleInput, catalog, {
+  } else if (args['input-file'] || args['simple-input-file'] || args.query) {
+    const inputFilePath = args['input-file'] || args['simple-input-file'];
+    const inputFile = inputFilePath
+      ? loadJson(path.resolve(process.cwd(), inputFilePath))
+      : {};
+    let unifiedInput = normalizeUnifiedInput(inputFile);
+    const catalog = loadConditionCatalog(catalogPath);
+    const naturalLanguageQueries = [inputFile.query, args.query].filter(Boolean);
+
+    for (const query of naturalLanguageQueries) {
+      const parsed = await queryToUnifiedInput(query, catalog.metrics);
+      const validation = validateUnifiedQuery(parsed, catalog.metrics);
+      if (!validation.valid) {
+        throw new Error(validation.errors.join('\n'));
+      }
+      unifiedInput = mergeUnifiedInputs(unifiedInput, parsed);
+    }
+
+    if (!unifiedInput.conditions?.length) {
+      throw new Error(
+        'Missing input conditions. Provide --input-file, --simple-input-file, or --query'
+      );
+    }
+
+    requestPlan = buildSharedRequestPlanFromUnifiedInput(unifiedInput, catalog, {
       areaCode: parsedUrl.areaCode,
       pageIndex: args['page-index'],
       pageSize: args['page-size']
@@ -635,7 +671,7 @@ async function main() {
       );
     }
     screenerConfig = await getScreenerConfig(cookie, screenerId);
-    requestPlan = buildRequestPlanFromScreener(screenerConfig, {
+    requestPlan = buildSharedRequestPlanFromScreener(screenerConfig, {
       areaCode: parsedUrl.areaCode,
       pageIndex: args['page-index'],
       pageSize: args['page-size']
