@@ -5,7 +5,7 @@
   "description": "自然语言驱动的理杏仁股票筛选 skill",
   "main": "main.js",
   "scripts": {
-    "test": "node --test browser/test/*.test.js",
+    "test": "node --test browser/test/*.test.js shared/test/*.test.js",
     "browser": "node run-skill.js",
     "browser:direct": "node browser/run-skill.js",
     "request:fetch": "node request/fetch-lixinger-screener.js",
