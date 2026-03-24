@@ -15,6 +15,8 @@ import {
   normalizeUnifiedInput
 } from '../shared/unified-input.js';
 
+// 默认筛选器：10年估值历史低位
+// 扣非PE-TTM过去10年分位点30%以下，PB（不含商誉）过去10年分位点30%以下，股息率2%以上
 const DEFAULT_URL = 'https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d';
 const DEFAULT_CATALOG_PATH = DEFAULT_CONDITION_CATALOG_PATH;
 
@@ -693,9 +695,14 @@ async function main() {
     : null;
 
   const tableRows = flattenTableRows(result.rows, requestPlan.columnSpecs);
+  const screenerName = screenerConfig?.name || requestPlan.summary.screenerName || null;
+  // 筛选器描述：从 API 返回的 description 或 remark 字段获取（理杏仁页面上展示的过滤条件说明）
+  const screenerDescription = screenerConfig?.description || screenerConfig?.remark || null;
+
   const payload = {
     screenerId: screenerId || null,
-    screenerName: screenerConfig?.name || requestPlan.summary.screenerName || null,
+    screenerName,
+    screenerDescription,
     total: result.total,
     latestTime,
     latestQuarter,
@@ -710,11 +717,23 @@ async function main() {
   }
 
   if (outputMode === 'csv') {
+    if (screenerName) {
+      process.stdout.write(`# 筛选器: ${screenerName}\n`);
+    }
+    if (screenerDescription) {
+      process.stdout.write(`# 描述: ${screenerDescription}\n`);
+    }
     process.stdout.write(`${toCsv(tableRows)}\n`);
     return;
   }
 
   if (outputMode === 'markdown') {
+    if (screenerName) {
+      process.stdout.write(`**${screenerName}**\n\n`);
+    }
+    if (screenerDescription) {
+      process.stdout.write(`> ${screenerDescription}\n\n`);
+    }
     process.stdout.write(`我们为您找到了 ${result.total} 个结果\n`);
     process.stdout.write(`(最新时间: ${latestTime}${latestQuarter ? ` 最新季度: ${latestQuarter}` : ''})\n\n`);
     process.stdout.write(`${toMarkdownTable(tableRows)}\n`);
