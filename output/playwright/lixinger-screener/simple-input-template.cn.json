@@ -1,0 +1,58 @@
+{
+  "name": "10年估值历史低位_示例",
+  "areaCode": "cn",
+  "pageSize": 100,
+  "sort": {
+    "metric": "PE-TTM(扣非)统计值",
+    "selectors": [
+      "10年",
+      "分位点%"
+    ],
+    "order": "desc"
+  },
+  "ranges": {
+    "market": "a",
+    "excludeBlacklist": false,
+    "excludeDelisted": false,
+    "excludeSpecialTreatment": false,
+    "specialTreatmentOnly": false
+  },
+  "conditions": [
+    {
+      "metric": "PE-TTM(扣非)统计值",
+      "selectors": [
+        "10年",
+        "分位点%"
+      ],
+      "min": 30,
+      "max": 50
+    },
+    {
+      "metric": "PB(不含商誉)统计值",
+      "selectors": [
+        "10年",
+        "分位点%"
+      ],
+      "min": 30,
+      "max": 50
+    },
+    {
+      "metric": "股息率",
+      "min": 1
+    },
+    {
+      "metric": "市值"
+    },
+    {
+      "metric": "上市日期",
+      "subCondition": "上市时间",
+      "max": "2015-01-01"
+    }
+  ],
+  "notes": [
+    "百分比按页面输入习惯填写，例如 30 表示 30%。脚本会自动转换成 API 需要的小数 0.3。",
+    "市值按“亿”填写，例如 100 表示 100 亿。脚本会自动转换成原始金额。",
+    "更完整的可用条件请查看同目录下的 condition-catalog.cn.json。"
+  ],
+  "catalogGeneratedAt": "2026-03-24T02:30:37.952Z"
+}
