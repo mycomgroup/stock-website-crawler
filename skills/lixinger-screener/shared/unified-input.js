@@ -1,3 +1,5 @@
+import { loadBrowserMetricsCatalog } from './catalog.js';
+
 const DEFAULT_RANGES = {
   market: 'a',
   stockBourseTypes: [],
@@ -17,6 +19,11 @@ const SPECIAL_METRIC_ALIASES = {
     resultFieldKey: 'ipoDate',
     supportedSubConditionLabels: ['上市时间'],
     notes: '当前脚本只支持“上市时间”这一种子条件。'
+  },
+  '市值/自由现金流': {
+    browserField: '市值',
+    browserCategory: '估值',
+    browserFallbackLabels: ['PCF-TTM', '市值/自由现金流']
   }
 };
 
@@ -226,6 +233,18 @@ function getCatalogMetrics(catalog) {
   return [];
 }
 
+function findBrowserCatalogEntry(condition) {
+  const browserCatalog = loadBrowserMetricsCatalog();
+  const labels = new Set([
+    condition.displayLabel,
+    condition.field,
+    condition.metric,
+    ...(SPECIAL_METRIC_ALIASES[condition.metric || condition.displayLabel || condition.field || '']?.browserFallbackLabels || [])
+  ].filter(Boolean));
+
+  return browserCatalog.find(entry => labels.has(entry.displayName) || labels.has(entry.metric)) || null;
+}
+
 export function lookupCatalogEntry(catalog, rawCondition) {
   const condition = normalizeOperatorValueCondition(rawCondition);
   const metrics = getCatalogMetrics(catalog);
@@ -300,7 +319,7 @@ export function buildDisplayLabel(entry, rawCondition) {
     return condition.displayLabel;
   }
 
-  let label = entry.displayLabelExample || entry.metric;
+  let label = entry.displayLabelExample || entry.displayName || entry.metric;
   const selectors = condition.selectors || [];
 
   for (let index = 0; index < (entry.selectors || []).length; index += 1) {
@@ -527,20 +546,36 @@ export function conditionToBrowserFilter(rawCondition, catalog = null) {
 
   if (!displayLabel) {
     if (!catalog) {
-      throw new Error(
-        `Condition ${JSON.stringify(rawCondition)} requires a condition catalog to resolve browser field name`
-      );
+      entry = findBrowserCatalogEntry(condition);
+      if (!entry) {
+        throw new Error(
+          `Condition ${JSON.stringify(rawCondition)} requires a condition catalog to resolve browser field name`
+        );
+      }
+      displayLabel = buildDisplayLabel(entry, condition);
+    } else {
+      entry = lookupCatalogEntry(catalog, condition);
+      if (!entry) {
+        entry = findBrowserCatalogEntry(condition);
+      }
+      if (!entry) {
+        throw new Error(`Unable to resolve browser field for condition: ${JSON.stringify(rawCondition)}`);
+      }
+      displayLabel = buildDisplayLabel(entry, condition);
     }
-    entry = lookupCatalogEntry(catalog, condition);
-    if (!entry) {
-      throw new Error(`Unable to resolve browser field for condition: ${JSON.stringify(rawCondition)}`);
-    }
-    displayLabel = buildDisplayLabel(entry, condition);
   } else if (catalog) {
     entry = lookupCatalogEntry(catalog, condition);
+    if (!entry) {
+      entry = findBrowserCatalogEntry(condition);
+    }
   }
 
-  const category = condition.category || entry?.category || null;
+  const alias = SPECIAL_METRIC_ALIASES[condition.metric || condition.displayLabel || condition.field || ''] || null;
+  if (alias?.browserField) {
+    displayLabel = alias.browserField;
+  }
+
+  const category = alias?.browserCategory || condition.category || entry?.category || null;
   const dateMode = resolveDateMode(entry, condition);
   const subCondition = resolveSubCondition(entry, condition);
   const sharedFields = {

@@ -278,31 +278,47 @@ async function openScreenerPage(page, targetUrl) {
   await waitForScreenerReady(page);
 }
 
+async function ensureScreenerPage(page, targetUrl) {
+  const currentUrl = page.url();
+  const needsNavigation =
+    !currentUrl ||
+    currentUrl === 'about:blank' ||
+    !currentUrl.startsWith(targetUrl);
+
+  if (needsNavigation) {
+    await openScreenerPage(page, targetUrl);
+    return;
+  }
+
+  await page.waitForTimeout(500);
+  await waitForScreenerReady(page);
+}
+
 /**
- * Validates login state by calling a lightweight API endpoint instead of
- * loading the full screener page. This avoids opening extra browser tabs
- * and avoids long timeouts when the page is slow to load.
+ * Validates login state by calling a lightweight API endpoint directly from Node.js.
+ * Extracts cookies from the Playwright context and uses Node.js fetch — no browser page needed.
  */
 async function validateContext(context) {
-  const page = await context.newPage();
+  const cookies = await context.cookies('https://www.lixinger.com').catch(() => []);
+  const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
+  if (!cookieHeader) return false;
+
   try {
-    const response = await page.goto(
-      'https://www.lixinger.com/api/user/info',
-      { timeout: 10_000, waitUntil: 'domcontentloaded' }
-    ).catch(() => null);
-    if (!response) return false;
-    const text = await page.evaluate(() => document.body?.innerText || '').catch(() => '');
-    try {
-      const json = JSON.parse(text);
-      // Logged-in response has a user object; not-logged-in returns code 401 or empty data
-      return json?.data?._id != null || json?.code === 1;
-    } catch {
-      return false;
-    }
+    const res = await fetch('https://www.lixinger.com/api/company/screener/dates', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'cookie': cookieHeader,
+        'user-agent': USER_AGENT,
+        'referer': SCREENER_URL
+      },
+      body: JSON.stringify({ areaCode: 'cn' })
+    });
+    if (res.status !== 200) return false;
+    const json = await res.json().catch(() => null);
+    return json?.priceMetricsDate != null;
   } catch {
     return false;
-  } finally {
-    await page.close().catch(() => {});
   }
 }
 
@@ -432,71 +448,48 @@ export async function loadOrCreateSession(browser, options = {}) {
  */
 export async function applyFilters(page, filters, options = {}) {
   const targetUrl = options.targetUrl || SCREENER_URL;
-  await openScreenerPage(page, targetUrl);
+  await ensureScreenerPage(page, targetUrl);
 
   const rowLocator = page.locator('tr').filter({ has: page.locator('svg.fa-xmark') });
 
-  const clickTab = async tabName => {
-    // Only click tabs that are inside the screener field panel, not site navigation
-    const tab = page.locator(
-      `.field-list a.nav-link:has-text("${tabName}"), ` +
-      `.screener-field a.nav-link:has-text("${tabName}"), ` +
-      `.condition-panel a.nav-link:has-text("${tabName}"), ` +
-      `ul.nav-tabs a.nav-link:has-text("${tabName}"), ` +
-      `.tab-content ~ ul a.nav-link:has-text("${tabName}")`
-    ).first();
-    // Fallback: find a nav-link that is near a plus-btn (i.e. inside the field panel)
-    const fallback = page.locator(`a.nav-link:has-text("${tabName}")`).filter({
-      has: page.locator('xpath=ancestor::*[.//div[@class and contains(@class,"plus-btn")]]')
-    }).first();
+  // Known screener category tabs — never click site navigation links
+  const SCREENER_TABS = [
+    '基本指标', '热度指标', '资产负债表', '利润表', '现金流量表', '财务指标', '财报属性', '自定义指标'
+  ];
 
-    let target = null;
-    if (await tab.count()) {
-      target = tab;
-    } else if (await fallback.count()) {
-      target = fallback;
-    } else {
-      // Last resort: find any nav-link with this exact text that is visible
-      const all = page.locator(`a.nav-link`);
-      const count = await all.count();
-      for (let i = 0; i < count; i++) {
-        const el = all.nth(i);
-        const text = (await el.textContent().catch(() => '')).trim();
-        if (text === tabName && await el.isVisible().catch(() => false)) {
-          target = el;
-          break;
+  const clickTab = async tabName => {
+    // Use exact text match scoped to elements that are siblings of plus-btn containers
+    // Try multiple candidate selectors from most to least specific
+    const candidates = [
+      // Inside a ul that contains li.field items (the field panel nav)
+      page.locator('ul').filter({ has: page.locator('li.field') }).locator(`a.nav-link:has-text("${tabName}")`).first(),
+      // Any nav-link with exact text that is NOT inside the top navbar
+      page.locator(`a.nav-link`).filter({ hasText: new RegExp(`^${tabName}$`) }).first()
+    ];
+
+    for (const candidate of candidates) {
+      if (await candidate.count().catch(() => 0)) {
+        const visible = await candidate.isVisible().catch(() => false);
+        if (visible) {
+          await candidate.click({ force: true });
+          await page.waitForTimeout(800);
+          return true;
         }
       }
     }
-
-    if (!target) return false;
-    await target.click({ force: true });
-    await page.waitForTimeout(800);
-    return true;
+    return false;
   };
 
-  // Only list tabs that are inside the screener field panel (contain plus-btn fields)
+  // Only return known screener tabs that actually exist on the page
   const listTabNames = async () => {
-    return page.evaluate(() => {
-      // Find all nav-link elements
-      const allLinks = [...document.querySelectorAll('a.nav-link')];
-      // A screener tab is one whose ancestor contains li.field or div.plus-btn elements
-      const screenerTabs = allLinks.filter(link => {
-        let el = link.parentElement;
-        // Walk up max 5 levels looking for a container that has plus-btn children
-        for (let i = 0; i < 5; i++) {
-          if (!el) break;
-          if (el.querySelector('li.field, div.plus-btn[title]')) return true;
-          el = el.parentElement;
-        }
-        return false;
-      });
-      // If we found screener-specific tabs, use those; otherwise fall back to all nav-links
-      const source = screenerTabs.length > 0 ? screenerTabs : allLinks;
-      return source
-        .map(el => el.textContent?.trim() || '')
-        .filter(Boolean);
-    }).catch(() => []);
+    const result = [];
+    for (const name of SCREENER_TABS) {
+      const locator = page.locator(`a.nav-link`).filter({ hasText: new RegExp(`^${name}$`) }).first();
+      if (await locator.count().catch(() => 0)) {
+        result.push(name);
+      }
+    }
+    return result;
   };
 
   const extractVisibleFieldTitles = async () => page.evaluate(() => {
@@ -512,6 +505,33 @@ export async function applyFilters(page, filters, options = {}) {
   });
 
   const findFieldButton = async filter => {
+    const baseLabel = String(filter.field || '').replace(/\(.*?\)/g, '').replace(/·.*$/, '').trim();
+
+    const exactLocator = title => page.locator(`div.plus-btn[title="${title}"]`).first();
+    const fuzzyLocator = title => page.locator(`div.plus-btn[title*="${title}"], [title*="${title}"]`).first();
+    const textLocator = title => page.getByText(title, { exact: false }).first();
+
+    // First check if the field is already visible without switching tabs
+    const directLocator = exactLocator(filter.field);
+    if (await directLocator.count() && await directLocator.isVisible().catch(() => false)) {
+      return directLocator;
+    }
+
+    if (baseLabel && baseLabel !== filter.field) {
+      const baseLocator = fuzzyLocator(baseLabel);
+      if (await baseLocator.count() && await baseLocator.isVisible().catch(() => false)) {
+        return baseLocator;
+      }
+    }
+
+    const textMatch = textLocator(filter.field);
+    if (await textMatch.count().catch(() => 0)) {
+      const visible = await textMatch.isVisible().catch(() => false);
+      if (visible) {
+        return textMatch;
+      }
+    }
+
     const triedTabs = [];
     const candidateTabs = [];
     if (filter.category) candidateTabs.push(filter.category);
@@ -523,14 +543,46 @@ export async function applyFilters(page, filters, options = {}) {
 
     for (const tabName of candidateTabs) {
       triedTabs.push(tabName);
-      await clickTab(tabName).catch(() => {});
-      const locator = page.locator(`div.plus-btn[title="${filter.field}"]`).first();
+      const clicked = await clickTab(tabName).catch(() => false);
+      if (!clicked) continue;
+      const locator = exactLocator(filter.field);
       if (await locator.count()) {
         const visible = await locator.isVisible().catch(() => false);
         if (visible) {
           return locator;
         }
       }
+      if (baseLabel && baseLabel !== filter.field) {
+        const baseLocator = fuzzyLocator(baseLabel);
+        if (await baseLocator.count()) {
+          const visible = await baseLocator.isVisible().catch(() => false);
+          if (visible) {
+            return baseLocator;
+          }
+        }
+        const baseTextMatch = page.getByText(baseLabel, { exact: false }).first();
+        if (await baseTextMatch.count().catch(() => 0) && await baseTextMatch.isVisible().catch(() => false)) {
+          return baseTextMatch;
+        }
+      }
+    }
+
+    const globalLocator = page.locator(
+      `div.plus-btn[title="${filter.field}"], [title="${filter.field}"]` +
+      (baseLabel && baseLabel !== filter.field
+        ? `, div.plus-btn[title*="${baseLabel}"], [title*="${baseLabel}"]`
+        : '')
+    ).first();
+    if (await globalLocator.count()) {
+      const visible = await globalLocator.isVisible().catch(() => false);
+      if (visible) {
+        return globalLocator;
+      }
+    }
+
+    const globalText = page.getByText(filter.field, { exact: false }).first();
+    if (await globalText.count().catch(() => 0) && await globalText.isVisible().catch(() => false)) {
+      return globalText;
     }
 
     const visibleTitles = await extractVisibleFieldTitles();
@@ -929,6 +981,7 @@ export async function main(options) {
       headless: options.headless
     });
     const page = await context.newPage();
+    await openScreenerPage(page, targetUrl);
     await applyFilters(page, screenerQuery.filters, { targetUrl });
     rows = await scrapeAllPages(page);
     await page.close().catch(() => {});

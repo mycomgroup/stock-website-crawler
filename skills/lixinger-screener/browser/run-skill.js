@@ -47,7 +47,7 @@ if (wantsHelp) {
       '',
       '示例：',
       '  node run-skill.js --query "PE-TTM(扣非)统计值10年分位点小于30%，股息率大于2%"',
-      '  node run-skill.js --input-file output/playwright/lixinger-screener/simple-input-template.cn.json --headless false',
+      '  node run-skill.js --input-file skills/lixinger-screener/data/simple-input-template.cn.json --headless false',
       '  node run-skill.js --url "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d" --profile-dir /path/to/chrome-profile'
     ].join('\n') + '\n'
   );

@@ -165,6 +165,27 @@ test('buildBrowserFiltersFromUnifiedInput preserves dateMode and subCondition fo
   ]);
 });
 
+test('buildBrowserFiltersFromUnifiedInput falls back to browser catalog for cashflow valuation fields', () => {
+  const filters = buildBrowserFiltersFromUnifiedInput({
+    conditions: [
+      {
+        metric: '市值/自由现金流',
+        category: '基本指标',
+        max: 20
+      }
+    ]
+  });
+
+  assert.deepStrictEqual(filters, [
+    {
+      field: '市值',
+      category: '估值',
+      operator: '小于',
+      value: 20
+    }
+  ]);
+});
+
 test('buildRequestPlanFromUnifiedInput reuses the same unified condition schema', () => {
   const plan = buildRequestPlanFromUnifiedInput({
     areaCode: 'cn',

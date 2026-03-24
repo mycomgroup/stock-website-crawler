@@ -1,0 +1,1457 @@
+{
+  "targetUrl": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+  "currentUrl": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+  "loginSuccess": true,
+  "pageTitle": "沪深|开始公司筛选|筛选器(10年估值历史低位) - 理杏仁",
+  "captureCount": 72,
+  "captures": [
+    {
+      "id": 1,
+      "phase": "request",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+      "headers": {
+        "accept-language": "zh-CN",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null
+    },
+    {
+      "id": 1,
+      "phase": "response",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "content-type": "text/html",
+        "date": "Tue, 24 Mar 2026 01:12:17 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "server": "nginx",
+        "vary": "Accept-Encoding",
+        "x-resp-api": "1"
+      },
+      "contentType": "text/html",
+      "body": "<!DOCTYPE html><html lang=\"cmn_hans_cn\" style=\"font-size:87.5%;\"><head><meta name=\"referrer\" content=\"no-referrer-when-downgrade\"><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"keywords\" content=\"\"><meta name=\"description\" content=\"理杏仁定位于理性投资者的数据中心，为投资者提供专业的数据提取、筛选以及可视化服务。\"><title>理杏仁 - 用数据认知世界</title><link rel=\"shortcut icon\" href=\"//resource.lixinger.com/static/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"icon\" href=\"//resource.lixinger.com/static/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"stylesheet\" type=\"text/css\" href=\"/server/static/style-CDo9LvYI.css\"></head><body style=\"\" class=\"system\"><div id=\"app\" class=\"position-absolute w-100 d-flex flex-column\"><div id=\"header\" class=\"lxr-header fixed-top\"></div><div class=\"lxr-body\"><div id=\"vueApp\">加载中...</div><div id=\"content\" class=\"\"></div></div><div class=\"lxr-footer mt-auto\"><div class=\"footer bg-dark text-white py-3 px-5\" data-v-61319b9c><div class=\"d-flex align-items-center\" data-v-61319b9c><div class=\"info me-auto\" data-v-61319b9c><ul class=\"links\" data-v-61319b9c><li data-v-61319b9c>网站链接: </li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/disclaimer\" target=\"_blank\" data-v-61319b9c>免责申明</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/join-us\" target=\"_blank\" data-v-61319b9c>加入我们</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/price-history\" target=\"_blank\" data-v-61319b9c>价格调整表</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/release\" target=\"_blank\" data-v-61319b9c>更新日志</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/app-release\" target=\"_blank\" data-v-61319b9c>APP更新日志</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/open/api\" target=\"_blank\" data-v-61319b9c>开放平台</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/wiki/list\" target=\"_blank\" data-v-61319b9c>百科</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/feedback/posts\" target=\"_blank\" data-v-61319b9c>反馈</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/install-xueqiu-plugin\" target=\"_blank\" data-v-61319b9c>雪球插件</a></li><li data-v-61319b9c>友情链接: </li><li data-v-61319b9c><a href=\"https://www.jianweidata.com/\" target=\"_blank\" data-v-61319b9c> 见微数据 </a></li></ul><ul class=\"links quick-links\" data-v-61319b9c><li class=\"text-capitalize\" data-v-61319b9c>快速链接: </li><li data-v-61319b9c><a href=\"/equity/company/detail/sh/688781/688781\" target=\"_blank\" data-v-61319b9c><span>视涯科技</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/sz/301682/301682\" target=\"_blank\" data-v-61319b9c><span>宏明电子</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/hk/03355/3355\" target=\"_blank\" data-v-61319b9c><span>飞速创新</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/hk/02701/2701\" target=\"_blank\" data-v-61319b9c><span>国民技术</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/hk/01989/1989\" target=\"_blank\" data-v-61319b9c><span>广合科技</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/bj/920028/920028\" target=\"_blank\" data-v-61319b9c><span>新恒泰</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/hk/07489/7489\" target=\"_blank\" data-v-61319b9c><span>岚图汽车</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/bj/920078/920078\" target=\"_blank\" data-v-61319b9c><span>族兴新材</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/hk/03268/3268\" target=\"_blank\" data-v-61319b9c><span>美格智能</span></a></li><li data-v-61319b9c><a href=\"/equity/index/detail/csi/932431/932431\" target=\"_blank\" data-v-61319b9c><span>300质量</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/hk/02715/2715\" target=\"_blank\" data-v-61319b9c><span>埃斯顿</span></a></li><li data-v-61319b9c><a href=\"/equity/company/detail/bj/920036/920036\" target=\"_blank\" data-v-61319b9c><span>觅睿科技</span></a></li><li data-v-61319b9c><a href=\"/equity/macro/interest-rates\" targe...<truncated>"
+    },
+    {
+      "id": 2,
+      "phase": "request",
+      "resourceType": "stylesheet",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.css?dffa6eb3e6118818-5",
+      "headers": {
+        "origin": "https://www.lixinger.com",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 3,
+      "phase": "request",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.js?dffa6eb3e6118818-5",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 2,
+      "phase": "response",
+      "resourceType": "stylesheet",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.css?dffa6eb3e6118818-5",
+      "status": 200,
+      "headers": {
+        "content-encoding": "gzip",
+        "etag": "W/\"69c0feb2-624f\"",
+        "age": "58775",
+        "expires": "Wed, 22 Apr 2026 08:52:43 GMT",
+        "x-cache": "HIT TCP_HIT dirn:11:1167753438",
+        "date": "Mon, 23 Mar 2026 08:52:43 GMT",
+        "content-type": "text/css",
+        "vary": "Accept-Encoding",
+        "cache-control": "max-age=2592000, public",
+        "x-swift-cachetime": "2585127",
+        "timing-allow-origin": "*",
+        "via": "cache85.l2cn8786[0,0,200-0,H], cache31.l2cn8786[1,0], kunlun13.cn8001[0,0,200-0,H], kunlun13.cn8001[2,0]",
+        "ali-swift-global-savetime": "1774255963",
+        "x-swift-savetime": "Mon, 23 Mar 2026 10:47:16 GMT",
+        "access-control-allow-origin": "https://www.lixinger.com",
+        "eagleid": "dcb5a62117743147384046545e",
+        "content-length": "3784",
+        "server": "Tengine"
+      },
+      "contentType": "text/css",
+      "body": "[data-v-fc758db8] .lxr-search-box{width:13.6rem}[data-v-fc758db8] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-643baf08] .lxr-search-box{width:12rem}[data-v-643baf08] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-425a654f] .lxr-search-box{width:13.6rem}[data-v-425a654f] .lxr-search-box .multiselect__content-wrapper{right:0}.table tbody tr td .suspended[data-v-425a654f]{color:red}.table tbody tr td.memo[data-v-425a654f]{font-size:.875rem;line-height:1rem;max-width:12rem;min-width:8rem}.table tbody tr td.memo .update-memo[data-v-425a654f]{text-decoration:underline}[data-v-db6b3cf0] .lxr-search-box{width:13.6rem}[data-v-db6b3cf0] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-db6b3cf0] .lxr-table-metrics thead th.ops{width:4.8rem}[data-v-6c52bab6] .lxr-search-box{width:13.6rem}[data-v-6c52bab6] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-cee60ff0] .lxr-search-box{width:13.6rem}[data-v-cee60ff0] .lxr-search-box .multiselect__content-wrapper{right:0}.settings-bar-info .icon-right[data-v-cee60ff0]{display:none}.settings-bar-info .icon-down[data-v-cee60ff0]{display:inline}.settings-bar-info.hide[data-v-cee60ff0]{width:auto}.settings-bar-info.hide .icon-right[data-v-cee60ff0]{display:inline}.settings-bar-info.hide .icon-down[data-v-cee60ff0]{display:none}.left[data-v-cee60ff0]{min-width:13.6rem;width:13.6rem}.keys .ghost .nav-link[data-v-66974c6b]{background-color:#ccc;color:#000;opacity:.5}.keys .key .nav-link[data-v-66974c6b]{position:relative}.keys .key .nav-link .icon-delete-keys[data-v-66974c6b]{color:red;display:none;font-size:1rem;position:absolute;right:2px;top:2px}.keys .key .nav-link:hover .icon-delete-keys[data-v-66974c6b]{display:inline-block}.content-wrapper[data-v-709ba7be]{grid-template-columns:16rem auto;grid-gap:2rem;gap:2rem}.user-groups .user-groups-container .user-group[data-v-709ba7be]{color:#868686;position:relative}.user-groups .user-groups-container .user-group[data-v-709ba7be]:hover{color:var(--bs-primary);cursor:pointer}.user-groups .user-groups-container .user-group.active[data-v-709ba7be]{color:var(--bs-primary)}.user-groups .user-groups-container .user-group .new-notification[data-v-709ba7be]{padding:.35rem}.create-article-btn[data-v-709ba7be]{line-height:1.2rem}.create-article-btn .scroll[data-v-709ba7be]{font-size:1.2rem}.create-article-btn[data-v-709ba7be]:hover{color:var(--bs-primary)!important;text-decoration:none!important}.rules[data-v-709ba7be]{min-width:20rem;top:6rem;width:20rem}[data-v-0df00d02] .table tbody td{line-height:1.5;padding:.75rem}.dashboard-screener-list[data-v-580269a8]{border-top:1px solid #ddd}.dashboard-screener-list .screener-followed[data-v-580269a8]{width:5rem}.left .table[data-v-d0434ee6]{min-width:100%}.left .table thead th[data-v-d0434ee6]{text-align:center}.left .table thead th.order[data-v-d0434ee6]{min-width:2rem;width:2rem}.left .table thead th.market[data-v-d0434ee6]{min-width:5rem;width:5rem}.left .table thead th.description[data-v-d0434ee6],.left .table thead th.screener-name[data-v-d0434ee6]{min-width:10rem}.left .table thead th.followed[data-v-d0434ee6]{min-width:4rem;width:4rem}.left .table thead th.creator[data-v-d0434ee6]{min-width:7rem;width:7rem}.left .table thead th.date[data-v-d0434ee6]{min-width:7rem;width:10rem}.left .table thead th.opt[data-v-d0434ee6]{min-width:7rem;width:7rem}.left .table tbody td[data-v-d0434ee6]{text-align:center;vertical-align:middle}.right[data-v-d0434ee6]{min-width:30rem}.left .table[data-v-61cdf24c]{min-width:100%}.left .table thead th[data-v-61cdf24c]{text-align:center}.left .table thead th.order[data-v-61cdf24c]{min-width:2rem;width:2rem}.left .table thead th.market[data-v-61cdf24c]{min-width:5rem;width:5rem}.left .table thead th.screener-name[data-v-61cdf24c]{min-width:10rem}.left .table thead th.followed[data-v-61cdf24c]{min-width:4rem;width:4rem}.left .table thead th.share-type[data-v-61cdf24c]{min-width:8rem;width:8rem}.left .table thead th.date[data-v-61cdf24...<truncated>"
+    },
+    {
+      "id": 3,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.js?dffa6eb3e6118818-5",
+      "status": 200,
+      "headers": {
+        "content-encoding": "gzip",
+        "etag": "W/\"69c0feb2-4e938\"",
+        "age": "58776",
+        "expires": "Wed, 22 Apr 2026 08:52:42 GMT",
+        "x-cache": "HIT TCP_HIT dirn:10:1194572550",
+        "date": "Mon, 23 Mar 2026 08:52:42 GMT",
+        "content-type": "application/x-javascript",
+        "vary": "Accept-Encoding",
+        "cache-control": "max-age=2592000, public",
+        "x-swift-cachetime": "2585126",
+        "timing-allow-origin": "*",
+        "via": "cache43.l2cn3059[0,0,200-0,H], cache43.l2cn3059[1,0], kunlun16.cn8001[0,0,200-0,H], kunlun2.cn8001[2,0]",
+        "ali-swift-global-savetime": "1774255962",
+        "x-swift-savetime": "Mon, 23 Mar 2026 10:47:16 GMT",
+        "access-control-allow-origin": "https://www.lixinger.com",
+        "eagleid": "dcb5a61617743147384304459e",
+        "content-length": "76755",
+        "server": "Tengine"
+      },
+      "contentType": "application/x-javascript",
+      "body": "(self.webpackChunk=self.webpackChunk||[]).push([[536],{19056:function(){},39177:function(){},67930:function(){},12666:function(){},80422:function(){},61933:function(){},93283:function(){},68373:function(){},61079:function(){},67677:function(){},31619:function(){},72509:function(){},16554:function(){},24780:function(){},23847:function(){},4637:function(){},55532:function(){},4410:function(){},9450:function(e,t,a){\"use strict\";a.d(t,{Z:function(){return p}});var s=a(88917),l=a(61334),i=a(13053),r=a(30537),n=a(71241),o=a(18e3),c=a(25428),d=a(587);const u=[\"title\"],m={key:2,class:\"ms-1\"};var p={__name:\"MemberRoleDisplay\",props:{member:{type:Object,required:!0},showText:{type:Boolean,required:!1,default:!0}},setup(e){return r.vI.add(n.uI,o.KC),(t,a)=>{const r=(0,s.up)(\"FaIcon\");return(0,s.wg)(),(0,s.iD)(\"span\",{class:\"text-capitalize text-center role\",title:t.$t((0,l.SU)(d.Ze)[e.member.role])},[e.member.role===(0,l.SU)(c.tfp).MEMBER_ROLE.CREATOR?((0,s.wg)(),(0,s.j4)(r,{key:0,icon:\"user-astronaut\"})):(0,s.kq)(\"v-if\",!0),e.member.role===(0,l.SU)(c.tfp).MEMBER_ROLE.ADMIN?((0,s.wg)(),(0,s.j4)(r,{key:1,icon:\"user-gear\"})):(0,s.kq)(\"v-if\",!0),e.showText?((0,s.wg)(),(0,s.iD)(\"span\",m,(0,i.zw)(t.$t((0,l.SU)(d.Ze)[e.member.role])),1)):(0,s.kq)(\"v-if\",!0)],8,u)}}}},40553:function(e,t,a){\"use strict\";a.r(t),a.d(t,{default:function(){return Eg}});a(13227),a(11431);var s=a(67332),l=a(92091),i=a(15877),r=a(55846);const n=[{name:\"companyDashboard\",children:[{name:\"mine\",component:r.qt},{name:\"followed\",component:r.qK}]}];var o=a(25428),c=(a(51344),a(56614),a(36736),a(37666),a(12249),a(57637),a(53124),a(74413),a(62285),a(63517),a(38690),a(59139),a(86028),a(86651),a(92815),a(19717),a(98704),a(91683),a(8532),a(20779),a(88917)),d=a(61334),u=a(13053),m=a(90996),p=a(61320),f=a.n(p),g=a(66380),y=a.n(g),v=a(66726),h=a.n(v),_=a(89432),k=a.n(_),S=a(71482),w=a.n(S),b=a(94464),x=a(8803),T=a(76096),D=a(9477),U=a(95835),C=a(30537),L=a(4388),N=a(36558),I=a(84594),F=a(90015),z=a(5888),O=a(81285),E=a(95628),M=a(19551),R=a(24093),$=a(55856),A=a(64351),P=a(94312),q=a(2438),H=a(58966),j=a(587),Y=a(15558),G=a(15105),V=a(70384),B=a(21108),W=a(71097),K=(a(32679),a(67551),a(70006)),X=a(53533);var Q=class{constructor(e,t){let{stockBourseTypes:a,index:s,industry:l,stockGroups:i,mutualMarkets:r,multiMarketListedType:n,excludeBlacklist:o,excludeDelisted:c,excludeBourseType:d,constituentsPerspectiveType:u}=e;this._areaCode=t,this._stockBourseTypes=a,this._index=s,this._industry=l,this._stockGroups=i,this._mutualMarkets=r,this._multiMarketListedType=n,this._excludeBlacklist=!!o,this._excludeDelisted=!!c,this._excludeBourseType=!!d,this._constituentsPerspectiveType=u}get areaCode(){return this._areaCode}get stockBourseTypes(){return this._stockBourseTypes}set stockBourseTypes(e){this._stockBourseTypes=e}get index(){return this._index}set index(e){this._index=e}get industry(){return this._industry}set industry(e){this._industry=e}get stockGroups(){return this._stockGroups}set stockGroups(e){this._stockGroups=e}get mutualMarkets(){return this._mutualMarkets}set mutualMarkets(e){this._mutualMarkets=e}get multiMarketListedType(){return this._multiMarketListedType}set multiMarketListedType(e){this._multiMarketListedType=e}get excludeBlacklist(){return this._excludeBlacklist}set excludeBlacklist(e){this._excludeBlacklist=e}get excludeDelisted(){return this._excludeDelisted}set excludeDelisted(e){this._excludeDelisted=e}get excludeBourseType(){return this._excludeBourseType}set excludeBourseType(e){this._excludeBourseType=e}get constituentsPerspectiveType(){return this._constituentsPerspectiveType}set constituentsPerspectiveType(e){this._constituentsPerspectiveType=e}};const Z=[{value:\"\",text:I18nMarker(\"all stock A&B\")},{value:o.X5m.A,text:I18nMarker(\"all stock A\")},{value:o.X5m.B,text:I18nMarker(\"all stock B\")}],J=[{value:o.LnX.SH,text:j.rz[o.LnX.SH]},{value:o.LnX.SH_GEM,text:j.rz[o.LnX.SH_GEM]},{value:o.LnX.SH_MAIN_BOARD,text:j.rz[o.LnX.SH_MAIN_BOARD]},{value:o.LnX.SZ,text:j.rz[o....<truncated>"
+    },
+    {
+      "id": 4,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/account/sign-in/by-account",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"accountName\":\"<redacted>\",\"password\":\"<redacted>\"}"
+    },
+    {
+      "id": 5,
+      "phase": "request",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+      "headers": {
+        "accept-language": "zh-CN",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null
+    },
+    {
+      "id": 4,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/account/sign-in/by-account",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:22 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 5,
+      "phase": "response",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "content-type": "text/html",
+        "date": "Tue, 24 Mar 2026 01:12:22 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "server": "nginx",
+        "vary": "Accept-Encoding",
+        "x-resp-api": "1"
+      },
+      "contentType": "text/html",
+      "body": "<!DOCTYPE html><html lang=\"cmn_hans_cn\" style=\"font-size:87.5%;\"><head><meta name=\"referrer\" content=\"no-referrer-when-downgrade\"><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"keywords\" content=\"\"><meta name=\"description\" content=\"理杏仁定位于理性投资者的数据中心，为投资者提供专业的数据提取、筛选以及可视化服务。\"><title>理杏仁 - 用数据认知世界</title><link rel=\"shortcut icon\" href=\"//resource.lixinger.com/static/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"icon\" href=\"//resource.lixinger.com/static/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"stylesheet\" type=\"text/css\" href=\"/server/static/style-CDo9LvYI.css\"></head><body style=\"\" class=\"system\"><div id=\"app\" class=\"position-absolute w-100 d-flex flex-column\"><div id=\"header\" class=\"lxr-header fixed-top\"></div><div class=\"lxr-body\"><div id=\"vueApp\">加载中...</div><div id=\"content\" class=\"\"></div></div><div class=\"lxr-footer mt-auto\"><div class=\"footer bg-dark text-white py-3 px-5\" data-v-61319b9c><div class=\"d-flex align-items-center\" data-v-61319b9c><div class=\"info me-auto\" data-v-61319b9c><ul class=\"links\" data-v-61319b9c><li data-v-61319b9c>网站链接: </li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/disclaimer\" target=\"_blank\" data-v-61319b9c>免责申明</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/join-us\" target=\"_blank\" data-v-61319b9c>加入我们</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/price-history\" target=\"_blank\" data-v-61319b9c>价格调整表</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/release\" target=\"_blank\" data-v-61319b9c>更新日志</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/app-release\" target=\"_blank\" data-v-61319b9c>APP更新日志</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/open/api\" target=\"_blank\" data-v-61319b9c>开放平台</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/wiki/list\" target=\"_blank\" data-v-61319b9c>百科</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/feedback/posts\" target=\"_blank\" data-v-61319b9c>反馈</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/install-xueqiu-plugin\" target=\"_blank\" data-v-61319b9c>雪球插件</a></li><li data-v-61319b9c>友情链接: </li><li data-v-61319b9c><a href=\"https://www.jianweidata.com/\" target=\"_blank\" data-v-61319b9c> 见微数据 </a></li></ul><p data-v-61319b9c> ©2016-2024 理杏仁 | 北京乾谦慧科技有限公司 | <span data-v-61319b9c>客服电话: 010-86460785</span></p><p class=\"suggested\" data-v-61319b9c>推荐Chrome浏览器 | <a target=\"_blank\" href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502033936\" class=\"beian\" data-v-61319b9c> 京公网安备11010502033936号 </a> | <span data-v-61319b9c> 京B2-20201471 </span> | <a href=\"http://beian.miit.gov.cn/\" target=\"_blank\" class=\"beian\" rel=\"noreferrer noopener\" data-v-61319b9c> 京ICP备16057978号 </a> | <a href=\"/marketing/user-agreement\" target=\"_blank\" class=\"beian\" data-v-61319b9c>用户协议</a></p><p class=\"note mb-0\" data-v-61319b9c><span class=\"text-capitalize\" data-v-61319b9c>风险提示</span>: <span data-v-61319b9c>本站所有免费及收费信息和数据仅供参考，不构成投资建议，理杏仁不承担由此导致的任何法律责任。</span></p></div><div class=\"follow-us\" data-v-61319b9c><div class=\"d-flex justify-content-center mt-2\" data-v-61319b9c><div class=\"text-center\" data-v-61319b9c><a class=\"icon d-block border text-light rounded-circle border-danger bg-danger bg-opacity-25 fs-6\" href=\"/marketing/app-instructions\" target=\"_blank\" data-v-61319b9c>APP</a></div><div class=\"ms-2 text-center\" data-v-61319b9c><div class=\"icon border rounded-circle border-success bg-success bg-opacity-25 fs-6\" data-img-src=\"/static/img/wechat-wyq.png\" data-v-61319b9c>微信群</div></div><div class=\"ms-2 text-center\" data-v-61319b9c><div class=\"icon border rounded-circle border-primary bg-primary bg-opacity-25 fs-6\" data-img-src=\"/static/img/qq_group_annually_card.png\" data-v-61319b9c>QQ群</div></div><div class=\"text-center ms-2\" data-v-61319b9c><div class=\"icon two-line-texts border rounded-circle border-info bg-info bg-opacity-25\" data-img-src=\"/static/img/wx_public.j...<truncated>"
+    },
+    {
+      "id": 6,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/users/current",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 7,
+      "phase": "request",
+      "resourceType": "stylesheet",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.css?dffa6eb3e6118818-5",
+      "headers": {
+        "origin": "https://www.lixinger.com",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 8,
+      "phase": "request",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.js?dffa6eb3e6118818-5",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 9,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/site/notifications/own-list",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"types\":[\"site\"]}"
+    },
+    {
+      "id": 10,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/ugd/custom-fs-metrics/list",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"userId\":\"5f59985d602af06426437704\",\"areaCode\":\"cn\",\"type\":\"company\",\"fsTableType\":\"non_financial\"}"
+    },
+    {
+      "id": 6,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/users/current",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:22 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 7,
+      "phase": "response",
+      "resourceType": "stylesheet",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.css?dffa6eb3e6118818-5",
+      "status": 200,
+      "headers": {
+        "content-encoding": "gzip",
+        "etag": "W/\"69c0feb2-624f\"",
+        "age": "58775",
+        "expires": "Wed, 22 Apr 2026 08:52:43 GMT",
+        "x-cache": "HIT TCP_HIT dirn:11:1167753438",
+        "date": "Mon, 23 Mar 2026 08:52:43 GMT",
+        "content-type": "text/css",
+        "vary": "Accept-Encoding",
+        "cache-control": "max-age=2592000, public",
+        "x-swift-cachetime": "2585127",
+        "timing-allow-origin": "*",
+        "via": "cache85.l2cn8786[0,0,200-0,H], cache31.l2cn8786[1,0], kunlun13.cn8001[0,0,200-0,H], kunlun13.cn8001[2,0]",
+        "ali-swift-global-savetime": "1774255963",
+        "x-swift-savetime": "Mon, 23 Mar 2026 10:47:16 GMT",
+        "access-control-allow-origin": "https://www.lixinger.com",
+        "eagleid": "dcb5a62117743147384046545e",
+        "content-length": "3784",
+        "server": "Tengine"
+      },
+      "contentType": "text/css",
+      "body": "[data-v-fc758db8] .lxr-search-box{width:13.6rem}[data-v-fc758db8] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-643baf08] .lxr-search-box{width:12rem}[data-v-643baf08] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-425a654f] .lxr-search-box{width:13.6rem}[data-v-425a654f] .lxr-search-box .multiselect__content-wrapper{right:0}.table tbody tr td .suspended[data-v-425a654f]{color:red}.table tbody tr td.memo[data-v-425a654f]{font-size:.875rem;line-height:1rem;max-width:12rem;min-width:8rem}.table tbody tr td.memo .update-memo[data-v-425a654f]{text-decoration:underline}[data-v-db6b3cf0] .lxr-search-box{width:13.6rem}[data-v-db6b3cf0] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-db6b3cf0] .lxr-table-metrics thead th.ops{width:4.8rem}[data-v-6c52bab6] .lxr-search-box{width:13.6rem}[data-v-6c52bab6] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-cee60ff0] .lxr-search-box{width:13.6rem}[data-v-cee60ff0] .lxr-search-box .multiselect__content-wrapper{right:0}.settings-bar-info .icon-right[data-v-cee60ff0]{display:none}.settings-bar-info .icon-down[data-v-cee60ff0]{display:inline}.settings-bar-info.hide[data-v-cee60ff0]{width:auto}.settings-bar-info.hide .icon-right[data-v-cee60ff0]{display:inline}.settings-bar-info.hide .icon-down[data-v-cee60ff0]{display:none}.left[data-v-cee60ff0]{min-width:13.6rem;width:13.6rem}.keys .ghost .nav-link[data-v-66974c6b]{background-color:#ccc;color:#000;opacity:.5}.keys .key .nav-link[data-v-66974c6b]{position:relative}.keys .key .nav-link .icon-delete-keys[data-v-66974c6b]{color:red;display:none;font-size:1rem;position:absolute;right:2px;top:2px}.keys .key .nav-link:hover .icon-delete-keys[data-v-66974c6b]{display:inline-block}.content-wrapper[data-v-709ba7be]{grid-template-columns:16rem auto;grid-gap:2rem;gap:2rem}.user-groups .user-groups-container .user-group[data-v-709ba7be]{color:#868686;position:relative}.user-groups .user-groups-container .user-group[data-v-709ba7be]:hover{color:var(--bs-primary);cursor:pointer}.user-groups .user-groups-container .user-group.active[data-v-709ba7be]{color:var(--bs-primary)}.user-groups .user-groups-container .user-group .new-notification[data-v-709ba7be]{padding:.35rem}.create-article-btn[data-v-709ba7be]{line-height:1.2rem}.create-article-btn .scroll[data-v-709ba7be]{font-size:1.2rem}.create-article-btn[data-v-709ba7be]:hover{color:var(--bs-primary)!important;text-decoration:none!important}.rules[data-v-709ba7be]{min-width:20rem;top:6rem;width:20rem}[data-v-0df00d02] .table tbody td{line-height:1.5;padding:.75rem}.dashboard-screener-list[data-v-580269a8]{border-top:1px solid #ddd}.dashboard-screener-list .screener-followed[data-v-580269a8]{width:5rem}.left .table[data-v-d0434ee6]{min-width:100%}.left .table thead th[data-v-d0434ee6]{text-align:center}.left .table thead th.order[data-v-d0434ee6]{min-width:2rem;width:2rem}.left .table thead th.market[data-v-d0434ee6]{min-width:5rem;width:5rem}.left .table thead th.description[data-v-d0434ee6],.left .table thead th.screener-name[data-v-d0434ee6]{min-width:10rem}.left .table thead th.followed[data-v-d0434ee6]{min-width:4rem;width:4rem}.left .table thead th.creator[data-v-d0434ee6]{min-width:7rem;width:7rem}.left .table thead th.date[data-v-d0434ee6]{min-width:7rem;width:10rem}.left .table thead th.opt[data-v-d0434ee6]{min-width:7rem;width:7rem}.left .table tbody td[data-v-d0434ee6]{text-align:center;vertical-align:middle}.right[data-v-d0434ee6]{min-width:30rem}.left .table[data-v-61cdf24c]{min-width:100%}.left .table thead th[data-v-61cdf24c]{text-align:center}.left .table thead th.order[data-v-61cdf24c]{min-width:2rem;width:2rem}.left .table thead th.market[data-v-61cdf24c]{min-width:5rem;width:5rem}.left .table thead th.screener-name[data-v-61cdf24c]{min-width:10rem}.left .table thead th.followed[data-v-61cdf24c]{min-width:4rem;width:4rem}.left .table thead th.share-type[data-v-61cdf24c]{min-width:8rem;width:8rem}.left .table thead th.date[data-v-61cdf24...<truncated>"
+    },
+    {
+      "id": 8,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.js?dffa6eb3e6118818-5",
+      "status": 200,
+      "headers": {
+        "content-encoding": "gzip",
+        "etag": "W/\"69c0feb2-4e938\"",
+        "age": "58776",
+        "expires": "Wed, 22 Apr 2026 08:52:42 GMT",
+        "x-cache": "HIT TCP_HIT dirn:10:1194572550",
+        "date": "Mon, 23 Mar 2026 08:52:42 GMT",
+        "content-type": "application/x-javascript",
+        "vary": "Accept-Encoding",
+        "cache-control": "max-age=2592000, public",
+        "x-swift-cachetime": "2585126",
+        "timing-allow-origin": "*",
+        "via": "cache43.l2cn3059[0,0,200-0,H], cache43.l2cn3059[1,0], kunlun16.cn8001[0,0,200-0,H], kunlun2.cn8001[2,0]",
+        "ali-swift-global-savetime": "1774255962",
+        "x-swift-savetime": "Mon, 23 Mar 2026 10:47:16 GMT",
+        "access-control-allow-origin": "https://www.lixinger.com",
+        "eagleid": "dcb5a61617743147384304459e",
+        "content-length": "76755",
+        "server": "Tengine"
+      },
+      "contentType": "application/x-javascript",
+      "body": "(self.webpackChunk=self.webpackChunk||[]).push([[536],{19056:function(){},39177:function(){},67930:function(){},12666:function(){},80422:function(){},61933:function(){},93283:function(){},68373:function(){},61079:function(){},67677:function(){},31619:function(){},72509:function(){},16554:function(){},24780:function(){},23847:function(){},4637:function(){},55532:function(){},4410:function(){},9450:function(e,t,a){\"use strict\";a.d(t,{Z:function(){return p}});var s=a(88917),l=a(61334),i=a(13053),r=a(30537),n=a(71241),o=a(18e3),c=a(25428),d=a(587);const u=[\"title\"],m={key:2,class:\"ms-1\"};var p={__name:\"MemberRoleDisplay\",props:{member:{type:Object,required:!0},showText:{type:Boolean,required:!1,default:!0}},setup(e){return r.vI.add(n.uI,o.KC),(t,a)=>{const r=(0,s.up)(\"FaIcon\");return(0,s.wg)(),(0,s.iD)(\"span\",{class:\"text-capitalize text-center role\",title:t.$t((0,l.SU)(d.Ze)[e.member.role])},[e.member.role===(0,l.SU)(c.tfp).MEMBER_ROLE.CREATOR?((0,s.wg)(),(0,s.j4)(r,{key:0,icon:\"user-astronaut\"})):(0,s.kq)(\"v-if\",!0),e.member.role===(0,l.SU)(c.tfp).MEMBER_ROLE.ADMIN?((0,s.wg)(),(0,s.j4)(r,{key:1,icon:\"user-gear\"})):(0,s.kq)(\"v-if\",!0),e.showText?((0,s.wg)(),(0,s.iD)(\"span\",m,(0,i.zw)(t.$t((0,l.SU)(d.Ze)[e.member.role])),1)):(0,s.kq)(\"v-if\",!0)],8,u)}}}},40553:function(e,t,a){\"use strict\";a.r(t),a.d(t,{default:function(){return Eg}});a(13227),a(11431);var s=a(67332),l=a(92091),i=a(15877),r=a(55846);const n=[{name:\"companyDashboard\",children:[{name:\"mine\",component:r.qt},{name:\"followed\",component:r.qK}]}];var o=a(25428),c=(a(51344),a(56614),a(36736),a(37666),a(12249),a(57637),a(53124),a(74413),a(62285),a(63517),a(38690),a(59139),a(86028),a(86651),a(92815),a(19717),a(98704),a(91683),a(8532),a(20779),a(88917)),d=a(61334),u=a(13053),m=a(90996),p=a(61320),f=a.n(p),g=a(66380),y=a.n(g),v=a(66726),h=a.n(v),_=a(89432),k=a.n(_),S=a(71482),w=a.n(S),b=a(94464),x=a(8803),T=a(76096),D=a(9477),U=a(95835),C=a(30537),L=a(4388),N=a(36558),I=a(84594),F=a(90015),z=a(5888),O=a(81285),E=a(95628),M=a(19551),R=a(24093),$=a(55856),A=a(64351),P=a(94312),q=a(2438),H=a(58966),j=a(587),Y=a(15558),G=a(15105),V=a(70384),B=a(21108),W=a(71097),K=(a(32679),a(67551),a(70006)),X=a(53533);var Q=class{constructor(e,t){let{stockBourseTypes:a,index:s,industry:l,stockGroups:i,mutualMarkets:r,multiMarketListedType:n,excludeBlacklist:o,excludeDelisted:c,excludeBourseType:d,constituentsPerspectiveType:u}=e;this._areaCode=t,this._stockBourseTypes=a,this._index=s,this._industry=l,this._stockGroups=i,this._mutualMarkets=r,this._multiMarketListedType=n,this._excludeBlacklist=!!o,this._excludeDelisted=!!c,this._excludeBourseType=!!d,this._constituentsPerspectiveType=u}get areaCode(){return this._areaCode}get stockBourseTypes(){return this._stockBourseTypes}set stockBourseTypes(e){this._stockBourseTypes=e}get index(){return this._index}set index(e){this._index=e}get industry(){return this._industry}set industry(e){this._industry=e}get stockGroups(){return this._stockGroups}set stockGroups(e){this._stockGroups=e}get mutualMarkets(){return this._mutualMarkets}set mutualMarkets(e){this._mutualMarkets=e}get multiMarketListedType(){return this._multiMarketListedType}set multiMarketListedType(e){this._multiMarketListedType=e}get excludeBlacklist(){return this._excludeBlacklist}set excludeBlacklist(e){this._excludeBlacklist=e}get excludeDelisted(){return this._excludeDelisted}set excludeDelisted(e){this._excludeDelisted=e}get excludeBourseType(){return this._excludeBourseType}set excludeBourseType(e){this._excludeBourseType=e}get constituentsPerspectiveType(){return this._constituentsPerspectiveType}set constituentsPerspectiveType(e){this._constituentsPerspectiveType=e}};const Z=[{value:\"\",text:I18nMarker(\"all stock A&B\")},{value:o.X5m.A,text:I18nMarker(\"all stock A\")},{value:o.X5m.B,text:I18nMarker(\"all stock B\")}],J=[{value:o.LnX.SH,text:j.rz[o.LnX.SH]},{value:o.LnX.SH_GEM,text:j.rz[o.LnX.SH_GEM]},{value:o.LnX.SH_MAIN_BOARD,text:j.rz[o.LnX.SH_MAIN_BOARD]},{value:o.LnX.SZ,text:j.rz[o....<truncated>"
+    },
+    {
+      "id": 9,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/site/notifications/own-list",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "content-length": "2",
+        "date": "Tue, 24 Mar 2026 01:12:22 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-resp-api": "1",
+        "server": "nginx"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 11,
+      "phase": "request",
+      "resourceType": "fetch",
+      "method": "POST",
+      "url": "https://tracking.lixinger.com/api/send",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8"
+      },
+      "postData": "{\"type\":\"event\",\"payload\":{\"website\":\"c803d99d-6938-44bb-a7d6-1fb8c4fed1f9\",\"screen\":\"1440x900\",\"language\":\"zh-CN\",\"title\":\"沪深|开始公司筛选|筛选器 - 理杏仁\",\"hostname\":\"www.lixinger.com\",\"url\":\"https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d\",\"referrer\":\"\"}}"
+    },
+    {
+      "id": 12,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/screener/587c4d21d6e94ed9d447b29d",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 10,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/ugd/custom-fs-metrics/list",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "content-length": "2",
+        "date": "Tue, 24 Mar 2026 01:12:23 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-resp-api": "1",
+        "server": "nginx",
+        "x-acl-by-userid-avail": "userId:60000:210:209|300000:600:599|600000:900:899"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "[]"
+    },
+    {
+      "id": 13,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"areaCode\":\"cn\",\"stockType\":\"industry\",\"fsTableType\":null,\"sources\":[\"sw\",\"sw_2021\",\"cni\"]}"
+    },
+    {
+      "id": 14,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"stockType\":\"index\",\"fsTableType\":null,\"excludeBlocked\":true}"
+    },
+    {
+      "id": 15,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/settings-groups?userId=5f59985d602af06426437704&type=fo_co",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 16,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/provinces/list",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 17,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener/dates",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"areaCode\":\"cn\"}"
+    },
+    {
+      "id": 12,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/screener/587c4d21d6e94ed9d447b29d",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:23 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:208|300000:600:598|600000:900:898"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"_id\":\"587c4d21d6e94ed9d447b29d\",\"name\":\"10年估值历史低位\",\"description\":\"扣非PE-TTM过去10年分位点30%以下，PB（不含商誉）过去10年分位点30%以下，股息率2%以上。\",\"shareType\":\"public\",\"userId\":\"57baa7c8cbda229ed1ab88ae\",\"date\":\"2017-01-16T04:33:37.337Z\",\"ranges\":{\"market\":\"a\"},\"areaCode\":\"cn\",\"filterList\":[{\"id\":\"pm.d_pe_ttm.y10.cvpos\",\"min\":0,\"max\":0.3},{\"id\":\"pm.pb_wo_gw.y10.cvpos\",\"min\":0,\"max\":0.3},{\"id\":\"pm.dyr\",\"min\":0.02},{\"id\":\"pm.mc\"},{\"id\":\"pm.ipoDate\",\"max\":\"2015-01-01\"}],\"sortName\":\"priceMetrics.latest.pm.d_pe_ttm.y10.cvpos\",\"sortOrder\":\"desc\",\"followedNum\":1102,\"type\":\"company\",\"customFilterList\":[],\"index\":12,\"isMine\":false,\"user\":{\"_id\":\"57baa7c8cbda229ed1ab88ae\",\"uniqueName\":\"Bing\",\"name\":\"Bing\",\"avatar\":\"//thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLZMAhehMNtrpC1qwKmg16lunrRn6KnqxvPCfrbr14GA4d8TQEeiaz6fic3y09NrtLAfZlib6Jm3Wqtg/132\",\"source\":\"phone\",\"description\":\"理杏仁网站创始人。\"},\"isFollowed\":false}"
+    },
+    {
+      "id": 16,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/provinces/list",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:23 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:207|300000:600:597|600000:900:897"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "[{\"code\":1,\"shortName\":\"北京\"},{\"code\":2,\"shortName\":\"河北\"},{\"code\":3,\"shortName\":\"天津\"},{\"code\":4,\"shortName\":\"山西\"},{\"code\":5,\"shortName\":\"内蒙古\"},{\"code\":6,\"shortName\":\"辽宁\"},{\"code\":7,\"shortName\":\"吉林\"},{\"code\":8,\"shortName\":\"黑龙江\"},{\"code\":9,\"shortName\":\"上海\"},{\"code\":10,\"shortName\":\"江苏\"},{\"code\":11,\"shortName\":\"浙江\"},{\"code\":12,\"shortName\":\"安徽\"},{\"code\":13,\"shortName\":\"福建\"},{\"code\":14,\"shortName\":\"江西\"},{\"code\":15,\"shortName\":\"山东\"},{\"code\":16,\"shortName\":\"河南\"},{\"code\":17,\"shortName\":\"湖北\"},{\"code\":18,\"shortName\":\"湖南\"},{\"code\":19,\"shortName\":\"广东\"},{\"code\":20,\"shortName\":\"广西\"},{\"code\":21,\"shortName\":\"海南\"},{\"code\":22,\"shortName\":\"重庆\"},{\"code\":23,\"shortName\":\"四川\"},{\"code\":24,\"shortName\":\"贵州\"},{\"code\":25,\"shortName\":\"云南\"},{\"code\":26,\"shortName\":\"西藏\"},{\"code\":27,\"shortName\":\"陕西\"},{\"code\":28,\"shortName\":\"甘肃\"},{\"code\":29,\"shortName\":\"青海\"},{\"code\":30,\"shortName\":\"宁夏\"},{\"code\":31,\"shortName\":\"新疆\"},{\"code\":32,\"shortName\":\"香港\"}]"
+    },
+    {
+      "id": 18,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"areaCode\":\"cn\",\"ranges\":{\"market\":\"a\",\"stockBourseTypes\":[],\"mutualMarkets\":{\"selectedMutualMarkets\":[],\"selectType\":\"include\"},\"multiMarketListedType\":{\"selectedMultiMarketListedTypes\":[],\"selectType\":\"include\"},\"excludeBlacklist\":false,\"excludeDelisted\":false,\"excludeBourseType\":false,\"excludeSpecialTreatment\":false,\"constituentsPerspectiveType\":\"history\",\"specialTreatmentOnly\":false},\"filterList\":[{\"id\":\"pm.d_pe_ttm.y10.cvpos\",\"min\":0,\"max\":0.3,\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.pb_wo_gw.y10.cvpos\",\"min\":0,\"max\":0.3,\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.dyr\",\"min\":0.02,\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.mc\",\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.ipoDate\",\"max\":\"2015-01-01\",\"value\":\"all\"}],\"customFilterList\":[],\"industrySource\":\"sw_2021\",\"industryLevel\":\"three\",\"sortName\":\"pm.latest.d_pe_ttm.y10.cvpos\",\"sortOrder\":\"desc\",\"pageIndex\":0,\"pageSize\":100}"
+    },
+    {
+      "id": 15,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/settings-groups?userId=5f59985d602af06426437704&type=fo_co",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:23 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:206|300000:600:596|600000:900:896"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 11,
+      "phase": "response",
+      "resourceType": "fetch",
+      "method": "POST",
+      "url": "https://tracking.lixinger.com/api/send",
+      "status": 200,
+      "headers": {
+        "access-control-max-age": "86400",
+        "content-security-policy": "default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; frame-ancestors 'self' ;",
+        "cache-control": "no-cache",
+        "x-dns-prefetch-control": "on",
+        "access-control-allow-methods": "GET, DELETE, POST, PUT",
+        "access-control-allow-origin": "*",
+        "date": "Tue, 24 Mar 2026 01:12:23 GMT",
+        "content-type": "application/json",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "server": "nginx/1.18.0 (Ubuntu)",
+        "access-control-allow-headers": "*"
+      },
+      "contentType": "application/json",
+      "body": "{\"cache\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3ZWJzaXRlSWQiOiJjODAzZDk5ZC02OTM4LTQ0YmItYTdkNi0xZmI4YzRmZWQxZjkiLCJzZXNzaW9uSWQiOiJmMTc3OWM1MS0yNjgxLTViZjUtYTljOS05YTE0OTBjODdjMTciLCJ2aXNpdElkIjoiNmE4MDMzOTYtZjY1NC01NGQzLWExZjUtMzAzOWQ4N2E2OWY0IiwiaWF0IjoxNzc0MzE0NzQzfQ.GmUyQEdGEQrcvqp4Td139TtjM6vOO-fcH2ijAmUwW-Y\",\"sessionId\":\"f1779c51-2681-5bf5-a9c9-9a1490c87c17\",\"visitId\":\"6a803396-f654-54d3-a1f5-3039d87a69f4\"}"
+    },
+    {
+      "id": 17,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener/dates",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:23 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:204|300000:600:594|600000:900:894"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"priceMetricsDate\":\"2026-03-22T16:00:00.000Z\"}"
+    },
+    {
+      "id": 19,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/notifications/unread/count",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 19,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/notifications/unread/count",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:23 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 13,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:24 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:203|300000:600:593|600000:900:893"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 14,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:24 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:205|300000:600:595|600000:900:895"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 20,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/stocks/1000000399986",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 18,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:24 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:202|300000:600:592|600000:900:892"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"total\":155,\"rows\":[{\"stock\":{\"_id\":2158,\"stockCode\":\"002158\",\"exchange\":\"sz\",\"market\":\"a\",\"stockType\":\"company\",\"followedNum\":720,\"ipoDate\":\"2007-08-16T16:00:00.000Z\",\"areaCode\":\"cn\",\"blackenedNum\":3,\"provinceCode\":9,\"fsTableType\":\"non_financial\",\"tickerId\":2158,\"memoNum\":6,\"mutualMarkets\":[\"ha\"],\"currency\":\"CNY\",\"name\":\"汉钟精机\",\"industry\":{\"_id\":2020000640105,\"stockCode\":\"640105\",\"name\":\"制冷空调设备\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640105,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":11},\"industryList\":[{\"_id\":2020000640000,\"stockCode\":\"640000\",\"name\":\"机械设备\",\"level\":\"one\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640000,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":68},{\"_id\":2020000640100,\"stockCode\":\"640100\",\"name\":\"通用设备\",\"level\":\"two\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640100,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":27},{\"_id\":2020000640105,\"stockCode\":\"640105\",\"name\":\"制冷空调设备\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640105,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":11}],\"isFollowed\":false,\"isBlackened\":false,\"province\":{\"code\":9,\"name\":\"上海市\",\"shortName\":\"上海\"}},\"data\":{\"pm\":{\"latest\":{\"date\":\"2026-03-22T16:00:00.000Z\",\"d_pe_ttm.y10.cvpos\":0.2943,\"pb_wo_gw.y10.cvpos\":0.2527,\"dyr\":0.026,\"mc\":11908306575.53,\"ipoDate\":\"2007-08-16T16:00:00.000Z\"}}}},{\"stock\":{\"_id\":600008,\"stockCode\":\"600008\",\"exchange\":\"sh\",\"market\":\"a\",\"stockType\":\"company\",\"followedNum\":661,\"ipoDate\":\"2000-04-26T16:00:00.000Z\",\"areaCode\":\"cn\",\"blackenedNum\":13,\"provinceCode\":1,\"fsTableType\":\"non_financial\",\"tickerId\":600008,\"mutualMarkets\":[\"ha\"],\"memoNum\":14,\"currency\":\"CNY\",\"name\":\"首创环保\",\"industry\":{\"_id\":2020000760102,\"stockCode\":\"760102\",\"name\":\"水务及水治理\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760102,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":20},\"industryList\":[{\"_id\":2020000760000,\"stockCode\":\"760000\",\"name\":\"环保\",\"level\":\"one\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760000,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":54},{\"_id\":2020000760100,\"stockCode\":\"760100\",\"name\":\"环境治理\",\"level\":\"two\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760100,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":16},{\"_id\":2020000760102,\"stockCode\":\"760102\",\"name\":\"水务及水治理\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760102,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":20}],\"isFollowed\":false,\"isBlackened\":false,\"province\":{\"code\":1,\"name\":\"北京市\",\"shortName\":\"北京\"}},\"data\":{\"pm\":{\"latest\":{\"date\":\"2026-03-22T16:00:00.000Z\",\"d_pe_ttm.y10.cvpos\":0.2913,\"pb_wo_gw.y10.cvpos\":0.1021,\"dyr\":0.0677,\"mc\":22755831098.7,\"ipoDate\":\"2000-04-26T16:00:00.000Z\"}}}},{\"stock\":{\"_id\":690,\"stockCode\":\"000690\",\"exchange\":\"sz\",\"market\":\"a\",\"stockType\":\"company\",\"followedNum\":769,\"ipoDate\":\"1997-01-27T16:00:00.000Z\",\"areaCode\":\"cn\",\"blackenedNum\":20,\"provinceCode\":19,\"fsTableType\":\"non_financial\",\"mutualMarkets\":[\"ha\"],\"tickerId\":690,\"memoNum\":19,\"currency\":\"CNY\",\"name\":\"宝新能源\",\"industry\":{\"_id\":2020000410101,\"stockCode\":\"410101\",\"name\":\"火力发电\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":410101,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":68},\"industryList\":[{\"_id\":2020000410000,\"stockCode\":\"410000\",\"name\":\"公用事业\",\"level\":\"one\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":410000,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":88},{\"_id\":2020000410100,\"stockCode\":\"410100\",\"name\":\"电力\",\"level\":\"two\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":410100,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":116},{\"_id\":2020000410101,\"stockCode\":\"410101\",\"...<truncated>"
+    },
+    {
+      "id": 20,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/stocks/1000000399986",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:24 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:201|300000:600:591|600000:900:891"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"_id\":1000000399986,\"stockCode\":\"399986\",\"areaCode\":\"cn\",\"stockType\":\"index\",\"fsTableType\":\"bank\",\"exchange\":\"sz\",\"source\":\"csi\",\"followedNum\":9444,\"status\":\"normal\",\"blackenedNum\":0,\"market\":\"a\",\"tickerId\":399986,\"name\":\"中证银行\",\"caculationMethod\":\"grading_weighted\",\"indexMethodology\":null,\"launchDate\":\"2013-07-14T16:00:00.000Z\",\"series\":\"sector\",\"currency\":\"CNY\",\"description\":\"为反映中证全指指数样本中不同行业公司证券的整体表现，为投资者提供分析工具，将中证全指指数样本按中证行业分类分为11个一级行业、35个二级行业、90余个三级行业及200余个四级行业，再以进入各一、二、三、四级行业的全部证券作为样本编制指数，形成中证全指行业指数。\",\"factsheet\":\"https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/399986factsheet.pdf\",\"basicDate\":\"2004-12-30T16:00:00.000Z\",\"basicIndex\":1000,\"fullName\":\"中证银行指数\",\"rebalancingFrequency\":\"semi-annually\",\"hotSpot\":null,\"totalReturnIndexId\":1000001720180,\"memoNum\":68,\"constituentsMarkets\":[\"a\"],\"pinyin\":\"zzyh\",\"hotSpots\":[null],\"stocksNum\":42}"
+    },
+    {
+      "id": 21,
+      "phase": "request",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+      "headers": {
+        "accept-language": "zh-CN",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null
+    },
+    {
+      "id": 21,
+      "phase": "response",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "content-type": "text/html",
+        "date": "Tue, 24 Mar 2026 01:12:29 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "server": "nginx",
+        "vary": "Accept-Encoding",
+        "x-resp-api": "1"
+      },
+      "contentType": "text/html",
+      "body": "<!DOCTYPE html><html lang=\"cmn_hans_cn\" style=\"font-size:87.5%;\"><head><meta name=\"referrer\" content=\"no-referrer-when-downgrade\"><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"keywords\" content=\"\"><meta name=\"description\" content=\"理杏仁定位于理性投资者的数据中心，为投资者提供专业的数据提取、筛选以及可视化服务。\"><title>理杏仁 - 用数据认知世界</title><link rel=\"shortcut icon\" href=\"//resource.lixinger.com/static/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"icon\" href=\"//resource.lixinger.com/static/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"stylesheet\" type=\"text/css\" href=\"/server/static/style-CDo9LvYI.css\"></head><body style=\"\" class=\"system\"><div id=\"app\" class=\"position-absolute w-100 d-flex flex-column\"><div id=\"header\" class=\"lxr-header fixed-top\"></div><div class=\"lxr-body\"><div id=\"vueApp\">加载中...</div><div id=\"content\" class=\"\"></div></div><div class=\"lxr-footer mt-auto\"><div class=\"footer bg-dark text-white py-3 px-5\" data-v-61319b9c><div class=\"d-flex align-items-center\" data-v-61319b9c><div class=\"info me-auto\" data-v-61319b9c><ul class=\"links\" data-v-61319b9c><li data-v-61319b9c>网站链接: </li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/disclaimer\" target=\"_blank\" data-v-61319b9c>免责申明</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/join-us\" target=\"_blank\" data-v-61319b9c>加入我们</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/price-history\" target=\"_blank\" data-v-61319b9c>价格调整表</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/release\" target=\"_blank\" data-v-61319b9c>更新日志</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/app-release\" target=\"_blank\" data-v-61319b9c>APP更新日志</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/open/api\" target=\"_blank\" data-v-61319b9c>开放平台</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/wiki/list\" target=\"_blank\" data-v-61319b9c>百科</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/feedback/posts\" target=\"_blank\" data-v-61319b9c>反馈</a></li><li class=\"text-capitaliz\" data-v-61319b9c><a href=\"/marketing/install-xueqiu-plugin\" target=\"_blank\" data-v-61319b9c>雪球插件</a></li><li data-v-61319b9c>友情链接: </li><li data-v-61319b9c><a href=\"https://www.jianweidata.com/\" target=\"_blank\" data-v-61319b9c> 见微数据 </a></li></ul><p data-v-61319b9c> ©2016-2024 理杏仁 | 北京乾谦慧科技有限公司 | <span data-v-61319b9c>客服电话: 010-86460785</span></p><p class=\"suggested\" data-v-61319b9c>推荐Chrome浏览器 | <a target=\"_blank\" href=\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502033936\" class=\"beian\" data-v-61319b9c> 京公网安备11010502033936号 </a> | <span data-v-61319b9c> 京B2-20201471 </span> | <a href=\"http://beian.miit.gov.cn/\" target=\"_blank\" class=\"beian\" rel=\"noreferrer noopener\" data-v-61319b9c> 京ICP备16057978号 </a> | <a href=\"/marketing/user-agreement\" target=\"_blank\" class=\"beian\" data-v-61319b9c>用户协议</a></p><p class=\"note mb-0\" data-v-61319b9c><span class=\"text-capitalize\" data-v-61319b9c>风险提示</span>: <span data-v-61319b9c>本站所有免费及收费信息和数据仅供参考，不构成投资建议，理杏仁不承担由此导致的任何法律责任。</span></p></div><div class=\"follow-us\" data-v-61319b9c><div class=\"d-flex justify-content-center mt-2\" data-v-61319b9c><div class=\"text-center\" data-v-61319b9c><a class=\"icon d-block border text-light rounded-circle border-danger bg-danger bg-opacity-25 fs-6\" href=\"/marketing/app-instructions\" target=\"_blank\" data-v-61319b9c>APP</a></div><div class=\"ms-2 text-center\" data-v-61319b9c><div class=\"icon border rounded-circle border-success bg-success bg-opacity-25 fs-6\" data-img-src=\"/static/img/wechat-wyq.png\" data-v-61319b9c>微信群</div></div><div class=\"ms-2 text-center\" data-v-61319b9c><div class=\"icon border rounded-circle border-primary bg-primary bg-opacity-25 fs-6\" data-img-src=\"/static/img/qq_group_annually_card.png\" data-v-61319b9c>QQ群</div></div><div class=\"text-center ms-2\" data-v-61319b9c><div class=\"icon two-line-texts border rounded-circle border-info bg-info bg-opacity-25\" data-img-src=\"/static/img/wx_public.j...<truncated>"
+    },
+    {
+      "id": 22,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/users/current",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 23,
+      "phase": "request",
+      "resourceType": "stylesheet",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.css?dffa6eb3e6118818-5",
+      "headers": {
+        "origin": "https://www.lixinger.com",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 24,
+      "phase": "request",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.js?dffa6eb3e6118818-5",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 25,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/site/notifications/own-list",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"types\":[\"site\"]}"
+    },
+    {
+      "id": 26,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/ugd/custom-fs-metrics/list",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"userId\":\"5f59985d602af06426437704\",\"areaCode\":\"cn\",\"type\":\"company\",\"fsTableType\":\"non_financial\"}"
+    },
+    {
+      "id": 22,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/users/current",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 23,
+      "phase": "response",
+      "resourceType": "stylesheet",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.css?dffa6eb3e6118818-5",
+      "status": 200,
+      "headers": {
+        "content-encoding": "gzip",
+        "etag": "W/\"69c0feb2-624f\"",
+        "age": "58775",
+        "expires": "Wed, 22 Apr 2026 08:52:43 GMT",
+        "x-cache": "HIT TCP_HIT dirn:11:1167753438",
+        "date": "Mon, 23 Mar 2026 08:52:43 GMT",
+        "content-type": "text/css",
+        "vary": "Accept-Encoding",
+        "cache-control": "max-age=2592000, public",
+        "x-swift-cachetime": "2585127",
+        "timing-allow-origin": "*",
+        "via": "cache85.l2cn8786[0,0,200-0,H], cache31.l2cn8786[1,0], kunlun13.cn8001[0,0,200-0,H], kunlun13.cn8001[2,0]",
+        "ali-swift-global-savetime": "1774255963",
+        "x-swift-savetime": "Mon, 23 Mar 2026 10:47:16 GMT",
+        "access-control-allow-origin": "https://www.lixinger.com",
+        "eagleid": "dcb5a62117743147384046545e",
+        "content-length": "3784",
+        "server": "Tengine"
+      },
+      "contentType": "text/css",
+      "body": "[data-v-fc758db8] .lxr-search-box{width:13.6rem}[data-v-fc758db8] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-643baf08] .lxr-search-box{width:12rem}[data-v-643baf08] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-425a654f] .lxr-search-box{width:13.6rem}[data-v-425a654f] .lxr-search-box .multiselect__content-wrapper{right:0}.table tbody tr td .suspended[data-v-425a654f]{color:red}.table tbody tr td.memo[data-v-425a654f]{font-size:.875rem;line-height:1rem;max-width:12rem;min-width:8rem}.table tbody tr td.memo .update-memo[data-v-425a654f]{text-decoration:underline}[data-v-db6b3cf0] .lxr-search-box{width:13.6rem}[data-v-db6b3cf0] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-db6b3cf0] .lxr-table-metrics thead th.ops{width:4.8rem}[data-v-6c52bab6] .lxr-search-box{width:13.6rem}[data-v-6c52bab6] .lxr-search-box .multiselect__content-wrapper{right:0}[data-v-cee60ff0] .lxr-search-box{width:13.6rem}[data-v-cee60ff0] .lxr-search-box .multiselect__content-wrapper{right:0}.settings-bar-info .icon-right[data-v-cee60ff0]{display:none}.settings-bar-info .icon-down[data-v-cee60ff0]{display:inline}.settings-bar-info.hide[data-v-cee60ff0]{width:auto}.settings-bar-info.hide .icon-right[data-v-cee60ff0]{display:inline}.settings-bar-info.hide .icon-down[data-v-cee60ff0]{display:none}.left[data-v-cee60ff0]{min-width:13.6rem;width:13.6rem}.keys .ghost .nav-link[data-v-66974c6b]{background-color:#ccc;color:#000;opacity:.5}.keys .key .nav-link[data-v-66974c6b]{position:relative}.keys .key .nav-link .icon-delete-keys[data-v-66974c6b]{color:red;display:none;font-size:1rem;position:absolute;right:2px;top:2px}.keys .key .nav-link:hover .icon-delete-keys[data-v-66974c6b]{display:inline-block}.content-wrapper[data-v-709ba7be]{grid-template-columns:16rem auto;grid-gap:2rem;gap:2rem}.user-groups .user-groups-container .user-group[data-v-709ba7be]{color:#868686;position:relative}.user-groups .user-groups-container .user-group[data-v-709ba7be]:hover{color:var(--bs-primary);cursor:pointer}.user-groups .user-groups-container .user-group.active[data-v-709ba7be]{color:var(--bs-primary)}.user-groups .user-groups-container .user-group .new-notification[data-v-709ba7be]{padding:.35rem}.create-article-btn[data-v-709ba7be]{line-height:1.2rem}.create-article-btn .scroll[data-v-709ba7be]{font-size:1.2rem}.create-article-btn[data-v-709ba7be]:hover{color:var(--bs-primary)!important;text-decoration:none!important}.rules[data-v-709ba7be]{min-width:20rem;top:6rem;width:20rem}[data-v-0df00d02] .table tbody td{line-height:1.5;padding:.75rem}.dashboard-screener-list[data-v-580269a8]{border-top:1px solid #ddd}.dashboard-screener-list .screener-followed[data-v-580269a8]{width:5rem}.left .table[data-v-d0434ee6]{min-width:100%}.left .table thead th[data-v-d0434ee6]{text-align:center}.left .table thead th.order[data-v-d0434ee6]{min-width:2rem;width:2rem}.left .table thead th.market[data-v-d0434ee6]{min-width:5rem;width:5rem}.left .table thead th.description[data-v-d0434ee6],.left .table thead th.screener-name[data-v-d0434ee6]{min-width:10rem}.left .table thead th.followed[data-v-d0434ee6]{min-width:4rem;width:4rem}.left .table thead th.creator[data-v-d0434ee6]{min-width:7rem;width:7rem}.left .table thead th.date[data-v-d0434ee6]{min-width:7rem;width:10rem}.left .table thead th.opt[data-v-d0434ee6]{min-width:7rem;width:7rem}.left .table tbody td[data-v-d0434ee6]{text-align:center;vertical-align:middle}.right[data-v-d0434ee6]{min-width:30rem}.left .table[data-v-61cdf24c]{min-width:100%}.left .table thead th[data-v-61cdf24c]{text-align:center}.left .table thead th.order[data-v-61cdf24c]{min-width:2rem;width:2rem}.left .table thead th.market[data-v-61cdf24c]{min-width:5rem;width:5rem}.left .table thead th.screener-name[data-v-61cdf24c]{min-width:10rem}.left .table thead th.followed[data-v-61cdf24c]{min-width:4rem;width:4rem}.left .table thead th.share-type[data-v-61cdf24c]{min-width:8rem;width:8rem}.left .table thead th.date[data-v-61cdf24...<truncated>"
+    },
+    {
+      "id": 24,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://resource.lixinger.com/static/bundle.analytics.screener.js?dffa6eb3e6118818-5",
+      "status": 200,
+      "headers": {
+        "content-encoding": "gzip",
+        "etag": "W/\"69c0feb2-4e938\"",
+        "age": "58776",
+        "expires": "Wed, 22 Apr 2026 08:52:42 GMT",
+        "x-cache": "HIT TCP_HIT dirn:10:1194572550",
+        "date": "Mon, 23 Mar 2026 08:52:42 GMT",
+        "content-type": "application/x-javascript",
+        "vary": "Accept-Encoding",
+        "cache-control": "max-age=2592000, public",
+        "x-swift-cachetime": "2585126",
+        "timing-allow-origin": "*",
+        "via": "cache43.l2cn3059[0,0,200-0,H], cache43.l2cn3059[1,0], kunlun16.cn8001[0,0,200-0,H], kunlun2.cn8001[2,0]",
+        "ali-swift-global-savetime": "1774255962",
+        "x-swift-savetime": "Mon, 23 Mar 2026 10:47:16 GMT",
+        "access-control-allow-origin": "https://www.lixinger.com",
+        "eagleid": "dcb5a61617743147384304459e",
+        "content-length": "76755",
+        "server": "Tengine"
+      },
+      "contentType": "application/x-javascript",
+      "body": "(self.webpackChunk=self.webpackChunk||[]).push([[536],{19056:function(){},39177:function(){},67930:function(){},12666:function(){},80422:function(){},61933:function(){},93283:function(){},68373:function(){},61079:function(){},67677:function(){},31619:function(){},72509:function(){},16554:function(){},24780:function(){},23847:function(){},4637:function(){},55532:function(){},4410:function(){},9450:function(e,t,a){\"use strict\";a.d(t,{Z:function(){return p}});var s=a(88917),l=a(61334),i=a(13053),r=a(30537),n=a(71241),o=a(18e3),c=a(25428),d=a(587);const u=[\"title\"],m={key:2,class:\"ms-1\"};var p={__name:\"MemberRoleDisplay\",props:{member:{type:Object,required:!0},showText:{type:Boolean,required:!1,default:!0}},setup(e){return r.vI.add(n.uI,o.KC),(t,a)=>{const r=(0,s.up)(\"FaIcon\");return(0,s.wg)(),(0,s.iD)(\"span\",{class:\"text-capitalize text-center role\",title:t.$t((0,l.SU)(d.Ze)[e.member.role])},[e.member.role===(0,l.SU)(c.tfp).MEMBER_ROLE.CREATOR?((0,s.wg)(),(0,s.j4)(r,{key:0,icon:\"user-astronaut\"})):(0,s.kq)(\"v-if\",!0),e.member.role===(0,l.SU)(c.tfp).MEMBER_ROLE.ADMIN?((0,s.wg)(),(0,s.j4)(r,{key:1,icon:\"user-gear\"})):(0,s.kq)(\"v-if\",!0),e.showText?((0,s.wg)(),(0,s.iD)(\"span\",m,(0,i.zw)(t.$t((0,l.SU)(d.Ze)[e.member.role])),1)):(0,s.kq)(\"v-if\",!0)],8,u)}}}},40553:function(e,t,a){\"use strict\";a.r(t),a.d(t,{default:function(){return Eg}});a(13227),a(11431);var s=a(67332),l=a(92091),i=a(15877),r=a(55846);const n=[{name:\"companyDashboard\",children:[{name:\"mine\",component:r.qt},{name:\"followed\",component:r.qK}]}];var o=a(25428),c=(a(51344),a(56614),a(36736),a(37666),a(12249),a(57637),a(53124),a(74413),a(62285),a(63517),a(38690),a(59139),a(86028),a(86651),a(92815),a(19717),a(98704),a(91683),a(8532),a(20779),a(88917)),d=a(61334),u=a(13053),m=a(90996),p=a(61320),f=a.n(p),g=a(66380),y=a.n(g),v=a(66726),h=a.n(v),_=a(89432),k=a.n(_),S=a(71482),w=a.n(S),b=a(94464),x=a(8803),T=a(76096),D=a(9477),U=a(95835),C=a(30537),L=a(4388),N=a(36558),I=a(84594),F=a(90015),z=a(5888),O=a(81285),E=a(95628),M=a(19551),R=a(24093),$=a(55856),A=a(64351),P=a(94312),q=a(2438),H=a(58966),j=a(587),Y=a(15558),G=a(15105),V=a(70384),B=a(21108),W=a(71097),K=(a(32679),a(67551),a(70006)),X=a(53533);var Q=class{constructor(e,t){let{stockBourseTypes:a,index:s,industry:l,stockGroups:i,mutualMarkets:r,multiMarketListedType:n,excludeBlacklist:o,excludeDelisted:c,excludeBourseType:d,constituentsPerspectiveType:u}=e;this._areaCode=t,this._stockBourseTypes=a,this._index=s,this._industry=l,this._stockGroups=i,this._mutualMarkets=r,this._multiMarketListedType=n,this._excludeBlacklist=!!o,this._excludeDelisted=!!c,this._excludeBourseType=!!d,this._constituentsPerspectiveType=u}get areaCode(){return this._areaCode}get stockBourseTypes(){return this._stockBourseTypes}set stockBourseTypes(e){this._stockBourseTypes=e}get index(){return this._index}set index(e){this._index=e}get industry(){return this._industry}set industry(e){this._industry=e}get stockGroups(){return this._stockGroups}set stockGroups(e){this._stockGroups=e}get mutualMarkets(){return this._mutualMarkets}set mutualMarkets(e){this._mutualMarkets=e}get multiMarketListedType(){return this._multiMarketListedType}set multiMarketListedType(e){this._multiMarketListedType=e}get excludeBlacklist(){return this._excludeBlacklist}set excludeBlacklist(e){this._excludeBlacklist=e}get excludeDelisted(){return this._excludeDelisted}set excludeDelisted(e){this._excludeDelisted=e}get excludeBourseType(){return this._excludeBourseType}set excludeBourseType(e){this._excludeBourseType=e}get constituentsPerspectiveType(){return this._constituentsPerspectiveType}set constituentsPerspectiveType(e){this._constituentsPerspectiveType=e}};const Z=[{value:\"\",text:I18nMarker(\"all stock A&B\")},{value:o.X5m.A,text:I18nMarker(\"all stock A\")},{value:o.X5m.B,text:I18nMarker(\"all stock B\")}],J=[{value:o.LnX.SH,text:j.rz[o.LnX.SH]},{value:o.LnX.SH_GEM,text:j.rz[o.LnX.SH_GEM]},{value:o.LnX.SH_MAIN_BOARD,text:j.rz[o.LnX.SH_MAIN_BOARD]},{value:o.LnX.SZ,text:j.rz[o....<truncated>"
+    },
+    {
+      "id": 27,
+      "phase": "request",
+      "resourceType": "fetch",
+      "method": "POST",
+      "url": "https://tracking.lixinger.com/api/send",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8"
+      },
+      "postData": "{\"type\":\"event\",\"payload\":{\"website\":\"c803d99d-6938-44bb-a7d6-1fb8c4fed1f9\",\"screen\":\"1440x900\",\"language\":\"zh-CN\",\"title\":\"沪深|开始公司筛选|筛选器 - 理杏仁\",\"hostname\":\"www.lixinger.com\",\"url\":\"https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d\",\"referrer\":\"\"}}"
+    },
+    {
+      "id": 25,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/site/notifications/own-list",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "content-length": "2",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-resp-api": "1",
+        "server": "nginx"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 28,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/screener/587c4d21d6e94ed9d447b29d",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 26,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/ugd/custom-fs-metrics/list",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "content-length": "2",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "x-resp-api": "1",
+        "server": "nginx",
+        "x-acl-by-userid-avail": "userId:60000:210:200|300000:600:590|600000:900:890"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "[]"
+    },
+    {
+      "id": 27,
+      "phase": "response",
+      "resourceType": "fetch",
+      "method": "POST",
+      "url": "https://tracking.lixinger.com/api/send",
+      "status": 200,
+      "headers": {
+        "access-control-max-age": "86400",
+        "content-security-policy": "default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; frame-ancestors 'self' ;",
+        "cache-control": "no-cache",
+        "x-dns-prefetch-control": "on",
+        "access-control-allow-methods": "GET, DELETE, POST, PUT",
+        "access-control-allow-origin": "*",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "server": "nginx/1.18.0 (Ubuntu)",
+        "access-control-allow-headers": "*"
+      },
+      "contentType": "application/json",
+      "body": "{\"cache\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3ZWJzaXRlSWQiOiJjODAzZDk5ZC02OTM4LTQ0YmItYTdkNi0xZmI4YzRmZWQxZjkiLCJzZXNzaW9uSWQiOiJmMTc3OWM1MS0yNjgxLTViZjUtYTljOS05YTE0OTBjODdjMTciLCJ2aXNpdElkIjoiNmE4MDMzOTYtZjY1NC01NGQzLWExZjUtMzAzOWQ4N2E2OWY0IiwiaWF0IjoxNzc0MzE0NzUwfQ.ULhF2OVut_8gPSZK-xZFmSEbYGt-huZUCT48OEVesZ0\",\"sessionId\":\"f1779c51-2681-5bf5-a9c9-9a1490c87c17\",\"visitId\":\"6a803396-f654-54d3-a1f5-3039d87a69f4\"}"
+    },
+    {
+      "id": 29,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"areaCode\":\"cn\",\"stockType\":\"industry\",\"fsTableType\":null,\"sources\":[\"sw\",\"sw_2021\",\"cni\"]}"
+    },
+    {
+      "id": 30,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"stockType\":\"index\",\"fsTableType\":null,\"excludeBlocked\":true}"
+    },
+    {
+      "id": 31,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/settings-groups?userId=5f59985d602af06426437704&type=fo_co",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 32,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/provinces/list",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 33,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener/dates",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"areaCode\":\"cn\"}"
+    },
+    {
+      "id": 28,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/screener/587c4d21d6e94ed9d447b29d",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:199|300000:600:589|600000:900:889"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"_id\":\"587c4d21d6e94ed9d447b29d\",\"name\":\"10年估值历史低位\",\"description\":\"扣非PE-TTM过去10年分位点30%以下，PB（不含商誉）过去10年分位点30%以下，股息率2%以上。\",\"shareType\":\"public\",\"userId\":\"57baa7c8cbda229ed1ab88ae\",\"date\":\"2017-01-16T04:33:37.337Z\",\"ranges\":{\"market\":\"a\"},\"areaCode\":\"cn\",\"filterList\":[{\"id\":\"pm.d_pe_ttm.y10.cvpos\",\"min\":0,\"max\":0.3},{\"id\":\"pm.pb_wo_gw.y10.cvpos\",\"min\":0,\"max\":0.3},{\"id\":\"pm.dyr\",\"min\":0.02},{\"id\":\"pm.mc\"},{\"id\":\"pm.ipoDate\",\"max\":\"2015-01-01\"}],\"sortName\":\"priceMetrics.latest.pm.d_pe_ttm.y10.cvpos\",\"sortOrder\":\"desc\",\"followedNum\":1102,\"type\":\"company\",\"customFilterList\":[],\"index\":12,\"isMine\":false,\"user\":{\"_id\":\"57baa7c8cbda229ed1ab88ae\",\"uniqueName\":\"Bing\",\"name\":\"Bing\",\"avatar\":\"//thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLZMAhehMNtrpC1qwKmg16lunrRn6KnqxvPCfrbr14GA4d8TQEeiaz6fic3y09NrtLAfZlib6Jm3Wqtg/132\",\"source\":\"phone\",\"description\":\"理杏仁网站创始人。\"},\"isFollowed\":false}"
+    },
+    {
+      "id": 31,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/ugd/settings-groups?userId=5f59985d602af06426437704&type=fo_co",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:198|300000:600:588|600000:900:888"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 32,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/provinces/list",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:195|300000:600:585|600000:900:885"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "[{\"code\":1,\"shortName\":\"北京\"},{\"code\":2,\"shortName\":\"河北\"},{\"code\":3,\"shortName\":\"天津\"},{\"code\":4,\"shortName\":\"山西\"},{\"code\":5,\"shortName\":\"内蒙古\"},{\"code\":6,\"shortName\":\"辽宁\"},{\"code\":7,\"shortName\":\"吉林\"},{\"code\":8,\"shortName\":\"黑龙江\"},{\"code\":9,\"shortName\":\"上海\"},{\"code\":10,\"shortName\":\"江苏\"},{\"code\":11,\"shortName\":\"浙江\"},{\"code\":12,\"shortName\":\"安徽\"},{\"code\":13,\"shortName\":\"福建\"},{\"code\":14,\"shortName\":\"江西\"},{\"code\":15,\"shortName\":\"山东\"},{\"code\":16,\"shortName\":\"河南\"},{\"code\":17,\"shortName\":\"湖北\"},{\"code\":18,\"shortName\":\"湖南\"},{\"code\":19,\"shortName\":\"广东\"},{\"code\":20,\"shortName\":\"广西\"},{\"code\":21,\"shortName\":\"海南\"},{\"code\":22,\"shortName\":\"重庆\"},{\"code\":23,\"shortName\":\"四川\"},{\"code\":24,\"shortName\":\"贵州\"},{\"code\":25,\"shortName\":\"云南\"},{\"code\":26,\"shortName\":\"西藏\"},{\"code\":27,\"shortName\":\"陕西\"},{\"code\":28,\"shortName\":\"甘肃\"},{\"code\":29,\"shortName\":\"青海\"},{\"code\":30,\"shortName\":\"宁夏\"},{\"code\":31,\"shortName\":\"新疆\"},{\"code\":32,\"shortName\":\"香港\"}]"
+    },
+    {
+      "id": 34,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json;charset=UTF-8"
+      },
+      "postData": "{\"areaCode\":\"cn\",\"ranges\":{\"market\":\"a\",\"stockBourseTypes\":[],\"mutualMarkets\":{\"selectedMutualMarkets\":[],\"selectType\":\"include\"},\"multiMarketListedType\":{\"selectedMultiMarketListedTypes\":[],\"selectType\":\"include\"},\"excludeBlacklist\":false,\"excludeDelisted\":false,\"excludeBourseType\":false,\"excludeSpecialTreatment\":false,\"constituentsPerspectiveType\":\"history\",\"specialTreatmentOnly\":false},\"filterList\":[{\"id\":\"pm.d_pe_ttm.y10.cvpos\",\"min\":0,\"max\":0.3,\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.pb_wo_gw.y10.cvpos\",\"min\":0,\"max\":0.3,\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.dyr\",\"min\":0.02,\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.mc\",\"value\":\"all\",\"date\":\"latest\"},{\"id\":\"pm.ipoDate\",\"max\":\"2015-01-01\",\"value\":\"all\"}],\"customFilterList\":[],\"industrySource\":\"sw_2021\",\"industryLevel\":\"three\",\"sortName\":\"pm.latest.d_pe_ttm.y10.cvpos\",\"sortOrder\":\"desc\",\"pageIndex\":0,\"pageSize\":100}"
+    },
+    {
+      "id": 33,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener/dates",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:30 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:194|300000:600:584|600000:900:884"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"priceMetricsDate\":\"2026-03-22T16:00:00.000Z\"}"
+    },
+    {
+      "id": 35,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/notifications/unread/count",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 29,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:31 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:197|300000:600:587|600000:900:887"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 35,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/user/notifications/unread/count",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:31 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 30,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/stock/stocks/stock-collections",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:32 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:196|300000:600:586|600000:900:886"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "<redacted>"
+    },
+    {
+      "id": 36,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/stocks/1000000399986",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 34,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.lixinger.com/api/company/screener",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:32 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:193|300000:600:583|600000:900:883"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"total\":155,\"rows\":[{\"stock\":{\"_id\":2158,\"stockCode\":\"002158\",\"exchange\":\"sz\",\"market\":\"a\",\"stockType\":\"company\",\"followedNum\":720,\"ipoDate\":\"2007-08-16T16:00:00.000Z\",\"areaCode\":\"cn\",\"blackenedNum\":3,\"provinceCode\":9,\"fsTableType\":\"non_financial\",\"tickerId\":2158,\"memoNum\":6,\"mutualMarkets\":[\"ha\"],\"currency\":\"CNY\",\"name\":\"汉钟精机\",\"industry\":{\"_id\":2020000640105,\"stockCode\":\"640105\",\"name\":\"制冷空调设备\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640105,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":11},\"industryList\":[{\"_id\":2020000640000,\"stockCode\":\"640000\",\"name\":\"机械设备\",\"level\":\"one\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640000,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":68},{\"_id\":2020000640100,\"stockCode\":\"640100\",\"name\":\"通用设备\",\"level\":\"two\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640100,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":27},{\"_id\":2020000640105,\"stockCode\":\"640105\",\"name\":\"制冷空调设备\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":640105,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":11}],\"isFollowed\":false,\"isBlackened\":false,\"province\":{\"code\":9,\"name\":\"上海市\",\"shortName\":\"上海\"}},\"data\":{\"pm\":{\"latest\":{\"date\":\"2026-03-22T16:00:00.000Z\",\"d_pe_ttm.y10.cvpos\":0.2943,\"pb_wo_gw.y10.cvpos\":0.2527,\"dyr\":0.026,\"mc\":11908306575.53,\"ipoDate\":\"2007-08-16T16:00:00.000Z\"}}}},{\"stock\":{\"_id\":600008,\"stockCode\":\"600008\",\"exchange\":\"sh\",\"market\":\"a\",\"stockType\":\"company\",\"followedNum\":661,\"ipoDate\":\"2000-04-26T16:00:00.000Z\",\"areaCode\":\"cn\",\"blackenedNum\":13,\"provinceCode\":1,\"fsTableType\":\"non_financial\",\"tickerId\":600008,\"mutualMarkets\":[\"ha\"],\"memoNum\":14,\"currency\":\"CNY\",\"name\":\"首创环保\",\"industry\":{\"_id\":2020000760102,\"stockCode\":\"760102\",\"name\":\"水务及水治理\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760102,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":20},\"industryList\":[{\"_id\":2020000760000,\"stockCode\":\"760000\",\"name\":\"环保\",\"level\":\"one\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760000,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":54},{\"_id\":2020000760100,\"stockCode\":\"760100\",\"name\":\"环境治理\",\"level\":\"two\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760100,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":16},{\"_id\":2020000760102,\"stockCode\":\"760102\",\"name\":\"水务及水治理\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":760102,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":20}],\"isFollowed\":false,\"isBlackened\":false,\"province\":{\"code\":1,\"name\":\"北京市\",\"shortName\":\"北京\"}},\"data\":{\"pm\":{\"latest\":{\"date\":\"2026-03-22T16:00:00.000Z\",\"d_pe_ttm.y10.cvpos\":0.2913,\"pb_wo_gw.y10.cvpos\":0.1021,\"dyr\":0.0677,\"mc\":22755831098.7,\"ipoDate\":\"2000-04-26T16:00:00.000Z\"}}}},{\"stock\":{\"_id\":690,\"stockCode\":\"000690\",\"exchange\":\"sz\",\"market\":\"a\",\"stockType\":\"company\",\"followedNum\":769,\"ipoDate\":\"1997-01-27T16:00:00.000Z\",\"areaCode\":\"cn\",\"blackenedNum\":20,\"provinceCode\":19,\"fsTableType\":\"non_financial\",\"mutualMarkets\":[\"ha\"],\"tickerId\":690,\"memoNum\":19,\"currency\":\"CNY\",\"name\":\"宝新能源\",\"industry\":{\"_id\":2020000410101,\"stockCode\":\"410101\",\"name\":\"火力发电\",\"level\":\"three\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":410101,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":68},\"industryList\":[{\"_id\":2020000410000,\"stockCode\":\"410000\",\"name\":\"公用事业\",\"level\":\"one\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":410000,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":88},{\"_id\":2020000410100,\"stockCode\":\"410100\",\"name\":\"电力\",\"level\":\"two\",\"areaCode\":\"cn\",\"stockType\":\"industry\",\"exchange\":\"sw_2021\",\"tickerId\":410100,\"currency\":\"CNY\",\"fsTableType\":\"non_financial\",\"followedNum\":116},{\"_id\":2020000410101,\"stockCode\":\"410101\",\"...<truncated>"
+    },
+    {
+      "id": 36,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.lixinger.com/api/stock/stocks/1000000399986",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "expires": "-1",
+        "date": "Tue, 24 Mar 2026 01:12:33 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "x-resp-api": "1",
+        "x-acl-by-userid-avail": "userId:60000:210:192|300000:600:582|600000:900:882"
+      },
+      "contentType": "application/json; charset=utf-8",
+      "body": "{\"_id\":1000000399986,\"stockCode\":\"399986\",\"areaCode\":\"cn\",\"stockType\":\"index\",\"fsTableType\":\"bank\",\"exchange\":\"sz\",\"source\":\"csi\",\"followedNum\":9444,\"status\":\"normal\",\"blackenedNum\":0,\"market\":\"a\",\"tickerId\":399986,\"name\":\"中证银行\",\"caculationMethod\":\"grading_weighted\",\"indexMethodology\":null,\"launchDate\":\"2013-07-14T16:00:00.000Z\",\"series\":\"sector\",\"currency\":\"CNY\",\"description\":\"为反映中证全指指数样本中不同行业公司证券的整体表现，为投资者提供分析工具，将中证全指指数样本按中证行业分类分为11个一级行业、35个二级行业、90余个三级行业及200余个四级行业，再以进入各一、二、三、四级行业的全部证券作为样本编制指数，形成中证全指行业指数。\",\"factsheet\":\"https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/399986factsheet.pdf\",\"basicDate\":\"2004-12-30T16:00:00.000Z\",\"basicIndex\":1000,\"fullName\":\"中证银行指数\",\"rebalancingFrequency\":\"semi-annually\",\"hotSpot\":null,\"totalReturnIndexId\":1000001720180,\"memoNum\":68,\"constituentsMarkets\":[\"a\"],\"pinyin\":\"zzyh\",\"hotSpots\":[null],\"stocksNum\":42}"
+    }
+  ]
+}

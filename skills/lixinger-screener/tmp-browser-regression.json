@@ -1,0 +1,59 @@
+{
+  "name": "浏览器回归_完整query",
+  "areaCode": "cn",
+  "industrySource": "sw_2021",
+  "industryLevel": "three",
+  "pageSize": 20,
+  "ranges": {
+    "market": "a",
+    "excludeBlacklist": true,
+    "excludeDelisted": true,
+    "excludeSpecialTreatment": true
+  },
+  "conditions": [
+    {
+      "metric": "PE-TTM(扣非)统计值",
+      "category": "基本指标",
+      "selectors": [
+        "10年",
+        "分位点%"
+      ],
+      "max": 30
+    },
+    {
+      "metric": "PB(不含商誉)统计值",
+      "category": "基本指标",
+      "selectors": [
+        "10年",
+        "分位点%"
+      ],
+      "max": 30
+    },
+    {
+      "metric": "股息率",
+      "category": "基本指标",
+      "min": 2.5
+    },
+    {
+      "metric": "市值/自由现金流",
+      "category": "基本指标",
+      "max": 20
+    },
+    {
+      "metric": "过去250个交易日涨跌幅",
+      "category": "热度指标",
+      "min": -20,
+      "max": 20
+    },
+    {
+      "metric": "过去20个交易日涨跌幅",
+      "category": "热度指标",
+      "max": -10
+    }
+  ],
+  "sort": {
+    "metric": "过去20个交易日涨跌幅",
+    "category": "热度指标",
+    "order": "asc"
+  }
+}

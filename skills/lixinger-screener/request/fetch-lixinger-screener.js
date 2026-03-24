@@ -69,7 +69,7 @@ function showHelp() {
       '  --page-size <数字>                        每页数量',
       '  --page-index <数字>                       起始页，默认 0',
       '  --save-request-body <文件路径>            保存最终请求体',
-      '  --catalog-file <文件路径>                 条件目录，默认 output/playwright/lixinger-screener/condition-catalog.cn.json',
+      '  --catalog-file <文件路径>                 条件目录，默认 skills/lixinger-screener/data/condition-catalog.cn.json',
       '  --help                                   显示帮助',
       '',
       '环境变量：',
@@ -78,7 +78,7 @@ function showHelp() {
       '',
       '示例：',
       '  node request/fetch-lixinger-screener.js --url "https://www.lixinger.com/analytics/screener/company-fundamental/cn?screener-id=587c4d21d6e94ed9d447b29d" --output markdown',
-      '  node request/fetch-lixinger-screener.js --input-file output/playwright/lixinger-screener/simple-input-template.cn.json --output csv',
+      '  node request/fetch-lixinger-screener.js --input-file skills/lixinger-screener/data/simple-input-template.cn.json --output csv',
       '  node request/fetch-lixinger-screener.js --query "PE-TTM(扣非)统计值10年分位点小于30%，股息率大于2%" --output markdown'
     ].join('\n') + '\n'
   );
