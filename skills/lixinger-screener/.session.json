@@ -1,0 +1,15 @@
+{
+  "cookies": [
+    {
+      "name": "jwt",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjU5OTg1ZDYwMmFmMDY0MjY0Mzc3MDQiLCJpYXQiOjE3NzQzNTczMjYsImV4cCI6MTgwMDI3NzMyNn0.4qip9SXR-QAey3kdBLRJ0eadDVN0D6HgV1CxvsvOb3A",
+      "domain": ".lixinger.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

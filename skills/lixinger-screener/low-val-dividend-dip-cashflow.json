@@ -1,0 +1,31 @@
+{
+  "name": "低估值高股息_横盘大跌_现金流质量",
+  "areaCode": "cn",
+  "industrySource": "sw_2021",
+  "industryLevel": "three",
+  "pageSize": 100,
+  "ranges": {
+    "market": "a",
+    "stockBourseTypes": [],
+    "mutualMarkets": { "selectedMutualMarkets": [], "selectType": "include" },
+    "multiMarketListedType": { "selectedMultiMarketListedTypes": [], "selectType": "include" },
+    "excludeBlacklist": true,
+    "excludeDelisted": true,
+    "excludeSpecialTreatment": true,
+    "specialTreatmentOnly": false
+  },
+  "conditions": [
+    { "metric": "PE-TTM(扣非)统计值", "category": "基本指标", "selectors": ["10年", "分位点%"], "max": 30 },
+    { "metric": "PB(不含商誉)统计值", "category": "基本指标", "selectors": ["10年", "分位点%"], "max": 30 },
+    { "metric": "股息率", "category": "基本指标", "min": 2.5 },
+    { "metric": "上市日期", "category": "基本指标", "subCondition": "上市时间", "max": "2015-01-01" },
+    { "metric": "过去250个交易日涨跌幅", "category": "热度指标", "min": -20, "max": 20 },
+    { "metric": "过去20个交易日涨跌幅", "category": "热度指标", "max": -10 },
+    { "metric": "PCF-TTM", "category": "基本指标", "max": 15 }
+  ],
+  "sort": {
+    "metric": "过去20个交易日涨跌幅",
+    "category": "热度指标",
+    "order": "asc"
+  }
+}

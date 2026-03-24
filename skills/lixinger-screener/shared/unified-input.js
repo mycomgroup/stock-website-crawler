@@ -70,8 +70,106 @@ function stripLatestSuffix(formulaId) {
     : formulaId;
 }
 
+const SCREENER_DATE_ALIASES = {
+  latest_fs: 'latest',
+  latest_time: 'latest'
+};
+
+const Q_SUBCONDITION_TOKEN_MAP = {
+  '累积': 'y',
+  '累积同比': 'y_yoy',
+  '累积环比': 'y_qoq',
+  '累积年比': 'y_y2y',
+  '当期': 'y',
+  '当期同比': 'y_yoy',
+  '当期环比': 'y_qoq',
+  '当期年比': 'y_y2y',
+  '单季': 'q',
+  '单季同比': 'q_yoy',
+  '单季环比': 'q_qoq',
+  '单季年比': 'q_y2y',
+  'TTM': 'ttm',
+  'TTM同比': 'ttm_yoy',
+  'TTM环比': 'ttm_qoq'
+};
+
+function getRequestIdPrefix(requestId) {
+  return String(requestId || '').split('.')[0] || '';
+}
+
+function normalizeScreenerDateMode(dateModeApi, requestId) {
+  if (/Date$/.test(requestId)) {
+    return null;
+  }
+
+  const normalized = SCREENER_DATE_ALIASES[dateModeApi] || dateModeApi || null;
+  if (normalized) {
+    return normalized;
+  }
+
+  const prefix = getRequestIdPrefix(requestId);
+  if (prefix === 'pm' || prefix === 'hm' || prefix === 'q') {
+    return 'latest';
+  }
+
+  return null;
+}
+
+function resolveQSubConditionToken(rawToken, subCondition) {
+  if (subCondition && Q_SUBCONDITION_TOKEN_MAP[subCondition]) {
+    return Q_SUBCONDITION_TOKEN_MAP[subCondition];
+  }
+  if (rawToken) {
+    return rawToken;
+  }
+  return 'y';
+}
+
+function normalizeQMetricRequestId(requestId, options = {}) {
+  if (!String(requestId || '').startsWith('q.')) {
+    return requestId;
+  }
+
+  const normalizedRequestId = stripLatestSuffix(requestId);
+  const rawPattern = /^(q\..+)\.[^.]+\.dynamic~lq~([^~]+)~0$/;
+  const match = normalizedRequestId.match(rawPattern);
+  if (!match) {
+    return normalizedRequestId;
+  }
+
+  const [, baseId, rawToken] = match;
+  const token = resolveQSubConditionToken(rawToken, options.subCondition);
+  return `${baseId}.${token}`;
+}
+
+function normalizeScreenerRequestId(requestId, options = {}) {
+  const prefix = getRequestIdPrefix(requestId);
+  if (prefix === 'q') {
+    return normalizeQMetricRequestId(requestId, options);
+  }
+  return stripLatestSuffix(requestId);
+}
+
+function requestIdToSortName(requestId) {
+  const prefix = getRequestIdPrefix(requestId);
+  if (prefix === 'pm') {
+    return `pm.latest.${requestId.replace(/^pm\./, '')}`;
+  }
+  if (prefix === 'q') {
+    return `fsm.latest.${requestId}`;
+  }
+  return requestId;
+}
+
 function requestIdToResultFieldKey(requestId) {
-  return requestId.replace(/^pm\./, '');
+  const prefix = getRequestIdPrefix(requestId);
+  if (prefix === 'pm') {
+    return requestId.replace(/^pm\./, '');
+  }
+  if (prefix === 'q') {
+    return `fsm.latest.${requestId}`;
+  }
+  return requestId;
 }
 
 function mapScaleByUnit(unit) {
@@ -99,11 +197,13 @@ function defaultRanges(overrides = {}) {
 export function normalizeFilterList(filterList = []) {
   return filterList.map(item => {
     const next = { ...item };
+    next.id = normalizeScreenerRequestId(next.id);
     if (!Object.prototype.hasOwnProperty.call(next, 'value')) {
       next.value = 'all';
     }
-    if (!next.date && next.id?.startsWith('pm.') && !/Date$/.test(next.id)) {
-      next.date = 'latest';
+    const normalizedDate = normalizeScreenerDateMode(next.date, next.id);
+    if (normalizedDate) {
+      next.date = normalizedDate;
     }
     return next;
   });
@@ -215,6 +315,60 @@ export function buildDisplayLabel(entry, rawCondition) {
   return label;
 }
 
+function resolveDateMode(entry, condition) {
+  const desiredLabel = condition.dateModeLabel || condition.dateMode || null;
+  const desiredValue = condition.dateModeApi || null;
+  const options = entry?.dateModes || [];
+
+  if (!desiredLabel && !desiredValue) {
+    return null;
+  }
+
+  if (!options.length) {
+    return {
+      label: desiredLabel || desiredValue,
+      value: desiredValue || desiredLabel
+    };
+  }
+
+  const option = options.find(item =>
+    (desiredLabel && item.label === desiredLabel) ||
+    (desiredValue && item.value === desiredValue) ||
+    (desiredValue && item.label === desiredValue) ||
+    (desiredLabel && item.value === desiredLabel)
+  );
+
+  if (!option) {
+    throw new Error(
+      `Unknown date mode for metric "${entry.metric}". ` +
+      `Available options: ${options.map(item => item.label).join(', ')}`
+    );
+  }
+
+  return {
+    label: option.label,
+    value: option.value
+  };
+}
+
+function resolveSubCondition(entry, condition) {
+  const desired = condition.subCondition || null;
+  const options = entry?.subConditionOptions || [];
+
+  if (!desired) {
+    return null;
+  }
+
+  if (options.length && !options.includes(desired)) {
+    throw new Error(
+      `Unknown subCondition "${desired}" for metric "${entry.metric}". ` +
+      `Available options: ${options.join(', ')}`
+    );
+  }
+
+  return desired;
+}
+
 export function resolveUnifiedCondition(entry, rawCondition) {
   const condition = normalizeOperatorValueCondition(rawCondition);
   const aliasName = condition.metric || condition.displayLabel || condition.field || null;
@@ -255,7 +409,13 @@ export function resolveUnifiedCondition(entry, rawCondition) {
     throw new Error(`Metric "${entry.metric}" does not expose a formula ID.`);
   }
 
-  const requestId = stripLatestSuffix(formulaId);
+  const dateMode = resolveDateMode(entry, condition);
+  const subCondition = resolveSubCondition(entry, condition);
+  const rawRequestId = stripLatestSuffix(formulaId);
+  const requestId = normalizeScreenerRequestId(rawRequestId, {
+    subCondition,
+    dateModeApi: dateMode?.value || null
+  });
   const primaryThreshold = entry.thresholds?.min || entry.thresholds?.max || {};
   const scale = mapScaleByUnit(primaryThreshold.unit);
   const kind = guessThresholdKind(primaryThreshold.unit, primaryThreshold.inputType);
@@ -265,8 +425,9 @@ export function resolveUnifiedCondition(entry, rawCondition) {
     value: 'all'
   };
 
-  if (!/Date$/.test(requestId)) {
-    filter.date = condition.dateModeApi || 'latest';
+  const filterDate = normalizeScreenerDateMode(dateMode?.value || condition.dateModeApi, requestId);
+  if (filterDate) {
+    filter.date = filterDate;
   }
 
   if (condition.min != null) {
@@ -312,8 +473,7 @@ export function buildRequestPlanFromUnifiedInput(rawInput, catalog, options = {}
     customFilterList: input.customFilterList || [],
     industrySource: input.industrySource || 'sw_2021',
     industryLevel: input.industryLevel || 'three',
-    sortName: normalizeSortName(input.sortName ||
-      (resolvedSort ? `pm.latest.${requestIdToResultFieldKey(resolvedSort.filter.id)}` : null)),
+    sortName: normalizeSortName(input.sortName || (resolvedSort ? requestIdToSortName(resolvedSort.filter.id) : null)),
     sortOrder: input.sortOrder || input.sort?.order || 'desc',
     pageIndex: Number(input.pageIndex ?? options.pageIndex ?? 0),
     pageSize: Number(input.pageSize ?? options.pageSize ?? 100)
@@ -381,15 +541,24 @@ export function conditionToBrowserFilter(rawCondition, catalog = null) {
   }
 
   const category = condition.category || entry?.category || null;
+  const dateMode = resolveDateMode(entry, condition);
+  const subCondition = resolveSubCondition(entry, condition);
+  const sharedFields = {
+    field: displayLabel,
+    category,
+    ...(dateMode?.label ? { dateModeLabel: dateMode.label } : {}),
+    ...(dateMode?.value ? { dateModeApi: dateMode.value } : {}),
+    ...(subCondition ? { subCondition } : {})
+  };
 
   if (condition.min != null && condition.max != null) {
-    return { field: displayLabel, category, operator: '介于', value: [condition.min, condition.max] };
+    return { ...sharedFields, operator: '介于', value: [condition.min, condition.max] };
   }
   if (condition.min != null) {
-    return { field: displayLabel, category, operator: '大于', value: condition.min };
+    return { ...sharedFields, operator: '大于', value: condition.min };
   }
   if (condition.max != null) {
-    return { field: displayLabel, category, operator: '小于', value: condition.max };
+    return { ...sharedFields, operator: '小于', value: condition.max };
   }
 
   throw new Error(`Condition ${JSON.stringify(rawCondition)} is missing min/max or operator/value`);
