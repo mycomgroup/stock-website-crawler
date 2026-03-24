@@ -127,6 +127,8 @@ function buildSimpleInputSchema() {
 function main() {
   const catalog = loadJson(DEFAULT_CATALOG_PATH);
   const template = loadJson(DEFAULT_TEMPLATE_PATH);
+  const dynamicOptionsIndexPath = path.join(DEFAULT_OUTPUT_DIR, 'dynamic-options-index.cn.json');
+  const dynamicOptionsIndex = fs.existsSync(dynamicOptionsIndexPath) ? loadJson(dynamicOptionsIndexPath) : null;
 
   const output = {
     generatedAt: new Date().toISOString(),
@@ -137,12 +139,14 @@ function main() {
       '这个文件是给人手工填写或程序生成 simple-input 用的，更偏规则化和可读性。',
       '百分比沿用页面输入习惯，例如 30 表示 30%，脚本会自动转换为 0.3。',
       '市值沿用“亿”作为输入单位，例如 100 表示 100 亿。',
-      '遇到同名指标时，建议同时填写 category 以避免歧义。'
+      '遇到同名指标时，建议同时填写 category 以避免歧义。',
+      '动态可选项请优先查看 dynamic-options-index.cn.json，再按分类拆分文件查看。'
     ],
     simpleInputSchema: buildSimpleInputSchema(),
     simpleInputExample: template,
     selectionRanges: (catalog.selectionRanges || []).map(simplifySelectionRange),
-    metricCategories: buildMetricCategories(catalog.metrics || [])
+    metricCategories: buildMetricCategories(catalog.metrics || []),
+    dynamicOptionsIndex: dynamicOptionsIndex
   };
 
   saveJson(DEFAULT_OUTPUT_PATH, output);
