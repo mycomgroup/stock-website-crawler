@@ -1,0 +1,184 @@
+[
+  {
+    "name": "市盈率(TTM)",
+    "displayName": "市盈率(TTM)",
+    "category": "估值",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "市净率",
+    "displayName": "市净率",
+    "category": "估值",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "市销率(TTM)",
+    "displayName": "市销率(TTM)",
+    "category": "估值",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "市现率(TTM)",
+    "displayName": "市现率(TTM)",
+    "category": "估值",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "企业价值倍数(EV/EBITDA)",
+    "displayName": "企业价值倍数(EV/EBITDA)",
+    "category": "估值",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "股息率(TTM)",
+    "displayName": "股息率(TTM)",
+    "category": "估值",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "市值/自由现金流",
+    "displayName": "市值/自由现金流",
+    "category": "估值",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "净资产收益率(TTM)",
+    "displayName": "净资产收益率(TTM)",
+    "category": "盈利",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "总资产收益率(TTM)",
+    "displayName": "总资产收益率(TTM)",
+    "category": "盈利",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "净利润率(TTM)",
+    "displayName": "净利润率(TTM)",
+    "category": "盈利",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "毛利率(TTM)",
+    "displayName": "毛利率(TTM)",
+    "category": "盈利",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "营业利润率(TTM)",
+    "displayName": "营业利润率(TTM)",
+    "category": "盈利",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "营业收入增长率(YOY)",
+    "displayName": "营业收入增长率(YOY)",
+    "category": "成长",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "净利润增长率(YOY)",
+    "displayName": "净利润增长率(YOY)",
+    "category": "成长",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "营业收入增长率(3年复合)",
+    "displayName": "营业收入增长率(3年复合)",
+    "category": "成长",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "净利润增长率(3年复合)",
+    "displayName": "净利润增长率(3年复合)",
+    "category": "成长",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "资产负债率",
+    "displayName": "资产负债率",
+    "category": "财务健康",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "流动比率",
+    "displayName": "流动比率",
+    "category": "财务健康",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "速动比率",
+    "displayName": "速动比率",
+    "category": "财务健康",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "利息保障倍数",
+    "displayName": "利息保障倍数",
+    "category": "财务健康",
+    "unit": "倍",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "总市值",
+    "displayName": "总市值",
+    "category": "规模",
+    "unit": "亿元",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "流通市值",
+    "displayName": "流通市值",
+    "category": "规模",
+    "unit": "亿元",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "营业收入(TTM)",
+    "displayName": "营业收入(TTM)",
+    "category": "规模",
+    "unit": "亿元",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "净利润(TTM)",
+    "displayName": "净利润(TTM)",
+    "category": "规模",
+    "unit": "亿元",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "总资产",
+    "displayName": "总资产",
+    "category": "规模",
+    "unit": "亿元",
+    "operators": ["大于", "小于", "介于"]
+  },
+  {
+    "name": "换手率",
+    "displayName": "换手率",
+    "category": "流动性",
+    "unit": "%",
+    "operators": ["大于", "小于", "介于"]
+  }
+]
