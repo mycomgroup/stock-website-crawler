@@ -401,7 +401,7 @@ For issues and questions, please open an issue on the project repository.
 
 
 LIXINGER_USERNAME=13311390323 LIXINGER_PASSWORD=3228552 \
-node /Users/fengzhi/Downloads/git/testlixingren/stock-crawler/scripts/fetch-lixinger-screener.js \
+node /Users/fengzhi/Downloads/git/testlixingren/skills/lixinger-screener/request/fetch-lixinger-screener.js \
   --simple-input-file /Users/fengzhi/Downloads/git/testlixingren/output/playwright/lixinger-screener/simple-input-template.cn.json \
   --catalog-file /Users/fengzhi/Downloads/git/testlixingren/output/playwright/lixinger-screener/condition-catalog.cn.json \
   --output csv

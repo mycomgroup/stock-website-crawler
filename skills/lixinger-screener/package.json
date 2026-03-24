@@ -5,7 +5,14 @@
   "description": "自然语言驱动的理杏仁股票筛选 skill",
   "main": "main.js",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test browser/test/*.test.js",
+    "browser": "node run-skill.js",
+    "browser:direct": "node browser/run-skill.js",
+    "request:fetch": "node request/fetch-lixinger-screener.js",
+    "request:catalog": "node request/export-lixinger-screener-catalog.js",
+    "request:config": "node request/build-lixinger-screener-config.js",
+    "request:dict": "node request/export-lixinger-screener-dictionaries.js",
+    "request:inspect": "node request/inspect-lixinger-screener.js"
   },
   "dependencies": {
     "dotenv": "^16.0.0",

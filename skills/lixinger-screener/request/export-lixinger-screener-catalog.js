@@ -1,10 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright';
+import '../load-env.js';
+import { LIXINGER_OUTPUT_DIR } from '../paths.js';
 
 const DEFAULT_AREA_CODE = 'cn';
 const DEFAULT_PAGE_URL = `https://www.lixinger.com/analytics/screener/company-fundamental/${DEFAULT_AREA_CODE}`;
-const DEFAULT_OUTPUT_DIR = path.resolve(process.cwd(), 'output/playwright/lixinger-screener');
+const DEFAULT_OUTPUT_DIR = LIXINGER_OUTPUT_DIR;
 const DEFAULT_CATALOG_PATH = path.join(DEFAULT_OUTPUT_DIR, 'condition-catalog.cn.json');
 const DEFAULT_TEMPLATE_PATH = path.join(DEFAULT_OUTPUT_DIR, 'simple-input-template.cn.json');
 
