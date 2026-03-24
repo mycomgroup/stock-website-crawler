@@ -24,6 +24,8 @@ import {
 import LoginHandler from '../../../stock-crawler/src/login-handler.js';
 
 const CATALOG = loadBrowserMetricsCatalog();
+const CONDITION_CATALOG_HINT_PATTERN = /统计值|分位点|上市日期|上市时间|上市年数|上市以来|10年|20年/;
+const BROWSER_CATALOG_HINT_PATTERN = /市盈率\(TTM\)|市销率\(TTM\)|市现率\(TTM\)|股息率\(TTM\)|净资产收益率\(TTM\)|总资产收益率\(TTM\)|净利润率\(TTM\)|毛利率\(TTM\)|营业利润率\(TTM\)|营业收入\(TTM\)|净利润\(TTM\)|营业收入增长率\(YOY\)|净利润增长率\(YOY\)|营业收入增长率\(3年复合\)|净利润增长率\(3年复合\)|流动比率|速动比率|利息保障倍数|市值\/自由现金流/;
 
 /**
  * Validates required environment variables.
@@ -88,6 +90,14 @@ function loadInputFile(inputFile) {
   return loadJson(inputFile);
 }
 
+function loadDefaultConditionCatalog(options) {
+  const defaultCatalogPath = resolveCatalogPath(options.catalogPath, options.cwd);
+  if (options.catalogPath || conditionCatalogExists(defaultCatalogPath)) {
+    return loadConditionCatalog(defaultCatalogPath);
+  }
+  return null;
+}
+
 function loadRichCatalogIfNeeded(options, input) {
   if (!inputNeedsConditionCatalog(input)) {
     return null;
@@ -97,33 +107,80 @@ function loadRichCatalogIfNeeded(options, input) {
   return loadConditionCatalog(catalogPath);
 }
 
+export function buildBrowserQueryCatalogCandidates(userQuery, options = {}, richCatalog = null) {
+  const queryText = String(userQuery || '');
+  const defaultConditionCatalog = richCatalog || loadDefaultConditionCatalog(options);
+  const browserCandidate = {
+    name: 'browser-metrics-catalog',
+    catalog: CATALOG,
+    richCatalog: null
+  };
+  const conditionCandidate = defaultConditionCatalog
+    ? {
+        name: 'condition-catalog',
+        catalog: defaultConditionCatalog.metrics,
+        richCatalog: defaultConditionCatalog
+      }
+    : null;
+
+  if (!conditionCandidate) {
+    return [browserCandidate];
+  }
+
+  if (CONDITION_CATALOG_HINT_PATTERN.test(queryText) && !BROWSER_CATALOG_HINT_PATTERN.test(queryText)) {
+    return [conditionCandidate, browserCandidate];
+  }
+
+  return [browserCandidate, conditionCandidate];
+}
+
+export async function parseBrowserNaturalLanguageQuery(
+  userQuery,
+  options = {},
+  richCatalog = null,
+  parseQuery = queryToUnifiedInput
+) {
+  const candidates = buildBrowserQueryCatalogCandidates(userQuery, options, richCatalog);
+  const failures = [];
+
+  for (const candidate of candidates) {
+    try {
+      const parsed = await parseQuery(userQuery, candidate.catalog);
+      const validation = validateUnifiedQuery(parsed, candidate.catalog);
+      if (validation.valid) {
+        return {
+          parsed,
+          richCatalog: candidate.richCatalog
+        };
+      }
+
+      failures.push(
+        `${candidate.name}: ${validation.errors.join('；') || '校验失败'}`
+      );
+    } catch (error) {
+      failures.push(`${candidate.name}: ${error.message}`);
+    }
+  }
+
+  throw new Error(
+    `无法解析筛选条件 "${userQuery}"。\n${failures.join('\n')}`
+  );
+}
+
 async function resolveBrowserInput(options) {
   const inputFileData = loadInputFile(options.inputFile);
   let unifiedInput = normalizeUnifiedInput(inputFileData);
-  const richCatalog = loadRichCatalogIfNeeded(options, unifiedInput);
+  let richCatalog = loadRichCatalogIfNeeded(options, unifiedInput);
 
   const naturalLanguageQueries = [inputFileData.query, options.query].filter(Boolean);
-  let queryCatalog = null;
 
   if (naturalLanguageQueries.length > 0) {
-    if (richCatalog) {
-      queryCatalog = richCatalog.metrics;
-    } else {
-      const defaultCatalogPath = resolveCatalogPath(options.catalogPath, options.cwd);
-      if (options.catalogPath || conditionCatalogExists(defaultCatalogPath)) {
-        queryCatalog = loadConditionCatalog(defaultCatalogPath).metrics;
-      } else {
-        queryCatalog = CATALOG;
-      }
-    }
-
     for (const userQuery of naturalLanguageQueries) {
-      const parsed = await queryToUnifiedInput(userQuery, queryCatalog);
-      const validation = validateUnifiedQuery(parsed, queryCatalog);
-      if (!validation.valid) {
-        throw new Error(validation.errors.join('\n'));
+      const resolved = await parseBrowserNaturalLanguageQuery(userQuery, options, richCatalog);
+      if (resolved.richCatalog && !richCatalog) {
+        richCatalog = resolved.richCatalog;
       }
-      unifiedInput = mergeUnifiedInputs(unifiedInput, parsed);
+      unifiedInput = mergeUnifiedInputs(unifiedInput, resolved.parsed);
     }
   }
 
@@ -133,7 +190,7 @@ async function resolveBrowserInput(options) {
 
   return {
     unifiedInput,
-    richCatalog: richCatalog || (queryCatalog && queryCatalog !== CATALOG ? { metrics: queryCatalog } : null)
+    richCatalog
   };
 }
 
@@ -221,11 +278,27 @@ async function openScreenerPage(page, targetUrl) {
   await waitForScreenerReady(page);
 }
 
-async function validateContext(context, targetUrl) {
+/**
+ * Validates login state by calling a lightweight API endpoint instead of
+ * loading the full screener page. This avoids opening extra browser tabs
+ * and avoids long timeouts when the page is slow to load.
+ */
+async function validateContext(context) {
   const page = await context.newPage();
   try {
-    await openScreenerPage(page, targetUrl);
-    return true;
+    const response = await page.goto(
+      'https://www.lixinger.com/api/user/info',
+      { timeout: 10_000, waitUntil: 'domcontentloaded' }
+    ).catch(() => null);
+    if (!response) return false;
+    const text = await page.evaluate(() => document.body?.innerText || '').catch(() => '');
+    try {
+      const json = JSON.parse(text);
+      // Logged-in response has a user object; not-logged-in returns code 401 or empty data
+      return json?.data?._id != null || json?.code === 1;
+    } catch {
+      return false;
+    }
   } catch {
     return false;
   } finally {
@@ -233,25 +306,15 @@ async function validateContext(context, targetUrl) {
   }
 }
 
-async function createAuthenticatedContext(browser, cookieHeader, options) {
+async function createAuthenticatedContext(browser, cookieHeader) {
   const context = await browser.newContext({
     locale: 'zh-CN',
     viewport: { width: 1600, height: 1400 },
     userAgent: USER_AGENT
   });
   await context.addCookies(cookieHeaderToPlaywrightCookies(cookieHeader));
-
-  const page = await context.newPage();
-  try {
-    await openScreenerPage(page, options.targetUrl);
-    await context.storageState({ path: SESSION_FILE });
-    await page.close().catch(() => {});
-    return context;
-  } catch (error) {
-    await page.close().catch(() => {});
-    await context.close().catch(() => {});
-    throw error;
-  }
+  await context.storageState({ path: SESSION_FILE });
+  return context;
 }
 
 /**
@@ -262,7 +325,6 @@ async function createAuthenticatedContext(browser, cookieHeader, options) {
  */
 export async function loadOrCreateSession(browser, options = {}) {
   const targetUrl = options.targetUrl || SCREENER_URL;
-  const profileDir = options.profileDir || process.env.LIXINGER_BROWSER_PROFILE_DIR || CHROME_USER_DATA;
 
   // Try loading existing session from storage state
   if (existsSync(SESSION_FILE)) {
@@ -272,29 +334,30 @@ export async function loadOrCreateSession(browser, options = {}) {
       viewport: { width: 1600, height: 1400 },
       userAgent: USER_AGENT
     });
-    if (await validateContext(context, targetUrl)) {
+    if (await validateContext(context)) {
       console.log('✓ 使用已保存的浏览器会话');
       return context;
     }
     await context.close().catch(() => {});
+    console.log('已保存的会话已失效，重新登录...');
   }
 
-  // Try using a specified browser profile
-  if (profileDir) {
+  // Try using a specified browser profile (only when explicitly provided via --profile-dir)
+  if (options.profileDir) {
     try {
-      console.log(`尝试使用浏览器 profile: ${profileDir}`);
-      const context = await chromium.launchPersistentContext(profileDir, {
+      console.log(`尝试使用浏览器 profile: ${options.profileDir}`);
+      const context = await chromium.launchPersistentContext(options.profileDir, {
         viewport: null,
         userAgent: USER_AGENT,
         headless: false,
         channel: 'chrome'
-      }).catch(() => chromium.launchPersistentContext(profileDir, {
+      }).catch(() => chromium.launchPersistentContext(options.profileDir, {
         viewport: null,
         userAgent: USER_AGENT,
         headless: false
       }));
 
-      if (await validateContext(context, targetUrl)) {
+      if (await validateContext(context)) {
         console.log('✓ 使用指定浏览器 profile 成功，已登录状态');
         return context;
       }
@@ -316,7 +379,7 @@ export async function loadOrCreateSession(browser, options = {}) {
   try {
     console.log('尝试通过登录接口写入浏览器会话...');
     const cookieHeader = await loginByRequest(username, password, targetUrl);
-    const context = await createAuthenticatedContext(browser, cookieHeader, { targetUrl });
+    const context = await createAuthenticatedContext(browser, cookieHeader);
     console.log('✓ 已通过登录接口创建浏览器会话');
     return context;
   } catch (error) {
@@ -355,7 +418,15 @@ export async function loadOrCreateSession(browser, options = {}) {
 /**
  * Navigates to screener page and applies filters.
  * @param {import('playwright').Page} page
- * @param {Array<{field: string, category?: string|null, operator: string, value: number|number[]}>} filters
+ * @param {Array<{
+ *   field: string,
+ *   category?: string|null,
+ *   dateModeLabel?: string,
+ *   dateModeApi?: string,
+ *   subCondition?: string,
+ *   operator: string,
+ *   value: number|number[]
+ * }>} filters
  * @param {{ targetUrl?: string }} options
  * @returns {Promise<void>}
  */
@@ -366,20 +437,67 @@ export async function applyFilters(page, filters, options = {}) {
   const rowLocator = page.locator('tr').filter({ has: page.locator('svg.fa-xmark') });
 
   const clickTab = async tabName => {
-    const tab = page.locator(`a.nav-link:has-text("${tabName}")`).first();
+    // Only click tabs that are inside the screener field panel, not site navigation
+    const tab = page.locator(
+      `.field-list a.nav-link:has-text("${tabName}"), ` +
+      `.screener-field a.nav-link:has-text("${tabName}"), ` +
+      `.condition-panel a.nav-link:has-text("${tabName}"), ` +
+      `ul.nav-tabs a.nav-link:has-text("${tabName}"), ` +
+      `.tab-content ~ ul a.nav-link:has-text("${tabName}")`
+    ).first();
+    // Fallback: find a nav-link that is near a plus-btn (i.e. inside the field panel)
+    const fallback = page.locator(`a.nav-link:has-text("${tabName}")`).filter({
+      has: page.locator('xpath=ancestor::*[.//div[@class and contains(@class,"plus-btn")]]')
+    }).first();
+
+    let target = null;
     if (await tab.count()) {
-      await tab.click({ force: true });
-      await page.waitForTimeout(800);
-      return true;
+      target = tab;
+    } else if (await fallback.count()) {
+      target = fallback;
+    } else {
+      // Last resort: find any nav-link with this exact text that is visible
+      const all = page.locator(`a.nav-link`);
+      const count = await all.count();
+      for (let i = 0; i < count; i++) {
+        const el = all.nth(i);
+        const text = (await el.textContent().catch(() => '')).trim();
+        if (text === tabName && await el.isVisible().catch(() => false)) {
+          target = el;
+          break;
+        }
+      }
     }
-    return false;
+
+    if (!target) return false;
+    await target.click({ force: true });
+    await page.waitForTimeout(800);
+    return true;
   };
 
-  const listTabNames = async () => page.locator('a.nav-link').evaluateAll(elements =>
-    elements
-      .map(element => element.textContent?.trim() || '')
-      .filter(Boolean)
-  ).catch(() => []);
+  // Only list tabs that are inside the screener field panel (contain plus-btn fields)
+  const listTabNames = async () => {
+    return page.evaluate(() => {
+      // Find all nav-link elements
+      const allLinks = [...document.querySelectorAll('a.nav-link')];
+      // A screener tab is one whose ancestor contains li.field or div.plus-btn elements
+      const screenerTabs = allLinks.filter(link => {
+        let el = link.parentElement;
+        // Walk up max 5 levels looking for a container that has plus-btn children
+        for (let i = 0; i < 5; i++) {
+          if (!el) break;
+          if (el.querySelector('li.field, div.plus-btn[title]')) return true;
+          el = el.parentElement;
+        }
+        return false;
+      });
+      // If we found screener-specific tabs, use those; otherwise fall back to all nav-links
+      const source = screenerTabs.length > 0 ? screenerTabs : allLinks;
+      return source
+        .map(el => el.textContent?.trim() || '')
+        .filter(Boolean);
+    }).catch(() => []);
+  };
 
   const extractVisibleFieldTitles = async () => page.evaluate(() => {
     const isVisible = element => {
@@ -441,6 +559,91 @@ export async function applyFilters(page, filters, options = {}) {
     throw new Error('新增筛选条件后未出现新的条件行');
   };
 
+  const selectByLabelOrValue = async (selectLocator, preferredLabel, preferredValue, description) => {
+    const attempts = [];
+
+    if (preferredLabel) {
+      attempts.push({ label: preferredLabel });
+    }
+    if (preferredValue && preferredValue !== preferredLabel) {
+      attempts.push({ value: preferredValue });
+    }
+
+    for (const option of attempts) {
+      try {
+        await selectLocator.selectOption(option);
+        return true;
+      } catch {
+        // Try the next option shape.
+      }
+    }
+
+    const available = await selectLocator.locator('option').evaluateAll(elements =>
+      elements.map(element => ({
+        label: element.textContent?.trim() || '',
+        value: element.getAttribute('value') || ''
+      }))
+    ).catch(() => []);
+
+    throw new Error(
+      `${description} 不支持 "${preferredLabel || preferredValue}"。` +
+      `${available.length ? `可选项：${available.map(item => item.label || item.value).join('、')}` : ''}`
+    );
+  };
+
+  const applyRowDateMode = async (row, filter) => {
+    if (!filter.dateModeLabel && !filter.dateModeApi) {
+      return;
+    }
+
+    const dateCell = row.locator('td').nth(2);
+    const select = dateCell.locator('select').first();
+    if (await select.count()) {
+      await selectByLabelOrValue(select, filter.dateModeLabel, filter.dateModeApi, `字段 "${filter.field}" 的日期模式`);
+      await page.waitForTimeout(200);
+      return;
+    }
+
+    const currentText = await dateCell.innerText().catch(() => '');
+    const expected = filter.dateModeLabel || filter.dateModeApi;
+    if (!currentText.includes(expected)) {
+      throw new Error(`字段 "${filter.field}" 不支持设置日期模式 "${expected}"`);
+    }
+  };
+
+  const applyRowSubCondition = async (row, filter) => {
+    if (!filter.subCondition) {
+      return;
+    }
+
+    const subConditionCell = row.locator('td').nth(3);
+    const select = subConditionCell.locator('select').first();
+    if (await select.count()) {
+      await selectByLabelOrValue(select, filter.subCondition, null, `字段 "${filter.field}" 的子条件`);
+      await page.waitForTimeout(200);
+      return;
+    }
+
+    const label = subConditionCell.locator('label').filter({ hasText: filter.subCondition }).first();
+    if (await label.count()) {
+      await label.click({ force: true }).catch(async () => {
+        const inputId = await label.getAttribute('for');
+        if (inputId) {
+          await subConditionCell.locator(`#${inputId}`).click({ force: true });
+        } else {
+          throw new Error(`字段 "${filter.field}" 的子条件 "${filter.subCondition}" 无法点击`);
+        }
+      });
+      await page.waitForTimeout(200);
+      return;
+    }
+
+    const currentText = await subConditionCell.innerText().catch(() => '');
+    if (!currentText.includes(filter.subCondition)) {
+      throw new Error(`字段 "${filter.field}" 不支持子条件 "${filter.subCondition}"`);
+    }
+  };
+
   const fillRowValues = async (row, filter) => {
     const inputs = row.locator('input');
     const inputCount = await inputs.count();
@@ -487,6 +690,8 @@ export async function applyFilters(page, filters, options = {}) {
       await fieldButton.click({ force: true });
       await page.waitForTimeout(500);
       const row = await waitForNewRow(countBefore);
+      await applyRowDateMode(row, filter);
+      await applyRowSubCondition(row, filter);
       await fillRowValues(row, filter);
       await page.waitForTimeout(300);
     } catch (err) {

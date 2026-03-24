@@ -1,0 +1,23 @@
+{
+  "name": "FCF测试",
+  "areaCode": "cn",
+  "industrySource": "sw_2021",
+  "industryLevel": "three",
+  "pageSize": 5,
+  "ranges": {
+    "market": "a",
+    "excludeBlacklist": true,
+    "excludeDelisted": true,
+    "excludeSpecialTreatment": true
+  },
+  "conditions": [
+    { "metric": "自由现金流量", "category": "财务指标", "formulaId": "q.m.fcf.t.dynamic~lq~ttm~0", "min": 5 },
+    { "metric": "经营活动产生的现金流量净额对净利润的比率", "category": "财务指标", "formulaId": "q.m.ncffoa_np_r.t.dynamic~lq~ttm~0", "min": 80 }
+  ],
+  "sort": {
+    "metric": "自由现金流量",
+    "category": "财务指标",
+    "formulaId": "q.m.fcf.t.dynamic~lq~ttm~0",
+    "order": "desc"
+  }
+}

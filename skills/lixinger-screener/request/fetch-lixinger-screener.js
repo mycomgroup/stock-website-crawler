@@ -443,9 +443,24 @@ function buildRequestPlanFromSimpleInput(simpleInput, catalog, options) {
   };
 }
 
+function getNestedValue(data, dotKey) {
+  // 先尝试 pm.latest 扁平 key（原有逻辑）
+  const pmLatest = data?.pm?.latest || {};
+  if (Object.prototype.hasOwnProperty.call(pmLatest, dotKey)) {
+    return pmLatest[dotKey];
+  }
+  // 再按点路径深层查找（如 hm.vol.td_cr_20d）
+  const parts = dotKey.split('.');
+  let cur = data;
+  for (const part of parts) {
+    if (cur == null || typeof cur !== 'object') return undefined;
+    cur = cur[part];
+  }
+  return cur;
+}
+
 function flattenTableRows(rows, columnSpecs) {
   return rows.map((row, index) => {
-    const latest = row.data?.pm?.latest || {};
     const result = {
       '#': index + 1,
       '公司名称': row.stock.name,
@@ -455,7 +470,7 @@ function flattenTableRows(rows, columnSpecs) {
     };
 
     for (const spec of columnSpecs) {
-      const value = latest[spec.resultFieldKey];
+      const value = getNestedValue(row.data, spec.resultFieldKey);
       if (spec.format === 'percentage') {
         result[spec.displayLabel] = value == null ? '' : `${formatNumber(value * 100)}%`;
       } else if (spec.format === 'yi') {

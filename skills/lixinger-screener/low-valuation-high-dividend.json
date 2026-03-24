@@ -1,0 +1,29 @@
+{
+  "name": "低估值高股息_第一轮",
+  "areaCode": "cn",
+  "industrySource": "sw_2021",
+  "industryLevel": "three",
+  "pageSize": 100,
+  "ranges": {
+    "market": "a",
+    "stockBourseTypes": [],
+    "mutualMarkets": { "selectedMutualMarkets": [], "selectType": "include" },
+    "multiMarketListedType": { "selectedMultiMarketListedTypes": [], "selectType": "include" },
+    "excludeBlacklist": true,
+    "excludeDelisted": true,
+    "excludeSpecialTreatment": true,
+    "specialTreatmentOnly": false
+  },
+  "conditions": [
+    { "metric": "PE-TTM(扣非)统计值", "category": "基本指标", "selectors": ["10年", "分位点%"], "max": 30 },
+    { "metric": "PB(不含商誉)统计值", "category": "基本指标", "selectors": ["10年", "分位点%"], "max": 30 },
+    { "metric": "股息率", "category": "基本指标", "min": 2.5 },
+    { "metric": "上市日期", "category": "基本指标", "subCondition": "上市时间", "max": "2015-01-01" }
+  ],
+  "sort": {
+    "metric": "PE-TTM(扣非)统计值",
+    "category": "基本指标",
+    "selectors": ["10年", "分位点%"],
+    "order": "asc"
+  }
+}
