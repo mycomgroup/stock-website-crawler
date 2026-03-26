@@ -14,14 +14,15 @@ class GoogleDiscoveryParser extends BaseParser {
 
   async parse(page, url) {
     try {
-      const jsonText = await page.evaluate(() => {
-        const pre = document.querySelector('pre');
-        if (pre?.innerText) return pre.innerText;
-        return document.body?.innerText || '';
-      });
+      await this.expandInteractiveBlocks(page);
 
+      const jsonText = await this.extractDiscoveryJsonText(page);
       const discovery = JSON.parse(jsonText);
       const methods = this.extractMethods(discovery);
+
+      const resourcesCount = this.countNestedNodes(discovery.resources || {});
+      const schemasCount = Object.keys(discovery.schemas || {}).length;
+      const parametersCount = Object.keys(discovery.parameters || {}).length;
 
       return {
         type: 'google-discovery-doc',
@@ -29,12 +30,36 @@ class GoogleDiscoveryParser extends BaseParser {
         title: `${discovery.title || 'Google API'} Discovery (${discovery.version || 'unknown'})`,
         description: discovery.description || '',
         serviceName: discovery.name || '',
+        canonicalName: discovery.canonicalName || '',
         version: discovery.version || '',
+        ownerDomain: discovery.ownerDomain || '',
+        ownerName: discovery.ownerName || '',
         rootUrl: discovery.rootUrl || '',
         servicePath: discovery.servicePath || '',
+        baseUrl: discovery.baseUrl || '',
+        basePath: discovery.basePath || '',
         mtlsRootUrl: discovery.mtlsRootUrl || '',
         batchPath: discovery.batchPath || '',
         revision: discovery.revision || '',
+        discoveryVersion: discovery.discoveryVersion || '',
+        protocol: discovery.protocol || '',
+        documentationLink: discovery.documentationLink || '',
+        resourcesCount,
+        schemasCount,
+        parametersCount,
+        topLevelMethodCount: Object.keys(discovery.methods || {}).length,
+        endpointCount: methods.length,
+        authScopes: this.extractAuthScopes(discovery),
+        features: {
+          labels: discovery.labels || [],
+          supportsMediaUpload: !!discovery.supportsMediaUpload,
+          supportsSubscription: !!discovery.supportsSubscription,
+          fullyEncodeReservedExpansion: !!discovery.fullyEncodeReservedExpansion,
+          hasIcons: !!discovery.icons,
+          hasEtag: !!discovery.etag,
+          hasResources: !!discovery.resources,
+          hasSchemas: !!discovery.schemas
+        },
         entryPoints: {
           discoveryUrl: url,
           rootUrl: discovery.rootUrl || '',
@@ -59,6 +84,79 @@ class GoogleDiscoveryParser extends BaseParser {
     }
   }
 
+  async expandInteractiveBlocks(page) {
+    try {
+      await page.evaluate(() => {
+        document.querySelectorAll('details:not([open])').forEach((el) => el.setAttribute('open', ''));
+
+        const collapsibles = Array.from(document.querySelectorAll('[aria-expanded="false"]'));
+        collapsibles.forEach((el) => {
+          if (typeof el.click === 'function') {
+            try {
+              el.click();
+            } catch {
+              // ignore single element error and continue
+            }
+          }
+        });
+      });
+    } catch {
+      // 页面不支持 evaluate 时忽略（例如某些错误页）
+    }
+  }
+
+  async extractDiscoveryJsonText(page) {
+    const rawText = await page.evaluate(() => {
+      const pre = document.querySelector('pre');
+      const script = document.querySelector('script[type="application/json"]');
+      return pre?.innerText || pre?.textContent || script?.textContent || document.body?.innerText || '';
+    });
+
+    const trimmed = (rawText || '').trim();
+    if (!trimmed) {
+      throw new Error('Discovery document content is empty');
+    }
+
+    const firstBrace = trimmed.indexOf('{');
+    const lastBrace = trimmed.lastIndexOf('}');
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      const candidate = trimmed.slice(firstBrace, lastBrace + 1);
+      JSON.parse(candidate);
+      return candidate;
+    }
+
+    JSON.parse(trimmed);
+    return trimmed;
+  }
+
+  extractAuthScopes(discovery) {
+    const oauth2Scopes = discovery?.auth?.oauth2?.scopes || {};
+    return Object.entries(oauth2Scopes).map(([name, info]) => ({
+      name,
+      description: info?.description || ''
+    }));
+  }
+
+  countNestedNodes(resourceMap) {
+    if (!resourceMap || typeof resourceMap !== 'object') {
+      return 0;
+    }
+
+    let count = 0;
+    const walk = (node) => {
+      if (!node || typeof node !== 'object') {
+        return;
+      }
+      count += 1;
+      if (node.resources) {
+        Object.values(node.resources).forEach((child) => walk(child));
+      }
+    };
+
+    Object.values(resourceMap).forEach((resource) => walk(resource));
+    return count;
+  }
+
   extractMethods(discovery) {
     const methods = [];
 
@@ -70,25 +168,31 @@ class GoogleDiscoveryParser extends BaseParser {
       return mergedPath ? `${root}/${mergedPath}` : root;
     };
 
-    const walkResource = (resource, resourcePath = []) => {
-      if (resource.methods) {
-        for (const [methodName, methodDef] of Object.entries(resource.methods)) {
-          const parameterNames = Object.keys(methodDef.parameters || {});
-          methods.push({
-            resource: resourcePath.join('.') || 'root',
-            methodName,
-            id: methodDef.id || '',
-            httpMethod: methodDef.httpMethod || '',
-            path: methodDef.path || '',
-            flatPath: methodDef.flatPath || '',
-            fullUrlTemplate: joinUrl(discovery.rootUrl, discovery.servicePath, methodDef.path),
-            supportsMediaDownload: !!methodDef.supportsMediaDownload,
-            supportsSubscription: !!methodDef.supportsSubscription,
-            parameterNames,
-            description: methodDef.description || ''
-          });
-        }
+    const addMethods = (methodMap = {}, resourcePath = []) => {
+      for (const [methodName, methodDef] of Object.entries(methodMap)) {
+        const parameterNames = Object.keys(methodDef.parameters || {});
+        methods.push({
+          resource: resourcePath.join('.') || 'root',
+          methodName,
+          id: methodDef.id || '',
+          httpMethod: methodDef.httpMethod || '',
+          path: methodDef.path || '',
+          flatPath: methodDef.flatPath || '',
+          fullUrlTemplate: joinUrl(discovery.rootUrl, discovery.servicePath, methodDef.path),
+          requestRef: methodDef.request?.$ref || '',
+          responseRef: methodDef.response?.$ref || '',
+          supportsMediaDownload: !!methodDef.supportsMediaDownload,
+          supportsMediaUpload: !!methodDef.supportsMediaUpload,
+          supportsSubscription: !!methodDef.supportsSubscription,
+          parameterNames,
+          parameterCount: parameterNames.length,
+          description: methodDef.description || ''
+        });
       }
+    };
+
+    const walkResource = (resource, resourcePath = []) => {
+      addMethods(resource.methods || {}, resourcePath);
 
       if (resource.resources) {
         for (const [subResourceName, subResourceDef] of Object.entries(resource.resources)) {
@@ -96,6 +200,8 @@ class GoogleDiscoveryParser extends BaseParser {
         }
       }
     };
+
+    addMethods(discovery.methods || {}, []);
 
     if (discovery.resources) {
       for (const [resourceName, resourceDef] of Object.entries(discovery.resources)) {
