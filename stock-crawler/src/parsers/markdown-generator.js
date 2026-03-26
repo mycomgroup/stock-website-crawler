@@ -1874,6 +1874,10 @@ class MarkdownGenerator {
    */
   generatePolyrouterApi(pageData) {
     const sections = [];
+    const escapeTableCell = (value) => String(value ?? '')
+      .replace(/\r?\n+/g, ' ')
+      .replace(/\|/g, '\\|')
+      .trim();
 
     // 添加标题
     if (pageData.title) {
@@ -1922,11 +1926,11 @@ class MarkdownGenerator {
             sections.push(`### 参数表 ${index + 1}\n`);
           }
           // 表头
-          sections.push('| ' + param.headers.join(' | ') + ' |');
+          sections.push('| ' + param.headers.map(escapeTableCell).join(' | ') + ' |');
           sections.push('| ' + param.headers.map(() => '---').join(' | ') + ' |');
           // 数据行
           param.rows.forEach(row => {
-            const values = param.headers.map(h => row[h] || '-');
+            const values = param.headers.map(h => escapeTableCell(row[h] || '-'));
             sections.push('| ' + values.join(' | ') + ' |');
           });
           sections.push('');
