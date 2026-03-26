@@ -297,13 +297,40 @@ class TextExtractor {
           return text;
         };
         
+        const normalizeText = (text) => (text || '').replace(/\s+/g, ' ').trim();
+
+        const seenText = new Set();
+        const pushParagraphIfValid = (text) => {
+          const normalized = normalizeText(text);
+          if (!normalized) return;
+          if (normalized.length < 2 || normalized.length > 500) return;
+          if (/^[\d\s,.;:|/\\\-+]+$/.test(normalized)) return;
+          if (seenText.has(normalized)) return;
+          seenText.add(normalized);
+          result.push({ type: 'paragraph', content: normalized });
+        };
+
+        const extractContainerInlineText = (element) => {
+          let text = '';
+          Array.from(element.childNodes).forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              text += node.textContent || '';
+              return;
+            }
+            if (node.nodeType !== Node.ELEMENT_NODE) return;
+            const tag = node.tagName;
+            if (['DIV', 'SECTION', 'ARTICLE', 'UL', 'OL', 'TABLE', 'PRE', 'BLOCKQUOTE'].includes(tag)) return;
+            text += processTextNode(node);
+          });
+          return normalizeText(text);
+        };
+
         const processElement = (element) => {
           const tag = element.tagName;
           if (tag === 'P') {
             let text = '';
             Array.from(element.childNodes).forEach(node => text += processTextNode(node));
-            text = text.trim();
-            if (text) result.push({ type: 'paragraph', content: text });
+            pushParagraphIfValid(text);
           } else if (/^H[1-6]$/.test(tag)) {
             let text = '';
             Array.from(element.childNodes).forEach(node => text += processTextNode(node));
@@ -355,6 +382,8 @@ class TextExtractor {
               });
             }
           } else if (tag === 'DIV' || tag === 'SECTION' || tag === 'ARTICLE') {
+            const inlineText = extractContainerInlineText(element);
+            pushParagraphIfValid(inlineText);
             Array.from(element.children).forEach(child => processElement(child));
           }
         };
