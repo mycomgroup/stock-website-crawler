@@ -1,11 +1,10 @@
 {
   "name": "lanyun-mcp-site",
   "seedUrls": [
-    "https://mcp.lanyun.net/",
-    "https://mcp.lanyun.net/home",
-    "https://mcp.lanyun.net/termsOfService",
-    "https://mcp.lanyun.net/privacyPolicy",
     "https://mcp.lanyun.net/#/home",
+    "https://mcp.lanyun.net/#/termsOfService",
+    "https://mcp.lanyun.net/#/privacyPolicy",
+    "https://mcp.lanyun.net/#/mcpSquare",
     "https://mcp.lanyun.net/#/manage/myMcp",
     "https://mcp.lanyun.net/#/manage/apiKey"
   ],
