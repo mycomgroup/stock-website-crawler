@@ -9,7 +9,7 @@ import BaseParser from './base-parser.js';
 class AliyunBailianMcpParser extends BaseParser {
   constructor() {
     super();
-    this.capturedApiData = null;
+    this.capturedApiData = [];
   }
 
   matches(url) {
@@ -32,7 +32,7 @@ class AliyunBailianMcpParser extends BaseParser {
    * 设置API响应拦截
    */
   setupApiInterception(page) {
-    this.capturedApiData = null;
+    this.capturedApiData = [];
 
     page.on('response', async (response) => {
       const url = response.url();
@@ -41,7 +41,7 @@ class AliyunBailianMcpParser extends BaseParser {
           const contentType = response.headers()['content-type'] || '';
           if (contentType.includes('json')) {
             const data = await response.json();
-            this.capturedApiData = data;
+            this.capturedApiData.push(data);
             console.log('AliyunBailianMcpParser: Captured SquarePageList API response');
           }
         } catch (e) {
@@ -63,15 +63,9 @@ class AliyunBailianMcpParser extends BaseParser {
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
       await page.waitForTimeout(6000);
 
-      // 如果捕获到了API数据
-      if (this.capturedApiData && this.capturedApiData.data?.DataV2?.data?.data?.mcpServerDetailList) {
-        const toolList = this.capturedApiData.data.DataV2.data.data.mcpServerDetailList;
-        const baseUrl = 'https://bailian.console.aliyun.com/cn-beijing/?tab=mcp#/mcp-market/detail/';
-
-        const links = toolList
-          .map(tool => baseUrl + tool.serverCode)
-          .filter(url => url.includes('detail/'));
-
+      // 优先从API数据中提取链接（支持分页、多次请求、嵌套JSON字符串）
+      let links = this.getDetailLinksFromApiData(this.capturedApiData);
+      if (links.length > 0) {
         console.log(`AliyunBailianMcpParser: Discovered ${links.length} detail links from API`);
         return links;
       }
@@ -79,21 +73,53 @@ class AliyunBailianMcpParser extends BaseParser {
       // 如果没有捕获到API数据，尝试滚动加载并检查是否有更多数据
       await this.scrollToLoadAll(page);
 
-      // 检查是否捕获到数据（滚动后可能触发API）
-      if (this.capturedApiData && this.capturedApiData.data?.DataV2?.data?.data?.mcpServerDetailList) {
-        const toolList = this.capturedApiData.data.DataV2.data.data.mcpServerDetailList;
-        const baseUrl = 'https://bailian.console.aliyun.com/cn-beijing/?tab=mcp#/mcp-market/detail/';
-
-        const links = toolList
-          .map(tool => baseUrl + tool.serverCode)
-          .filter(url => url.includes('detail/'));
-
+      // 检查滚动后是否捕获到更多数据
+      links = this.getDetailLinksFromApiData(this.capturedApiData);
+      if (links.length > 0) {
         console.log(`AliyunBailianMcpParser: Discovered ${links.length} detail links from API after scroll`);
         return links;
       }
 
+      // 再尝试从页面 script JSON 提取（Bailian 常将链接/ID写在 JSON 字符串中）
+      links = await page.evaluate(() => {
+        const result = [];
+        const serverCodes = new Set();
+        const baseUrl = 'https://bailian.console.aliyun.com/cn-beijing/?tab=mcp#/mcp-market/detail/';
+
+        const collectCodesFromString = (text = '') => {
+          if (!text) return;
+          const detailPattern = /#\/mcp-market\/detail\/([a-zA-Z0-9_-]+)/g;
+          const serverCodePattern = /"serverCode"\s*:\s*"([^"]+)"/g;
+
+          let match;
+          while ((match = detailPattern.exec(text)) !== null) {
+            serverCodes.add(match[1]);
+          }
+          while ((match = serverCodePattern.exec(text)) !== null) {
+            serverCodes.add(match[1]);
+          }
+        };
+
+        document.querySelectorAll('script').forEach(script => {
+          const scriptText = script.textContent || '';
+          if (!scriptText) return;
+          collectCodesFromString(scriptText);
+        });
+
+        serverCodes.forEach(code => {
+          result.push(baseUrl + code);
+        });
+
+        return result;
+      });
+
+      if (links.length > 0) {
+        console.log(`AliyunBailianMcpParser: Discovered ${links.length} detail links from embedded JSON`);
+        return links;
+      }
+
       // 最后尝试从页面元素提取
-      const links = await page.evaluate(() => {
+      links = await page.evaluate(() => {
         const result = [];
         document.querySelectorAll('a[href]').forEach(a => {
           const href = a.getAttribute('href') || '';
@@ -113,6 +139,69 @@ class AliyunBailianMcpParser extends BaseParser {
       console.error('Failed to discover links:', error.message);
       return [];
     }
+  }
+
+  /**
+   * 从 API 返回数据中提取详情页链接（支持递归解析 JSON 字符串）
+   */
+  getDetailLinksFromApiData(apiPayloads = []) {
+    const baseUrl = 'https://bailian.console.aliyun.com/cn-beijing/?tab=mcp#/mcp-market/detail/';
+    const serverCodes = new Set();
+
+    const collectFromAny = (value, depth = 0) => {
+      if (value == null || depth > 8) return;
+
+      if (Array.isArray(value)) {
+        value.forEach(item => collectFromAny(item, depth + 1));
+        return;
+      }
+
+      if (typeof value === 'object') {
+        // 直接字段命中
+        const code = value.serverCode || value.toolId || value.id;
+        if (typeof code === 'string' && code.trim()) {
+          serverCodes.add(code.trim());
+        }
+
+        Object.values(value).forEach(item => collectFromAny(item, depth + 1));
+        return;
+      }
+
+      if (typeof value === 'string') {
+        const text = value.trim();
+        if (!text) return;
+
+        // 字符串中的 detail URL
+        const detailPattern = /#\/mcp-market\/detail\/([a-zA-Z0-9_-]+)/g;
+        let match;
+        while ((match = detailPattern.exec(text)) !== null) {
+          serverCodes.add(match[1]);
+        }
+
+        // 字符串中的 serverCode 字段
+        const serverCodePattern = /"serverCode"\s*:\s*"([^"]+)"/g;
+        while ((match = serverCodePattern.exec(text)) !== null) {
+          serverCodes.add(match[1]);
+        }
+
+        // 递归解析 JSON 字符串
+        if (
+          (text.startsWith('{') && text.endsWith('}')) ||
+          (text.startsWith('[') && text.endsWith(']'))
+        ) {
+          try {
+            const parsed = JSON.parse(text);
+            collectFromAny(parsed, depth + 1);
+          } catch {
+            // Ignore malformed JSON strings
+          }
+        }
+      }
+    };
+
+    collectFromAny(apiPayloads);
+
+    return [...serverCodes].map(code => `${baseUrl}${code}`);
   }
 
   /**
@@ -243,8 +332,12 @@ class AliyunBailianMcpParser extends BaseParser {
 
     // 优先使用API数据
     let toolsFromApi = null;
-    if (this.capturedApiData) {
-      toolsFromApi = this.parseFromApiData(this.capturedApiData);
+    if (this.capturedApiData.length > 0) {
+      // 优先选择包含 mcpServerDetailList 的响应
+      const preferredPayload = this.capturedApiData.find(item => (
+        item?.data?.DataV2?.data?.data?.mcpServerDetailList
+      )) || this.capturedApiData[0];
+      toolsFromApi = this.parseFromApiData(preferredPayload);
     }
 
     const data = await page.evaluate(() => {
