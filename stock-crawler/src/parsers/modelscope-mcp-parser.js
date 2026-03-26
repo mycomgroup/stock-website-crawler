@@ -7,6 +7,10 @@ import BaseParser from './base-parser.js';
  * 例如: https://modelscope.cn/mcp/servers/@modelcontextprotocol/fetch
  */
 class ModelscopeMcpParser extends BaseParser {
+  constructor() {
+    super();
+    this.maxExpandRounds = 4;
+  }
   /**
    * ModelScope MCP 页面需要在解析器内部做额外等待后才能稳定拿到链接
    */
@@ -160,38 +164,87 @@ class ModelscopeMcpParser extends BaseParser {
    */
   async expandCollapsedContent(page) {
     try {
-      // 使用 JavaScript 直接点击展开按钮，避免被遮罩层阻挡
-      const clickedCount = await page.evaluate(() => {
-        let count = 0;
-        // 查找所有展开按钮
-        const selectors = [
-          '.antd5-typography-expand',
-          '[aria-label="展开"]',
-          '[class*="expand"]',
-          '[class*="Expand"]'
-        ];
+      let totalClicked = 0;
+      for (let round = 0; round < this.maxExpandRounds; round++) {
+        // 使用 JavaScript 直接点击展开按钮，避免被遮罩层阻挡
+        const clickedCount = await page.evaluate(() => {
+          let count = 0;
+          const clicked = new WeakSet();
 
-        selectors.forEach(selector => {
-          try {
-            document.querySelectorAll(selector).forEach(btn => {
-              try {
-                btn.click();
-                count++;
-              } catch {
-                // 元素点击可能失败（不可见/禁用），忽略继续
-              }
-            });
-          } catch {
-            // 选择器查询失败，忽略继续
-          }
+          const isVisible = (el) => {
+            if (!el || !(el instanceof HTMLElement)) return false;
+            const style = window.getComputedStyle(el);
+            if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
+            const rect = el.getBoundingClientRect();
+            return rect.width > 2 && rect.height > 2;
+          };
+
+          const safeClick = (el) => {
+            if (!el || clicked.has(el) || !isVisible(el)) return false;
+            try {
+              el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+              clicked.add(el);
+              count++;
+              return true;
+            } catch {
+              return false;
+            }
+          };
+
+          // 1) 常见展开按钮选择器
+          const selectors = [
+            '.antd5-typography-expand',
+            '[aria-label="展开"]',
+            '[aria-label="Expand"]',
+            '[data-testid*="expand"]',
+            'button[aria-expanded="false"]',
+            '[class*="expand"]',
+            '[class*="Expand"]',
+            '[class*="collapse"] [role="button"]',
+            'summary'
+          ];
+
+          selectors.forEach(selector => {
+            try {
+              document.querySelectorAll(selector).forEach(el => {
+                safeClick(el);
+              });
+            } catch {
+              // 选择器查询失败，忽略继续
+            }
+          });
+
+          // 2) 按文案识别展开/更多
+          document.querySelectorAll('button, span, a, div[role="button"]').forEach((el) => {
+            const text = (el.textContent || '').trim().toLowerCase();
+            if (!text) return;
+            if (
+              text === '展开' ||
+              text === '更多' ||
+              text === '查看全部' ||
+              text === '显示更多' ||
+              text === 'show more' ||
+              text === 'expand' ||
+              text === 'read more'
+            ) {
+              safeClick(el);
+            }
+          });
+
+          return count;
         });
 
-        return count;
-      });
+        totalClicked += clickedCount;
+        if (clickedCount <= 0) {
+          break;
+        }
 
-      if (clickedCount > 0) {
-        console.log(`Expanded ${clickedCount} collapsed sections`);
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(700);
+      }
+
+      if (totalClicked > 0) {
+        console.log(`Expanded ${totalClicked} collapsed sections`);
+        await page.waitForTimeout(600);
       }
     } catch (error) {
       // 忽略错误
@@ -257,6 +310,20 @@ class ModelscopeMcpParser extends BaseParser {
    */
   async parse(page, url, options = {}) {
     try {
+      // 部分请求会临时返回 502，先做轻量级重试
+      for (let retry = 0; retry < 2; retry++) {
+        const isBadGateway = await page.evaluate(() => {
+          const title = (document.title || '').toLowerCase();
+          const bodyText = (document.body?.innerText || '').toLowerCase();
+          return title.includes('502') || bodyText.includes('bad gateway');
+        });
+
+        if (!isBadGateway) break;
+
+        await page.waitForTimeout(1000 * (retry + 1));
+        await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
+      }
+
       await this.waitForContent(page);
 
       const serverPath = this.extractServerPath(url);
@@ -264,10 +331,30 @@ class ModelscopeMcpParser extends BaseParser {
 
       // 先获取页面原始数据
       const rawData = await page.evaluate(() => {
+        const clean = (text = '') => text.replace(/\s+/g, ' ').trim();
+        const pushUnique = (arr, value, seen = null) => {
+          if (!value) return;
+          const key = typeof value === 'string' ? value : JSON.stringify(value);
+          if (!key) return;
+          if (seen) {
+            if (seen.has(key)) return;
+            seen.add(key);
+          } else if (arr.some(item => JSON.stringify(item) === key)) {
+            return;
+          }
+          arr.push(value);
+        };
+
         const result = {
           title: '',
           description: '',
           serverInfo: {},
+          stats: {
+            users: '',
+            calls: '',
+            avgTime: '',
+            toolCount: ''
+          },
           tags: [],
           codeBlocks: [],
           tables: [],
@@ -275,49 +362,83 @@ class ModelscopeMcpParser extends BaseParser {
           links: []
         };
 
-        // 获取 main 元素作为主要内容容器
-        const main = document.querySelector('main');
-        if (!main) {
-          return result;
-        }
+        // 获取主要内容容器（main 不存在时回退到 #root / body）
+        const main = document.querySelector('main') ||
+                     document.querySelector('[role="main"]') ||
+                     document.querySelector('#root') ||
+                     document.body;
 
         // 提取标题
         const h1 = main.querySelector('h1');
         if (h1) {
-          result.title = h1.textContent.trim();
+          result.title = clean(h1.textContent);
+        } else {
+          const ogTitle = document.querySelector('meta[property="og:title"]')?.getAttribute('content');
+          if (ogTitle) result.title = clean(ogTitle);
         }
 
         // 提取描述
         const descriptionEl = main.querySelector('.acss-j8jmz5') ||
-                              main.querySelector('[class*="description"]');
+                              main.querySelector('[class*="description"]') ||
+                              main.querySelector('p');
         if (descriptionEl) {
-          result.description = descriptionEl.textContent.trim();
+          result.description = clean(descriptionEl.textContent);
+        } else {
+          const metaDescription = document.querySelector('meta[name="description"]')?.getAttribute('content');
+          if (metaDescription) result.description = clean(metaDescription);
         }
 
         // 提取服务器基本信息
         const serverNameEl = main.querySelector('.acss-cyoggp');
         const serverPathEl = main.querySelector('.acss-149f9ri');
         if (serverNameEl) {
-          result.serverInfo['开发者'] = serverNameEl.textContent.trim();
+          result.serverInfo['开发者'] = clean(serverNameEl.textContent);
         }
         if (serverPathEl) {
-          result.serverInfo['路径'] = serverPathEl.textContent.trim();
+          result.serverInfo['路径'] = clean(serverPathEl.textContent);
         }
 
         // 提取原始内容
         result.rawContent = main.innerText || '';
 
+        // 从描述列表提取字段（避免关键字段遗漏）
+        main.querySelectorAll('dl').forEach((dl) => {
+          const dts = dl.querySelectorAll('dt');
+          const dds = dl.querySelectorAll('dd');
+          dts.forEach((dt, idx) => {
+            const key = clean(dt.textContent);
+            const value = clean(dds[idx]?.textContent || '');
+            if (key && value && !(key in result.serverInfo)) {
+              result.serverInfo[key] = value;
+            }
+          });
+        });
+
+        // 从常见 label:value 文本中抽取关键字段
+        const infoPatterns = [
+          { key: '开发者', regex: /(?:开发者|Developer)[:：]\s*([^\n]+)/i },
+          { key: '许可证', regex: /(?:许可证|License)[:：]\s*([^\n]+)/i },
+          { key: '更新', regex: /(?:更新时间|Last\s*Updated?)[:：]\s*([^\n]+)/i }
+        ];
+
+        infoPatterns.forEach(({ key, regex }) => {
+          const match = result.rawContent.match(regex);
+          if (match && match[1] && !result.serverInfo[key]) {
+            result.serverInfo[key] = clean(match[1]);
+          }
+        });
+
         // 提取许可证信息
         const licenseMatch = result.rawContent.match(/License[:\s]+([A-Za-z\s]+)/i);
         if (licenseMatch) {
-          result.serverInfo['许可证'] = licenseMatch[1].trim();
+          result.serverInfo['许可证'] = clean(licenseMatch[1]);
         }
 
         // 提取标签
         const tags = main.querySelectorAll('.antd5-tag');
         const seenTags = new Set();
         tags.forEach(tag => {
-          const tagText = tag.textContent.trim();
+          const tagText = clean(tag.textContent);
           if (tagText &&
               !tagText.includes('License') &&
               !tagText.includes('Developer') &&
@@ -333,8 +454,9 @@ class ModelscopeMcpParser extends BaseParser {
 
         // 提取真正的代码块（只保留多行代码）
         const codeElements = main.querySelectorAll('pre');
+        const seenCodeBlocks = new Set();
         codeElements.forEach(el => {
-          const code = el.textContent.trim();
+          const code = (el.textContent || '').trim();
           if (code && (code.split('\n').length >= 3 || code.length > 50)) {
             let language = 'text';
 
@@ -348,9 +470,7 @@ class ModelscopeMcpParser extends BaseParser {
               language = 'bash';
             }
 
-            if (!result.codeBlocks.find(b => b.code === code)) {
-              result.codeBlocks.push({ language, code });
-            }
+            pushUnique(result.codeBlocks, { language, code }, seenCodeBlocks);
           }
         });
 
@@ -377,7 +497,7 @@ class ModelscopeMcpParser extends BaseParser {
               const rowData = {};
               cells.forEach((cell, cellIndex) => {
                 const headerName = headers[cellIndex] || `column_${cellIndex}`;
-                rowData[headerName] = cell.textContent.trim();
+                rowData[headerName] = clean(cell.textContent);
               });
               rows.push(rowData);
             }
@@ -389,14 +509,29 @@ class ModelscopeMcpParser extends BaseParser {
         });
 
         // 提取 MCP 相关链接
-        const links = main.querySelectorAll('a[href*="/mcp"]');
+        const links = main.querySelectorAll('a[href]');
         const seenLinks = new Set();
         links.forEach(link => {
           const href = link.href;
-          const text = link.textContent.trim();
+          const text = clean(link.textContent);
           if (text && !seenLinks.has(href)) {
             result.links.push({ text, href });
             seenLinks.add(href);
+          }
+        });
+
+        // 提取统计字段
+        const statsPatterns = [
+          { field: 'users', regex: /(?:开通用户|用户数|Users?)[:：]?\s*([\d,]+)/i },
+          { field: 'calls', regex: /(?:调用次数|Calls?)[:：]?\s*([\d,]+)/i },
+          { field: 'avgTime', regex: /(?:平均执行时间|平均耗时|Avg(?:erage)?\s*Time)[:：]?\s*([^\n]+)/i },
+          { field: 'toolCount', regex: /(?:工具数量|Tools?)[:：]?\s*([\d,]+)/i }
+        ];
+
+        statsPatterns.forEach(({ field, regex }) => {
+          const match = result.rawContent.match(regex);
+          if (match && match[1]) {
+            result.stats[field] = clean(match[1]);
           }
         });
 
@@ -418,6 +553,7 @@ class ModelscopeMcpParser extends BaseParser {
         title: rawData.title,
         description: rawData.description,
         serverInfo: rawData.serverInfo,
+        stats: rawData.stats,
         tools,
         tags: rawData.tags,
         installation,
@@ -438,6 +574,12 @@ class ModelscopeMcpParser extends BaseParser {
         title: '',
         description: '',
         serverInfo: {},
+        stats: {
+          users: '',
+          calls: '',
+          avgTime: '',
+          toolCount: ''
+        },
         tools: [],
         tags: [],
         installation: '',
