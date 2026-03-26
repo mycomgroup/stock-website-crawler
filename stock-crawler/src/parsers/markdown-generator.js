@@ -604,7 +604,7 @@ class MarkdownGenerator {
         }
         const lang = example.language || 'text';
         sections.push(`\`\`\`${lang}`);
-        sections.push(example.code || '');
+        sections.push(this.sanitizeCodeBlockContent(example.code || ''));
         sections.push('```\n');
       });
     }
@@ -619,7 +619,7 @@ class MarkdownGenerator {
         }
         const lang = example.language || 'json';
         sections.push(`\`\`\`${lang}`);
-        sections.push(example.code || '');
+        sections.push(this.sanitizeCodeBlockContent(example.code || ''));
         sections.push('```\n');
       });
     }
@@ -634,7 +634,7 @@ class MarkdownGenerator {
         }
         const lang = example.language || 'text';
         sections.push(`\`\`\`${lang}`);
-        sections.push(example.code || '');
+        sections.push(this.sanitizeCodeBlockContent(example.code || ''));
         sections.push('```\n');
       });
     }
@@ -728,6 +728,11 @@ class MarkdownGenerator {
     }
 
     return sections.join('\n');
+  }
+
+  sanitizeCodeBlockContent(code) {
+    if (!code) return '';
+    return String(code).replace(/```/g, '``\\`');
   }
 
   /**
@@ -5418,6 +5423,11 @@ class MarkdownGenerator {
       } else {
         finalMarkdown = `# ${this.escapeMarkdown(title)}`;
       }
+    }
+
+    const fenceCount = (finalMarkdown.match(/```/g) || []).length;
+    if (fenceCount % 2 !== 0) {
+      finalMarkdown = `${finalMarkdown}\n\n\`\`\`\n`;
     }
 
     // 生成统一的 YAML Frontmatter
