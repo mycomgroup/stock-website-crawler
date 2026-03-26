@@ -55,174 +55,27 @@ class QverisApiParser extends BaseParser {
    */
   async parse(page, url, options = {}) {
     try {
-      // 优先尝试从 JS chunk 文件直接提取数据
-      const jsChunkData = await this.extractFromJsChunk(url);
-      if (jsChunkData) {
-        console.log('Successfully extracted data from JS chunk');
-        return jsChunkData;
-      }
-
-      console.log('Falling back to page rendering...');
-      // 回退到页面渲染方式
       await this.waitForContent(page);
+      await this.expandInteractiveContent(page);
 
-      // 从页面提取内容
-      const data = await page.evaluate(() => {
-        const result = {
-          title: '',
-          description: '',
-          sections: [],
-          codeExamples: [],
-          endpoints: [],
-          rawContent: ''
-        };
+      const renderedData = await this.extractFromRenderedPage(page, url);
+      const jsChunkData = await this.extractFromJsChunk(url);
 
-        // 获取主要内容区域
-        const mainContent = document.querySelector('main') || document.body;
-
-        // 提取标题
-        const titleEl = mainContent.querySelector('h1, [class*="title"]');
-        result.title = titleEl ? titleEl.textContent.trim() : document.title;
-
-        // 提取所有段落文本
-        const paragraphs = mainContent.querySelectorAll('p');
-        const paragraphTexts = [];
-        paragraphs.forEach(p => {
-          const text = p.textContent.trim();
-          if (text && text.length > 10) {
-            paragraphTexts.push(text);
-          }
-        });
-
-        // 设置描述（第一个段落）
-        if (paragraphTexts.length > 0) {
-          result.description = paragraphTexts[0];
-        }
-
-        // 提取代码块 - 改进选择器以捕获所有类型
-        // 1. 标准 pre > code 结构
-        // 2. 直接的 pre 元素
-        // 3. 带有代码高亮 class 的元素
-        const codeElements = new Set();
-
-        // 收集所有 pre 元素
-        mainContent.querySelectorAll('pre').forEach(pre => {
-          codeElements.add(pre);
-        });
-
-        // 收集所有带有代码相关 class 的元素
-        mainContent.querySelectorAll('[class*="code"], [class*="Code"], code').forEach(el => {
-          // 如果是 code 元素，找到它的父 pre
-          if (el.tagName === 'CODE') {
-            const parentPre = el.closest('pre');
-            if (parentPre) {
-              codeElements.add(parentPre);
-            } else {
-              codeElements.add(el);
-            }
-          }
-        });
-
-        // 提取代码内容，去重
-        const seenCode = new Set();
-        codeElements.forEach(block => {
-          const code = block.textContent.trim();
-          // 使用内容的 hash 去重
-          const codeHash = code.substring(0, 100);
-          // 过滤掉太短的代码片段（通常是标签或短文本）
-          if (code && code.length > 30 && !seenCode.has(codeHash)) {
-            seenCode.add(codeHash);
-            // 尝试检测语言
-            let language = 'text';
-            const classList = block.className || '';
-            if (classList.includes('python') || classList.includes('Python')) language = 'python';
-            else if (classList.includes('javascript') || classList.includes('JavaScript') || classList.includes('js')) language = 'javascript';
-            else if (classList.includes('bash') || classList.includes('shell')) language = 'bash';
-            else if (classList.includes('json')) language = 'json';
-            else if (classList.includes('typescript') || classList.includes('ts')) language = 'typescript';
-
-            // 检测代码内容推断语言
-            if (language === 'text') {
-              if (code.includes('pip install') || code.includes('curl ')) language = 'bash';
-              else if (code.includes('import ') && code.includes('async def')) language = 'python';
-              else if (code.startsWith('{') && code.endsWith('}')) language = 'json';
-              else if (code.includes('function') || code.includes('const ') || code.includes('let ')) language = 'javascript';
-            }
-
-            result.codeExamples.push({ language, code });
-          }
-        });
-
-        // 提取 API 端点信息
-        // QVeris API 端点格式：POST /search, POST /tools/execute
-        const textContent = mainContent.innerText;
-        const endpointPatterns = [
-          /POST\s+(\/[^\s\n]+)/g,
-          /GET\s+(\/[^\s\n]+)/g,
-          /PUT\s+(\/[^\s\n]+)/g,
-          /DELETE\s+(\/[^\s\n]+)/g
-        ];
-
-        const foundEndpoints = new Set();
-        endpointPatterns.forEach(pattern => {
-          let match;
-          while ((match = pattern.exec(textContent)) !== null) {
-            foundEndpoints.add(match[1]);
-          }
-        });
-
-        result.endpoints = Array.from(foundEndpoints);
-
-        // 提取 sections（基于 h2, h3 标题）
-        const headings = mainContent.querySelectorAll('h2, h3, [class*="heading"], [class*="section"]');
-        headings.forEach(heading => {
-          const title = heading.textContent.trim();
-          if (title && title.length > 2) {
-            // 获取该标题后的内容直到下一个标题
-            let content = '';
-            let sibling = heading.nextElementSibling;
-            while (sibling && !['H2', 'H3'].includes(sibling.tagName)) {
-              content += sibling.textContent.trim() + '\n';
-              sibling = sibling.nextElementSibling;
-              if (content.length > 2000) break; // 限制长度
-            }
-            // 清理内容中的格式化残留
-            let cleanedContent = content.trim()
-              .replace(/Line NumbersThemeCopy/g, '')
-              .replace(/JSONBashPythonTypeScript/g, '')
-              .replace(/BashPythonTypeScript/g, '')
-              .replace(/JSONLine NumbersThemeCopy/g, '')
-              // 移除行首的 JSON、bash、Python 等语言标签
-              .replace(/^JSON\s*/gm, '')
-              .replace(/^bash\s*/gmi, '')
-              .replace(/^Python\s*\d/gm, '')
-              .replace(/\n{3,}/g, '\n\n');
-            result.sections.push({
-              title,
-              content: cleanedContent.substring(0, 1000)
-            });
-          }
-        });
-
-        // 提取完整文本内容
-        result.rawContent = mainContent.innerText;
-
-        return result;
-      });
-
-      // 结构化 API 信息
-      const apiInfo = this.extractApiInfo(data.rawContent);
+      const merged = this.mergeRenderedAndChunkData(renderedData, jsChunkData, url);
+      if (merged) {
+        return merged;
+      }
 
       return {
         type: 'qveris-api',
         url,
-        title: data.title || 'QVeris Documentation',
-        description: data.description,
-        sections: data.sections,
-        codeExamples: data.codeExamples,
-        endpoints: data.endpoints,
-        apiInfo,
-        rawContent: data.rawContent,
+        title: 'QVeris Documentation',
+        description: '',
+        sections: [],
+        codeExamples: [],
+        endpoints: [],
+        apiInfo: {},
+        rawContent: '',
         suggestedFilename: this.generateFilename(url)
       };
     } catch (error) {
@@ -240,6 +93,221 @@ class QverisApiParser extends BaseParser {
         suggestedFilename: this.generateFilename(url)
       };
     }
+  }
+
+  async expandInteractiveContent(page) {
+    try {
+      for (let round = 0; round < 3; round++) {
+        await page.evaluate(() => {
+          document.querySelectorAll('details:not([open])').forEach((el) => el.setAttribute('open', ''));
+        });
+
+        const selectors = [
+          '[aria-expanded="false"]',
+          'button:has-text("Show more")',
+          'button:has-text("展开")',
+          'button:has-text("More")',
+          'button:has-text("Expand")',
+          'summary'
+        ];
+
+        let clicked = 0;
+        for (const selector of selectors) {
+          const elements = await page.locator(selector).all();
+          for (const element of elements.slice(0, 30)) {
+            try {
+              if (await element.isVisible()) {
+                await element.click({ timeout: 1500 });
+                clicked++;
+              }
+            } catch {
+              // 忽略无法点击的元素
+            }
+          }
+        }
+
+        if (clicked === 0) break;
+        await page.waitForTimeout(600);
+      }
+    } catch (error) {
+      console.warn('Failed to expand interactive content:', error.message);
+    }
+  }
+
+  async extractFromRenderedPage(page, url) {
+    const data = await page.evaluate(() => {
+      const cleanText = (text) => (text || '').replace(/\s+/g, ' ').trim();
+      const root = document.querySelector('main') || document.body;
+
+      const titleEl = root.querySelector('h1');
+      const title = cleanText(titleEl?.textContent) || document.title || 'QVeris Documentation';
+
+      const paragraphs = [...root.querySelectorAll('p')].map((p) => cleanText(p.textContent)).filter(Boolean);
+      const description = paragraphs.find((text) => text.length > 20) || '';
+
+      const toc = [...document.querySelectorAll('nav button, nav a, [role="tablist"] button, button.w-full.text-left')]
+        .map((el) => cleanText(el.textContent))
+        .filter((v) => v.length > 1);
+
+      const sections = [...root.querySelectorAll('h2, h3, h4')].map((heading) => {
+        const headingText = cleanText(heading.textContent);
+        let content = '';
+        let sibling = heading.nextElementSibling;
+        while (sibling && !/^H[1-4]$/.test(sibling.tagName)) {
+          const text = cleanText(sibling.textContent);
+          if (text) content += `${text}\n`;
+          sibling = sibling.nextElementSibling;
+          if (content.length > 5000) break;
+        }
+        return { title: headingText, content: content.trim() };
+      }).filter((section) => section.title);
+
+      const codeExamples = [...root.querySelectorAll('pre, code')]
+        .map((node) => {
+          const code = node.textContent?.trim() || '';
+          if (code.length < 30) return null;
+          const className = node.className || '';
+          return { className, code };
+        })
+        .filter(Boolean);
+
+      const links = [...root.querySelectorAll('a[href]')]
+        .map((a) => ({ title: cleanText(a.textContent) || a.href, url: a.href }))
+        .filter((item) => item.url && /^https?:\/\//.test(item.url));
+
+      return {
+        title,
+        description,
+        toc: [...new Set(toc)],
+        sections,
+        codeExamples,
+        links: [...new Map(links.map((item) => [item.url, item])).values()],
+        rawContent: (root.innerText || '').trim()
+      };
+    });
+
+    const endpoints = this.extractEndpointsFromText(data.rawContent || '');
+    const apiInfo = this.extractApiInfo(data.rawContent || '');
+    const codeExamples = this.normalizeCodeExamples(data.codeExamples || []);
+    const parameterSet = new Set((apiInfo.endpoints || []).flatMap((ep) => ep.params || []));
+    const parameters = [...parameterSet].map((name) => ({ name, type: '', required: false, description: '' }));
+
+    const markdownContent = [
+      data.toc?.length ? `## 目录\n${data.toc.map((item) => `- ${item}`).join('\n')}\n` : '',
+      data.sections?.length ? `## 章节\n${data.sections.map((s) => `### ${s.title}\n${s.content || ''}`).join('\n\n')}` : '',
+    ].filter(Boolean).join('\n');
+
+    return {
+      type: 'qveris-api',
+      url,
+      title: data.title,
+      description: data.description,
+      sections: data.sections || [],
+      codeExamples,
+      endpoints,
+      apiInfo,
+      baseUrl: apiInfo.baseUrl || '',
+      authMethod: apiInfo.authMethod || '',
+      authentication: apiInfo.authMethod ? `使用 ${apiInfo.authMethod}` : '',
+      endpoint: endpoints[0] || '',
+      parameters,
+      requestHeaders: apiInfo.authMethod ? [{ name: 'Authorization', type: 'string', required: true, description: 'Bearer Token' }] : [],
+      relatedLinks: data.links || [],
+      markdownContent,
+      rawContent: data.rawContent || '',
+      suggestedFilename: this.generateFilename(url),
+      source: 'rendered-page'
+    };
+  }
+
+  mergeRenderedAndChunkData(renderedData, jsChunkData, url) {
+    if (!renderedData && !jsChunkData) return null;
+    if (!renderedData) return jsChunkData;
+    if (!jsChunkData) return renderedData;
+
+    const mergeUnique = (a = [], b = []) => {
+      const merged = [...a, ...b];
+      const seen = new Set();
+      return merged.filter((item) => {
+        const key = typeof item === 'string'
+          ? item
+          : `${item.language || 'text'}:${(item.code || item.path || item.url || JSON.stringify(item)).slice(0, 160)}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    };
+
+    const mergedEndpoints = mergeUnique(renderedData.endpoints, jsChunkData.endpoints);
+    const mergedApiEndpoints = mergeUnique(renderedData.apiInfo?.endpoints, jsChunkData.apiInfo?.endpoints);
+    const mergedCodeExamples = mergeUnique(renderedData.codeExamples, jsChunkData.codeExamples);
+    const mergedParams = mergeUnique(renderedData.parameters, (jsChunkData.apiInfo?.endpoints || []).flatMap((ep) => (ep.params || []).map((name) => ({ name }))));
+
+    return {
+      ...jsChunkData,
+      ...renderedData,
+      url,
+      title: renderedData.title || jsChunkData.title || 'QVeris API Documentation',
+      description: renderedData.description || jsChunkData.description || '',
+      endpoints: mergedEndpoints,
+      codeExamples: mergedCodeExamples,
+      parameters: mergedParams.map((param) => ({
+        name: param.name || param,
+        type: param.type || '',
+        required: Boolean(param.required),
+        description: param.description || ''
+      })).filter((param) => param.name),
+      apiInfo: {
+        ...jsChunkData.apiInfo,
+        ...renderedData.apiInfo,
+        baseUrl: renderedData.apiInfo?.baseUrl || jsChunkData.apiInfo?.baseUrl || 'https://qveris.ai/api/v1',
+        authMethod: renderedData.apiInfo?.authMethod || jsChunkData.apiInfo?.authMethod || 'Bearer Token',
+        endpoints: mergedApiEndpoints
+      },
+      baseUrl: renderedData.baseUrl || jsChunkData.baseUrl || jsChunkData.apiInfo?.baseUrl || 'https://qveris.ai/api/v1',
+      authMethod: renderedData.authMethod || jsChunkData.authMethod || 'Bearer Token',
+      authentication: renderedData.authentication || jsChunkData.authentication || 'Bearer Token',
+      markdownContent: [renderedData.markdownContent, jsChunkData.markdownContent].filter(Boolean).join('\n\n'),
+      source: 'rendered+js-chunk'
+    };
+  }
+
+  extractEndpointsFromText(text) {
+    const endpointPattern = /\b(GET|POST|PUT|PATCH|DELETE)\s+(\/[^\s\n`"]+)/g;
+    const endpoints = [];
+    const seen = new Set();
+    let match;
+    while ((match = endpointPattern.exec(text)) !== null) {
+      const path = match[2].replace(/[),.;]+$/, '');
+      if (!seen.has(path)) {
+        seen.add(path);
+        endpoints.push(path);
+      }
+    }
+    return endpoints;
+  }
+
+  normalizeCodeExamples(codeExamples) {
+    const seen = new Set();
+    return codeExamples
+      .map((item) => {
+        const code = item.code || '';
+        const className = item.className || '';
+        let language = 'text';
+        if (/typescript|ts-/i.test(className) || /export\s+(async\s+)?function|const\s+\w+\s*:\s*\w+/i.test(code)) language = 'typescript';
+        else if (/python|py-/i.test(className) || /import requests|def\s+\w+\(/i.test(code)) language = 'python';
+        else if (/bash|shell|sh-/i.test(className) || /\bcurl\s+/i.test(code)) language = 'bash';
+        else if (/json/i.test(className) || /^[\[{]/.test(code.trim())) language = 'json';
+        else if (/javascript|js-/i.test(className)) language = 'javascript';
+        return { language, code };
+      })
+      .filter((item) => item.code.length >= 30)
+      .filter((item) => {
+        const key = `${item.language}:${item.code.slice(0, 120)}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
   }
 
   /**
@@ -646,6 +714,12 @@ class QverisApiParser extends BaseParser {
       codeExamples: finalExamples,
       endpoints,
       apiInfo,
+      baseUrl,
+      authMethod: 'Bearer Token',
+      authentication: 'Bearer Token',
+      endpoint: endpoints[0] || '',
+      parameters: apiInfo.endpoints.flatMap((ep) => ep.params || []).map((name) => ({ name })),
+      requestHeaders: [{ name: 'Authorization', type: 'string', required: true, description: 'Bearer Token' }],
       rawContent,
       suggestedFilename: this.generateFilename(url),
       source: 'js-chunk'
