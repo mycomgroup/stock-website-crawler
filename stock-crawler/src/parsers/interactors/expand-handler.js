@@ -111,8 +111,8 @@ class ExpandHandler {
 
       // 5. 点击常规的"更多/展开"按钮
       const buttonTexts = [
-        '更多', '展开', '查看全部', '加载更多', '全部', '历史', '明细',
-        'More', 'Expand', 'Show All', 'Load More', 'View All'
+        '更多', '展开', '查看全部', '加载更多', '全部', '历史', '明细', '详情', '说明', '继续阅读',
+        'More', 'Expand', 'Show All', 'Load More', 'View All', 'Details', 'Read More'
       ];
 
       let clicked = true;
@@ -125,7 +125,9 @@ class ExpandHandler {
 
         for (const text of buttonTexts) {
           try {
-            const buttons = await page.locator(`button:has-text("${text}"), a:has-text("${text}"), [class*="more"]:has-text("${text}"), [class*="expand"]:has-text("${text}")`).all();
+            const buttons = await page.locator(
+              `button:has-text("${text}"), a:has-text("${text}"), [role="button"]:has-text("${text}"), [class*="more"]:has-text("${text}"), [class*="expand"]:has-text("${text}"), [class*="detail"]:has-text("${text}")`
+            ).all();
 
             for (const button of buttons) {
               try {
