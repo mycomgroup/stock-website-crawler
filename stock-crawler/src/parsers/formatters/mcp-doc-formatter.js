@@ -133,6 +133,29 @@ function normalizeTools(tools) {
 }
 
 /**
+ * 从 metadata.apiEndpoints 中恢复工具列表（tokenflux-mcp 等场景）
+ */
+function normalizeToolsFromApiEndpoints(apiEndpoints) {
+  if (!Array.isArray(apiEndpoints) || apiEndpoints.length === 0) {
+    return [];
+  }
+
+  return apiEndpoints.map((endpoint) => {
+    const method = endpoint.method ? ` [${endpoint.method}]` : '';
+    const endpointUrl = endpoint.endpoint ? `\nEndpoint: ${endpoint.endpoint}` : '';
+    const baseDescription = endpoint.description || '';
+
+    return {
+      name: endpoint.name || endpoint.fullName || '',
+      displayName: endpoint.fullName || '',
+      description: `${baseDescription}${method}${endpointUrl}`.trim(),
+      inputs: normalizeInputs(endpoint.parameters || []),
+      outputs: Array.isArray(endpoint.responseFields) ? endpoint.responseFields : []
+    };
+  }).filter(t => t.name);
+}
+
+/**
  * 统一输入参数格式
  */
 function normalizeInputs(inputs) {
@@ -269,6 +292,20 @@ export function formatMcpDoc(rawData) {
   const codeExamples = findValue(rawData, MCP_FIELD_MAPPINGS.codeExamples) || [];
   const rawContent = findValue(rawData, MCP_FIELD_MAPPINGS.rawContent) || '';
   const serverInfo = findValue(rawData, MCP_FIELD_MAPPINGS.serverInfo) || {};
+  const metadata = rawData.metadata && typeof rawData.metadata === 'object' ? rawData.metadata : {};
+
+  // 兼容 tokenflux-mcp：优先使用原 tools，否则回退到 metadata.apiEndpoints
+  let normalizedTools = normalizeTools(tools);
+  if (normalizedTools.length === 0 && Array.isArray(metadata.apiEndpoints)) {
+    normalizedTools = normalizeToolsFromApiEndpoints(metadata.apiEndpoints);
+  }
+
+  const mergedServerInfo = {
+    ...(typeof serverInfo === 'object' ? serverInfo : {}),
+    ...(metadata.securitySchemes ? { securitySchemes: metadata.securitySchemes } : {}),
+    ...(metadata.version ? { version: metadata.version } : {}),
+    ...(metadata.mcpId ? { mcpId: metadata.mcpId } : {})
+  };
 
   // 构建统一格式对象
   const result = {
@@ -282,16 +319,16 @@ export function formatMcpDoc(rawData) {
     // MCP 核心信息
     mcp: {
       serverId,
-      provider,
+      provider: provider || metadata.provider || '',
       category,
-      version: rawData.version || serverInfo.version || ''
+      version: rawData.version || mergedServerInfo.version || ''
     },
 
     // 统计数据
     stats: normalizeStats(rawData),
 
     // 工具列表
-    tools: normalizeTools(tools),
+    tools: normalizedTools,
 
     // 标签
     tags: Array.isArray(tags) ? tags : [],
@@ -307,7 +344,7 @@ export function formatMcpDoc(rawData) {
     codeExamples: normalizeCodeExamples(codeExamples),
 
     // 其他信息
-    serverInfo: typeof serverInfo === 'object' ? serverInfo : {},
+    serverInfo: mergedServerInfo,
     notes: rawData.notes || [],
     relatedLinks: rawData.relatedLinks || rawData.links || [],
 

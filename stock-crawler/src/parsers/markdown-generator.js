@@ -842,7 +842,17 @@ class MarkdownGenerator {
         if (tool.outputs && tool.outputs.length > 0) {
           sections.push('');
           sections.push('**输出:**');
-          sections.push(tool.outputs.map(o => typeof o === 'string' ? `\`${o}\`` : `\`${o.name || ''}\``).join(', '));
+          const structuredOutputs = tool.outputs.filter(o => o && typeof o === 'object' && (o.name || o.type || o.description));
+          if (structuredOutputs.length > 0) {
+            sections.push('');
+            sections.push('| 字段名 | 类型 | 描述 |');
+            sections.push('|--------|------|------|');
+            structuredOutputs.forEach((o) => {
+              sections.push(`| \`${this.escapeMarkdown(o.name || '')}\` | ${this.escapeMarkdown(o.type || '-')} | ${this.escapeMarkdown(o.description || '-')} |`);
+            });
+          } else {
+            sections.push(tool.outputs.map(o => typeof o === 'string' ? `\`${o}\`` : `\`${o.name || ''}\``).join(', '));
+          }
         }
 
         sections.push('');
