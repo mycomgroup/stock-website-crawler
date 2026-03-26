@@ -80,8 +80,12 @@ class MarkdownGenerator {
   generate(pageData) {
     let markdown = '';
 
+    if (pageData.type === 'google-discovery-doc') {
+      markdown = this.generateGoogleDiscoveryDoc(pageData);
+    }
+
     // MCP 文档类型使用统一 MCP 格式
-    if (MCP_DOC_TYPES.has(pageData.type)) {
+    if (!markdown && MCP_DOC_TYPES.has(pageData.type)) {
       const unifiedMcpData = formatMcpDoc(pageData);
       markdown = this.generateUnifiedMcp(unifiedMcpData);
     }
@@ -4762,24 +4766,58 @@ class MarkdownGenerator {
 
     sections.push('## 入口信息\n');
     sections.push(`- Service Name: \`${pageData.serviceName || '-'}\``);
+    sections.push(`- Canonical Name: \`${pageData.canonicalName || '-'}\``);
     sections.push(`- Version: \`${pageData.version || '-'}\``);
+    sections.push(`- Revision: \`${pageData.revision || '-'}\``);
+    sections.push(`- Protocol: \`${pageData.protocol || '-'}\``);
+    sections.push(`- Discovery Version: \`${pageData.discoveryVersion || '-'}\``);
     sections.push(`- Root URL: \`${pageData.rootUrl || '-'}\``);
+    sections.push(`- Base URL: \`${pageData.baseUrl || '-'}\``);
     sections.push(`- Service Path: \`${pageData.servicePath || '-'}\``);
+    sections.push(`- Base Path: \`${pageData.basePath || '-'}\``);
     sections.push(`- Batch Path: \`${pageData.batchPath || '-'}\``);
     if (pageData.mtlsRootUrl) {
       sections.push(`- mTLS Root URL: \`${pageData.mtlsRootUrl}\``);
     }
+    if (pageData.documentationLink) {
+      sections.push(`- Documentation: ${pageData.documentationLink}`);
+    }
     sections.push('');
+
+    if (pageData.ownerName || pageData.ownerDomain) {
+      sections.push('## 归属信息\n');
+      sections.push(`- Owner Name: ${this.escapeMarkdown(pageData.ownerName || '-')}`);
+      sections.push(`- Owner Domain: ${this.escapeMarkdown(pageData.ownerDomain || '-')}`);
+      sections.push('');
+    }
+
+    sections.push('## 完整性摘要\n');
+    sections.push(`- 资源总数（含嵌套）: ${pageData.resourcesCount ?? 0}`);
+    sections.push(`- Schema 数量: ${pageData.schemasCount ?? 0}`);
+    sections.push(`- 全局参数数量: ${pageData.parametersCount ?? 0}`);
+    sections.push(`- 顶层 methods 数量: ${pageData.topLevelMethodCount ?? 0}`);
+    sections.push(`- 接口总数: ${pageData.endpointCount ?? (pageData.urlRuleInterfaces || []).length}`);
+    sections.push('');
+
+    if (Array.isArray(pageData.authScopes) && pageData.authScopes.length > 0) {
+      sections.push(`## OAuth Scopes（共 ${pageData.authScopes.length} 个）\n`);
+      sections.push('| Scope | 描述 |');
+      sections.push('|-------|------|');
+      pageData.authScopes.forEach((scope) => {
+        sections.push(`| \`${this.escapeMarkdown(scope.name || '-')}\` | ${this.escapeMarkdown(scope.description || '-')} |`);
+      });
+      sections.push('');
+    }
 
     const interfaces = pageData.urlRuleInterfaces || [];
     sections.push(`## URL规则接口（共 ${interfaces.length} 个）\n`);
 
     if (interfaces.length > 0) {
-      sections.push('| 资源 | 方法ID | HTTP | Path | Full URL Template | 参数 |');
-      sections.push('|------|--------|------|------|-------------------|------|');
+      sections.push('| 资源 | 方法ID | HTTP | Path | Full URL Template | 参数数量 | 参数 | Request | Response |');
+      sections.push('|------|--------|------|------|-------------------|----------|------|---------|----------|');
       interfaces.forEach((item) => {
         const params = (item.parameterNames || []).join(', ');
-        sections.push(`| ${this.escapeMarkdown(item.resource || '-')} | \`${this.escapeMarkdown(item.id || item.methodName || '-')}\` | \`${this.escapeMarkdown(item.httpMethod || '-')}\` | \`${this.escapeMarkdown(item.path || '-')}\` | \`${this.escapeMarkdown(item.fullUrlTemplate || '-')}\` | ${this.escapeMarkdown(params || '-')} |`);
+        sections.push(`| ${this.escapeMarkdown(item.resource || '-')} | \`${this.escapeMarkdown(item.id || item.methodName || '-')}\` | \`${this.escapeMarkdown(item.httpMethod || '-')}\` | \`${this.escapeMarkdown(item.path || '-')}\` | \`${this.escapeMarkdown(item.fullUrlTemplate || '-')}\` | ${item.parameterCount ?? (item.parameterNames || []).length} | ${this.escapeMarkdown(params || '-')} | \`${this.escapeMarkdown(item.requestRef || '-')}\` | \`${this.escapeMarkdown(item.responseRef || '-')}\` |`);
       });
       sections.push('');
     }
