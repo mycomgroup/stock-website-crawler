@@ -1,4 +1,8 @@
 import BaseParser from './base-parser.js';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+
+const execFileAsync = promisify(execFile);
 
 /**
  * TokenFlux Parser - 解析 tokenflux.ai 的 docs 与 MCP 页面
@@ -43,10 +47,15 @@ class TokenfluxParser extends BaseParser {
    * 直接从 API 获取 MCP 数据
    */
   async fetchMcpApiData(mcpId) {
+    const apiUrl = `https://tokenflux.ai/v1/mcps/${mcpId}`;
     try {
-      const apiUrl = `https://tokenflux.ai/v1/mcps/${mcpId}`;
       console.log(`  从 API 获取 MCP 数据: ${apiUrl}`);
-      const response = await fetch(apiUrl);
+      const response = await fetch(apiUrl, {
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': 'stock-website-crawler/1.0'
+        }
+      });
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
       }
@@ -58,6 +67,19 @@ class TokenfluxParser extends BaseParser {
       return null;
     } catch (error) {
       console.error(`  ✗ API 获取失败: ${error.message}`);
+      console.log('  尝试使用 curl 回退获取...');
+      try {
+        const { stdout } = await execFileAsync('curl', ['-sS', '--fail', '--location', apiUrl], {
+          maxBuffer: 10 * 1024 * 1024
+        });
+        const data = JSON.parse(stdout);
+        if (data.success && data.data) {
+          console.log(`  ✓ curl 回退成功，返回 ${data.data.tools?.length || 0} 个工具`);
+          return data.data;
+        }
+      } catch (fallbackError) {
+        console.error(`  ✗ curl 回退失败: ${fallbackError.message}`);
+      }
       return null;
     }
   }
@@ -72,44 +94,43 @@ class TokenfluxParser extends BaseParser {
 
     if (!params?.properties) return parameters;
 
-    // 检查 body 参数结构
-    if (params.properties.body?.properties) {
-      const bodyProps = params.properties.body.properties;
-      const requiredList = params.properties.body.required || [];
-      const visibleList = params.properties.body.visible || Object.keys(bodyProps);
+    const flattenSchema = (schema, prefix = '', inheritedRequired = false, inheritedVisible = true) => {
+      if (!schema || typeof schema !== 'object') return;
 
-      for (const [paramName, paramDef] of Object.entries(bodyProps)) {
-        // 跳过嵌套对象（如 contents），只提取顶级参数
-        if (paramDef.type === 'object' && paramDef.properties) continue;
+      const hasProperties = schema.properties && typeof schema.properties === 'object';
+      if (!hasProperties) return;
 
+      const requiredList = Array.isArray(schema.required) ? schema.required : [];
+      const visibleList = Array.isArray(schema.visible) ? schema.visible : Object.keys(schema.properties);
+
+      for (const [paramName, paramDef] of Object.entries(schema.properties)) {
+        const fullName = prefix ? `${prefix}.${paramName}` : paramName;
+        const isRequired = inheritedRequired || requiredList.includes(paramName);
+        const isVisible = inheritedVisible && visibleList.includes(paramName);
+
+        if (paramDef?.type === 'object' && paramDef.properties) {
+          flattenSchema(paramDef, fullName, isRequired, isVisible);
+          continue;
+        }
+
+        const inferredType = paramDef?.type || (paramDef?.items?.type ? `array<${paramDef.items.type}>` : 'string');
         parameters.push({
-          name: paramName,
-          type: paramDef.type || 'string',
-          required: requiredList.includes(paramName),
-          description: paramDef.description || '',
-          enum: paramDef.enum || [],
-          default: paramDef.default,
-          visible: visibleList.includes(paramName)
+          name: fullName,
+          type: inferredType,
+          required: isRequired,
+          description: paramDef?.description || '',
+          enum: Array.isArray(paramDef?.enum) ? paramDef.enum : [],
+          default: paramDef?.default,
+          visible: isVisible
         });
       }
-    }
+    };
 
-    // 检查 query 参数结构
-    if (params.properties.query?.properties) {
-      const queryProps = params.properties.query.properties;
-      const requiredList = params.properties.query.required || [];
-
-      for (const [paramName, paramDef] of Object.entries(queryProps)) {
-        parameters.push({
-          name: paramName,
-          type: paramDef.type || 'string',
-          required: requiredList.includes(paramName),
-          description: paramDef.description || '',
-          enum: paramDef.enum || [],
-          default: paramDef.default
-        });
+    ['body', 'query', 'path', 'header'].forEach((section) => {
+      if (params.properties[section]) {
+        flattenSchema(params.properties[section], section);
       }
-    }
+    });
 
     return parameters;
   }
