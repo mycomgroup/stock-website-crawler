@@ -50,3 +50,31 @@
 1. 优先修复 `AlltickParser` 的侧边栏选择器策略（增加 GitBook 新版 selector 兜底）。
 2. 在正文抽取前增加主内容区兜底提取（如 `main` 内文本分块提取），避免仅输出标题。
 3. 对该站点加一条站点级 smoke test：要求 markdown 最小字符数（如 >500）并校验关键小标题（如“什么是AllTick”）。
+
+---
+
+## 2026-03-18 追加执行记录（本次修复后）
+
+### 代码修复点
+- `src/parsers/alltick-api-parser.js`
+  - 扩展 GitBook 导航/侧边栏 selector（`nav`、`role=navigation`、`data-testid*=sidebar`）以提升链接发现率。
+  - 主内容提取改为“候选节点打分”策略，避免误取到菜单容器导致正文缺失。
+  - 增加关键字段兜底：`title`/`description` 在结构化抽取失败时仍可从页面文本回填。
+  - Markdown 表格输出增加 `|` 和换行转义，降低格式破损概率。
+  - 增加 `networkidle` 等待与更长 SPA 渲染等待时间。
+
+### 本次多轮执行
+执行时间：**2026-03-18（UTC）**  
+命令：`for i in $(seq 1 3); do npm run crawl config/alltick.json; done`
+
+结果：
+- 3 轮均成功进入爬虫流程，但在浏览器启动阶段失败。
+- 失败原因为运行环境缺少系统动态库：`libatk-1.0.so.0`，导致 Playwright Chromium 无法启动。
+- 因页面未实际打开，本轮未生成新的 Markdown 文件，无法对新产物做线上内容一致性比对。
+
+### 新增站点级 Markdown 质量校验脚本
+- 新增：`scripts/validate-alltick-markdown.js`
+- 功能：
+  - 校验最新 `pages-*` 目录是否存在 Markdown 文件；
+  - 校验 H1 标题、最小正文长度（>=300）、连续空行、表格分隔符等格式约束；
+  - 以非零状态码返回失败，适合接入 CI / smoke test。

@@ -41,20 +41,23 @@ class AlltickApiParser extends BaseParser {
     const baseUrl = 'https://apis.alltick.co';
 
     try {
-      // GitBook 新版已不再使用 Sidebar class，改为等待任一可用导航容器
-      await page.waitForSelector('aside a[href], [role="navigation"] a[href], a[href^="/"]', { timeout: 15000 });
+      // GitBook 新版侧边栏结构多变，等待任一可用导航链接出现
+      await page.waitForSelector(
+        'aside a[href], nav a[href], [role="navigation"] a[href], [data-testid*="sidebar"] a[href], a[href^="/"]',
+        { timeout: 15000 }
+      );
 
       // 提取侧边栏中的所有链接
       const links = await page.evaluate(() => {
         const urls = [];
         // GitBook 兼容选择器（新版以 aside + role=navigation 为主）
         const sidebarLinks = document.querySelectorAll(
-          'aside a[href], [role="navigation"] a[href], a[href^="/"]'
+          'aside a[href], nav a[href], [role="navigation"] a[href], [data-testid*="sidebar"] a[href], a[href^="/"]'
         );
 
         sidebarLinks.forEach(link => {
           const href = link.getAttribute('href');
-          if (href && !href.includes('~gitbook') && !href.includes('~image')) {
+          if (href && !href.includes('~gitbook') && !href.includes('~image') && !href.startsWith('#')) {
             urls.push(href);
           }
         });
@@ -85,6 +88,8 @@ class AlltickApiParser extends BaseParser {
           discoveredUrls.add(baseUrl + link);
         } else if (link.startsWith('http') && link.includes('apis.alltick.co')) {
           discoveredUrls.add(link);
+        } else if (!link.startsWith('javascript:') && !link.startsWith('//')) {
+          discoveredUrls.add(`${baseUrl}/${link.replace(/^\.\//, '')}`);
         }
       }
 
@@ -163,10 +168,36 @@ class AlltickApiParser extends BaseParser {
           rawContent: ''
         };
 
-        // GitBook 主内容区域选择器（兼容新版）
-        const mainContent = document.querySelector(
-          'main, [class*="PageContent"], [class*="Content"], article, [data-testid="page.contentEditor"]'
-        );
+        const findMainContent = () => {
+          const candidates = Array.from(document.querySelectorAll(
+            'main, article, [data-testid="page.contentEditor"], [data-testid*="content"], [class*="PageContent"], [class*="Content"], [class*="markdown"], [class*="doc"]'
+          ));
+
+          if (candidates.length === 0) return null;
+
+          const scoreNode = (node) => {
+            const text = (node.innerText || '').trim();
+            const headingCount = node.querySelectorAll('h1, h2, h3').length;
+            const paragraphCount = node.querySelectorAll('p').length;
+            const codeCount = node.querySelectorAll('pre, code').length;
+            return text.length + headingCount * 80 + paragraphCount * 30 + codeCount * 30;
+          };
+
+          const filtered = candidates.filter(node => {
+            const tag = (node.tagName || '').toLowerCase();
+            if (tag === 'aside' || tag === 'nav' || tag === 'header' || tag === 'footer') return false;
+            const cls = `${node.className || ''}`.toLowerCase();
+            return !/(sidebar|menu|toc|breadcrumb|footer|header)/.test(cls);
+          });
+
+          const scored = (filtered.length ? filtered : candidates)
+            .map(node => ({ node, score: scoreNode(node) }))
+            .sort((a, b) => b.score - a.score);
+
+          return scored[0]?.node || null;
+        };
+
+        const mainContent = findMainContent();
 
         if (!mainContent) {
           // 回退方案：获取整个页面的文本
@@ -199,7 +230,7 @@ class AlltickApiParser extends BaseParser {
         }
 
         // 遍历所有内容块
-        const contentElements = mainContent.querySelectorAll('h1, h2, h3, h4, p, pre, code, table, ul, ol, [class*="CodeBlock"], [class*="code"]');
+        const contentElements = mainContent.querySelectorAll('h1, h2, h3, h4, p, pre, table, ul, ol, [class*="CodeBlock"], [class*="code"]');
 
         let currentSection = null;
 
@@ -235,7 +266,7 @@ class AlltickApiParser extends BaseParser {
             }
           }
           // 代码块处理
-          else if (tagName === 'pre' || tagName === 'code' || className.includes('CodeBlock') || className.includes('code')) {
+          else if (tagName === 'pre' || className.includes('CodeBlock') || className.includes('code')) {
             const code = (el.textContent || '').trim();
             if (code && code.length > 10) {
               // 尝试识别代码语言
@@ -313,6 +344,20 @@ class AlltickApiParser extends BaseParser {
 
         // 提取原始内容
         result.rawContent = mainContent.innerText || '';
+
+        // 关键字段兜底：保证标题与描述尽量不缺失
+        if (!result.title) {
+          result.title = (document.title || '').split('|')[0].trim() || 'AllTick API Docs';
+        }
+        if (!result.description && result.rawContent) {
+          const firstLongLine = result.rawContent
+            .split('\n')
+            .map(line => line.trim())
+            .find(line => line.length >= 20);
+          if (firstLongLine) {
+            result.description = normalizeText(firstLongLine);
+          }
+        }
 
         // 兜底：如果结构化提取过少，至少保留正文段落，保证文档可读性
         if (result.sections.length === 0 || result.rawContent.length > 300 && result.sections.length < 3) {
@@ -431,9 +476,10 @@ class AlltickApiParser extends BaseParser {
    */
   _formatTable(lines, tableData) {
     if (!tableData || tableData.length === 0) return;
+    const esc = (value) => String(value ?? '').replace(/\|/g, '\\|').replace(/\n/g, '<br>');
 
     // 表头
-    const headers = tableData[0];
+    const headers = tableData[0].map(esc);
     lines.push('| ' + headers.join(' | ') + ' |');
     lines.push('| ' + headers.map(() => '---').join(' | ') + ' |');
 
@@ -444,7 +490,7 @@ class AlltickApiParser extends BaseParser {
       while (row.length < headers.length) {
         row.push('');
       }
-      lines.push('| ' + row.slice(0, headers.length).join(' | ') + ' |');
+      lines.push('| ' + row.slice(0, headers.length).map(esc).join(' | ') + ' |');
     }
     lines.push('');
   }
@@ -456,10 +502,14 @@ class AlltickApiParser extends BaseParser {
   async waitForContent(page) {
     try {
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
+      await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {});
       // 等待 GitBook 内容区域加载
-      await page.waitForSelector('main, [class*="PageContent"], [class*="Content"], article, h1', { timeout: 20000 });
+      await page.waitForSelector(
+        'main, article, [data-testid="page.contentEditor"], [data-testid*="content"], [class*="PageContent"], [class*="Content"], h1',
+        { timeout: 20000 }
+      );
       // GitBook 是 SPA，需要额外等待渲染
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(3000);
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);
     }
