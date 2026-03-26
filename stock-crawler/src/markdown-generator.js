@@ -1341,6 +1341,14 @@ class MarkdownGenerator {
    */
   generateFinancialDatasetsApi(pageData) {
     const sections = [];
+    const escapeTableCell = (value) => {
+      if (value === undefined || value === null || value === '') return '-';
+      return String(value)
+        .replace(/\r?\n+/g, '<br>')
+        .replace(/\|/g, '\\|')
+        .replace(/`/g, '\\`')
+        .trim() || '-';
+    };
 
     // 添加标题
     if (pageData.title) {
@@ -1378,7 +1386,7 @@ class MarkdownGenerator {
       sections.push('|--------|------|------|------|');
       pageData.requestParams.forEach(p => {
         const required = p.required === '是' || p.required === 'required' ? '✓' : (p.required || '-');
-        sections.push(`| \`${p.name || '-'}\` | ${p.type || '-'} | ${required} | ${p.description || '-'} |`);
+        sections.push(`| \`${escapeTableCell(p.name)}\` | ${escapeTableCell(p.type)} | ${escapeTableCell(required)} | ${escapeTableCell(p.description)} |`);
       });
       sections.push('');
     }
@@ -1389,7 +1397,7 @@ class MarkdownGenerator {
       sections.push('| 字段名 | 类型 | 描述 |');
       sections.push('|--------|------|------|');
       pageData.responseFields.forEach(f => {
-        sections.push(`| \`${f.name || '-'}\` | ${f.type || '-'} | ${f.description || '-'} |`);
+        sections.push(`| \`${escapeTableCell(f.name)}\` | ${escapeTableCell(f.type)} | ${escapeTableCell(f.description)} |`);
       });
       sections.push('');
     }
