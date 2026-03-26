@@ -62,9 +62,73 @@ class FinancialModelingPrepApiParser extends BaseParser {
     try {
       // 等待 SPA 内容加载完成
       await this.waitForContent(page);
+      // 展开折叠内容，确保参数/示例字段不缺失
+      await this.expandCollapsedContent(page);
 
       // 提取结构化的 API 文档内容
       const data = await page.evaluate(() => {
+        const cleanText = (value) => (value || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+        const extractEndpointInfo = (text) => {
+          if (!text) return { method: '', endpoint: '' };
+          const normalized = text.replace(/\s+/g, ' ').trim();
+          const endpointLabelMatch = normalized.match(/endpoint\s*:\s*([A-Z]+)?\s*(https?:\/\/[^\s]+)/i);
+          if (endpointLabelMatch) {
+            return {
+              method: (endpointLabelMatch[1] || '').toUpperCase(),
+              endpoint: endpointLabelMatch[2]
+            };
+          }
+
+          const methodUrlMatch = normalized.match(/\b(GET|POST|PUT|PATCH|DELETE)\b\s+(https?:\/\/[^\s]+)/i);
+          if (methodUrlMatch) {
+            return {
+              method: methodUrlMatch[1].toUpperCase(),
+              endpoint: methodUrlMatch[2]
+            };
+          }
+
+          const urlOnlyMatch = normalized.match(/(https?:\/\/[^\s]+)/i);
+          return {
+            method: '',
+            endpoint: urlOnlyMatch ? urlOnlyMatch[1] : ''
+          };
+        };
+
+        const extractTables = (root) => {
+          const tables = [];
+          root.querySelectorAll('table').forEach((table) => {
+            const headers = Array.from(table.querySelectorAll('thead th, tr:first-child th, tr:first-child td'))
+              .map(cell => cleanText(cell.textContent))
+              .filter(Boolean);
+            const rows = Array.from(table.querySelectorAll('tbody tr, tr'))
+              .map((row, rowIndex) => {
+                // 如果首行作为 header，跳过重复行
+                if (rowIndex === 0 && headers.length > 0 && !table.querySelector('thead')) {
+                  return null;
+                }
+                const cells = Array.from(row.querySelectorAll('td, th')).map(cell => cleanText(cell.textContent));
+                return cells.some(Boolean) ? cells : null;
+              })
+              .filter(Boolean);
+
+            if (headers.length > 0 || rows.length > 0) {
+              tables.push({ headers, rows });
+            }
+          });
+          return tables;
+        };
+
+        const extractCodeBlocks = (root) => {
+          const blocks = [];
+          root.querySelectorAll('pre code, code').forEach((codeEl) => {
+            const text = (codeEl.textContent || '').trim();
+            if (text.length >= 8) {
+              blocks.push(text);
+            }
+          });
+          return [...new Set(blocks)];
+        };
+
         const result = {
           title: '',
           description: '',
@@ -136,12 +200,12 @@ class FinancialModelingPrepApiParser extends BaseParser {
               // 提取端点 - 支持两种 class 名称
               const endpointDiv = section.querySelector('[class*="infoBlockBlank"], [class*="udocInfoBoxWrapper"]');
               let endpoint = '';
+              let method = '';
               if (endpointDiv) {
                 const endpointText = endpointDiv.textContent.trim();
-                const match = endpointText.match(/Endpoint:\s*(https?:\/\/[^\s]+)/);
-                if (match) {
-                  endpoint = match[1];
-                }
+                const endpointInfo = extractEndpointInfo(endpointText);
+                endpoint = endpointInfo.endpoint;
+                method = endpointInfo.method;
               }
 
               // 提取相关 API
@@ -165,13 +229,19 @@ class FinancialModelingPrepApiParser extends BaseParser {
                 }
               }
 
+              const tables = extractTables(section);
+              const codeBlocks = extractCodeBlocks(section);
+
               result.sections.push({
                 type: 'subpage-section',
                 title: sectionTitle,
                 content: description,
                 endpoint: endpoint,
+                method,
                 relatedApis: relatedApis,
-                lists: lists
+                lists: lists,
+                tables,
+                codeBlocks
               });
             }
           }
@@ -257,7 +327,10 @@ class FinancialModelingPrepApiParser extends BaseParser {
                     const currentApi = {
                       title: apiText,
                       description: '',
-                      endpoint: ''
+                      endpoint: '',
+                      method: '',
+                      tables: [],
+                      codeBlocks: []
                     };
 
                     // 下一个 DIV 应该是描述
@@ -279,15 +352,16 @@ class FinancialModelingPrepApiParser extends BaseParser {
                       if (endpointDiv.tagName === 'DIV') {
                         const endpointText = endpointDiv.textContent?.trim() || '';
                         if (endpointText.startsWith('Endpoint:')) {
-                          const match = endpointText.match(/Endpoint:\s*(https?:\/\/[^\s]+)/);
-                          if (match) {
-                            currentApi.endpoint = match[1];
-                            i++; // 跳过已处理的端点
-                          }
+                          const endpointInfo = extractEndpointInfo(endpointText);
+                          currentApi.endpoint = endpointInfo.endpoint;
+                          currentApi.method = endpointInfo.method;
+                          i++; // 跳过已处理的端点
                         }
                       }
                     }
 
+                    currentApi.tables = extractTables(apiChild);
+                    currentApi.codeBlocks = extractCodeBlocks(apiChild);
                     apis.push(currentApi);
                   }
 
@@ -330,8 +404,10 @@ class FinancialModelingPrepApiParser extends BaseParser {
               title: sectionTitle,
               content: '',
               endpoint: '',
+              method: '',
               codeBlocks: [],
-              bulletItems: []
+              bulletItems: [],
+              tables: []
             };
 
             let sibling = heading.nextElementSibling;
@@ -340,10 +416,9 @@ class FinancialModelingPrepApiParser extends BaseParser {
 
               if (['P', 'DIV'].includes(sibling.tagName) && siblingText) {
                 if (/^endpoint\s*:/i.test(siblingText)) {
-                  const endpointMatch = siblingText.match(/endpoint\s*:\s*([^\s].*)/i);
-                  if (endpointMatch) {
-                    section.endpoint = endpointMatch[1].trim();
-                  }
+                  const endpointInfo = extractEndpointInfo(siblingText);
+                  section.endpoint = endpointInfo.endpoint || section.endpoint;
+                  section.method = endpointInfo.method || section.method;
                 } else {
                   section.content += (section.content ? '\n\n' : '') + siblingText;
                 }
@@ -358,11 +433,15 @@ class FinancialModelingPrepApiParser extends BaseParser {
                 const item = li.textContent?.trim();
                 if (item) section.bulletItems.push(item);
               });
+              const nestedTables = extractTables(sibling);
+              if (nestedTables.length > 0) {
+                section.tables.push(...nestedTables);
+              }
 
               sibling = sibling.nextElementSibling;
             }
 
-            if (section.content || section.endpoint || section.codeBlocks.length > 0 || section.bulletItems.length > 0) {
+            if (section.content || section.endpoint || section.codeBlocks.length > 0 || section.bulletItems.length > 0 || section.tables.length > 0) {
               result.sections.push(section);
             }
           }
@@ -445,9 +524,11 @@ class FinancialModelingPrepApiParser extends BaseParser {
           if (api.endpoint) {
             lines.push('**Endpoint:**', '');
             lines.push('```text');
-            lines.push(api.endpoint);
+            lines.push(`${api.method ? `${api.method} ` : ''}${api.endpoint}`);
             lines.push('```', '');
           }
+          this.pushTables(lines, api.tables);
+          this.pushCodeBlocks(lines, api.codeBlocks);
           if (api.hasParams) {
             lines.push('> **Parameters:** See the API documentation for parameter details.', '');
           }
@@ -466,7 +547,7 @@ class FinancialModelingPrepApiParser extends BaseParser {
         if (section.endpoint) {
           lines.push('**Endpoint:**', '');
           lines.push('```text');
-          lines.push(section.endpoint);
+          lines.push(`${section.method ? `${section.method} ` : ''}${section.endpoint}`);
           lines.push('```', '');
         }
 
@@ -477,6 +558,8 @@ class FinancialModelingPrepApiParser extends BaseParser {
           }
           lines.push('');
         }
+        this.pushTables(lines, section.tables);
+        this.pushCodeBlocks(lines, section.codeBlocks);
 
         // 相关 API
         if (section.relatedApis && section.relatedApis.length > 0) {
@@ -505,15 +588,12 @@ class FinancialModelingPrepApiParser extends BaseParser {
         if (section.endpoint) {
           lines.push('**Endpoint:**', '');
           lines.push('```text');
-          lines.push(section.endpoint);
+          lines.push(`${section.method ? `${section.method} ` : ''}${section.endpoint}`);
           lines.push('```', '');
         }
+        this.pushTables(lines, section.tables);
         if (section.codeBlocks && section.codeBlocks.length > 0) {
-          for (const block of section.codeBlocks) {
-            lines.push('```');
-            lines.push(block);
-            lines.push('```', '');
-          }
+          this.pushCodeBlocks(lines, section.codeBlocks);
         }
       }
     }
@@ -535,6 +615,83 @@ class FinancialModelingPrepApiParser extends BaseParser {
       await page.waitForTimeout(5000);
     } catch (error) {
       console.warn('Wait for content timeout, proceeding anyway:', error.message);
+    }
+  }
+
+  async expandCollapsedContent(page) {
+    try {
+      const clickedCount = await page.evaluate(() => {
+        const candidateSelectors = [
+          'button[aria-expanded="false"]',
+          '[role="button"][aria-expanded="false"]',
+          'button',
+          '[role="button"]',
+          '[class*="expand"]',
+          '[class*="collapse"]'
+        ];
+
+        let clicked = 0;
+        const seen = new Set();
+
+        candidateSelectors.forEach((selector) => {
+          const nodes = document.querySelectorAll(selector);
+          nodes.forEach((node) => {
+            if (!(node instanceof HTMLElement) || seen.has(node)) return;
+            seen.add(node);
+            const text = (node.textContent || '').toLowerCase();
+            const shouldClick = node.getAttribute('aria-expanded') === 'false'
+              || /show more|view more|expand|more/.test(text);
+            if (shouldClick) {
+              node.click();
+              clicked++;
+            }
+          });
+        });
+
+        document.querySelectorAll('details').forEach((details) => {
+          if (!details.open) {
+            details.open = true;
+            clicked++;
+          }
+        });
+
+        return clicked;
+      });
+
+      if (clickedCount > 0) {
+        await page.waitForTimeout(1200);
+      }
+    } catch (error) {
+      console.warn('Failed to expand collapsed content:', error.message);
+    }
+  }
+
+  pushCodeBlocks(lines, codeBlocks = []) {
+    const uniqueBlocks = [...new Set(codeBlocks.filter(Boolean))];
+    for (const block of uniqueBlocks) {
+      lines.push('```');
+      lines.push(block);
+      lines.push('```', '');
+    }
+  }
+
+  pushTables(lines, tables = []) {
+    for (const table of tables) {
+      if (!table || (!table.headers?.length && !table.rows?.length)) continue;
+
+      const headers = table.headers?.length
+        ? table.headers
+        : (table.rows[0] || []).map((_, idx) => `Column ${idx + 1}`);
+      const rows = table.headers?.length ? table.rows : table.rows.slice(1);
+      if (!headers.length) continue;
+
+      lines.push(`| ${headers.join(' | ')} |`);
+      lines.push(`| ${headers.map(() => '---').join(' | ')} |`);
+      for (const row of rows) {
+        const normalizedRow = headers.map((_, idx) => (row[idx] || '').replace(/\n+/g, ' ').trim());
+        lines.push(`| ${normalizedRow.join(' | ')} |`);
+      }
+      lines.push('');
     }
   }
 }
