@@ -4,6 +4,16 @@
 CONFIG="config/investoday.json"
 MAX_RUNS=50
 RUN=0
+LINKS_FILE="./output/investoday-data-api-docs/links.txt"
+
+safe_count() {
+  local status="$1"
+  if [ -f "$LINKS_FILE" ]; then
+    grep -c "\"status\":\"$status\"" "$LINKS_FILE" || true
+  else
+    echo "0"
+  fi
+}
 
 while [ $RUN -lt $MAX_RUNS ]; do
   RUN=$((RUN + 1))
@@ -17,8 +27,8 @@ while [ $RUN -lt $MAX_RUNS ]; do
   echo "$OUTPUT" | grep -E "(Total URLs|Crawled:|Files Generated|unfetched URLs remaining)"
   
   # 检查是否还有未抓取的URL
-  UNFETCHED=$(grep -c '"status":"unfetched"' ./output/investoday-data-api-docs/links.txt 2>/dev/null || echo "0")
-  FETCHED=$(grep -c '"status":"fetched"' ./output/investoday-data-api-docs/links.txt 2>/dev/null || echo "0")
+  UNFETCHED=$(safe_count unfetched)
+  FETCHED=$(safe_count fetched)
   
   echo ""
   echo "当前状态: 已抓取 $FETCHED, 未抓取 $UNFETCHED"
@@ -33,7 +43,10 @@ while [ $RUN -lt $MAX_RUNS ]; do
   fi
   
   # 如果这次运行没有抓取任何页面，也退出（可能遇到问题）
-  CRAWLED=$(echo "$OUTPUT" | grep "Crawled:" | awk '{print $4}')
+  CRAWLED=$(echo "$OUTPUT" | grep "Crawled:" | awk '{print $4}' | head -n 1)
+  if [ -z "$CRAWLED" ]; then
+    CRAWLED=0
+  fi
   if [ "$CRAWLED" = "0" ]; then
     echo "本次没有抓取新页面，退出循环"
     break
@@ -44,8 +57,8 @@ done
 
 echo ""
 echo "=== 最终统计 ==="
-FETCHED=$(grep -c '"status":"fetched"' ./output/investoday-data-api-docs/links.txt)
-UNFETCHED=$(grep -c '"status":"unfetched"' ./output/investoday-data-api-docs/links.txt)
+FETCHED=$(safe_count fetched)
+UNFETCHED=$(safe_count unfetched)
 FILES=$(find ./output/investoday-data-api-docs/pages-* -name "*.md" 2>/dev/null | wc -l)
 SIZE=$(find ./output/investoday-data-api-docs/pages-* -name "*.md" -exec du -ch {} + 2>/dev/null | tail -1)
 

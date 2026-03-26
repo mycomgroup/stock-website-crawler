@@ -13,7 +13,7 @@ class InvestodayApiParser extends GenericParser {
    * @returns {boolean}
    */
   matches(url) {
-    return /^https?:\/\/data-api\.investoday\.net(?:\/|$)/.test(url);
+    return /^https?:\/\/(?:data-api|std)\.investoday\.net(?:\/|$)/.test(url);
   }
 
   /**
@@ -35,6 +35,9 @@ class InvestodayApiParser extends GenericParser {
     const baseData = await super.parse(page, url, options);
 
     try {
+      // Investoday 文档里有很多折叠面板/Tab，需要再次显式展开
+      await this.expandInvestodaySections(page);
+
       // 给予 SPA 二次渲染时间，减少首屏骨架导致的信息缺失
       await page.waitForTimeout(1500);
 
@@ -73,6 +76,26 @@ class InvestodayApiParser extends GenericParser {
         pathPattern.lastIndex = 0;
         while ((match = pathPattern.exec(text)) !== null) {
           pushEndpoint('', match[1], 'body-text-path');
+        }
+
+        // 2.1) 提取 code / pre / table 区域中的接口信息（不少文档在此展示）
+        const structuredNodes = Array.from(
+          document.querySelectorAll('pre, code, table, [class*="endpoint"], [class*="api"], [data-path], [data-endpoint]')
+        );
+        for (const node of structuredNodes) {
+          const nodeText = node.textContent || '';
+
+          methodPattern.lastIndex = 0;
+          let structuredMethodMatch;
+          while ((structuredMethodMatch = methodPattern.exec(nodeText)) !== null) {
+            pushEndpoint(structuredMethodMatch[1], structuredMethodMatch[2], 'structured-node');
+          }
+
+          pathPattern.lastIndex = 0;
+          let structuredPathMatch;
+          while ((structuredPathMatch = pathPattern.exec(nodeText)) !== null) {
+            pushEndpoint('', structuredPathMatch[1], 'structured-node-path');
+          }
         }
 
         // 3) 额外提取脚本内容中的路径（SPA 常把接口写在打包脚本里）
@@ -131,6 +154,40 @@ class InvestodayApiParser extends GenericParser {
         extractedEndpoints: 0,
         parserWarning: `investoday endpoint extraction failed: ${error.message}`
       };
+    }
+  }
+
+  async expandInvestodaySections(page) {
+    const clickableSelectors = [
+      '.ant-collapse-header',
+      '[class*="collapse"] [role="button"]',
+      '.ant-tabs-tab',
+      '[role="tab"]',
+      '[aria-expanded="false"]',
+      'button[aria-controls]'
+    ];
+
+    for (const selector of clickableSelectors) {
+      const elements = await page.locator(selector).all();
+      for (const element of elements.slice(0, 80)) {
+        try {
+          if (await element.isVisible()) {
+            const isNavigatingLink = await element.evaluate((node) => {
+              const anchor = node.closest('a[href]');
+              if (!anchor) return false;
+              const href = anchor.getAttribute('href') || '';
+              return !!href && !href.startsWith('#');
+            });
+            if (isNavigatingLink) {
+              continue;
+            }
+            await element.click({ timeout: 1500 });
+            await page.waitForTimeout(120);
+          }
+        } catch (error) {
+          // best-effort 展开，单点失败不影响整体
+        }
+      }
     }
   }
 }
