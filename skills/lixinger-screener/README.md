@@ -27,7 +27,29 @@ node request/fetch-lixinger-screener.js --query "PE-TTM(扣非)统计值10年分
 
 # request 版：统一参数文件
 node request/fetch-lixinger-screener.js --input-file unified-input.example.json --output csv
+
+# request 版：按筛选器入口直接调用
+npm run request:fund-cn -- --output markdown
+npm run request:index-cn -- --output markdown
+npm run request:company-hk -- --output markdown
+npm run request:company-us -- --output markdown
+npm run request:index-hk -- --output markdown
 ```
+
+新增的独立 request 入口对应以下页面：
+
+- `request/fetch-fund-fundamental-cn.js`
+  对应 `https://www.lixinger.com/analytics/screener/fund-fundamental/cn`
+- `request/fetch-index-fundamental-cn.js`
+  对应 `https://www.lixinger.com/analytics/screener/index-fundamental/cn`
+- `request/fetch-company-fundamental-hk.js`
+  对应 `https://www.lixinger.com/analytics/screener/company-fundamental/hk`
+- `request/fetch-company-fundamental-us.js`
+  对应 `https://www.lixinger.com/analytics/screener/company-fundamental/us`
+- `request/fetch-index-fundamental-hk.js`
+  对应 `https://www.lixinger.com/analytics/screener/index-fundamental/hk`
+
+它们都复用 `request/screener-runner.js`，由 runner 根据入口预设切换正确的 API 端点、`ranges`、`industrySource` 和分页逻辑；每个筛选器仍然保持独立入口文件，避免大改现有结构。
 
 所有理杏仁相关入口现在都只保留在这个目录下，不再保留 `stock-crawler/scripts` 里的兼容包装。
 

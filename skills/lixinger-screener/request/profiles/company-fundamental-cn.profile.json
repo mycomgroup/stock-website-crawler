@@ -1,0 +1,26 @@
+{
+  "name": "company-fundamental-cn",
+  "pageType": "company-fundamental",
+  "screenerKey": "company-cn",
+  "apiType": "company",
+  "areaCode": "cn",
+  "defaultUrl": "https://www.lixinger.com/analytics/screener/company-fundamental/cn",
+  "ranges": {
+    "market": "a",
+    "stockBourseTypes": [],
+    "mutualMarkets": { "selectedMutualMarkets": [], "selectType": "include" },
+    "multiMarketListedType": { "selectedMultiMarketListedTypes": [], "selectType": "include" },
+    "excludeBlacklist": false,
+    "excludeDelisted": false,
+    "excludeBourseType": false,
+    "excludeSpecialTreatment": false,
+    "constituentsPerspectiveType": "history",
+    "specialTreatmentOnly": false
+  },
+  "industrySource": "sw_2021",
+  "industryLevel": "three",
+  "sortName": "pm.latest.d_pe_ttm.y10.cvpos",
+  "sortOrder": "desc",
+  "pageSize": 100,
+  "catalogPath": "condition-catalog.cn.json"
+}

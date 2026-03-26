@@ -4,93 +4,172 @@ import { chromium } from 'playwright';
 import '../load-env.js';
 import { LIXINGER_OUTPUT_DIR } from '../paths.js';
 
-const DEFAULT_AREA_CODE = 'cn';
-const DEFAULT_PAGE_URL = `https://www.lixinger.com/analytics/screener/company-fundamental/${DEFAULT_AREA_CODE}`;
-const DEFAULT_OUTPUT_DIR = LIXINGER_OUTPUT_DIR;
-const DEFAULT_CATALOG_PATH = path.join(DEFAULT_OUTPUT_DIR, 'condition-catalog.cn.json');
-const DEFAULT_TEMPLATE_PATH = path.join(DEFAULT_OUTPUT_DIR, 'simple-input-template.cn.json');
+// ─── 各页面配置 ───────────────────────────────────────────────────────────────
 
-const TAB_NAMES = [
-  '基本指标',
-  '热度指标',
-  '资产负债表',
-  '利润表',
-  '现金流量表',
-  '财务指标',
-  '财报属性'
-];
+const PAGE_CONFIGS = {
+  'company-cn': {
+    pageLabel: 'company-fundamental',
+    areaCode: 'cn',
+    pageUrl: 'https://www.lixinger.com/analytics/screener/company-fundamental/cn',
+    tabNames: [
+      '基本指标',
+      '热度指标',
+      '资产负债表',
+      '利润表',
+      '现金流量表',
+      '财务指标',
+      '财报属性'
+    ],
+    selectionRanges: [
+      {
+        key: 'market',
+        label: '市场',
+        type: 'single-select',
+        options: [
+          { label: 'AB股市场', value: '' },
+          { label: 'A股市场', value: 'a' },
+          { label: 'B股市场', value: 'b' }
+        ]
+      },
+      { key: 'stockBourseTypes', label: '交易板块', type: 'multi-select', source: 'page-picker', note: '页面可选，当前目录未展开所有板块值。' },
+      { key: 'industry', label: '行业', type: 'entity-select', source: 'page-picker', note: '页面可选，支持包含/排除。' },
+      { key: 'index', label: '指数', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' },
+      { key: 'stockGroups', label: '我的关注', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' },
+      { key: 'mutualMarkets', label: '互联互通市场', type: 'multi-select', source: 'page-picker' },
+      { key: 'multiMarketListedType', label: '多市场上市', type: 'multi-select', source: 'page-picker' },
+      { key: 'province', label: '省份', type: 'entity-select', source: 'api/stock/provinces/list' },
+      { key: 'excludeBlacklist', label: '排除屏蔽名单', type: 'boolean' },
+      { key: 'excludeDelisted', label: '排除退市股', type: 'boolean' },
+      { key: 'excludeSpecialTreatment', label: '排除ST', type: 'boolean' },
+      { key: 'specialTreatmentOnly', label: '只含ST', type: 'boolean' }
+    ],
+    outputFileName: 'condition-catalog.cn.json',
+    templateFileName: 'simple-input-template.cn.json',
+    fetchProvinces: true
+  },
+  'company-hk': {
+    pageLabel: 'company-fundamental',
+    areaCode: 'hk',
+    pageUrl: 'https://www.lixinger.com/analytics/screener/company-fundamental/hk',
+    tabNames: [
+      '基本指标',
+      '热度指标',
+      '资产负债表',
+      '利润表',
+      '现金流量表',
+      '财务指标',
+      '财报属性'
+    ],
+    selectionRanges: [
+      { key: 'stockBourseTypes', label: '交易板块', type: 'multi-select', source: 'page-picker' },
+      { key: 'industry', label: '行业', type: 'entity-select', source: 'page-picker', note: '页面可选，支持包含/排除。' },
+      { key: 'index', label: '指数', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' },
+      { key: 'stockGroups', label: '我的关注', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' },
+      { key: 'mutualMarkets', label: '互联互通市场', type: 'multi-select', source: 'page-picker' },
+      { key: 'multiMarketListedType', label: '多市场上市', type: 'multi-select', source: 'page-picker' },
+      { key: 'excludeBlacklist', label: '排除屏蔽名单', type: 'boolean' },
+      { key: 'excludeDelisted', label: '排除退市股', type: 'boolean' }
+    ],
+    outputFileName: 'condition-catalog.company-hk.json',
+    templateFileName: null,
+    fetchProvinces: false
+  },
+  'company-us': {
+    pageLabel: 'company-fundamental',
+    areaCode: 'us',
+    pageUrl: 'https://www.lixinger.com/analytics/screener/company-fundamental/us',
+    tabNames: [
+      '基本指标',
+      '热度指标',
+      '资产负债表',
+      '利润表',
+      '现金流量表',
+      '财务指标'
+    ],
+    selectionRanges: [
+      { key: 'industry', label: '行业', type: 'entity-select', source: 'page-picker', note: '页面可选，支持包含/排除。' },
+      { key: 'index', label: '指数', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' },
+      { key: 'stockGroups', label: '我的关注', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' },
+      { key: 'excludeBlacklist', label: '排除屏蔽名单', type: 'boolean' },
+      { key: 'excludeDelisted', label: '排除退市股', type: 'boolean' }
+    ],
+    outputFileName: 'condition-catalog.company-us.json',
+    templateFileName: null,
+    fetchProvinces: false
+  },
+  'fund-cn': {
+    pageLabel: 'fund-fundamental',
+    areaCode: 'cn',
+    pageUrl: 'https://www.lixinger.com/analytics/screener/fund-fundamental/cn',
+    tabNames: [
+      '基本指标',
+      '热度指标',
+      '基金财报数据'
+    ],
+    selectionRanges: [
+      { key: 'fundType', label: '基金类型', type: 'multi-select', source: 'page-picker' },
+      { key: 'stockGroups', label: '我的关注', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' },
+      { key: 'excludeDelisted', label: '排除退市/终止基金', type: 'boolean' },
+      { key: 'excludeAbnormalNav', label: '排除异常净值', type: 'boolean' }
+    ],
+    outputFileName: 'condition-catalog.fund-cn.json',
+    templateFileName: null,
+    fetchProvinces: false
+  },
+  'index-cn': {
+    pageLabel: 'index-fundamental',
+    areaCode: 'cn',
+    pageUrl: 'https://www.lixinger.com/analytics/screener/index-fundamental/cn',
+    tabNames: [
+      '基本指标',
+      '热度指标',
+      '资产负债表',
+      '利润表',
+      '现金流量表',
+      '财务指标'
+    ],
+    selectionRanges: [
+      { key: 'source', label: '指数来源', type: 'single-select', source: 'page-picker' },
+      { key: 'series', label: '指数系列', type: 'single-select', source: 'page-picker' },
+      { key: 'calculationMethod', label: '计算方式', type: 'single-select', source: 'page-picker' },
+      { key: 'stockGroups', label: '我的关注', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' }
+    ],
+    outputFileName: 'condition-catalog.index-cn.json',
+    templateFileName: null,
+    fetchProvinces: false
+  },
+  'index-hk': {
+    pageLabel: 'index-fundamental',
+    areaCode: 'hk',
+    pageUrl: 'https://www.lixinger.com/analytics/screener/index-fundamental/hk',
+    tabNames: [
+      '基本指标',
+      '热度指标',
+      '资产负债表',
+      '利润表',
+      '现金流量表',
+      '财务指标'
+    ],
+    selectionRanges: [
+      { key: 'source', label: '指数来源', type: 'single-select', source: 'page-picker' },
+      { key: 'stockGroups', label: '我的关注', type: 'entity-select', source: 'page-picker', note: '页面可选，支持交集/排除。' }
+    ],
+    outputFileName: 'condition-catalog.index-hk.json',
+    templateFileName: null,
+    fetchProvinces: false
+  }
+};
 
 const SPECIAL_METRIC_ALIASES = {
   '上市日期': {
     requestId: 'pm.ipoDate',
     resultFieldKey: 'ipoDate',
     supportedSubConditionLabels: ['上市时间'],
-    notes: '无公式 ID。当前脚本只支持“上市时间”。'
+    notes: '无公式 ID。当前脚本只支持"上市时间"。'
   }
 };
 
-const SELECTION_RANGES = [
-  {
-    key: 'market',
-    label: '市场',
-    type: 'single-select',
-    options: [
-      { label: 'AB股市场', value: '' },
-      { label: 'A股市场', value: 'a' },
-      { label: 'B股市场', value: 'b' }
-    ]
-  },
-  {
-    key: 'stockBourseTypes',
-    label: '交易板块',
-    type: 'multi-select',
-    source: 'page-picker',
-    note: '页面可选，当前目录未展开所有板块值。'
-  },
-  {
-    key: 'industry',
-    label: '行业',
-    type: 'entity-select',
-    source: 'page-picker',
-    note: '页面可选，支持包含/排除。'
-  },
-  {
-    key: 'index',
-    label: '指数',
-    type: 'entity-select',
-    source: 'page-picker',
-    note: '页面可选，支持交集/排除。'
-  },
-  {
-    key: 'stockGroups',
-    label: '我的关注',
-    type: 'entity-select',
-    source: 'page-picker',
-    note: '页面可选，支持交集/排除。'
-  },
-  {
-    key: 'mutualMarkets',
-    label: '互联互通市场',
-    type: 'multi-select',
-    source: 'page-picker'
-  },
-  {
-    key: 'multiMarketListedType',
-    label: '多市场上市',
-    type: 'multi-select',
-    source: 'page-picker'
-  },
-  {
-    key: 'province',
-    label: '省份',
-    type: 'entity-select',
-    source: 'api/stock/provinces/list'
-  },
-  { key: 'excludeBlacklist', label: '排除屏蔽名单', type: 'boolean' },
-  { key: 'excludeDelisted', label: '排除退市股', type: 'boolean' },
-  { key: 'excludeSpecialTreatment', label: '排除ST', type: 'boolean' },
-  { key: 'specialTreatmentOnly', label: '只含ST', type: 'boolean' }
-];
+// ─── 工具函数 ─────────────────────────────────────────────────────────────────
 
 function saveJson(filePath, data) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -142,7 +221,7 @@ async function login(username, password) {
       accept: 'application/json, text/plain, */*',
       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
       'content-type': 'application/json;charset=UTF-8',
-      referer: DEFAULT_PAGE_URL,
+      referer: 'https://www.lixinger.com/',
       'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
     },
     body: JSON.stringify({ accountName: username, password })
@@ -163,19 +242,17 @@ async function fetchProvinces(cookie) {
       accept: 'application/json, text/plain, */*',
       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
       cookie,
-      referer: DEFAULT_PAGE_URL,
+      referer: 'https://www.lixinger.com/',
       'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
     }
   });
 
-  if (!response.ok) {
-    return [];
-  }
+  if (!response.ok) return [];
   return response.json();
 }
 
-async function createPage(cookie) {
-  const browser = await chromium.launch({
+async function createBrowser() {
+  return chromium.launch({
     headless: true,
     channel: 'chrome',
     args: [
@@ -191,7 +268,9 @@ async function createPage(cookie) {
       '--disable-setuid-sandbox'
     ]
   }));
+}
 
+async function createContext(browser, cookie) {
   const context = await browser.newContext({
     locale: 'zh-CN',
     viewport: { width: 1600, height: 1400 },
@@ -215,15 +294,16 @@ async function createPage(cookie) {
     });
 
   await context.addCookies(cookies);
-  const page = await context.newPage();
-  await page.goto(DEFAULT_PAGE_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
-  await page.waitForTimeout(8000);
-
-  return { browser, context, page };
+  return context;
 }
 
-async function reloadBasePage(page) {
-  await page.goto(DEFAULT_PAGE_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+async function navigateToPage(page, pageUrl) {
+  await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await page.waitForTimeout(8000);
+}
+
+async function reloadPage(page, pageUrl) {
+  await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(4000);
 }
 
@@ -407,29 +487,37 @@ function buildSimpleInputTemplate(catalog) {
     ],
     notes: [
       '百分比按页面输入习惯填写，例如 30 表示 30%。脚本会自动转换成 API 需要的小数 0.3。',
-      '市值按“亿”填写，例如 100 表示 100 亿。脚本会自动转换成原始金额。',
+      '市值按"亿"填写，例如 100 表示 100 亿。脚本会自动转换成原始金额。',
       '更完整的可用条件请查看同目录下的 condition-catalog.cn.json。'
     ],
     catalogGeneratedAt: catalog.generatedAt
   };
 }
 
-async function main() {
-  const username = process.env.LIXINGER_USERNAME;
-  const password = process.env.LIXINGER_PASSWORD;
+// ─── 核心抓取函数 ──────────────────────────────────────────────────────────────
 
-  if (!username || !password) {
-    throw new Error('Missing LIXINGER_USERNAME or LIXINGER_PASSWORD');
-  }
+/**
+ * 针对一个页面类型执行抓取并保存 catalog
+ */
+async function runExport(pageType, browser, context, cookie) {
+  const config = PAGE_CONFIGS[pageType];
+  if (!config) throw new Error(`Unknown page type: ${pageType}. Available: ${Object.keys(PAGE_CONFIGS).join(', ')}`);
 
-  const cookie = await login(username, password);
-  const provinces = await fetchProvinces(cookie);
-  const { browser, page } = await createPage(cookie);
+  console.log(`\n=== Exporting catalog for: ${pageType} ===`);
+  console.log(`URL: ${config.pageUrl}`);
+
+  // 需要 provinces 时异步获取
+  const provincesPromise = config.fetchProvinces ? fetchProvinces(cookie) : Promise.resolve([]);
+
+  const page = await context.newPage();
+  await navigateToPage(page, config.pageUrl);
+
+  const outputPath = path.join(LIXINGER_OUTPUT_DIR, config.outputFileName);
 
   try {
     const metrics = [];
 
-    for (const tabName of TAB_NAMES) {
+    for (const tabName of config.tabNames) {
       console.log(`TAB ${tabName}`);
       await clickTab(page, tabName);
       const titles = await extractVisibleFieldTitles(page);
@@ -453,7 +541,7 @@ async function main() {
             await withTimeout(() => deleteCurrentField(page), 3000, `${tabName}/${title}/delete`);
           } catch (error) {
             console.warn(`  RESET ${title}: ${error.message}`);
-            await reloadBasePage(page);
+            await reloadPage(page, config.pageUrl);
             await clickTab(page, tabName);
           }
         }
@@ -483,40 +571,97 @@ async function main() {
       notes: '需要页面内手工定义，当前目录不展开。'
     });
 
+    const provinces = await provincesPromise;
+
+    const selectionRanges = config.selectionRanges.map(item => {
+      if (item.key === 'province') {
+        return {
+          ...item,
+          options: provinces.map(province => ({
+            label: province.shortName,
+            value: province.code
+          }))
+        };
+      }
+      return item;
+    });
+
     const catalog = {
       generatedAt: new Date().toISOString(),
-      page: 'company-fundamental',
-      areaCode: DEFAULT_AREA_CODE,
-      sourceUrl: DEFAULT_PAGE_URL,
-      selectionRanges: SELECTION_RANGES.map(item => {
-        if (item.key === 'province') {
-          return {
-            ...item,
-            options: provinces.map(province => ({
-              label: province.shortName,
-              value: province.code
-            }))
-          };
-        }
-        return item;
-      }),
+      page: config.pageLabel,
+      areaCode: config.areaCode,
+      sourceUrl: config.pageUrl,
+      selectionRanges,
       metrics
     };
 
-    const template = buildSimpleInputTemplate(catalog);
+    saveJson(outputPath, catalog);
 
-    saveJson(DEFAULT_CATALOG_PATH, catalog);
-    saveJson(DEFAULT_TEMPLATE_PATH, template);
+    let templatePath = null;
+    if (config.templateFileName) {
+      const template = buildSimpleInputTemplate(catalog);
+      templatePath = path.join(LIXINGER_OUTPUT_DIR, config.templateFileName);
+      saveJson(templatePath, template);
+    }
 
-    process.stdout.write(`${JSON.stringify({
-      catalogPath: DEFAULT_CATALOG_PATH,
-      templatePath: DEFAULT_TEMPLATE_PATH,
-      metricCount: metrics.length,
-      provinceCount: provinces.length
-    }, null, 2)}\n`);
+    console.log(`DONE ${pageType}: ${metrics.length} metrics → ${outputPath}`);
+    return { pageType, catalogPath: outputPath, templatePath, metricCount: metrics.length };
+  } finally {
+    await page.close();
+  }
+}
+
+// ─── CLI 入口 ─────────────────────────────────────────────────────────────────
+
+function parseArgs(argv) {
+  const args = {};
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (!arg.startsWith('--')) continue;
+    const key = arg.slice(2);
+    const next = argv[i + 1];
+    if (!next || next.startsWith('--')) { args[key] = true; continue; }
+    args[key] = next;
+    i += 1;
+  }
+  return args;
+}
+
+async function main() {
+  const username = process.env.LIXINGER_USERNAME;
+  const password = process.env.LIXINGER_PASSWORD;
+
+  if (!username || !password) {
+    throw new Error('Missing LIXINGER_USERNAME or LIXINGER_PASSWORD');
+  }
+
+  const args = parseArgs(process.argv.slice(2));
+  const pageTypeArg = args['page-type'] || 'company-cn';
+
+  const allKeys = Object.keys(PAGE_CONFIGS);
+  const pageTypes = pageTypeArg === 'all' ? allKeys : [pageTypeArg];
+
+  for (const pt of pageTypes) {
+    if (!PAGE_CONFIGS[pt]) {
+      throw new Error(`Unknown --page-type "${pt}". Available: ${allKeys.join(', ')}, all`);
+    }
+  }
+
+  const cookie = await login(username, password);
+  const browser = await createBrowser();
+  const context = await createContext(browser, cookie);
+
+  const results = [];
+  try {
+    for (const pt of pageTypes) {
+      const result = await runExport(pt, browser, context, cookie);
+      results.push(result);
+    }
   } finally {
     await browser.close();
   }
+
+  process.stdout.write(`${JSON.stringify(results.length === 1 ? results[0] : results, null, 2)}\n`);
 }
 
 main().catch(error => {

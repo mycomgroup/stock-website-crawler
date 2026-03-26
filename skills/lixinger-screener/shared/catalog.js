@@ -40,9 +40,14 @@ export function loadBrowserMetricsCatalog(filePath = DEFAULT_BROWSER_METRICS_CAT
   return catalog;
 }
 
-export function resolveCatalogPath(catalogPath, cwd = process.cwd()) {
-  if (!catalogPath) return DEFAULT_CONDITION_CATALOG_PATH;
-  return path.resolve(cwd, catalogPath);
+export function resolveCatalogPath(catalogPath, cwd = process.cwd(), profileCatalogPath) {
+  if (catalogPath) return path.resolve(cwd, catalogPath);
+  if (profileCatalogPath) {
+    // profileCatalogPath 可以是绝对路径，也可以是相对于 LIXINGER_OUTPUT_DIR 的路径
+    if (path.isAbsolute(profileCatalogPath)) return profileCatalogPath;
+    return path.resolve(LIXINGER_OUTPUT_DIR, profileCatalogPath);
+  }
+  return DEFAULT_CONDITION_CATALOG_PATH;
 }
 
 export function conditionCatalogExists(filePath = DEFAULT_CONDITION_CATALOG_PATH) {

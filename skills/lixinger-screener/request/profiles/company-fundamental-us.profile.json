@@ -1,0 +1,19 @@
+{
+  "name": "company-fundamental-us",
+  "pageType": "company-fundamental",
+  "screenerKey": "company-us",
+  "apiType": "company",
+  "areaCode": "us",
+  "defaultUrl": "https://www.lixinger.com/analytics/screener/company-fundamental/us",
+  "ranges": {
+    "excludeBlacklist": false,
+    "excludeDelisted": false,
+    "constituentsPerspectiveType": "history"
+  },
+  "industrySource": null,
+  "industryLevel": null,
+  "sortName": "pm.latest.pe_ttm",
+  "sortOrder": "desc",
+  "pageSize": 100,
+  "catalogPath": "condition-catalog.company-us.json"
+}

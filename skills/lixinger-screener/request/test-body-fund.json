@@ -1,0 +1,13 @@
+{
+  "areaCode": "cn",
+  "ranges": {
+    "excludeDelisted": true,
+    "excludeAbnormalNav": false
+  },
+  "filterList": [{ "id": "hm.vol.td_cr_20d", "min": 1, "value": "all", "date": "latest" }],
+  "customFilterList": [],
+  "sortName": "pm.latest.hm.vol.td_cr_20d",
+  "sortOrder": "desc",
+  "pageIndex": 0,
+  "pageSize": 3
+}

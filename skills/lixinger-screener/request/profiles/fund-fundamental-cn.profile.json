@@ -1,0 +1,16 @@
+{
+  "name": "fund-fundamental-cn",
+  "pageType": "fund-fundamental",
+  "screenerKey": "fund-cn",
+  "apiType": "fund",
+  "areaCode": "cn",
+  "defaultUrl": "https://www.lixinger.com/analytics/screener/fund-fundamental/cn",
+  "ranges": {
+    "excludeDelisted": true,
+    "excludeAbnormalNav": false
+  },
+  "sortName": "pm.latest.hm.vol.td_cr_20d",
+  "sortOrder": "desc",
+  "pageSize": 100,
+  "catalogPath": "condition-catalog.fund-cn.json"
+}

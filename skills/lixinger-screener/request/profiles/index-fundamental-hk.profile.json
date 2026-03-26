@@ -1,0 +1,17 @@
+{
+  "name": "index-fundamental-hk",
+  "pageType": "index-fundamental",
+  "screenerKey": "index-hk",
+  "apiType": "ii",
+  "stockType": "index",
+  "areaCode": "hk",
+  "defaultUrl": "https://www.lixinger.com/analytics/screener/index-fundamental/hk",
+  "ranges": {
+    "source": "all",
+    "keyword": ""
+  },
+  "sortName": "hm.o.followedNum",
+  "sortOrder": "desc",
+  "pageSize": 100,
+  "catalogPath": "condition-catalog.index-hk.json"
+}

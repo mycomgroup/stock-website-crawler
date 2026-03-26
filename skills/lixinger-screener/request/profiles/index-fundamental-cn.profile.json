@@ -1,0 +1,19 @@
+{
+  "name": "index-fundamental-cn",
+  "pageType": "index-fundamental",
+  "screenerKey": "index-cn",
+  "apiType": "ii",
+  "stockType": "index",
+  "areaCode": "cn",
+  "defaultUrl": "https://www.lixinger.com/analytics/screener/index-fundamental/cn",
+  "ranges": {
+    "source": "all",
+    "series": "all",
+    "calculationMethod": "all",
+    "keyword": ""
+  },
+  "sortName": "hm.o.followedNum",
+  "sortOrder": "desc",
+  "pageSize": 100,
+  "catalogPath": "condition-catalog.index-cn.json"
+}
