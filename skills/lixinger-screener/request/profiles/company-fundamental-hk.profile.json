@@ -1,0 +1,23 @@
+{
+  "name": "company-fundamental-hk",
+  "pageType": "company-fundamental",
+  "screenerKey": "company-hk",
+  "apiType": "company",
+  "areaCode": "hk",
+  "defaultUrl": "https://www.lixinger.com/analytics/screener/company-fundamental/hk",
+  "ranges": {
+    "stockBourseTypes": [],
+    "mutualMarkets": { "selectedMutualMarkets": [], "selectType": "include" },
+    "multiMarketListedType": { "selectedMultiMarketListedTypes": [], "selectType": "include" },
+    "excludeBlacklist": false,
+    "excludeDelisted": false,
+    "excludeBourseType": false,
+    "constituentsPerspectiveType": "history"
+  },
+  "industrySource": "hsi",
+  "industryLevel": "three",
+  "sortName": "pm.latest.pe_ttm",
+  "sortOrder": "desc",
+  "pageSize": 100,
+  "catalogPath": "condition-catalog.company-hk.json"
+}

@@ -1,0 +1,16 @@
+{
+  "areaCode": "us",
+  "ranges": {
+    "excludeBlacklist": false,
+    "excludeDelisted": false,
+    "constituentsPerspectiveType": "history"
+  },
+  "filterList": [{ "id": "pm.pe_ttm", "min": 1, "value": "all", "date": "latest" }],
+  "customFilterList": [],
+  "industrySource": null,
+  "industryLevel": null,
+  "sortName": "pm.latest.pe_ttm",
+  "sortOrder": "desc",
+  "pageIndex": 0,
+  "pageSize": 3
+}

@@ -1,0 +1,20 @@
+{
+  "areaCode": "hk",
+  "ranges": {
+    "stockBourseTypes": [],
+    "mutualMarkets": { "selectedMutualMarkets": [], "selectType": "include" },
+    "multiMarketListedType": { "selectedMultiMarketListedTypes": [], "selectType": "include" },
+    "excludeBlacklist": false,
+    "excludeDelisted": false,
+    "excludeBourseType": false,
+    "constituentsPerspectiveType": "history"
+  },
+  "filterList": [{ "id": "pm.pe_ttm", "min": 1, "value": "all", "date": "latest" }],
+  "customFilterList": [],
+  "industrySource": "hsi",
+  "industryLevel": "three",
+  "sortName": "pm.latest.pe_ttm",
+  "sortOrder": "desc",
+  "pageIndex": 0,
+  "pageSize": 3
+}

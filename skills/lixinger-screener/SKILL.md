@@ -50,6 +50,26 @@ node run-skill.js --query "市盈率(TTM)小于20，市净率小于2，股息率
 node request/fetch-lixinger-screener.js --input-file ./my-value-screen.json --output csv
 ```
 
+如果目标不是 A 股公司页，而是基金 / 指数 / 港美股公司页，直接用独立 request 入口：
+
+```bash
+cd /Users/fengzhi/Downloads/git/testlixingren/skills/lixinger-screener
+
+node request/fetch-fund-fundamental-cn.js --output markdown
+node request/fetch-index-fundamental-cn.js --output markdown
+node request/fetch-company-fundamental-hk.js --output markdown
+node request/fetch-company-fundamental-us.js --output markdown
+node request/fetch-index-fundamental-hk.js --output markdown
+```
+
+这些入口分别固定到：
+
+- `fund-fundamental/cn`
+- `index-fundamental/cn`
+- `company-fundamental/hk`
+- `company-fundamental/us`
+- `index-fundamental/hk`
+
 ---
 
 ## 三套筛选模板

@@ -192,12 +192,17 @@ function guessThresholdKind(unit, inputType) {
   return 'number';
 }
 
-function defaultRanges(overrides = {}) {
+function defaultRanges(overrides = {}, baseRanges = {}) {
   return {
     ...DEFAULT_RANGES,
+    ...baseRanges,
     ...overrides,
-    mutualMarkets: overrides.mutualMarkets || DEFAULT_RANGES.mutualMarkets,
-    multiMarketListedType: overrides.multiMarketListedType || DEFAULT_RANGES.multiMarketListedType
+    mutualMarkets: overrides.mutualMarkets
+      || baseRanges.mutualMarkets
+      || DEFAULT_RANGES.mutualMarkets,
+    multiMarketListedType: overrides.multiMarketListedType
+      || baseRanges.multiMarketListedType
+      || DEFAULT_RANGES.multiMarketListedType
   };
 }
 
@@ -487,13 +492,17 @@ export function buildRequestPlanFromUnifiedInput(rawInput, catalog, options = {}
 
   const body = {
     areaCode: input.areaCode || options.areaCode || 'cn',
-    ranges: defaultRanges(input.ranges),
+    ranges: defaultRanges(input.ranges, options.defaultRanges),
     filterList: filters,
     customFilterList: input.customFilterList || [],
-    industrySource: input.industrySource || 'sw_2021',
-    industryLevel: input.industryLevel || 'three',
-    sortName: normalizeSortName(input.sortName || (resolvedSort ? requestIdToSortName(resolvedSort.filter.id) : null)),
-    sortOrder: input.sortOrder || input.sort?.order || 'desc',
+    industrySource: input.industrySource ?? options.industrySource ?? 'sw_2021',
+    industryLevel: input.industryLevel ?? options.industryLevel ?? 'three',
+    sortName: normalizeSortName(
+      input.sortName
+      || (resolvedSort ? requestIdToSortName(resolvedSort.filter.id) : null)
+      || options.defaultSortName
+    ),
+    sortOrder: input.sortOrder || input.sort?.order || options.defaultSortOrder || 'desc',
     pageIndex: Number(input.pageIndex ?? options.pageIndex ?? 0),
     pageSize: Number(input.pageSize ?? options.pageSize ?? 100)
   };
@@ -510,15 +519,15 @@ export function buildRequestPlanFromUnifiedInput(rawInput, catalog, options = {}
 export function buildRequestPlanFromScreener(config, options = {}) {
   const body = {
     areaCode: config.areaCode || options.areaCode || 'cn',
-    ranges: defaultRanges(config.ranges),
+    ranges: defaultRanges(config.ranges, options.defaultRanges),
     filterList: normalizeFilterList(config.filterList),
     customFilterList: config.customFilterList || [],
-    industrySource: config.industrySource || 'sw_2021',
-    industryLevel: config.industryLevel || 'three',
-    sortName: normalizeSortName(config.sortName),
-    sortOrder: config.sortOrder || 'desc',
-    pageIndex: Number(options.pageIndex || 0),
-    pageSize: Number(options.pageSize || 100)
+    industrySource: config.industrySource ?? options.industrySource ?? 'sw_2021',
+    industryLevel: config.industryLevel ?? options.industryLevel ?? 'three',
+    sortName: normalizeSortName(config.sortName || options.defaultSortName),
+    sortOrder: config.sortOrder || options.defaultSortOrder || 'desc',
+    pageIndex: Number(options.pageIndex ?? config.pageIndex ?? 0),
+    pageSize: Number(options.pageSize ?? config.pageSize ?? 100)
   };
 
   const columnSpecs = body.filterList.map(item => ({
