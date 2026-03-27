@@ -23,3 +23,5 @@ debug-*.json
 # 抓取的数据文件
 api-docs/
 links.txtbak
+
+output
