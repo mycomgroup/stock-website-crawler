@@ -1,0 +1,18 @@
+{
+  "name": "joinquant_nookbook",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "JoinQuant notebook request runner",
+  "main": "main.js",
+  "scripts": {
+    "capture": "node browser/capture-joinquant-session.js",
+    "inspect:login": "node browser/inspect-login-page.js",
+    "test:notebook": "node request/test-joinquant-notebook.js",
+    "run": "node run-skill.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "playwright": "^1.40.0"
+  }
+}

@@ -1,0 +1,722 @@
+{
+  "url": "https://www.joinquant.com/user/login/index?redirect=%2Fdefault%2Fresearch%2Findex%3Ftarget%3Dresearch%26url%3D%2Fuser%2F21333940833%2Fnotebooks%2Ftest.ipynb",
+  "title": "用户登录 - JoinQuant",
+  "inputs": [
+    {
+      "index": 0,
+      "tag": "INPUT",
+      "type": "hidden",
+      "name": null,
+      "id": "imagePath",
+      "placeholder": null,
+      "className": "",
+      "value": "https://image.joinquant.com",
+      "visible": false
+    },
+    {
+      "index": 1,
+      "tag": "INPUT",
+      "type": "hidden",
+      "name": null,
+      "id": "cdnPath",
+      "placeholder": null,
+      "className": "",
+      "value": "https://cdn.joinquant.com",
+      "visible": false
+    },
+    {
+      "index": 2,
+      "tag": "INPUT",
+      "type": "hidden",
+      "name": null,
+      "id": "filePath",
+      "placeholder": null,
+      "className": "",
+      "value": "https://file.joinquant.com",
+      "visible": false
+    },
+    {
+      "index": 3,
+      "tag": "INPUT",
+      "type": "hidden",
+      "name": null,
+      "id": "version",
+      "placeholder": null,
+      "className": "",
+      "value": "17679309750001772433728239",
+      "visible": false
+    },
+    {
+      "index": 4,
+      "tag": "INPUT",
+      "type": "text",
+      "name": "username",
+      "id": null,
+      "placeholder": "手机号",
+      "className": "phone pwd-phone",
+      "value": "",
+      "visible": true
+    },
+    {
+      "index": 5,
+      "tag": "INPUT",
+      "type": "password",
+      "name": "pwd",
+      "id": null,
+      "placeholder": "请输入密码",
+      "className": "jq-login__password",
+      "value": "",
+      "visible": true
+    },
+    {
+      "index": 6,
+      "tag": "INPUT",
+      "type": "text",
+      "name": null,
+      "id": null,
+      "placeholder": "手机号",
+      "className": "phone valid-phone",
+      "value": "",
+      "visible": false
+    },
+    {
+      "index": 7,
+      "tag": "INPUT",
+      "type": "text",
+      "name": null,
+      "id": null,
+      "placeholder": "请输入6位验证码",
+      "className": "loginValidCode",
+      "value": "",
+      "visible": false
+    },
+    {
+      "index": 8,
+      "tag": "INPUT",
+      "type": "text",
+      "name": null,
+      "id": null,
+      "placeholder": "8~20位密码，包含大小写英文字母和数字",
+      "className": "set-pwd",
+      "value": "",
+      "visible": false
+    },
+    {
+      "index": 9,
+      "tag": "INPUT",
+      "type": "text",
+      "name": null,
+      "id": null,
+      "placeholder": "设置昵称",
+      "className": "set-nickname",
+      "value": "",
+      "visible": false
+    },
+    {
+      "index": 10,
+      "tag": "INPUT",
+      "type": "checkbox",
+      "name": null,
+      "id": "agreementBox",
+      "placeholder": null,
+      "className": "agreement-box",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "index": 11,
+      "tag": "INPUT",
+      "type": "hidden",
+      "name": null,
+      "id": null,
+      "placeholder": null,
+      "className": "timeStamp",
+      "value": "17679309750001772433728239",
+      "visible": false
+    },
+    {
+      "index": 12,
+      "tag": "INPUT",
+      "type": "hidden",
+      "name": null,
+      "id": null,
+      "placeholder": null,
+      "className": "js-cdn-path",
+      "value": "https://cdn.joinquant.com",
+      "visible": false
+    },
+    {
+      "index": 13,
+      "tag": "INPUT",
+      "type": "hidden",
+      "name": null,
+      "id": "valid-code__token",
+      "placeholder": null,
+      "className": "",
+      "value": "",
+      "visible": false
+    }
+  ],
+  "buttons": [
+    {
+      "index": 0,
+      "tag": "A",
+      "text": "",
+      "id": null,
+      "name": null,
+      "href": "/",
+      "className": "navbar-brand fleft headerLogBg",
+      "visible": true
+    },
+    {
+      "index": 1,
+      "tag": "A",
+      "text": "首页",
+      "id": null,
+      "name": null,
+      "href": "/",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 2,
+      "tag": "A",
+      "text": "量化研究平台",
+      "id": null,
+      "name": null,
+      "href": "javascript:void(0)",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 3,
+      "tag": "A",
+      "text": "研究环境",
+      "id": null,
+      "name": null,
+      "href": "/research",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 4,
+      "tag": "A",
+      "text": "策略回测",
+      "id": null,
+      "name": null,
+      "href": "/algorithm/index/list",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 5,
+      "tag": "A",
+      "text": "模拟列表",
+      "id": null,
+      "name": null,
+      "href": "/algorithm/trade/list?process=1",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 6,
+      "tag": "A",
+      "text": "因子看板",
+      "id": null,
+      "name": null,
+      "href": "/view/factorlib/list",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 7,
+      "tag": "A",
+      "text": "平台API文档",
+      "id": null,
+      "name": null,
+      "href": "/help/api/help?name=api",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 8,
+      "tag": "A",
+      "text": "平台数据字典",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/data",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 9,
+      "tag": "A",
+      "text": "新手指引",
+      "id": null,
+      "name": null,
+      "href": "/post/4589",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 10,
+      "tag": "A",
+      "text": "平台会员",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/view/vip/charge",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 11,
+      "tag": "A",
+      "text": "聚宽社区",
+      "id": null,
+      "name": null,
+      "href": "/community/new",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 12,
+      "tag": "A",
+      "text": "精选文章",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/view/community/list?listType=5",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 13,
+      "tag": "A",
+      "text": "帮助",
+      "id": null,
+      "name": null,
+      "href": "javascript:void(0)",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 14,
+      "tag": "A",
+      "text": "常见问题",
+      "id": null,
+      "name": null,
+      "href": "/faq",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 15,
+      "tag": "A",
+      "text": "Python 2 to 3",
+      "id": null,
+      "name": null,
+      "href": "/view/algorithm/pythonConversion?utm_source=Nav",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 16,
+      "tag": "A",
+      "text": "实盘说明",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/help/api/help#faq:%E5%AE%9E%E7%9B%98%E8%AF%B4%E6%98%8E",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 17,
+      "tag": "A",
+      "text": "量化课堂",
+      "id": null,
+      "name": null,
+      "href": "/study",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 18,
+      "tag": "A",
+      "text": "因子分析",
+      "id": null,
+      "name": null,
+      "href": "/help/api/help?name=factor",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 19,
+      "tag": "A",
+      "text": "聚宽投资",
+      "id": null,
+      "name": null,
+      "href": "javascript:void(0)",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 20,
+      "tag": "A",
+      "text": "聚宽基金",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/view/algorithm/fundraising",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 21,
+      "tag": "A",
+      "text": "校园招聘",
+      "id": null,
+      "name": null,
+      "href": "https://app.mokahr.com/m/campus-recruitment/joinquant/92347",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 22,
+      "tag": "A",
+      "text": "社会招聘",
+      "id": null,
+      "name": null,
+      "href": "https://app.mokahr.com/m/social-recruitment/joinquant/92346",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 23,
+      "tag": "A",
+      "text": "本地数据",
+      "id": null,
+      "name": null,
+      "href": "javascript:void(0)",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 24,
+      "tag": "A",
+      "text": "申请试用",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/default/index/sdk?utm_campaign=JQData%E7%94%B3%E8%AF%B7&utm_medium=%E7%BD%91%E9%A1%B5&utm_source=%E8%81%9A%E5%AE%BD&gio_link_id=xRxqAjP5",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 25,
+      "tag": "A",
+      "text": "Python版API",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/help/api/doc?name=JQDatadoc",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 26,
+      "tag": "A",
+      "text": "试用及购买",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/help/api/doc?name=logon&id=9830",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 27,
+      "tag": "A",
+      "text": "平台会员",
+      "id": null,
+      "name": null,
+      "href": "javascript:void(0)",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 28,
+      "tag": "A",
+      "text": "平台会员",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/view/vip/charge",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 29,
+      "tag": "A",
+      "text": "积分商城",
+      "id": null,
+      "name": null,
+      "href": "https://www.joinquant.com/view/credits/list",
+      "className": "item",
+      "visible": false
+    },
+    {
+      "index": 30,
+      "tag": "A",
+      "text": "登录",
+      "id": null,
+      "name": null,
+      "href": "/user/login/index?type=login",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 31,
+      "tag": "A",
+      "text": "注册",
+      "id": null,
+      "name": null,
+      "href": "/user/register/index?type=register",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 32,
+      "tag": "BUTTON",
+      "text": "登  录",
+      "id": null,
+      "name": null,
+      "href": null,
+      "className": "login-submit btnPwdSubmit",
+      "visible": true
+    },
+    {
+      "index": 33,
+      "tag": "BUTTON",
+      "text": "登录/注册",
+      "id": null,
+      "name": null,
+      "href": null,
+      "className": "login-submit btnValidSubmit",
+      "visible": false
+    },
+    {
+      "index": 34,
+      "tag": "BUTTON",
+      "text": "完  成",
+      "id": null,
+      "name": null,
+      "href": null,
+      "className": "btn-finish btn-style submit-button",
+      "visible": false
+    },
+    {
+      "index": 35,
+      "tag": "A",
+      "text": "用户协议",
+      "id": null,
+      "name": null,
+      "href": "https://cdn.joinquant.com/std/user/protocol/user.pdf",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 36,
+      "tag": "A",
+      "text": "隐私政策",
+      "id": null,
+      "name": null,
+      "href": "https://cdn.joinquant.com/std/user/protocol/privacy.pdf",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 37,
+      "tag": "A",
+      "text": "忘记密码？",
+      "id": null,
+      "name": null,
+      "href": "/user/account/forgetpwd",
+      "className": "login-forget-password",
+      "visible": true
+    },
+    {
+      "index": 38,
+      "tag": "A",
+      "text": "联系我们：hi@joinquant.com",
+      "id": null,
+      "name": null,
+      "href": "javascript:void(0);",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 39,
+      "tag": "A",
+      "text": "加入我们",
+      "id": null,
+      "name": null,
+      "href": "https://app.mokahr.com/m/social-recruitment/joinquant/92346",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 40,
+      "tag": "A",
+      "text": "指数数据",
+      "id": null,
+      "name": null,
+      "href": "/help/data/index?f=home&m=footer",
+      "className": "",
+      "visible": false
+    },
+    {
+      "index": 41,
+      "tag": "A",
+      "text": "基金数据",
+      "id": null,
+      "name": null,
+      "href": "/help/data/fund?f=home&m=footer",
+      "className": "",
+      "visible": false
+    },
+    {
+      "index": 42,
+      "tag": "A",
+      "text": "国泰安数据",
+      "id": null,
+      "name": null,
+      "href": "/data/dict/gta?f=home&m=footer",
+      "className": "",
+      "visible": false
+    },
+    {
+      "index": 43,
+      "tag": "A",
+      "text": "股票财务数据",
+      "id": null,
+      "name": null,
+      "href": "/help/data/stock?f=home&m=footer",
+      "className": "",
+      "visible": false
+    },
+    {
+      "index": 44,
+      "tag": "A",
+      "text": "金融期货数据",
+      "id": null,
+      "name": null,
+      "href": "/help/data/futures?f=home&m=footer",
+      "className": "",
+      "visible": false
+    },
+    {
+      "index": 45,
+      "tag": "A",
+      "text": "行业概念数据",
+      "id": null,
+      "name": null,
+      "href": "/help/api/plateData?f=home&m=footer",
+      "className": "",
+      "visible": false
+    },
+    {
+      "index": 46,
+      "tag": "A",
+      "text": "常见问题",
+      "id": null,
+      "name": null,
+      "href": "/faq?f=home&m=footer",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 47,
+      "tag": "A",
+      "text": "API文档",
+      "id": null,
+      "name": null,
+      "href": "/api?f=home&m=footer",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 48,
+      "tag": "A",
+      "text": "Python教程",
+      "id": null,
+      "name": null,
+      "href": "/study#link=python?f=home&m=footer",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 49,
+      "tag": "A",
+      "text": "Python 2 to 3",
+      "id": null,
+      "name": null,
+      "href": "/view/algorithm/pythonConversion?utm_source=bottom",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 50,
+      "tag": "A",
+      "text": "果仁网",
+      "id": null,
+      "name": null,
+      "href": "https://guorn.com/?f=joinquant",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 51,
+      "tag": "A",
+      "text": "知乎专栏",
+      "id": null,
+      "name": null,
+      "href": "https://zhuanlan.zhihu.com/JoinQuant?f=home&m=footer",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 52,
+      "tag": "A",
+      "text": "雪球",
+      "id": null,
+      "name": null,
+      "href": "https://xueqiu.com/JoinQuant/profile?f=home&m=footer",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 53,
+      "tag": "A",
+      "text": "京ICP备17068639号-5",
+      "id": null,
+      "name": null,
+      "href": "https://beian.miit.gov.cn",
+      "className": "",
+      "visible": true
+    },
+    {
+      "index": 54,
+      "tag": "A",
+      "text": "",
+      "id": null,
+      "name": null,
+      "href": "/post/24debe6786302edc2febfc09b1312a6c",
+      "className": "",
+      "visible": false
+    }
+  ],
+  "iframes": [
+    {
+      "index": 0,
+      "id": null,
+      "name": null,
+      "src": "https://qiyukf.com/webapi/sdkres/delegate.html?1774591102884",
+      "className": "",
+      "visible": true
+    }
+  ]
+}

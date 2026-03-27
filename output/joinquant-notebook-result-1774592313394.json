@@ -1,0 +1,69 @@
+{
+  "capturedAt": "2026-03-27T06:18:33.393Z",
+  "notebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+  "notebookPath": "test.ipynb",
+  "kernelId": "1c9186f4-c99d-46df-bca6-44aac52a3361",
+  "sessionId": "02b11521-bfbb-4385-a002-204e4c5c088b",
+  "appendedCellIndex": null,
+  "mode": "all",
+  "targetCellIndices": [
+    0,
+    1,
+    2
+  ],
+  "notebookMetadata": {
+    "name": "test.ipynb",
+    "path": "test.ipynb",
+    "last_modified": "2026-03-27T06:18:33.448678Z",
+    "created": "2026-03-27T06:18:33.448678Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "",
+      "msgId": "d6011378c5e24705a795801dc4aa61ea",
+      "websocketSessionId": "545edb164f4a467aa72936f153bd0013",
+      "executionCount": 3,
+      "status": "ok",
+      "textOutput": "",
+      "outputs": []
+    },
+    {
+      "cellIndex": 1,
+      "source": "print(\"hello\")",
+      "msgId": "be38a0d9456a43479848b2b917ad85e1",
+      "websocketSessionId": "265f71f6a965421ea54cb67774333b4d",
+      "executionCount": 4,
+      "status": "ok",
+      "textOutput": "hello\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "hello\n"
+        }
+      ]
+    },
+    {
+      "cellIndex": 2,
+      "source": "print(\"hello\")",
+      "msgId": "0f91d9f79f004d01a5f2ed580f48946b",
+      "websocketSessionId": "a268d288bd2a450e82f5349df5a3aa96",
+      "executionCount": 5,
+      "status": "ok",
+      "textOutput": "hello\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "hello\n"
+        }
+      ]
+    }
+  ]
+}

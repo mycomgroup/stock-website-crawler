@@ -1,0 +1,147 @@
+{
+  "capturedAt": "2026-03-27T06:12:02.097Z",
+  "notebookUrl": "https://www.joinquant.com/research?target=research&url=/user/21333940833/notebooks/test.ipynb",
+  "directNotebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+  "cookieHeader": "user-21333940833=2|1:0|10:1774591898|16:user-21333940833|48:NjUzZTE5OTEtODJkZi00NDJjLWJiNTItYTUwZWEzYmRhNjRj|6ab671a76f33ede12136f40e4c8cb56866ee2b923766db9983a3400352a00519; jupyter-hub-token=\"2|1:0|10:1774591898|17:jupyter-hub-token|44:YmQyZDc3MDAyMzk2NDU0ZGE3MTRiOThkNjY1MWIzOGE=|58ba8084e04cee299cfc4342d3120bc5c9ec25601ec7bea584b36b6499f44655\"; uid=wKgyrWnGH5Z4ZwWzLwt5Ag==; token=59992bca13f52c2dc9ec6dafa6fa4e5c021fd298; PHPSESSID=pof4jthspmv1hev1ov30rul5h6; _xsrf=2|3529b2fd|57c3ac0a9d14e6ff1b0b935b422d6cde|1774591898; uid=wKgyrWnGH5t+GAXCLJH6Ag==",
+  "cookies": [
+    {
+      "name": "user-21333940833",
+      "value": "2|1:0|10:1774591898|16:user-21333940833|48:NjUzZTE5OTEtODJkZi00NDJjLWJiNTItYTUwZWEzYmRhNjRj|6ab671a76f33ede12136f40e4c8cb56866ee2b923766db9983a3400352a00519",
+      "domain": "www.joinquant.com",
+      "path": "/user/21333940833/",
+      "expires": 1777183898.645578,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "jupyter-hub-token",
+      "value": "\"2|1:0|10:1774591898|17:jupyter-hub-token|44:YmQyZDc3MDAyMzk2NDU0ZGE3MTRiOThkNjY1MWIzOGE=|58ba8084e04cee299cfc4342d3120bc5c9ec25601ec7bea584b36b6499f44655\"",
+      "domain": "www.joinquant.com",
+      "path": "/hub/",
+      "expires": 1777183898.489236,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "uid",
+      "value": "wKgyrWnGH5Z4ZwWzLwt5Ag==",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": 1809151894.31389,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "token",
+      "value": "59992bca13f52c2dc9ec6dafa6fa4e5c021fd298",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "PHPSESSID",
+      "value": "pof4jthspmv1hev1ov30rul5h6",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_xsrf",
+      "value": "2|3529b2fd|57c3ac0a9d14e6ff1b0b935b422d6cde|1774591898",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": 1777183898.76082,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "uid",
+      "value": "wKgyrWnGH5t+GAXCLJH6Ag==",
+      "domain": "cdn.joinquant.com",
+      "path": "/",
+      "expires": 1809151899.164342,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "pageState": {
+    "pageUrl": "https://www.joinquant.com/research?target=research&url=/user/21333940833/notebooks/test.ipynb",
+    "pageTitle": "【新消息】研究 - test.ipynb",
+    "frameCount": 3,
+    "targetFrameUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+    "url": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+    "title": "test",
+    "hasJupyter": true,
+    "bodyClassName": "notebook_app  command_mode",
+    "bodyDataset": {
+      "baseUrl": "/user/21333940833/",
+      "wsUrl": "",
+      "notebookName": "test.ipynb",
+      "notebookPath": "test.ipynb"
+    },
+    "csrfMeta": null,
+    "csrfInput": null,
+    "scripts": [
+      "https://cdn.joinquant.com/research/static/components/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full,Safe&delayStartupUntil=configured",
+      "https://cdn.joinquant.com/research/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe",
+      "https://cdn.joinquant.com/research/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542",
+      "https://cdn.joinquant.com/research/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604",
+      "https://cdn.joinquant.com/research/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1",
+      "https://cdn.joinquant.com/research/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce",
+      "https://cdn.joinquant.com/research/static/services/contents.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/custom/custom.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/plotlywidget/extension.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter-js-widgets/extension.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/qgrid/extension.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/main.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/notebook.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/snippets_submenu_python.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/snippets_submenu_markdown.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/codefolding/main.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/toc2/main.js?v=20260327133345",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/foldcode.js?v=20260327133345",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/foldgutter.js?v=20260327133345",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/brace-fold.js?v=20260327133345",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/indent-fold.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/toc2/toc2.js?v=20260327133345",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/joinquant.js?v=20260327133345",
+      "https://cdn.joinquant.com/research/static/components/text-encoding/lib/encoding.js?v=d5bb0fc9ffeff7d98a69bb83daa51052",
+      "https://cdn.joinquant.com/research/static/notebook/js/main.min.js?v=11b42e90f007d9034055418999cda73c"
+    ],
+    "notebook": {
+      "notebookPath": "test.ipynb",
+      "baseUrl": "/user/21333940833/",
+      "kernelId": "1c9186f4-c99d-46df-bca6-44aac52a3361",
+      "sessionId": "02b11521-bfbb-4385-a002-204e4c5c088b",
+      "ncells": 1
+    }
+  },
+  "actionResult": {
+    "hasJupyter": true,
+    "inserted": true,
+    "cellIndex": 1,
+    "startCount": 1,
+    "endCount": 2,
+    "kernelId": "1c9186f4-c99d-46df-bca6-44aac52a3361",
+    "sessionId": "02b11521-bfbb-4385-a002-204e4c5c088b",
+    "notebookPath": "test.ipynb"
+  },
+  "login": {
+    "loggedIn": true,
+    "mode": "form-login",
+    "acceptedAgreement": true,
+    "urlAfterSubmit": "https://www.joinquant.com/default/research/index?target=research&amp;url=/user/21333940833/notebooks/test.ipynb",
+    "errorText": null
+  }
+}
