@@ -1,0 +1,16 @@
+{
+  "name": "joinquant_strategy",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "JoinQuant strategy request runner",
+  "main": "run-skill.js",
+  "scripts": {
+    "run": "node run-skill.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "minimist": "^1.2.8",
+    "playwright": "^1.40.0"
+  }
+}
