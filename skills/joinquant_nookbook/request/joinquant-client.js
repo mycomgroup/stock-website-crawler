@@ -435,7 +435,7 @@ export class JoinQuantClient {
     const timestamp = Date.now();
     const filePath = path.join(this.outputRoot, `${baseName}-${timestamp}.${extension}`);
     ensureDir(filePath);
-    const content = extension === 'json'
+    const content = (extension === 'json' || extension === 'ipynb')
       ? JSON.stringify(data, null, 2)
       : String(data);
     fs.writeFileSync(filePath, content, 'utf8');

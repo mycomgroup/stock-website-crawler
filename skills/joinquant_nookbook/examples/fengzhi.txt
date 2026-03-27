@@ -1,0 +1,13 @@
+# 执行 Notebook（修复后的版本）
+cd /Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_nookbook
+node run-skill.js \
+  --session-file data/session.json \
+  --notebook-url "https://www.joinquant.com/research?target=research&url=/user/21333940833/notebooks/02%20%E7%A0%94%E7%A9%B6%20%E6%9D%BF%E5%9D%97%E8%BD%AE%E5%8A%A8%E6%89%93%E5%88%86%E4%B8%8E%E7%83%AD%E5%BA%A6%E8%BF%BD%E8%B8%AA.ipynb" \
+  --mode all \
+  --timeout-ms 60000
+
+# 查看生成的文件
+ls -lh /Users/fengzhi/Downloads/git/testlixingren/output/
+
+# 验证 Notebook 内容（检查是否是有效 JSON）
+head -50 /Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-*.ipynb

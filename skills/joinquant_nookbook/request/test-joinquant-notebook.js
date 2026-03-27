@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { fileURLToPath } from 'node:url';
 import { JoinQuantClient, createCodeCell } from './joinquant-client.js';
 
 function parseArgs(argv) {
@@ -22,13 +23,62 @@ function normalizeCellSource(cellSource) {
   return String(cellSource || 'print("hello")');
 }
 
+function getCellSourceText(cell) {
+  if (!cell) return '';
+  return Array.isArray(cell.source) ? cell.source.join('') : String(cell.source || '');
+}
+
+function findMarkerCellIndices(notebookContent, marker) {
+  if (!marker) return [];
+  return notebookContent.cells
+    .map((cell, index) => ({ cell, index }))
+    .filter(item => item.cell?.cell_type === 'code')
+    .filter(item => getCellSourceText(item.cell).includes(marker))
+    .map(item => item.index);
+}
+
+function upsertMarkedCell(notebookContent, marker, cellSource, appendCell) {
+  if (!marker) {
+    if (!appendCell) {
+      return { targetCellIndex: null, appendedCellIndex: null };
+    }
+    notebookContent.cells.push(createCodeCell(cellSource));
+    return {
+      targetCellIndex: notebookContent.cells.length - 1,
+      appendedCellIndex: notebookContent.cells.length - 1
+    };
+  }
+
+  const matchedIndices = findMarkerCellIndices(notebookContent, marker);
+  matchedIndices.slice(1).reverse().forEach(index => {
+    notebookContent.cells.splice(index, 1);
+  });
+
+  const primaryIndex = matchedIndices[0];
+  if (Number.isInteger(primaryIndex)) {
+    notebookContent.cells[primaryIndex] = createCodeCell(cellSource);
+    return { targetCellIndex: primaryIndex, appendedCellIndex: null };
+  }
+
+  if (!appendCell) {
+    return { targetCellIndex: null, appendedCellIndex: null };
+  }
+
+  notebookContent.cells.push(createCodeCell(cellSource));
+  return {
+    targetCellIndex: notebookContent.cells.length - 1,
+    appendedCellIndex: notebookContent.cells.length - 1
+  };
+}
+
 function parseCellIndices(input, notebookContent) {
   if (!input || input === 'last') {
     return [notebookContent.cells.length - 1];
   }
   return String(input)
     .split(',')
-    .map(item => Number(item.trim()))
+    .map(item => item.trim())
+    .map(item => (item === 'last' ? notebookContent.cells.length - 1 : Number(item)))
     .filter(Number.isInteger)
     .filter(index => index >= 0 && index < notebookContent.cells.length);
 }
@@ -67,10 +117,15 @@ export async function runNotebookTest(options = {}) {
     throw new Error('未获取到 notebook content.cells');
   }
 
-  let appendedCellIndex = null;
-  if (appendCell) {
-    notebookContent.cells.push(createCodeCell(cellSource));
-    appendedCellIndex = notebookContent.cells.length - 1;
+  const upsertResult = upsertMarkedCell(
+    notebookContent,
+    options.cellMarker,
+    cellSource,
+    appendCell
+  );
+  const appendedCellIndex = upsertResult.appendedCellIndex;
+  const managedCellIndex = upsertResult.targetCellIndex;
+  if (Number.isInteger(managedCellIndex)) {
     await client.saveNotebook(notebookContent);
   }
 
@@ -80,10 +135,13 @@ export async function runNotebookTest(options = {}) {
     throw new Error('未能创建 kernel session');
   }
 
+  const defaultCellIndex = options.cellIndex
+    || (Number.isInteger(managedCellIndex) ? String(managedCellIndex) : null)
+    || (appendCell ? 'last' : null);
   const targetCellIndices = resolveRunCellIndices(
     mode,
     notebookContent,
-    options.cellIndex || (appendCell ? 'last' : null)
+    defaultCellIndex
   );
   if (!targetCellIndices.length) {
     throw new Error('未解析到可执行的 cell 索引');
@@ -122,6 +180,7 @@ export async function runNotebookTest(options = {}) {
     kernelId,
     sessionId: session.id,
     appendedCellIndex,
+    managedCellIndex,
     mode,
     targetCellIndices,
     notebookMetadata,
@@ -136,6 +195,7 @@ export async function runNotebookTest(options = {}) {
     notebookPath: client.notebookPath,
     mode,
     appendedCellIndex,
+    managedCellIndex,
     targetCellIndices,
     executions,
     session
@@ -150,6 +210,7 @@ async function main() {
     mode: args.mode,
     cellSource: args['cell-source'],
     cellIndex: args['cell-index'],
+    cellMarker: args['cell-marker'],
     timeoutMs: args['timeout-ms'],
     kernelName: args['kernel-name'],
     appendCell: args['append-cell'] === 'false' ? false : true
@@ -158,7 +219,9 @@ async function main() {
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }
 
-main().catch(error => {
-  console.error(error.stack || error.message);
-  process.exit(1);
-});
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main().catch(error => {
+    console.error(error.stack || error.message);
+    process.exit(1);
+  });
+}
