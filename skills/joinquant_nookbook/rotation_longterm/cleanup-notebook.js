@@ -11,6 +11,12 @@ const CELL_MARKER = '# AUTO_ROTATION_ANALYSIS_30D';
 const BASE_CELL_COUNT = 3;
 
 export async function main() {
+  await ensureJoinQuantSession({
+    sessionFile: SESSION_FILE,
+    notebookUrl: NOTEBOOK_URL,
+    outputRoot: OUTPUT_ROOT
+  });
+
   const client = new JoinQuantClient({
     sessionFile: SESSION_FILE,
     notebookUrl: NOTEBOOK_URL,
