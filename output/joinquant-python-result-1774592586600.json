@@ -1,0 +1,41 @@
+{
+  "notebook_url": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+  "session": {
+    "id": "02b11521-bfbb-4385-a002-204e4c5c088b",
+    "path": "test.ipynb",
+    "name": "",
+    "type": "notebook",
+    "kernel": {
+      "id": "1c9186f4-c99d-46df-bca6-44aac52a3361",
+      "name": "python3",
+      "last_activity": "2026-03-27T06:20:43.049782Z",
+      "execution_state": "idle",
+      "connections": 0
+    },
+    "notebook": {
+      "path": "test.ipynb",
+      "name": ""
+    }
+  },
+  "executions": [
+    {
+      "cell_index": 6,
+      "msg_id": "f4ce8303cae348f7b36f63b764bb5998",
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "hello\n"
+        }
+      ],
+      "reply": {
+        "status": "ok",
+        "execution_count": 7,
+        "user_expressions": {},
+        "payload": []
+      },
+      "text_output": "hello\n"
+    }
+  ]
+}

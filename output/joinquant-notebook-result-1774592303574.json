@@ -1,0 +1,41 @@
+{
+  "capturedAt": "2026-03-27T06:18:23.572Z",
+  "notebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+  "notebookPath": "test.ipynb",
+  "kernelId": "1c9186f4-c99d-46df-bca6-44aac52a3361",
+  "sessionId": "02b11521-bfbb-4385-a002-204e4c5c088b",
+  "appendedCellIndex": 2,
+  "mode": "partial",
+  "targetCellIndices": [
+    2
+  ],
+  "notebookMetadata": {
+    "name": "test.ipynb",
+    "path": "test.ipynb",
+    "last_modified": "2026-03-27T06:18:23.575317Z",
+    "created": "2026-03-27T06:18:23.575317Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 2,
+      "source": "print(\"hello\")",
+      "msgId": "54feaaff69a145d88faa7332e7cd7c80",
+      "websocketSessionId": "d96df73bcac14758834c05def688c6aa",
+      "executionCount": 3,
+      "status": "ok",
+      "textOutput": "hello\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "hello\n"
+        }
+      ]
+    }
+  ]
+}
