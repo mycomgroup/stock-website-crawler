@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { fileURLToPath } from 'node:url';
 import { JoinQuantClient, createCodeCell } from './joinquant-client.js';
+import { ensureJoinQuantSession } from './ensure-joinquant-session.js';
 
 function parseArgs(argv) {
   const args = {};
@@ -105,6 +106,12 @@ function summarizeExecution(result) {
 }
 
 export async function runNotebookTest(options = {}) {
+  await ensureJoinQuantSession({
+    sessionFile: options.sessionFile,
+    notebookUrl: options.notebookUrl,
+    outputRoot: options.outputRoot
+  });
+
   const client = new JoinQuantClient(options);
   const mode = options.mode === 'all' ? 'all' : 'partial';
   const appendCell = options.appendCell !== false;

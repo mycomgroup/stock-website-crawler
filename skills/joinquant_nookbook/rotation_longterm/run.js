@@ -2,6 +2,7 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JoinQuantClient } from '../request/joinquant-client.js';
+import { ensureJoinQuantSession } from '../request/ensure-joinquant-session.js';
 import { runNotebookTest } from '../request/test-joinquant-notebook.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -311,6 +312,12 @@ async function ensureNotebookExists() {
 }
 
 export async function main() {
+  await ensureJoinQuantSession({
+    sessionFile: SESSION_FILE,
+    notebookUrl: NOTEBOOK_URL,
+    outputRoot: OUTPUT_ROOT
+  });
+
   const { created } = await ensureNotebookExists();
   console.log(created ? '已创建长期复用 notebook，开始更新分析单元...' : '将更新长期复用 notebook 中的 30 交易日分析单元...');
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import '../load-env.js';
 import {
@@ -373,11 +374,18 @@ async function triggerNotebookActions(frame) {
   });
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
+function normalizeCaptureOptions(options = {}) {
+  if (Array.isArray(options)) {
+    return parseArgs(options);
+  }
+  return { ...options };
+}
+
+export async function captureJoinQuantSession(options = {}) {
+  const args = normalizeCaptureOptions(options);
   const username = args.username || process.env.JOINQUANT_USERNAME;
   const password = args.password || process.env.JOINQUANT_PASSWORD;
-  const notebookUrl = args.url || process.env.JOINQUANT_NOTEBOOK_URL || DEFAULT_NOTEBOOK_URL;
+  const notebookUrl = args.url || args.notebookUrl || process.env.JOINQUANT_NOTEBOOK_URL || DEFAULT_NOTEBOOK_URL;
   const directNotebookUrl = resolveDirectNotebookUrl(notebookUrl);
   const headed = args.headed === true || args.headless === 'false';
 
@@ -516,7 +524,7 @@ async function main() {
       websockets
     }, null, 2));
 
-    process.stdout.write(`${JSON.stringify({
+    return {
       sessionFile: SESSION_FILE,
       contractFile: CONTRACT_FILE,
       rawCaptureFile: RAW_CAPTURE_FILE,
@@ -525,14 +533,21 @@ async function main() {
       login: loginResult,
       pageState,
       actionResult
-    }, null, 2)}\n`);
+    };
   } finally {
     await context.close().catch(() => {});
     await browser.close().catch(() => {});
   }
 }
 
-main().catch(error => {
-  console.error(error.stack || error.message);
-  process.exit(1);
-});
+async function main() {
+  const result = await captureJoinQuantSession(process.argv.slice(2));
+  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main().catch(error => {
+    console.error(error.stack || error.message);
+    process.exit(1);
+  });
+}
