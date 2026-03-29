@@ -1,42 +1,42 @@
 {
-  "capturedAt": "2026-03-27T12:55:48.715Z",
-  "notebookUrl": "https://www.joinquant.com/research?target=research&url=/user/21333940833/notebooks/test.ipynb",
+  "capturedAt": "2026-03-28T11:50:30.410Z",
+  "notebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
   "directNotebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
-  "cookieHeader": "user-21333940833=2|1:0|10:1774616131|16:user-21333940833|48:OGIzMzEyMGMtNWI5Yi00YmZkLTk0MzUtZDlmMjYyZmVjYWY2|274b26159360763972c60c0e9bd06e68bc6f90896643cc1d7abb37c35dd613f0; jupyter-hub-token=\"2|1:0|10:1774616126|17:jupyter-hub-token|44:YmQyZDc3MDAyMzk2NDU0ZGE3MTRiOThkNjY1MWIzOGE=|677126c3b7ddac5e456774f36ee0ef69e9ce67cbf17c46beb5c391ff5171128a\"; uid=wKgyrWnGfjl/+QXHLsSeAg==; token=6ac81baae466355ad8f6e8abb41e067529c0462d; PHPSESSID=6cebdvjofpra7kn7c9td03k232; _xsrf=2|599f26fb|a5e461c6c7f0e426639a0fd990587e7b|1774616131; uid=wKiXm2nGfkNY+AWcHPjbAg==",
+  "cookieHeader": "user-21333940833=2|1:0|10:1774698612|16:user-21333940833|48:ZGY0ODcxZTYtNGEwNS00NmMxLTlhYzItZjgyOTViYjZiZjdl|16d96b1f7c1899f71a5a89bda9665d79bf6e26092da2a75f76c79bfb2cf8d71d; jupyter-hub-token=\"2|1:0|10:1774698607|17:jupyter-hub-token|44:YmQyZDc3MDAyMzk2NDU0ZGE3MTRiOThkNjY1MWIzOGE=|9db54c4dd4b48b68654cd804b37a6cfae44b437237163c0934b32b35735c4cd8\"; uid=wKiXm2nHwGpWWgWCHRYsAg==; token=dcd94ded52012fbbc170e088c38349f18f95064a; PHPSESSID=9g6m4fmlf370h0vnv8h85s9sj3; _xsrf=2|756ea78f|b667bb7a440fdabcc84b46d78d0b5da2|1774698612; uid=wKiXm2nHwHVXTwWZHJ+4Ag==",
   "cookies": [
     {
       "name": "user-21333940833",
-      "value": "2|1:0|10:1774616131|16:user-21333940833|48:OGIzMzEyMGMtNWI5Yi00YmZkLTk0MzUtZDlmMjYyZmVjYWY2|274b26159360763972c60c0e9bd06e68bc6f90896643cc1d7abb37c35dd613f0",
+      "value": "2|1:0|10:1774698612|16:user-21333940833|48:ZGY0ODcxZTYtNGEwNS00NmMxLTlhYzItZjgyOTViYjZiZjdl|16d96b1f7c1899f71a5a89bda9665d79bf6e26092da2a75f76c79bfb2cf8d71d",
       "domain": "www.joinquant.com",
       "path": "/user/21333940833/",
-      "expires": 1777208130.97594,
+      "expires": 1777290612.493188,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "jupyter-hub-token",
-      "value": "\"2|1:0|10:1774616126|17:jupyter-hub-token|44:YmQyZDc3MDAyMzk2NDU0ZGE3MTRiOThkNjY1MWIzOGE=|677126c3b7ddac5e456774f36ee0ef69e9ce67cbf17c46beb5c391ff5171128a\"",
+      "value": "\"2|1:0|10:1774698607|17:jupyter-hub-token|44:YmQyZDc3MDAyMzk2NDU0ZGE3MTRiOThkNjY1MWIzOGE=|9db54c4dd4b48b68654cd804b37a6cfae44b437237163c0934b32b35735c4cd8\"",
       "domain": "www.joinquant.com",
       "path": "/hub/",
-      "expires": 1777208126.586238,
+      "expires": 1777290607.377179,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "uid",
-      "value": "wKgyrWnGfjl/+QXHLsSeAg==",
+      "value": "wKiXm2nHwGpWWgWCHRYsAg==",
       "domain": "www.joinquant.com",
       "path": "/",
-      "expires": 1809176121.198454,
+      "expires": 1809258602.634893,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "token",
-      "value": "6ac81baae466355ad8f6e8abb41e067529c0462d",
+      "value": "dcd94ded52012fbbc170e088c38349f18f95064a",
       "domain": "www.joinquant.com",
       "path": "/",
       "expires": -1,
@@ -46,7 +46,7 @@
     },
     {
       "name": "PHPSESSID",
-      "value": "6cebdvjofpra7kn7c9td03k232",
+      "value": "9g6m4fmlf370h0vnv8h85s9sj3",
       "domain": "www.joinquant.com",
       "path": "/",
       "expires": -1,
@@ -56,20 +56,20 @@
     },
     {
       "name": "_xsrf",
-      "value": "2|599f26fb|a5e461c6c7f0e426639a0fd990587e7b|1774616131",
+      "value": "2|756ea78f|b667bb7a440fdabcc84b46d78d0b5da2|1774698612",
       "domain": "www.joinquant.com",
       "path": "/",
-      "expires": 1777208131.158502,
+      "expires": 1777290612.74261,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "uid",
-      "value": "wKiXm2nGfkNY+AWcHPjbAg==",
+      "value": "wKiXm2nHwHVXTwWZHJ+4Ag==",
       "domain": "cdn.joinquant.com",
       "path": "/",
-      "expires": 1809176131.490908,
+      "expires": 1809258613.028143,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
@@ -108,10 +108,10 @@
     "reason": "frame 内未找到 Jupyter.notebook"
   },
   "login": {
-    "loggedIn": true,
+    "loggedIn": false,
     "mode": "form-login",
     "acceptedAgreement": true,
-    "urlAfterSubmit": "https://www.joinquant.com/default/research/index?target=research&amp;url=/user/21333940833/notebooks/test.ipynb",
+    "urlAfterSubmit": "https://www.joinquant.com/user/login/index?from_research=1&redirect=%2Fhub%2Flogin%3Fnext%3D%252Fhub%252Fuser%252F21333940833%252Fnotebooks%252Ftest.ipynb",
     "errorText": null
   }
 }
