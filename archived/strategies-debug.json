@@ -1,0 +1,286 @@
+[
+  {
+    "metadata": {
+      "strategy_type": "general",
+      "wizard_option": null
+    },
+    "config": {
+      "stock_init_cash": 1000000,
+      "futures_init_cash": 0,
+      "bond_init_cash": 0,
+      "start_date": "2015-01-04",
+      "end_date": "2020-01-04",
+      "frequency": "day",
+      "commission_multiplier": 1,
+      "benchmark": "000300.XSHG",
+      "dividend_reinvestment": false,
+      "enable_profiler": false,
+      "enable_short_sell": false,
+      "margin_multiplier": 1,
+      "matching_type": "current_bar",
+      "slippage": 0,
+      "slippage_model": "PriceRatioSlippage",
+      "volume_limit": false,
+      "volume_percent": 0.25
+    },
+    "title": "Golden Cross 策略",
+    "account_type": "stock",
+    "permission": "write",
+    "strategy_id": 2146474,
+    "owner": 497381,
+    "last_modified": "2023-03-11 21:17:12"
+  },
+  {
+    "metadata": {
+      "strategy_type": "wizard",
+      "wizard_option": {
+        "board": [
+          "*"
+        ],
+        "buy": {
+          "filters": [],
+          "rebalance_interval": 1
+        },
+        "filters": [
+          {
+            "operator": "less_than",
+            "lhs": {
+              "type": "fundamental",
+              "name": "pe_ratio"
+            },
+            "rhs": 15
+          },
+          {
+            "operator": "less_than",
+            "lhs": {
+              "type": "fundamental",
+              "name": "pb_ratio"
+            },
+            "rhs": 1.5
+          }
+        ],
+        "industries": [
+          "*"
+        ],
+        "max_holding_num": 10,
+        "rebalance_interval": 5,
+        "risk": {
+          "market_enter_signals": [],
+          "market_panic_signals": [],
+          "pnl": []
+        },
+        "sell": {
+          "rebalance_interval": 1,
+          "filters": []
+        },
+        "sorting": [
+          {
+            "factor": {
+              "type": "fundamental",
+              "name": "market_cap"
+            },
+            "ascending": false,
+            "weight": 1
+          }
+        ],
+        "st_option": "include",
+        "template_name": "single_period",
+        "three_periods": {
+          "rebalance_interval": 5,
+          "max_holding_num": 10,
+          "max_holding_percent": 0.2
+        },
+        "universe": [
+          "000300.XSHG"
+        ]
+      }
+    },
+    "config": {
+      "stock_init_cash": 1000000,
+      "futures_init_cash": 0,
+      "bond_init_cash": 0,
+      "start_date": "2017-01-01",
+      "end_date": "2018-01-01",
+      "frequency": "day",
+      "commission_multiplier": 1,
+      "benchmark": "000300.XSHG",
+      "dividend_reinvestment": false,
+      "enable_profiler": false,
+      "enable_short_sell": false,
+      "margin_multiplier": 1,
+      "matching_type": "current_bar",
+      "slippage": 0,
+      "slippage_model": "PriceRatioSlippage",
+      "volume_limit": false,
+      "volume_percent": 0.25
+    },
+    "title": "向导式价值投资",
+    "account_type": "stock",
+    "permission": "write",
+    "strategy_id": 2146476,
+    "owner": 497381,
+    "last_modified": "2023-03-11 21:17:12"
+  },
+  {
+    "metadata": {
+      "strategy_type": "general",
+      "wizard_option": null
+    },
+    "config": {
+      "stock_init_cash": 1000000,
+      "futures_init_cash": 0,
+      "bond_init_cash": 0,
+      "start_date": "2015-01-04",
+      "end_date": "2020-01-04",
+      "frequency": "day",
+      "commission_multiplier": 1,
+      "benchmark": "000300.XSHG",
+      "dividend_reinvestment": false,
+      "enable_profiler": false,
+      "enable_short_sell": false,
+      "margin_multiplier": 1,
+      "matching_type": "current_bar",
+      "slippage": 0,
+      "slippage_model": "PriceRatioSlippage",
+      "volume_limit": false,
+      "volume_percent": 0.25
+    },
+    "title": "Golden Cross 策略",
+    "account_type": "stock",
+    "permission": "write",
+    "strategy_id": 2146473,
+    "owner": 497381,
+    "last_modified": "2023-03-11 21:17:12"
+  },
+  {
+    "metadata": {
+      "strategy_type": "wizard",
+      "wizard_option": {
+        "board": [
+          "*"
+        ],
+        "buy": {
+          "rebalance_interval": 1,
+          "filters": []
+        },
+        "filters": [
+          {
+            "operator": "less_than",
+            "lhs": {
+              "type": "fundamental",
+              "name": "pe_ratio"
+            },
+            "rhs": 15
+          },
+          {
+            "operator": "less_than",
+            "lhs": {
+              "type": "fundamental",
+              "name": "pb_ratio"
+            },
+            "rhs": 1.5
+          }
+        ],
+        "industries": [
+          "*"
+        ],
+        "max_holding_num": 10,
+        "rebalance_interval": 5,
+        "risk": {
+          "market_enter_signals": [],
+          "market_panic_signals": [],
+          "pnl": []
+        },
+        "sell": {
+          "rebalance_interval": 1,
+          "filters": []
+        },
+        "sorting": [
+          {
+            "factor": {
+              "type": "fundamental",
+              "name": "market_cap"
+            },
+            "ascending": false,
+            "weight": 1
+          },
+          {
+            "factor": {
+              "type": "pricing",
+              "name": "open"
+            },
+            "ascending": true,
+            "weight": 1
+          }
+        ],
+        "st_option": "include",
+        "template_name": "single_period",
+        "three_periods": {
+          "max_holding_num": 10,
+          "max_holding_percent": 0.2,
+          "rebalance_interval": 5
+        },
+        "universe": [
+          "000300.XSHG"
+        ],
+        "customStockPoolList": []
+      }
+    },
+    "config": {
+      "stock_init_cash": 1000000,
+      "futures_init_cash": 0,
+      "bond_init_cash": 0,
+      "start_date": "2017-01-01",
+      "end_date": "2018-01-01",
+      "frequency": "day",
+      "commission_multiplier": 1,
+      "benchmark": "000300.XSHG",
+      "dividend_reinvestment": false,
+      "enable_profiler": false,
+      "enable_short_sell": false,
+      "margin_multiplier": 1,
+      "matching_type": "current_bar",
+      "slippage": 0,
+      "slippage_model": "PriceRatioSlippage",
+      "volume_limit": false,
+      "volume_percent": 0.25
+    },
+    "title": "向导式价值投资",
+    "account_type": "stock",
+    "permission": "write",
+    "strategy_id": 2146475,
+    "owner": 497381,
+    "last_modified": "2023-03-11 21:30:44"
+  },
+  {
+    "metadata": {
+      "strategy_type": "general",
+      "wizard_option": null
+    },
+    "config": {
+      "stock_init_cash": 1000000,
+      "futures_init_cash": 0,
+      "bond_init_cash": 0,
+      "start_date": "2016-01-04",
+      "end_date": "2016-10-04",
+      "frequency": "day",
+      "commission_multiplier": 1,
+      "benchmark": "000300.XSHG",
+      "dividend_reinvestment": false,
+      "enable_profiler": false,
+      "enable_short_sell": false,
+      "margin_multiplier": 1,
+      "matching_type": "current_bar",
+      "slippage": 0,
+      "slippage_model": "PriceRatioSlippage",
+      "volume_limit": false,
+      "volume_percent": 0.25
+    },
+    "title": "test_strategy",
+    "account_type": "stock",
+    "permission": "write",
+    "strategy_id": 2414951,
+    "owner": 497381,
+    "last_modified": "2026-03-28 06:09:51"
+  }
+]

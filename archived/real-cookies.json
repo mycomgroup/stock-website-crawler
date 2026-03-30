@@ -1,0 +1,42 @@
+[
+  {
+    "name": "tgw_l7_route",
+    "value": "006b76bf4a6398f05baf657858ca2891",
+    "domain": "www.ricequant.com",
+    "path": "/",
+    "expires": 1774758075.531726,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "sid",
+    "value": "HInkswc05DjFxmJzp5iL2ZYdT7qi3lkh|3e87ea40f04b739b6a7e54c912a403764d887c960b980b97b367fd4c2db07367e4908a0400fb7c2cc29ae8967003fb12b9e3966779ed7b54202647f277a4efb6",
+    "domain": "www.ricequant.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "jupyter-hub-token",
+    "value": "",
+    "domain": "www.ricequant.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "rqjwt",
+    "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NDc1NDQ4MywgImV4cCI6IDE3NzczNDY0ODN9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.kdU1dufNM5GdkTofpTfwWS5BymHgav0OtY0-JPTqiAlbP6AnA9XDn72Hbw0zYLkwezUvqBjTV9lc0Cx0Jo5BSg",
+    "domain": "www.ricequant.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]

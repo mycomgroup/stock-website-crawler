@@ -1,0 +1,392 @@
+[
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/user/login",
+    "headers": {
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"macOS\""
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:30.075Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-type": "text/html; charset=UTF-8",
+      "date": "Sun, 29 Mar 2026 06:04:30 GMT",
+      "etag": "W/\"93b4c1eb1443b080e53cb654de732cbc424bd597\"",
+      "server": "TornadoServer/4.2.1",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/",
+      "x-xss-protection": "1; mode=block"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/static/libs/bootstrap/fonts/glyphicons-halflings-regular.woff2",
+    "headers": {
+      "origin": "https://guorn.com",
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/static/libs/bootstrap/bootstrap-5dc80d3373.css",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:30.881Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "content-security-policy": "frame-ancestors guorn.com",
+      "cache-control": "max-age=86400",
+      "etag": "\"69a7c67f-466c\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "expires": "Mon, 30 Mar 2026 06:04:30 GMT",
+      "accept-ranges": "bytes",
+      "content-length": "18028",
+      "date": "Sun, 29 Mar 2026 06:04:30 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "application/octet-stream",
+      "last-modified": "Wed, 04 Mar 2026 05:43:27 GMT",
+      "server": "nginx",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/stock",
+    "headers": {
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"macOS\""
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.224Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-type": "text/html; charset=UTF-8",
+      "date": "Sun, 29 Mar 2026 06:04:39 GMT",
+      "etag": "W/\"e95da6a6b0810e4b867715b785e4a295d98c5b8b\"",
+      "server": "TornadoServer/4.2.1",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/",
+      "x-xss-protection": "1; mode=block"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/static/libs/bootstrap/fonts/glyphicons-halflings-regular.woff2",
+    "headers": {
+      "referer": ""
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.488Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "content-security-policy": "frame-ancestors guorn.com",
+      "cache-control": "max-age=86400",
+      "etag": "\"69a7c67f-466c\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "expires": "Mon, 30 Mar 2026 06:04:30 GMT",
+      "accept-ranges": "bytes",
+      "content-length": "18028",
+      "date": "Sun, 29 Mar 2026 06:04:30 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "application/octet-stream",
+      "last-modified": "Wed, 04 Mar 2026 05:43:27 GMT",
+      "server": "nginx",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/user/privilege?filename=commons&op=Show&_=1774764279465",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/stock",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.786Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "transfer-encoding": "chunked",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-encoding": "gzip",
+      "etag": "W/\"f10ad1032298a1284eb3f0de0b250c75ffee98f4\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "date": "Sun, 29 Mar 2026 06:04:39 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "text/html; charset=UTF-8",
+      "server": "TornadoServer/4.2.1",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/msg/broadcast?_=1774764279466",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/stock",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.786Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "transfer-encoding": "chunked",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-encoding": "gzip",
+      "etag": "W/\"fef33eee1fe1b446f1491d9fc1dba07da3333264\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "date": "Sun, 29 Mar 2026 06:04:39 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "text/html; charset=UTF-8",
+      "server": "TornadoServer/4.2.1",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/user/privilege?filename=stockScreen&op=Show&_=1774764279467",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/stock",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.786Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "transfer-encoding": "chunked",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-encoding": "gzip",
+      "etag": "W/\"2d56382c26262c9509cf384348fe12b7c6dc9931\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "date": "Sun, 29 Mar 2026 06:04:39 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "text/html; charset=UTF-8",
+      "server": "TornadoServer/4.2.1",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/user/privilege?filename=stockScreen&op=Use&_=1774764279468",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/stock",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.786Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "transfer-encoding": "chunked",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-encoding": "gzip",
+      "etag": "W/\"ab06e2bb09d8eae2480c9086eaa6553d8e8e2d6b\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "date": "Sun, 29 Mar 2026 06:04:39 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "text/html; charset=UTF-8",
+      "server": "TornadoServer/4.2.1",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/stock/meta?category=stock",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/stock",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.786Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "transfer-encoding": "chunked",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-encoding": "gzip",
+      "etag": "W/\"d7edc969885519e22ceeb5b82facfda33ffd2d95\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "date": "Sun, 29 Mar 2026 06:04:39 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "text/html; charset=UTF-8",
+      "server": "TornadoServer/4.2.1",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/stock/hotpool/all?category=stock&_=1774764279469",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/stock",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:39.786Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "transfer-encoding": "chunked",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-encoding": "gzip",
+      "etag": "W/\"13f81fd1494faf4f0aefc050b63b84f8dd5b162a\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "date": "Sun, 29 Mar 2026 06:04:39 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "text/html; charset=UTF-8",
+      "server": "TornadoServer/4.2.1",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "GET",
+    "url": "https://guorn.com/frontend/config?_=1774764279471",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/stock",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:40.098Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "transfer-encoding": "chunked",
+      "content-security-policy": "frame-ancestors guorn.com",
+      "content-encoding": "gzip",
+      "etag": "W/\"89760749da8b1b12f3323ca7f13de9955332bca4\"",
+      "connection": "keep-alive",
+      "x-content-type-options": "nosniff",
+      "date": "Sun, 29 Mar 2026 06:04:40 GMT",
+      "x-xss-protection": "1; mode=block",
+      "content-type": "text/html; charset=UTF-8",
+      "server": "TornadoServer/4.2.1",
+      "x-frame-options": "ALLOW-FROM https://guorn.com/"
+    }
+  },
+  {
+    "type": "request",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/j/collect?v=1&_v=j102&a=1075234209&t=pageview&_s=1&dl=https%3A%2F%2Fguorn.com%2Fstock&ul=zh-cn&dt=%E8%82%A1%E7%A5%A8%E7%AD%96%E7%95%A5%7C%E9%87%8F%E5%8C%96%E6%8A%95%E8%B5%84%20-%20%E6%9E%9C%E4%BB%81%E7%BD%91&sr=1280x720&vp=1280x720&_u=IEBAAEABAAAAACAAI~&jid=1796217720&gjid=139885149&cid=66584767.1774764280&tid=UA-66340962-1&_gid=303804355.1774764280&_r=1&_slc=1&z=1799058312",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:40.361Z",
+    "statusCode": 200,
+    "responseHeaders": {
+      "report-to": "{\"group\":\"ascnsrsgac:207:0\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsgac:207:0\"}],}",
+      "x-content-type-options": "nosniff",
+      "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+      "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+      "date": "Sun, 29 Mar 2026 06:04:40 GMT",
+      "last-modified": "Sun, 17 May 1998 03:00:00 GMT",
+      "content-type": "text/plain",
+      "cache-control": "no-cache, no-store, must-revalidate",
+      "pragma": "no-cache",
+      "cross-origin-resource-policy": "cross-origin",
+      "access-control-allow-credentials": "true",
+      "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsgac:207:0",
+      "access-control-allow-origin": "https://guorn.com",
+      "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsgac:207:0",
+      "content-length": "15",
+      "server": "Golfe2"
+    }
+  },
+  {
+    "type": "request",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-F86HQLY9XG&gtm=45je63p1v9111553102za20g&_p=1774764280589&gcd=13l3l3l3l2l1&npa=0&dma=0&ul=zh-cn&sr=1280x720&cid=66584767.1774764280&ir=1&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EBAI&_s=1&tag_exp=0~115616986~115938466~115938469~117266401~117484252&dl=https%3A%2F%2Fguorn.com%2Fstock&dt=%E8%82%A1%E7%A5%A8%E7%AD%96%E7%95%A5%7C%E9%87%8F%E5%8C%96%E6%8A%95%E8%B5%84%20-%20%E6%9E%9C%E4%BB%81%E7%BD%91&sid=1774764281&sct=1&seg=0&_tu=wAQ&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2667",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://guorn.com/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": null,
+    "timestamp": "2026-03-29T06:04:41.894Z",
+    "statusCode": 204,
+    "responseHeaders": {
+      "cache-control": "no-cache, no-store, must-revalidate",
+      "pragma": "no-cache",
+      "cross-origin-resource-policy": "cross-origin",
+      "access-control-allow-credentials": "true",
+      "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsggc:120:0",
+      "report-to": "{\"group\":\"ascnsrsggc:120:0\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsggc:120:0\"}],}",
+      "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+      "access-control-allow-origin": "https://guorn.com",
+      "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsggc:120:0",
+      "content-length": "0",
+      "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+      "date": "Sun, 29 Mar 2026 06:04:42 GMT",
+      "content-type": "text/plain",
+      "server": "Golfe2"
+    }
+  }
+]

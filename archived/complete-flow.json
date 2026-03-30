@@ -1,0 +1,56 @@
+[
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/user/v1/workspaces",
+    "postData": null,
+    "timestamp": 1774763859681
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/products",
+    "postData": null,
+    "timestamp": 1774763859682
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/rqmessager/v1/messages?unread=false&limit=10",
+    "postData": null,
+    "timestamp": 1774763859682
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/rqmessager/v1/messages?unread=true&limit=10",
+    "postData": null,
+    "timestamp": 1774763859682
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/640c7f5851dc7e67377e085d",
+    "postData": null,
+    "timestamp": 1774763859747
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/640c7f5851dc7e67377e085d/products",
+    "postData": null,
+    "timestamp": 1774763859747
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/backtest/v1/workspaces/640c7f5851dc7e67377e085d/backtests?status=running",
+    "postData": null,
+    "timestamp": 1774763859826
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/strategy/v1/workspaces/640c7f5851dc7e67377e085d/strategies?code=false&own=false&metadata=true",
+    "postData": null,
+    "timestamp": 1774763859826
+  },
+  {
+    "method": "GET",
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/640c7f5851dc7e67377e085d/users",
+    "postData": null,
+    "timestamp": 1774763859883
+  }
+]

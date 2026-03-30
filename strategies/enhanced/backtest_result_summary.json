@@ -1,0 +1,53 @@
+{
+  "test_date": "2026-03-30",
+  "test_method": "Notebook (无时间限制)",
+  "backtest_period": {
+    "start": "2021-01-01",
+    "end": "2025-03-28"
+  },
+  "initial_capital": 100000,
+  "rebalance_frequency": "monthly",
+  "results": {
+    "original_strategy": {
+      "name": "RFScore PB10 原始策略",
+      "total_return": "42.20%",
+      "annual_return": "~9.93%",
+      "sharpe_ratio": 0.49,
+      "win_rate": "52.9%",
+      "trade_count": 51,
+      "description": "基于 breadth 和 trend 择时，固定持仓 20 只"
+    },
+    "enhanced_strategy": {
+      "name": "RFScore PB10 增强策略",
+      "total_return": "39.74%",
+      "annual_return": "~9.35%",
+      "sharpe_ratio": 0.60,
+      "win_rate": "54.9%",
+      "trade_count": 51,
+      "description": "添加情绪开关、四档仓位、风控模块"
+    }
+  },
+  "comparison": {
+    "return_diff": "-2.46%",
+    "sharpe_diff": "+0.12",
+    "win_rate_diff": "+2.0%",
+    "conclusion": "增强策略风险调整后收益更好，夏普比率和胜率更高",
+    "key_improvements": [
+      "2022年10月极端市场：增强策略清仓避险",
+      "情绪开关减少了弱市交易",
+      "四档仓位平滑了风险暴露",
+      "提高了夏普比率和胜率"
+    ]
+  },
+  "methodology": {
+    "advantage": "Notebook 无每日 180 分钟限制",
+    "limitation": "简化版本，使用 get_fundamentals 代替 jqfactor",
+    "accuracy": "月度收益计算，非精确回测"
+  },
+  "files": {
+    "strategy_original": "strategies/rfscore7_pb10_final.py",
+    "strategy_enhanced": "strategies/enhanced/rfscore7_pb10_enhanced_standalone.py",
+    "notebook_script": "skills/joinquant_nookbook/examples/rfscore_full_comparison.py",
+    "comparison_script": "strategies/enhanced/backtest_comparison.py"
+  }
+}

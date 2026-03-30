@@ -1,0 +1,605 @@
+{
+  "next_token": "99",
+  "logs": [
+    {
+      "timestamp": 1641225600000,
+      "level": "INFO",
+      "msg": "Strategy initialized. Benchmark: 000300.XSHG",
+      "seq": 0
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓开始: 2022-01-04 15:00:00",
+      "seq": 1
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "市场状态: breadth=0.52, trend=False",
+      "seq": 2
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "原始股票池: 沪深300=300, 中证500=500, 合计=800",
+      "seq": 3
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "排除科创板后: 775",
+      "seq": 4
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "股票池大小: 100",
+      "seq": 5
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "指标计算: 检查=50, 成功=50, 错误=0",
+      "seq": 6
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "选股结果: 13 只股票",
+      "seq": 7
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "前5只: ['603858.XSHG', '000997.XSHE', '002458.XSHE', '002001.XSHE', '002038.XSHE']",
+      "seq": 8
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "市场正常，正常仓位",
+      "seq": 9
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 目标持股数=20, 实际选股=13",
+      "seq": 10
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 603858.XSHG -> 76923",
+      "seq": 11
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 000997.XSHE -> 76923",
+      "seq": 12
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 002458.XSHE -> 76923",
+      "seq": 13
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 002001.XSHE -> 76923",
+      "seq": 14
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 002038.XSHE -> 76923",
+      "seq": 15
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 300418.XSHE -> 76923",
+      "seq": 16
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 002563.XSHE -> 76923",
+      "seq": 17
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 002901.XSHE -> 76923",
+      "seq": 18
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 600369.XSHG -> 76923",
+      "seq": 19
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 000062.XSHE -> 76923",
+      "seq": 20
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 601228.XSHG -> 76923",
+      "seq": 21
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 601628.XSHG -> 76923",
+      "seq": 22
+    },
+    {
+      "timestamp": 1641279600000,
+      "level": "INFO",
+      "msg": "调仓: 002078.XSHE -> 76923",
+      "seq": 23
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "调仓开始: 2022-02-07 15:00:00",
+      "seq": 24
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "市场状态: breadth=0.24, trend=False",
+      "seq": 25
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "原始股票池: 沪深300=300, 中证500=500, 合计=800",
+      "seq": 26
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "排除科创板后: 775",
+      "seq": 27
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "股票池大小: 100",
+      "seq": 28
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "指标计算: 检查=50, 成功=50, 错误=0",
+      "seq": 29
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "选股结果: 3 只股票",
+      "seq": 30
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "前5只: ['601328.XSHG', '002302.XSHE', '600350.XSHG']",
+      "seq": 31
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "市场偏弱，减仓",
+      "seq": 32
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "调仓: 目标持股数=10, 实际选股=3",
+      "seq": 33
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 603858.XSHG",
+      "seq": 34
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 000997.XSHE",
+      "seq": 35
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 002458.XSHE",
+      "seq": 36
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 002001.XSHE",
+      "seq": 37
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 002038.XSHE",
+      "seq": 38
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 300418.XSHE",
+      "seq": 39
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 002563.XSHE",
+      "seq": 40
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 002901.XSHE",
+      "seq": 41
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 600369.XSHG",
+      "seq": 42
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 000062.XSHE",
+      "seq": 43
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 601228.XSHG",
+      "seq": 44
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 601628.XSHG",
+      "seq": 45
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "卖出: 002078.XSHE",
+      "seq": 46
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "调仓: 601328.XSHG -> 304545",
+      "seq": 47
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "调仓: 002302.XSHE -> 304545",
+      "seq": 48
+    },
+    {
+      "timestamp": 1644217200000,
+      "level": "INFO",
+      "msg": "调仓: 600350.XSHG -> 304545",
+      "seq": 49
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓开始: 2022-03-01 15:00:00",
+      "seq": 50
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "市场状态: breadth=0.40, trend=True",
+      "seq": 51
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "原始股票池: 沪深300=300, 中证500=500, 合计=800",
+      "seq": 52
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "排除科创板后: 775",
+      "seq": 53
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "股票池大小: 100",
+      "seq": 54
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "指标计算: 检查=50, 成功=50, 错误=0",
+      "seq": 55
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "选股结果: 14 只股票",
+      "seq": 56
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "前5只: ['601869.XSHG', '002078.XSHE', '601228.XSHG', '002001.XSHE', '600500.XSHG']",
+      "seq": 57
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "市场正常，正常仓位",
+      "seq": 58
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 目标持股数=20, 实际选股=14",
+      "seq": 59
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "卖出: 601328.XSHG",
+      "seq": 60
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "卖出: 002302.XSHE",
+      "seq": 61
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "卖出: 600350.XSHG",
+      "seq": 62
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 601869.XSHG -> 65097",
+      "seq": 63
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 002078.XSHE -> 65097",
+      "seq": 64
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 601228.XSHG -> 65097",
+      "seq": 65
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 002001.XSHE -> 65097",
+      "seq": 66
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 600500.XSHG -> 65097",
+      "seq": 67
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 000937.XSHE -> 65097",
+      "seq": 68
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 600563.XSHG -> 65097",
+      "seq": 69
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 002203.XSHE -> 65097",
+      "seq": 70
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 000825.XSHE -> 65097",
+      "seq": 71
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 000997.XSHE -> 65097",
+      "seq": 72
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 603288.XSHG -> 65097",
+      "seq": 73
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 002008.XSHE -> 65097",
+      "seq": 74
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 300595.XSHE -> 65097",
+      "seq": 75
+    },
+    {
+      "timestamp": 1646118000000,
+      "level": "INFO",
+      "msg": "调仓: 002387.XSHE -> 65097",
+      "seq": 76
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "调仓开始: 2022-04-01 15:00:00",
+      "seq": 77
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "市场状态: breadth=0.58, trend=True",
+      "seq": 78
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "原始股票池: 沪深300=300, 中证500=500, 合计=800",
+      "seq": 79
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "排除科创板后: 775",
+      "seq": 80
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "股票池大小: 100",
+      "seq": 81
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "指标计算: 检查=50, 成功=50, 错误=0",
+      "seq": 82
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "选股结果: 15 只股票",
+      "seq": 83
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "前5只: ['600649.XSHG', '000046.XSHE', '002302.XSHE', '300418.XSHE', '600350.XSHG']",
+      "seq": 84
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "市场正常，正常仓位",
+      "seq": 85
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "调仓: 目标持股数=20, 实际选股=15",
+      "seq": 86
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 601869.XSHG",
+      "seq": 87
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 002078.XSHE",
+      "seq": 88
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 601228.XSHG",
+      "seq": 89
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 002001.XSHE",
+      "seq": 90
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 600500.XSHG",
+      "seq": 91
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 002203.XSHE",
+      "seq": 92
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 000825.XSHE",
+      "seq": 93
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 000997.XSHE",
+      "seq": 94
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 603288.XSHG",
+      "seq": 95
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 002008.XSHE",
+      "seq": 96
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 300595.XSHE",
+      "seq": 97
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "卖出: 002387.XSHE",
+      "seq": 98
+    },
+    {
+      "timestamp": 1648796400000,
+      "level": "INFO",
+      "msg": "调仓: 600649.XSHG -> 55413",
+      "seq": 99
+    }
+  ]
+}

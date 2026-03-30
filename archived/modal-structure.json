@@ -1,0 +1,34 @@
+[
+  {
+    "class": "el-popup-parent--hidden",
+    "html": "<svg aria-hidden=\"true\" style=\"position: absolute; width: 0px; height: 0px; overflow: hidden;\"><symbol id=\"icon-saas-colorful-skill\" viewBox=\"0 0 1458 1024\"><path d=\"M1225.78933111 894.74844445l-218.87324918-219.24947437 29.79460742-29.84679349-38.71599883-38.78153481-89.3012954 89.46756267-139.99703229-140.20941748 171.67276563-172.02471822c23.30775703 7.86310637 47.72355792 11.84623882 72.6430151 11.8462388 60.66449067 0 117.70629689-23.64878697 160.62509511-66.59428503 66.20592355-66.37097718"
+  },
+  {
+    "class": "el-overlay-dialog",
+    "html": "<div class=\"el-dialog user-status\" tabindex=\"-1\"><header class=\"el-dialog__header\"><p class=\"base__title\" data-v-fd6240=\"\">登录</p><button aria-label=\"el.dialog.close\" class=\"el-dialog__headerbtn\" type=\"button\"><i class=\"el-icon el-dialog__close\"><svg viewBox=\"0 0 1024 1024\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"currentColor\" d=\"M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.2"
+  },
+  {
+    "class": "el-dialog user-status",
+    "html": "<header class=\"el-dialog__header\"><p class=\"base__title\" data-v-fd6240=\"\">登录</p><button aria-label=\"el.dialog.close\" class=\"el-dialog__headerbtn\" type=\"button\"><i class=\"el-icon el-dialog__close\"><svg viewBox=\"0 0 1024 1024\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"currentColor\" d=\"M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064"
+  },
+  {
+    "class": "el-dialog__header",
+    "html": "<p class=\"base__title\" data-v-fd6240=\"\">登录</p><button aria-label=\"el.dialog.close\" class=\"el-dialog__headerbtn\" type=\"button\"><i class=\"el-icon el-dialog__close\"><svg viewBox=\"0 0 1024 1024\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"currentColor\" d=\"M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1"
+  },
+  {
+    "class": "el-dialog__headerbtn",
+    "html": "<i class=\"el-icon el-dialog__close\"><svg viewBox=\"0 0 1024 1024\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"currentColor\" d=\"M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1 0-45.12-45.184z\"></path></svg></i>"
+  },
+  {
+    "class": "el-icon el-dialog__close",
+    "html": "<svg viewBox=\"0 0 1024 1024\" xmlns=\"http://www.w3.org/2000/svg\"><path fill=\"currentColor\" d=\"M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1 0-45.12-45.184z\"></path></svg>"
+  },
+  {
+    "class": "el-dialog__body",
+    "html": "<div class=\"base__body\" data-v-fd6240=\"\"><div class=\"user-status__login\" data-v-c4feae=\"\" data-v-fd6240=\"\"><ul role=\"menubar\" class=\"el-menu el-menu--horizontal title\" data-v-c4feae=\"\" style=\"--el-menu-level: 0;\"><li class=\"el-menu-item\" role=\"menuitem\" tabindex=\"0\" data-v-c4feae=\"\">验证码登录</li><li class=\"el-menu-item is-active\" role=\"menuitem\" tabindex=\"0\" data-v-c4feae=\"\">密码登录</li></ul><div class=\"transition-wrapper\" data-v-c4feae=\"\"><div class=\"code-login main\" data-v-3dd781=\"\" data-v-c4feae=\"\""
+  },
+  {
+    "class": "el-overlay-dialog",
+    "html": ""
+  }
+]
