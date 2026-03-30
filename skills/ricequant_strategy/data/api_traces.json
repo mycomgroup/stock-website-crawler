@@ -1,0 +1,46 @@
+[
+  {
+    "url": "https://www.ricequant.com/api/user/isLogin.do",
+    "method": "POST",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://www.ricequant.com/welcome/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "content-type": "application/x-www-form-urlencoded;charset=utf-8",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "status": 200,
+    "body": "{\"code\": 1, \"message\": \"\\u672a\\u767b\\u9646\"}"
+  },
+  {
+    "url": "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=6bc7efd1-5134-492d-a46f-4b7be7148d27&env=production&platform=4&netType=4&vp=1400%20*%20900&sr=1400%20*%20900&sessionId=session-8f6f036723ad437698ccee31ce5100bd&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+    "method": "GET",
+    "headers": {
+      "referer": "https://www.ricequant.com/"
+    }
+  },
+  {
+    "url": "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=6bc7efd1-5134-492d-a46f-4b7be7148d27&env=production&platform=4&netType=4&vp=1400%20*%20900&sr=1400%20*%20900&sessionId=session-8f6f036723ad437698ccee31ce5100bd&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+    "method": "GET",
+    "headers": {
+      "referer": "https://www.ricequant.com/"
+    }
+  },
+  {
+    "url": "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=6bc7efd1-5134-492d-a46f-4b7be7148d27&env=production&platform=4&netType=4&vp=1400%20*%20900&sr=1400%20*%20900&sessionId=session-8f6f036723ad437698ccee31ce5100bd&referer=",
+    "method": "POST",
+    "headers": {
+      "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryhDu8e90lyJRAn2Hr",
+      "referer": "https://www.ricequant.com/"
+    }
+  },
+  {
+    "url": "https://rumt-zh.com/speed/performance?dnsLookup=0&tcp=0&ssl=0&ttfb=27&contentDownload=0&domParse=107&resourceDownload=226&firstScreenTiming=0&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=6bc7efd1-5134-492d-a46f-4b7be7148d27&env=production&platform=4&netType=4&vp=1400%20*%20900&sr=1400%20*%20900&sessionId=session-8f6f036723ad437698ccee31ce5100bd&referer=&",
+    "method": "GET",
+    "headers": {
+      "referer": "https://www.ricequant.com/"
+    }
+  }
+]

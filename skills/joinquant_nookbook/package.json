@@ -1,18 +1,24 @@
 {
-  "name": "joinquant_nookbook",
+  "name": "joinquant-notebook-strategy",
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "JoinQuant notebook request runner",
+  "description": "在 JoinQuant Notebook 中运行策略代码，无时间限制",
   "main": "main.js",
   "scripts": {
     "capture": "node browser/capture-joinquant-session.js",
     "inspect:login": "node browser/inspect-login-page.js",
     "test:notebook": "node request/test-joinquant-notebook.js",
-    "run": "node run-skill.js"
+    "run": "node run-skill.js",
+    "strategy": "node run-strategy.js",
+    "run-strategy": "node run-strategy.js",
+    "demo": "node run-strategy.js --strategy examples/strategy_runner_demo.py"
   },
   "dependencies": {
     "dotenv": "^16.0.0",
     "playwright": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

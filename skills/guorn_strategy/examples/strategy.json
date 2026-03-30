@@ -1,0 +1,41 @@
+{
+  "name": "低PE高ROE策略",
+  "description": "选择PE低于30且ROE排名前10的股票",
+  "stockPool": {
+    "type": "system",
+    "poolId": "hs300",
+    "stockLimit": 10,
+    "rebalanceCycle": 20
+  },
+  "filters": [
+    {
+      "indicator": "pe_ttm",
+      "operator": "between",
+      "value": [0, 30]
+    },
+    {
+      "indicator": "turnover_rate",
+      "operator": ">",
+      "value": 1
+    }
+  ],
+  "rankings": [
+    {
+      "indicator": "roe",
+      "order": "desc",
+      "weight": 0.6
+    },
+    {
+      "indicator": "revenue_growth",
+      "order": "desc",
+      "weight": 0.4
+    }
+  ],
+  "tradingModel": {
+    "type": 1,
+    "rebalanceCycle": 20,
+    "rebalanceTime": "close",
+    "maxPosition": 10,
+    "positionWeight": "equal"
+  }
+}

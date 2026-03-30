@@ -1,0 +1,26 @@
+{
+  "cookies": [
+    {
+      "name": "tgw_l7_route",
+      "value": "3596f940fbcd94bd2bec34c51be04477",
+      "domain": "www.ricequant.com",
+      "path": "/",
+      "expires": 1774841682.39738,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "sid",
+      "value": "Hqlu37JwDyLkkcBDM67ryaItdMBOULf8|252d15b26a99430b24d6a45fe23c82cf31664fb5bb850b4007a5efc4c5a1ae2d7965cd0d3cb0e252add25cf409a9b6f52336f684e9f62bca3f960db710d8c4ed",
+      "domain": "www.ricequant.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "timestamp": 1774838203851,
+  "capturedAt": "2026-03-30T02:36:43.851Z"
+}
