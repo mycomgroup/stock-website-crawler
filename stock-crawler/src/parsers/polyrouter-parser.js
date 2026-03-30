@@ -66,8 +66,75 @@ class PolyrouterParser extends BaseParser {
       // 等待主内容区域
       await page.waitForSelector('.mdx-content, main, article, h1', { timeout: 10000 }).catch(() => {});
       await page.waitForTimeout(3000); // 额外等待动态内容
+
+      // 尝试展开折叠内容（details/accordion/tab）避免关键字段缺失
+      await this.expandInteractiveContent(page);
+      await page.waitForTimeout(1200);
     } catch (error) {
       console.warn('Wait for content error:', error.message);
+    }
+  }
+
+  /**
+   * 展开页面中的可交互折叠区域
+   * 目标：尽量拿到与网页原始显示一致的完整字段
+   * @param {Page} page
+   */
+  async expandInteractiveContent(page) {
+    try {
+      // 1) 展开所有 details
+      await page.evaluate(() => {
+        document.querySelectorAll('details:not([open])').forEach((el) => {
+          el.setAttribute('open', '');
+        });
+      });
+
+      // 2) 尝试点击常见展开按钮
+      const expandSelectors = [
+        'button[aria-expanded="false"]',
+        '[role="button"][aria-expanded="false"]',
+        '[data-state="closed"][role="button"]',
+        '[data-state="closed"] > button',
+        'summary'
+      ];
+
+      for (const selector of expandSelectors) {
+        const locators = await page.locator(selector).all();
+        for (const locator of locators) {
+          try {
+            const label = ((await locator.innerText().catch(() => '')) || '').trim();
+            const shouldClick = !label ||
+              /(show|more|expand|schema|example|response|request|parameter|header|body|详情|展开|更多)/i.test(label);
+            if (!shouldClick) continue;
+            await locator.click({ timeout: 800 }).catch(() => {});
+          } catch (e) {
+            // 忽略单个元素失败
+          }
+        }
+      }
+
+      // 3) 轮询点击 tab，确保多语言/多示例代码被渲染一次
+      const tabSelectors = [
+        '[role="tab"]',
+        '[data-state][data-orientation] button',
+        '[class*="tab"] button'
+      ];
+
+      for (const selector of tabSelectors) {
+        const tabs = await page.locator(selector).all();
+        for (const tab of tabs) {
+          try {
+            const text = ((await tab.innerText().catch(() => '')) || '').trim();
+            if (!text || text.length > 40) continue;
+            await tab.click({ timeout: 800 }).catch(() => {});
+            await page.waitForTimeout(120);
+          } catch (e) {
+            // 忽略
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Expand interactive content error:', error.message);
     }
   }
 
@@ -275,17 +342,23 @@ class PolyrouterParser extends BaseParser {
         });
         result.rawContent = contentParagraphs.join('\n\n');
 
-        // 提取 API 端点信息
-        const endpointBlock = contentArea.querySelector('[class*="endpoint"], [class*="method"], pre:has(code)');
-        if (endpointBlock) {
-          const endpointText = endpointBlock.textContent.trim();
-          // 解析 HTTP 方法和路径
-          const methodMatch = endpointText.match(/^(GET|POST|PUT|DELETE|PATCH)\s+(\/[\w\/{}-]+)/i);
-          if (methodMatch) {
+        // 提取 API 端点信息（优先匹配代码块 + 文本全局回退）
+        const endpointCandidates = [];
+        const endpointBlocks = contentArea.querySelectorAll('[class*="endpoint"], [class*="method"], pre, code, kbd, samp');
+        endpointBlocks.forEach((el) => {
+          const text = (el.textContent || '').trim();
+          if (text && text.length < 500) endpointCandidates.push(text);
+        });
+        endpointCandidates.push(contentArea.textContent || '');
+
+        for (const candidate of endpointCandidates) {
+          const methodPathMatch = candidate.match(/\b(GET|POST|PUT|DELETE|PATCH)\s+(\/[^\s"'`<>]*)/i);
+          if (methodPathMatch) {
             result.endpoint = {
-              method: methodMatch[1].toUpperCase(),
-              path: methodMatch[2]
+              method: methodPathMatch[1].toUpperCase(),
+              path: methodPathMatch[2]
             };
+            break;
           }
         }
 
@@ -345,6 +418,32 @@ class PolyrouterParser extends BaseParser {
 
           if (rows.length > 0) {
             result.parameters.push({ index, headers, rows });
+          }
+        });
+
+        // 提取 definition list / 键值对参数（很多 docs 用 dl 代替 table）
+        const dls = contentArea.querySelectorAll('dl');
+        dls.forEach((dl, index) => {
+          const terms = Array.from(dl.querySelectorAll('dt'));
+          const descs = Array.from(dl.querySelectorAll('dd'));
+          if (terms.length === 0 || descs.length === 0) return;
+
+          const rows = [];
+          const maxLen = Math.max(terms.length, descs.length);
+          for (let i = 0; i < maxLen; i++) {
+            const name = (terms[i]?.textContent || '').trim();
+            const description = (descs[i]?.textContent || '').trim();
+            if (name || description) {
+              rows.push({ Name: name || '-', Description: description || '-' });
+            }
+          }
+
+          if (rows.length > 0) {
+            result.parameters.push({
+              index: tables.length + index,
+              headers: ['Name', 'Description'],
+              rows
+            });
           }
         });
 
