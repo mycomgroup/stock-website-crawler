@@ -1,14 +1,143 @@
 import BaseParser from './base-parser.js';
 
+const APIFY_CANONICAL_MD_URL = 'https://docs.apify.com/api/v2.md';
+const APIFY_OPENAPI_PATTERN = /https?:\/\/docs\.apify\.com\/api\/openapi\.(?:json|yaml)/g;
+const APIFY_REFERENCE_ROUTE_PATTERN = /#\/reference\/[A-Za-z0-9\-_/]+/g;
+
+function unique(values = []) {
+  return Array.from(new Set((values || []).filter(Boolean)));
+}
+
+function extractSection(markdown = '', heading) {
+  if (!markdown || !heading) return '';
+  const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`(?:^|\\n)#{1,4}\\s+${escaped}\\s*\\n([\\s\\S]*?)(?=\\n#{1,4}\\s+|$)`, 'i');
+  const match = markdown.match(pattern);
+  return match?.[1]?.trim() || '';
+}
+
+function extractCodeExamplesFromMarkdown(markdown = '') {
+  const examples = [];
+  const codeBlockRegex = /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g;
+  let match;
+
+  while ((match = codeBlockRegex.exec(markdown)) !== null && examples.length < 10) {
+    const language = (match[1] || 'text').trim().toLowerCase() || 'text';
+    const code = (match[2] || '').trim();
+    if (!code || code.length < 10) continue;
+    examples.push({ language, code });
+  }
+
+  return examples;
+}
+
+function extractMarkdownMetadata(markdown = '') {
+  const openapiLinks = unique(markdown.match(APIFY_OPENAPI_PATTERN) || []);
+  const referenceRoutes = unique(markdown.match(APIFY_REFERENCE_ROUTE_PATTERN) || []);
+
+  const authenticationSection = extractSection(markdown, 'Authentication') ||
+    extractSection(markdown, 'Authorization');
+
+  const rateLimitSection = extractSection(markdown, 'Rate limiting') ||
+    extractSection(markdown, 'Rate limits') ||
+    extractSection(markdown, 'Limits');
+
+  const noteCandidates = markdown
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => /^[-*]\s+/.test(line))
+    .map((line) => line.replace(/^[-*]\s+/, '').trim())
+    .filter((line) => /(token|rate\s*limit|pagination|webhook|dataset)/i.test(line))
+    .slice(0, 12);
+
+  const responseStatuses = unique((markdown.match(/\b([1-5][0-9]{2})\b/g) || []))
+    .slice(0, 20)
+    .map((code) => ({ code, description: '' }));
+
+  const codeExamples = extractCodeExamplesFromMarkdown(markdown);
+
+  return {
+    openapiLinks,
+    referenceRoutes,
+    authentication: authenticationSection,
+    rateLimit: rateLimitSection,
+    noteCandidates,
+    responseStatuses,
+    codeExamples
+  };
+}
+
+export function parseOpenApiDocument(openapi = {}) {
+  const servers = Array.isArray(openapi.servers) ? openapi.servers.map(s => s.url).filter(Boolean) : [];
+  const baseUrl = servers[0] || 'https://api.apify.com';
+
+  const operations = [];
+  const responseStatusesSet = new Set();
+  const tagsSet = new Set();
+
+  for (const [path, methods] of Object.entries(openapi.paths || {})) {
+    for (const [method, operation] of Object.entries(methods || {})) {
+      if (!['get', 'post', 'put', 'delete', 'patch', 'options', 'head'].includes(method)) continue;
+
+      const responses = operation?.responses || {};
+      Object.keys(responses).forEach((statusCode) => {
+        if (/^[1-5][0-9][0-9]$/.test(statusCode)) {
+          responseStatusesSet.add(statusCode);
+        }
+      });
+
+      const tags = Array.isArray(operation?.tags) ? operation.tags : [];
+      tags.forEach((tag) => tagsSet.add(tag));
+
+      operations.push({
+        method: method.toUpperCase(),
+        path,
+        operationId: operation?.operationId || '',
+        summary: operation?.summary || '',
+        description: operation?.description || '',
+        tags
+      });
+    }
+  }
+
+  const securitySchemes = openapi.components?.securitySchemes || {};
+  const authSummary = Object.entries(securitySchemes)
+    .map(([name, scheme]) => `${name}: ${scheme?.type || 'unknown'}${scheme?.scheme ? ` (${scheme.scheme})` : ''}`)
+    .join('\n');
+
+  const responseStatuses = Array.from(responseStatusesSet)
+    .sort((a, b) => Number(a) - Number(b))
+    .map((code) => ({ code, description: '' }));
+
+  const operationLines = operations
+    .slice(0, 400)
+    .map(op => `${op.method} ${op.path}${op.summary ? ` - ${op.summary}` : ''}`)
+    .join('\n');
+
+  return {
+    api: {
+      method: 'MULTI',
+      endpoint: '/v2/*',
+      baseUrl
+    },
+    servers,
+    operationCount: operations.length,
+    operations,
+    responseStatuses,
+    authentication: authSummary,
+    tags: Array.from(tagsSet),
+    rawContent: JSON.stringify(openapi, null, 2),
+    markdownContent: operationLines
+  };
+}
+
 /**
  * Apify API Parser - 解析 Apify API v2 文档与 OpenAPI 文件
  */
 class ApifyApiParser extends BaseParser {
   async fetchCanonicalMarkdown() {
-    const canonicalUrl = 'https://docs.apify.com/api/v2.md';
-
     try {
-      const response = await fetch(canonicalUrl, {
+      const response = await fetch(APIFY_CANONICAL_MD_URL, {
         headers: {
           Accept: 'text/markdown,text/plain;q=0.9,*/*;q=0.8'
         }
@@ -79,7 +208,7 @@ class ApifyApiParser extends BaseParser {
           .filter(href => href.startsWith('#/reference/'))
       ));
 
-      let canonicalMarkdown = '';
+      let canonicalMarkdownFromPage = '';
       try {
         const response = await fetch('https://docs.apify.com/api/v2.md', {
           headers: {
@@ -87,7 +216,7 @@ class ApifyApiParser extends BaseParser {
           }
         });
         if (response.ok) {
-          canonicalMarkdown = (await response.text())?.trim() || '';
+          canonicalMarkdownFromPage = (await response.text())?.trim() || '';
         }
       } catch (_) {
         // ignore and fallback to DOM text
@@ -99,26 +228,22 @@ class ApifyApiParser extends BaseParser {
         openapiLinks,
         referenceRoutes,
         rawContent: document.body?.innerText || '',
-        canonicalMarkdown
+        canonicalMarkdown: canonicalMarkdownFromPage
       };
     });
 
-    const markdownOpenApiLinks = Array.from(
-      new Set(
-        (canonicalMarkdown.match(/https?:\/\/docs\.apify\.com\/api\/openapi\.(?:json|yaml)/g) || [])
-      )
-    );
-
-    const markdownReferenceRoutes = Array.from(
-      new Set(
-        (canonicalMarkdown.match(/#\/reference\/[A-Za-z0-9\-_/]+/g) || [])
-      )
-    );
-
-    const mergedOpenApiLinks = Array.from(new Set([...data.openapiLinks, ...markdownOpenApiLinks]));
-    const mergedReferenceRoutes = Array.from(new Set([...data.referenceRoutes, ...markdownReferenceRoutes]));
-
     const normalizedRawContent = canonicalMarkdown || data.canonicalMarkdown || data.rawContent;
+    const markdownMeta = extractMarkdownMetadata(normalizedRawContent);
+
+    const mergedOpenApiLinks = unique([...data.openapiLinks, ...markdownMeta.openapiLinks]);
+    const mergedReferenceRoutes = unique([...data.referenceRoutes, ...markdownMeta.referenceRoutes]);
+
+    const relatedLinks = [
+      ...mergedOpenApiLinks.map((item) => ({ title: 'OpenAPI', url: item })),
+      ...mergedReferenceRoutes.map((item) => ({ title: item, url: `https://docs.apify.com/api/v2${item}` }))
+    ];
+
+    const notes = markdownMeta.noteCandidates.map((content) => ({ type: 'important', content }));
 
     return {
       type: 'apify-api-doc',
@@ -130,11 +255,17 @@ class ApifyApiParser extends BaseParser {
         endpoint: '/v2/*',
         baseUrl: 'https://api.apify.com'
       },
+      authentication: markdownMeta.authentication,
+      rateLimit: markdownMeta.rateLimit,
+      responseStatuses: markdownMeta.responseStatuses,
+      codeExamples: markdownMeta.codeExamples,
       entryPoints: [
         'https://docs.apify.com/api/v2',
         ...mergedOpenApiLinks
       ],
       referenceRoutes: mergedReferenceRoutes,
+      relatedLinks,
+      notes,
       urlRules: {
         include: [
           '^https://docs\\.apify\\.com/api/v2(?:\\.md)?(?:[?#].*)?$',
@@ -142,6 +273,7 @@ class ApifyApiParser extends BaseParser {
         ],
         exclude: ['\\?(?:.*&)?utm_', '#/?(?!/reference/)']
       },
+      markdownContent: normalizedRawContent,
       rawContent: normalizedRawContent
     };
   }
@@ -171,45 +303,18 @@ class ApifyApiParser extends BaseParser {
       };
     }
 
-    const servers = Array.isArray(openapi.servers) ? openapi.servers.map(s => s.url).filter(Boolean) : [];
-    const baseUrl = servers[0] || 'https://api.apify.com';
-
-    const operations = [];
-    for (const [path, methods] of Object.entries(openapi.paths || {})) {
-      for (const [method, operation] of Object.entries(methods || {})) {
-        if (!['get', 'post', 'put', 'delete', 'patch', 'options', 'head'].includes(method)) continue;
-        operations.push({
-          method: method.toUpperCase(),
-          path,
-          operationId: operation?.operationId || '',
-          summary: operation?.summary || '',
-          tags: Array.isArray(operation?.tags) ? operation.tags : []
-        });
-      }
-    }
-
-    const operationsPreview = operations
-      .slice(0, 300)
-      .map(op => `${op.method} ${op.path}${op.summary ? ` - ${op.summary}` : ''}`)
-      .join('\n');
+    const parsed = parseOpenApiDocument(openapi);
 
     return {
       type: 'apify-openapi',
       url,
       title: openapi.info?.title || 'Apify API OpenAPI',
       description: openapi.info?.description || '',
-      api: {
-        method: 'MULTI',
-        endpoint: '/v2/*',
-        baseUrl
-      },
-      version: openapi.info?.version || '',
-      servers,
-      operationCount: operations.length,
-      operations,
-      rawContent: operationsPreview
+      ...parsed,
+      version: openapi.info?.version || ''
     };
   }
 }
 
 export default ApifyApiParser;
+export { extractMarkdownMetadata, extractCodeExamplesFromMarkdown };
