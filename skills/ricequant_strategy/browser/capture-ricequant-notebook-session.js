@@ -150,24 +150,31 @@ async function waitForNotebookReady(page) {
 async function loginIfNeeded(page, username, password, hasExistingCookies) {
   await page.waitForTimeout(2000);
   let currentUrl = page.url();
+  console.log(`当前 URL: ${currentUrl}`);
 
   if (currentUrl.includes('/research') && !currentUrl.includes('/login')) {
+    console.log('✓ 已登录（research页面）');
     return { loggedIn: true, mode: 'existing-session' };
   }
 
   if (currentUrl.includes('/hub/') && !currentUrl.includes('/login')) {
+    console.log('✓ 已登录（hub页面）');
     return { loggedIn: true, mode: 'cookie-session' };
   }
 
   if (hasExistingCookies && currentUrl.includes('/login')) {
+    console.log('尝试使用已有 cookies 自动登录...');
     await page.waitForTimeout(3000);
     currentUrl = page.url();
     if (!currentUrl.includes('/login')) {
+      console.log('✓ Cookies 自动登录成功');
       return { loggedIn: true, mode: 'cookie-auto-login' };
     }
+    console.log('✗ Cookies 自动登录失败，需要手动登录');
   }
 
   if (!currentUrl.includes('/login')) {
+    console.log('查找登录入口...');
     await clickFirst(page, [
       'a[href*="/login"]',
       'button:has-text("登录")',
@@ -177,6 +184,7 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
     currentUrl = page.url();
   }
 
+  console.log('切换到密码登录模式...');
   await clickFirst(page, [
     'text=密码登录',
     'text=账号密码登录',
@@ -219,6 +227,7 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
     throw new Error('未找到登录输入框，无法自动填写账号密码');
   }
 
+  console.log('填写登录信息...');
   await usernameInput.fill('');
   await usernameInput.fill(username);
   await passwordInput.fill('');
@@ -226,6 +235,7 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
 
   await page.waitForTimeout(300);
 
+  console.log('提交登录...');
   const submitSelectors = [
     'button.login-submit',
     'button.btn--submit',
@@ -247,6 +257,7 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
     await passwordInput.press('Enter').catch(() => {});
   }
 
+  console.log('等待登录完成...');
   await Promise.race([
     page.waitForURL(url => !url.includes('/login'), { timeout: 15000 }).catch(() => null),
     page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => null),
@@ -255,8 +266,15 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
 
   await page.waitForTimeout(1500);
 
+  const success = !page.url().includes('/login');
+  if (success) {
+    console.log('✓ 登录成功');
+  } else {
+    console.log('✗ 登录失败');
+  }
+
   return {
-    loggedIn: !page.url().includes('/login'),
+    loggedIn: success,
     mode: 'form-login',
     urlAfterSubmit: page.url()
   };
@@ -407,8 +425,14 @@ export async function captureRiceQuantNotebookSession(options = {}) {
   const password = args.password || process.env.RICEQUANT_PASSWORD;
   const notebookUrl = args.url || args.notebookUrl || process.env.RICEQUANT_NOTEBOOK_URL;
   const directNotebookUrl = resolveDirectNotebookUrl(notebookUrl);
-  const headed = args.headed === true || args.headless === 'false';
+  
+  const headed = args.headed === true;
+  const headless = args.headless !== false;
   const forceLogin = args.forceLogin === true || args['force-login'] === true;
+
+  console.log('=== RiceQuant Notebook Session Capture ===');
+  console.log(`模式: ${headed ? '有界面' : '无界面（headless）'}`);
+  console.log(`Notebook URL: ${notebookUrl}`);
 
   if (!username || !password) {
     throw new Error('缺少 RICEQUANT_USERNAME 或 RICEQUANT_PASSWORD');
@@ -423,11 +447,19 @@ export async function captureRiceQuantNotebookSession(options = {}) {
   ensureDir(RAW_CAPTURE_FILE);
 
   const existingCookies = forceLogin ? null : loadExistingCookies();
+  
+  if (existingCookies && existingCookies.length > 0) {
+    console.log(`✓ 发现已有 cookies (${existingCookies.length} 个)`);
+  }
 
+  console.log('启动浏览器...');
   const browser = await chromium.launch({
-    headless: !headed,
+    headless: headless && !headed,
     channel: 'chrome'
-  }).catch(() => chromium.launch({ headless: !headed }));
+  }).catch(() => {
+    console.log('使用默认浏览器...');
+    return chromium.launch({ headless: headless && !headed });
+  });
 
   const context = await browser.newContext({
     locale: 'zh-CN',
@@ -507,19 +539,31 @@ export async function captureRiceQuantNotebookSession(options = {}) {
   let actionResult = null;
 
   try {
+    console.log('访问 RiceQuant 主页...');
     const ricequantUrl = 'https://www.ricequant.com';
     await page.goto(ricequantUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    
     loginResult = await loginIfNeeded(page, username, password, Boolean(existingCookies?.length));
+    
+    if (!loginResult.loggedIn) {
+      throw new Error('登录失败');
+    }
+    
+    console.log('访问 Notebook...');
     await page.waitForTimeout(2000);
     await page.goto(directNotebookUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+    
+    console.log('等待 Notebook 加载...');
     const notebookFrame = await waitForNotebookReady(page);
     await page.waitForTimeout(5000);
 
+    console.log('收集页面状态...');
     pageState = await collectPageState(page, notebookFrame);
     actionResult = await triggerNotebookActions(notebookFrame);
     await page.waitForTimeout(12000);
 
+    console.log('保存 session...');
     const cookies = await context.cookies();
     const cookieHeader = buildCookieHeader(cookies.filter(item => item.domain.includes('ricequant.com')));
     const sessionPayload = {
@@ -534,6 +578,7 @@ export async function captureRiceQuantNotebookSession(options = {}) {
       reusedCookies: existingCookies?.length || 0
     };
     fs.writeFileSync(SESSION_FILE, JSON.stringify(sessionPayload, null, 2));
+    console.log(`✓ Session 已保存: ${SESSION_FILE}`);
 
     const contractPayload = {
       capturedAt: sessionPayload.capturedAt,
