@@ -32,7 +32,7 @@ def calc_rfscore_factors(stocks, watch_date):
             stocks, factor_names, start_date=watch_date, end_date=watch_date
         )
     except Exception as e:
-        log.warn(f"get_factor failed: {e}")
+        logger.warning(f"get_factor failed: {e}")
         return pd.DataFrame()
 
     if current_factors is None or current_factors.empty:
@@ -111,25 +111,18 @@ def calc_rfscore_factors(stocks, watch_date):
 
 
 def init(context):
-    # 基准指数
     context.benchmark = "000300.XSHG"
 
-    # 系统设置
-    set_slippage(FixedSlippage(0))
-    set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
-
-    # 策略参数
     context.ipo_days = 180
     context.base_hold_num = 20
     context.reduced_hold_num = 10
     context.breadth_reduce = 0.25
     context.breadth_stop = 0.15
-    context.primary_pb_group = 1  # PB10%
-    context.reduced_pb_group = 2  # PB20%
+    context.primary_pb_group = 1
+    context.reduced_pb_group = 2
     context.last_market_state = {}
 
-    # 定时任务 - RiceQuant 使用 scheduler
-    scheduler.run_monthly(rebalance, tradingday=1)
+    scheduler.run_monthly(rebalance, monthday=1)
 
 
 def get_universe(context):
@@ -238,7 +231,7 @@ def get_pb_ratio(stocks, watch_date):
         if pb_data is not None and not pb_data.empty:
             return pb_data.get("pb_ratio", pd.Series())
     except Exception as e:
-        log.warn(f"get pb_ratio failed: {e}")
+        logger.warning(f"get pb_ratio failed: {e}")
 
     # 备用: 使用 instruments 获取估值信息
     pb_dict = {}
@@ -404,7 +397,7 @@ def rebalance(context, bar_dict):
         )
         target_stocks = filter_buyable(context, target_stocks)
 
-    log.info(
+    logger.info(
         "rebalance: date=%s breadth=%.3f trend=%s hold_num=%s count=%s"
         % (
             str(watch_date),
@@ -455,10 +448,4 @@ def rebalance(context, bar_dict):
 
 
 def after_trading(context):
-    """
-    收盘后记录市场状态
-    """
-    if context.last_market_state:
-        plot("breadth", context.last_market_state["breadth"])
-        plot("hs300_close", context.last_market_state["idx_close"])
-        plot("hs300_ma20", context.last_market_state["idx_ma20"])
+    pass

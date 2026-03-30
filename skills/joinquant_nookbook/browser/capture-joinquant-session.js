@@ -522,8 +522,10 @@ export async function captureJoinQuantSession(options = {}) {
   let actionResult = null;
 
   try {
-    await page.goto(notebookUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    const researchUrl = 'https://www.joinquant.com/research';
+    await page.goto(researchUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     loginResult = await loginIfNeeded(page, username, password, Boolean(existingCookies?.length));
+    await page.waitForTimeout(2000);
     await page.goto(directNotebookUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     const notebookFrame = await waitForNotebookReady(page);

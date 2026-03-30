@@ -1,116 +1,163 @@
-# RiceQuant 策略回测工具
+# RiceQuant Notebook 策略运行器
 
-RiceQuant 量化交易平台自动化策略回测工具。支持本地策略代码同步、运行回测、获取完整报告。
+**核心优势：无每日 180 分钟时间限制**
+
+在 RiceQuant Notebook 中运行策略代码，快速验证策略逻辑。
 
 ## 功能特性
 
-- 自动登录并保持会话（Cookie 持久化，避免重复登录）
-- 本地策略代码同步到 RiceQuant 平台
-- 运行回测并自动轮询等待完成
-- 获取完整回测报告（风险指标、持仓、日志）
+### Notebook 运行（新增）
+- 无时间限制（策略编辑器限制 180分钟/天）
+- 快速验证策略逻辑
+- 交互调试，逐步执行
+- 自动抓取 Notebook session
+
+### 策略编辑器回测（原有）
+- 自动登录并保持会话
+- 本地策略代码同步
+- 运行回测并获取报告
 - 支持自定义回测参数
 
 ## 快速开始
 
-### 1. 安装依赖
+### Notebook 运行
 
 ```bash
+# 1. 安装依赖
 cd skills/ricequant_strategy
 npm install
+
+# 2. 配置账号和环境变量
+# 创建 .env 文件：
+# RICEQUANT_USERNAME=your_username
+# RICEQUANT_PASSWORD=your_password
+# RICEQUANT_NOTEBOOK_URL=your_notebook_url
+
+# 3. 首次使用：抓取 session
+node browser/capture-ricequant-notebook-session.js --notebook-url "YOUR_NOTEBOOK_URL" --headed
+
+# 4. 运行策略
+node run-strategy.js --strategy examples/simple_backtest.py
+
+# 5. 查看结果
+cat data/ricequant-notebook-result-*.json
 ```
 
-### 2. 配置账号
-
-创建 `.env` 文件：
-
-```env
-RICEQUANT_USERNAME=your_username
-RICEQUANT_PASSWORD=your_password
-```
-
-### 3. 列出策略
+### 策略编辑器回测
 
 ```bash
+# 列出策略
 node list-strategies.js
-# 或
-npm run list
-```
 
-输出示例：
-```
-Available Strategies:
-------------------------------------------------------------
-ID           | Name
-------------------------------------------------------------
-abc123       | 我的策略
-def456       | 双均线策略
-------------------------------------------------------------
-Total: 2 strategies
-```
-
-### 4. 运行回测
-
-```bash
+# 运行回测
 node run-skill.js --id <strategyId> --file ./my-strategy.py
-```
 
-完整参数示例：
-```bash
-node run-skill.js \
-  --id abc123 \
-  --file ./strategy.py \
-  --start 2022-01-01 \
-  --end 2024-12-31 \
-  --capital 1000000 \
-  --freq day \
-  --benchmark 000300.XSHG
-```
-
-### 5. 获取回测报告
-
-```bash
-# 基础报告（终端显示）
-node fetch-report.js --id <backtestId>
-
-# 完整报告（保存到文件）
+# 获取回测报告
 node fetch-report.js --id <backtestId> --full
+```
+
+## Notebook 示例
+
+```bash
+# 运行策略文件
+node run-strategy.js --strategy examples/simple_backtest.py
+
+# 直接执行代码
+node run-strategy.js --cell-source "print('hello')"
+
+# 增加超时时间
+node run-strategy.js --strategy your_strategy.py --timeout-ms 300000
+
+# 重新执行 notebook 中的 cell
+node run-strategy.js --cell-index last
+
+# 创建独立 notebook 并运行
+node run-strategy.js --strategy your_strategy.py --create-new
+
+# 创建独立 notebook，运行后自动清理
+node run-strategy.js --strategy your_strategy.py --create-new --cleanup
+```
+
+## Notebook 管理策略
+
+### 默认模式
+- 使用现有 notebook
+- 在现有 notebook 中追加 cell
+- 不会自动清理
+
+### 独立模式（`--create-new`）
+- 创建新的独立 notebook
+- 名称格式：`strategy_run_<timestamp>_<random>.ipynb`
+- 适合测试和验证
+
+### 临时模式（`--create-new --cleanup`）
+- 创建新的独立 notebook
+- 运行完成后自动删除
+- 适合快速测试，不保留中间文件
+
+## 示例策略
+
+| 文件 | 说明 | 运行时间 |
+|------|------|---------|
+| `examples/simple_backtest.py` | API 连接测试 | ~30秒 |
+| `examples/ma_strategy_notebook.py` | 双均线策略验证 | ~1分钟 |
+| `examples/rfscore_simple_notebook.py` | RFScore 选股测试 | ~2分钟 |
+| `examples/double-ma-strategy.py` | 策略编辑器格式 | 需转换 |
+
+## 策略代码转换
+
+### 策略编辑器格式
+```python
+def init(context):
+    scheduler.run_monthly(rebalance, monthday=1)
+
+def rebalance(context, bar_dict):
+    stocks = get_all_securities("stock", context.now)
+```
+
+### Notebook 格式
+```python
+stocks = get_all_securities("stock", "2024-03-20")
+print(f"股票数: {len(stocks)}")
 ```
 
 ## CLI 命令详解
 
-### run-skill.js - 运行回测
+### run-strategy.js - Notebook 策略运行
 
 | 参数 | 说明 | 默认值 |
 |------|------|--------|
-| `--id` | RiceQuant 策略 ID（必填） | - |
-| `--file` | 本地策略文件路径（必填） | - |
+| `--strategy` | 策略文件路径 | - |
+| `--cell-source` | 直接执行的代码 | - |
+| `--notebook-url` | Notebook URL | 从 .env 读取 |
+| `--timeout-ms` | 超时时间 | 60000 |
+| `--cell-index` | 执行指定 cell | last |
+| `--mode` | all: 执行所有 cells | - |
+| `--create-new` | 创建新的独立 notebook | false |
+| `--cleanup` | 运行后自动清理 notebook | false |
+| `--notebook-base-name` | 新 notebook 基础名称 | strategy_run |
+
+### test-functionality.js - 功能验证测试
+
+```bash
+# 运行自动化测试套件
+node test-functionality.js
+```
+
+测试内容包括：
+1. 基础连接测试
+2. 创建独立 notebook 测试
+3. 自动清理测试
+
+### run-skill.js - 策略编辑器回测
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `--id` | RiceQuant 策略 ID | - |
+| `--file` | 本地策略文件路径 | - |
 | `--start` | 回测开始日期 | 2023-01-01 |
 | `--end` | 回测结束日期 | 2023-12-31 |
 | `--capital` | 初始资金 | 100000 |
-| `--freq` | 回测频率 (day/minute) | day |
-| `--benchmark` | 基准指数 | 000300.XSHG |
-
-### list-strategies.js - 列出策略
-
-```bash
-node list-strategies.js
-```
-
-### fetch-report.js - 获取报告
-
-```bash
-node fetch-report.js --id <backtestId> [--full]
-```
-
-| 参数 | 说明 |
-|------|------|
-| `--id` | 回测 ID（必填） |
-| `--full` | 保存完整报告到 data 目录 |
-
-报告内容：
-- 基本信息（状态、标题、创建时间）
-- 风险指标（Sharpe、Sortino、MaxDrawdown、Alpha、Beta、信息比率）
-- 持仓汇总（交易日数、市值、估算收益率）
 
 ## 文件结构
 
@@ -118,63 +165,86 @@ node fetch-report.js --id <backtestId> [--full]
 ricequant_strategy/
 ├── .env                    # 账户配置
 ├── package.json            # 依赖配置
-├── run-skill.js            # CLI: 运行回测
+├── run-strategy.js         # Notebook 运行脚本
+├── run-skill.js            # 策略编辑器回测脚本
 ├── list-strategies.js      # CLI: 列出策略
 ├── fetch-report.js         # CLI: 获取报告
-├── run-backtest.js         # 脚本: 创建并运行回测
 ├── paths.js                # 路径配置
 ├── load-env.js             # 环境变量加载
 │
 ├── request/
-│   ├── ricequant-client.js # 核心 HTTP 客户端
-│   ├── strategy-runner.js  # 回测工作流
-│   └── ensure-session.js   # 会话入口
+│   ├── ricequant-notebook-client.js           # Notebook API client
+│   ├── test-ricequant-notebook.js             # Notebook test script
+│   ├── ensure-ricequant-notebook-session.js   # Notebook session
+│   ├── ricequant-client.js                    # HTTP client
+│   └── strategy-runner.js                     # 回测工作流
 │
 ├── browser/
-│   ├── session-manager.js  # 会话管理（Cookie 检查）
-│   └── capture-session.js  # 登录捕获（API + 浏览器）
+│   ├── capture-ricequant-notebook-session.js  # Notebook session capture
+│   ├── capture-session.js                     # API login
+│   └── session-manager.js                     # Session persistence
 │
 ├── data/
-│   └── session.json        # Cookie 存储（自动生成）
+│   ├── session.json          # Cookie 存储
+│   ├── notebook-contract.json # Notebook API contract
+│   └── raw-capture.json      # Raw capture data
 │
 └── examples/
-    └── double-ma-strategy.py
+    ├── simple_backtest.py    # 简单测试
+    ├── ma_strategy_notebook.py # MA策略
+    ├── rfscore_simple_notebook.py # RFScore
+    └── double-ma-strategy.py # 策略编辑器格式
 ```
 
-## 会话管理（Cookie 机制）
+## 输出文件
 
-**关键特性：登录一次后，Cookie 会自动保存并复用**
-
-工作流程：
-
-1. **首次运行**
-   - 检测 `data/session.json` 不存在或已过期
-   - 自动登录（优先 API 登录，备用浏览器登录）
-   - 保存 Cookie 到 `data/session.json`
-
-2. **后续运行**
-   - 检测到有效 Cookie（包含 session、rqjwt 等）
-   - 直接复用，**无需重新登录**
-   - 不会打开浏览器
-
-3. **过期处理**
-   - Cookie 有效期：24 小时
-   - 过期后自动重新登录
-
-Cookie 文件示例（`data/session.json`）：
-```json
-{
-  "cookies": [
-    { "name": "sid", "value": "..." },
-    { "name": "rqjwt", "value": "..." }
-  ],
-  "timestamp": 1774763944473
-}
+```bash
+data/
+├── ricequant-notebook-TIMESTAMP.ipynb           # Notebook 快照
+└── ricequant-notebook-result-TIMESTAMP.json     # 执行结果详情
 ```
 
-登录方式（按优先级）：
-1. **API 直接登录** - 快速，无浏览器依赖
-2. **浏览器自动化登录** - 备用方案（Playwright）
+## 故障排查
+
+### Notebook Session 过期
+
+```bash
+node browser/capture-ricequant-notebook-session.js --notebook-url "YOUR_URL" --headed
+```
+
+### Notebook 执行超时
+
+```bash
+node run-strategy.js --strategy your_strategy.py --timeout-ms 300000
+```
+
+### 策略编辑器登录失败
+
+检查 `.env` 文件中的用户名密码是否正确。
+
+### 策略编辑器 Cookie 过期
+
+```bash
+rm data/session.json
+node run-skill.js --id <id> --file <file>
+```
+
+## 对比：Notebook vs 策略编辑器
+
+| 特性 | 策略编辑器 | Notebook |
+|------|-----------|----------|
+| 时间限制 | **180分钟/天** | **无限制** ✓ |
+| 数据 API | ✓ | ✓ |
+| 因子 API | ✓ | ✓ |
+| 回测框架 | 完整 | 需手动实现 |
+| 交互调试 | ✗ | ✓ |
+| 逐步执行 | ✗ | ✓ |
+| 适用场景 | 精确回测 | 快速验证 |
+
+**推荐流程**：
+1. Notebook → 快速验证逻辑
+2. Notebook → 参数调优
+3. 策略编辑器 → 最终精确回测
 
 ## RiceQuant API 端点
 
@@ -182,107 +252,33 @@ Cookie 文件示例（`data/session.json`）：
 |------|------|------|
 | `/api/user/v1/workspaces` | GET | 获取工作空间列表 |
 | `/api/strategy/v1/workspaces/{id}/strategies` | GET | 列出策略 |
-| `/api/strategy/v1/workspaces/{id}/strategies` | POST | 创建策略 |
-| `/api/strategy/v1/workspaces/{id}/strategies/{sid}` | PUT | 保存策略代码 |
 | `/api/backtest/v1/workspaces/{id}/backtests` | POST | 运行回测 |
-| `/api/backtest/v1/workspaces/{id}/backtests/{btId}` | GET | 获取回测状态 |
 | `/api/backtest/v1/workspaces/{id}/backtests/{btId}/risk` | GET | 风险指标 |
-| `/api/backtest/v1/workspaces/{id}/backtests/{btId}/positions` | GET | 持仓数据 |
-| `/api/backtest/v1/workspaces/{id}/backtests/{btId}/logs` | GET | 回测日志 |
 
 ## 程序化调用
 
-```javascript
-import { RiceQuantClient } from './request/ricequant-client.js';
-import { ensureRiceQuantSession } from './browser/session-manager.js';
+### Notebook API
 
-// 1. 获取会话（自动复用 Cookie）
-const cookies = await ensureRiceQuantSession({
-  username: process.env.RICEQUANT_USERNAME,
-  password: process.env.RICEQUANT_PASSWORD
+```javascript
+import { runNotebookTest } from './request/test-ricequant-notebook.js';
+
+const result = await runNotebookTest({
+  notebookUrl: process.env.RICEQUANT_NOTEBOOK_URL,
+  cellSource: 'print("hello")',
+  timeoutMs: 60000
 });
 
-// 2. 创建客户端
+console.log(result.executions[0].textOutput);
+```
+
+### 策略编辑器 API
+
+```javascript
+import { RiceQuantClient } from './request/ricequant-client.js';
+
 const client = new RiceQuantClient({ cookies });
-
-// 3. 列出策略
 const strategies = await client.listStrategies();
-
-// 4. 获取策略上下文
-const context = await client.getStrategyContext(strategyId);
-
-// 5. 保存策略代码
-await client.saveStrategy(strategyId, '策略名称', code, context);
-
-// 6. 运行回测
-const result = await client.runBacktest(strategyId, code, {
-  startTime: '2022-01-01',
-  endTime: '2024-12-31',
-  baseCapital: '1000000',
-  frequency: 'day',
-  benchmark: '000300.XSHG'
-}, context);
-
-// 7. 获取完整报告
 const report = await client.getFullReport(backtestId);
-console.log('Sharpe:', report.risk?.sharpe);
-console.log('MaxDrawdown:', report.risk?.max_drawdown);
-```
-
-## 策略代码注意事项
-
-RiceQuant 使用 RQAlpha 框架，部分 API 与 JoinQuant 不同：
-
-```python
-# 定时任务 - 不支持 time 参数
-scheduler.run_monthly(my_func)  # 正确
-scheduler.run_monthly(my_func, time='open')  # 错误
-
-# 持仓市值
-position = context.portfolio.positions[stock]
-value = position.market_value  # 使用 market_value，不是 value
-
-# 常用基准指数
-# 000300.XSHG - 沪深300
-# 000905.XSHG - 中证500
-# 000001.XSHG - 上证指数
-```
-
-## 故障排查
-
-### 登录失败
-
-```
-Error: Login failed: 401
-```
-
-检查 `.env` 文件中的用户名密码是否正确。
-
-### Cookie 过期
-
-```
-Error: Session expired
-```
-
-删除 `data/session.json` 后重新运行：
-```bash
-rm data/session.json
-node run-skill.js --id <id> --file <file>
-```
-
-### 回测超时
-
-```
-Error: Backtest timeout after 60 attempts
-```
-
-回测时间较长，可在 `run-backtest.js:124` 调整 `maxAttempts`（默认 120 次，每次等待 5 秒）。
-
-### 获取策略 ID
-
-策略 ID 可从 RiceQuant 网页版 URL 获取：
-```
-https://www.ricequant.com/quant/editor/{strategyId}
 ```
 
 ## 许可证

@@ -63,7 +63,7 @@ export async function captureRiceQuantSession(credentials) {
 async function captureViaBrowser(credentials) {
   console.log('Launching browser for RiceQuant...');
   
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     viewport: { width: 1280, height: 720 }
   });

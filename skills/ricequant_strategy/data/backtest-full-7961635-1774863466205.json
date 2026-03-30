@@ -1,0 +1,46 @@
+{
+  "backtestId": "7961635",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-03-30T17:34:38.398000",
+    "start_at": "2026-03-30T17:34:42.327000",
+    "progress": 0,
+    "backtest_id": "7961635",
+    "description": "",
+    "strategy_id": 2415898,
+    "title": "ddd",
+    "account_type": "stock",
+    "end_at": "2026-03-30T17:34:54.460000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 44 in get_limit_up_count\n    all_stocks = [inst.order_book_id for inst in all_instruments(type=\"CS\")]\n    --> context = Context({strategy_mode = 'mainline', limit_up_count = 0, consecutive_losses = 0, stop_trading_until = None, stocks_in_pool = []})\n    --> bar_dict = BarMap()\n\n  File strategy.py, line 44 in <listcomp>\n    all_stocks = [inst.order_book_id for inst in all_instruments(type=\"CS\")]\n    --> .0 = <map object at 0x7f25f1e016d0>\n    --> inst = 'order_book_id'\n\nAttributeError: 'str' object has no attribute 'order_book_id'"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  }
+}

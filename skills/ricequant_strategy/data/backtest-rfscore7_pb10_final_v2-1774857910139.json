@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "config": null,
+  "metadata": null,
+  "status": "error_exit",
+  "summary": null,
+  "create_at": "2026-03-30T16:04:49.572000",
+  "start_at": "2026-03-30T16:04:53.697000",
+  "progress": 0,
+  "backtest_id": "7961475",
+  "description": "",
+  "strategy_id": 2415824,
+  "title": "Test_rfscore7_pb10_final_v2_1774857889118",
+  "account_type": "stock",
+  "end_at": "2026-03-30T16:05:09.408000",
+  "exception": "Traceback (most recent call last):\n  File strategy.py, line 455 in after_trading\n    plot(\"breadth\", context.last_market_state[\"breadth\"])\n    --> context = Context({benchmark = '000300.XSHG', ipo_days = 180, base_hold_num = 20, reduced_hold_num = 10, breadth_reduce = 0.25, breadth_stop = 0.15, primary_pb_group = 1, ...\n\nRuntimeError: plot 不能在 [日内交易后] 中调用。"
+}

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import './load-env.js';
 import { RiceQuantClient } from './request/ricequant-client.js';
+import { ensureRiceQuantSession } from './browser/session-manager.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -59,32 +60,41 @@ async function runBacktest(options) {
   console.log('Benchmark:', benchmark || '000300.XSHG');
   console.log('='.repeat(60) + '\n');
   
-  const client = new RiceQuantClient();
-  
   try {
-    // 1. 检查登录
-    console.log('1. Checking login status...');
+    // 1. 确保会话有效（纯 HTTP 验证，只在过期时启动浏览器）
+    console.log('1. Verifying session...');
+    const credentials = {
+      username: process.env.RICEQUANT_USERNAME,
+      password: process.env.RICEQUANT_PASSWORD
+    };
+    const cookies = await ensureRiceQuantSession(credentials);
+    console.log('   Session OK (' + cookies.length + ' cookies)');
+    
+    const client = new RiceQuantClient({ cookies });
+    
+    // 2. HTTP 验证登录状态
+    console.log('\n2. Checking login status...');
     const loginStatus = await client.checkLogin();
     
     if (loginStatus.code !== 0) {
-      console.error('Error: Not logged in. Run: node auto-login.js');
+      console.error('Error: Session invalid after verification');
       return null;
     }
     console.log('   Logged in as:', loginStatus.fullname || loginStatus.phone);
     
-    // 2. 获取策略上下文
-    console.log('\n2. Getting strategy context...');
+    // 3. 获取策略上下文
+    console.log('\n3. Getting strategy context...');
     const context = await client.getStrategyContext(id);
     console.log('   Strategy name:', context.name || 'N/A');
     console.log('   Workspace ID:', context.workspaceId);
     
-    // 3. 保存策略代码
-    console.log('\n3. Saving strategy code...');
+    // 4. 保存策略代码
+    console.log('\n4. Saving strategy code...');
     const saveResult = await client.saveStrategy(id, context.name || 'Strategy', code, context);
     console.log('   Save result:', saveResult?.message || JSON.stringify(saveResult).substring(0, 100) || 'OK');
     
-    // 4. 运行回测
-    console.log('\n4. Starting backtest...');
+    // 5. 运行回测
+    console.log('\n5. Starting backtest...');
     const backtestResult = await client.runBacktest(id, code, {
       startTime: start || '2021-01-01',
       endTime: end || '2025-03-28',
@@ -104,8 +114,8 @@ async function runBacktest(options) {
     if (backtestId) {
       console.log('\n   ✓ Backtest started! ID:', backtestId);
       
-      // 5. 等待回测完成
-      console.log('\n5. Waiting for backtest to complete...');
+      // 6. 等待回测完成
+      console.log('\n6. Waiting for backtest to complete...');
       let attempts = 0;
       let result = null;
       
@@ -128,9 +138,9 @@ async function runBacktest(options) {
         }
       }
       
-      // 6. 获取完整报告
+      // 7. 获取完整报告
       if (result) {
-        console.log('\n6. Generating full report...');
+        console.log('\n7. Generating full report...');
         const report = await client.getFullReport(backtestId);
         const reportPath = client.writeArtifact(`ricequant-backtest-${backtestId}`, report);
         console.log('   Report saved:', reportPath);

@@ -1,0 +1,46 @@
+{
+  "backtestId": "7961453",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-03-30T15:42:48.855000",
+    "start_at": "2026-03-30T15:42:53.399000",
+    "progress": 0,
+    "backtest_id": "7961453",
+    "description": "",
+    "strategy_id": 2414951,
+    "title": "test_strategy",
+    "account_type": "stock",
+    "end_at": "2026-03-30T15:43:05.141000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 230 in init\n    set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))\n    --> context = Context({benchmark = '000300.XSHG'})\n\nNameError: name 'set_commission' is not defined"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  }
+}

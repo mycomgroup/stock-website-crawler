@@ -24,7 +24,8 @@ export class RiceQuantClient {
     this.outputRoot = path.resolve(options.outputRoot || OUTPUT_ROOT);
     this.sessionPayload = options.sessionPayload || loadJson(this.sessionFile);
     this.origin = 'https://www.ricequant.com';
-    this.cookieJar = this.sessionPayload.cookies || [];
+    // 支持直接传入 cookies 数组，或从 sessionPayload 中获取
+    this.cookieJar = options.cookies || this.sessionPayload.cookies || [];
     this.workspaceId = null;
   }
 
@@ -116,7 +117,7 @@ export class RiceQuantClient {
     
     const body = JSON.stringify({
       name,
-      code: Buffer.from(code).toString('base64')
+      code
     });
     
     try {
@@ -137,7 +138,7 @@ export class RiceQuantClient {
     
     const body = JSON.stringify({
       strategy_id: strategyId,
-      code: Buffer.from(code).toString('base64'),
+      code,
       config: {
         start_date: config.startTime || '2021-01-01',
         end_date: config.endTime || '2025-03-28',
