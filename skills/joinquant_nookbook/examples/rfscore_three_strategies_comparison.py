@@ -65,11 +65,7 @@ def select_stocks_v2(date_str, hold_num=20):
     stocks = get_universe(date_str)
 
     q = query(
-        valuation.code,
-        valuation.pb_ratio,
-        valuation.pe_ratio,
-        indicator.roa,
-        indicator.ocfps,
+        valuation.code, valuation.pb_ratio, valuation.pe_ratio, indicator.roa
     ).filter(valuation.code.in_(stocks))
 
     df = get_fundamentals(q, date=date_str)
@@ -85,7 +81,7 @@ def select_stocks_v2(date_str, hold_num=20):
     )
 
     primary = df[(df["pb_group"] <= 1) & (df["roa"] > 0.5)]
-    primary = primary.sort_values(["roa", "ocfps"], ascending=[False, False])
+    primary = primary.sort_values(["roa", "pb_ratio"], ascending=[False, True])
     picks = primary["code"].tolist()
 
     if len(picks) < hold_num:
@@ -105,11 +101,7 @@ def select_stocks_release_v1(date_str, hold_num=15):
     stocks = get_universe(date_str)
 
     q = query(
-        valuation.code,
-        valuation.pb_ratio,
-        valuation.pe_ratio,
-        indicator.roa,
-        indicator.ocfps,
+        valuation.code, valuation.pb_ratio, valuation.pe_ratio, indicator.roa
     ).filter(valuation.code.in_(stocks))
 
     df = get_fundamentals(q, date=date_str)
@@ -133,9 +125,7 @@ def select_stocks_release_v1(date_str, hold_num=15):
     )
 
     primary = df[df["pb_group"] == 1]
-    primary = primary.sort_values(
-        ["roa", "ocfps", "pb_ratio"], ascending=[False, False, True]
-    )
+    primary = primary.sort_values(["roa", "pb_ratio"], ascending=[False, True])
 
     industry_raw = get_industry(primary["code"].tolist(), date=date_str)
     industry_map = {

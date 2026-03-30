@@ -22,7 +22,6 @@ class RiceQuantAuth {
     
     console.log('Username:', this.username);
     
-    // 确保目录存在
     if (!fs.existsSync(SCREENSHOT_DIR)) {
       fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
     }
@@ -35,12 +34,10 @@ class RiceQuantAuth {
     const timestamp = Date.now();
     const filepath = path.join(SCREENSHOT_DIR, `${name}-${timestamp}.png`);
     await page.screenshot({ path: filepath, fullPage: false });
-    console.log('  Screenshot:', filepath);
-    return filepath;
+    console.log('  Screenshot:', path.basename(filepath));
   }
 
   async saveAuthState(context, metadata = {}) {
-    // 保存 Playwright state
     const state = await context.storageState();
     const stateData = {
       ...state,
@@ -50,7 +47,6 @@ class RiceQuantAuth {
     fs.writeFileSync(AUTH_STATE_FILE, JSON.stringify(stateData, null, 2));
     console.log('  Auth state saved:', AUTH_STATE_FILE);
     
-    // 同时保存为 session.json 格式
     const sessionData = {
       cookies: state.cookies,
       timestamp: Date.now(),
@@ -58,39 +54,10 @@ class RiceQuantAuth {
     };
     fs.writeFileSync(SESSION_FILE, JSON.stringify(sessionData, null, 2));
     console.log('  Session saved:', SESSION_FILE);
-  }
-
-  async checkLoginStatus(page) {
-    try {
-      // 方法1: 检查 URL
-      const url = page.url();
-      console.log('  Current URL:', url);
-      
-      if (url.includes('/workspace') || url.includes('/strategy')) {
-        return true;
-      }
-      
-      // 方法2: 检查是否有用户头像/用户名显示
-      const userElement = await page.$('[class*="avatar"], [class*="user-name"], [class*="username"]');
-      if (userElement) {
-        return true;
-      }
-      
-      // 方法3: 调用 API 检查
-      const loginStatus = await page.evaluate(async () => {
-        try {
-          const response = await fetch('/api/user/isLogin.do', { method: 'POST' });
-          return await response.json();
-        } catch {
-          return { code: -1 };
-        }
-      });
-      
-      return loginStatus.code === 0;
-    } catch (e) {
-      console.log('  Check login error:', e.message);
-      return false;
-    }
+    
+    // 打印 cookies
+    console.log('\n  Cookies saved:');
+    state.cookies.forEach(c => console.log(`    ${c.name}: ${c.value.substring(0, 50)}...`));
   }
 
   async doLogin(page) {
@@ -103,180 +70,141 @@ class RiceQuantAuth {
     
     // 2. 点击登录按钮
     console.log('2. Clicking login button...');
-    
-    const loginButtonSelectors = [
-      'button:has-text("登录")',
-      'a:has-text("登录")',
-      '[class*="login"]:has-text("登录")',
-      'text=登录'
-    ];
-    
-    for (const selector of loginButtonSelectors) {
-      try {
-        const btn = await page.$(selector);
-        if (btn && await btn.isVisible()) {
-          await btn.click();
-          console.log('  Clicked:', selector);
-          break;
-        }
-      } catch (e) {}
-    }
-    
-    await page.waitForTimeout(1500);
+    await page.click('button:has-text("登录")');
+    await page.waitForTimeout(1000);
     await this.takeScreenshot(page, '02-login-modal');
     
-    // 3. 切换到密码登录（如果需要）
-    console.log('3. Checking for password login tab...');
-    
-    const passwordTabSelectors = [
-      'text=密码登录',
-      'text=账号密码登录',
-      '[class*="password"]:has-text("密码")',
-      'li:has-text("密码")',
-      'span:has-text("密码")'
-    ];
-    
-    for (const selector of passwordTabSelectors) {
-      try {
-        const tab = await page.$(selector);
-        if (tab && await tab.isVisible()) {
-          await tab.click();
-          console.log('  Clicked password tab:', selector);
-          await page.waitForTimeout(500);
-          break;
-        }
-      } catch (e) {}
-    }
-    
-    await this.takeScreenshot(page, '03-password-form');
+    // 3. 点击密码登录 tab
+    console.log('3. Clicking "密码登录" tab...');
+    await page.click('text=密码登录');
+    await page.waitForTimeout(800);
+    await this.takeScreenshot(page, '03-password-tab');
     
     // 4. 填写用户名
     console.log('4. Filling username...');
-    
-    const usernameSelectors = [
-      'input[placeholder*="手机"]',
-      'input[placeholder*="用户"]',
-      'input[placeholder*="账号"]',
-      'input[name="username"]',
-      'input[name="mobile"]',
-      'input[name="phone"]',
-      'input[type="text"]',
-      'input[type="tel"]'
-    ];
-    
-    let usernameFilled = false;
-    for (const selector of usernameSelectors) {
-      try {
-        const input = await page.$(selector);
-        if (input && await input.isVisible()) {
-          await input.click();
-          await input.fill('');
-          await input.type(this.username, { delay: 50 });
-          console.log('  Filled username with:', selector);
-          usernameFilled = true;
-          break;
-        }
-      } catch (e) {}
+    const usernameInput = await page.$('input[placeholder="国内手机号或邮箱"]');
+    if (usernameInput) {
+      await usernameInput.click();
+      await page.waitForTimeout(100);
+      await usernameInput.fill('');
+      await page.waitForTimeout(100);
+      // 逐字输入
+      for (const char of this.username) {
+        await usernameInput.press(char);
+        await page.waitForTimeout(50);
+      }
+      console.log('  Filled username:', this.username);
     }
-    
-    if (!usernameFilled) {
-      console.log('  WARNING: Could not find username input!');
-    }
-    
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
     
     // 5. 填写密码
     console.log('5. Filling password...');
-    
-    const passwordSelectors = [
-      'input[type="password"]',
-      'input[placeholder*="密码"]',
-      'input[name="password"]',
-      'input[name="pwd"]'
-    ];
-    
-    let passwordFilled = false;
-    for (const selector of passwordSelectors) {
-      try {
-        const input = await page.$(selector);
-        if (input && await input.isVisible()) {
-          await input.click();
-          await input.fill('');
-          await input.type(this.password, { delay: 50 });
-          console.log('  Filled password with:', selector);
-          passwordFilled = true;
-          break;
-        }
-      } catch (e) {}
+    const passwordInput = await page.$('input[type="password"]');
+    if (passwordInput) {
+      await passwordInput.click();
+      await page.waitForTimeout(100);
+      await passwordInput.fill('');
+      await page.waitForTimeout(100);
+      // 逐字输入
+      for (const char of this.password) {
+        await passwordInput.press(char);
+        await page.waitForTimeout(50);
+      }
+      console.log('  Filled password');
     }
-    
-    if (!passwordFilled) {
-      console.log('  WARNING: Could not find password input!');
-    }
+    await page.waitForTimeout(500);
     
     await this.takeScreenshot(page, '04-filled-form');
     
     // 6. 点击登录按钮
     console.log('6. Clicking submit button...');
+    await page.click('button.btn--submit:has-text("登录")');
+    console.log('  Clicked submit');
     
-    await page.waitForTimeout(500);
-    
-    const submitSelectors = [
-      'button[type="submit"]',
-      'button:has-text("登 录")',
-      'button:has-text("登录")',
-      '[class*="submit"]:has-text("登")',
-      'input[type="submit"]'
-    ];
-    
-    for (const selector of submitSelectors) {
-      try {
-        const btn = await page.$(selector);
-        if (btn && await btn.isVisible()) {
-          await btn.click();
-          console.log('  Clicked submit:', selector);
-          break;
-        }
-      } catch (e) {}
-    }
-    
-    // 7. 等待登录结果
+    // 7. 等待登录结果 - 增加等待时间
     console.log('7. Waiting for login result...');
     
-    await page.waitForTimeout(2000);
-    await this.takeScreenshot(page, '05-after-submit');
+    // 等待可能的跳转
+    await page.waitForTimeout(3000);
+    await this.takeScreenshot(page, '05-after-submit-3s');
     
-    // 检查是否有验证码
-    const captcha = await page.$('[class*="captcha"], [class*="verify"], img[src*="captcha"]');
-    if (captcha) {
-      console.log('\n  !!! CAPTCHA DETECTED !!!');
-      console.log('  Waiting 30 seconds for manual captcha solving...');
-      await page.waitForTimeout(30000);
-      await this.takeScreenshot(page, '06-after-captcha');
-    }
+    // 检查当前 URL
+    let url = page.url();
+    console.log('  URL after 3s:', url);
+    
+    // 等待更长时间
+    await page.waitForTimeout(2000);
+    url = page.url();
+    console.log('  URL after 5s:', url);
+    await this.takeScreenshot(page, '05-after-submit-5s');
     
     // 检查错误信息
-    const errorElement = await page.$('[class*="error"], [class*="message"]');
-    if (errorElement) {
-      const errorText = await errorElement.textContent().catch(() => null);
-      if (errorText && errorText.includes('错误')) {
-        console.log('  Login error:', errorText);
+    const errorSelectors = [
+      '[class*="error"]',
+      '[class*="message"]',
+      '.el-message',
+      '.el-notification'
+    ];
+    
+    for (const selector of errorSelectors) {
+      const errorEl = await page.$(selector);
+      if (errorEl) {
+        const isVisible = await errorEl.isVisible();
+        if (isVisible) {
+          const text = await errorEl.textContent();
+          if (text && text.trim()) {
+            console.log('  Error/Message found:', text.trim());
+          }
+        }
       }
     }
     
-    // 8. 检查登录状态
-    await page.waitForTimeout(2000);
-    const isLoggedIn = await this.checkLoginStatus(page);
-    
-    if (isLoggedIn) {
-      console.log('\n  ✓ LOGIN SUCCESSFUL!');
-      await this.takeScreenshot(page, '07-login-success');
+    // 检查是否成功登录到策略页面
+    if (url.includes('/quant/strategys') || url.includes('/workspace')) {
+      console.log('\n  ✓ LOGIN SUCCESSFUL! (redirected to strategy page)');
+      await this.takeScreenshot(page, '06-login-success');
       return true;
-    } else {
-      console.log('\n  ✗ Login may have failed');
-      await this.takeScreenshot(page, '08-login-failed');
-      return false;
     }
+    
+    // 尝试手动访问 workspace
+    console.log('\n  Trying to access workspace directly...');
+    try {
+      await page.goto('https://www.ricequant.com/workspace', { 
+        waitUntil: 'networkidle', 
+        timeout: 15000 
+      });
+      await page.waitForTimeout(2000);
+      
+      url = page.url();
+      console.log('  Workspace URL:', url);
+      await this.takeScreenshot(page, '07-workspace');
+      
+      if (!url.includes('/welcome') && !url.includes('/login')) {
+        console.log('\n  ✓ LOGIN SUCCESSFUL! (can access workspace)');
+        return true;
+      }
+    } catch (e) {
+      console.log('  Workspace access error:', e.message);
+    }
+    
+    // 最后检查 cookies
+    console.log('\n  Checking cookies...');
+    const cookies = await page.context().cookies();
+    const rqjwt = cookies.find(c => c.name === 'rqjwt');
+    const sid = cookies.find(c => c.name === 'sid');
+    
+    console.log('  rqjwt:', rqjwt ? 'present' : 'missing');
+    console.log('  sid:', sid ? 'present' : 'missing');
+    
+    if (rqjwt) {
+      console.log('\n  ✓ LOGIN SUCCESSFUL! (rqjwt cookie present)');
+      await this.takeScreenshot(page, '08-success-with-cookie');
+      return true;
+    }
+    
+    console.log('\n  ✗ Login appears to have failed');
+    await this.takeScreenshot(page, '09-failed');
+    return false;
   }
 
   async run() {
@@ -286,42 +214,11 @@ class RiceQuantAuth {
     
     const browser = await chromium.launch({
       headless: false,
-      slowMo: 100,
+      slowMo: 30,
       args: ['--start-maximized']
     });
     
-    let context;
-    
-    // 尝试使用保存的状态
-    if (fs.existsSync(AUTH_STATE_FILE)) {
-      console.log('\nTrying saved auth state...');
-      try {
-        context = await browser.newContext({
-          storageState: AUTH_STATE_FILE,
-          viewport: { width: 1400, height: 900 }
-        });
-        
-        const page = await context.newPage();
-        await page.goto('https://www.ricequant.com/workspace', { waitUntil: 'networkidle', timeout: 15000 });
-        
-        const isLoggedIn = await this.checkLoginStatus(page);
-        
-        if (isLoggedIn) {
-          console.log('✓ Saved auth state is valid!\n');
-          await browser.close();
-          return true;
-        } else {
-          console.log('✗ Saved auth state expired');
-        }
-      } catch (e) {
-        console.log('Error using saved state:', e.message);
-      }
-    }
-    
-    // 需要重新登录
-    console.log('\nPerforming fresh login...\n');
-    
-    context = await browser.newContext({
+    const context = await browser.newContext({
       viewport: { width: 1400, height: 900 }
     });
     
@@ -331,25 +228,23 @@ class RiceQuantAuth {
       const success = await this.doLogin(page);
       
       if (success) {
-        // 导航到 workspace 确认登录
-        await page.goto('https://www.ricequant.com/workspace', { waitUntil: 'networkidle' });
-        await page.waitForTimeout(2000);
-        
         await this.saveAuthState(context, { source: 'auto-login' });
         await browser.close();
         return true;
       } else {
-        // 等待用户手动完成登录
         console.log('\n' + '='.repeat(60));
-        console.log('Auto login may have failed.');
-        console.log('Please complete login manually in the browser.');
-        console.log('Waiting 60 seconds...');
+        console.log('Auto login failed.');
+        console.log('Please check your credentials or try manual login.');
+        console.log('Browser will stay open for 30 seconds...');
         console.log('='.repeat(60));
         
-        await page.waitForTimeout(60000);
+        await page.waitForTimeout(30000);
         
-        const isLoggedIn = await this.checkLoginStatus(page);
-        if (isLoggedIn) {
+        // 再次检查
+        const cookies = await context.cookies();
+        const rqjwt = cookies.find(c => c.name === 'rqjwt');
+        if (rqjwt) {
+          console.log('\n✓ rqjwt cookie found after waiting!');
           await this.saveAuthState(context, { source: 'manual' });
           await browser.close();
           return true;
@@ -372,14 +267,15 @@ auth.run().then(success => {
   console.log('\n' + '='.repeat(60));
   if (success) {
     console.log('✓ Authentication successful!');
-    console.log('\nNext steps:');
+    console.log('\nYou can now run:');
     console.log('  node list-strategies.js');
-    console.log('  node run-skill.js --id <strategyId> --file <path>');
+    console.log('  node run-skill.js --id <id> --file <path>');
   } else {
     console.log('✗ Authentication failed!');
-    console.log('\nPlease check:');
-    console.log('  1. Username and password in .env file');
-    console.log('  2. Manual login in browser');
+    console.log('\nPlease verify:');
+    console.log('  1. Username and password in .env');
+    console.log('  2. Account is not locked');
+    console.log('  3. Try manual login in browser');
   }
   console.log('='.repeat(60));
   process.exit(success ? 0 : 1);

@@ -1,0 +1,16 @@
+{
+  "strategyId": 2415741,
+  "backtestId": "7961317",
+  "strategyName": "rfscore7_pb10_final_v2",
+  "startDate": "2023-01-01",
+  "endDate": "2024-06-30",
+  "capital": "100000",
+  "annualReturn": 0,
+  "totalReturn": 0,
+  "maxDrawdown": 0,
+  "sharpe": 0,
+  "alpha": 0,
+  "beta": 0,
+  "winRate": 0,
+  "status": "error_exit"
+}
