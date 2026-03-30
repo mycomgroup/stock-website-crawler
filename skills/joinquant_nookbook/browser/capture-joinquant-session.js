@@ -173,11 +173,24 @@ async function waitForNotebookReady(page) {
   return null;
 }
 
-async function loginIfNeeded(page, username, password) {
+async function loginIfNeeded(page, username, password, hasExistingCookies) {
   await page.waitForTimeout(2000);
   let currentUrl = page.url();
+
   if (currentUrl.includes('/research') && !currentUrl.includes('/user/login/')) {
     return { loggedIn: true, mode: 'existing-session' };
+  }
+
+  if (currentUrl.includes('/hub/') && !currentUrl.includes('/login')) {
+    return { loggedIn: true, mode: 'cookie-session' };
+  }
+
+  if (hasExistingCookies && currentUrl.includes('/user/login/')) {
+    await page.waitForTimeout(3000);
+    currentUrl = page.url();
+    if (!currentUrl.includes('/user/login/')) {
+      return { loggedIn: true, mode: 'cookie-auto-login' };
+    }
   }
 
   if (!currentUrl.includes('/user/login/')) {
@@ -381,6 +394,32 @@ function normalizeCaptureOptions(options = {}) {
   return { ...options };
 }
 
+function loadExistingCookies() {
+  try {
+    if (!fs.existsSync(SESSION_FILE)) {
+      return null;
+    }
+    const data = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
+    if (!data.cookies || !Array.isArray(data.cookies)) {
+      return null;
+    }
+    const capturedAt = new Date(data.capturedAt);
+    const now = new Date();
+    const hoursSinceCapture = (now - capturedAt) / (1000 * 60 * 60);
+    if (hoursSinceCapture > 24 * 7) {
+      return null;
+    }
+    return data.cookies.filter(cookie => {
+      if (cookie.expires && cookie.expires > 0 && cookie.expires < now.getTime() / 1000) {
+        return false;
+      }
+      return true;
+    });
+  } catch {
+    return null;
+  }
+}
+
 export async function captureJoinQuantSession(options = {}) {
   const args = normalizeCaptureOptions(options);
   const username = args.username || process.env.JOINQUANT_USERNAME;
@@ -388,6 +427,7 @@ export async function captureJoinQuantSession(options = {}) {
   const notebookUrl = args.url || args.notebookUrl || process.env.JOINQUANT_NOTEBOOK_URL || DEFAULT_NOTEBOOK_URL;
   const directNotebookUrl = resolveDirectNotebookUrl(notebookUrl);
   const headed = args.headed === true || args.headless === 'false';
+  const forceLogin = args.forceLogin === true || args['force-login'] === true;
 
   if (!username || !password) {
     throw new Error('缺少 JOINQUANT_USERNAME 或 JOINQUANT_PASSWORD');
@@ -396,6 +436,8 @@ export async function captureJoinQuantSession(options = {}) {
   ensureDir(SESSION_FILE);
   ensureDir(CONTRACT_FILE);
   ensureDir(RAW_CAPTURE_FILE);
+
+  const existingCookies = forceLogin ? null : loadExistingCookies();
 
   const browser = await chromium.launch({
     headless: !headed,
@@ -410,6 +452,10 @@ export async function captureJoinQuantSession(options = {}) {
       'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
     }
   });
+
+  if (existingCookies && existingCookies.length > 0) {
+    await context.addCookies(existingCookies);
+  }
 
   const page = await context.newPage();
   const captures = [];
@@ -477,7 +523,7 @@ export async function captureJoinQuantSession(options = {}) {
 
   try {
     await page.goto(notebookUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    loginResult = await loginIfNeeded(page, username, password);
+    loginResult = await loginIfNeeded(page, username, password, Boolean(existingCookies?.length));
     await page.goto(directNotebookUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
     const notebookFrame = await waitForNotebookReady(page);
@@ -497,7 +543,8 @@ export async function captureJoinQuantSession(options = {}) {
       cookies: normalizeCookies(cookies),
       pageState,
       actionResult,
-      login: loginResult
+      login: loginResult,
+      reusedCookies: existingCookies?.length || 0
     };
     fs.writeFileSync(SESSION_FILE, JSON.stringify(sessionPayload, null, 2));
 

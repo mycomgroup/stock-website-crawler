@@ -9,6 +9,25 @@ function resolveSessionFile(sessionFile) {
   return path.resolve(sessionFile || SESSION_FILE);
 }
 
+function isSessionExpired(sessionData) {
+  if (!sessionData?.capturedAt) return true;
+  const capturedAt = new Date(sessionData.capturedAt);
+  const now = new Date();
+  const hoursSinceCapture = (now - capturedAt) / (1000 * 60 * 60);
+  return hoursSinceCapture > 24 * 7;
+}
+
+function hasValidCookies(sessionData) {
+  if (!sessionData?.cookies || !Array.isArray(sessionData.cookies)) return false;
+  const now = Date.now() / 1000;
+  const validCookies = sessionData.cookies.filter(cookie => {
+    if (cookie.name === 'PHPSESSID') return true;
+    if (cookie.expires && cookie.expires > 0 && cookie.expires < now) return false;
+    return true;
+  });
+  return validCookies.length >= 2;
+}
+
 function shouldRefreshSession(error) {
   const message = String(error?.stack || error?.message || error || '');
   if (!message) return true;
@@ -26,17 +45,21 @@ export async function ensureJoinQuantSession(options = {}) {
 
   if (fs.existsSync(sessionFile) && !options.forceRefresh) {
     try {
-      const client = new JoinQuantClient({
-        sessionFile,
-        notebookUrl,
-        outputRoot: options.outputRoot
-      });
-      await client.getNotebookMetadata();
-      return {
-        sessionFile,
-        refreshed: false,
-        reason: 'existing-session-valid'
-      };
+      const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
+      
+      if (!isSessionExpired(sessionData) && sessionData.login?.loggedIn && hasValidCookies(sessionData)) {
+        const client = new JoinQuantClient({
+          sessionFile,
+          notebookUrl,
+          outputRoot: options.outputRoot
+        });
+        await client.getNotebookMetadata();
+        return {
+          sessionFile,
+          refreshed: false,
+          reason: 'existing-session-valid'
+        };
+      }
     } catch (error) {
       if (!shouldRefreshSession(error)) {
         return {

@@ -1,0 +1,13 @@
+{
+  "strategyId": "2415370",
+  "strategyName": "rfscore7_pb10_final_v2",
+  "startDate": "2023-01-01",
+  "endDate": "2024-12-31",
+  "metrics": {
+    "annualReturn": "--",
+    "maxDrawdown": "--",
+    "sharpe": "--"
+  },
+  "screenshot": "/Users/fengzhi/Downloads/git/testlixingren/skills/ricequant_strategy/data/result-rfscore7_pb10_final_v2-1774845673481.png",
+  "timestamp": "2026-03-30T04:41:13.541Z"
+}

@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "config": null,
+  "metadata": null,
+  "status": "error_exit",
+  "summary": null,
+  "create_at": "2026-03-30T13:58:06.995000",
+  "start_at": "2026-03-30T13:58:10.913000",
+  "progress": 0,
+  "backtest_id": "7961317",
+  "description": "",
+  "strategy_id": 2415741,
+  "title": "Test_rfscore7_pb10_final_v2_1774850286542",
+  "account_type": "stock",
+  "end_at": "2026-03-30T13:58:22.751000",
+  "exception": "Traceback (most recent call last):\n  File strategy.py, line 118 in init\n    set_slippage(FixedSlippage(0))\n    --> context = Context({benchmark = '000300.XSHG'})\n\nNameError: name 'set_slippage' is not defined"
+}

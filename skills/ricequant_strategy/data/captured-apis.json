@@ -1,0 +1,77 @@
+[
+  {
+    "url": "https://www.ricequant.com/api/user/isLogin.do",
+    "method": "POST",
+    "postData": null,
+    "status": 200,
+    "response": "{\"code\": 0, \"message\": \"OK\", \"username\": \"\", \"email\": null, \"phone\": \"+8613311390323\", \"fullname\": \"yuping322\", \"userId\": 497381, \"user_id\": \"497381\", \"wxname\": \"\", \"avatar\": \"https://qcdn.ricequant.com/img/avatar/default-avatar.png\", \"third_party\": null, \"init_password\": false, \"agreed_disclaimer\": false, \"rank\": 0}"
+  },
+  {
+    "url": "https://www.ricequant.com/api/user/v1/workspaces",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\"data\": [{\"name\": \"user_497381\\u7684\\u5de5\\u4f5c\\u7a7a\\u95f4\", \"admin\": 497381, \"capacity\": 3, \"users\": [497381], \"ctime\": \"2023-03-11\", \"tags\": [\"default\"], \"description\": \"user_497381\\u7684\\u9ed8\\u8ba4\\u5de5\\u4f5c\\u7a7a\\u95f4\", \"id\": \"640c7f5851dc7e67377e085d\"}]}"
+  },
+  {
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/products",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\"data\": [{\"ws_id\": \"640c7f5851dc7e67377e085d\", \"product\": [{\"start\": \"2000-01-01\", \"expire\": \"2099-01-01\", \"product\": {\"name\": \"QUANT\", \"version\": \"Base\", \"features\": [\"\\u80a1\\u7968\\u3001ETF\\u3001LOF\\u3001\\u6307\\u6570\\u3001\\u671f\\u8d27\\u76f8\\u5173\\u57fa\\u7840\\u6570\\u636e\\u53ca\\u5386\\u53f2\\u65e5\\u7ebf/\\u5206\\u949f\\uff0c\\u5b9e\\u65f6\\u5206\\u949f\\u6570\\u636e\", \"\\u80a1\\u7968\\u8d22\\u52a1\\u6570\\u636e\\uff0c\\u8d22\\u52a1\\u56e0\\u5b50\\u6570\\u636e\\uff0c\\u6280\\u672f\\u56e0\\u5b50\\u6570\\u636e\\uff0calpha101\\u56e"
+  },
+  {
+    "url": "https://www.ricequant.com/api/rqmessager/v1/messages?unread=false&limit=10",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\n  \"data\": [], \n  \"total\": 0\n}\n"
+  },
+  {
+    "url": "https://www.ricequant.com/api/rqmessager/v1/messages?unread=true&limit=10",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\n  \"data\": [], \n  \"total\": 0\n}\n"
+  },
+  {
+    "url": "https://www.ricequant.com/api/user/isLogin.do",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/640c7f5851dc7e67377e085d",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\"data\": {\"name\": \"user_497381\\u7684\\u5de5\\u4f5c\\u7a7a\\u95f4\", \"admin\": 497381, \"capacity\": 3, \"users\": [497381], \"ctime\": \"2023-03-11\", \"tags\": [\"default\"], \"description\": \"user_497381\\u7684\\u9ed8\\u8ba4\\u5de5\\u4f5c\\u7a7a\\u95f4\", \"id\": \"640c7f5851dc7e67377e085d\"}}"
+  },
+  {
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/640c7f5851dc7e67377e085d/products",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\"data\": [{\"start\": \"2000-01-01\", \"expire\": \"2099-01-01\", \"product\": {\"name\": \"QUANT\", \"version\": \"Base\", \"features\": [\"\\u80a1\\u7968\\u3001ETF\\u3001LOF\\u3001\\u6307\\u6570\\u3001\\u671f\\u8d27\\u76f8\\u5173\\u57fa\\u7840\\u6570\\u636e\\u53ca\\u5386\\u53f2\\u65e5\\u7ebf/\\u5206\\u949f\\uff0c\\u5b9e\\u65f6\\u5206\\u949f\\u6570\\u636e\", \"\\u80a1\\u7968\\u8d22\\u52a1\\u6570\\u636e\\uff0c\\u8d22\\u52a1\\u56e0\\u5b50\\u6570\\u636e\\uff0c\\u6280\\u672f\\u56e0\\u5b50\\u6570\\u636e\\uff0calpha101\\u56e0\\u5b50\\u6570\\u636e\", \"\\u5b8f\\u89c2\\u7ecf\\u6d4e\\u6"
+  },
+  {
+    "url": "https://www.ricequant.com/api/backtest/v1/workspaces/640c7f5851dc7e67377e085d/backtests?status=running",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\"next_token\":\"0\",\"backtests\":[]}"
+  },
+  {
+    "url": "https://www.ricequant.com/api/strategy/v1/workspaces/640c7f5851dc7e67377e085d/strategies?code=false&own=false&metadata=true",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "[{\"metadata\":{\"strategy_type\":\"general\",\"wizard_option\":null},\"config\":{\"stock_init_cash\":1000000.0,\"futures_init_cash\":0.0,\"bond_init_cash\":0.0,\"start_date\":\"2015-01-04\",\"end_date\":\"2020-01-04\",\"frequency\":\"day\",\"commission_multiplier\":1.0,\"benchmark\":\"000300.XSHG\",\"dividend_reinvestment\":false,\"enable_profiler\":false,\"enable_short_sell\":false,\"margin_multiplier\":1.0,\"matching_type\":\"current_bar\",\"slippage\":0.0,\"slippage_model\":\"PriceRatioSlippage\",\"volume_limit\":false,\"volume_percent\":0.25},\"t"
+  },
+  {
+    "url": "https://www.ricequant.com/api/user/v1/workspaces/640c7f5851dc7e67377e085d/users",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "{\"data\": [{\"phone\": \"+8613311390323\", \"profile\": {\"avatar\": \"https://qcdn.ricequant.com/img/avatar/default-avatar.png\", \"fullname\": \"yuping322\", \"school\": null, \"gender\": 0, \"education\": null, \"company\": null, \"job\": null, \"signature\": null, \"locale\": \"zh_CN\", \"settings\": \"{\\\"frontSize\\\": \\\"small\\\", \\\"keybind\\\": \\\"default\\\", \\\"theme\\\": \\\"eclipse\\\"}\", \"company_id\": null}, \"ctime\": \"2023-03-11\", \"last_login_time\": \"2026-03-30\", \"rank\": 0, \"id\": 497381}]}"
+  }
+]

@@ -1,188 +1,217 @@
 import './load-env.js';
 import { RiceQuantClient } from './request/ricequant-client.js';
-import { ensureRiceQuantSession } from './browser/session-manager.js';
-import fs from 'node:fs';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const WORKSPACE_ID = '640c7f5851dc7e67377e085d';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const OUTPUT_DIR = path.join(__dirname, 'data');
 
-async function createAndRunBacktest() {
-  console.log('=== RiceQuant Create Strategy & Run Backtest ===\n');
+async function runBacktest(codeFile, startDate, endDate, capital) {
+  const code = fs.readFileSync(codeFile, 'utf8');
+  const strategyName = path.basename(codeFile, '.py');
+  
+  console.log('\n' + '='.repeat(60));
+  console.log('RiceQuant Backtest - Create, Run, Delete');
+  console.log('='.repeat(60));
+  console.log('Strategy:', strategyName);
+  console.log('Period:', startDate, '-', endDate);
+  console.log('Capital:', capital);
+  console.log('Code length:', code.length);
+  console.log('='.repeat(60) + '\n');
+  
+  const client = new RiceQuantClient();
+  let strategyId = null;
+  let backtestId = null;
   
   try {
-    // 1. 确保会话
-    console.log('1. Ensuring session...');
-    const credentials = {
-      username: process.env.RICEQUANT_USERNAME,
-      password: process.env.RICEQUANT_PASSWORD
-    };
-    const cookies = await ensureRiceQuantSession(credentials);
-    console.log(`✓ Session ready (${cookies.length} cookies)`);
+    // Step 1: 检查登录
+    console.log('1. Checking login...');
+    const loginStatus = await client.checkLogin();
     
-    const client = new RiceQuantClient({ cookies });
+    if (loginStatus.code !== 0) {
+      console.log('   ❌ Not logged in!');
+      console.log('   Please run: node auto-login.js');
+      return null;
+    }
+    console.log('   ✓ Logged in as:', loginStatus.fullname || loginStatus.phone);
     
-    // 2. 读取策略代码
-    console.log('\n2. Loading strategy code...');
-    const strategyCode = fs.readFileSync('strategy_rfscore_v2.py', 'utf8');
-    console.log(`✓ Strategy loaded (${strategyCode.length} chars)`);
+    // Step 2: 创建新策略
+    console.log('\n2. Creating new strategy...');
+    const createResult = await client.createStrategy(`Test_${strategyName}_${Date.now()}`, code);
     
-    // 3. 创建新策略
-    console.log('\n3. Creating new strategy...');
-    const createUrl = `/api/strategy/v1/workspaces/${WORKSPACE_ID}/strategies`;
+    strategyId = createResult.strategy_id || createResult._id || createResult.id;
     
-    const strategyData = {
-      title: 'RFScore Pure Offensive',
-      code: strategyCode,
-      metadata: {
-        strategy_type: 'general',
-        wizard_option: null
-      },
-      config: {
-        stock_init_cash: 1000000,
-        futures_init_cash: 0,
-        bond_init_cash: 0,
-        start_date: '2022-01-01',
-        end_date: '2025-03-28',
-        frequency: 'day',
-        commission_multiplier: 1,
-        benchmark: '000300.XSHG',
-        dividend_reinvestment: false,
-        enable_profiler: false,
-        enable_short_sell: false,
-        margin_multiplier: 1,
-        matching_type: 'current_bar',
-        slippage: 0,
-        slippage_model: 'PriceRatioSlippage',
-        volume_limit: false,
-        volume_percent: 0.25
-      },
-      account_type: 'stock',
-      permission: 'write'
-    };
+    if (!strategyId) {
+      console.log('   ❌ Failed to create strategy');
+      console.log('   Response:', JSON.stringify(createResult).substring(0, 300));
+      return null;
+    }
+    console.log('   ✓ Strategy created:', strategyId);
     
-    try {
-      const createResult = await client.request(createUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(strategyData)
-      });
+    // Step 3: 运行回测
+    console.log('\n3. Running backtest...');
+    const backtestResult = await client.runBacktest(strategyId, code, {
+      startTime: startDate,
+      endTime: endDate,
+      baseCapital: capital,
+      frequency: 'day',
+      benchmark: '000300.XSHG'
+    });
+    
+    backtestId = backtestResult.backtestId;
+    
+    if (typeof backtestId === 'string') {
+      backtestId = backtestId.replace(/"/g, '');
+    }
+    
+    if (!backtestId) {
+      console.log('   ❌ Failed to start backtest');
+      console.log('   Response:', JSON.stringify(backtestResult).substring(0, 300));
+      return null;
+    }
+    console.log('   ✓ Backtest started:', backtestId);
+    
+    // Step 4: 等待回测完成
+    console.log('\n4. Waiting for completion...');
+    
+    let completed = false;
+    let attempts = 0;
+    const maxAttempts = 120; // 10分钟
+    
+    while (!completed && attempts < maxAttempts) {
+      await new Promise(r => setTimeout(r, 5000));
+      attempts++;
       
-      console.log('✓ Strategy created');
-      console.log('Result:', JSON.stringify(createResult).substring(0, 300));
-      
-      const strategyId = createResult.strategy_id || createResult.id;
-      console.log(`Strategy ID: ${strategyId}`);
-      
-      // 4. 运行回测
-      console.log('\n4. Running backtest...');
-      const backtestUrl = `/api/backtest/v1/workspaces/${WORKSPACE_ID}/backtests`;
-      
-      const backtestData = {
-        strategy_id: strategyId,
-        config: {
-          start_date: '2022-01-01',
-          end_date: '2025-03-28',
-          stock_init_cash: 1000000,
-          futures_init_cash: 0,
-          bond_init_cash: 0,
-          frequency: 'day',
-          benchmark: '000300.XSHG',
-          commission_multiplier: 1,
-          dividend_reinvestment: false,
-          enable_profiler: false,
-          enable_short_sell: false,
-          margin_multiplier: 1,
-          matching_type: 'current_bar',
-          slippage: 0,
-          slippage_model: 'PriceRatioSlippage',
-          volume_limit: false,
-          volume_percent: 0.25
-        }
-      };
-      
-      const backtestResult = await client.request(backtestUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(backtestData)
-      });
-      
-      console.log('✓ Backtest started');
-      console.log('Backtest result:', JSON.stringify(backtestResult).substring(0, 300));
-      
-      // 处理返回的回测ID
-      let backtestId;
-      if (typeof backtestResult === 'string') {
-        backtestId = backtestResult.replace(/"/g, '');  // 移除引号
-      } else {
-        backtestId = backtestResult.backtest_id || backtestResult.id || backtestResult;
-      }
-      console.log(`Backtest ID: ${backtestId}`);
-      
-      // 5. 轮询等待回测完成
-      console.log('\n5. Waiting for backtest to complete...');
-      let isComplete = false;
-      let attempts = 0;
-      const maxAttempts = 120; // 最多等待10分钟
-      
-      while (!isComplete && attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        attempts++;
-        
-        try {
-          const statusUrl = `/api/backtest/v1/workspaces/${WORKSPACE_ID}/backtests/${backtestId}`;
-          const status = await client.request(statusUrl, { method: 'GET' });
-          
-          const backtestStatus = status.status || status.backtest?.status || 'unknown';
-          const progress = status.progress || status.backtest?.progress || 0;
-          
-          console.log(`  [${attempts}/${maxAttempts}] Status: ${backtestStatus}, Progress: ${progress}%`);
-          
-          if (backtestStatus === 'finished' || backtestStatus === 'completed' || backtestStatus === 'success') {
-            isComplete = true;
-            console.log('\n✓ Backtest completed!');
-          } else if (backtestStatus === 'failed' || backtestStatus === 'error') {
-            throw new Error(`Backtest failed: ${JSON.stringify(status)}`);
-          }
-        } catch (err) {
-          console.log(`  [${attempts}] Error checking status: ${err.message}`);
-        }
-      }
-      
-      if (!isComplete) {
-        console.log('\n⚠ Backtest did not complete within timeout');
-      }
-      
-      // 6. 获取回测结果
-      console.log('\n6. Fetching backtest results...');
       try {
-        const resultUrl = `/api/backtest/v1/workspaces/${WORKSPACE_ID}/backtests/${backtestId}`;
-        const result = await client.request(resultUrl, { method: 'GET' });
+        const result = await client.getBacktestResult(backtestId);
+        const status = result.status || 'unknown';
+        const progress = result.progress || 0;
         
-        fs.writeFileSync('backtest-result.json', JSON.stringify(result, null, 2));
-        console.log('✓ Result saved to backtest-result.json');
-        console.log('\nResult summary:');
-        console.log(JSON.stringify(result, null, 2).substring(0, 1000));
-      } catch (err) {
-        console.log('Error fetching result:', err.message);
-      }
-      
-    } catch (err) {
-      console.log('Error creating strategy:', err.message);
-      if (err.message.includes('400')) {
-        console.log('\nTrying alternative approach...');
+        process.stdout.write(`   [${attempts}/${maxAttempts}] Status: ${status}, Progress: ${progress}%   \r`);
         
-        // 列出现有策略
-        const strategies = await client.listStrategies();
-        console.log(`\nExisting strategies: ${strategies.length}`);
-        strategies.forEach((s, i) => {
-          console.log(`  ${i + 1}. ${s.id} - ${s.name}`);
-        });
+        if (status === 'finished' || status === 'completed' || progress >= 100) {
+          completed = true;
+          console.log('\n   ✓ Backtest completed!');
+        } else if (status === 'error_exit' || status === 'failed') {
+          console.log('\n   ❌ Backtest failed!');
+          console.log('   Error:', result.exception || result.description);
+          completed = true;
+        }
+      } catch (e) {
+        console.log(`\n   Error checking: ${e.message}`);
       }
     }
     
-  } catch (error) {
-    console.error('\n✗ Error:', error.message);
-    console.error(error.stack);
+    if (!completed) {
+      console.log('\n   ⚠ Timeout waiting for backtest');
+    }
+    
+    // Step 5: 获取结果
+    console.log('\n5. Fetching results...');
+    
+    const fullResult = await client.getBacktestResult(backtestId);
+    
+    // 保存结果
+    const timestamp = Date.now();
+    const resultFile = path.join(OUTPUT_DIR, `backtest-${strategyName}-${timestamp}.json`);
+    fs.writeFileSync(resultFile, JSON.stringify(fullResult, null, 2));
+    console.log('   Result saved:', resultFile);
+    
+    // 提取关键指标
+    const risk = fullResult.risk || {};
+    const summary = fullResult.summary || {};
+    
+    const results = {
+      strategyId,
+      backtestId,
+      strategyName,
+      startDate,
+      endDate,
+      capital,
+      annualReturn: (risk.annual_returns || 0) * 100,
+      totalReturn: (risk.total_returns || 0) * 100,
+      maxDrawdown: (risk.max_drawdown || 0) * 100,
+      sharpe: risk.sharpe || 0,
+      alpha: risk.alpha || 0,
+      beta: risk.beta || 0,
+      winRate: (risk.win_rate || 0) * 100,
+      status: fullResult.status
+    };
+    
+    // 打印结果
+    console.log('\n' + '='.repeat(60));
+    console.log('BACKTEST RESULTS');
+    console.log('='.repeat(60));
+    console.log('Status:', fullResult.status);
+    console.log('Annual Return:', results.annualReturn.toFixed(2), '%');
+    console.log('Total Return:', results.totalReturn.toFixed(2), '%');
+    console.log('Max Drawdown:', results.maxDrawdown.toFixed(2), '%');
+    console.log('Sharpe Ratio:', results.sharpe.toFixed(2));
+    console.log('Alpha:', results.alpha.toFixed(2));
+    console.log('Beta:', results.beta.toFixed(2));
+    console.log('Win Rate:', results.winRate.toFixed(1), '%');
+    console.log('='.repeat(60));
+    
+    // 保存摘要
+    const summaryFile = path.join(OUTPUT_DIR, `summary-${strategyName}-${timestamp}.json`);
+    fs.writeFileSync(summaryFile, JSON.stringify(results, null, 2));
+    console.log('\nSummary saved:', summaryFile);
+    
+    return results;
+    
+  } catch (e) {
+    console.error('\n❌ Error:', e.message);
+    console.error(e.stack);
+    return null;
+    
+  } finally {
+    // Step 6: 删除策略
+    if (strategyId) {
+      console.log('\n6. Cleaning up...');
+      const deleted = await client.deleteStrategy(strategyId);
+      if (deleted) {
+        console.log('   ✓ Strategy deleted:', strategyId);
+      } else {
+        console.log('   ⚠ Failed to delete strategy');
+      }
+    }
+    
+    console.log('\n' + '='.repeat(60));
+    console.log('Done!');
+    console.log('='.repeat(60));
   }
 }
 
-createAndRunBacktest();
+// 主程序
+const args = process.argv.slice(2);
+
+if (args.length < 1) {
+  console.log(`
+Usage: node run-backtest.js <codeFile> [startDate] [endDate] [capital]
+
+Arguments:
+  codeFile    - Strategy Python file path
+  startDate   - Backtest start date (default: 2021-01-01)
+  endDate     - Backtest end date (default: 2025-03-28)
+  capital     - Initial capital (default: 100000)
+
+Examples:
+  # Run original strategy
+  node run-backtest.js ../../strategies/Ricequant/rfscore7_pb10_final_v2.py
+
+  # Run enhanced strategy
+  node run-backtest.js ../../strategies/Ricequant/rfscore7_pb10_enhanced.py 2023-01-01 2024-12-31
+
+  # With custom capital
+  node run-backtest.js strategy.py 2021-01-01 2025-03-28 500000
+`);
+  process.exit(0);
+}
+
+runBacktest(
+  args[0],
+  args[1] || '2021-01-01',
+  args[2] || '2025-03-28',
+  args[3] || '100000'
+);
