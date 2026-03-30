@@ -31,17 +31,32 @@ npm install
 # 创建 .env 文件：
 # RICEQUANT_USERNAME=your_username
 # RICEQUANT_PASSWORD=your_password
-# RICEQUANT_NOTEBOOK_URL=your_notebook_url
+# RICEQUANT_NOTEBOOK_URL=https://www.ricequant.com/research
 
-# 3. 首次使用：抓取 session
-node browser/capture-ricequant-notebook-session.js --notebook-url "YOUR_NOTEBOOK_URL" --headed
-
-# 4. 运行策略
+# 3. 运行策略（自动处理 session）
 node run-strategy.js --strategy examples/simple_backtest.py
 
-# 5. 查看结果
+# 4. 查看结果
 cat data/ricequant-notebook-result-*.json
 ```
+
+### Session 自动管理
+
+**系统会自动处理 session，无需手动干预：**
+
+- ✅ 自动检查现有 session 是否有效
+- ✅ Session 无效时自动后台登录（headless模式）
+- ✅ 登录成功后自动保存 session
+- ✅ 后续运行自动复用有效 session（7天有效期）
+
+**首次运行时会自动登录，后续运行会自动复用 session。**
+
+测试 session 状态：
+```bash
+npm run test-session
+```
+
+详细说明请查看：[SESSION_MANAGEMENT.md](SESSION_MANAGEMENT.md)
 
 ### 策略编辑器回测
 

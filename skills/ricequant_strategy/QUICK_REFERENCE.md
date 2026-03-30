@@ -3,11 +3,21 @@
 ## 一键运行
 
 ```bash
-# 首次使用：抓取 session
-node browser/capture-ricequant-notebook-session.js --notebook-url "YOUR_NOTEBOOK_URL" --headed
-
-# 运行策略
+# 配置环境变量后直接运行（自动处理 session）
 node run-strategy.js --strategy examples/simple_backtest.py
+```
+
+## Session 自动管理
+
+**无需手动抓取 session，系统自动处理：**
+
+1. 自动检查现有 session 是否有效
+2. Session 无效时自动后台登录（headless模式）
+3. 自动保存和复用 session（7天有效期）
+
+**测试 session 状态：**
+```bash
+npm run test-session
 ```
 
 ## 常用命令

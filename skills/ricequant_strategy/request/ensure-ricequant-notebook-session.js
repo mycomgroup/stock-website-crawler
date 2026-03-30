@@ -48,33 +48,47 @@ export async function ensureRiceQuantNotebookSession(options = {}) {
       const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
       
       if (!isSessionExpired(sessionData) && sessionData.login?.loggedIn && hasValidCookies(sessionData)) {
+        console.log('✓ 使用现有 session（未过期）');
+        console.log(`  Session 文件: ${sessionFile}`);
+        console.log(`  Session 时间: ${sessionData.capturedAt}`);
+        
         const client = new RiceQuantNotebookClient({
           sessionFile,
           notebookUrl,
           outputRoot: options.outputRoot
         });
-        await client.getNotebookMetadata();
-        return {
-          sessionFile,
-          refreshed: false,
-          reason: 'existing-session-valid'
-        };
+        
+        try {
+          await client.getNotebookMetadata();
+          console.log('✓ Session 验证成功');
+          return {
+            sessionFile,
+            refreshed: false,
+            reason: 'existing-session-valid'
+          };
+        } catch (verifyError) {
+          console.log(`✗ Session 验证失败: ${verifyError.message}`);
+          console.log('  需要重新登录...');
+        }
+      } else {
+        if (isSessionExpired(sessionData)) {
+          console.log('✗ Session 已过期（超过7天）');
+        } else if (!sessionData.login?.loggedIn) {
+          console.log('✗ Session 未登录');
+        } else if (!hasValidCookies(sessionData)) {
+          console.log('✗ Session cookies 无效');
+        }
       }
     } catch (error) {
-      if (!shouldRefreshSession(error)) {
-        return {
-          sessionFile,
-          refreshed: false,
-          reason: 'existing-session-valid-but-target-notebook-missing'
-        };
-      }
+      console.log(`✗ 读取 session 失败: ${error.message}`);
     }
   }
 
+  console.log('开始浏览器登录获取新 session...');
   const captureResult = await captureRiceQuantNotebookSession({
     notebookUrl,
-    headed: options.headed,
-    headless: options.headless
+    headed: options.headed || false,
+    headless: options.headless !== false
   });
 
   return {
