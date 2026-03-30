@@ -1,9 +1,18 @@
 {
-  "name": "ricequant-strategy",
+  "name": "ricequant-notebook-strategy",
   "version": "1.0.0",
   "type": "module",
+  "private": true,
+  "description": "在 RiceQuant Notebook 中运行策略代码，无时间限制",
+  "main": "run-strategy.js",
   "scripts": {
+    "capture": "node browser/capture-ricequant-notebook-session.js",
     "run": "node run-skill.js",
+    "strategy": "node run-strategy.js",
+    "run-strategy": "node run-strategy.js",
+    "demo": "node run-strategy.js --strategy examples/simple_backtest.py",
+    "demo-cleanup": "node run-strategy.js --strategy examples/simple_backtest.py --create-new --cleanup",
+    "test": "node test-functionality.js",
     "list": "node list-strategies.js",
     "report": "node fetch-report.js"
   },
@@ -11,5 +20,8 @@
     "dotenv": "^16.4.0",
     "playwright": "^1.41.0",
     "minimist": "^1.2.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

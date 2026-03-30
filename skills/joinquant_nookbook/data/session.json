@@ -1,15 +1,25 @@
 {
-  "capturedAt": "2026-03-30T06:52:05.913Z",
-  "notebookUrl": "https://www.joinquant.com/user/notebook?url=/user/13311390323/notebooks/strategy_runner.ipynb",
-  "directNotebookUrl": "https://www.joinquant.com/user/13311390323/notebooks/strategy_runner.ipynb",
-  "cookieHeader": "PHPSESSID=jv67jb5jnh876v6v2emjpdguf4; uid=wKgyrWnKG1yASwW6MgaOAg==; token=477b039f7d4ad76732ac51371dcdd391711fce7a",
+  "capturedAt": "2026-03-30T09:40:23.405Z",
+  "notebookUrl": "https://www.joinquant.com/user/notebook?url=/user/21333940833/notebooks/test.ipynb",
+  "directNotebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+  "cookieHeader": "user-21333940833=2|1:0|10:1774863569|16:user-21333940833|48:NDI5ZTY1ODEtODUyNi00ZGM3LWI2YzctZjFkYWIzMjNjZTI1|a063291872452d544f24b4327e4d7bdfc40f6a752c5fad2d0b0ea644bad9b010; jupyter-hub-token=\"2|1:0|10:1774854313|17:jupyter-hub-token|44:NmRlNjA5NjYxZmRkNDI3MDlmZmZlZmNjYmU3NjM2Mjc=|1e889573bd673043539ebb6266a9b37469912751b6d79cc012dfdb04ef71ab25\"; uid=wKgyrWnKG1yASwW6MgaOAg==; token=477b039f7d4ad76732ac51371dcdd391711fce7a; PHPSESSID=c8s7reuurreslsui8sdhg1u5g0; _xsrf=2|bcb7d5ad|59a439f7e0d6fcb73e1b6813df0f3b8e|1774854313; uid=wKiXm2nKIKpY8gWIHOfKAg==; finishExtInfo203164f4fb5e876ce07d8d750861522b=1",
   "cookies": [
     {
-      "name": "PHPSESSID",
-      "value": "jv67jb5jnh876v6v2emjpdguf4",
+      "name": "user-21333940833",
+      "value": "2|1:0|10:1774863569|16:user-21333940833|48:NDI5ZTY1ODEtODUyNi00ZGM3LWI2YzctZjFkYWIzMjNjZTI1|a063291872452d544f24b4327e4d7bdfc40f6a752c5fad2d0b0ea644bad9b010",
       "domain": "www.joinquant.com",
-      "path": "/",
-      "expires": -1,
+      "path": "/user/21333940833/",
+      "expires": 1777455569.568795,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "jupyter-hub-token",
+      "value": "\"2|1:0|10:1774854313|17:jupyter-hub-token|44:NmRlNjA5NjYxZmRkNDI3MDlmZmZlZmNjYmU3NjM2Mjc=|1e889573bd673043539ebb6266a9b37469912751b6d79cc012dfdb04ef71ab25\"",
+      "domain": "www.joinquant.com",
+      "path": "/hub/",
+      "expires": 1777446313.599954,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
@@ -33,44 +43,113 @@
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
+    },
+    {
+      "name": "PHPSESSID",
+      "value": "c8s7reuurreslsui8sdhg1u5g0",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_xsrf",
+      "value": "2|bcb7d5ad|59a439f7e0d6fcb73e1b6813df0f3b8e|1774854313",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": 1777446313.98646,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "uid",
+      "value": "wKiXm2nKIKpY8gWIHOfKAg==",
+      "domain": "cdn.joinquant.com",
+      "path": "/",
+      "expires": 1809414314.464346,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "finishExtInfo203164f4fb5e876ce07d8d750861522b",
+      "value": "1",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": 1774940721,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
     }
   ],
   "pageState": {
-    "pageUrl": "https://www.joinquant.com/user/login/index?from_research=1&redirect=%2Fhub%2Flogin%3Fnext%3D%252Fhub%252Fuser%252F13311390323%252Fnotebooks%252Fstrategy_runner.ipynb",
-    "pageTitle": "用户登录 - JoinQuant",
-    "frameCount": 2,
-    "targetFrameUrl": "https://www.joinquant.com/user/login/index?from_research=1&redirect=%2Fhub%2Flogin%3Fnext%3D%252Fhub%252Fuser%252F13311390323%252Fnotebooks%252Fstrategy_runner.ipynb",
-    "url": "https://www.joinquant.com/user/login/index?from_research=1&redirect=%2Fhub%2Flogin%3Fnext%3D%252Fhub%252Fuser%252F13311390323%252Fnotebooks%252Fstrategy_runner.ipynb",
-    "title": "用户登录 - JoinQuant",
-    "hasJupyter": false,
-    "bodyClassName": "",
-    "bodyDataset": {},
+    "pageUrl": "https://www.joinquant.com/research?target=research&url=/user/21333940833/notebooks/test.ipynb",
+    "pageTitle": "研究 - test.ipynb",
+    "frameCount": 3,
+    "targetFrameUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+    "url": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
+    "title": "test",
+    "hasJupyter": true,
+    "bodyClassName": "notebook_app  command_mode",
+    "bodyDataset": {
+      "baseUrl": "/user/21333940833/",
+      "wsUrl": "",
+      "notebookName": "test.ipynb",
+      "notebookPath": "test.ipynb"
+    },
     "csrfMeta": null,
     "csrfInput": null,
     "scripts": [
-      "https://cdn.joinquant.com/std/dist/asset/vendor.js?v=17679309750001772433728239",
-      "https://cdn.joinquant.com/std/dist/asset/jq-plugin.js?v=17679309750001772433728239",
-      "https://cdn.joinquant.com/themes/jq/static/dist/asset/general/include.bundle.js?v=17679309750001772433728239",
-      "https://cdn.joinquant.com/std/dist/asset/general/login-dialog.bundle.js?v=17679309750001772433728239",
-      "https://cdn.joinquant.com/std/dist/asset/general/wechat-share.bundle.js?v=17679309750001772433728239",
-      "https://cdn.joinquant.com/std/dist/asset/general/message.bundle.js?v=17679309750001772433728239",
-      "https://cdn.joinquant.com/themes/jq/static/dist/asset/general/backtotop.bundle.js?v=17679309750001772433728239",
-      "https://qiyukf.com/script/d65beefd7552d92ee02344b3cc6173de.js",
-      "https://cdn.joinquant.com/std/third/pdfjs-2.16.105-legacy-dist/build/pdf.js",
-      "https://cdn.joinquant.com/std/dist/modules/user/login/index.bundle.js?v=17679309750001772433728239"
+      "https://cdn.joinquant.com/research/static/components/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full,Safe&delayStartupUntil=configured",
+      "https://cdn.joinquant.com/research/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe",
+      "https://cdn.joinquant.com/research/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542",
+      "https://cdn.joinquant.com/research/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604",
+      "https://cdn.joinquant.com/research/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1",
+      "https://cdn.joinquant.com/research/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce",
+      "https://cdn.joinquant.com/research/static/services/contents.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/custom/custom.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/plotlywidget/extension.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter-js-widgets/extension.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/qgrid/extension.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/main.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/notebook.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/snippets_submenu_python.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/snippets_submenu_markdown.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/codefolding/main.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/toc2/main.js?v=20260330173926",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/foldcode.js?v=20260330173926",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/foldgutter.js?v=20260330173926",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/brace-fold.js?v=20260330173926",
+      "https://cdn.joinquant.com/research/static/components/codemirror/addon/fold/indent-fold.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/nb-jq-ext/toc2/toc2.js?v=20260330173926",
+      "https://www.joinquant.com/user/21333940833/nbextensions/jupyter_boilerplate/joinquant.js?v=20260330173926",
+      "https://cdn.joinquant.com/research/static/components/text-encoding/lib/encoding.js?v=d5bb0fc9ffeff7d98a69bb83daa51052",
+      "https://cdn.joinquant.com/research/static/notebook/js/main.min.js?v=11b42e90f007d9034055418999cda73c"
     ],
-    "notebook": null
+    "notebook": {
+      "notebookPath": "test.ipynb",
+      "baseUrl": "/user/21333940833/",
+      "kernelId": "b11d1fc1-f4b0-400a-8eee-3554fa910beb",
+      "sessionId": "09abda8c-27bc-43c6-9921-d35001c2913f",
+      "ncells": 151
+    }
   },
   "actionResult": {
-    "hasJupyter": false,
-    "reason": "未找到包含 Jupyter 的 frame"
+    "hasJupyter": true,
+    "inserted": true,
+    "cellIndex": 151,
+    "startCount": 151,
+    "endCount": 152,
+    "kernelId": "b11d1fc1-f4b0-400a-8eee-3554fa910beb",
+    "sessionId": "09abda8c-27bc-43c6-9921-d35001c2913f",
+    "notebookPath": "test.ipynb"
   },
   "login": {
-    "loggedIn": false,
-    "mode": "form-login",
-    "acceptedAgreement": true,
-    "urlAfterSubmit": "https://www.joinquant.com/user/login/index",
-    "errorText": null
+    "loggedIn": true,
+    "mode": "existing-session"
   },
-  "reusedCookies": 3
+  "reusedCookies": 8
 }

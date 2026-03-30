@@ -116,7 +116,7 @@ async function main() {
 
   const result = await runNotebookTest({
     sessionFile: args['session-file'],
-    notebookUrl: args['notebook-url'],
+    notebookUrl: args['notebook-url'] || process.env.JOINQUANT_NOTEBOOK_URL,
     mode: args.mode,
     cellSource,
     cellIndex: args['cell-index'],

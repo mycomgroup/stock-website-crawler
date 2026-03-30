@@ -1,0 +1,46 @@
+{
+  "backtestId": "7961487",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-03-30T16:13:01.115000",
+    "start_at": "2026-03-30T16:13:05.348000",
+    "progress": 1,
+    "backtest_id": "7961487",
+    "description": "",
+    "strategy_id": 2415828,
+    "title": "Test_test_rfscore_simple_1774858380555",
+    "account_type": "stock",
+    "end_at": "2026-03-30T16:13:25.608000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1743147000000,
+    "trading_date": 20250328,
+    "alpha": -0.011151996811819817,
+    "beta": 0.5988772492836273,
+    "sharpe": -0.32496974844216214,
+    "sortino": -0.45507148131814007,
+    "information_ratio": 0.003071078547475593,
+    "annual_volatility": 0.16956339375927393,
+    "max_drawdown": 0.39499882539658066,
+    "annual_tracking_error": 0.14822368256655277,
+    "annual_downside_risk": 0.12108641318357652
+  },
+  "summary": {
+    "timestamp": 1743147000000,
+    "trading_date": 20250328,
+    "alpha": -0.011151996811819817,
+    "beta": 0.5988772492836273,
+    "sharpe": -0.32496974844216214,
+    "sortino": -0.45507148131814007,
+    "information_ratio": 0.003071078547475593,
+    "annual_volatility": 0.16956339375927393,
+    "max_drawdown": 0.39499882539658066,
+    "annual_tracking_error": 0.14822368256655277,
+    "annual_downside_risk": 0.12108641318357652
+  }
+}

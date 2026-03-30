@@ -26,7 +26,7 @@ def calc_rfscore_factors(stocks, watch_date):
             stocks, factor_names, start_date=watch_date, end_date=watch_date
         )
     except Exception as e:
-        log.warn(f"get_factor failed: {e}")
+        logger.warning(f"get_factor failed: {e}")
         return pd.DataFrame()
 
     if current_factors is None or current_factors.empty:
@@ -161,7 +161,7 @@ class SentimentSwitch:
                 self.sentiment_state = 0
 
         except Exception as e:
-            log.warn(f"Sentiment update failed: {e}")
+            logger.warning(f"Sentiment update failed: {e}")
 
     def get_position_ratio(self):
         ratios = {4: 1.0, 3: 0.8, 2: 0.6, 1: 0.3, 0: 0.0}
@@ -227,8 +227,6 @@ class FourTierPosition:
 
 def init(context):
     context.benchmark = "000300.XSHG"
-    set_slippage(FixedSlippage(0))
-    set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
 
     context.ipo_days = 180
     context.primary_pb_group = 1
@@ -244,15 +242,7 @@ def init(context):
     context.month_start_value = 0
     context.forced_rest_days = 0
 
-    scheduler.run_monthly(rebalance, tradingday=1)
-    scheduler.run_daily(morning_check, rule=market_open)
-
-
-def morning_check(context, bar_dict):
-    context.sentiment.update(context, bar_dict)
-    plot("sentiment_state", context.sentiment.sentiment_state)
-    plot("sentiment_score", context.sentiment.sentiment_score)
-    plot("hl_count", context.sentiment.hl_count)
+    scheduler.run_monthly(rebalance, monthday=1)
 
 
 def get_universe(context, bar_dict):
@@ -297,7 +287,7 @@ def get_pb_ratio(stocks, watch_date):
         if pb_data is not None and not pb_data.empty:
             return pb_data.get("pb_ratio", pd.Series())
     except Exception as e:
-        log.warn(f"get pb_ratio failed: {e}")
+        logger.warning(f"get pb_ratio failed: {e}")
 
     pb_dict = {}
     for stock in stocks:
@@ -416,15 +406,11 @@ def rebalance(context, bar_dict):
     sentiment_ratio = context.sentiment.get_position_ratio()
     adjusted_hold_num = int(target_hold_num * sentiment_ratio)
 
-    log.info(
+    logger.info(
         f"rebalance: breadth={breadth:.3f}, trend={trend_on}, "
         f"sentiment_state={context.sentiment.sentiment_state}, "
         f"base_hold={target_hold_num}, adjusted_hold={adjusted_hold_num}"
     )
-
-    plot("breadth", breadth)
-    plot("target_hold_num", target_hold_num)
-    plot("adjusted_hold_num", adjusted_hold_num)
 
     if adjusted_hold_num <= 0:
         for stock in context.portfolio.positions:
