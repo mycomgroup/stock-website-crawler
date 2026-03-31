@@ -1,0 +1,40 @@
+{
+  "strategyId": 2416427,
+  "backtestId": "7963136",
+  "strategyName": "rfscore7_simple_test",
+  "startDate": "2023-01-01",
+  "endDate": "2024-01-01",
+  "capital": "100000",
+  "status": "normal_exit",
+  "info": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-03-31T18:23:45.395000",
+    "start_at": "2026-03-31T18:23:49.120000",
+    "progress": 1,
+    "backtest_id": "7963136",
+    "description": "",
+    "strategy_id": 2416427,
+    "title": "Backtest_1774952624939",
+    "account_type": "stock",
+    "end_at": "2026-03-31T18:24:00.717000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1703835000000,
+    "trading_date": 20231229,
+    "alpha": -0.020883,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.1350110621272342,
+    "annual_downside_risk": 0
+  },
+  "timestamp": "2026-03-31T10:24:00.894Z"
+}

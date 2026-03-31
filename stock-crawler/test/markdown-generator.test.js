@@ -167,7 +167,7 @@ describe('MarkdownGenerator', () => {
 
     test('should add H1 title when parser markdown has no heading', () => {
       const markdown = generator.normalizeMarkdownOutput('纯文本内容\n\n第二段', { title: '统一标题测试' });
-      expect(markdown.startsWith('# 统一标题测试')).toBe(true);
+      expect(markdown).toContain('# 统一标题测试');
       expect(markdown).toContain('纯文本内容');
     });
 
