@@ -62,22 +62,33 @@ def get_limit_up_count(date, stock_list, max_count=300):
     """获取涨停股票数量"""
     limit_up_count = 0
     tested = 0
+    errors = []
 
     for stock in stock_list[:max_count]:
         try:
-            bars = history_bars(stock, 2, "1d", "close", end_dt=date)
-            if bars is not None and len(bars) >= 2:
-                prev_close = bars["close"][-2]
-                curr_close = bars["close"][-1]
+            # RiceQuant Notebook 使用 get_price
+            df = get_price(
+                stock, end_date=date, frequency="1d", fields=["close"], count=2
+            )
+            if df is not None and len(df) >= 2:
+                prev_close = df["close"].iloc[-2]
+                curr_close = df["close"].iloc[-1]
                 if prev_close > 0:
                     pct_change = (curr_close - prev_close) / prev_close
                     if pct_change >= 0.095:
                         limit_up_count += 1
-            tested += 1
-        except:
+                tested += 1
+            else:
+                if len(errors) < 3:
+                    errors.append(f"{stock}: df={df}")
+        except Exception as e:
+            if len(errors) < 3:
+                errors.append(f"{stock}: {str(e)[:50]}")
             continue
 
     print(f"[{date}] 涨停统计: 测试{tested}只, 涨停{limit_up_count}只")
+    if errors:
+        print(f"  错误示例: {errors[:2]}")
     return limit_up_count
 
 
