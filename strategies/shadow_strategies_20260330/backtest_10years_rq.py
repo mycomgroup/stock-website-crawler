@@ -95,13 +95,19 @@ def get_limit_up_count(date, stock_list, max_count=300):
 def is_fake_weak_high_open(stock, date):
     """判断是否为假弱高开"""
     try:
-        bars = history_bars(stock, 2, "1d", ["close", "open", "high"], end_dt=date)
-        if bars is None or len(bars) < 2:
+        df = get_price(
+            stock,
+            end_date=date,
+            frequency="1d",
+            fields=["close", "open", "high"],
+            count=2,
+        )
+        if df is None or len(df) < 2:
             return False
 
-        prev_close = bars["close"][-2]
-        open_price = bars["open"][-1]
-        high_price = bars["high"][-1]
+        prev_close = df["close"].iloc[-2]
+        open_price = df["open"].iloc[-1]
+        high_price = df["high"].iloc[-1]
 
         if prev_close <= 0:
             return False
@@ -136,12 +142,12 @@ def get_stock_market_cap(stock, date):
 def get_stock_position_pct(stock, date):
     """获取位置（相对历史最高）"""
     try:
-        bars = history_bars(stock, 250, "1d", "high", end_dt=date)
-        if bars is None or len(bars) < 250:
+        df = get_price(stock, end_date=date, frequency="1d", fields=["high"], count=250)
+        if df is None or len(df) < 250:
             return None
 
-        high_max = max(bars["high"])
-        current_high = bars["high"][-1]
+        high_max = df["high"].max()
+        current_high = df["high"].iloc[-1]
 
         if high_max > 0:
             return current_high / high_max - 1
@@ -153,11 +159,11 @@ def get_stock_position_pct(stock, date):
 def has_consecutive_boards(stock, date):
     """判断是否有连板"""
     try:
-        bars = history_bars(stock, 5, "1d", "close", end_dt=date)
-        if bars is None or len(bars) < 5:
+        df = get_price(stock, end_date=date, frequency="1d", fields=["close"], count=5)
+        if df is None or len(df) < 5:
             return False
 
-        closes = bars["close"]
+        closes = df["close"].values
 
         for i in range(len(closes) - 2):
             if closes[i] > 0 and closes[i + 1] > 0:
@@ -172,11 +178,11 @@ def has_consecutive_boards(stock, date):
 def is_second_board(stock, date):
     """判断是否为二板"""
     try:
-        bars = history_bars(stock, 5, "1d", "close", end_dt=date)
-        if bars is None or len(bars) < 5:
+        df = get_price(stock, end_date=date, frequency="1d", fields=["close"], count=5)
+        if df is None or len(df) < 5:
             return False
 
-        closes = bars["close"]
+        closes = df["close"].values
         consecutive = 0
 
         for i in range(len(closes) - 1):
@@ -195,12 +201,12 @@ def is_second_board(stock, date):
 def is_limit_up_today(stock, date):
     """判断今日是否涨停"""
     try:
-        bars = history_bars(stock, 2, "1d", "close", end_dt=date)
-        if bars is None or len(bars) < 2:
+        df = get_price(stock, end_date=date, frequency="1d", fields=["close"], count=2)
+        if df is None or len(df) < 2:
             return False
 
-        prev_close = bars["close"][-2]
-        curr_close = bars["close"][-1]
+        prev_close = df["close"].iloc[-2]
+        curr_close = df["close"].iloc[-1]
 
         if prev_close > 0:
             pct = (curr_close - prev_close) / prev_close
@@ -311,9 +317,11 @@ else:
         total_value = capital
         for stock, pos in positions.items():
             try:
-                bars = history_bars(stock, 1, "1d", "close", end_dt=date_str)
-                if bars is not None:
-                    total_value += bars["close"][-1] * pos["shares"]
+                df = get_price(
+                    stock, end_date=date_str, frequency="1d", fields=["close"], count=1
+                )
+                if df is not None and len(df) > 0:
+                    total_value += df["close"].iloc[-1] * pos["shares"]
             except:
                 pass
 
@@ -322,10 +330,12 @@ else:
         stocks_to_sell = []
         for stock, pos in positions.items():
             try:
-                bars = history_bars(stock, 1, "1d", "close", end_dt=date_str)
-                if bars is None:
+                df = get_price(
+                    stock, end_date=date_str, frequency="1d", fields=["close"], count=1
+                )
+                if df is None or len(df) == 0:
                     continue
-                current_price = bars["close"][-1]
+                current_price = df["close"].iloc[-1]
                 profit_pct = (current_price - pos["buy_price"]) / pos["buy_price"]
 
                 if STRATEGY_MODE == "mainline":
