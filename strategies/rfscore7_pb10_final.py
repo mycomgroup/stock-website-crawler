@@ -106,15 +106,18 @@ def initialize(context):
     )
 
     g.ipo_days = 180
-    g.base_hold_num = 20
-    g.reduced_hold_num = 10
+    g.hold_num_normal = 10
+    g.hold_num_mid = 8
+    g.hold_num_weak = 6
+    g.hold_num_stop = 0
+    g.breadth_normal = 0.35
     g.breadth_reduce = 0.25
     g.breadth_stop = 0.15
-    g.primary_pb_group = 1  # PB10% - 升级自 PB20
-    g.reduced_pb_group = 2  # PB20% - 次级池
+    g.primary_pb_group = 1
+    g.reduced_pb_group = 2
     g.last_market_state = {}
 
-    run_monthly(rebalance, 1, time="9:35", reference_security="000300.XSHG")
+    run_weekly(rebalance, 1, time="9:35", reference_security="000300.XSHG")
     run_daily(record_market_state, time="14:50", reference_security="000300.XSHG")
 
 
@@ -257,15 +260,19 @@ def rebalance(context):
     market_state = calc_market_state(watch_date)
     g.last_market_state = market_state
 
-    if market_state["breadth"] < g.breadth_stop and (not market_state["trend_on"]):
+    if market_state["breadth"] < g.breadth_stop:
         target_stocks = []
-        target_hold_num = 0
-    elif market_state["breadth"] < g.breadth_reduce and (not market_state["trend_on"]):
-        target_hold_num = g.reduced_hold_num
+        target_hold_num = g.hold_num_stop
+    elif market_state["breadth"] < g.breadth_reduce:
+        target_hold_num = g.hold_num_weak
+        target_stocks, factor_table = choose_stocks(watch_date, target_hold_num)
+        target_stocks = filter_buyable(context, target_stocks)
+    elif market_state["breadth"] < g.breadth_normal and (not market_state["trend_on"]):
+        target_hold_num = g.hold_num_mid
         target_stocks, factor_table = choose_stocks(watch_date, target_hold_num)
         target_stocks = filter_buyable(context, target_stocks)
     else:
-        target_hold_num = g.base_hold_num
+        target_hold_num = g.hold_num_normal
         target_stocks, factor_table = choose_stocks(watch_date, target_hold_num)
         target_stocks = filter_buyable(context, target_stocks)
 

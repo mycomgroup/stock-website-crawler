@@ -2,17 +2,17 @@
   "cookies": [
     {
       "name": "tgw_l7_route",
-      "value": "3596f940fbcd94bd2bec34c51be04477",
+      "value": "006b76bf4a6398f05baf657858ca2891",
       "domain": "www.ricequant.com",
       "path": "/",
-      "expires": 1774844221.777304,
+      "expires": 1774938412.288488,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "sid",
-      "value": "vcRTGyKGWPe2r2iXY7bZ5UmlB4O8u8zV|afe72984fd436d23e2cb7be1d12918f22b25fc38f80a485c8a9ecba2cb6af2e67fffe3dc7fb835169ebe6ccc7b9435d289b02dbd2ba51d9021857d05bdf06a4a",
+      "value": "RfATisBt2utDC38CywZO76bSTr4EvhVz|57aafbbdf9f4dd7ffc86399c6623782bdade6332b7e4c5f5ec6e525c25def7f55ffd39f530a3be6f7e9896771a7ed51de3058bf0776c77212a7581ca7d5e01ad",
       "domain": "www.ricequant.com",
       "path": "/",
       "expires": -1,
@@ -32,30 +32,15 @@
     },
     {
       "name": "rqjwt",
-      "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NDg0MDYyOSwgImV4cCI6IDE3Nzc0MzI2Mjl9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.9xAeOeKIyulCuWbGFc_bpZdYg1GWEm0QasfGiuclps74ZwQ3wi86mPNrzcuZXGWpyYsphzQ4XSDZGizlZPF2VA",
+      "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NDkzNDgyMCwgImV4cCI6IDE3Nzc1MjY4MjB9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.FOpVwdVLHkXpAAlr4LlncXJuPl2Uhf8bqs5osNrO0PW02YFKx9PWkSpfptd2pNZnBWEoGMLaijSk7qGwEHXtow",
       "domain": "www.ricequant.com",
       "path": "/",
       "expires": -1,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
-    },
-    {
-      "name": "tgw_l7_route",
-      "value": "3596f940fbcd94bd2bec34c51be04477",
-      "domain": "assets.ricequant.com",
-      "path": "/",
-      "expires": 1774844229.50019,
-      "httpOnly": false,
-      "secure": true,
-      "sameSite": "None"
     }
   ],
-  "timestamp": 1774840634171,
-  "savedAt": "2026-03-30T03:17:14.171Z",
-  "login": {
-    "loggedIn": true,
-    "timestamp": 1774840634171
-  },
-  "capturedAt": "2026-03-30T03:17:14.171Z"
+  "csrfToken": "",
+  "timestamp": 1774934825795
 }

@@ -29,7 +29,7 @@ async function main() {
   console.log('='.repeat(60) + '\n');
   
   const browser = await chromium.launch({ 
-    headless: false,
+    headless: true,
     slowMo: 50
   });
   

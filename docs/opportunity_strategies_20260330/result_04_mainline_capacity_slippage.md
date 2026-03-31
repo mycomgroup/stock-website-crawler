@@ -563,4 +563,151 @@ def check_volume_ratio(stock, date, target_value):
 
 ---
 
+## 附录十一：实际回测指南
+
+### 11.1 为什么无法自动运行回测？
+
+**技术原因**：
+1. **JoinQuant连接超时**：Session抓取成功但kernel无响应（多次尝试均超时）
+2. **RiceQuant自动登录失败**：登录界面XPath已过期，无法自动填写账号密码
+3. **平台限制**：Notebook需要保持活跃状态，自动运行可能触发安全限制
+
+**解决方案**：手动在Notebook中运行回测脚本
+
+### 11.2 手动回测步骤（推荐）
+
+#### 方案A：JoinQuant Notebook
+
+1. **打开JoinQuant Notebook**
+   - 访问：https://www.joinquant.com/research
+   - 登录账号：已有session可自动登录
+   - 打开或创建一个新Notebook
+
+2. **复制回测脚本**
+   - 文件路径：`docs/opportunity_strategies_20260330/capacity_slippage_backtest.py`
+   - 全选复制所有代码（约300行）
+   - 粘贴到Notebook的一个cell中
+
+3. **执行回测**
+   - 按 `Shift + Enter` 执行
+   - 等待5-10分钟（根据网络速度）
+   - 观察实时输出结果
+
+4. **保存结果**
+   - 脚本会自动输出容量-滑点收益矩阵
+   - 手动记录关键数据到本报告
+   - 或使用浏览器截图保存
+
+#### 方案B：RiceQuant Notebook
+
+1. **打开RiceQuant Notebook**
+   - 访问：https://www.ricequant.com/research
+   - 登录账号：13311390323 / 3228552
+   - 创建新Notebook
+
+2. **运行同样脚本**
+   - 脚本自动适配JoinQuant/RiceQuant API
+   - 执行后会自动识别平台
+
+3. **对比两个平台结果**
+   - 如果结果一致 → 数据可信
+   - 如果结果差异大 → 需排查API差异
+
+### 11.3 完整回测脚本
+
+**脚本位置**：`docs/opportunity_strategies_20260330/capacity_slippage_backtest.py`
+
+**脚本功能**：
+- ✓ 测试4档资金：500万、1000万、3000万、5000万
+- ✓ 测试4档滑点：0%、0.2%、0.5%、1.0%
+- ✓ 共16组测试组合
+- ✓ 自动输出收益矩阵
+- ✓ 自动判断失效点和容量上限
+- ✓ 自动适配JoinQuant/RiceQuant
+
+**脚本特点**：
+- 无需外部依赖（仅使用平台自带API）
+- 防超时设计（限制90天、300只股票）
+- 实时输出进度
+- 结果格式化输出
+
+### 11.4 快速验证方法（1分钟）
+
+如果完整回测时间过长，可以先运行快速验证：
+
+```python
+# 复制以下代码到Notebook运行（约1分钟）
+from jqdata import *  # 或 RiceQuant: 无需import
+import pandas as pd
+
+TEST_DATE = "2024-10-15"
+SLIPPAGES = [0, 0.002, 0.005]
+SLIPPAGE_NAMES = ["0%", "0.2%", "0.5%"]
+
+prev_date = "2024-10-14"
+
+# 获取涨停股（限制30只）
+stocks = get_all_securities('stock', prev_date).index.tolist()[:100]
+stocks = [s for s in stocks if s[0] not in '68']
+
+df_prev = get_price(stocks, end_date=prev_date, fields=['close', 'high_limit'], count=1, panel=False)
+df_prev = df_prev.dropna()
+hl = df_prev[df_prev['close']==df_prev['high_limit']]['code'].tolist()
+
+if len(hl) > 0:
+    df_today = get_price(hl[:30], end_date=TEST_DATE, fields=['open', 'close', 'high_limit'], count=1, panel=False)
+    df_today = df_today.dropna()
+    df_today['ratio'] = df_today['open'] / (df_today['high_limit']/1.1)
+    
+    signals = df_today[(df_today['ratio']>1.005) & (df_today['ratio']<1.015)]
+    
+    if len(signals) > 0:
+        bp = signals['open'].mean()
+        sp = signals['close'].mean()
+        
+        print(f'信号数: {len(signals)}')
+        print(f'买入价: {bp:.2f}, 卖出价: {sp:.2f}')
+        
+        print('\\n不同滑点收益:')
+        for i, slip in enumerate(SLIPPAGES):
+            pnl = (sp*(1-slip-0.0013) - bp*(1+slip+0.0003)) / bp * 100
+            print(f'  {SLIPPAGE_NAMES[i]}: {pnl:.2f}%')
+        
+        print('\\n快速判断:')
+        print('  0%滑点为基准')
+        print('  0.2%滑点衰减约0.4-0.5%')
+        print('  0.5%滑点衰减约1.0-1.2%，可能转负')
+```
+
+### 11.5 验证完成后如何更新报告？
+
+1. **记录实测数据**
+   - 将Notebook输出的收益矩阵复制
+   - 更新到本报告第4.3节
+
+2. **对比理论估算**
+   - 如果实测年化55.6% ≈ 理论55.6% → 理论估算准确
+   - 如果实测与理论差异大 → 需重新估算
+
+3. **更新结论**
+   - 根据实测数据调整推荐上限
+   - 更新滑点失效点判断
+
+### 11.6 后续优化方向
+
+1. **Session管理优化**
+   - 更新JoinQuant session抓取脚本，添加kernel状态检查
+   - 更新RiceQuant登录脚本，修复XPath选择器
+
+2. **回测脚本优化**
+   - 增加成交额占比实测（获取股票实际成交额）
+   - 增加流动性冲击测试（大资金分批买入）
+   - 增加回撤精确计算（基于权益曲线）
+
+3. **自动化运行**
+   - 等平台修复后，重新尝试自动运行
+   - 或开发备用方案（如通过email通知手动运行）
+
+---
+
 **END**

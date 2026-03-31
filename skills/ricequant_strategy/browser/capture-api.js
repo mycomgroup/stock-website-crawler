@@ -11,7 +11,7 @@ async function captureRiceQuantAPI() {
   console.log('=== RiceQuant API Capture ===\n');
   
   const browser = await chromium.launch({ 
-    headless: false,
+    headless: true,
     slowMo: 200
   });
   

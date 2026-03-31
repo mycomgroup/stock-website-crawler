@@ -73,8 +73,8 @@ export async function ensureJoinQuantSession(options = {}) {
 
   const captureResult = await captureJoinQuantSession({
     notebookUrl,
-    headed: options.headed,
-    headless: options.headless
+    headed: options.headed || false,
+    headless: options.headless !== false
   });
 
   return {

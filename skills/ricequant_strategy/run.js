@@ -23,7 +23,7 @@ async function runBacktest(strategyId, codeFile, startDate, endDate) {
   const state = JSON.parse(fs.readFileSync(AUTH_STATE_FILE, 'utf8'));
   
   const browser = await chromium.launch({ 
-    headless: false,
+    headless: true,
     slowMo: 100,
     args: ['--start-maximized']
   });

@@ -1,0 +1,514 @@
+{
+  "capturedAt": "2026-03-31T05:22:52.751Z",
+  "notebookUrl": "https://www.ricequant.com/research",
+  "directNotebookUrl": "https://www.ricequant.com/research",
+  "pageState": {
+    "pageUrl": "https://www.ricequant.com/welcome/",
+    "pageTitle": "米筐量化平台",
+    "frameCount": 1,
+    "targetFrameUrl": "https://www.ricequant.com/welcome/",
+    "url": "https://www.ricequant.com/welcome/",
+    "title": "米筐量化平台",
+    "hasJupyter": false,
+    "bodyClassName": "",
+    "bodyDataset": {},
+    "csrfMeta": null,
+    "scripts": [
+      "https://plausible.ricequant.com/js/script.js",
+      "https://assets.ricequant.com/welcome/index.3277d67c.js",
+      "https://assets.ricequant.com/welcome/index.fab2008c.js",
+      "https://assets.ricequant.com/welcome/index.1e8f1826.js",
+      "https://assets.ricequant.com/welcome/index.1e3e214a.js",
+      "https://assets.ricequant.com/vendor/browser-upgrade/check.v0.js",
+      "https://cdn-go.cn/aegis/aegis-sdk/latest/aegis.min.js"
+    ],
+    "notebook": null
+  },
+  "actionResult": {
+    "hasJupyter": false,
+    "reason": "未找到包含 Jupyter 的 frame"
+  },
+  "requestUrls": [
+    "https://www.ricequant.com/",
+    "https://www.ricequant.com/welcome/",
+    "https://assets.ricequant.com/welcome/index.3277d67c.js",
+    "https://assets.ricequant.com/welcome/index.1e8f1826.js",
+    "https://assets.ricequant.com/vendor/browser-upgrade/check.v0.js",
+    "https://cdn-go.cn/aegis/aegis-sdk/latest/aegis.min.js",
+    "https://plausible.ricequant.com/js/script.js",
+    "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+    "https://www.ricequant.com/api/user/isLogin.do",
+    "https://assets.ricequant.com/welcome/Home.190b4796.js",
+    "https://assets.ricequant.com/welcome/Home.808e8a00.js",
+    "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+    "https://rumt-zh.com/collect?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&referer=",
+    "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&referer=",
+    "https://assets.ricequant.com/welcome/codes.c1426628.js",
+    "https://turing.captcha.qcloud.com/TCaptcha.js",
+    "https://turing.captcha.gtimg.com/1/tcaptcha-frame.5bae14dd.js",
+    "https://turing.captcha.gtimg.com/1/template/drag_ele.html",
+    "https://turing.captcha.gtimg.com/1/dy-jy3.js",
+    "https://turing.captcha.gtimg.com/1/dy-ele.b693189b.js",
+    "https://rumt-zh.com/speed/performance?dnsLookup=0&tcp=0&ssl=0&ttfb=31&contentDownload=1&domParse=179&resourceDownload=101&firstScreenTiming=463&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&referer=&",
+    "https://www.ricequant.com/research",
+    "https://www.ricequant.com/research/hub/",
+    "https://www.ricequant.com/research/hub/login",
+    "https://www.ricequant.com/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa",
+    "https://www.ricequant.com/research/hub/static/components/jquery/dist/jquery.min.js?v=c9f5aeeca3ad37bf2aa006139b935f0a",
+    "https://www.ricequant.com/research/hub/static/components/bootstrap/dist/js/bootstrap.min.js?v=5869c96cc8f19086aee625d670d741f9",
+    "https://www.ricequant.com/research/hub/load_session?next=",
+    "https://www.ricequant.com/login",
+    "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin",
+    "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin",
+    "https://rumt-zh.com/speed/performance?dnsLookup=0&tcp=0&ssl=0&ttfb=27&contentDownload=0&domParse=3&resourceDownload=36&firstScreenTiming=180&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin&",
+    "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin"
+  ],
+  "likelyNotebookRequests": [
+    {
+      "id": 13,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+      "headers": {
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": null
+    },
+    {
+      "id": 14,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.ricequant.com/api/user/isLogin.do",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/welcome/",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/x-www-form-urlencoded;charset=utf-8"
+      },
+      "postData": null
+    },
+    {
+      "id": 21,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.ricequant.com/api/user/isLogin.do",
+      "status": 200,
+      "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "44",
+        "date": "Tue, 31 Mar 2026 05:21:56 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{\"code\": 1, \"message\": \"\\u672a\\u767b\\u9646\"}"
+    },
+    {
+      "id": 22,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+      "headers": {
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": null
+    },
+    {
+      "id": 23,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://rumt-zh.com/collect?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&referer=",
+      "headers": {
+        "content-type": "application/json",
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": "{\"level\":[\"1024\"],\"msg\":[\"fetch req url: https://www.ricequant.com/api/user/isLogin.do\\n\\nres status: 200\\n\\nres duration: 54ms\\n\\nres startTime: 1774934516075\\n\\nreq method: POST\\n\\nres retcode: 1\"],\"code\":[\"1\"],\"errorMsg\":[\"\"],\"originFrom\":[\"https://www.ricequant.com/welcome/\"],\"count\":1}"
+    },
+    {
+      "id": 24,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&referer=",
+      "headers": {
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundary6bgMsNAMk9M00TSn",
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": "------WebKitFormBoundary6bgMsNAMk9M00TSn\r\nContent-Disposition: form-data; name=\"payload\"\r\n\r\n{\"duration\":{\"fetch\":[{\"url\":\"https://www.ricequant.com/api/user/isLogin.do\",\"isHttps\":true,\"method\":\"POST\",\"type\":\"fetch\",\"status\":200,\"duration\":54,\"nextHopProtocol\":\"\",\"domainLookup\":-1,\"connectTime\":-1,\"ret\":\"1\",\"isErr\":1}],\"static\":[],\"bridge\":[]},\"id\":\"4eQndT5o5vyER3r91k\",\"uin\":\"\",\"version\":\"1.43.51\",\"aid\":\"75348ced-942e-49f4-9249-807ad04ad741\",\"env\":\"production\",\"platform\":4,\"netType\":4,\"vp\":\"1600 * 1200\",\"sr\":\"1600 * 1200\",\"sessionId\":\"session-dcc283f5eee14917a9ea3e47a994cb4c\",\"from\":\"https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F\",\"referer\":\"\"}\r\n------WebKitFormBoundary6bgMsNAMk9M00TSn--\r\n"
+    },
+    {
+      "id": 37,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://rumt-zh.com/speed/performance?dnsLookup=0&tcp=0&ssl=0&ttfb=31&contentDownload=1&domParse=179&resourceDownload=101&firstScreenTiming=463&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&referer=&",
+      "headers": {
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": null
+    },
+    {
+      "id": 38,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-dcc283f5eee14917a9ea3e47a994cb4c&referer=",
+      "headers": {
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundarykeUmgw6RMn0tHhyp",
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": "------WebKitFormBoundarykeUmgw6RMn0tHhyp\r\nContent-Disposition: form-data; name=\"payload\"\r\n\r\n{\"duration\":{\"fetch\":[],\"static\":[{\"url\":\"https://assets.ricequant.com/welcome/index.3165cf66.css\",\"method\":\"get\",\"duration\":175.1,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Home.9cee1c6f.css\",\"method\":\"get\",\"duration\":162.8,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Trial.acd8105c.css\",\"method\":\"get\",\"duration\":162.9,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/vendor/browser-upgrade/check.v0.js\",\"method\":\"get\",\"duration\":162.3,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/index.3277d67c.js\",\"method\":\"get\",\"duration\":163.3,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/index.1e8f1826.js\",\"method\":\"get\",\"duration\":215.2,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://plausible.ricequant.com/js/script.js\",\"method\":\"get\",\"duration\":52,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/logo.b328504e.svg\",\"method\":\"get\",\"duration\":19.3,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Home.190b4796.js\",\"method\":\"get\",\"duration\":19,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Home.808e8a00.js\",\"method\":\"get\",\"duration\":18.9,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/logo.3c341260.png\",\"method\":\"get\",\"duration\":13.6,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/title.c2e669df.svg\",\"method\":\"get\",\"duration\":66.6,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/rqdata-3.70b994cf.svg\",\"method\":\"get\",\"duration\":81.6,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/circle-left.10e09d6a.svg\",\"method\":\"get\",\"duration\":109.8,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/circle-right.9eae33bb.svg\",\"method\":\"get\",\"duration\":109.8,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/rqdata-1.953de18f.svg\",\"method\":\"get\",\"duration\":109.9,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/rqalpha-1.4c7b0f71.svg\",\"method\":\"get\",\"duration\":66.5,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1}...<truncated>"
+    },
+    {
+      "id": 39,
+      "phase": "request",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research",
+      "headers": {
+        "accept-language": "zh-CN",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null
+    },
+    {
+      "id": 40,
+      "phase": "request",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/",
+      "headers": {
+        "accept-language": "zh-CN",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null
+    },
+    {
+      "id": 41,
+      "phase": "response",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research",
+      "status": 302,
+      "headers": {
+        "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "0",
+        "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
+        "content-type": "text/html",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "location": "/research/hub/",
+        "server": "nginx",
+        "x-jupyterhub-version": "1.1.0"
+      },
+      "contentType": "text/html",
+      "body": null
+    },
+    {
+      "id": 42,
+      "phase": "request",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/login",
+      "headers": {
+        "accept-language": "zh-CN",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null
+    },
+    {
+      "id": 43,
+      "phase": "response",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/",
+      "status": 302,
+      "headers": {
+        "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "0",
+        "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
+        "content-type": "text/html",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "location": "/research/hub/login",
+        "server": "nginx",
+        "x-jupyterhub-version": "1.1.0"
+      },
+      "contentType": "text/html",
+      "body": null
+    },
+    {
+      "id": 44,
+      "phase": "request",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/research/hub/login",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 45,
+      "phase": "request",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/static/components/jquery/dist/jquery.min.js?v=c9f5aeeca3ad37bf2aa006139b935f0a",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/research/hub/login",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 46,
+      "phase": "request",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/static/components/bootstrap/dist/js/bootstrap.min.js?v=5869c96cc8f19086aee625d670d741f9",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/research/hub/login",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null
+    },
+    {
+      "id": 47,
+      "phase": "response",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/login",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-encoding": "gzip",
+        "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "etag": "W/\"e073223a2083428b3e4d7b971b62d7f7d7f5149c\"",
+        "server": "nginx",
+        "vary": "Accept-Encoding",
+        "x-jupyterhub-version": "1.1.0"
+      },
+      "contentType": "text/html; charset=utf-8",
+      "body": "\n\n\n<!DOCTYPE HTML>\n<html>\n\n<head>\n    <meta charset=\"utf-8\">\n\n    <title>JupyterHub</title>\n    <meta http-equiv=\"X-UA-Compatible\" content=\"chrome=1\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\n    \n    <link rel=\"stylesheet\" href=\"/research/hub/static/css/style.min.css?v=ab35cbd1a6857ec00620a56c43760477\" type=\"text/css\"/>\n    \n    \n    <script src=\"/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa\" type=\"text/javascript\" charset=\"utf-8\"></script>\n    <script src=\"/research/hub/static/components/jquery/dist/jquery.min.js?v=c9f5aeeca3ad37bf2aa006139b935f0a\" type=\"text/javascript\" charset=\"utf-8\"></script>\n    <script src=\"/research/hub/static/components/bootstrap/dist/js/bootstrap.min.js?v=5869c96cc8f19086aee625d670d741f9\" type=\"text/javascript\" charset=\"utf-8\"></script>\n    \n    <script>\n      require.config({\n          \n          urlArgs: \"v=20250528183747\",\n          \n          baseUrl: '/research/hub/static/js',\n          paths: {\n            components: '../components',\n            jquery: '../components/jquery/dist/jquery.min',\n            bootstrap: '../components/bootstrap/dist/js/bootstrap.min',\n            moment: \"../components/moment/moment\",\n          },\n          shim: {\n            bootstrap: {\n              deps: [\"jquery\"],\n              exports: \"bootstrap\"\n            },\n          }\n      });\n    </script>\n\n    <script type=\"text/javascript\">\n      window.jhdata = {\n        base_url: \"/research/hub/\",\n        prefix: \"/research/\",\n        \n        \n        admin_access: false,\n        \n        \n        options_form: false,\n        \n      }\n    </script>\n\n    \n    \n\n</head>\n\n<body>\n\n<noscript>\n  <div id='noscript'>\n    JupyterHub requires JavaScript.<br>\n    Please enable it to proceed.\n  </div>\n</noscript>\n\n\n  <nav class=\"navbar navbar-default\">\n    <div class=\"container-fluid\">\n      <div class=\"navbar-header\">\n        \n        <span id=\"jupyterhub-logo\" class=\"pull-left\">\n            <a href=\"/research/hub/\"><img src='/research/hub/logo' alt='JupyterHub' class='jpy-logo' title='Home'/></a>\n        </span>\n        \n        <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#thenavbar\" aria-expanded=\"false\">\n          <span class=\"sr-only\">Toggle navigation</span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n        </button>\n      </div>\n\n      <div class=\"collapse navbar-collapse\" id=\"thenavbar\">\n        \n        <ul class=\"nav navbar-nav navbar-right\">\n          \n            <li>\n              \n\n            </li>\n          \n        </ul>\n      </div>\n\n      \n      \n    </div>\n  </nav>\n\n\n\n\n\n\n\n\n\n\n\n<div id=\"login-main\" class=\"container\">\n\n<div class=\"service-login\">\n  <a role=\"button\" class='btn btn-jupyter btn-lg' href='/research/hub/load_session?next='>\n    Sign in with Ricequant\n  </a>\n</div>\n\n</div>\n\n\n\n\n\n\n\n<div class=\"modal fade\" id=\"error-dialog\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"error-label\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button>\n        <h4 class=\"modal-title\" id=\"error-label\">Error</h4>\n      </div>\n      <div class=\"modal-body\">\n        \n  <div class=\"ajax-error\">\n    The error\n  </div>\n\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n        <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" data-dismiss=\"modal\">OK</button>\n      </div>\n    </div>\n  </div>\n</div>\n\n\n\n\n\n<script>\nif (window.location.protocol === \"http:\") {\n  // unhide http warning\n  var warning = document.getElementById('insecure-login-warning');\n  warning.className = warning.className.replace(/\\bhidden\\b/, '');\n}\n</sc...<truncated>"
+    },
+    {
+      "id": 48,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/static/components/bootstrap/dist/js/bootstrap.min.js?v=5869c96cc8f19086aee625d670d741f9",
+      "status": 200,
+      "headers": {
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Fri, 28 Mar 2036 05:22:04 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "/*!\n * Bootstrap v3.3.7 (http://getbootstrap.com)\n * Copyright 2011-2016 Twitter, Inc.\n * Licensed under the MIT license\n */\nif(\"undefined\"==typeof jQuery)throw new Error(\"Bootstrap's JavaScript requires jQuery\");+function(a){\"use strict\";var b=a.fn.jquery.split(\" \")[0].split(\".\");if(b[0]<2&&b[1]<9||1==b[0]&&9==b[1]&&b[2]<1||b[0]>3)throw new Error(\"Bootstrap's JavaScript requires jQuery version 1.9.1 or higher, but lower than version 4\")}(jQuery),+function(a){\"use strict\";function b(){var a=document.createElement(\"bootstrap\"),b={WebkitTransition:\"webkitTransitionEnd\",MozTransition:\"transitionend\",OTransition:\"oTransitionEnd otransitionend\",transition:\"transitionend\"};for(var c in b)if(void 0!==a.style[c])return{end:b[c]};return!1}a.fn.emulateTransitionEnd=function(b){var c=!1,d=this;a(this).one(\"bsTransitionEnd\",function(){c=!0});var e=function(){c||a(d).trigger(a.support.transition.end)};return setTimeout(e,b),this},a(function(){a.support.transition=b(),a.support.transition&&(a.event.special.bsTransitionEnd={bindType:a.support.transition.end,delegateType:a.support.transition.end,handle:function(b){if(a(b.target).is(this))return b.handleObj.handler.apply(this,arguments)}})})}(jQuery),+function(a){\"use strict\";function b(b){return this.each(function(){var c=a(this),e=c.data(\"bs.alert\");e||c.data(\"bs.alert\",e=new d(this)),\"string\"==typeof b&&e[b].call(c)})}var c='[data-dismiss=\"alert\"]',d=function(b){a(b).on(\"click\",c,this.close)};d.VERSION=\"3.3.7\",d.TRANSITION_DURATION=150,d.prototype.close=function(b){function c(){g.detach().trigger(\"closed.bs.alert\").remove()}var e=a(this),f=e.attr(\"data-target\");f||(f=e.attr(\"href\"),f=f&&f.replace(/.*(?=#[^\\s]*$)/,\"\"));var g=a(\"#\"===f?[]:f);b&&b.preventDefault(),g.length||(g=e.closest(\".alert\")),g.trigger(b=a.Event(\"close.bs.alert\")),b.isDefaultPrevented()||(g.removeClass(\"in\"),a.support.transition&&g.hasClass(\"fade\")?g.one(\"bsTransitionEnd\",c).emulateTransitionEnd(d.TRANSITION_DURATION):c())};var e=a.fn.alert;a.fn.alert=b,a.fn.alert.Constructor=d,a.fn.alert.noConflict=function(){return a.fn.alert=e,this},a(document).on(\"click.bs.alert.data-api\",c,d.prototype.close)}(jQuery),+function(a){\"use strict\";function b(b){return this.each(function(){var d=a(this),e=d.data(\"bs.button\"),f=\"object\"==typeof b&&b;e||d.data(\"bs.button\",e=new c(this,f)),\"toggle\"==b?e.toggle():b&&e.setState(b)})}var c=function(b,d){this.$element=a(b),this.options=a.extend({},c.DEFAULTS,d),this.isLoading=!1};c.VERSION=\"3.3.7\",c.DEFAULTS={loadingText:\"loading...\"},c.prototype.setState=function(b){var c=\"disabled\",d=this.$element,e=d.is(\"input\")?\"val\":\"html\",f=d.data();b+=\"Text\",null==f.resetText&&d.data(\"resetText\",d[e]()),setTimeout(a.proxy(function(){d[e](null==f[b]?this.options[b]:f[b]),\"loadingText\"==b?(this.isLoading=!0,d.addClass(c).attr(c,c).prop(c,!0)):this.isLoading&&(this.isLoading=!1,d.removeClass(c).removeAttr(c).prop(c,!1))},this),0)},c.prototype.toggle=function(){var a=!0,b=this.$element.closest('[data-toggle=\"buttons\"]');if(b.length){var c=this.$element.find(\"input\");\"radio\"==c.prop(\"type\")?(c.prop(\"checked\")&&(a=!1),b.find(\".active\").removeClass(\"active\"),this.$element.addClass(\"active\")):\"checkbox\"==c.prop(\"type\")&&(c.prop(\"checked\")!==this.$element.hasClass(\"active\")&&(a=!1),this.$element.toggleClass(\"active\")),c.prop(\"checked\",this.$element.hasClass(\"active\")),a&&c.trigger(\"change\")}else this.$element.attr(\"aria-pressed\",!this.$element.hasClass(\"active\")),this.$element.toggleClass(\"active\")};var d=a.fn.button;a.fn.button=b,a.fn.button.Constructor=c,a.fn.button.noConflict=function(){return a.fn.button=d,this},a(document).on(\"click.bs.button.data-api\",'[data-toggle^=\"button\"]',function(c){var d=a(c.target).closest(\".btn\");b.call(d,\"toggle\"),a(c.target).is('input[type=\"radio\"], input[type=\"checkbox\"]')||(c.preventDefault(),d.is(\"input,button\")?d.trigger(\"focus\"):d.find(\"input:visible,button:visible\").first().trigger(\"focus\"))}).on(\"focus.bs.button.data-api blur.bs.button.data-api\",'[data-toggle^=\"button\"]',fun...<truncated>"
+    },
+    {
+      "id": 49,
+      "phase": "request",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/load_session?next=",
+      "headers": {
+        "accept-language": "zh-CN",
+        "referer": "https://www.ricequant.com/research/hub/login",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null
+    },
+    {
+      "id": 50,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa",
+      "status": 200,
+      "headers": {
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Fri, 28 Mar 2036 05:22:04 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Wed, 09 Sep 2020 10:06:51 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "/** vim: et:ts=4:sw=4:sts=4\n * @license RequireJS 2.3.6 Copyright jQuery Foundation and other contributors.\n * Released under MIT license, https://github.com/requirejs/requirejs/blob/master/LICENSE\n */\n//Not using strict: uneven strict support in browsers, #392, and causes\n//problems with requirejs.exec()/transpiler plugins that may not be strict.\n/*jslint regexp: true, nomen: true, sloppy: true */\n/*global window, navigator, document, importScripts, setTimeout, opera */\n\nvar requirejs, require, define;\n(function (global, setTimeout) {\n    var req, s, head, baseElement, dataMain, src,\n        interactiveScript, currentlyAddingScript, mainScript, subPath,\n        version = '2.3.6',\n        commentRegExp = /\\/\\*[\\s\\S]*?\\*\\/|([^:\"'=]|^)\\/\\/.*$/mg,\n        cjsRequireRegExp = /[^.]\\s*require\\s*\\(\\s*[\"']([^'\"\\s]+)[\"']\\s*\\)/g,\n        jsSuffixRegExp = /\\.js$/,\n        currDirRegExp = /^\\.\\//,\n        op = Object.prototype,\n        ostring = op.toString,\n        hasOwn = op.hasOwnProperty,\n        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),\n        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',\n        //PS3 indicates loaded and complete, but need to wait for complete\n        //specifically. Sequence is 'loading', 'loaded', execution,\n        // then 'complete'. The UA check is unfortunate, but not sure how\n        //to feature test w/o causing perf issues.\n        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?\n                      /^complete$/ : /^(complete|loaded)$/,\n        defContextName = '_',\n        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.\n        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',\n        contexts = {},\n        cfg = {},\n        globalDefQueue = [],\n        useInteractive = false;\n\n    //Could match something like ')//comment', do not lose the prefix to comment.\n    function commentReplace(match, singlePrefix) {\n        return singlePrefix || '';\n    }\n\n    function isFunction(it) {\n        return ostring.call(it) === '[object Function]';\n    }\n\n    function isArray(it) {\n        return ostring.call(it) === '[object Array]';\n    }\n\n    /**\n     * Helper function for iterating over an array. If the func returns\n     * a true value, it will break out of the loop.\n     */\n    function each(ary, func) {\n        if (ary) {\n            var i;\n            for (i = 0; i < ary.length; i += 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Helper function for iterating over an array backwards. If the func\n     * returns a true value, it will break out of the loop.\n     */\n    function eachReverse(ary, func) {\n        if (ary) {\n            var i;\n            for (i = ary.length - 1; i > -1; i -= 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    function hasProp(obj, prop) {\n        return hasOwn.call(obj, prop);\n    }\n\n    function getOwn(obj, prop) {\n        return hasProp(obj, prop) && obj[prop];\n    }\n\n    /**\n     * Cycles over properties in an object and calls a function for each\n     * property value. If the function returns a truthy value, then the\n     * iteration is stopped.\n     */\n    function eachProp(obj, func) {\n        var prop;\n        for (prop in obj) {\n            if (hasProp(obj, prop)) {\n                if (func(obj[prop], prop)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Simple function to mix in properties from source into target,\n     * but only if target does not already have a property of the same name.\n     */\n    function mixin(target, source, force, deepStringMixin) {\n        if (source) {\n            eachProp(source, function (value, prop) {\n                if (force || !hasProp(target, prop)) {\n    ...<truncated>"
+    },
+    {
+      "id": 51,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/static/components/jquery/dist/jquery.min.js?v=c9f5aeeca3ad37bf2aa006139b935f0a",
+      "status": 200,
+      "headers": {
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Fri, 28 Mar 2036 05:22:04 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "/*! jQuery v3.2.1 | (c) JS Foundation and other contributors | jquery.org/license */\n!function(a,b){\"use strict\";\"object\"==typeof module&&\"object\"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error(\"jQuery requires a window with a document\");return b(a)}:b(a)}(\"undefined\"!=typeof window?window:this,function(a,b){\"use strict\";var c=[],d=a.document,e=Object.getPrototypeOf,f=c.slice,g=c.concat,h=c.push,i=c.indexOf,j={},k=j.toString,l=j.hasOwnProperty,m=l.toString,n=m.call(Object),o={};function p(a,b){b=b||d;var c=b.createElement(\"script\");c.text=a,b.head.appendChild(c).parentNode.removeChild(c)}var q=\"3.2.1\",r=function(a,b){return new r.fn.init(a,b)},s=/^[\\s\\uFEFF\\xA0]+|[\\s\\uFEFF\\xA0]+$/g,t=/^-ms-/,u=/-([a-z])/g,v=function(a,b){return b.toUpperCase()};r.fn=r.prototype={jquery:q,constructor:r,length:0,toArray:function(){return f.call(this)},get:function(a){return null==a?f.call(this):a<0?this[a+this.length]:this[a]},pushStack:function(a){var b=r.merge(this.constructor(),a);return b.prevObject=this,b},each:function(a){return r.each(this,a)},map:function(a){return this.pushStack(r.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(f.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(a<0?b:0);return this.pushStack(c>=0&&c<b?[this[c]]:[])},end:function(){return this.prevObject||this.constructor()},push:h,sort:c.sort,splice:c.splice},r.extend=r.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for(\"boolean\"==typeof g&&(j=g,g=arguments[h]||{},h++),\"object\"==typeof g||r.isFunction(g)||(g={}),h===i&&(g=this,h--);h<i;h++)if(null!=(a=arguments[h]))for(b in a)c=g[b],d=a[b],g!==d&&(j&&d&&(r.isPlainObject(d)||(e=Array.isArray(d)))?(e?(e=!1,f=c&&Array.isArray(c)?c:[]):f=c&&r.isPlainObject(c)?c:{},g[b]=r.extend(j,f,d)):void 0!==d&&(g[b]=d));return g},r.extend({expando:\"jQuery\"+(q+Math.random()).replace(/\\D/g,\"\"),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return\"function\"===r.type(a)},isWindow:function(a){return null!=a&&a===a.window},isNumeric:function(a){var b=r.type(a);return(\"number\"===b||\"string\"===b)&&!isNaN(a-parseFloat(a))},isPlainObject:function(a){var b,c;return!(!a||\"[object Object]\"!==k.call(a))&&(!(b=e(a))||(c=l.call(b,\"constructor\")&&b.constructor,\"function\"==typeof c&&m.call(c)===n))},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},type:function(a){return null==a?a+\"\":\"object\"==typeof a||\"function\"==typeof a?j[k.call(a)]||\"object\":typeof a},globalEval:function(a){p(a)},camelCase:function(a){return a.replace(t,\"ms-\").replace(u,v)},each:function(a,b){var c,d=0;if(w(a)){for(c=a.length;d<c;d++)if(b.call(a[d],d,a[d])===!1)break}else for(d in a)if(b.call(a[d],d,a[d])===!1)break;return a},trim:function(a){return null==a?\"\":(a+\"\").replace(s,\"\")},makeArray:function(a,b){var c=b||[];return null!=a&&(w(Object(a))?r.merge(c,\"string\"==typeof a?[a]:a):h.call(c,a)),c},inArray:function(a,b,c){return null==b?-1:i.call(b,a,c)},merge:function(a,b){for(var c=+b.length,d=0,e=a.length;d<c;d++)a[e++]=b[d];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;f<g;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,e,f=0,h=[];if(w(a))for(d=a.length;f<d;f++)e=b(a[f],f,c),null!=e&&h.push(e);else for(f in a)e=b(a[f],f,c),null!=e&&h.push(e);return g.apply([],h)},guid:1,proxy:function(a,b){var c,d,e;if(\"string\"==typeof b&&(c=a[b],b=a,a=c),r.isFunction(a))return d=f.call(arguments,2),e=function(){return a.apply(b||this,d.concat(f.call(arguments)))},e.guid=a.guid=a.guid||r.guid++,e},now:Date.now,support:o}),\"function\"==typeof Symbol&&(r.fn[Symbol.iterator]=c[Symbol.iterator]),r.each(\"Boolean Number String Function Array Date RegExp Object Error Symbol\".split(\" \"),function(a,b){j[\"[object \"+b+\"]\"]=b.toLowerCase()});function w(a){var b=!!a&&\"length\"in a&&a.length...<truncated>"
+    },
+    {
+      "id": 53,
+      "phase": "response",
+      "resourceType": "document",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/load_session?next=",
+      "status": 302,
+      "headers": {
+        "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "0",
+        "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
+        "content-type": "text/html",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "location": "/login",
+        "server": "nginx",
+        "x-jupyterhub-version": "1.1.0"
+      },
+      "contentType": "text/html",
+      "body": null
+    },
+    {
+      "id": 61,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.ricequant.com/api/user/isLogin.do",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/welcome/",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/x-www-form-urlencoded;charset=utf-8"
+      },
+      "postData": null
+    },
+    {
+      "id": 69,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin",
+      "headers": {
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": null
+    },
+    {
+      "id": 73,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.ricequant.com/api/user/isLogin.do",
+      "status": 200,
+      "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "44",
+        "date": "Tue, 31 Mar 2026 05:22:04 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{\"code\": 1, \"message\": \"\\u672a\\u767b\\u9646\"}"
+    },
+    {
+      "id": 74,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin",
+      "headers": {
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": null
+    },
+    {
+      "id": 75,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://rumt-zh.com/speed/performance?dnsLookup=0&tcp=0&ssl=0&ttfb=27&contentDownload=0&domParse=3&resourceDownload=36&firstScreenTiming=180&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin&",
+      "headers": {
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": null
+    },
+    {
+      "id": 76,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=75348ced-942e-49f4-9249-807ad04ad741&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-9f03df44833b4f57a4d8bc36620e4208&referer=https%3A%2F%2Fwww.ricequant.com%2Fresearch%2Fhub%2Flogin",
+      "headers": {
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryUdhaNPOcZ3I9VcYA",
+        "referer": "https://www.ricequant.com/"
+      },
+      "postData": "------WebKitFormBoundaryUdhaNPOcZ3I9VcYA\r\nContent-Disposition: form-data; name=\"payload\"\r\n\r\n{\"duration\":{\"fetch\":[],\"static\":[{\"url\":\"https://assets.ricequant.com/welcome/index.3165cf66.css\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Home.9cee1c6f.css\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Trial.acd8105c.css\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/index.3277d67c.js\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/index.1e8f1826.js\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/vendor/browser-upgrade/check.v0.js\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://plausible.ricequant.com/js/script.js\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/logo.3c341260.png\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/logo.b328504e.svg\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Home.190b4796.js\",\"method\":\"get\",\"duration\":24.1,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/Home.808e8a00.js\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/title.c2e669df.svg\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/circle-left.10e09d6a.svg\",\"method\":\"get\",\"duration\":15.9,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/circle-right.9eae33bb.svg\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/rqdata-1.953de18f.svg\",\"method\":\"get\",\"duration\":15.4,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/rqdata-3.70b994cf.svg\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/rqalpha-1.4c7b0f71.svg\",\"method\":\"get\",\"duration\":0,\"status\":200,\"type\":\"static\",\"isHttps\":true,\"nextHopProtocol\":\"\",\"urlQuery\":\"\",\"domainLookup\":0,\"connectTime\":0,\"transferSize\":-1},{\"url\":\"https://assets.ricequant.com/welcome/r...<truncated>"
+    }
+  ],
+  "websockets": []
+}

@@ -213,9 +213,8 @@ class RiceQuantAuth {
     console.log('='.repeat(60));
     
     const browser = await chromium.launch({
-      headless: false,
-      slowMo: 30,
-      args: ['--start-maximized']
+      headless: true,
+      args: ['--disable-gpu', '--no-sandbox']
     });
     
     const context = await browser.newContext({

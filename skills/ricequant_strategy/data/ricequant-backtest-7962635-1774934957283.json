@@ -1,0 +1,46 @@
+{
+  "backtestId": "7962635",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-03-31T13:26:13.122000",
+    "start_at": "2026-03-31T13:26:16.881000",
+    "progress": 1,
+    "backtest_id": "7962635",
+    "description": "",
+    "strategy_id": 2414951,
+    "title": "test_strategy",
+    "account_type": "stock",
+    "end_at": "2026-03-31T13:26:34.911000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1719559800000,
+    "trading_date": 20240628,
+    "alpha": -0.02112,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.13784790547100192,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 1719559800000,
+    "trading_date": 20240628,
+    "alpha": -0.02112,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.13784790547100192,
+    "annual_downside_risk": 0
+  }
+}

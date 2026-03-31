@@ -29,24 +29,26 @@ function isSessionValid(session) {
     return false;
   }
   
-  // 检查是否有必要的cookie（如sessionid）
-  const hasSessionCookie = session.cookies.some(c => 
+  // RiceQuant 关键 cookie: sid 或 rqjwt
+  const hasValidCookie = session.cookies.some(c => 
+    c.name === 'sid' ||
+    c.name === 'rqjwt' ||
     c.name.toLowerCase().includes('session') ||
     c.name.toLowerCase().includes('token') ||
     c.name.toLowerCase().includes('auth')
   );
   
-  if (!hasSessionCookie) {
-    console.log('No session cookie found');
+  if (!hasValidCookie) {
+    console.log('No valid session cookie found (need sid or rqjwt)');
     return false;
   }
   
-  // 检查是否过期（假设24小时有效）
-  const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24小时
-  const isExpired = Date.now() - session.timestamp > SESSION_DURATION;
+  // 检查是否过期（RiceQuant session 有效期较长，设为 7 天）
+  const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7天
+  const isExpired = Date.now() - (session.timestamp || 0) > SESSION_DURATION;
   
   if (isExpired) {
-    console.log('Session expired');
+    console.log('Session expired (> 7 days old)');
     return false;
   }
   

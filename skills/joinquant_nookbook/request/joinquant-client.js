@@ -239,6 +239,71 @@ export class JoinQuantClient {
     return result.data;
   }
 
+  async createNotebook(options = {}) {
+    const notebookPath = options.notebookPath || this.notebookPath;
+    const url = this.buildApiUrl(`contents/${encodeNotebookPath(notebookPath)}`, { _: Date.now() });
+    
+    const emptyNotebook = {
+      metadata: {
+        kernelspec: {
+          display_name: 'Python 3',
+          language: 'python',
+          name: options.kernelName || 'python3'
+        },
+        language_info: {
+          codemirror_mode: {
+            name: 'ipython',
+            version: 3
+          },
+          file_extension: '.py',
+          mimetype: 'text/x-python',
+          name: 'python',
+          nbconvert_exporter: 'python',
+          pygments_lexer: 'ipython3',
+          version: '3.8.0'
+        }
+      },
+      nbformat: 4,
+      nbformat_minor: 4,
+      cells: []
+    };
+
+    const result = await this.requestJson(url, {
+      method: 'PUT',
+      body: {
+        type: 'notebook',
+        content: emptyNotebook
+      }
+    });
+    
+    return {
+      notebookPath,
+      notebookUrl: `${this.origin}${this.baseUrl}notebooks/${encodeNotebookPath(notebookPath)}`,
+      ...result.data
+    };
+  }
+
+  async deleteNotebook(options = {}) {
+    const notebookPath = options.notebookPath || this.notebookPath;
+    const url = this.buildApiUrl(`contents/${encodeNotebookPath(notebookPath)}`, { _: Date.now() });
+    
+    try {
+      const result = await this.requestJson(url, {
+        method: 'DELETE'
+      });
+      return { success: true, notebookPath };
+    } catch (error) {
+      return { success: false, notebookPath, error: error.message };
+    }
+  }
+
+  generateUniqueNotebookName(baseName = 'strategy_run') {
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '');
+    return `${baseName}_${dateStr}_${timeStr}.ipynb`;
+  }
+
   async ensureSession(options = {}) {
     const url = this.buildApiUrl('sessions');
     const kernelName = options.kernelName || 'python3';

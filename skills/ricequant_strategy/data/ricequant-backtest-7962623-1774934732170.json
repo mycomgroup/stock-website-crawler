@@ -1,0 +1,46 @@
+{
+  "backtestId": "7962623",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-03-31T13:22:27.651000",
+    "start_at": "2026-03-31T13:22:31.305000",
+    "progress": 0,
+    "backtest_id": "7962623",
+    "description": "",
+    "strategy_id": 2414951,
+    "title": "test_strategy",
+    "account_type": "stock",
+    "end_at": "2026-03-31T13:22:44.135000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 31 in handle_bar\n    do_rebalance(context, bar_dict)\n    --> context = Context({benchmark = '000300.XSHG', frequency = 'day', hold_num = 15, ipo_days = 180, breadth_extreme = 0.15, breadth_bottom = 0.25, breadth_defensive = 0.4, la ...\n    --> bar_dict = BarMap()\n    --> today = datetime.datetime(2023, 1, 3, 15, 0)\n\n  File strategy.py, line 57 in do_rebalance\n    log.info(f\"breadth={breadth:.2f} sentiment={sentiment}\")\n    --> context = Context({benchmark = '000300.XSHG', frequency = 'day', hold_num = 15, ipo_days = 180, breadth_extreme = 0.15, breadth_bottom = 0.25, breadth_defensive = 0.4, la ...\n    --> bar_dict = BarMap()\n    --> breadth = 0.34\n    --> sentiment = 20\n\nNameError: name 'log' is not defined"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  }
+}

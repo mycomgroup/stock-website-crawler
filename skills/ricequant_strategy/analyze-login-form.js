@@ -9,7 +9,7 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 async function analyzePage() {
   const browser = await chromium.launch({ 
-    headless: false,
+    headless: true,
     slowMo: 100
   });
   
