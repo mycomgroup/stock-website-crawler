@@ -1,0 +1,40 @@
+{
+  "strategyId": 2416358,
+  "backtestId": "7962985",
+  "strategyName": "rfscore7_pb10_final_v2",
+  "startDate": "2023-01-01",
+  "endDate": "2024-06-30",
+  "capital": "100000",
+  "status": "error_exit",
+  "info": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-03-31T16:45:41.419000",
+    "start_at": "2026-03-31T16:45:46.258000",
+    "progress": 0,
+    "backtest_id": "7962985",
+    "description": "",
+    "strategy_id": 2416358,
+    "title": "Backtest_1774946741047",
+    "account_type": "stock",
+    "end_at": "2026-03-31T16:45:57.774000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 41 in \n        except Exception as e:\n\n\nSyntaxError: invalid syntax (strategy.py, line 41)"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "timestamp": "2026-03-31T08:45:59.784Z"
+}

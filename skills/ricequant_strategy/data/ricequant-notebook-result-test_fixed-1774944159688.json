@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-03-31T08:02:39.688Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/test_fixed_20260331_160236.ipynb",
+  "notebookPath": "test_fixed_20260331_160236.ipynb",
+  "kernelId": "c1291feb-0a9b-419e-ad63-a30fe044bddf",
+  "sessionId": "d3ffc508-2c37-45af-8934-d658c62ccede",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "test_fixed_20260331_160236.ipynb",
+    "path": "test_fixed_20260331_160236.ipynb",
+    "last_modified": "2026-03-31T08:02:39.823764Z",
+    "created": "2026-03-31T08:02:39.825764Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2038,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n简单回测示例 - RiceQuant Notebook\n\n验证 notebook 连接和基本 API\n\"\"\"\n\nprint(\"=== RiceQuant Notebook 简单回测测试 ===\")\nfrom datetime import datetime\n\nprint(f\"当前时间: {datetime.now()}\")\n\ntry:\n    all_stocks = get_all_securities([\"stock\"])\n    print(f\"股票总数: {len(all_stocks)}\")\n\n    hs300 = index_components(\"000300.XSHG\")\n    print(f\"沪深300成分股: {len(hs300)}\")\n\n    zz500 = index_components(\"000905.XSHG\")\n    print(f\"中证500成分股: {len(zz500)}\")\n\n    dates = get_trading_dates(\"2024-01-01\", \"2024-12-31\")\n    print(f\"2024年交易日: {len(dates)}\")\n\n    print(\"\\nAPI 测试成功!\")\n\nexcept Exception as e:\n    print(f\"API 测试错误: {e}\")\n    print(\"可能需要在 RiceQuant Notebook 平台上运行\")\n\nprint(\"\\n=== 测试完成 ===\")\n",
+      "msgId": "ae5279ce28834373bd0bf7143ad33b65",
+      "websocketSessionId": "1d920ed87d144371ad4be557f8a928d7",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== RiceQuant Notebook 简单回测测试 ===\n当前时间: 2026-03-31 16:02:39.427276\nAPI 测试错误: name 'get_all_securities' is not defined\n可能需要在 RiceQuant Notebook 平台上运行\n\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RiceQuant Notebook 简单回测测试 ===\n当前时间: 2026-03-31 16:02:39.427276\nAPI 测试错误: name 'get_all_securities' is not defined\n可能需要在 RiceQuant Notebook 平台上运行\n\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

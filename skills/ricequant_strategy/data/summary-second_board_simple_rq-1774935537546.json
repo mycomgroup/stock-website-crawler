@@ -1,0 +1,16 @@
+{
+  "strategyId": 2416226,
+  "backtestId": "7962646",
+  "strategyName": "second_board_simple_rq",
+  "startDate": "2022-01-01",
+  "endDate": "2022-06-30",
+  "capital": "100000",
+  "annualReturn": 0,
+  "totalReturn": 0,
+  "maxDrawdown": 0,
+  "sharpe": 0,
+  "alpha": 0,
+  "beta": 0,
+  "winRate": 0,
+  "status": "error_exit"
+}

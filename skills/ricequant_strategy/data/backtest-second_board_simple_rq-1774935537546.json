@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "config": null,
+  "metadata": null,
+  "status": "error_exit",
+  "summary": null,
+  "create_at": "2026-03-31T13:38:36.594000",
+  "start_at": "2026-03-31T13:38:40.353000",
+  "progress": 0.008547008547008548,
+  "backtest_id": "7962646",
+  "description": "",
+  "strategy_id": 2416226,
+  "title": "Test_second_board_simple_rq_1774935516177",
+  "account_type": "stock",
+  "end_at": "2026-03-31T13:38:52.175000",
+  "exception": "Traceback (most recent call last):\n  File strategy.py, line 44 in daily_check\n    all_stocks = get_all_securities([\"stock\"])\n    --> context = Context({trades = 0, wins = 0, total_profit = 0, trade_log = [], test_mode = True, test_dates = ['2022-01-04', '2022-01-05', '2022-01-06', '2022-01-07', '2022-0 ...\n    --> bar_dict = BarMap()\n    --> today = '2022-01-10'\n    --> date = '2022-01-06'\n    --> prev1 = '2022-01-05'\n    --> prev2 = '2022-01-04'\n\nNameError: name 'get_all_securities' is not defined"
+}

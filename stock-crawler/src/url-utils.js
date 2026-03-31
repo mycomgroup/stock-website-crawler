@@ -17,10 +17,11 @@ function isValidUrl(url) {
 
     const urlObj = new URL(url);
 
-    // 检查所有查询参数的值
     for (const [key, value] of urlObj.searchParams.entries()) {
-      // 过滤掉无效的参数值
-      if (value === 'undefined' || value === 'null' || value.trim() === '') {
+      if (value === 'undefined' || value === 'null') {
+        return false;
+      }
+      if (typeof value === 'string' && value.trim() === '') {
         return false;
       }
     }

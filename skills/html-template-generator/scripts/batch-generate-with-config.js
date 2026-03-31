@@ -294,7 +294,7 @@ async function main() {
     const templateName = pattern.name;
     const outputPath = path.join(outputDir, `${templateName}.json`);
     
-    console.log(`\n[${index + 1}/${totalPatterns}] Processing: ${templateName}`);
+    console.log(`\n[${i + 1}/${patterns.length}] Processing: ${templateName}`);
     console.log(`  Description: ${pattern.description || 'N/A'}`);
     console.log(`  URLs: ${pattern.urlCount || pattern.urls?.length || 0}`);
     

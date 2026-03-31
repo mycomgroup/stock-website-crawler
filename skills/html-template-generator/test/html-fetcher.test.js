@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { HTMLFetcher } from '../lib/html-fetcher.js';
 
 describe('HTMLFetcher', () => {

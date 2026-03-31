@@ -7,6 +7,22 @@ export class XPathGenerator {
   }
 
   /**
+   * Escape quotes for XPath string to prevent injection
+   * @param {string} str - String to escape
+   * @returns {string} Escaped string
+   * @private
+   */
+  _escapeXPathString(str) {
+    if (!str) return str;
+    if (str.includes("'") && str.includes('"')) {
+      return 'concat(' + str.split("'").map(part => `'${part}'`).join(', "\'", ') + ')';
+    } else if (str.includes("'")) {
+      return `"${str}"`;
+    }
+    return `'${str}'`;
+  }
+
+  /**
    * Generate XPath rules from structure analysis
    * @param {Object} structure - Structure analysis result from StructureAnalyzer
    * @returns {Object} XPath rules for content extraction
@@ -216,8 +232,9 @@ export class XPathGenerator {
     
     // Generate XPath filters for ad patterns
     adPatterns.forEach(pattern => {
-      adXPaths.push(`//div[contains(@class, '${pattern}')]`);
-      adXPaths.push(`//section[contains(@class, '${pattern}')]`);
+      const escaped = this._escapeXPathString(pattern);
+      adXPaths.push(`//div[contains(@class, ${escaped})]`);
+      adXPaths.push(`//section[contains(@class, ${escaped})]`);
     });
     
     return adXPaths;
@@ -243,8 +260,9 @@ export class XPathGenerator {
     
     // Generate XPath filters for navigation patterns
     navPatterns.forEach(pattern => {
-      navXPaths.push(`//div[contains(@class, '${pattern}')]`);
-      navXPaths.push(`//ul[contains(@class, '${pattern}')]`);
+      const escaped = this._escapeXPathString(pattern);
+      navXPaths.push(`//div[contains(@class, ${escaped})]`);
+      navXPaths.push(`//ul[contains(@class, ${escaped})]`);
     });
     
     return navXPaths;
@@ -269,8 +287,9 @@ export class XPathGenerator {
     
     // Generate XPath filters for sidebar patterns
     sidebarPatterns.forEach(pattern => {
-      sidebarXPaths.push(`//div[contains(@class, '${pattern}')]`);
-      sidebarXPaths.push(`//aside[contains(@class, '${pattern}')]`);
+      const escaped = this._escapeXPathString(pattern);
+      sidebarXPaths.push(`//div[contains(@class, ${escaped})]`);
+      sidebarXPaths.push(`//aside[contains(@class, ${escaped})]`);
     });
     
     return sidebarXPaths;

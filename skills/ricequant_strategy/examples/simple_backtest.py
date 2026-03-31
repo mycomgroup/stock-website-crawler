@@ -5,7 +5,9 @@
 """
 
 print("=== RiceQuant Notebook 简单回测测试 ===")
-print(f"当前时间: {context.now}")
+from datetime import datetime
+
+print(f"当前时间: {datetime.now()}")
 
 try:
     all_stocks = get_all_securities(["stock"])

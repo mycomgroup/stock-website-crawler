@@ -1,0 +1,79 @@
+{
+  "cookies": [
+    {
+      "name": "tgw_l7_route",
+      "value": "006b76bf4a6398f05baf657858ca2891",
+      "domain": "www.ricequant.com",
+      "path": "/",
+      "expires": 1774945993.549443,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "sid",
+      "value": "8pleQ9nCJ3LsbhfNkpcP7TcCWQrlA3VU|28c9aa2a9dc258a1f838b0fde41b2499b556efb7107dd93ad5b6b2d56840d3fa6e427a8b928858b9d7dfe5d14a0984c03189723ff3a7eb03c6cd5f727a38c54b",
+      "domain": "www.ricequant.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "jupyter-hub-token",
+      "value": "",
+      "domain": "www.ricequant.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "rqjwt",
+      "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NDk0MjM5OCwgImV4cCI6IDE3Nzc1MzQzOTh9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.QlznEOIa9JNeARXVfkfRlwRx1RXtx2mew2OND7_jXk-29_mWiW2_O1xHp-p3yiLW_pEnPZ8_g3TN9_s3l8Sljw",
+      "domain": "www.ricequant.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.ricequant.com",
+      "localStorage": [
+        {
+          "name": "common_recently_product",
+          "value": "{\"497381\":\"quant\"}"
+        },
+        {
+          "name": "AEGIS_ID",
+          "value": "e534b121-06c8-4752-a77f-76206a306a83"
+        },
+        {
+          "name": "common_workspace",
+          "value": "{\"497381\":\"640c7f5851dc7e67377e085d\"}"
+        },
+        {
+          "name": "common_account",
+          "value": "{\"isLogin\":true,\"fullname\":\"yuping322\",\"avatar\":\"https://qcdn.ricequant.com/img/avatar/default-avatar.png\",\"phone\":\"+8613311390323\",\"email\":null,\"userId\":497381}"
+        },
+        {
+          "name": "anka_login_method",
+          "value": "1"
+        },
+        {
+          "name": "quant_tableColumns",
+          "value": "{\"0\":{\"strategys\":[\"title\",\"owner\",\"account_type\",\"last_modified\",\"strategy_type\",\"permission\",\"operation\"]}}"
+        }
+      ]
+    }
+  ],
+  "savedAt": "2026-03-31T07:33:23.700Z",
+  "metadata": {
+    "source": "auto-login"
+  }
+}

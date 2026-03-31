@@ -126,15 +126,29 @@ async function runBacktest(options) {
         try {
           result = await client.getBacktestResult(backtestId);
           
+          if (!result) {
+            process.stdout.write(`   [${attempts}/60] Waiting for result...\r`);
+            continue;
+          }
+          
           if (result.status === 'finished' || result.progress === 100) {
             console.log('\n   ✓ Backtest completed!');
+            break;
+          }
+          
+          if (result.status === 'error_exit' || result.status === 'failed') {
+            console.log('\n   ✗ Backtest failed:', result.exception || result.message || 'Unknown error');
             break;
           }
           
           const progress = result.progress || 0;
           process.stdout.write(`   [${attempts}/60] Progress: ${progress}%\r`);
         } catch (e) {
-          // 忽略错误继续轮询
+          if (e.message && (e.message.includes('network') || e.message.includes('ECONN') || e.message.includes('timeout'))) {
+            process.stdout.write(`   [${attempts}/60] Network error, retrying...\r`);
+          } else {
+            console.log('\n   ✗ Error:', e.message);
+          }
         }
       }
       

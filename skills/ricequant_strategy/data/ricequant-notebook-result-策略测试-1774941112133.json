@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-03-31T07:11:52.133Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260331_151148.ipynb",
+  "notebookPath": "策略测试_20260331_151148.ipynb",
+  "kernelId": "27e26ee0-7660-4e84-a95d-5d521b9da44c",
+  "sessionId": "1530129e-eb56-4e1d-9904-9c824cd21e6c",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260331_151148.ipynb",
+    "path": "策略测试_20260331_151148.ipynb",
+    "last_modified": "2026-03-31T07:11:52.154716Z",
+    "created": "2026-03-31T07:11:52.155716Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 4724,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板策略简化版测试 - RiceQuant DataFrame正确处理\n\"\"\"\n\nprint(\"=\" * 60)\nprint(\"二板策略简化测试 - 2022年\")\nprint(\"=\" * 60)\n\n\ndef init(context):\n    context.trades = 0\n    context.wins = 0\n    context.total_profit = 0\n\n    scheduler.run_daily(daily_check, time_rule=market_open(minute=5))\n\n\ndef daily_check(context, bar_dict):\n    today = context.now.date()\n\n    if today.year != 2022:\n        return\n\n    if today.month > 6:\n        return\n\n    all_inst = all_instruments(\"CS\")\n    stock_list = all_inst[\"order_book_id\"].tolist()\n\n    stocks = [\n        s\n        for s in stock_list\n        if not (s.startswith(\"68\") or s.startswith(\"4\") or s.startswith(\"8\"))\n    ][:300]\n\n    def is_zt(stock):\n        try:\n            bars = history_bars(stock, 1, \"1d\", [\"close\", \"limit_up\"])\n            if bars is not None and len(bars) > 0:\n                return bars[-1][\"close\"] >= bars[-1][\"limit_up\"] * 0.99\n        except:\n            pass\n        return False\n\n    zt_stocks = [s for s in stocks if is_zt(s)]\n\n    if len(zt_stocks) < 10:\n        logger.info(f\"{today}: 涨停股数不足 ({len(zt_stocks)})\")\n        return\n\n    def is_zt_on_date(stock, days_ago):\n        try:\n            bars = history_bars(stock, days_ago + 1, \"1d\", [\"close\", \"limit_up\"])\n            if bars is not None and len(bars) > days_ago:\n                return bars[-days_ago][\"close\"] >= bars[-days_ago][\"limit_up\"] * 0.99\n        except:\n            pass\n        return False\n\n    second_board = []\n    for s in zt_stocks:\n        if is_zt_on_date(s, 1) and not is_zt_on_date(s, 2):\n            second_board.append(s)\n\n    if len(second_board) == 0:\n        logger.info(f\"{today}: 无二板股票\")\n        return\n\n    logger.info(f\"{today}: 发现 {len(second_board)} 只二板股票\")\n\n    valid = []\n    for s in second_board[:5]:\n        try:\n            bars = history_bars(s, 2, \"1d\", [\"volume\"])\n            if bars is not None and len(bars) >= 2:\n                vol_ratio = bars[-1][\"volume\"] / bars[-2][\"volume\"]\n                if vol_ratio <= 1.875:\n                    valid.append(s)\n        except:\n            pass\n\n    if len(valid) == 0:\n        logger.info(f\"{today}: 无符合条件的股票\")\n        return\n\n    target = valid[0]\n    logger.info(f\"{today}: 选择 {target}\")\n\n    if target in bar_dict:\n        bar = bar_dict[target]\n        if bar.is_trading:\n            bars = history_bars(target, 1, \"1d\", [\"close\", \"limit_up\"])\n            if bars is not None and len(bars) > 0:\n                limit_up = bars[-1][\"limit_up\"]\n\n                if bar.open < limit_up * 0.99:\n                    order_shares(target, 1000)\n                    context.trades += 1\n                    logger.info(f\"{today}: 买入 {target} @ {bar.open}\")\n\n\ndef after_trading(context):\n    pass\n\n\n__all__ = [\"init\", \"daily_check\", \"after_trading\"]\n",
+      "msgId": "546ab2ed535e445d99fc0f06200fd1b8",
+      "websocketSessionId": "3db27ed99b874c7d82dfdc5c0b66477e",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "============================================================\n二板策略简化测试 - 2022年\n============================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "============================================================\n二板策略简化测试 - 2022年\n============================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

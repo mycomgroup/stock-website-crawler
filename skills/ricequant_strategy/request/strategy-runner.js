@@ -60,8 +60,12 @@ export async function runStrategyWorkflow(options = {}) {
   let attempts = 0;
   const maxAttempts = 60; // 最多等待5分钟
   
+  const baseInterval = 2000;
+  const maxInterval = 10000;
+  
   while (!isComplete && attempts < maxAttempts) {
-    await new Promise(resolve => setTimeout(resolve, 5000)); // 每5秒检查一次
+    const interval = Math.min(baseInterval * Math.pow(1.5, attempts), maxInterval);
+    await new Promise(resolve => setTimeout(resolve, interval));
     attempts++;
     
     try {
@@ -77,12 +81,14 @@ export async function runStrategyWorkflow(options = {}) {
       } else if (status === 'failed' || status === 'error') {
         throw new Error(`Backtest failed: ${result.message || JSON.stringify(result)}`);
       }
-    } catch (error) {
-      if (attempts >= maxAttempts) {
-        throw new Error(`Backtest timeout after ${maxAttempts} attempts: ${error.message}`);
+} catch (error) {
+        if (attempts >= maxAttempts) {
+          const timeoutError = new Error(`Backtest timeout after ${maxAttempts} attempts: ${error.message}`);
+          timeoutError.originalError = error;
+          timeoutError.stack = `${timeoutError.stack}\nCaused by: ${error.stack}`;
+          throw timeoutError;
+        }
       }
-      // 继续等待
-    }
   }
 
   if (!isComplete) {

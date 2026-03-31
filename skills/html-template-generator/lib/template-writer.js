@@ -66,26 +66,26 @@ export class TemplateWriter {
       commonElements: {}
     };
 
-    // Count common elements from xpaths
+    const frequencies = data.metadata?.frequencies || {};
+
     if (data.xpaths) {
       if (data.xpaths.title) {
-        metadata.commonElements.title = data.metadata?.sampleCount || 0;
+        metadata.commonElements.title = frequencies.title || data.metadata?.sampleCount || 0;
       }
       
       if (data.xpaths.sections) {
-        metadata.commonElements.sections = data.metadata?.sampleCount || 0;
+        metadata.commonElements.sections = frequencies.mainContent || data.metadata?.sampleCount || 0;
         
-        // Count nested elements
         const extract = data.xpaths.sections.extract;
         if (extract) {
           if (extract.table) {
-            metadata.commonElements.tables = data.metadata?.sampleCount || 0;
+            metadata.commonElements.tables = frequencies.tables || 0;
           }
           if (extract.codeExample) {
-            metadata.commonElements.codeBlocks = data.metadata?.sampleCount || 0;
+            metadata.commonElements.codeBlocks = frequencies.codeBlocks || 0;
           }
           if (extract.list) {
-            metadata.commonElements.lists = data.metadata?.sampleCount || 0;
+            metadata.commonElements.lists = frequencies.lists || 0;
           }
         }
       }

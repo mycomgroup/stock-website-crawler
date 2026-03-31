@@ -66,7 +66,13 @@ async function main() {
   
   // Read patterns file
   const inputPath = path.resolve(config.input);
-  const patternsData = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
+  let patternsData;
+  try {
+    patternsData = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
+  } catch (error) {
+    console.error(`Error: Failed to parse JSON file ${inputPath}: ${error.message}`);
+    process.exit(1);
+  }
   const patterns = patternsData.patterns || [];
   
   console.log(`📊 Total patterns: ${patterns.length}`);

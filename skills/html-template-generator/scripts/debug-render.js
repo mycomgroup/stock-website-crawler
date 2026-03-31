@@ -67,7 +67,6 @@ async function main() {
     
     // Test XPath directly
     console.log('\n4. Testing XPath directly...');
-    const { JSDOM } = await import('jsdom');
     const xpath = (await import('xpath')).default;
     
     const dom = new JSDOM(result.html);

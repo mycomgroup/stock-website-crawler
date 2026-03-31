@@ -286,7 +286,9 @@ async function main() {
     }
   } catch (error) {
     console.error('\n错误:', error.message);
-    await client.close();
+    if (client && typeof client.close === 'function') {
+      await client.close();
+    }
     process.exit(1);
   }
 }

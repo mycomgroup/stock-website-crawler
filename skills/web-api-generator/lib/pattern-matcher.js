@@ -4,10 +4,11 @@ import fs from 'fs';
  * Pattern 匹配器
  */
 export class PatternMatcher {
-  constructor(patternsPath) {
+  constructor(patternsPath, options = {}) {
     const content = fs.readFileSync(patternsPath, 'utf-8');
     const data = JSON.parse(content);
     this.patterns = data.patterns || [];
+    this.baseUrl = options.baseUrl || 'https://www.lixinger.com';
   }
 
   /**
@@ -107,7 +108,7 @@ export class PatternMatcher {
    * 构建 URL
    */
   buildUrl(pattern, params = {}) {
-    let url = pattern.samples[0];
+    let url = (pattern.samples && pattern.samples.length > 0) ? pattern.samples[0] : `${this.baseUrl}${pattern.pathTemplate}`;
 
     if (Object.keys(params).length > 0) {
       let path = pattern.pathTemplate;
@@ -116,7 +117,7 @@ export class PatternMatcher {
         path = path.replace(`{${key}}`, value);
       }
 
-      url = `https://www.lixinger.com${path}`;
+      url = `${this.baseUrl}${path}`;
 
       const queryParams = [];
       for (const [key, value] of Object.entries(params)) {

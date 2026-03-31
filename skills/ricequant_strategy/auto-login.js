@@ -20,7 +20,10 @@ class RiceQuantAuth {
       throw new Error('RICEQUANT_USERNAME and RICEQUANT_PASSWORD must be set in .env');
     }
     
-    console.log('Username:', this.username);
+    const masked = this.username.length > 4 
+      ? this.username.slice(0, 2) + '***' + this.username.slice(-2) 
+      : '****';
+    console.log('Username:', masked);
     
     if (!fs.existsSync(SCREENSHOT_DIR)) {
       fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -86,13 +89,7 @@ class RiceQuantAuth {
     if (usernameInput) {
       await usernameInput.click();
       await page.waitForTimeout(100);
-      await usernameInput.fill('');
-      await page.waitForTimeout(100);
-      // 逐字输入
-      for (const char of this.username) {
-        await usernameInput.press(char);
-        await page.waitForTimeout(50);
-      }
+      await usernameInput.fill(this.username);
       console.log('  Filled username:', this.username);
     }
     await page.waitForTimeout(500);
@@ -103,13 +100,7 @@ class RiceQuantAuth {
     if (passwordInput) {
       await passwordInput.click();
       await page.waitForTimeout(100);
-      await passwordInput.fill('');
-      await page.waitForTimeout(100);
-      // 逐字输入
-      for (const char of this.password) {
-        await passwordInput.press(char);
-        await page.waitForTimeout(50);
-      }
+      await passwordInput.fill(this.password);
       console.log('  Filled password');
     }
     await page.waitForTimeout(500);

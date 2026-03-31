@@ -62,7 +62,13 @@ export class ConfigLoader {
     const result = { ...target };
     
     for (const key in source) {
-      if (source[key] instanceof Object && !Array.isArray(source[key])) {
+      if (Array.isArray(source[key])) {
+        if (Array.isArray(result[key])) {
+          result[key] = [...result[key], ...source[key]];
+        } else {
+          result[key] = [...source[key]];
+        }
+      } else if (source[key] instanceof Object && source[key] !== null) {
         result[key] = this._deepMerge(result[key] || {}, source[key]);
       } else {
         result[key] = source[key];

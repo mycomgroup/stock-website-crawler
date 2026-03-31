@@ -1,0 +1,51 @@
+{
+  "capturedAt": "2026-03-31T07:09:48.510Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260331_150942.ipynb",
+  "notebookPath": "策略测试_20260331_150942.ipynb",
+  "kernelId": "0ae9c29d-6fa6-45f9-900c-0fe32b091534",
+  "sessionId": "91f3a208-3dfc-4424-b192-1672f741b4cf",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260331_150942.ipynb",
+    "path": "策略测试_20260331_150942.ipynb",
+    "last_modified": "2026-03-31T07:09:48.370936Z",
+    "created": "2026-03-31T07:09:48.371937Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 4176,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\nRFScore 简化策略 - Notebook 版本\n\n用于快速验证选股逻辑\n\"\"\"\n\nimport numpy as np\n\nprint(\"=== RFScore 简化策略 Notebook 测试 ===\")\n\ntry:\n    print(\"获取沪深300成分股...\")\n    hs300 = index_components(\"000300.XSHG\")[:30]\n    print(f\"测试股票数: {len(hs300)}\")\n\n    scores = []\n    for stock in hs300:\n        try:\n            bars = history_bars(stock, 20, \"1d\", [\"close\", \"volume\"], include_now=True)\n            if bars is None or len(bars) < 20:\n                continue\n\n            close = bars[\"close\"]\n            volume = bars[\"volume\"]\n\n            momentum = (close[-1] / close[0] - 1) * 100\n\n            vol_ratio = (\n                np.mean(volume[-5:]) / np.mean(volume) if np.mean(volume) > 0 else 0\n            )\n\n            price_pos = (\n                (close[-1] - np.min(close)) / (np.max(close) - np.min(close))\n                if np.max(close) != np.min(close)\n                else 0.5\n            )\n\n            score = 0\n            if momentum > 0:\n                score += 2\n            elif momentum > -5:\n                score += 1\n\n            if vol_ratio > 1.2:\n                score += 2\n            elif vol_ratio > 0.8:\n                score += 1\n\n            if price_pos > 0.7:\n                score += 2\n            elif price_pos > 0.3:\n                score += 1\n\n            fscore = min(7, max(1, score + 1))\n\n            scores.append(\n                {\n                    \"code\": stock,\n                    \"close\": close[-1],\n                    \"momentum\": momentum,\n                    \"fscore\": fscore,\n                }\n            )\n\n        except Exception as e:\n            continue\n\n    print(f\"\\n成功计算 {len(scores)} 只股票的评分\")\n\n    if scores:\n        scores.sort(key=lambda x: -x[\"fscore\"])\n\n        print(\"\\n评分最高的5只股票:\")\n        for i, s in enumerate(scores[:5]):\n            print(\n                f\"  {i + 1}. {s['code']}: FScore={s['fscore']}, 动量={s['momentum']:.2f}%\"\n            )\n\n        high_score_stocks = [s[\"code\"] for s in scores if s[\"fscore\"] >= 6]\n        print(f\"\\nFScore >= 6 的股票数: {len(high_score_stocks)}\")\n\n        print(\"\\n策略逻辑验证成功!\")\n\nexcept Exception as e:\n    print(f\"策略测试错误: {e}\")\n    print(\"可能需要在 RiceQuant Notebook 平台上运行\")\n\nprint(\"\\n=== 测试完成 ===\")\n",
+      "msgId": "24098f7795454982b4ed0444a36dbf00",
+      "websocketSessionId": "bb7f6d4aa74e4f2588a17e6f2f8a9ab6",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== RFScore 简化策略 Notebook 测试 ===\n获取沪深300成分股...\n测试股票数: 30\n\n成功计算 0 只股票的评分\n\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RFScore 简化策略 Notebook 测试 ===\n获取沪深300成分股...\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "测试股票数: 30\n\n成功计算 0 只股票的评分\n\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

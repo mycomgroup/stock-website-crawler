@@ -116,28 +116,33 @@ export class FieldInferenceService {
       context
     };
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`
-      },
-      body: JSON.stringify({
-        model: this.model,
-        temperature: 0.2,
-        response_format: { type: 'json_object' },
-        messages: [
-          {
-            role: 'system',
-            content: '你是 API 参数语义分析专家，擅长从 URL 模板、路径层级和样本链接推断字段含义。'
-          },
-          {
-            role: 'user',
-            content: JSON.stringify(prompt)
-          }
-        ]
-      })
-    });
+    let response;
+    try {
+      response = await fetch(`${this.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
+        },
+        body: JSON.stringify({
+          model: this.model,
+          temperature: 0.2,
+          response_format: { type: 'json_object' },
+          messages: [
+            {
+              role: 'system',
+              content: '你是 API 参数语义分析专家，擅长从 URL 模板、路径层级和样本链接推断字段含义。'
+            },
+            {
+              role: 'user',
+              content: JSON.stringify(prompt)
+            }
+          ]
+        })
+      });
+    } catch (networkError) {
+      throw new Error(`网络请求失败: ${networkError.message}`);
+    }
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -32,7 +32,7 @@ export class HARParser {
   extractDataAPIs() {
     return this.entries.filter(entry => {
       const url = entry.request.url;
-      const mimeType = entry.response.content.mimeType || '';
+      const mimeType = entry.response?.content?.mimeType || '';
       
       return this.isDataAPI(url, mimeType, entry);
     });

@@ -101,14 +101,18 @@ function parseArgs(argv) {
   return args;
 }
 
-function parseScreenerUrl(url) {
-  const parsed = new URL(url);
-  const parts = parsed.pathname.split('/').filter(Boolean);
-  return {
-    url,
-    areaCode: parts[parts.length - 1] || 'cn',
-    screenerId: parsed.searchParams.get('screener-id')
-  };
+function parseScreenerUrl(urlString) {
+  try {
+    const parsed = new URL(urlString);
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    return {
+      url: urlString,
+      areaCode: parts[parts.length - 1] || 'cn',
+      screenerId: parsed.searchParams.get('screener-id')
+    };
+  } catch (error) {
+    throw new Error(`Invalid screener URL: ${urlString}. ${error.message}`);
+  }
 }
 
 function buildCookieHeader(setCookies) {

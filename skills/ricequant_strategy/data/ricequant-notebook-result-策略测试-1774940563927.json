@@ -1,0 +1,40 @@
+{
+  "capturedAt": "2026-03-31T07:02:43.927Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260331_150240.ipynb",
+  "notebookPath": "策略测试_20260331_150240.ipynb",
+  "kernelId": "3258ccbd-4336-4ed2-8625-780cb213df16",
+  "sessionId": "057086c8-b143-43cc-a578-315b180587d3",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260331_150240.ipynb",
+    "path": "策略测试_20260331_150240.ipynb",
+    "last_modified": "2026-03-31T07:02:43.906263Z",
+    "created": "2026-03-31T07:02:43.906263Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 1352,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n简单买入测试 - RiceQuant handle_bar 方式\n\"\"\"\n\n\ndef init(context):\n    context.bought = False\n    context.s1 = \"000001.XSHE\"\n\n\ndef handle_bar(context, bar_dict):\n    if context.bought:\n        return\n\n    stock = context.s1\n\n    if stock not in bar_dict:\n        return\n\n    bar = bar_dict[stock]\n\n    # 买入\n    shares = int(context.portfolio.cash / bar.close / 100) * 100\n    if shares >= 100:\n        order_shares(stock, shares)\n        context.bought = True\n        logger.info(f\"Bought {stock} {shares} shares @ {bar.close}\")\n",
+      "msgId": "24564ea67ff740018a98a7f22c4f4eb9",
+      "websocketSessionId": "a42e999d31fb4369ae6a03d9572feaca",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "",
+      "outputs": []
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

@@ -104,9 +104,9 @@ export class RiceQuantClient {
     const result = await this.request(url);
     
     return {
-      strategyId: result._id || strategyId,
+      strategyId: result._id || result.strategy_id || strategyId,
       workspaceId,
-      name: result.name || '',
+      name: result.name || result.title || '',
       code: result.code || ''
     };
   }
@@ -116,7 +116,7 @@ export class RiceQuantClient {
     const url = `/api/strategy/v1/workspaces/${workspaceId}/strategies/${strategyId}`;
     
     const body = JSON.stringify({
-      name,
+      title: name,
       code
     });
     
@@ -142,7 +142,7 @@ export class RiceQuantClient {
       config: {
         start_date: config.startTime || '2021-01-01',
         end_date: config.endTime || '2025-03-28',
-        stock_init_cash: parseInt(config.baseCapital || '100000'),
+        stock_init_cash: parseInt(config.baseCapital || '100000', 10),
         futures_init_cash: 0,
         bond_init_cash: 0,
         frequency: config.frequency || 'day',

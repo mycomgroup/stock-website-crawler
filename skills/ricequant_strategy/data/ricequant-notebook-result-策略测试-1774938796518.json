@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-03-31T06:33:16.518Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260331_143135.ipynb",
+  "notebookPath": "策略测试_20260331_143135.ipynb",
+  "kernelId": "41477119-774f-42f9-bd3f-267718a78ec5",
+  "sessionId": "524a5bd3-f209-4af4-8c48-db5b4cccd8aa",
+  "appendedCellIndex": 1,
+  "managedCellIndex": 1,
+  "mode": "partial",
+  "targetCellIndices": [
+    1
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260331_143135.ipynb",
+    "path": "策略测试_20260331_143135.ipynb",
+    "last_modified": "2026-03-31T06:33:16.560170Z",
+    "created": "2026-03-31T06:33:16.560170Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 5122,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 1,
+      "source": "\"\"\"\n移动平均策略 - Notebook 版本\n\n用于在 RiceQuant Notebook 中逐步验证策略逻辑\n\"\"\"\n\nimport numpy as np\n\nprint(\"=== 双均线策略 Notebook 测试 ===\")\n\ntry:\n    stock = \"000001.XSHE\"\n    print(f\"测试股票: {stock}\")\n\n    bars = history_bars(stock, 30, \"1d\", [\"close\", \"volume\"], include_now=True)\n\n    if bars is not None and len(bars) >= 20:\n        close = bars[\"close\"]\n        volume = bars[\"volume\"]\n\n        short_window = 5\n        long_window = 20\n\n        short_ma = np.mean(close[-short_window:])\n        long_ma = np.mean(close[-long_window:])\n\n        print(f\"最近收盘价: {close[-1]:.2f}\")\n        print(f\"短期均线({short_window}日): {short_ma:.2f}\")\n        print(f\"长期均线({long_window}日): {long_ma:.2f}\")\n\n        if short_ma > long_ma:\n            print(\"\\n>>> 金叉信号: 短期均线 > 长期均线，建议买入\")\n        else:\n            print(\"\\n>>> 无金叉信号: 短期均线 <= 长期均线\")\n\n        print(\"\\n策略逻辑验证成功!\")\n\n    else:\n        print(\"无法获取足够的历史数据\")\n\nexcept Exception as e:\n    print(f\"策略测试错误: {e}\")\n    print(\"可能需要在 RiceQuant Notebook 平台上运行\")\n\nprint(\"\\n=== 测试完成 ===\")\n",
+      "msgId": "46dfc234e01f4a91a1d241a608778736",
+      "websocketSessionId": "b5e3ee3f63524b8189c8f9ca3fa10a6f",
+      "executionCount": 2,
+      "status": "ok",
+      "textOutput": "=== 双均线策略 Notebook 测试 ===\n测试股票: 000001.XSHE\n策略测试错误: name 'history_bars' is not defined\n可能需要在 RiceQuant Notebook 平台上运行\n\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== 双均线策略 Notebook 测试 ===\n测试股票: 000001.XSHE\n策略测试错误: name 'history_bars' is not defined\n可能需要在 RiceQuant Notebook 平台上运行\n\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": false,
+  "reuseNotebook": true,
+  "strategyBaseName": "策略测试"
+}

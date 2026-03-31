@@ -52,6 +52,10 @@ function normalizeCookieDomain(domain) {
 }
 
 function hostMatchesDomain(hostname, domain) {
+  if (!hostname || !domain) return false;
+  if (hostname === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+    return hostname === normalizeCookieDomain(domain);
+  }
   const normalizedDomain = normalizeCookieDomain(domain);
   return hostname === normalizedDomain || hostname.endsWith(`.${normalizedDomain}`);
 }
@@ -110,9 +114,26 @@ export class RiceQuantNotebookClient {
       this.baseUrl = this.sessionPayload.pageState?.notebook?.baseUrl || `/user/${this.userId}/`;
     } else if (directNotebookUrl.includes('/research') || directNotebookUrl.includes('ricequant.com')) {
       this.origin = parsedNotebookUrl.origin;
-      this.userId = this.sessionPayload.pageState?.notebook?.baseUrl?.split('/')[2] || 'default';
+      
+      // 从 pageState.bodyDataset.baseUrl 提取用户路径
+      const bodyDatasetBaseUrl = this.sessionPayload.pageState?.bodyDataset?.baseUrl;
+      if (bodyDatasetBaseUrl) {
+        this.baseUrl = bodyDatasetBaseUrl;
+        this.userId = bodyDatasetBaseUrl.split('/')[3] || 'user_497381'; // /research/user/user_497381/ -> user_497381
+      } else {
+        // 从页面 URL 提取
+        const urlPath = this.sessionPayload.pageState?.url || '';
+        const pathMatch = urlPath.match(/\/research\/user\/([^\/]+)/);
+        if (pathMatch) {
+          this.userId = pathMatch[1];
+          this.baseUrl = `/research/user/${this.userId}/`;
+        } else {
+          this.userId = 'user_497381'; // 从之前的成功访问获取
+          this.baseUrl = `/research/user/${this.userId}/`;
+        }
+      }
+      
       this.notebookPath = options.notebookPath || 'default.ipynb';
-      this.baseUrl = '/user/default/';
     } else {
       throw new Error(`无法从 notebook URL 解析路径：${directNotebookUrl}`);
     }

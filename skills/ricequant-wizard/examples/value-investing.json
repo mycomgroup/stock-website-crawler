@@ -1,0 +1,55 @@
+{
+  "name": "低估值高股息",
+  "template": "single_period",
+  "universe": ["000300.XSHG"],
+  "industries": ["*"],
+  "board": ["*"],
+  "stOption": "exclude",
+  "filters": [
+    {
+      "operator": "less_than",
+      "factor": { "type": "fundamental", "name": "pe_ratio" },
+      "rhs": 15
+    },
+    {
+      "operator": "less_than",
+      "factor": { "type": "fundamental", "name": "pb_ratio" },
+      "rhs": 1.5
+    },
+    {
+      "operator": "greater_than",
+      "factor": { "type": "fundamental", "name": "dividend_yield" },
+      "rhs": 3
+    },
+    {
+      "operator": "greater_than",
+      "factor": { "type": "fundamental", "name": "roe" },
+      "rhs": 10
+    }
+  ],
+  "sorting": [
+    {
+      "factor": { "type": "fundamental", "name": "dividend_yield" },
+      "ascending": false,
+      "weight": 0.6
+    },
+    {
+      "factor": { "type": "fundamental", "name": "pe_ratio" },
+      "ascending": true,
+      "weight": 0.4
+    }
+  ],
+  "maxHoldingNum": 10,
+  "rebalanceInterval": 20,
+  "risk": {
+    "profitTaking": 0.15,
+    "stopLoss": -0.08
+  },
+  "backtest": {
+    "start": "2020-01-01",
+    "end": "2025-03-28",
+    "capital": 100000,
+    "benchmark": "000300.XSHG",
+    "frequency": "day"
+  }
+}

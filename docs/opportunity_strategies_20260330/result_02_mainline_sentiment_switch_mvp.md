@@ -375,3 +375,8 @@ def sentiment_switch_mvp(date, prev_date):
    - ✅ 可进入卖出规则测试
    - ✅ 规则已足够简单稳定
    - ✅ 样本内外均验证通过
+
+### 补充报告
+
+详细测试过程请参考：
+- **最近日期实测报告**：`result_02_supplement_recent_test.md`

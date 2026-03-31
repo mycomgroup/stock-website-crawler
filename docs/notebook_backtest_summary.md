@@ -150,21 +150,20 @@ node run-strategy.js --strategy /path/to/your/strategy.py
 
 **方式2：创建独立 Notebook（默认行为）**
 
-每次运行默认创建新的独立 notebook，命名格式：`中文任务名_YYYYMMDD_HHMMSS.ipynb`
+每次运行默认创建新的独立 notebook，命名格式：`任务名_YYYYMMDD_HHMMSS.ipynb`
 
-任务名自动从策略文件第一行注释提取：
+任务名自动从策略文件第一行注释提取（最多12个字）：
 ```python
-# 最小化测试 - 2025年12月到2026年3月
+# 龙头底分型回测研究
 ```
-生成：`最小化测试_2025年12月到2026年3月_20260331_133203.ipynb`
+生成：`龙头底分型回测研究_20240115_103045.ipynb`
 
 ```bash
 # 运行策略，自动创建新 notebook（推荐）
 node run-strategy.js --strategy examples/simple_backtest.py
 
-# 指定 notebook 基础名称
+# 指定 notebook 名称
 node run-strategy.js --strategy examples/simple_backtest.py --notebook-base-name 自定义任务名
-# 生成：自定义任务名_20240115_103045.ipynb
 ```
 
 **Notebook 不会自动删除，方便查看每次运行的结果**
@@ -299,12 +298,12 @@ node run-strategy.js [参数]
   --timeout-ms <ms>             超时时间（默认 60000ms）
   --cell-index <index>          执行指定 cell（0, last）
   --mode <mode>                 all: 执行所有 cells
-  --notebook-base-name <name>   Notebook 名称（默认从策略注释提取中文任务名）
+  --notebook-base-name <name>   Notebook 名称（默认从策略注释提取，最多12字）
 ```
 
 **说明：**
 - 每次运行自动创建新 notebook，命名：`任务名_YYYYMMDD_HHMMSS.ipynb`
-- 任务名优先从策略文件第一行注释提取中文描述
+- 任务名优先从策略文件第一行注释提取（最多12字）
 - 可通过 `--notebook-base-name` 手动指定
 - Notebook 不会自动删除，保留所有运行结果
 - 如果运行出错，下次自动继续使用同一个 notebook，直到修复
@@ -383,16 +382,16 @@ node run-strategy.js --strategy your_strategy.py --timeout-ms 600000  # 10分钟
 
 **自动管理，无需手动干预**
 
-- **每次运行自动创建新 notebook**：命名格式 `中文任务名_YYYYMMDD_HHMMSS.ipynb`
-- **任务名自动提取**：从策略文件第一行注释提取中文任务名
+- **每次运行自动创建新 notebook**：命名格式 `任务名_YYYYMMDD_HHMMSS.ipynb`
+- **任务名自动提取**：从策略文件第一行注释提取中文任务名（最多12字）
 - **不会自动删除**：保留所有运行过的 notebook，方便查看结果
 - **出错自动重用**：如果运行出错，下次会继续使用同一个 notebook，直到修复
 
 **示例**：
 ```python
-# 龙头底分型回测 - 2024年Q1
+# 龙头底分型回测
 ```
-生成 notebook：`龙头底分型回测_2024年Q1_20240115_103045.ipynb`
+生成 notebook：`龙头底分型回测_20240115_103045.ipynb`
 
 **RiceQuant 用户**
 
@@ -550,8 +549,8 @@ for r in results:
 
 **核心改进**：
 - 默认使用无界面模式（headless），不会弹出浏览器
-- 每次运行自动创建新 notebook：`中文任务名_YYYYMMDD_HHMMSS.ipynb`
-- 任务名自动从策略文件注释中提取中文描述
+- 每次运行自动创建新 notebook：`任务名_YYYYMMDD_HHMMSS.ipynb`
+- 任务名自动从策略注释提取中文描述（最多12字，不含日期）
 - Notebook 不会自动删除，保留所有运行结果
 - Session 出错自动重试（401/403）
 - 运行出错自动重用同一个 notebook，直到修复

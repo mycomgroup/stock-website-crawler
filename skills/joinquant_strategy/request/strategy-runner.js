@@ -44,23 +44,21 @@ export async function runStrategyWorkflow(options = {}) {
   const backtestId = buildResult.backtestId;
   console.log(`Backtest started! ID: ${backtestId}`);
 
-  // 5. Poll for results
+// 5. Poll for results
   console.log('Waiting for backtest to complete...');
   let status = 'running';
-  let finalResult = null;
   
   while (status === 'running' || status === 'waiting') {
     await new Promise(resolve => setTimeout(resolve, 5000));
     const result = await client.getBacktestResult(backtestId, context);
     
-    const bt = result.data?.result?.backtest || {};
+    const bt = result.data?.result?.backtest || result.data?.backtest || {};
     const summary = result.data?.result?.summary || {};
     process.stdout.write(`[Status: ${bt.status}, Progress: ${bt.progress || 0}%]`);
     
-    // Check status in result.status or result.data.status depending on exact API response
-    // Based on research, the result object contains the backtest details
-    if (result.status === 'error') {
-        throw new Error(`Backtest failed: ${result.message || JSON.stringify(result)}`);
+    if (result.status === 'error' || result.data?.status === 'error' || bt.status === 'error') {
+        const errorMsg = result.message || result.data?.message || result.error || 'Unknown backtest error';
+        throw new Error(`Backtest failed: ${errorMsg}`);
     }
     
     // The exact response structure from /algorithm/backtest/result?ajax=1:
@@ -68,9 +66,8 @@ export async function runStrategyWorkflow(options = {}) {
     // Let's assume for now we look for 'finished_time' or similar.
     if (bt.finished_time || bt.status === 'finished') {
         status = 'finished';
-        finalResult = result.result;
     }
- else if (result.data?.backtest?.status === 'failed') {
+  else if (result.data?.backtest?.status === 'failed') {
         status = 'failed';
         throw new Error('Backtest failed on server.');
     }

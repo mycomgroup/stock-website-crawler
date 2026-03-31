@@ -204,24 +204,36 @@ export class DocGenerator {
    * 提取参数的取值范围
    */
   extractValueRange(pattern, paramName) {
-    // 从样本中提取参数值
     const values = new Set();
     
+    let regex;
+    try {
+      regex = new RegExp(pattern.pattern);
+    } catch {
+      return null;
+    }
+    
     for (const sample of pattern.samples.slice(0, 10)) {
-      const regex = new RegExp(pattern.pattern);
       const match = sample.match(regex);
       
       if (!match) continue;
       
-      // 提取所有参数值
       const paramValues = match.slice(1).filter(v => v !== undefined && !v.startsWith('?'));
       
-      // 根据参数位置提取值
       const pathParams = pattern.pathTemplate.match(/\{([^}]+)\}/g) || [];
-      const paramIndex = pathParams.findIndex(p => {
-        const name = p.replace(/[{}]/g, '');
-        return this.inferParameterName(pattern, name) === paramName;
-      });
+      let paramIndex = -1;
+      let occuranceCount = 0;
+      
+      for (let i = 0; i < pathParams.length; i++) {
+        const name = pathParams[i].replace(/[{}]/g, '');
+        const inferred = this.inferParameterName(pattern, name);
+        if (inferred === paramName) {
+          if (paramIndex === -1) {
+            paramIndex = i;
+          }
+          occuranceCount++;
+        }
+      }
       
       if (paramIndex >= 0 && paramIndex < paramValues.length) {
         values.add(paramValues[paramIndex]);
@@ -289,15 +301,20 @@ export class DocGenerator {
     if (strings.length === 0) return '';
     if (strings.length === 1) return strings[0];
     
-    let prefix = strings[0];
-    for (let i = 1; i < strings.length; i++) {
-      while (strings[i].indexOf(prefix) !== 0) {
-        prefix = prefix.substring(0, prefix.length - 1);
-        if (prefix === '') return '';
+    const first = strings[0];
+    let maxLen = first.length;
+    
+    for (let i = 1; i < strings.length && maxLen > 0; i++) {
+      const str = strings[i];
+      let j = 0;
+      const minLen = Math.min(maxLen, str.length);
+      while (j < minLen && first[j] === str[j]) {
+        j++;
       }
+      maxLen = j;
     }
     
-    return prefix;
+    return first.substring(0, maxLen);
   }
 
   /**
@@ -315,8 +332,14 @@ export class DocGenerator {
     let totalSamples = 0;
     
     // 从样本中提取参数值
+    let regex;
+    try {
+      regex = new RegExp(pattern.pattern);
+    } catch {
+      return duplicates;
+    }
+    
     for (const sample of pattern.samples.slice(0, 10)) {
-      const regex = new RegExp(pattern.pattern);
       const match = sample.match(regex);
       
       if (!match) continue;

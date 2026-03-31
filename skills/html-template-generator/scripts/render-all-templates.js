@@ -60,6 +60,10 @@ async function main() {
       console.log(`  Samples: ${template.samples.length}`);
       
       // Fetch first sample URL
+      if (!template.samples || template.samples.length === 0) {
+        console.log(`  ⚠ No sample URLs found, skipping`);
+        continue;
+      }
       const url = template.samples[0];
       console.log(`  Fetching: ${url}`);
       const result = await fetcher.fetchOne(url);

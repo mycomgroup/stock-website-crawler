@@ -19,6 +19,11 @@ async function runBacktest(strategyId, codeFile, startDate, endDate) {
   console.log('Period:', startDate, '-', endDate);
   console.log('='.repeat(60) + '\n');
   
+  if (!fs.existsSync(AUTH_STATE_FILE)) {
+    console.error('Error: Auth state file not found:', AUTH_STATE_FILE);
+    console.error('Please run auto-login.js first to authenticate.');
+    process.exit(1);
+  }
   const state = JSON.parse(fs.readFileSync(AUTH_STATE_FILE, 'utf8'));
   
   const browser = await chromium.launch({ 
@@ -152,9 +157,9 @@ async function runBacktest(strategyId, codeFile, startDate, endDate) {
     resultData.error = e.message;
     return resultData;
   } finally {
-    console.log('\nClosing in 10s...');
-    await page.waitForTimeout(10000);
-    try { await browser.close(); } catch (e) {}
+    console.log('\nClosing browser...');
+    await page.waitForTimeout(process.env.BROWSER_CLOSE_DELAY ? parseInt(process.env.BROWSER_CLOSE_DELAY) : 2000);
+    try { await browser.close(); } catch (e) { console.error('Browser close error:', e.message); }
   }
 }
 
