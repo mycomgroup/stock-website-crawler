@@ -120,9 +120,8 @@ def init(context):
 def get_universe(context):
     """
     获取股票池: 沪深300 + 中证500, 剔除 ST、停牌、新股
+    RiceQuant 的 bar_dict 不包含个股数据, 使用 history_bars 代替
     """
-    bar_dict = context.bar_dict
-
     # 获取指数成分股
     hs300 = index_components("000300.XSHG")
     zz500 = index_components("000905.XSHG")
@@ -135,17 +134,11 @@ def get_universe(context):
     # 剔除科创板
     stocks = [s for s in stocks if not s.startswith("688")]
 
-    # 剔除新股、ST 和停牌
+    # 剔除新股、ST
     valid_stocks = []
     today = context.now.date()
 
     for stock in stocks:
-        if stock not in bar_dict:
-            continue
-        bar = bar_dict[stock]
-        if bar.is_trading is False:
-            continue
-
         # 检查 ST
         try:
             inst = instruments(stock)
@@ -165,6 +158,14 @@ def get_universe(context):
         except:
             pass
 
+        # 检查停牌：用 history_bars 检查是否有最近交易数据
+        try:
+            hist = history_bars(stock, 1, "1d", "close")
+            if hist is None or len(hist) == 0:
+                continue
+        except:
+            continue
+
         valid_stocks.append(stock)
 
     logger.info(f"get_universe: {len(valid_stocks)} valid stocks")
@@ -174,9 +175,8 @@ def get_universe(context):
 def calc_market_state(context):
     """
     计算市场状态: 市场宽度 + 指数趋势
+    RiceQuant 的 bar_dict 不包含个股数据, 使用 history_bars
     """
-    bar_dict = context.bar_dict
-
     # 沪深300成分股
     hs300 = index_components("000300.XSHG")
 
@@ -185,12 +185,10 @@ def calc_market_state(context):
     total = 0
 
     for stock in hs300:
-        if stock not in bar_dict:
-            continue
         # 获取20日历史价格
         try:
             hist = history_bars(stock, 20, "1d", "close")
-            if len(hist) < 20:
+            if hist is None or len(hist) < 20:
                 continue
             ma20 = hist.mean()
             close = hist[-1]
@@ -212,6 +210,8 @@ def calc_market_state(context):
         idx_close = 0
         idx_ma20 = 0
         trend_on = False
+
+    logger.info(f"calc_market_state: breadth={breadth:.3f}, trend_on={trend_on}")
 
     return {
         "breadth": breadth,

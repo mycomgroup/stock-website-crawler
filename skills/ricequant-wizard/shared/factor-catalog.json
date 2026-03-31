@@ -1,0 +1,158 @@
+{
+  "version": "1.0.0",
+  "factors": {
+    "fundamental": {
+      "valuation": {
+        "label": "估值指标",
+        "factors": [
+          {"name": "pe_ratio", "label": "市盈率(PE)", "description": "股价/每股收益"},
+          {"name": "pb_ratio", "label": "市净率(PB)", "description": "股价/每股净资产"},
+          {"name": "ps_ratio", "label": "市销率(PS)", "description": "股价/每股销售额"},
+          {"name": "pcf_ratio", "label": "市现率(PCF)", "description": "股价/每股现金流"},
+          {"name": "market_cap", "label": "总市值", "description": "总股本×股价"},
+          {"name": "circulating_market_cap", "label": "流通市值", "description": "流通股本×股价"},
+          {"name": "capitalization", "label": "总股本", "description": "公司总股本"},
+          {"name": "circulating_cap", "label": "流通股本", "description": "可交易股本"}
+        ]
+      },
+      "profitability": {
+        "label": "盈利能力",
+        "factors": [
+          {"name": "roe", "label": "净资产收益率(ROE)", "description": "净利润/净资产"},
+          {"name": "roa", "label": "总资产收益率(ROA)", "description": "净利润/总资产"},
+          {"name": "gross_profit_margin", "label": "毛利率", "description": "毛利/营业收入"},
+          {"name": "net_profit_margin", "label": "净利率", "description": "净利润/营业收入"},
+          {"name": "operating_profit_margin", "label": "营业利润率", "description": "营业利润/营业收入"},
+          {"name": "ebit_margin", "label": "EBIT利润率", "description": "EBIT/营业收入"}
+        ]
+      },
+      "growth": {
+        "label": "成长能力",
+        "factors": [
+          {"name": "revenue_growth_rate", "label": "营业收入增长率", "description": "营收同比增长"},
+          {"name": "net_profit_growth_rate", "label": "净利润增长率", "description": "净利润同比增长"},
+          {"name": "operating_profit_growth_rate", "label": "营业利润增长率", "description": "营业利润同比增长"},
+          {"name": "total_profit_growth_rate", "label": "利润总额增长率", "description": "利润总额同比增长"},
+          {"name": "total_assets_growth_rate", "label": "总资产增长率", "description": "总资产同比增长"}
+        ]
+      },
+      "financialHealth": {
+        "label": "财务健康",
+        "factors": [
+          {"name": "debt_ratio", "label": "资产负债率", "description": "总负债/总资产"},
+          {"name": "current_ratio", "label": "流动比率", "description": "流动资产/流动负债"},
+          {"name": "quick_ratio", "label": "速动比率", "description": "(流动资产-存货)/流动负债"},
+          {"name": "equity_ratio", "label": "产权比率", "description": "总负债/股东权益"},
+          {"name": "tangible_asset_ratio", "label": "有形资产比率", "description": "有形资产/总资产"}
+        ]
+      },
+      "cashFlow": {
+        "label": "现金流",
+        "factors": [
+          {"name": "operating_cash_flow_per_share", "label": "每股经营现金流", "description": "经营现金流/股本"},
+          {"name": "free_cash_flow_per_share", "label": "每股自由现金流", "description": "自由现金流/股本"},
+          {"name": "cash_flow_to_debt", "label": "现金流债务比", "description": "经营现金流/总负债"}
+        ]
+      },
+      "dividend": {
+        "label": "分红指标",
+        "factors": [
+          {"name": "dividend_yield", "label": "股息率", "description": "每股股利/股价"},
+          {"name": "dividend_payout_ratio", "label": "股利支付率", "description": "股利/净利润"}
+        ]
+      },
+      "perShare": {
+        "label": "每股指标",
+        "factors": [
+          {"name": "eps", "label": "每股收益(EPS)", "description": "净利润/股本"},
+          {"name": "book_value_per_share", "label": "每股净资产", "description": "净资产/股本"},
+          {"name": "revenue_per_share", "label": "每股营业收入", "description": "营业收入/股本"},
+          {"name": "operating_profit_per_share", "label": "每股营业利润", "description": "营业利润/股本"}
+        ]
+      }
+    },
+    "pricing": {
+      "price": {
+        "label": "价格指标",
+        "factors": [
+          {"name": "open", "label": "开盘价", "description": "当日开盘价"},
+          {"name": "close", "label": "收盘价", "description": "当日收盘价"},
+          {"name": "high", "label": "最高价", "description": "当日最高价"},
+          {"name": "low", "label": "最低价", "description": "当日最低价"},
+          {"name": "last", "label": "最新价", "description": "最新成交价"},
+          {"name": "limit_up", "label": "涨停价", "description": "当日涨停价"},
+          {"name": "limit_down", "label": "跌停价", "description": "当日跌停价"}
+        ]
+      },
+      "volume": {
+        "label": "成交量指标",
+        "factors": [
+          {"name": "volume", "label": "成交量", "description": "成交股数"},
+          {"name": "turnover", "label": "成交额", "description": "成交金额"},
+          {"name": "turnover_rate", "label": "换手率", "description": "成交量/流通股本"}
+        ]
+      }
+    },
+    "technical": {
+      "trend": {
+        "label": "趋势指标",
+        "factors": [
+          {"name": "MA", "label": "移动平均线", "description": "简单移动平均", "hasParameters": true},
+          {"name": "EMA", "label": "指数移动平均", "description": "指数移动平均", "hasParameters": true},
+          {"name": "MACD", "label": "MACD", "description": "指数平滑异同移动平均线"},
+          {"name": "ADX", "label": "平均趋向指标", "description": "衡量趋势强度"}
+        ]
+      },
+      "momentum": {
+        "label": "动量指标",
+        "factors": [
+          {"name": "RSI", "label": "相对强弱指标", "description": "相对强弱指标", "hasParameters": true},
+          {"name": "CCI", "label": "顺势指标", "description": "顺势指标"},
+          {"name": "KDJ", "label": "KDJ指标", "description": "随机指标"},
+          {"name": "WILLR", "label": "威廉指标", "description": "威廉指标"}
+        ]
+      },
+      "volatility": {
+        "label": "波动率指标",
+        "factors": [
+          {"name": "ATR", "label": "真实波幅", "description": "平均真实波幅"},
+          {"name": "BOLL", "label": "布林带", "description": "布林带"},
+          {"name": "STDDEV", "label": "标准差", "description": "标准差"}
+        ]
+      }
+    },
+    "extra": {
+      "meta": {
+        "label": "元数据",
+        "factors": [
+          {"name": "listed_days", "label": "上市天数", "description": "上市至今天数"},
+          {"name": "industry", "label": "所属行业", "description": "所属行业"},
+          {"name": "board_type", "label": "板块类型", "description": "主板/创业板/科创板"}
+        ]
+      }
+    }
+  },
+  "operators": [
+    {"name": "greater_than", "label": "大于", "description": "筛选值大于阈值"},
+    {"name": "less_than", "label": "小于", "description": "筛选值小于阈值"},
+    {"name": "in_range", "label": "介于", "description": "筛选值在范围内", "requiresArray": true},
+    {"name": "rank_in_range", "label": "排名介于", "description": "筛选排名百分比在范围内", "requiresArray": true}
+  ],
+  "templates": [
+    {"name": "single_period", "label": "单期调仓", "description": "买入和卖出使用相同的调仓周期"},
+    {"name": "three_periods", "label": "三期调仓", "description": "买入、持仓、卖出分开配置"}
+  ],
+  "stOptions": [
+    {"value": "include", "label": "包含ST", "description": "包含ST股票"},
+    {"value": "exclude", "label": "排除ST", "description": "排除ST股票"},
+    {"value": "only", "label": "仅ST", "description": "仅选择ST股票"}
+  ],
+  "universes": [
+    {"code": "000300.XSHG", "name": "沪深300"},
+    {"code": "000905.XSHG", "name": "中证500"},
+    {"code": "000852.XSHG", "name": "中证1000"},
+    {"code": "000016.XSHG", "name": "上证50"},
+    {"code": "399006.XSHE", "name": "创业板指"},
+    {"code": "*", "name": "全市场"}
+  ]
+}
