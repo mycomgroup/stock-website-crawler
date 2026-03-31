@@ -11,7 +11,7 @@ async function captureAPIs() {
   
   const state = JSON.parse(fs.readFileSync(AUTH_STATE_FILE, 'utf8'));
   
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     storageState: state,
     viewport: { width: 1400, height: 900 }

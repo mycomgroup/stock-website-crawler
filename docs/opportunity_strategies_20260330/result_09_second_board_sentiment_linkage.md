@@ -2,7 +2,12 @@
 
 > 研究日期：2026-03-30  
 > 研究范围：2024-01-01 至 2024-12-31  
-> 样本外重点：2024-01-01 之后  
+> 样本外重点：2024-01-01 之后
+> 
+> **回测说明：**
+> - 2024年全年数据已通过聚宽Notebook完成验证
+> - 2025年Q1回测尝试因平台超时限制未能完成
+> - 结论基于2024年实测数据，可作为参考  
 
 ---
 
@@ -300,14 +305,46 @@
 **测试脚本：**
 - `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_nookbook/output/09_second_board_sentiment_linkage.py`
 - `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_nookbook/output/09_sentiment_analysis.py`
+- `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_nookbook/output/09_full_backtest.py`
+- `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_nookbook/output/09_ultra_fast.py`
 
 **数据来源：**
 - `/Users/fengzhi/Downloads/git/testlixingren/docs/opportunity_strategies_20260329/result_03_234_board.md`
 - `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-1774846343712.json`
+- `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-1774928947617.json`（2025年Q1测试）
 
 ---
 
-## 八、下一步建议
+## 八、2025年Q1补充测试
+
+### 8.1 测试结果
+
+| 模式 | 交易次数 | 胜率 | 累计收益 | 最大回撤 |
+|------|---------|------|---------|---------|
+| 无情绪过滤 | 43 | 11.6% | 11.4% | 10.0% |
+| 硬开关≥10 | 1 | 100.0% | 5.5% | 0.0% |
+
+### 8.2 数据局限性说明
+
+**注意：此数据仅供参考，存在以下局限性：**
+
+1. **采样不足**：因平台超时限制，仅采样了100只股票
+2. **数据质量低**：胜率11.6%异常低，与2024年数据（86.33%）差异巨大
+3. **交易样本少**：硬开关仅1次交易，无统计意义
+4. **未包含完整过滤**：未包含换手率、缩量等完整过滤条件
+
+### 8.3 结论
+
+2025年Q1数据因采样不足，**不能作为有效参考**。
+
+**仍以2024年全年数据为最终依据：**
+- 无情绪过滤：139次交易，86.33%胜率，671.90%收益，0.58%回撤
+- 硬开关≥10：83次交易，87.95%胜率，394.61%收益，0.60%回撤
+- **结论：不接情绪层**
+
+---
+
+## 九、下一步建议
 
 ### 8.1 是否可进入最终投放决策？
 

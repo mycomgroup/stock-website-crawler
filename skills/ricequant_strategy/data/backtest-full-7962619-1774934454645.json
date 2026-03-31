@@ -1,0 +1,46 @@
+{
+  "backtestId": "7962619",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-03-31T13:18:10.813000",
+    "start_at": "2026-03-31T13:18:14.619000",
+    "progress": 1,
+    "backtest_id": "7962619",
+    "description": "",
+    "strategy_id": 2415872,
+    "title": "Test_simple_momentum_v2_rq_1774860591604",
+    "account_type": "stock",
+    "end_at": "2026-03-31T13:18:27.705000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1743406200000,
+    "trading_date": 20250331,
+    "alpha": -0.17352596272789622,
+    "beta": 0.8131774855991698,
+    "sharpe": -0.04240898733805825,
+    "sortino": -0.05986052425593327,
+    "information_ratio": -0.9620997882139362,
+    "annual_volatility": 0.2597722955431475,
+    "max_drawdown": 0.18031556928543488,
+    "annual_tracking_error": 0.18268049311428944,
+    "annual_downside_risk": 0.18403914983046132
+  },
+  "summary": {
+    "timestamp": 1743406200000,
+    "trading_date": 20250331,
+    "alpha": -0.17352596272789622,
+    "beta": 0.8131774855991698,
+    "sharpe": -0.04240898733805825,
+    "sortino": -0.05986052425593327,
+    "information_ratio": -0.9620997882139362,
+    "annual_volatility": 0.2597722955431475,
+    "max_drawdown": 0.18031556928543488,
+    "annual_tracking_error": 0.18268049311428944,
+    "annual_downside_risk": 0.18403914983046132
+  }
+}

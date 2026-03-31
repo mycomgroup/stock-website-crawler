@@ -546,6 +546,12 @@ export async function captureRiceQuantNotebookSession(options = {}) {
     loginResult = await loginIfNeeded(page, username, password, Boolean(existingCookies?.length));
     
     if (!loginResult.loggedIn) {
+      console.log('尝试直接访问登录页面...');
+      await page.goto('https://www.ricequant.com/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
+      loginResult = await loginIfNeeded(page, username, password, Boolean(existingCookies?.length));
+    }
+    
+    if (!loginResult.loggedIn) {
       throw new Error('登录失败');
     }
     

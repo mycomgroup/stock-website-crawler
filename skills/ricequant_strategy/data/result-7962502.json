@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "config": null,
+  "metadata": null,
+  "status": "normal_exit",
+  "summary": null,
+  "create_at": "2026-03-31T11:41:03.224000",
+  "start_at": "2026-03-31T11:41:07.203000",
+  "progress": 1,
+  "backtest_id": "7962502",
+  "description": "",
+  "strategy_id": 2415370,
+  "title": "RFScore Pure Offensive",
+  "account_type": "stock",
+  "end_at": "2026-03-31T11:41:19.188000",
+  "exception": ""
+}

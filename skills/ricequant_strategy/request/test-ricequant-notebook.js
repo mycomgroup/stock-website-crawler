@@ -1,7 +1,12 @@
 #!/usr/bin/env node
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RiceQuantNotebookClient, createCodeCell } from './ricequant-notebook-client.js';
 import { ensureRiceQuantNotebookSession } from './ensure-ricequant-notebook-session.js';
+import { OUTPUT_ROOT } from '../paths.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function parseArgs(argv) {
   const args = {};
@@ -105,26 +110,148 @@ function summarizeExecution(result) {
   };
 }
 
-export async function runNotebookTest(options = {}) {
-  await ensureRiceQuantNotebookSession({
-    sessionFile: options.sessionFile,
-    notebookUrl: options.notebookUrl,
-    outputRoot: options.outputRoot
-  });
+function extractTaskNameFromStrategy(strategyPath, cellSource) {
+  let firstLine = '';
+  
+  if (strategyPath && fs.existsSync(strategyPath)) {
+    const content = fs.readFileSync(strategyPath, 'utf8');
+    const lines = content.split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('import') && !trimmed.startsWith('from')) {
+        if (trimmed.startsWith('#') || trimmed.startsWith('"""') || trimmed.startsWith("'''")) {
+          firstLine = trimmed.replace(/^#|^"""|^'''/, '').trim();
+          break;
+        }
+      }
+    }
+  } else if (cellSource) {
+    const lines = cellSource.split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed && (trimmed.startsWith('#') || trimmed.startsWith('"""') || trimmed.startsWith("'''"))) {
+        firstLine = trimmed.replace(/^#|^"""|^'''/, '').trim();
+        break;
+      }
+    }
+  }
+  
+  if (firstLine) {
+    const taskName = firstLine
+      .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '')
+      .slice(0, 30);
+    if (taskName.length >= 2) {
+      return taskName;
+    }
+  }
+  
+  if (strategyPath) {
+    const fileName = path.basename(strategyPath, '.py');
+    return fileName.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '_');
+  }
+  
+  return '策略测试';
+}
 
+function findRecentNotebookWithError(outputRoot, notebookBaseName) {
+  try {
+    const files = fs.readdirSync(outputRoot)
+      .filter(f => f.startsWith(`ricequant-notebook-result-${notebookBaseName}`) && f.endsWith('.json'))
+      .map(f => ({
+        file: f,
+        path: path.join(outputRoot, f),
+        time: fs.statSync(path.join(outputRoot, f)).mtime.getTime()
+      }))
+      .sort((a, b) => b.time - a.time);
+    
+    if (files.length === 0) return null;
+    
+    const recentFile = files[0];
+    const data = JSON.parse(fs.readFileSync(recentFile.path, 'utf8'));
+    
+    const hasError = data.executions && data.executions.some(exec => 
+      exec.outputs && exec.outputs.some(output => output.output_type === 'error')
+    );
+    
+    if (!hasError) return null;
+    
+    return {
+      notebookPath: data.notebookPath,
+      notebookUrl: data.notebookUrl,
+      resultFile: recentFile.path
+    };
+  } catch {
+    return null;
+  }
+}
+
+function isSessionError(error) {
+  const message = String(error?.stack || error?.message || error || '');
+  return /401|403|Unauthorized|Forbidden|session.*expired|cookie.*invalid|authentication|token.*invalid/i.test(message);
+}
+
+export async function runNotebookTest(options = {}) {
+  let attemptCount = 0;
+  const maxAttempts = 2;
+  
+  while (attemptCount < maxAttempts) {
+    attemptCount++;
+    
+    try {
+      const forceRefresh = attemptCount > 1;
+      await ensureRiceQuantNotebookSession({
+        sessionFile: options.sessionFile,
+        notebookUrl: options.notebookUrl,
+        outputRoot: options.outputRoot,
+        forceRefresh,
+        headed: options.headed,
+        headless: options.headless
+      });
+
+      const result = await executeNotebookTest(options);
+      return result;
+    } catch (error) {
+      if (isSessionError(error) && attemptCount < maxAttempts) {
+        console.log(`Session error detected, retrying with fresh session (attempt ${attemptCount + 1}/${maxAttempts})`);
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+
+async function executeNotebookTest(options = {}) {
   const client = new RiceQuantNotebookClient(options);
   const mode = options.mode === 'all' ? 'all' : 'partial';
   const appendCell = options.appendCell !== false;
   const cellSource = normalizeCellSource(options.cellSource);
   const timeoutMs = Number(options.timeoutMs || 30000);
-  const createNew = options.createNew === true || options['create-new'] === true;
-  const cleanup = options.cleanup === true;
+  
+  let createNew = options.createNew !== false && options['create-new'] !== false;
+  let reuseNotebook = false;
+  
+  const strategyBaseName = extractTaskNameFromStrategy(options.strategy, cellSource);
+  const notebookBaseName = options.notebookBaseName || strategyBaseName || 'strategy_run';
+  
+  if (createNew) {
+    const recentNotebook = findRecentNotebookWithError(client.outputRoot, notebookBaseName);
+    if (recentNotebook) {
+      console.log(`Found recent notebook with error: ${recentNotebook.notebookPath}`);
+      console.log(`Reusing notebook: ${recentNotebook.notebookUrl}`);
+      reuseNotebook = true;
+      createNew = false;
+      client.notebookPath = recentNotebook.notebookPath;
+      client.directNotebookUrl = recentNotebook.notebookUrl;
+    }
+  }
 
   let newNotebookPath = null;
   let newNotebookCreated = false;
 
   if (createNew) {
-    newNotebookPath = client.generateUniqueNotebookName(options.notebookBaseName || 'strategy_run');
+    newNotebookPath = client.generateUniqueNotebookName(notebookBaseName);
     console.log(`Creating new notebook: ${newNotebookPath}`);
     
     try {
@@ -218,20 +345,10 @@ export async function runNotebookTest(options = {}) {
     notebookMetadata,
     executions,
     newNotebookCreated,
-    cleanup
+    reuseNotebook,
+    strategyBaseName
   };
-  const resultFile = client.writeArtifact('ricequant-notebook-result', resultPayload, 'json');
-
-  let cleanupResult = null;
-  if (cleanup && newNotebookCreated) {
-    console.log(`Cleaning up notebook: ${newNotebookPath}`);
-    cleanupResult = await client.deleteNotebook({ notebookPath: newNotebookPath });
-    if (cleanupResult.success) {
-      console.log('Notebook cleaned up successfully');
-    } else {
-      console.error(`Failed to cleanup notebook: ${cleanupResult.error}`);
-    }
-  }
+  const resultFile = client.writeArtifact(`ricequant-notebook-result-${notebookBaseName}`, resultPayload, 'json');
 
   return {
     resultFile,
@@ -245,7 +362,8 @@ export async function runNotebookTest(options = {}) {
     executions,
     session,
     newNotebookCreated,
-    cleanupResult
+    reuseNotebook,
+    strategyBaseName
   };
 }
 

@@ -1,15 +1,8 @@
 #!/usr/bin/env node
-/**
- * 综合测试：验证 RiceQuant 和 JoinQuant 的代码编码正确
- * 
- * 测试场景：
- * 1. RiceQuant 应发送原始代码（非 base64）
- * 2. JoinQuant 应发送 base64 编码代码 + encrType
- */
-
 import './ricequant_strategy/load-env.js';
 import { RiceQuantClient } from './ricequant_strategy/request/ricequant-client.js';
 import { JoinQuantStrategyClient } from './joinquant_strategy/request/joinquant-strategy-client.js';
+import { ensureRiceQuantSession } from './ricequant_strategy/browser/session-manager.js';
 
 const TEST_PYTHON = `
 def init(context):
@@ -25,42 +18,48 @@ async function testRiceQuant() {
   console.log('1. RiceQuant Test');
   console.log('Expected: Raw Python code (NOT base64)\n');
   
-  const client = new RiceQuantClient();
+  const credentials = {
+    username: process.env.RICEQUANT_USERNAME,
+    password: process.env.RICEQUANT_PASSWORD
+  };
   
-  // Check login
-  const login = await client.checkLogin();
-  if (login.code !== 0) {
-    console.log('✗ RiceQuant: Not logged in');
+  try {
+    const cookies = await ensureRiceQuantSession(credentials);
+    const client = new RiceQuantClient({ cookies });
+    
+    const login = await client.checkLogin();
+    if (login.code !== 0) {
+      console.log('✗ RiceQuant: Not logged in');
+      return false;
+    }
+    console.log('  Logged in:', login.fullname);
+    
+    const create = await client.createStrategy('test_encoding_rq', TEST_PYTHON);
+    const strategyId = create.strategy_id || create._id || create.id;
+    console.log('  Created strategy:', strategyId);
+    
+    const ctx = await client.getStrategyContext(strategyId);
+    const code = ctx.code;
+    
+    const isBase64 = /^[A-Za-z0-9+/]+={0,2}$/.test(code?.replace(/\s/g, '')) && !code?.includes('def ');
+    const isPython = code?.includes('def init') || code?.includes('print');
+    
+    console.log('  Code length:', code?.length);
+    console.log('  Is base64:', isBase64);
+    console.log('  Is Python:', isPython);
+    
+    if (!isBase64 && isPython) {
+      console.log('  ✓ PASS: Code is raw Python\n');
+    } else {
+      console.log('  ✗ FAIL: Code encoding wrong\n');
+    }
+    
+    await client.deleteStrategy(strategyId);
+    return !isBase64 && isPython;
+  } catch (e) {
+    console.log('  ✗ Error:', e.message, '\n');
     return false;
   }
-  console.log('  Logged in:', login.fullname);
-  
-  // Create strategy
-  const create = await client.createStrategy('test_encoding_rq', TEST_PYTHON);
-  const strategyId = create.strategy_id || create._id || create.id;
-  console.log('  Created strategy:', strategyId);
-  
-  // Read back
-  const ctx = await client.getStrategyContext(strategyId);
-  const code = ctx.code;
-  
-  // Validate
-  const isBase64 = /^[A-Za-z0-9+/]+={0,2}$/.test(code?.replace(/\s/g, '')) && !code?.includes('def ');
-  const isPython = code?.includes('def init') || code?.includes('print');
-  
-  console.log('  Code length:', code?.length);
-  console.log('  Is base64:', isBase64);
-  console.log('  Is Python:', isPython);
-  
-  if (!isBase64 && isPython) {
-    console.log('  ✓ PASS: Code is raw Python\n');
-  } else {
-    console.log('  ✗ FAIL: Code encoding wrong\n');
-  }
-  
-  // Cleanup
-  await client.deleteStrategy(strategyId);
-  return !isBase64 && isPython;
 }
 
 async function testJoinQuant() {

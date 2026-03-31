@@ -103,14 +103,20 @@ export class RiceQuantNotebookClient {
     const parsedNotebookUrl = new URL(directNotebookUrl);
     const pathParts = parsedNotebookUrl.pathname.split('/').filter(Boolean);
     
-    if (pathParts.length < 4 || pathParts[0] !== 'user' || pathParts[2] !== 'notebooks') {
+    if (pathParts.length >= 4 && pathParts[0] === 'user' && pathParts[2] === 'notebooks') {
+      this.origin = parsedNotebookUrl.origin;
+      this.userId = pathParts[1];
+      this.notebookPath = decodeURIComponent(pathParts.slice(3).join('/'));
+      this.baseUrl = this.sessionPayload.pageState?.notebook?.baseUrl || `/user/${this.userId}/`;
+    } else if (directNotebookUrl.includes('/research') || directNotebookUrl.includes('ricequant.com')) {
+      this.origin = parsedNotebookUrl.origin;
+      this.userId = this.sessionPayload.pageState?.notebook?.baseUrl?.split('/')[2] || 'default';
+      this.notebookPath = options.notebookPath || 'default.ipynb';
+      this.baseUrl = '/user/default/';
+    } else {
       throw new Error(`无法从 notebook URL 解析路径：${directNotebookUrl}`);
     }
 
-    this.origin = parsedNotebookUrl.origin;
-    this.userId = pathParts[1];
-    this.notebookPath = decodeURIComponent(pathParts.slice(3).join('/'));
-    this.baseUrl = this.sessionPayload.pageState?.notebook?.baseUrl || `/user/${this.userId}/`;
     this.cookieJar = this.sessionPayload.cookies || [];
     this.xsrfToken = stripWrappedQuotes(
       options.xsrfToken ||
@@ -119,7 +125,7 @@ export class RiceQuantNotebookClient {
 
     if (!this.xsrfToken) {
       const sessionCookie = this.cookieJar.find(item => 
-        (item.name === 'session' || item.name === 'RQSESSION') && 
+        (item.name === 'session' || item.name === 'RQSESSION' || item.name === 'sid') && 
         hostMatchesDomain('ricequant.com', item.domain)
       );
       if (sessionCookie) {
@@ -310,9 +316,10 @@ export class RiceQuantNotebookClient {
   }
 
   generateUniqueNotebookName(baseName = 'strategy_run') {
-    const timestamp = Date.now();
-    const randomSuffix = Math.random().toString(36).substring(2, 6);
-    return `${baseName}_${timestamp}_${randomSuffix}.ipynb`;
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '');
+    return `${baseName}_${dateStr}_${timeStr}.ipynb`;
   }
 
   async ensureSession(options = {}) {

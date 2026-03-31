@@ -35,7 +35,7 @@ async function captureSession() {
   console.log('-'.repeat(60));
   
   const browser = await chromium.launch({ 
-    headless: false,
+    headless: true,
     slowMo: 100
   });
   

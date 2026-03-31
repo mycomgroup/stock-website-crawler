@@ -13,7 +13,11 @@
     "demo": "node run-strategy.js --strategy examples/simple_backtest.py",
     "demo-cleanup": "node run-strategy.js --strategy examples/simple_backtest.py --create-new --cleanup",
     "test": "node test-functionality.js",
-    "test-session": "node test-session.js",
+    "test:session": "node test-session.js",
+    "test:boundary": "node test-boundary.js",
+    "test:error": "node test-error.js",
+    "test:comprehensive": "node test-comprehensive.js",
+    "test:all": "./run-all-tests.sh",
     "list": "node list-strategies.js",
     "report": "node fetch-report.js"
   },

@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "config": null,
+  "metadata": null,
+  "status": "error_exit",
+  "summary": null,
+  "create_at": "2026-03-31T13:26:16.325000",
+  "start_at": "2026-03-31T13:26:20.144000",
+  "progress": 0,
+  "backtest_id": "7962636",
+  "description": "",
+  "strategy_id": 2416212,
+  "title": "Test_second_board_historical_rq_1774934775943",
+  "account_type": "stock",
+  "end_at": "2026-03-31T13:26:30.609000",
+  "exception": "Traceback (most recent call last):\n  File strategy.py, line 218 in <module>\n    cumulative = [r[\"cumulative\"] for r in year_data.values()]\n\n  File strategy.py, line 218 in <listcomp>\n    cumulative = [r[\"cumulative\"] for r in year_data.values()]\n\nKeyError: 'cumulative'"
+}
