@@ -4,34 +4,35 @@ import GenericParser from '../src/parsers/generic-parser.js';
 describe('ParserManager', () => {
   let manager;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     manager = new ParserManager();
+    await manager.init();
   });
 
   test('should register all default parsers', () => {
     expect(manager.parsers.length).toBeGreaterThan(0);
   });
 
-  test('should return GenericParser for unknown URLs', () => {
-    const parser = manager.selectParser('https://example.com/unknown/page');
+  test('should return GenericParser for unknown URLs', async () => {
+    const parser = await manager.selectParser('https://example.com/unknown/page');
     expect(parser).toBeInstanceOf(GenericParser);
   });
 
-  test('should select parser based on URL pattern match', () => {
+  test('should select parser based on URL pattern match', async () => {
     // Test with a known parser URL pattern
     const finnhubUrl = 'https://finnhub.io/docs/api/some-endpoint';
-    const parser = manager.selectParser(finnhubUrl);
+    const parser = await manager.selectParser(finnhubUrl);
 
     // Should match FinnhubApiParser
     expect(parser.constructor.name).toBe('FinnhubApiParser');
   });
 
-  test('should return GenericParser as fallback', () => {
-    const parser = manager.selectParser('https://random-site.com/page');
+  test('should return GenericParser as fallback', async () => {
+    const parser = await manager.selectParser('https://random-site.com/page');
     expect(parser.constructor.name).toBe('GenericParser');
   });
 
-  test('parsers should be sorted by priority', () => {
+  test('parsers should be sorted by priority', async () => {
     for (let i = 0; i < manager.parsers.length - 1; i++) {
       const currentPriority = manager.parsers[i].getPriority();
       const nextPriority = manager.parsers[i + 1].getPriority();
@@ -39,7 +40,7 @@ describe('ParserManager', () => {
     }
   });
 
-  test('register should add parser and maintain priority order', () => {
+  test('register should add parser and maintain priority order', async () => {
     const initialCount = manager.parsers.length;
 
     // Create a mock parser with high priority
@@ -55,10 +56,10 @@ describe('ParserManager', () => {
     expect(manager.parsers[0]).toBe(mockParser); // Highest priority should be first
   });
 
-  test('selectParser should return first matching parser', () => {
+  test('selectParser should return first matching parser', async () => {
     // GenericParser matches everything but has lowest priority
     const genericUrl = 'https://example.com/generic/page';
-    const parser = manager.selectParser(genericUrl);
+    const parser = await manager.selectParser(genericUrl);
 
     // Should return GenericParser since no specific parser matches
     expect(parser.constructor.name).toBe('GenericParser');
@@ -69,7 +70,7 @@ describe('ParserManager', () => {
     const url = 'https://example.com/test';
 
     // Get the selected parser
-    const selectedParser = manager.selectParser(url);
+    const selectedParser = await manager.selectParser(url);
 
     // Mock the parse method
     const originalParse = selectedParser.parse;

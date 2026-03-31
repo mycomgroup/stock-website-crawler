@@ -391,10 +391,12 @@ else:
             stock = signal["stock"]
 
             try:
-                bars = history_bars(stock, 1, "1d", "close", end_dt=date_str)
-                if bars is None:
+                df = get_price(
+                    stock, end_date=date_str, frequency="1d", fields=["close"], count=1
+                )
+                if df is None or len(df) == 0:
                     continue
-                price = bars["close"][-1]
+                price = df["close"].iloc[-1]
 
                 max_amount = min(100000, capital)
                 shares = int(max_amount / price / 100) * 100
