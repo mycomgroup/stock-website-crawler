@@ -86,11 +86,7 @@ class LinkManager {
       return;
     }
 
-    // 对于SPA应用的hash路由，保留hash部分
-    // 检查URL是否包含有意义的hash路由（如 #/mcp-market/detail/）
-    const hasHashRoute = /#\/[^/]+\//.test(url);
-
-    // 只有当URL没有有意义的hash路由时，才去掉锚点
+    const hasHashRoute = /#\/[^/]+(?:\/|$)/.test(url);
     const urlKey = hasHashRoute ? url : url.split('#')[0];
 
     // 检查链接是否已存在
@@ -118,8 +114,7 @@ class LinkManager {
    * @param {string} error - 错误信息（可选）
    */
   updateLinkStatus(url, status, error = null) {
-    // 对于SPA应用的hash路由，保留hash部分
-    const hasHashRoute = /#\/[^/]+\//.test(url);
+    const hasHashRoute = /#\/[^/]+(?:\/|$)/.test(url);
     const urlKey = hasHashRoute ? url : url.split('#')[0];
 
     const linkIndex = this.linkIndex.get(urlKey);
@@ -155,8 +150,7 @@ class LinkManager {
    * @returns {number} 当前重试次数
    */
   incrementRetryCount(url) {
-    // 对于SPA应用的hash路由，保留hash部分
-    const hasHashRoute = /#\/[^/]+\//.test(url);
+    const hasHashRoute = /#\/[^/]+(?:\/|$)/.test(url);
     const urlKey = hasHashRoute ? url : url.split('#')[0];
 
     const linkIndex = this.linkIndex.get(urlKey);

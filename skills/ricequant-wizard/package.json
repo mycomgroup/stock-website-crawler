@@ -1,0 +1,17 @@
+{
+  "name": "ricequant-wizard",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "RiceQuant 向导式策略创建和运行工具",
+  "main": "run-skill.js",
+  "scripts": {
+    "create": "node run-skill.js --create",
+    "run": "node run-skill.js --run",
+    "list": "node run-skill.js --list",
+    "report": "node run-skill.js --report"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18"
+  }
+}

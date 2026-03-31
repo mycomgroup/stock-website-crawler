@@ -1,0 +1,16 @@
+{
+  "strategyId": 2416254,
+  "backtestId": "7962714",
+  "strategyName": "shadow_mainline",
+  "startDate": "2022-01-01",
+  "endDate": "2022-03-31",
+  "capital": "100000",
+  "annualReturn": 0,
+  "totalReturn": 0,
+  "maxDrawdown": 0,
+  "sharpe": 0,
+  "alpha": 0,
+  "beta": 0,
+  "winRate": 0,
+  "status": "error_exit"
+}

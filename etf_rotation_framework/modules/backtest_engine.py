@@ -101,7 +101,14 @@ class BacktestEngine:
                             shares = actual_capital / prices.loc[date, etf]
                             holdings[etf] = shares
 
-                    capital = 0  # 资金已全部投入
+                    total_buy_cost = 0
+                    for etf in held_etfs:
+                        if etf in prices.columns and date in prices.index:
+                            shares = holdings[etf]
+                            buy_value = shares * prices.loc[date, etf]
+                            buy_cost = buy_value * (commission_rate + slippage_rate)
+                            total_buy_cost += buy_value + buy_cost
+                    capital -= total_buy_cost
 
             # 记录每日数据
             position_value = 0

@@ -153,11 +153,35 @@ export class TemplateExtractor {
     if (!xpathExpr) return [];
     try {
       const doc = context.nodeType === 9 ? context : context.ownerDocument;
+      const XPathResult = doc.defaultView?.XPathResult;
+      if (!XPathResult) {
+        return this._selectNodesFallback(context, xpathExpr);
+      }
       const result = doc.evaluate(
         xpathExpr,
         context,
         null,
-        doc.defaultView.XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+        null
+      );
+      const nodes = [];
+      for (let i = 0; i < result.snapshotLength; i++) {
+        nodes.push(result.snapshotItem(i));
+      }
+      return nodes;
+    } catch {
+      return [];
+    }
+  }
+
+  _selectNodesFallback(context, xpathExpr) {
+    try {
+      const doc = context.nodeType === 9 ? context : context.ownerDocument;
+      const result = doc.evaluate(
+        xpathExpr,
+        context,
+        null,
+        7,
         null
       );
       const nodes = [];

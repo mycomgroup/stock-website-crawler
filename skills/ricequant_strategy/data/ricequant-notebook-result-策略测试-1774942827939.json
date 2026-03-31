@@ -1,0 +1,51 @@
+{
+  "capturedAt": "2026-03-31T07:40:27.939Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260331_154024.ipynb",
+  "notebookPath": "策略测试_20260331_154024.ipynb",
+  "kernelId": "cde35481-9b31-4dfb-b9ce-d60a0f9e7df7",
+  "sessionId": "6e0d5ead-0459-4198-b500-d825f8ac1196",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260331_154024.ipynb",
+    "path": "策略测试_20260331_154024.ipynb",
+    "last_modified": "2026-03-31T07:40:28.053296Z",
+    "created": "2026-03-31T07:40:28.053296Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2819,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板策略简化测试 - RiceQuant Notebook\n测试单个日期验证 API\n\"\"\"\n\nprint(\"=== RiceQuant 二板策略简化测试 ===\")\n\ntry:\n    # 获取交易日\n    dates = get_trading_dates(\"2025-01-01\", \"2025-03-31\")\n    print(f\"2025Q1交易日数: {len(dates)}\")\n    \n    if len(dates) > 0:\n        test_date = dates[-5]  # 测试最近第5天\n        print(f\"测试日期: {test_date}\")\n        \n        # 获取股票列表\n        all_stocks = get_all_securities([\"stock\"])\n        print(f\"股票总数: {len(all_stocks)}\")\n        \n        # 测试单个股票\n        test_stock = list(all_stocks.index)[0]\n        print(f\"测试股票: {test_stock}\")\n        \n        # 获取价格数据\n        prices = get_price(test_stock, start_date=test_date, end_date=test_date,\n                           fields=['open', 'close', 'high', 'low', 'volume'])\n        print(f\"价格数据: {len(prices)} 行\")\n        \n        if len(prices) > 0:\n            print(f\"开盘: {prices['open'].iloc[0]}, 收盘: {prices['close'].iloc[0]}\")\n        \n        print(\"\\nAPI 测试成功!\")\n        \nexcept Exception as e:\n    print(f\"错误: {e}\")\n    import traceback\n    traceback.print_exc()\n\nprint(\"\\n=== 测试完成 ===\")\n",
+      "msgId": "fa3d74c7ab694758a7e2cd53a3d7b49f",
+      "websocketSessionId": "d3b7ab067eaa40da83ff8a0c1ea3c959",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== RiceQuant 二板策略简化测试 ===\n2025Q1交易日数: 57\n测试日期: 2025-03-25\n错误: name 'get_all_securities' is not defined\n\n=== 测试完成 ===\nTraceback (most recent call last):\n  File \"<ipython-input-1-1afcaca8a24d>\", line 18, in <module>\n    all_stocks = get_all_securities([\"stock\"])\nNameError: name 'get_all_securities' is not defined\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RiceQuant 二板策略简化测试 ===\n2025Q1交易日数: 57\n测试日期: 2025-03-25\n错误: name 'get_all_securities' is not defined\n\n=== 测试完成 ===\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-1afcaca8a24d>\", line 18, in <module>\n    all_stocks = get_all_securities([\"stock\"])\nNameError: name 'get_all_securities' is not defined\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

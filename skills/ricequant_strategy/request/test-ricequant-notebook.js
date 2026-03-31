@@ -137,11 +137,17 @@ function extractTaskNameFromStrategy(strategyPath, cellSource) {
   }
   
   if (firstLine) {
-    const taskName = firstLine
-      .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '_')
-      .replace(/_+/g, '_')
-      .replace(/^_|_$/g, '')
-      .slice(0, 30);
+    let taskName = firstLine
+      .replace(/\d{4}年\d{1,2}月\d{1,2}日?/g, '')
+      .replace(/\d{4}年\d{1,2}月?/g, '')
+      .replace(/\d{4}[\/\-]\d{1,2}[\/\-]?\d{0,2}/g, '')
+      .replace(/\d{4}Q[1-4]/gi, '')
+      .replace(/\d{4}H[1-2]/gi, '')
+      .replace(/20\d{2}/g, '')
+      .replace(/[到至\-~]+\s*\d*/g, '')
+      .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '')
+      .slice(0, 12);
+    
     if (taskName.length >= 2) {
       return taskName;
     }
@@ -149,7 +155,7 @@ function extractTaskNameFromStrategy(strategyPath, cellSource) {
   
   if (strategyPath) {
     const fileName = path.basename(strategyPath, '.py');
-    return fileName.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '_');
+    return fileName.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').slice(0, 12);
   }
   
   return '策略测试';

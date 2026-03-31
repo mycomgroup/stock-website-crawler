@@ -47,7 +47,8 @@ function truncate(value, max = 4000) {
   if (value == null) return null;
   const text = typeof value === 'string' ? value : JSON.stringify(value);
   if (text.length <= max) return text;
-  return `${text.slice(0, max)}...<truncated>`;
+  const suffix = '...<truncated>';
+  return `${text.slice(0, max - suffix.length)}${suffix}`;
 }
 
 function buildCookieHeader(cookies = []) {
@@ -180,7 +181,7 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
       'button:has-text("登录")',
       'a:has-text("登录")'
     ]);
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
     currentUrl = page.url();
   }
 
@@ -190,6 +191,7 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
     'text=账号密码登录',
     '[role="tab"]:has-text("密码")'
   ]);
+  await page.waitForTimeout(1000);
 
   const usernameSelectors = [
     'input[name="username"]',
@@ -207,20 +209,29 @@ async function loginIfNeeded(page, username, password, hasExistingCookies) {
   let usernameInput = null;
   let passwordInput = null;
 
-  for (const selector of usernameSelectors) {
-    const locator = page.locator(selector).first();
-    if (await locator.count().catch(() => 0) && await locator.isVisible().catch(() => false)) {
-      usernameInput = locator;
-      break;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    for (const selector of usernameSelectors) {
+      const locator = page.locator(selector).first();
+      if (await locator.count().catch(() => 0) && await locator.isVisible().catch(() => false)) {
+        usernameInput = locator;
+        break;
+      }
     }
-  }
 
-  for (const selector of passwordSelectors) {
-    const locator = page.locator(selector).first();
-    if (await locator.count().catch(() => 0) && await locator.isVisible().catch(() => false)) {
-      passwordInput = locator;
+    for (const selector of passwordSelectors) {
+      const locator = page.locator(selector).first();
+      if (await locator.count().catch(() => 0) && await locator.isVisible().catch(() => false)) {
+        passwordInput = locator;
+        break;
+      }
+    }
+    
+    if (usernameInput && passwordInput) {
       break;
     }
+    
+    console.log(`等待登录框加载... (尝试 ${attempt + 1}/3)`);
+    await page.waitForTimeout(2000);
   }
 
   if (!usernameInput || !passwordInput) {
@@ -539,26 +550,60 @@ export async function captureRiceQuantNotebookSession(options = {}) {
   let actionResult = null;
 
   try {
-    console.log('访问 RiceQuant 主页...');
+console.log('访问 RiceQuant 主页...');
     const ricequantUrl = 'https://www.ricequant.com';
     await page.goto(ricequantUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     
-    loginResult = await loginIfNeeded(page, username, password, Boolean(existingCookies?.length));
+    // 检查是否已经登录（通过cookies）
+    const initialCookies = await context.cookies();
+    const hasSid = initialCookies.some(c => c.name === 'sid' && c.value);
+    const hasJwt = initialCookies.some(c => c.name === 'rqjwt' && c.value);
     
-    if (!loginResult.loggedIn) {
-      console.log('尝试直接访问登录页面...');
+    if (hasSid && hasJwt) {
+      console.log('✓ 检测到有效的登录 cookies，跳过自动登录');
+      loginResult = { loggedIn: true, mode: 'existing-cookies' };
+    } else {
+      console.log('访问登录页面...');
       await page.goto('https://www.ricequant.com/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
+      
       loginResult = await loginIfNeeded(page, username, password, Boolean(existingCookies?.length));
-    }
-    
-    if (!loginResult.loggedIn) {
-      throw new Error('登录失败');
+      
+      if (!loginResult.loggedIn) {
+        throw new Error('登录失败');
+      }
     }
     
     console.log('访问 Notebook...');
     await page.waitForTimeout(2000);
     await page.goto(directNotebookUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+    
+    console.log('等待 JupyterHub token...');
+    await page.waitForTimeout(5000);
+    
+    let currentCookies = await context.cookies();
+    let jupyterToken = currentCookies.find(c => c.name === 'jupyter-hub-token');
+    console.log(`JupyterHub token: ${jupyterToken?.value || '(empty)'}`);
+    
+    if (!jupyterToken || !jupyterToken.value) {
+      console.log('未获取到 JupyterHub token，等待更长时间...');
+      await page.waitForTimeout(10000);
+      
+      currentCookies = await context.cookies();
+      jupyterToken = currentCookies.find(c => c.name === 'jupyter-hub-token');
+      console.log(`重试后 JupyterHub token: ${jupyterToken?.value || '(empty)'}`);
+      
+      if (!jupyterToken || !jupyterToken.value) {
+        console.log('刷新页面重试...');
+        await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
+        await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+        await page.waitForTimeout(5000);
+        
+        currentCookies = await context.cookies();
+        jupyterToken = currentCookies.find(c => c.name === 'jupyter-hub-token');
+        console.log(`刷新后 JupyterHub token: ${jupyterToken?.value || '(empty)'}`);
+      }
+    }
     
     console.log('等待 Notebook 加载...');
     const notebookFrame = await waitForNotebookReady(page);
@@ -571,7 +616,18 @@ export async function captureRiceQuantNotebookSession(options = {}) {
 
     console.log('保存 session...');
     const cookies = await context.cookies();
-    const cookieHeader = buildCookieHeader(cookies.filter(item => item.domain.includes('ricequant.com')));
+    const savedJupyterToken = cookies.find(c => c.name === 'jupyter-hub-token');
+    
+    if (!savedJupyterToken || !savedJupyterToken.value) {
+      console.log('⚠️  警告: JupyterHub token 为空，Notebook API 可能无法正常工作');
+    } else {
+      console.log(`✓ JupyterHub token 已获取: ${savedJupyterToken.value.substring(0, 20)}...`);
+    }
+    
+    const cookieHeader = buildCookieHeader(cookies.filter(item => {
+      const domain = item.domain.startsWith('.') ? item.domain.slice(1) : item.domain;
+      return domain === 'ricequant.com' || domain.endsWith('.ricequant.com');
+    }));
     const sessionPayload = {
       capturedAt: new Date().toISOString(),
       notebookUrl,
@@ -620,8 +676,8 @@ export async function captureRiceQuantNotebookSession(options = {}) {
       actionResult
     };
   } finally {
-    await context.close().catch(() => {});
-    await browser.close().catch(() => {});
+    await context.close().catch(e => console.error('Context close error:', e.message));
+    await browser.close().catch(e => console.error('Browser close error:', e.message));
   }
 }
 

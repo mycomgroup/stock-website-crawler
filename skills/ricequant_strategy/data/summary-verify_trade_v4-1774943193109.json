@@ -1,0 +1,16 @@
+{
+  "strategyId": 2416319,
+  "backtestId": "7962883",
+  "strategyName": "verify_trade_v4",
+  "startDate": "2021-01-01",
+  "endDate": "2021-03-31",
+  "capital": "100000",
+  "annualReturn": 0,
+  "totalReturn": 0,
+  "maxDrawdown": 0,
+  "sharpe": 0,
+  "alpha": 0,
+  "beta": 0,
+  "winRate": 0,
+  "status": "error_exit"
+}

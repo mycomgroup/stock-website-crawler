@@ -58,9 +58,13 @@ export class WebApiClient {
     const page = await this.browserManager.newPage();
     try {
       await this.loginHandler.login(page, this.browserManager);
-    } finally {
+    } catch (error) {
       await page.close();
+      await this.browserManager.close();
+      this.browserManager = null;
+      throw error;
     }
+    await page.close();
   }
 
   /**

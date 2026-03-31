@@ -28,9 +28,7 @@ def calc_rfscore_factors(stocks, watch_date):
 
     # 获取当前期因子
     try:
-        current_factors = get_factor(
-            stocks, factor_names, start_date=watch_date, end_date=watch_date
-        )
+        current_factors = get_factor(stocks, factor_names)
     except Exception as e:
         logger.warning(f"get_factor failed: {e}")
         return pd.DataFrame()
@@ -38,14 +36,8 @@ def calc_rfscore_factors(stocks, watch_date):
     if current_factors is None or current_factors.empty:
         return pd.DataFrame()
 
-    # 获取历史期因子 (4期前用于计算变化率)
-    hist_date = watch_date - pd.Timedelta(days=365)
-    try:
-        hist_factors = get_factor(
-            stocks, factor_names, start_date=hist_date, end_date=hist_date
-        )
-    except Exception as e:
-        hist_factors = None
+    # 获取历史期因子 (用于计算变化率)
+    hist_factors = None
 
     # 计算各指标
     df = pd.DataFrame(index=stocks)
@@ -136,37 +128,47 @@ def get_universe(context):
     zz500 = index_components("000905.XSHG")
     stocks = list(set(hs300) | set(zz500))
 
+    if not stocks:
+        logger.warning("get_universe: no stocks from index")
+        return []
+
     # 剔除科创板
     stocks = [s for s in stocks if not s.startswith("688")]
 
-    # 剔除新股
-    all_inst = all_instruments(type="CS")
+    # 剔除新股、ST 和停牌
     valid_stocks = []
     today = context.now.date()
 
     for stock in stocks:
-        inst = all_inst[all_inst["order_book_id"] == stock]
-        if inst.empty:
-            continue
-        listed_date = pd.to_datetime(inst.iloc[0]["listed_date"])
-        if (today - listed_date.date()).days >= context.ipo_days:
-            valid_stocks.append(stock)
-
-    # 剔除 ST 和停牌
-    final_stocks = []
-    for stock in valid_stocks:
         if stock not in bar_dict:
             continue
         bar = bar_dict[stock]
         if bar.is_trading is False:
             continue
-        # 检查 ST (通过股票名称)
-        instrument = instruments(stock)
-        if "ST" in instrument.symbol or "*" in instrument.symbol:
-            continue
-        final_stocks.append(stock)
 
-    return final_stocks
+        # 检查 ST
+        try:
+            inst = instruments(stock)
+            if "ST" in inst.symbol or "*" in inst.symbol:
+                continue
+        except:
+            continue
+
+        # 检查上市时间
+        try:
+            inst_df = all_instruments(type="CS")
+            inst_row = inst_df[inst_df["order_book_id"] == stock]
+            if not inst_row.empty:
+                listed_date = pd.to_datetime(inst_row.iloc[0]["listed_date"])
+                if (today - listed_date.date()).days < context.ipo_days:
+                    continue
+        except:
+            pass
+
+        valid_stocks.append(stock)
+
+    logger.info(f"get_universe: {len(valid_stocks)} valid stocks")
+    return valid_stocks
 
 
 def calc_market_state(context):
@@ -225,9 +227,7 @@ def get_pb_ratio(stocks, watch_date):
     RiceQuant 使用 get_factor 获取估值因子
     """
     try:
-        pb_data = get_factor(
-            stocks, "pb_ratio", start_date=watch_date, end_date=watch_date
-        )
+        pb_data = get_factor(stocks, "pb_ratio")
         if pb_data is not None and not pb_data.empty:
             return pb_data.get("pb_ratio", pd.Series())
     except Exception as e:
@@ -419,7 +419,7 @@ def rebalance(context, bar_dict):
     # 等权买入
     portfolio = context.portfolio
     total_value = portfolio.total_value
-    cash = portfolio.available_cash
+    cash = portfolio.cash
 
     # 计算目标市值
     current_positions_value = sum(

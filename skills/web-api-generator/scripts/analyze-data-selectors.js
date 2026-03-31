@@ -128,7 +128,7 @@ class DataSelectorAnalyzer {
             if (selector) {
               result.dataContainers.push({
                 selector,
-                xpath: this.getXPath(container),
+                xpath: getXPath(container),
                 hasTables: container.querySelectorAll('table').length,
                 hasCharts: container.querySelectorAll('canvas, svg').length
               });
@@ -137,8 +137,7 @@ class DataSelectorAnalyzer {
         });
 
         return result;
-
-        // Helper function
+        
         function getXPath(element) {
           if (element.id) {
             return `//*[@id="${element.id}"]`;

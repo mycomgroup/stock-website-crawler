@@ -73,25 +73,19 @@ consecutive_losses = []
 current_loss_count = 0
 current_loss_sum = 0.0
 
-for trade in trades:
+for i, trade in enumerate(trades):
     if not trade["is_win"]:
         current_loss_count += 1
         current_loss_sum += trade["return_pct"]
     else:
         if current_loss_count > 0:
+            start_idx = i - current_loss_count
+            end_idx = i
             consecutive_losses.append(
                 {
                     "count": current_loss_count,
                     "sum_pct": current_loss_sum,
-                    "trade_ids": [
-                        t["trade_id"]
-                        for t in trades[
-                            trade["trade_id"] - current_loss_count - 1 : trade[
-                                "trade_id"
-                            ]
-                            - 1
-                        ]
-                    ],
+                    "trade_ids": [t["trade_id"] for t in trades[start_idx:end_idx]],
                 }
             )
         current_loss_count = 0
@@ -115,7 +109,7 @@ if consecutive_losses:
 
     print(f"最大连亏笔数: {max_consecutive_loss}")
     print(f"平均连亏笔数: {avg_consecutive_loss:.2f}")
-    print(f"最大连亏累计亏损: {max_loss_sum:.2f}%")
+    print(f"最大连亏累计亏损: {abs(max_loss_sum):.2f}%")
 
     loss_distribution = {}
     for loss_event in consecutive_losses:

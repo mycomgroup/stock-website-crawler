@@ -1,0 +1,40 @@
+{
+  "capturedAt": "2026-03-31T06:58:54.702Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/Simple_Test_Strategy_for_RiceQ_20260331_145851.ipynb",
+  "notebookPath": "Simple_Test_Strategy_for_RiceQ_20260331_145851.ipynb",
+  "kernelId": "562d3304-6413-41d9-b39a-a54ec8be3692",
+  "sessionId": "e320b5fb-d1db-48e0-a41a-121649218f06",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "Simple_Test_Strategy_for_RiceQ_20260331_145851.ipynb",
+    "path": "Simple_Test_Strategy_for_RiceQ_20260331_145851.ipynb",
+    "last_modified": "2026-03-31T06:58:54.722819Z",
+    "created": "2026-03-31T06:58:54.723819Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 1700,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# Simple Test Strategy for RiceQuant\n# 使用 order_target_value\n\n\ndef init(context):\n    context.benchmark = \"000300.XSHG\"\n    context.stocks = [\"000001.XSHE\", \"600000.XSHG\"]\n    context.bought = False\n    scheduler.run_daily(rebalance)\n\n\ndef rebalance(context, bar_dict):\n    if context.bought:\n        return\n\n    # 检查股票是否可交易\n    tradable = []\n    for stock in context.stocks:\n        if stock in bar_dict:\n            bar = bar_dict[stock]\n            if bar.is_trading:\n                tradable.append(stock)\n\n    if len(tradable) == 0:\n        return\n\n    # 等权买入\n    total = context.portfolio.total_value\n    per_stock = total / len(tradable)\n\n    for stock in tradable:\n        order_target_value(stock, per_stock)\n\n    context.bought = True\n    log.info(f\"Bought {len(tradable)} stocks\")\n",
+      "msgId": "9990a45047d649db9da9ca10d780222f",
+      "websocketSessionId": "1592a77eb5b6476f94d193632da9e7ee",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "",
+      "outputs": []
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "Simple_Test_Strategy_for_RiceQ"
+}

@@ -42,8 +42,8 @@ class WebApiGeneratorSkill {
 
   getPaths(params) {
     return {
-      patternsPath: params.patterns || path.join(__dirname, '../../stock-crawler/output/lixinger-crawler/url-patterns.json'),
-      configPath: params.config || path.join(__dirname, 'output/web-api-docs/api-configs.json')
+      patternsPath: this.validatePath(params.patterns, path.join(__dirname, '../../stock-crawler/output/lixinger-crawler/url-patterns.json')),
+      configPath: this.validatePath(params.config, path.join(__dirname, 'output/web-api-docs/api-configs.json'))
     };
   }
 
@@ -68,16 +68,26 @@ class WebApiGeneratorSkill {
     return new FieldInferenceService({ enabled: useLLM });
   }
 
+  validatePath(inputPath, defaultPath) {
+    if (!inputPath) return defaultPath;
+    const resolved = path.resolve(inputPath);
+    const cwd = process.cwd();
+    if (!resolved.startsWith(cwd) && !resolved.startsWith(path.join(__dirname, '..'))) {
+      throw new Error(`路径遍历攻击检测: ${inputPath} 不在允许的目录范围内`);
+    }
+    return resolved;
+  }
+
   async generateDocs(params) {
-    const patternsPath = params.patterns || path.join(__dirname, '../../stock-crawler/output/lixinger-crawler/url-patterns.json');
-    const outputDir = params.output || path.join(__dirname, 'output/web-api-docs');
+    const patternsPath = this.validatePath(params.patterns, path.join(__dirname, '../../stock-crawler/output/lixinger-crawler/url-patterns.json'));
+    const outputDir = this.validatePath(params.output, path.join(__dirname, 'output/web-api-docs'));
 
     console.log(`\n生成 API 文档...`);
     console.log(`Patterns: ${patternsPath}`);
     console.log(`Output: ${outputDir}\n`);
 
     const generator = new DocGenerator(patternsPath, outputDir);
-    generator.generateAll();
+    await generator.generateAll();
   }
 
   async listApis(params) {
@@ -202,6 +212,7 @@ class WebApiGeneratorSkill {
     const matcher = new PatternMatcher(patternsPath);
     const fieldInference = this.createFieldInferenceService(params);
     const rl = this.createReadline();
+    let exitCode = 0;
 
     try {
       console.log('\n=== 交互式 Web API 调用 ===');
@@ -273,9 +284,13 @@ class WebApiGeneratorSkill {
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
       console.error('\n交互调用失败:', error.message);
-      process.exit(1);
+      exitCode = 1;
     } finally {
       rl.close();
+    }
+    
+    if (exitCode !== 0) {
+      process.exit(exitCode);
     }
   }
 

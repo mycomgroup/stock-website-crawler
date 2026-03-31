@@ -1,0 +1,65 @@
+{
+  "name": "高质量增长",
+  "template": "single_period",
+  "universe": ["000300.XSHG", "000905.XSHG"],
+  "industries": ["*"],
+  "board": ["*"],
+  "stOption": "exclude",
+  "filters": [
+    {
+      "operator": "in_range",
+      "factor": { "type": "fundamental", "name": "pe_ratio" },
+      "rhs": [10, 30]
+    },
+    {
+      "operator": "greater_than",
+      "factor": { "type": "fundamental", "name": "roe" },
+      "rhs": 15
+    },
+    {
+      "operator": "greater_than",
+      "factor": { "type": "fundamental", "name": "gross_profit_margin" },
+      "rhs": 25
+    },
+    {
+      "operator": "greater_than",
+      "factor": { "type": "fundamental", "name": "revenue_growth_rate" },
+      "rhs": 10
+    },
+    {
+      "operator": "less_than",
+      "factor": { "type": "fundamental", "name": "debt_ratio" },
+      "rhs": 50
+    }
+  ],
+  "sorting": [
+    {
+      "factor": { "type": "fundamental", "name": "roe" },
+      "ascending": false,
+      "weight": 0.5
+    },
+    {
+      "factor": { "type": "fundamental", "name": "revenue_growth_rate" },
+      "ascending": false,
+      "weight": 0.3
+    },
+    {
+      "factor": { "type": "fundamental", "name": "gross_profit_margin" },
+      "ascending": false,
+      "weight": 0.2
+    }
+  ],
+  "maxHoldingNum": 15,
+  "rebalanceInterval": 20,
+  "risk": {
+    "profitTaking": null,
+    "stopLoss": null
+  },
+  "backtest": {
+    "start": "2020-01-01",
+    "end": "2025-03-28",
+    "capital": 100000,
+    "benchmark": "000300.XSHG",
+    "frequency": "day"
+  }
+}

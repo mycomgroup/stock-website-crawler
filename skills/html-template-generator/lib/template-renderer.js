@@ -50,8 +50,8 @@ export class TemplateRenderer {
                        template.samples?.[0] || 
                        'N/A';
     md += `- **描述**: ${description}\n`;
-    md += `- **生成时间**: ${template.generatedAt}\n`;
-    md += `- **版本**: ${template.version}\n`;
+    md += `- **生成时间**: ${template.generatedAt || 'N/A'}\n`;
+    md += `- **版本**: ${template.version || 'N/A'}\n`;
     md += `- **样本数量**: ${template.metadata?.sampleCount || template.samples?.length || 0}\n`;
     md += '\n---\n\n';
     return md;

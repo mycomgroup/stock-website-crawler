@@ -1,0 +1,46 @@
+{
+  "backtestId": "7962834",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-03-31T15:27:39.290000",
+    "start_at": "2026-03-31T15:27:43.144000",
+    "progress": 1,
+    "backtest_id": "7962834",
+    "description": "",
+    "strategy_id": 2415370,
+    "title": "RFScore Pure Offensive",
+    "account_type": "stock",
+    "end_at": "2026-03-31T15:27:58.669000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1735630200000,
+    "trading_date": 20241231,
+    "alpha": -0.020831,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.2138624068112149,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 1735630200000,
+    "trading_date": 20241231,
+    "alpha": -0.020831,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.2138624068112149,
+    "annual_downside_risk": 0
+  }
+}

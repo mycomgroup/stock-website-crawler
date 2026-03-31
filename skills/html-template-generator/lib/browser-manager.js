@@ -18,6 +18,8 @@ export class BrowserManager {
     this.channel = config.channel || 'chrome';
     this.timeout = config.timeout || 30000;
     this.browser = null;
+    this._closing = false;
+    this._closePromise = null;
   }
 
   /**
@@ -50,14 +52,30 @@ export class BrowserManager {
    * Close browser
    */
   async close() {
-    if (this.browser) {
+    if (this._closing) {
+      return this._closePromise;
+    }
+    
+    if (!this.browser) {
+      return;
+    }
+    
+    this._closing = true;
+    const browser = this.browser;
+    this.browser = null;
+    
+    this._closePromise = (async () => {
       try {
-        await this.browser.close();
-        this.browser = null;
+        await browser.close();
       } catch (error) {
         console.error('Error closing browser:', error.message);
+      } finally {
+        this._closing = false;
+        this._closePromise = null;
       }
-    }
+    })();
+    
+    return this._closePromise;
   }
 
   /**

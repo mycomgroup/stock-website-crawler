@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "config": null,
+  "metadata": null,
+  "status": "error_exit",
+  "summary": null,
+  "create_at": "2026-03-31T15:46:12.664000",
+  "start_at": "2026-03-31T15:46:16.767000",
+  "progress": 0.017241379310344827,
+  "backtest_id": "7962883",
+  "description": "",
+  "strategy_id": 2416319,
+  "title": "Test_verify_trade_v4_1774943172085",
+  "account_type": "stock",
+  "end_at": "2026-03-31T15:46:28.520000",
+  "exception": "Traceback (most recent call last):\n  File strategy.py, line 34 in handle_bar\n    order_target(stock, 0)\n    --> context = Context({s1 = '000001.XSHE'})\n    --> bar_dict = BarMap()\n    --> stock = '000001.XSHE'\n    --> prices = array([19.17, 19.2 , 19.34, 18.6 , 18.17])\n    --> cur_position = 5300\n    --> shares = 73.81045679691711\n\nNameError: name 'order_target' is not defined"
+}

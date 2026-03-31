@@ -310,6 +310,22 @@ export class StructureAnalyzer {
   }
 
   /**
+   * Escape quotes for XPath string
+   * @param {string} str - String to escape
+   * @returns {string} Escaped string
+   * @private
+   */
+  _escapeXPathString(str) {
+    if (!str) return str;
+    if (str.includes("'") && str.includes('"')) {
+      return 'concat(' + str.split("'").map(part => `'${part}'`).join(', "\'", ') + ')';
+    } else if (str.includes("'")) {
+      return `"${str}"`;
+    }
+    return `'${str}'`;
+  }
+
+  /**
    * Generate XPath for element
    * @param {Element} element - DOM element
    * @returns {string} XPath expression
@@ -318,14 +334,16 @@ export class StructureAnalyzer {
   _generateXPath(element) {
     // Prioritize id
     if (element.id) {
-      return `//*[@id='${element.id}']`;
+      const escapedId = this._escapeXPathString(element.id);
+      return `//*[@id=${escapedId}]`;
     }
     
     // Use class - use //* instead of //tagname for JSDOM compatibility
     if (element.className) {
       const classes = element.className.trim().split(/\s+/);
       if (classes.length > 0) {
-        return `//*[contains(@class, '${classes[0]}')]`;
+        const escapedClass = this._escapeXPathString(classes[0]);
+        return `//*[contains(@class, ${escapedClass})]`;
       }
     }
     
@@ -402,7 +420,10 @@ export class StructureAnalyzer {
     const entries = Object.entries(xpaths);
     if (entries.length === 0) return null;
     
-    const [xpath, count] = entries.sort((a, b) => b[1] - a[1])[0];
+    const [xpath, count] = entries.sort((a, b) => {
+      if (b[1] !== a[1]) return b[1] - a[1];
+      return a[0].localeCompare(b[0]);
+    })[0];
     return {
       xpath,
       frequency: count / sampleCount

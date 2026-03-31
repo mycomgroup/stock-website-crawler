@@ -1,0 +1,40 @@
+{
+  "capturedAt": "2026-03-31T07:00:34.559Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/RiceQuant_%E7%AE%80%E5%8C%96%E6%B5%8B%E8%AF%95%E7%AD%96%E7%95%A5_20260331_150031.ipynb",
+  "notebookPath": "RiceQuant_简化测试策略_20260331_150031.ipynb",
+  "kernelId": "b76ed5ea-c226-439f-a6fa-17a4ddce31e8",
+  "sessionId": "d24e0567-63ae-4060-9f02-4910e596ebc4",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "RiceQuant_简化测试策略_20260331_150031.ipynb",
+    "path": "RiceQuant_简化测试策略_20260331_150031.ipynb",
+    "last_modified": "2026-03-31T07:00:34.490448Z",
+    "created": "2026-03-31T07:00:34.491448Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2426,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# RiceQuant 简化测试策略\n# 直接买入低 PB 股票\n\n\ndef init(context):\n    context.benchmark = \"000300.XSHG\"\n    scheduler.run_monthly(rebalance, tradingday=1)\n\n\ndef rebalance(context, bar_dict):\n    # 获取沪深300成分股\n    stocks = index_components(\"000300.XSHG\")\n\n    # 获取 PB 数据\n    try:\n        pb_data = get_factor(\n            stocks,\n            \"pb_ratio\",\n            start_date=context.now.date(),\n            end_date=context.now.date(),\n        )\n        if pb_data is None or pb_data.empty:\n            logger.warning(\"No PB data\")\n            return\n    except Exception as e:\n        logger.warning(f\"get_factor error: {e}\")\n        return\n\n    # 选择 PB 最低的 10 只\n    pb_series = pb_data.get(\"pb_ratio\")\n    if pb_series is None:\n        return\n\n    # 过滤无效值\n    valid = pb_series[pb_series > 0].sort_values()\n    if len(valid) < 5:\n        return\n\n    selected = valid.head(10).index.tolist()\n\n    # 调仓\n    for stock in context.portfolio.positions:\n        if stock not in selected:\n            order_target_value(stock, 0)\n\n    # 买入\n    total = context.portfolio.total_value\n    per_stock = total / len(selected)\n\n    for stock in selected:\n        if stock in bar_dict and bar_dict[stock].is_trading:\n            order_target_value(stock, per_stock)\n\n    logger.info(f\"Selected {len(selected)} stocks\")\n",
+      "msgId": "e482e3707b4644ae9da0920f8532fa01",
+      "websocketSessionId": "b247a82425e34edf96201fcb7a88cc3f",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "",
+      "outputs": []
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "RiceQuant_简化测试策略"
+}

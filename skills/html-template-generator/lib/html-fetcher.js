@@ -61,7 +61,7 @@ export class HTMLFetcher {
       await this._scrollPage(page);
       
       // Final wait for any animations
-      await page.waitForTimeout(1000);
+      await this._wait(1000);
       
       // Extract content
       const html = await page.content();
@@ -75,7 +75,7 @@ export class HTMLFetcher {
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      if (error.name === 'TimeoutError') {
+      if (error.name === 'TimeoutError' || error.message?.includes('timeout') || error.message?.includes('Timeout')) {
         throw new Error(`Timeout loading ${url} after ${this.timeout}ms`);
       }
       throw new Error(`Failed to fetch ${url}: ${error.message}`);
@@ -113,7 +113,7 @@ export class HTMLFetcher {
     }
     
     // Strategy 2: Wait for Vue/React to finish rendering
-    await page.waitForTimeout(2000);
+    await this._wait(2000);
     
     // Strategy 3: Wait for no new DOM mutations
     try {
@@ -157,19 +157,19 @@ export class HTMLFetcher {
       await page.evaluate(() => {
         window.scrollTo(0, document.body.scrollHeight);
       });
-      await page.waitForTimeout(500);
+      await this._wait(500);
       
       // Scroll to middle
       await page.evaluate(() => {
         window.scrollTo(0, document.body.scrollHeight / 2);
       });
-      await page.waitForTimeout(500);
+      await this._wait(500);
       
       // Scroll back to top
       await page.evaluate(() => {
         window.scrollTo(0, 0);
       });
-      await page.waitForTimeout(500);
+      await this._wait(500);
       
       console.log('  ✓ Scrolled page');
     } catch (e) {
@@ -183,5 +183,14 @@ export class HTMLFetcher {
    */
   setTimeout(timeout) {
     this.timeout = timeout;
+  }
+
+  /**
+   * Wait for specified milliseconds (replacement for deprecated page.waitForTimeout)
+   * @param {number} ms - Milliseconds to wait
+   * @private
+   */
+  async _wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

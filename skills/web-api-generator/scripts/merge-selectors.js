@@ -50,9 +50,21 @@ function mergeSelectors() {
   console.log(`选择器文件: ${selectorsPath}`);
   console.log(`输出文件: ${outputPath}\n`);
 
-  // 加载文件
-  const configs = JSON.parse(fs.readFileSync(configsPath, 'utf-8'));
-  const selectors = JSON.parse(fs.readFileSync(selectorsPath, 'utf-8'));
+  let configs, selectors;
+  
+  try {
+    configs = JSON.parse(fs.readFileSync(configsPath, 'utf-8'));
+  } catch (error) {
+    console.error(`解析配置文件失败: ${error.message}`);
+    process.exit(1);
+  }
+  
+  try {
+    selectors = JSON.parse(fs.readFileSync(selectorsPath, 'utf-8'));
+  } catch (error) {
+    console.error(`解析选择器文件失败: ${error.message}`);
+    process.exit(1);
+  }
 
   // 创建选择器映射
   const selectorMap = {};

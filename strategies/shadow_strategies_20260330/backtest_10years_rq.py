@@ -43,11 +43,19 @@ OBSERVATION_PARAMS = {
 def get_all_stocks_list():
     """获取所有A股股票列表"""
     try:
-        all_stocks = get_all_securities(["stock"])
-        return list(all_stocks.index)
+        instruments = all_instruments(type="CS")
+        return list(instruments.order_book_id)
     except Exception as e:
-        print(f"获取股票列表失败: {e}")
-        return []
+        print(f"all_instruments获取失败: {e}")
+        try:
+            hs300 = index_components("000300.XSHG")
+            zz500 = index_components("000905.XSHG")
+            combined = list(set(hs300 + zz500))
+            print(f"使用沪深300+中证500替代，共{len(combined)}只")
+            return combined
+        except Exception as e2:
+            print(f"获取指数成分股也失败: {e2}")
+            return []
 
 
 def get_limit_up_count(date, stock_list, max_count=300):
@@ -57,7 +65,7 @@ def get_limit_up_count(date, stock_list, max_count=300):
 
     for stock in stock_list[:max_count]:
         try:
-            bars = history_bars(stock, 2, "1d", "close", include_now=True)
+            bars = history_bars(stock, 2, "1d", "close", end_dt=date)
             if bars is not None and len(bars) >= 2:
                 prev_close = bars["close"][-2]
                 curr_close = bars["close"][-1]
@@ -76,7 +84,7 @@ def get_limit_up_count(date, stock_list, max_count=300):
 def is_fake_weak_high_open(stock, date):
     """判断是否为假弱高开"""
     try:
-        bars = history_bars(stock, 2, "1d", ["close", "open", "high"], include_now=True)
+        bars = history_bars(stock, 2, "1d", ["close", "open", "high"], end_dt=date)
         if bars is None or len(bars) < 2:
             return False
 
@@ -117,7 +125,7 @@ def get_stock_market_cap(stock, date):
 def get_stock_position_pct(stock, date):
     """获取位置（相对历史最高）"""
     try:
-        bars = history_bars(stock, 250, "1d", "high")
+        bars = history_bars(stock, 250, "1d", "high", end_dt=date)
         if bars is None or len(bars) < 250:
             return None
 
@@ -134,7 +142,7 @@ def get_stock_position_pct(stock, date):
 def has_consecutive_boards(stock, date):
     """判断是否有连板"""
     try:
-        bars = history_bars(stock, 5, "1d", "close")
+        bars = history_bars(stock, 5, "1d", "close", end_dt=date)
         if bars is None or len(bars) < 5:
             return False
 
@@ -153,7 +161,7 @@ def has_consecutive_boards(stock, date):
 def is_second_board(stock, date):
     """判断是否为二板"""
     try:
-        bars = history_bars(stock, 5, "1d", "close", include_now=True)
+        bars = history_bars(stock, 5, "1d", "close", end_dt=date)
         if bars is None or len(bars) < 5:
             return False
 
@@ -176,7 +184,7 @@ def is_second_board(stock, date):
 def is_limit_up_today(stock, date):
     """判断今日是否涨停"""
     try:
-        bars = history_bars(stock, 2, "1d", "close", include_now=True)
+        bars = history_bars(stock, 2, "1d", "close", end_dt=date)
         if bars is None or len(bars) < 2:
             return False
 
@@ -292,7 +300,7 @@ else:
         total_value = capital
         for stock, pos in positions.items():
             try:
-                bars = history_bars(stock, 1, "1d", "close", include_now=True)
+                bars = history_bars(stock, 1, "1d", "close", end_dt=date_str)
                 if bars is not None:
                     total_value += bars["close"][-1] * pos["shares"]
             except:
@@ -303,7 +311,7 @@ else:
         stocks_to_sell = []
         for stock, pos in positions.items():
             try:
-                bars = history_bars(stock, 1, "1d", "close", include_now=True)
+                bars = history_bars(stock, 1, "1d", "close", end_dt=date_str)
                 if bars is None:
                     continue
                 current_price = bars["close"][-1]
@@ -362,7 +370,7 @@ else:
             stock = signal["stock"]
 
             try:
-                bars = history_bars(stock, 1, "1d", "close", include_now=True)
+                bars = history_bars(stock, 1, "1d", "close", end_dt=date_str)
                 if bars is None:
                     continue
                 price = bars["close"][-1]

@@ -75,27 +75,33 @@ async function main() {
 
   const reviewItems = [];
   const results = [];
+  const failedUrls = [];
 
   await browserManager.launch();
   try {
     for (const url of urls) {
-      const { html } = await fetcher.fetchOne(url);
-      const record = extractor.extract(html, template, { url });
-      results.push(record);
+      try {
+        const { html } = await fetcher.fetchOne(url);
+        const record = extractor.extract(html, template, { url });
+        results.push(record);
 
-      if (markdownDir) {
-        const markdown = renderer.render(html, template);
-        const safeName = encodeURIComponent(url).replace(/%/g, '_');
-        await fs.mkdir(markdownDir, { recursive: true });
-        await fs.writeFile(path.join(markdownDir, `${safeName}.md`), markdown, 'utf-8');
-      }
+        if (markdownDir) {
+          const markdown = renderer.render(html, template);
+          const safeName = encodeURIComponent(url).replace(/%/g, '_');
+          await fs.mkdir(markdownDir, { recursive: true });
+          await fs.writeFile(path.join(markdownDir, `${safeName}.md`), markdown, 'utf-8');
+        }
 
-      if (record.needsHumanReview) {
-        reviewItems.push({
-          url,
-          score: record.confidence.score,
-          missing: record.confidence.missingCritical
-        });
+        if (record.needsHumanReview) {
+          reviewItems.push({
+            url,
+            score: record.confidence.score,
+            missing: record.confidence.missingCritical
+          });
+        }
+      } catch (error) {
+        console.error(`Failed to fetch ${url}: ${error.message}`);
+        failedUrls.push({ url, error: error.message });
       }
     }
   } finally {
@@ -113,6 +119,12 @@ async function main() {
   console.log(`🧑‍💻 Review report: ${reportPath}`);
   if (markdownDir) {
     console.log(`📝 Markdown previews: ${markdownDir}`);
+  }
+  if (failedUrls.length > 0) {
+    console.log(`\n❌ Failed URLs (${failedUrls.length}):`);
+    failedUrls.forEach(({ url, error }) => {
+      console.log(`  - ${url}: ${error}`);
+    });
   }
 }
 

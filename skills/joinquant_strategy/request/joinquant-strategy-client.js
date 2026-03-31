@@ -356,18 +356,7 @@ export class JoinQuantStrategyClient {
     // Get attribution context first to get the correct token for factor APIs
     const attrContext = await this.getAttributionContext(backtestId);
 
-    const [
-      result, 
-      stats, 
-      transactions, 
-      positions, 
-      log,
-      attrReturn,
-      attrBenefit,
-      attrRisk,
-      attrPosition,
-      attrBrinson
-    ] = await Promise.all([
+    const results = await Promise.allSettled([
       this.getBacktestResult(backtestId, context),
       this.getBacktestStats(backtestId, context),
       this.getTransactionInfo(backtestId),
@@ -379,6 +368,20 @@ export class JoinQuantStrategyClient {
       this.getAttributionPositionAnaly(backtestId, attrContext),
       this.getAttributionBrinson(backtestId, attrContext)
     ]);
+
+    const getValue = (r) => r.status === 'fulfilled' ? r.value : {};
+    const [
+      result, 
+      stats, 
+      transactions, 
+      positions, 
+      log,
+      attrReturn,
+      attrBenefit,
+      attrRisk,
+      attrPosition,
+      attrBrinson
+    ] = results.map(getValue);
 
     const resultData = result.data?.result || {};
     const statsData = stats.data || {};

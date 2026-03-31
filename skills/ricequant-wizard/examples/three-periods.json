@@ -1,0 +1,61 @@
+{
+  "name": "三期调仓示例",
+  "template": "three_periods",
+  "universe": ["000300.XSHG"],
+  "industries": ["*"],
+  "board": ["*"],
+  "stOption": "exclude",
+  "filters": [
+    {
+      "operator": "less_than",
+      "factor": { "type": "fundamental", "name": "pe_ratio" },
+      "rhs": 20
+    },
+    {
+      "operator": "less_than",
+      "factor": { "type": "fundamental", "name": "pb_ratio" },
+      "rhs": 2
+    }
+  ],
+  "sorting": [
+    {
+      "factor": { "type": "fundamental", "name": "market_cap" },
+      "ascending": false,
+      "weight": 1
+    }
+  ],
+  "buy": {
+    "filters": [
+      {
+        "operator": "greater_than",
+        "factor": { "type": "fundamental", "name": "turnover_rate" },
+        "rhs": 2
+      }
+    ],
+    "rebalanceInterval": 1
+  },
+  "sell": {
+    "filters": [
+      {
+        "operator": "greater_than",
+        "factor": { "type": "fundamental", "name": "pe_ratio" },
+        "rhs": 25
+      }
+    ],
+    "rebalanceInterval": 1
+  },
+  "maxHoldingNum": 10,
+  "maxHoldingPercent": 0.15,
+  "rebalanceInterval": 5,
+  "risk": {
+    "profitTaking": 0.2,
+    "stopLoss": -0.1
+  },
+  "backtest": {
+    "start": "2020-01-01",
+    "end": "2025-03-28",
+    "capital": 100000,
+    "benchmark": "000300.XSHG",
+    "frequency": "day"
+  }
+}

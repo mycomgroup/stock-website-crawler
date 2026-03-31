@@ -179,6 +179,10 @@ async function captureViaBrowser(credentials) {
     await page.screenshot({ path: 'login-error.png', fullPage: true });
     throw error;
   } finally {
-    await browser.close();
+    try {
+      await browser.close();
+    } catch (e) {
+      console.error('Browser close error:', e.message);
+    }
   }
 }

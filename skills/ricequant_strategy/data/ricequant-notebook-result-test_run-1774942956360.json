@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-03-31T07:42:36.360Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/test_run_20260331_154233.ipynb",
+  "notebookPath": "test_run_20260331_154233.ipynb",
+  "kernelId": "26cde609-5618-4207-9719-a5e468148876",
+  "sessionId": "acbf2a4d-7e33-43be-bb03-aff8995ad382",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "test_run_20260331_154233.ipynb",
+    "path": "test_run_20260331_154233.ipynb",
+    "last_modified": "2026-03-31T07:42:36.482086Z",
+    "created": "2026-03-31T07:42:36.482086Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2975,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n简单回测示例 - RiceQuant Notebook\n\n验证 notebook 连接和基本 API\n\"\"\"\n\nprint(\"=== RiceQuant Notebook 简单回测测试 ===\")\nprint(f\"当前时间: {context.now}\")\n\ntry:\n    all_stocks = get_all_securities([\"stock\"])\n    print(f\"股票总数: {len(all_stocks)}\")\n\n    hs300 = index_components(\"000300.XSHG\")\n    print(f\"沪深300成分股: {len(hs300)}\")\n\n    zz500 = index_components(\"000905.XSHG\")\n    print(f\"中证500成分股: {len(zz500)}\")\n\n    dates = get_trading_dates(\"2024-01-01\", \"2024-12-31\")\n    print(f\"2024年交易日: {len(dates)}\")\n\n    print(\"\\nAPI 测试成功!\")\n\nexcept Exception as e:\n    print(f\"API 测试错误: {e}\")\n    print(\"可能需要在 RiceQuant Notebook 平台上运行\")\n\nprint(\"\\n=== 测试完成 ===\")\n",
+      "msgId": "a95073b5f0e24995b6adb99cece92b3a",
+      "websocketSessionId": "18387f9350d948bda3a6413ea7e33350",
+      "executionCount": 1,
+      "status": "error",
+      "textOutput": "=== RiceQuant Notebook 简单回测测试 ===\nNameError: name 'context' is not defined",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RiceQuant Notebook 简单回测测试 ===\n"
+        },
+        {
+          "output_type": "error",
+          "ename": "NameError",
+          "evalue": "name 'context' is not defined",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-1-f1ecaf8f27bb>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      6\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      7\u001b[0m \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m\"=== RiceQuant Notebook 简单回测测试 ===\"\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 8\u001b[0;31m \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34mf\"当前时间: {context.now}\"\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      9\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     10\u001b[0m \u001b[0;32mtry\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'context' is not defined"
+          ]
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

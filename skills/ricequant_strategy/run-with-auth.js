@@ -116,14 +116,28 @@ async function runBacktest(options) {
         try {
           result = await client.getBacktestResult(backtestId);
           
+          if (!result) {
+            process.stdout.write(`[${attempts}] Waiting for result...\r`);
+            continue;
+          }
+          
           if (result.status === 'finished' || result.progress === 100) {
             console.log('\n✓ Backtest completed!');
             break;
           }
           
+          if (result.status === 'error_exit' || result.status === 'failed') {
+            console.log('\n✗ Backtest failed:', result.exception || result.message || 'Unknown error');
+            break;
+          }
+          
           process.stdout.write(`[${attempts}] Progress: ${result.progress || 0}%\r`);
         } catch (e) {
-          console.log('Poll error:', e.message);
+          if (e.message && (e.message.includes('network') || e.message.includes('ECONN') || e.message.includes('timeout'))) {
+            process.stdout.write(`[${attempts}] Network error, retrying...\r`);
+          } else {
+            console.log('\nPoll error:', e.message);
+          }
         }
       }
       

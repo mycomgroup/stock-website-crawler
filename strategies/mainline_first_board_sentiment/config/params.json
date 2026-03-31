@@ -1,0 +1,155 @@
+{
+  "strategy": "mainline_first_board_sentiment",
+  "version": "v1.0",
+  "lock_date": "2026-03-31",
+  "status": "locked",
+  
+  "description": {
+    "name": "首板低开情绪择时策略",
+    "type": "机会仓高频策略",
+    "holding_period": "1-2天",
+    "capital_limit": "≤500万"
+  },
+  
+  "signal": {
+    "open_pct_min": 0.5,
+    "open_pct_max": 1.5,
+    "cap_min": 50,
+    "cap_max": 150,
+    "position_max": 30,
+    "prev_day_zt": 0,
+    "prev_close_zt": 1,
+    "description": "假弱高开结构，流通市值50-150亿，相对位置≤30%，非连板"
+  },
+  
+  "sentiment": {
+    "zt_count_high": 50,
+    "zt_count_mid": 30,
+    "zt_count_low": 30,
+    "use_hard_switch": true,
+    "data_source": "eastmoney",
+    "update_time": "T-1收盘",
+    "description": "涨停家数单指标硬开关，≥30开仓，<30空仓"
+  },
+  
+  "position": {
+    "single_position_pct": 5,
+    "single_position_max_amount": 50,
+    "total_position_pct_high": 30,
+    "total_position_pct_mid": 20,
+    "total_position_pct_low": 0,
+    "max_stocks_per_day": 3,
+    "description": "单票≤5%或50万，总仓≤30%"
+  },
+  
+  "buy": {
+    "buy_start_time": "09:35",
+    "buy_end_time": "09:40",
+    "buy_method": "market",
+    "buy_slippage": 0.5,
+    "description": "开盘后市价买入，预留0.5%滑点"
+  },
+  
+  "sell": {
+    "sell_time_primary": "次日09:35",
+    "sell_time_force": "第2天14:50",
+    "sell_method": "market",
+    "sell_slippage": 0.5,
+    "zt_hold": true,
+    "max_holding_days": 2,
+    "description": "次日开盘卖出，涨停持有，第2天强制卖"
+  },
+  
+  "stop_loss": {
+    "daily_loss_stop": -3.0,
+    "next_day_open_stop": -4.0,
+    "description": "日内亏损>3%止损，次日低开≤-4%止损"
+  },
+  
+  "risk_control": {
+    "consecutive_loss_trigger": 3,
+    "pause_days": 3,
+    "pause_auto_resume": true,
+    "daily_drawdown_stop": 5,
+    "weekly_drawdown_stop": 8,
+    "monthly_drawdown_stop": 15,
+    "description": "连亏3笔停3天，日回撤>5%熔断"
+  },
+  
+  "capacity": {
+    "max_total_capital": 500,
+    "min_total_capital": 100,
+    "turnover_ratio_max": 10,
+    "description": "资金上限500万，成交额占比≤10%"
+  },
+  
+  "fee": {
+    "commission_rate": 0.0003,
+    "stamp_duty_rate": 0.001,
+    "min_commission": 5,
+    "description": "佣金万三，印花税千一"
+  },
+  
+  "expected": {
+    "win_rate": 48.5,
+    "avg_pnl": 0.77,
+    "pnl_ratio": 1.65,
+    "annual_return": 20,
+    "max_drawdown": 15,
+    "max_loss": -3.0,
+    "calmar_ratio": 1.5,
+    "description": "胜率48.5%，平均收益+0.77%，年化20%"
+  },
+  
+  "warning": {
+    "win_rate_deviation": 5.0,
+    "avg_pnl_deviation": 0.3,
+    "max_drawdown_deviation": 5.0,
+    "max_loss_deviation": -1.0,
+    "description": "胜率偏差±5%，收益偏差±0.3%"
+  },
+  
+  "data_source": {
+    "sentiment": {
+      "primary": "东方财富涨停统计",
+      "backup": "同花顺涨停复盘",
+      "url": "http://data.eastmoney.com/zt/"
+    },
+    "backtest": {
+      "platform": "JoinQuant",
+      "url": "https://www.joinquant.com"
+    }
+  },
+  
+  "documents": {
+    "strategy_doc": "docs/策略说明书.md",
+    "params_doc": "docs/参数配置表.md",
+    "execution_doc": "docs/执行指南.md",
+    "risk_doc": "docs/风控手册.md",
+    "review_doc": "docs/复盘模板.md"
+  },
+  
+  "scripts": {
+    "strategy_code": "code/mainline_strategy.py",
+    "config_file": "config/params.json",
+    "execution_tools": "../mainline_sim_trading_20260330/scripts/"
+  },
+  
+  "changelog": [
+    {
+      "version": "v1.0",
+      "date": "2026-03-31",
+      "changes": "参数锁定，正式发布"
+    },
+    {
+      "version": "v0.9",
+      "date": "2026-03-30",
+      "changes": "初步完成，待锁定"
+    },
+    {
+      "version": "v0.1",
+      "date": "2026-03-29",
+      "changes": "初始版本"
+    }
+  ]
+}

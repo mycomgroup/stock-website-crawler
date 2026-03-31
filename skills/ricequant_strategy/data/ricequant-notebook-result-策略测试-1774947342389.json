@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-03-31T08:55:42.389Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260331_163633.ipynb",
+  "notebookPath": "策略测试_20260331_163633.ipynb",
+  "kernelId": "5e7624c5-798d-4b2f-ba31-d4ac261bff04",
+  "sessionId": "ea95e043-386d-4d37-b3bb-0824543d218a",
+  "appendedCellIndex": 1,
+  "managedCellIndex": 1,
+  "mode": "partial",
+  "targetCellIndices": [
+    1
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260331_163633.ipynb",
+    "path": "策略测试_20260331_163633.ipynb",
+    "last_modified": "2026-03-31T08:55:42.439669Z",
+    "created": "2026-03-31T08:55:42.440669Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 21015,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 1,
+      "source": "\"\"\"\nRiceQuant 平台因子查询示例 - 简化版\n\"\"\"\n\nprint(\"=\" * 80)\nprint(\"RiceQuant 平台因子测试\")\nprint(\"=\" * 80)\n\n# ============================================================================\n# 第一部分：财务因子（fundamentals）- 平台直接提供\n# ============================================================================\n\nprint(\"\\n【财务因子】平台直接提供，无需计算\")\nprint(\"-\" * 80)\n\n# 1. 市值因子\nprint(\"\\n1. 市值因子（直接查询）\")\nprint(\"   API: fundamentals.eod_market_cap\")\n\n# 2. 估值因子\nprint(\"\\n2. 估值因子（直接查询）\")\nprint(\"   - fundamentals.eod_derivative_indicator.pe_ratio      # PE市盈率\")\nprint(\"   - fundamentals.eod_derivative_indicator.pb_ratio      # PB市净率\")\nprint(\"   - fundamentals.eod_derivative_indicator.turnover_rate # 换手率\")\n\n# 3. 成长因子\nprint(\"\\n3. 成长因子（直接查询）\")\nprint(\"   - fundamentals.financial_indicator.roe                # ROE\")\nprint(\"   - fundamentals.financial_indicator.roa                # ROA\")\nprint(\"   - fundamentals.financial_indicator.inc_revenue_year   # 营收增长\")\n\n# ============================================================================\n# 第二部分：价格因子 - 有现成数据\n# ============================================================================\n\nprint(\"\\n【价格因子】平台提供原始数据\")\nprint(\"-\" * 80)\n\nprint(\"\\n可用字段（history_bars / get_price）:\")\nprint(\"   - open         开盘价\")\nprint(\"   - close        收盘价\")\nprint(\"   - high         最高价\")\nprint(\"   - low          最低价\")\nprint(\"   - volume       成交量\")\nprint(\"   - limit_up     涨停价（重要！）\")\nprint(\"   - limit_down   跌停价\")\n\n# ============================================================================\n# 第三部分：需要自己计算的因子\n# ============================================================================\n\nprint(\"\\n【需要简单计算的因子】\")\nprint(\"-\" * 80)\n\nprint(\"\\n虽然平台提供了原始数据，但以下因子需要自己计算:\")\nprint(\"   1. 涨停判断: close >= limit_up * 0.995\")\nprint(\"   2. 开盘涨幅: (open - prev_close) / prev_close\")\nprint(\"   3. 动量因子: (close[-1] / close[-20] - 1) * 100\")\nprint(\"   4. 量比: mean(volume[-5:]) / mean(volume)\")\n\n# ============================================================================\n# 第四部分：对比总结\n# ============================================================================\n\nprint(\"\\n【对比】平台因子 vs 自己计算\")\nprint(\"-\" * 80)\n\nprint(\"\\n✅ 平台直接提供（推荐使用）:\")\nprint(\"   财务因子: 市值、PE、PB、ROE、营收增长...\")\nprint(\"   价格数据: 开盘、收盘、涨停价、跌停价...\")\nprint(\"   估值因子: 换手率、市盈率、市净率...\")\n\nprint(\"\\n⚠️  需要自己计算:\")\nprint(\"   技术指标: 动量、均线、MACD、RSI...\")\nprint(\"   组合因子: 开盘涨幅、涨停判断...\")\n\nprint(\"\\n💡 最佳实践:\")\nprint(\"   1. 优先使用平台财务因子（更准确、更高效）\")\nprint(\"   2. 价格因子使用 history_bars 获取原始数据\")\nprint(\"   3. 技术因子可以自己计算（numpy/pandas）\")\nprint(\"   4. 避免重复造轮子，善用平台能力\")\n\nprint(\"\\n\" + \"=\" * 80)\nprint(\"结论: RiceQuant 提供了丰富的财务和估值因子，无需自己计算！\")\nprint(\"=\" * 80)\n",
+      "msgId": "839ff2d4bd37430aba79f3d52ecdfebe",
+      "websocketSessionId": "190cbc7b1c1940a0b2e0cb5a055e7e84",
+      "executionCount": 2,
+      "status": "ok",
+      "textOutput": "================================================================================\nRiceQuant 平台因子测试\n================================================================================\n\n【财务因子】平台直接提供，无需计算\n--------------------------------------------------------------------------------\n\n1. 市值因子（直接查询）\n   API: fundamentals.eod_market_cap\n\n2. 估值因子（直接查询）\n   - fundamentals.eod_derivative_indicator.pe_ratio      # PE市盈率\n   - fundamentals.eod_derivative_indicator.pb_ratio      # PB市净率\n   - fundamentals.eod_derivative_indicator.turnover_rate # 换手率\n\n3. 成长因子（直接查询）\n   - fundamentals.financial_indicator.roe                # ROE\n   - fundamentals.financial_indicator.roa                # ROA\n   - fundamentals.financial_indicator.inc_revenue_year   # 营收增长\n\n【价格因子】平台提供原始数据\n--------------------------------------------------------------------------------\n\n可用字段（history_bars / get_price）:\n   - open         开盘价\n   - close        收盘价\n   - high         最高价\n   - low          最低价\n   - volume       成交量\n   - limit_up     涨停价（重要！）\n   - limit_down   跌停价\n\n【需要简单计算的因子】\n--------------------------------------------------------------------------------\n\n虽然平台提供了原始数据，但以下因子需要自己计算:\n   1. 涨停判断: close >= limit_up * 0.995\n   2. 开盘涨幅: (open - prev_close) / prev_close\n   3. 动量因子: (close[-1] / close[-20] - 1) * 100\n   4. 量比: mean(volume[-5:]) / mean(volume)\n\n【对比】平台因子 vs 自己计算\n--------------------------------------------------------------------------------\n\n✅ 平台直接提供（推荐使用）:\n   财务因子: 市值、PE、PB、ROE、营收增长...\n   价格数据: 开盘、收盘、涨停价、跌停价...\n   估值因子: 换手率、市盈率、市净率...\n\n⚠️  需要自己计算:\n   技术指标: 动量、均线、MACD、RSI...\n   组合因子: 开盘涨幅、涨停判断...\n\n💡 最佳实践:\n   1. 优先使用平台财务因子（更准确、更高效）\n   2. 价格因子使用 history_bars 获取原始数据\n   3. 技术因子可以自己计算（numpy/pandas）\n   4. 避免重复造轮子，善用平台能力\n\n================================================================================\n结论: RiceQuant 提供了丰富的财务和估值因子，无需自己计算！\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\nRiceQuant 平台因子测试\n================================================================================\n\n【财务因子】平台直接提供，无需计算\n--------------------------------------------------------------------------------\n\n1. 市值因子（直接查询）\n   API: fundamentals.eod_market_cap\n\n2. 估值因子（直接查询）\n   - fundamentals.eod_derivative_indicator.pe_ratio      # PE市盈率\n   - fundamentals.eod_derivative_indicator.pb_ratio      # PB市净率\n   - fundamentals.eod_derivative_indicator.turnover_rate # 换手率\n\n3. 成长因子（直接查询）\n   - fundamentals.financial_indicator.roe                # ROE\n   - fundamentals.financial_indicator.roa                # ROA\n   - fundamentals.financial_indicator.inc_revenue_year   # 营收增长\n\n【价格因子】平台提供原始数据\n--------------------------------------------------------------------------------\n\n可用字段（history_bars / get_price）:\n   - open         开盘价\n   - close        收盘价\n   - high         最高价\n   - low          最低价\n   - volume       成交量\n   - limit_up     涨停价（重要！）\n   - limit_down   跌停价\n\n【需要简单计算的因子】\n--------------------------------------------------------------------------------\n\n虽然平台提供了原始数据，但以下因子需要自己计算:\n   1. 涨停判断: close >= limit_up * 0.995\n   2. 开盘涨幅: (open - prev_close) / prev_close\n   3. 动量因子: (close[-1] / close[-20] - 1) * 100\n   4. 量比: mean(volume[-5:]) / mean(volume)\n\n【对比】平台因子 vs 自己计算\n--------------------------------------------------------------------------------\n\n✅ 平台直接提供（推荐使用）:\n   财务因子: 市值、PE、PB、ROE、营收增长...\n   价格数据: 开盘、收盘、涨停价、跌停价...\n   估值因子: 换手率、市盈率、市净率...\n\n⚠️  需要自己计算:\n   技术指标: 动量、均线、MACD、RSI...\n   组合因子: 开盘涨幅、涨停判断...\n\n💡 最佳实践:\n   1. 优先使用平台财务因子（更准确、更高效）\n   2. 价格因子使用 history_bars 获取原始数据\n   3. 技术因子可以自己计算（numpy/pandas）\n   4. 避免重复造轮子，善用平台能力\n\n================================================================================\n结论: RiceQuant 提供了丰富的财务和估值因子，无需自己计算！\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": false,
+  "reuseNotebook": true,
+  "strategyBaseName": "策略测试"
+}

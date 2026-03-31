@@ -79,7 +79,7 @@ export class RequestGenerator {
         const data = JSON.parse(details.postData);
         code += `,\n  data: ${JSON.stringify(data, null, 2)}\n`;
       } catch {
-        code += `,\n  data: ${JSON.stringify(details.postData)}\n`;
+        code += `,\n  data: ${JSON.stringify(details.postData, null, 2)}\n`;
       }
     }
     

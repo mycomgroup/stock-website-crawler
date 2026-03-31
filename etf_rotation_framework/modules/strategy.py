@@ -119,11 +119,13 @@ class RotationStrategy:
 
         for date in momentum.index:
             daily_momentum = momentum.loc[date].dropna()
+            daily_momentum = daily_momentum[
+                daily_momentum.notna() & ~np.isinf(daily_momentum)
+            ]
 
             if len(daily_momentum) < hold_count:
                 continue
 
-            # 按动量排序，选择前N只
             top_n = daily_momentum.nlargest(hold_count).index
             signals.loc[date, top_n] = True
 

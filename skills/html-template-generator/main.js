@@ -76,6 +76,11 @@ export class TemplateGenerator {
       // Step 3: Fetch HTML from sample URLs
       console.log('\nStep 3: Fetching sample pages...');
       const sampleUrls = this._pickSampleUrls(template.samples);
+      
+      if (!sampleUrls || sampleUrls.length === 0) {
+        throw new Error('No sample URLs available for fetching');
+      }
+      
       const htmlContents = await this.htmlFetcher.fetchAll(sampleUrls);
       
       if (htmlContents.length === 0) {

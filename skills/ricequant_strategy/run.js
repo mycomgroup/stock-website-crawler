@@ -38,9 +38,10 @@ async function runBacktest(strategyId, codeFile, startDate, endDate) {
   try {
     // 1. 打开策略编辑页面
     console.log('1. Opening strategy page...');
+    const gotoTimeout = process.env.PAGE_GOTO_TIMEOUT ? parseInt(process.env.PAGE_GOTO_TIMEOUT) : 30000;
     await page.goto(`https://www.ricequant.com/quant/create_edit/${strategyId}`, { 
       waitUntil: 'networkidle',
-      timeout: 30000
+      timeout: gotoTimeout
     });
     await page.waitForTimeout(2000);
     
@@ -266,13 +267,13 @@ async function runBacktest(strategyId, codeFile, startDate, endDate) {
     
     return null;
   } finally {
-    // 关闭浏览器
-    console.log('\nClosing browser in 10 seconds...');
-    await page.waitForTimeout(10000);
-    
+    console.log('\nClosing browser...');
+    await page.waitForTimeout(process.env.BROWSER_CLOSE_DELAY ? parseInt(process.env.BROWSER_CLOSE_DELAY) : 2000);
     try {
       await browser.close();
-    } catch (e) {}
+    } catch (e) {
+      console.error('Browser close error:', e.message);
+    }
   }
 }
 

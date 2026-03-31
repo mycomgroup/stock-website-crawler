@@ -1,0 +1,17 @@
+{
+  "code": null,
+  "config": null,
+  "metadata": null,
+  "status": "error_exit",
+  "summary": null,
+  "create_at": "2026-03-31T15:30:19.269000",
+  "start_at": "2026-03-31T15:30:23.143000",
+  "progress": 0,
+  "backtest_id": "7962845",
+  "description": "",
+  "strategy_id": 2416309,
+  "title": "Test_verify_trade_v2_1774942218760",
+  "account_type": "stock",
+  "end_at": "2026-03-31T15:30:35.335000",
+  "exception": "Traceback (most recent call last):\n  File strategy.py, line 10 in init\n    log.info(\"=== 策略初始化 ===\")\n    --> context = Context({s1 = '000001.XSHE', bought = False})\n\nNameError: name 'log' is not defined"
+}

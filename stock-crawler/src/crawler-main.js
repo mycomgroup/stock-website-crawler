@@ -68,7 +68,11 @@ class CrawlerMain {
     if (this.linkManager.links.length === 0 && this.config.seedUrls && this.config.seedUrls.length > 0) {
       this.logger.info(`Initializing with ${this.config.seedUrls.length} seed URLs`);
       this.config.seedUrls.forEach(url => {
-        this.linkManager.addLink(url, 'pending');
+        try {
+          this.linkManager.addLink(url, 'pending');
+        } catch (error) {
+          this.logger.error(`Failed to add seed URL ${url}: ${error.message}`);
+        }
       });
       this.linkManager.saveLinks(this.linksFile, this.linkManager.links);
     }
@@ -271,7 +275,18 @@ class CrawlerMain {
       page = await this.browserManager.newPage();
       
       // Strategy 1: Try the configured login URL or first seed URL
-      const targetUrl = this.config.login.loginUrl || this.config.seedUrls[0];
+      const targetUrl = this.config.login.loginUrl || (this.config.seedUrls && this.config.seedUrls.length > 0 ? this.config.seedUrls[0] : null);
+      if (!targetUrl) {
+        this.logger.warn('No login URL or seed URLs available for login attempt');
+        if (page) {
+          try {
+            if (!page.isClosed()) {
+              await page.close();
+            }
+          } catch (e) {}
+        }
+        return false;
+      }
       this.logger.info(`Strategy 1: Visiting target URL: ${targetUrl}`);
       
       await this.browserManager.goto(page, targetUrl, this.config.crawler.timeout, { forcePlaywright: true });
@@ -321,10 +336,27 @@ class CrawlerMain {
       
       // Strategy 2: Try to find login link on the main page
       this.logger.info('Strategy 2: Looking for login link on main page');
-      const mainUrl = this.config.seedUrls[0];
+      const mainUrl = this.config.seedUrls && this.config.seedUrls.length > 0 ? this.config.seedUrls[0] : null;
+      if (!mainUrl) {
+        this.logger.warn('No seed URLs available for Strategy 2');
+        if (page) {
+          try {
+            if (!page.isClosed()) {
+              await page.close();
+            }
+          } catch (e) {}
+        }
+        return false;
+      }
       
       // Reuse the same page if still open, otherwise create new one
-      if (!page || page.isClosed()) {
+      let pageClosed = false;
+      try {
+        pageClosed = page ? page.isClosed() : true;
+      } catch (e) {
+        pageClosed = true;
+      }
+      if (!page || pageClosed) {
         page = await this.browserManager.newPage();
       }
       
@@ -408,8 +440,13 @@ class CrawlerMain {
           const loginUrl = baseUrl + path;
           this.logger.info(`Trying: ${loginUrl}`);
           
-          // Reuse the same page if still open
-          if (!page || page.isClosed()) {
+          let pageClosed2 = false;
+          try {
+            pageClosed2 = page ? page.isClosed() : true;
+          } catch (e) {
+            pageClosed2 = true;
+          }
+          if (!page || pageClosed2) {
             page = await this.browserManager.newPage();
           }
           
@@ -437,19 +474,23 @@ class CrawlerMain {
         }
       }
       
-      if (page && !page.isClosed()) {
-        await page.close();
+      if (page) {
+        try {
+          if (!page.isClosed()) {
+            await page.close();
+          }
+        } catch (e) {}
       }
       this.logger.warn('All login strategies failed');
       return false;
     } catch (error) {
       this.logger.error('Error during login attempt', error);
-      if (page && !page.isClosed()) {
+      if (page) {
         try {
-          await page.close();
-        } catch (e) {
-          // Ignore close errors
-        }
+          if (!page.isClosed()) {
+            await page.close();
+          }
+        } catch (e) {}
       }
       return false;
     }
@@ -554,17 +595,19 @@ class CrawlerMain {
         filepath = `${this.pagesDir}/${filename}.md`;
       }
       
+      let writeLock = Promise.resolve();
       const onDataChunk = async (chunk) => {
-        try {
-          const fs = await import('fs');
-          
-          // 初始化文件（第一次）
-          if (isFirstChunk) {
-            // 写入文件头
-            const header = `# ${pageTitle || 'Untitled'}\n\n## 源URL\n\n${url}\n\n`;
-            fs.writeFileSync(filepath, header, 'utf-8');
-            isFirstChunk = false;
-          }
+        writeLock = writeLock.then(async () => {
+          try {
+            const fs = await import('fs');
+            
+            // 初始化文件（第一次）
+            if (isFirstChunk) {
+              // 写入文件头
+              const header = `# ${pageTitle || 'Untitled'}\n\n## 源URL\n\n${url}\n\n`;
+              fs.writeFileSync(filepath, header, 'utf-8');
+              isFirstChunk = false;
+            }
           
           // 追加数据块
           if (chunk.type === 'table') {
@@ -766,10 +809,12 @@ ${block.code}
             
             fs.appendFileSync(filepath, dateFilterContent, 'utf-8');
             this.logger.info(`Appended date filter data: ${chunk.range}`);
+            }
+          } catch (error) {
+            this.logger.error(`Failed to write data chunk: ${error.message}`);
           }
-        } catch (error) {
-          this.logger.error(`Failed to write data chunk: ${error.message}`);
-        }
+        }).catch(err => this.logger.error(`Write lock error: ${err.message}`));
+        await writeLock;
       };
       
       const pageData = await this.pageParser.parsePage(page, url, { 

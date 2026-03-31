@@ -8,8 +8,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = path.join(__dirname, 'data');
 
 async function runBacktest(codeFile, startDate, endDate, capital) {
-  const code = fs.readFileSync(codeFile, 'utf8');
-  const strategyName = path.basename(codeFile, '.py');
+  const resolvedPath = path.resolve(codeFile);
+  if (!fs.existsSync(resolvedPath)) {
+    throw new Error(`File not found: ${resolvedPath}`);
+  }
+  if (!resolvedPath.endsWith('.py')) {
+    throw new Error(`Invalid file type, expected .py: ${resolvedPath}`);
+  }
+  const code = fs.readFileSync(resolvedPath, 'utf8');
+  const strategyName = path.basename(resolvedPath, '.py');
   
   console.log('\n' + '='.repeat(60));
   console.log('RiceQuant Backtest - Create, Run, Delete');
@@ -90,7 +97,7 @@ async function runBacktest(codeFile, startDate, endDate, capital) {
         
         process.stdout.write(`   [${attempts}/${maxAttempts}] Status: ${status}, Progress: ${progress}%   \r`);
         
-        if (status === 'finished' || status === 'completed' || progress >= 100) {
+        if (status === 'finished' || status === 'completed' || progress === 100) {
           completed = true;
           console.log('\n   ✓ Backtest completed!');
         } else if (status === 'error_exit' || status === 'failed') {
