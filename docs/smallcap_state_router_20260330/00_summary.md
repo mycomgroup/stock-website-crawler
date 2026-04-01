@@ -35,7 +35,7 @@
 |------|--------------|
 | 01 | `result_01_smallcap_market_cap_stratification.md` |
 | 02 | `result_02_smallcap_state_stratification.md` |
-| 03 | `result_03_state_filter_research.md` |
+| 03 | `result_03_firstboard_low_open_oos_2025.md` |
 | 04 | `result_04_secondboard_cross_cycle_validation.md` |
 | 05 | `result_05_smallcap_defense_v1_design.md` |
 | 06 | `result_06_state_router_v1_design.md` |
@@ -86,6 +86,20 @@
   - 推荐规则：涨停数<30完全停手，涨停数>=30正常交易
 - 方法说明：基于result_02情绪分层估算 + 策略代码已创建
 - 待验证：需要JoinQuant实际回测验证精确回撤数据
+
+### 03 首板低开最新 OOS 验证
+
+- 状态：✅ **已完成**
+- 结果文件：`result_03_firstboard_low_open_oos_2025.md` ✅ 已完成
+- 一句话结论：⚠️ **严重衰减 - 信号减少67%，收益下降78%，建议暂停或重新设计**
+- 是否进入正式版本：❌ **No-Go - 严重衰减，暂停使用**
+- 关键发现：
+  - 历史期（2024-07至2025-03）：33个信号，次日最高收益1.74%，胜率63.6%，年化78.9%
+  - 最新期（2025-04至2026-03）：14个信号，次日最高收益1.20%，胜率50.0%，年化17.4%
+  - 日均信号下降67%（0.18→0.06个），收益下降31%，胜率下降22%，年化收益下降78%
+  - 次日收盘收益持续为负（-1.20%→-1.87%），实际可操作性极低
+- 验证方法：JoinQuant Notebook完整验证（历史期9个月+最新期12个月）
+- 改进建议：暂停当前策略，放宽筛选条件（市值5-20亿，位置≤40%），优化退出方式
 
 ### 04 二板接力跨周期验证
 
