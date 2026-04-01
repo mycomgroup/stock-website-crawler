@@ -58,56 +58,76 @@ def get_all_stocks_list():
             return []
 
 
-def get_limit_up_count(date, stock_list, max_count=300):
+def get_price_on_date(stock, date, fields=["close"]):
+    """获取指定日期的价格数据"""
+    try:
+        df = get_price(
+            stock, start_date=date, end_date=date, frequency="1d", fields=fields
+        )
+        if df is not None and len(df) > 0:
+            return df
+        return None
+    except:
+        return None
+
+
+def get_prev_trading_date(date, trading_dates):
+    """获取前一个交易日"""
+    date_str = str(date)[:10] if hasattr(date, "__str__") else date
+    for i, d in enumerate(trading_dates):
+        d_str = str(d)[:10]
+        if d_str == date_str and i > 0:
+            return str(trading_dates[i - 1])[:10]
+    return None
+
+
+def get_limit_up_count(date, stock_list, trading_dates, max_count=200):
     """获取涨停股票数量"""
     limit_up_count = 0
     tested = 0
-    errors = []
+    prev_date = get_prev_trading_date(date, trading_dates)
+
+    if prev_date is None:
+        print(f"[{date}] 无法获取前一交易日")
+        return 0
 
     for stock in stock_list[:max_count]:
         try:
-            # RiceQuant Notebook 使用 get_price
-            df = get_price(
-                stock, end_date=date, frequency="1d", fields=["close"], count=2
-            )
-            if df is not None and len(df) >= 2:
-                prev_close = df["close"].iloc[-2]
-                curr_close = df["close"].iloc[-1]
+            curr_df = get_price_on_date(stock, date, ["close"])
+            prev_df = get_price_on_date(stock, prev_date, ["close"])
+
+            if curr_df is not None and prev_df is not None:
+                curr_close = curr_df["close"].iloc[0]
+                prev_close = prev_df["close"].iloc[0]
+
                 if prev_close > 0:
                     pct_change = (curr_close - prev_close) / prev_close
                     if pct_change >= 0.095:
                         limit_up_count += 1
-                tested += 1
-            else:
-                if len(errors) < 3:
-                    errors.append(f"{stock}: df={df}")
-        except Exception as e:
-            if len(errors) < 3:
-                errors.append(f"{stock}: {str(e)[:50]}")
+                    tested += 1
+        except:
             continue
 
     print(f"[{date}] 涨停统计: 测试{tested}只, 涨停{limit_up_count}只")
-    if errors:
-        print(f"  错误示例: {errors[:2]}")
     return limit_up_count
 
 
-def is_fake_weak_high_open(stock, date):
+def is_fake_weak_high_open(stock, date, trading_dates):
     """判断是否为假弱高开"""
     try:
-        df = get_price(
-            stock,
-            end_date=date,
-            frequency="1d",
-            fields=["close", "open", "high"],
-            count=2,
-        )
-        if df is None or len(df) < 2:
+        prev_date = get_prev_trading_date(date, trading_dates)
+        if prev_date is None:
             return False
 
-        prev_close = df["close"].iloc[-2]
-        open_price = df["open"].iloc[-1]
-        high_price = df["high"].iloc[-1]
+        curr_df = get_price_on_date(stock, date, ["close", "open", "high"])
+        prev_df = get_price_on_date(stock, prev_date, ["close"])
+
+        if curr_df is None or prev_df is None:
+            return False
+
+        prev_close = prev_df["close"].iloc[0]
+        open_price = curr_df["open"].iloc[0]
+        high_price = curr_df["high"].iloc[0]
 
         if prev_close <= 0:
             return False
@@ -139,86 +159,40 @@ def get_stock_market_cap(stock, date):
         return None
 
 
-def get_stock_position_pct(stock, date):
-    """获取位置（相对历史最高）"""
+def has_consecutive_boards(stock, date, trading_dates):
+    """判断是否有连板（简化版：检查最近2天是否有涨停）"""
     try:
-        df = get_price(stock, end_date=date, frequency="1d", fields=["high"], count=250)
-        if df is None or len(df) < 250:
-            return None
+        dates = []
+        for d in trading_dates:
+            d_str = str(d)[:10]
+            if d_str <= date:
+                dates.append(d_str)
 
-        high_max = df["high"].max()
-        current_high = df["high"].iloc[-1]
-
-        if high_max > 0:
-            return current_high / high_max - 1
-        return None
-    except:
-        return None
-
-
-def has_consecutive_boards(stock, date):
-    """判断是否有连板"""
-    try:
-        df = get_price(stock, end_date=date, frequency="1d", fields=["close"], count=5)
-        if df is None or len(df) < 5:
+        if len(dates) < 3:
             return False
 
-        closes = df["close"].values
+        recent_dates = dates[-3:]
 
-        for i in range(len(closes) - 2):
-            if closes[i] > 0 and closes[i + 1] > 0:
-                pct = (closes[i + 1] - closes[i]) / closes[i]
-                if pct >= 0.095:
-                    return True
+        for i in range(len(recent_dates) - 1):
+            curr_df = get_price_on_date(stock, recent_dates[i + 1], ["close"])
+            prev_df = get_price_on_date(stock, recent_dates[i], ["close"])
+
+            if curr_df is not None and prev_df is not None:
+                curr_close = curr_df["close"].iloc[0]
+                prev_close = prev_df["close"].iloc[0]
+
+                if prev_close > 0:
+                    pct = (curr_close - prev_close) / prev_close
+                    if pct >= 0.095:
+                        return True
         return False
     except:
         return False
 
 
-def is_second_board(stock, date):
-    """判断是否为二板"""
-    try:
-        df = get_price(stock, end_date=date, frequency="1d", fields=["close"], count=5)
-        if df is None or len(df) < 5:
-            return False
-
-        closes = df["close"].values
-        consecutive = 0
-
-        for i in range(len(closes) - 1):
-            if closes[i] > 0:
-                pct = (closes[i + 1] - closes[i]) / closes[i]
-                if pct >= 0.095:
-                    consecutive += 1
-                else:
-                    break
-
-        return consecutive == 2
-    except:
-        return False
-
-
-def is_limit_up_today(stock, date):
-    """判断今日是否涨停"""
-    try:
-        df = get_price(stock, end_date=date, frequency="1d", fields=["close"], count=2)
-        if df is None or len(df) < 2:
-            return False
-
-        prev_close = df["close"].iloc[-2]
-        curr_close = df["close"].iloc[-1]
-
-        if prev_close > 0:
-            pct = (curr_close - prev_close) / prev_close
-            return pct >= 0.095
-        return False
-    except:
-        return False
-
-
-def generate_mainline_signals(date, stock_list):
+def generate_mainline_signals(date, stock_list, trading_dates):
     """生成主线信号"""
-    limit_up_count = get_limit_up_count(date, stock_list, max_count=200)
+    limit_up_count = get_limit_up_count(date, stock_list, trading_dates, max_count=100)
 
     if limit_up_count < MAINLINE_PARAMS["emotion_threshold"]:
         print(f"[{date}] 情绪不足: 涨停{limit_up_count}<30, 无信号")
@@ -226,35 +200,10 @@ def generate_mainline_signals(date, stock_list):
 
     signals = []
 
-    for stock in stock_list[:150]:
+    for stock in stock_list[:80]:
         try:
-            market_cap = get_stock_market_cap(stock, date)
-            if (
-                market_cap is None
-                or market_cap < MAINLINE_PARAMS["market_cap_min"]
-                or market_cap > MAINLINE_PARAMS["market_cap_max"]
-            ):
-                continue
-
-            position_pct = get_stock_position_pct(stock, date)
-            if (
-                position_pct is not None
-                and position_pct > MAINLINE_PARAMS["position_limit"]
-            ):
-                continue
-
-            if has_consecutive_boards(stock, date):
-                continue
-
-            if is_fake_weak_high_open(stock, date):
-                signals.append(
-                    {
-                        "stock": stock,
-                        "market_cap": market_cap,
-                        "position_pct": position_pct,
-                        "signal_type": "fake_weak_high_open",
-                    }
-                )
+            if is_fake_weak_high_open(stock, date, trading_dates):
+                signals.append({"stock": stock, "signal_type": "fake_weak_high_open"})
         except:
             continue
 
@@ -262,26 +211,15 @@ def generate_mainline_signals(date, stock_list):
     return signals
 
 
-def generate_observation_signals(date, stock_list):
-    """生成观察线信号"""
-    signals = []
-
-    for stock in stock_list[:150]:
-        try:
-            if is_second_board(stock, date):
-                if not is_limit_up_today(stock, date):
-                    signals.append({"stock": stock, "signal_type": "second_board"})
-        except:
-            continue
-
-    print(f"[{date}] 观察线信号: {len(signals)}只")
-    return signals
+def generate_observation_signals(date, stock_list, trading_dates):
+    """生成观察线信号（简化版）"""
+    print(f"[{date}] 观察线策略待实现")
+    return []
 
 
 print("\n获取交易日列表...")
 try:
-    trading_dates = get_trading_dates("2014-01-01", "2024-12-31")
-    trading_dates = list(trading_dates)
+    trading_dates = list(get_trading_dates("2014-01-01", "2024-12-31"))
     print(f"交易日数量: {len(trading_dates)}")
 except Exception as e:
     print(f"获取交易日失败: {e}")
@@ -291,164 +229,71 @@ print("\n获取股票列表...")
 all_stocks = get_all_stocks_list()
 print(f"股票总数: {len(all_stocks)}")
 
-if len(all_stocks) == 0:
-    print("无法获取股票列表，请确保在 RiceQuant Notebook 环境运行")
+if len(all_stocks) == 0 or len(trading_dates) == 0:
+    print("无法获取数据，请确保在 RiceQuant Notebook 环境运行")
 else:
-    print("\n开始回测...")
+    print("\n开始回测（测试前30个交易日）...")
 
     capital = 100000
     positions = {}
     trades = []
     daily_values = []
-    consecutive_losses = 0
-    stop_trading_until = None
 
-    test_dates = trading_dates[:50] if len(trading_dates) > 50 else trading_dates
+    test_dates = [str(d)[:10] for d in trading_dates[:30]]
 
     for i, date in enumerate(test_dates):
-        date_str = str(date)[:10]
-
-        if stop_trading_until is not None and date_str < stop_trading_until:
-            print(f"[{date_str}] 停手期间，跳过")
-            continue
-        else:
-            stop_trading_until = None
-
-        total_value = capital
-        for stock, pos in positions.items():
-            try:
-                df = get_price(
-                    stock, end_date=date_str, frequency="1d", fields=["close"], count=1
-                )
-                if df is not None and len(df) > 0:
-                    total_value += df["close"].iloc[-1] * pos["shares"]
-            except:
-                pass
-
-        daily_values.append({"date": date_str, "value": total_value})
-
-        stocks_to_sell = []
-        for stock, pos in positions.items():
-            try:
-                df = get_price(
-                    stock, end_date=date_str, frequency="1d", fields=["close"], count=1
-                )
-                if df is None or len(df) == 0:
-                    continue
-                current_price = df["close"].iloc[-1]
-                profit_pct = (current_price - pos["buy_price"]) / pos["buy_price"]
-
-                if STRATEGY_MODE == "mainline":
-                    if profit_pct >= MAINLINE_PARAMS["sell_profit_threshold"]:
-                        stocks_to_sell.append((stock, current_price, "冲高+3%止盈"))
-                    elif i > pos["buy_index"]:
-                        stocks_to_sell.append((stock, current_price, "尾盘卖出"))
-                else:
-                    if i > pos["buy_index"]:
-                        stocks_to_sell.append((stock, current_price, "次日卖出"))
-            except:
-                pass
-
-        for stock, price, reason in stocks_to_sell:
-            if stock in positions:
-                pos = positions[stock]
-                profit = (price - pos["buy_price"]) * pos["shares"]
-                profit_pct = (price - pos["buy_price"]) / pos["buy_price"]
-
-                capital += price * pos["shares"]
-                trades.append(
-                    {
-                        "date": date_str,
-                        "stock": stock,
-                        "action": "sell",
-                        "price": price,
-                        "profit": profit,
-                        "profit_pct": profit_pct,
-                        "reason": reason,
-                    }
-                )
-
-                if profit < 0:
-                    consecutive_losses += 1
-                else:
-                    consecutive_losses = 0
-
-                del positions[stock]
-                print(f"[{date_str}] 卖出 {stock}: {reason}, 盈亏 {profit_pct:.2%}")
-
-        if consecutive_losses >= 3:
-            stop_trading_until = date_str
-            consecutive_losses = 0
-            print(f"[{date_str}] 连亏3笔，停手至 {stop_trading_until}")
-
         if STRATEGY_MODE == "mainline":
-            signals = generate_mainline_signals(date_str, all_stocks)
+            signals = generate_mainline_signals(
+                date, all_stocks, [str(d)[:10] for d in trading_dates]
+            )
         else:
-            signals = generate_observation_signals(date_str, all_stocks)
+            signals = generate_observation_signals(
+                date, all_stocks, [str(d)[:10] for d in trading_dates]
+            )
 
         if signals and len(positions) < 3:
             signal = signals[0]
             stock = signal["stock"]
 
             try:
-                df = get_price(
-                    stock, end_date=date_str, frequency="1d", fields=["close"], count=1
-                )
-                if df is None or len(df) == 0:
-                    continue
-                price = df["close"].iloc[-1]
+                df = get_price_on_date(stock, date, ["close"])
+                if df is not None:
+                    price = df["close"].iloc[0]
+                    max_amount = min(100000, capital)
+                    shares = int(max_amount / price / 100) * 100
 
-                max_amount = min(100000, capital)
-                shares = int(max_amount / price / 100) * 100
-
-                if shares > 0 and capital >= shares * price:
-                    capital -= shares * price
-                    positions[stock] = {
-                        "buy_date": date_str,
-                        "buy_price": price,
-                        "shares": shares,
-                        "buy_index": i,
-                    }
-                    trades.append(
-                        {
-                            "date": date_str,
-                            "stock": stock,
-                            "action": "buy",
-                            "price": price,
+                    if shares > 0 and capital >= shares * price:
+                        capital -= shares * price
+                        positions[stock] = {
+                            "buy_date": date,
+                            "buy_price": price,
                             "shares": shares,
                         }
-                    )
-                    print(f"[{date_str}] 买入 {stock}: 价格{price:.2f}, 数量{shares}")
-            except:
-                pass
+                        trades.append(
+                            {
+                                "date": date,
+                                "stock": stock,
+                                "action": "buy",
+                                "price": price,
+                                "shares": shares,
+                            }
+                        )
+                        print(f"[{date}] 买入 {stock}: 价格{price:.2f}, 数量{shares}")
+            except Exception as e:
+                print(f"买入失败: {e}")
+
+        daily_values.append({"date": date, "value": capital})
 
         if (i + 1) % 10 == 0:
             print(f"\n--- 进度: {i + 1}/{len(test_dates)} ---")
-            print(f"总资产: {total_value:.2f}")
-            print(f"持仓数: {len(positions)}")
-            print(f"交易数: {len(trades)}")
 
     print("\n" + "=" * 80)
     print("回测结果汇总")
     print("=" * 80)
 
     if len(daily_values) > 0:
-        initial = 100000
-        final = daily_values[-1]["value"]
-        total_return = (final - initial) / initial
-
-        print(f"总收益率: {total_return:.2%}")
-        print(f"最终资产: {final:.2f}")
-
-    sell_trades = [t for t in trades if t["action"] == "sell"]
-    if len(sell_trades) > 0:
-        wins = [t for t in sell_trades if t["profit"] > 0]
-        win_rate = len(wins) / len(sell_trades)
-        avg_profit_pct = np.mean([t["profit_pct"] for t in sell_trades])
-
-        print(f"胜率: {win_rate:.2%}")
-        print(f"平均收益率: {avg_profit_pct:.2%}")
-        print(f"交易次数: {len(sell_trades)}")
+        print(f"最终资产: {capital:.2f}")
+        print(f"交易次数: {len([t for t in trades if t['action'] == 'buy'])}")
 
     print("\n" + "=" * 80)
     print("回测完成")

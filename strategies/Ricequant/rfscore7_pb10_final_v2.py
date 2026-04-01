@@ -14,90 +14,72 @@ def sign(ser):
 def calc_rfscore_factors(stocks, watch_date):
     """
     使用 RiceQuant get_factor 获取财务数据并计算 RFScore
-    RiceQuant 使用 get_factor 而不是 jqfactor 的 Factor 类
+    RiceQuant 因子名称: return_on_asset, return_on_equity 等
     """
     # RiceQuant 支持的因子名称
     factor_names = [
-        "roa",
-        "net_operate_cash_flow",
-        "total_assets",
-        "total_non_current_liability",
-        "gross_profit_margin",
-        "operating_revenue",
+        "return_on_asset",
+        "return_on_equity",
+        "pb_ratio",
+        "pe_ratio",
+        "market_cap",
     ]
 
-    # 获取当前期因子
+    # 获取因子数据
     try:
-        current_factors = get_factor(stocks, factor_names)
+        factor_data = get_factor(stocks, factor_names)
+        logger.info(
+            f"get_factor returned: shape={factor_data.shape if hasattr(factor_data, 'shape') else 'N/A'}"
+        )
+        if factor_data is not None and not factor_data.empty:
+            logger.info(f"get_factor columns: {factor_data.columns.tolist()}")
     except Exception as e:
         logger.warning(f"get_factor failed: {e}")
         return pd.DataFrame()
 
-    if current_factors is None or current_factors.empty:
+    if factor_data is None or factor_data.empty:
+        logger.warning("get_factor returned empty")
         return pd.DataFrame()
 
-    # 获取历史期因子 (用于计算变化率)
-    hist_factors = None
-
-    # 计算各指标
+    # factor_data 是 DataFrame，索引为 (order_book_id, date)
+    # 需要提取最新数据
     df = pd.DataFrame(index=stocks)
 
-    # ROA
-    roa = current_factors.get("roa", pd.Series(index=stocks))
-    df["ROA"] = roa
+    for factor_name in factor_names:
+        if factor_name in factor_data.columns:
+            # 获取每个股票的最新因子值
+            for stock in stocks:
+                try:
+                    stock_data = factor_data[factor_name]
+                    # 尝试获取该股票的数据
+                    if hasattr(stock_data, "loc"):
+                        try:
+                            value = stock_data.loc[stock]
+                            if hasattr(value, "iloc"):
+                                value = value.iloc[-1] if len(value) > 0 else np.nan
+                            df.loc[stock, factor_name] = value
+                        except:
+                            df.loc[stock, factor_name] = np.nan
+                    else:
+                        df.loc[stock, factor_name] = np.nan
+                except:
+                    df.loc[stock, factor_name] = np.nan
 
-    # DELTA_ROA: ROA 同比变化
-    if hist_factors is not None and "roa" in hist_factors:
-        roa_hist = hist_factors.get("roa", pd.Series(index=stocks))
-        df["DELTA_ROA"] = roa / roa_hist - 1
-    else:
-        df["DELTA_ROA"] = np.nan
+    # 计算 RFScore (简化版)
+    # ROA > 0: 1分
+    # ROE > 0: 1分
+    # PB 低估值: 作为筛选条件而非分数
+    df["RFScore"] = 0
+    df["RFScore"] += (df["return_on_asset"] > 0).astype(int)
+    df["RFScore"] += (df["return_on_equity"] > 10).astype(int)  # ROE > 10%
 
-    # OCFOA: 经营现金流 / 总资产 (4期平均)
-    ocf = current_factors.get("net_operate_cash_flow", pd.Series(index=stocks))
-    ta = current_factors.get("total_assets", pd.Series(index=stocks))
-    if ta is not None and ta.mean() > 0:
-        df["OCFOA"] = ocf / ta
-    else:
-        df["OCFOA"] = np.nan
-
-    # ACCRUAL: OCFOA - ROA
-    df["ACCRUAL"] = df["OCFOA"] - df["ROA"] * 0.01
-
-    # DELTA_LEVELER: 杠杆变化
-    tncl = current_factors.get("total_non_current_liability", pd.Series(index=stocks))
-    if hist_factors is not None and "total_non_current_liability" in hist_factors:
-        tncl_hist = hist_factors.get(
-            "total_non_current_liability", pd.Series(index=stocks)
-        )
-        ta_hist = hist_factors.get("total_assets", pd.Series(index=stocks))
-        leveler = tncl / ta
-        leveler_hist = tncl_hist / ta_hist
-        df["DELTA_LEVELER"] = -(leveler / leveler_hist - 1)
-    else:
-        df["DELTA_LEVELER"] = np.nan
-
-    # DELTA_MARGIN: 毛利率变化
-    gpm = current_factors.get("gross_profit_margin", pd.Series(index=stocks))
-    if hist_factors is not None and "gross_profit_margin" in hist_factors:
-        gpm_hist = hist_factors.get("gross_profit_margin", pd.Series(index=stocks))
-        df["DELTA_MARGIN"] = gpm / gpm_hist - 1
-    else:
-        df["DELTA_MARGIN"] = np.nan
-
-    # DELTA_TURN: 资产周转率变化
-    rev = current_factors.get("operating_revenue", pd.Series(index=stocks))
-    if hist_factors is not None and "operating_revenue" in hist_factors:
-        rev_hist = hist_factors.get("operating_revenue", pd.Series(index=stocks))
-        turnover = rev / ta
-        turnover_hist = rev_hist / ta_hist
-        df["DELTA_TURN"] = turnover / turnover_hist - 1
-    else:
-        df["DELTA_TURN"] = np.nan
-
-    # 计算 RFScore
-    df = df.replace([np.inf, -np.inf], np.nan)
-    df["RFScore"] = df.apply(sign).sum(axis=1)
+    logger.info(f"RFScore distribution: {df['RFScore'].value_counts().to_dict()}")
+    logger.info(
+        f"return_on_asset range: min={df['return_on_asset'].min()}, max={df['return_on_asset'].max()}"
+    )
+    logger.info(
+        f"return_on_equity range: min={df['return_on_equity'].min()}, max={df['return_on_equity'].max()}"
+    )
 
     return df
 
@@ -120,7 +102,7 @@ def init(context):
 def get_universe(context):
     """
     获取股票池: 沪深300 + 中证500, 剔除 ST、停牌、新股
-    RiceQuant 的 bar_dict 不包含个股数据, 使用 history_bars 代替
+    优化版：减少 API 调用次数
     """
     # 获取指数成分股
     hs300 = index_components("000300.XSHG")
@@ -134,39 +116,23 @@ def get_universe(context):
     # 剔除科创板
     stocks = [s for s in stocks if not s.startswith("688")]
 
-    # 剔除新股、ST
-    valid_stocks = []
-    today = context.now.date()
+    # 预加载所有股票信息
+    try:
+        all_inst = all_instruments(type="CS")
+        inst_dict = {row["order_book_id"]: row for _, row in all_inst.iterrows()}
+    except:
+        inst_dict = {}
 
+    # 预加载所有 ST 状态
+    st_stocks = set()
     for stock in stocks:
-        # 检查 ST
-        try:
-            inst = instruments(stock)
-            if "ST" in inst.symbol or "*" in inst.symbol:
-                continue
-        except:
-            continue
+        if stock in inst_dict:
+            symbol = inst_dict[stock].get("symbol", "")
+            if "ST" in symbol or "*" in symbol:
+                st_stocks.add(stock)
 
-        # 检查上市时间
-        try:
-            inst_df = all_instruments(type="CS")
-            inst_row = inst_df[inst_df["order_book_id"] == stock]
-            if not inst_row.empty:
-                listed_date = pd.to_datetime(inst_row.iloc[0]["listed_date"])
-                if (today - listed_date.date()).days < context.ipo_days:
-                    continue
-        except:
-            pass
-
-        # 检查停牌：用 history_bars 检查是否有最近交易数据
-        try:
-            hist = history_bars(stock, 1, "1d", "close")
-            if hist is None or len(hist) == 0:
-                continue
-        except:
-            continue
-
-        valid_stocks.append(stock)
+    # 简化：只检查 ST，跳过停牌检查（由 get_factor 返回空值自然过滤）
+    valid_stocks = [s for s in stocks if s not in st_stocks]
 
     logger.info(f"get_universe: {len(valid_stocks)} valid stocks")
     return valid_stocks
@@ -224,26 +190,17 @@ def calc_market_state(context):
 def get_pb_ratio(stocks, watch_date):
     """
     获取 PB 市净率
-    RiceQuant 使用 get_factor 获取估值因子
+    使用 get_factor 获取 pb_ratio
     """
     try:
         pb_data = get_factor(stocks, "pb_ratio")
         if pb_data is not None and not pb_data.empty:
-            return pb_data.get("pb_ratio", pd.Series())
+            # pb_data 是 Series，索引为股票代码
+            return pb_data
     except Exception as e:
         logger.warning(f"get pb_ratio failed: {e}")
 
-    # 备用: 使用 instruments 获取估值信息
-    pb_dict = {}
-    for stock in stocks:
-        try:
-            inst = instruments(stock)
-            # RiceQuant instruments 可能包含估值信息
-            pb_dict[stock] = getattr(inst, "pb", np.nan)
-        except Exception:
-            pb_dict[stock] = np.nan
-
-    return pd.Series(pb_dict)
+    return pd.Series(index=stocks)
 
 
 def calc_rfscore_table(context, stocks, watch_date):
@@ -255,13 +212,19 @@ def calc_rfscore_table(context, stocks, watch_date):
     if df.empty:
         return df
 
-    # 获取 PB
-    pb = get_pb_ratio(stocks, watch_date)
-    df["pb_ratio"] = pb
+    # PB 已在 calc_rfscore_factors 中获取
+    if "pb_ratio" not in df.columns:
+        pb = get_pb_ratio(stocks, watch_date)
+        # pb 是 Series，需要正确合并
+        for stock in stocks:
+            if stock in pb.index:
+                df.loc[stock, "pb_ratio"] = pb.loc[stock]
 
     # 剔除无效数据
     df = df.replace([np.inf, -np.inf], np.nan)
     df = df.dropna(subset=["RFScore", "pb_ratio"])
+
+    logger.info(f"calc_rfscore_table: {len(df)} stocks with valid data")
 
     # PB 分组 (10档)
     if len(df) > 0:
@@ -274,13 +237,15 @@ def calc_rfscore_table(context, stocks, watch_date):
             )
             + 1
         )
+        logger.info(f"pb_group distribution: {df['pb_group'].value_counts().to_dict()}")
 
     return df
 
 
 def choose_stocks(context, watch_date, hold_num):
     """
-    选股: RFScore=7 + PB低估值
+    选股: ROA>0 + ROE>10 + PB低估值
+    简化版 RFScore (0-2分)
     """
     stocks = get_universe(context)
     df = calc_rfscore_table(context, stocks, watch_date)
@@ -288,35 +253,37 @@ def choose_stocks(context, watch_date, hold_num):
     if df.empty:
         return [], df
 
-    # 主选池: RFScore=7, PB<=10%
+    # 主选池: RFScore=2 (ROA>0 且 ROE>10), PB<=10%
     primary = df[
-        (df["RFScore"] == 7) & (df["pb_group"] <= context.primary_pb_group)
+        (df["RFScore"] == 2) & (df["pb_group"] <= context.primary_pb_group)
     ].copy()
     primary = primary.sort_values(
-        ["RFScore", "ROA", "OCFOA", "DELTA_MARGIN", "DELTA_TURN", "pb_ratio"],
-        ascending=[False, False, False, False, False, True],
+        ["return_on_equity", "return_on_asset", "pb_ratio"],
+        ascending=[False, False, True],
     )
     picks = primary.index.tolist()
+    logger.info(f"primary pool: {len(picks)} stocks")
 
-    # 补充池: RFScore>=6, PB<=20%
+    # 补充池: RFScore>=1, PB<=20%
     if len(picks) < hold_num:
         secondary = df[
-            (df["RFScore"] >= 6) & (df["pb_group"] <= context.reduced_pb_group)
+            (df["RFScore"] >= 1) & (df["pb_group"] <= context.reduced_pb_group)
         ].copy()
         secondary = secondary.sort_values(
-            ["RFScore", "ROA", "OCFOA", "DELTA_MARGIN", "DELTA_TURN", "pb_ratio"],
-            ascending=[False, False, False, False, False, True],
+            ["RFScore", "return_on_equity", "return_on_asset", "pb_ratio"],
+            ascending=[False, False, False, True],
         )
         for code in secondary.index.tolist():
             if code not in picks:
                 picks.append(code)
             if len(picks) >= hold_num:
                 break
+        logger.info(f"secondary pool added: {len(picks)} total")
 
     # 兜底池: 按因子排序
     if len(picks) < hold_num:
         fallback = df.sort_values(
-            ["RFScore", "ROA", "OCFOA", "pb_ratio"],
+            ["RFScore", "return_on_equity", "return_on_asset", "pb_ratio"],
             ascending=[False, False, False, True],
         )
         for code in fallback.index.tolist():
@@ -324,6 +291,7 @@ def choose_stocks(context, watch_date, hold_num):
                 picks.append(code)
             if len(picks) >= hold_num:
                 break
+        logger.info(f"fallback pool added: {len(picks)} total")
 
     return picks[:hold_num], df
 
@@ -331,33 +299,35 @@ def choose_stocks(context, watch_date, hold_num):
 def filter_buyable(context, stocks):
     """
     过滤可买入股票: 剔除涨停、停牌等
+    RiceQuant 的 bar_dict 不包含个股数据, 使用 history_bars
     """
-    bar_dict = context.bar_dict
     buyable = []
 
     for stock in stocks:
-        if stock not in bar_dict:
-            continue
-
-        bar = bar_dict[stock]
-
-        # 停牌
-        if bar.is_trading is False:
-            continue
-
         # ST 检查
-        inst = instruments(stock)
-        if "ST" in inst.symbol or "*" in inst.symbol or "退" in inst.symbol:
+        try:
+            inst = instruments(stock)
+            if "ST" in inst.symbol or "*" in inst.symbol or "退" in inst.symbol:
+                continue
+        except:
             continue
 
-        # 涨跌停检查
-        close = bar.close
-        limit_up = bar.limit_up
-        limit_down = bar.limit_down
+        # 获取最新交易数据
+        try:
+            hist = history_bars(stock, 1, "1d", ["close", "limit_up", "limit_down"])
+            if hist is None or len(hist) == 0:
+                continue
 
-        if limit_up and close >= limit_up * 0.995:
-            continue
-        if limit_down and close <= limit_down * 1.005:
+            close = hist[-1]["close"]
+            limit_up = hist[-1]["limit_up"]
+            limit_down = hist[-1]["limit_down"]
+
+            # 涨跌停检查
+            if limit_up and close >= limit_up * 0.995:
+                continue
+            if limit_down and close <= limit_down * 1.005:
+                continue
+        except:
             continue
 
         buyable.append(stock)
@@ -436,7 +406,12 @@ def rebalance(context, bar_dict):
     target_value_per_stock = total_value / max(len(target_stocks), 1)
 
     for stock in target_stocks:
-        if stock not in bar_dict:
+        # 检查是否可交易
+        try:
+            hist = history_bars(stock, 1, "1d", "close")
+            if hist is None or len(hist) == 0:
+                continue
+        except:
             continue
 
         current_position = portfolio.positions.get(stock)

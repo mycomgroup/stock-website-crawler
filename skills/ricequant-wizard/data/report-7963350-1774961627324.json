@@ -1,0 +1,61 @@
+{
+  "backtestId": "7963350",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-03-31T20:53:06.442000",
+    "start_at": "2026-03-31T20:53:11.033000",
+    "progress": 0,
+    "backtest_id": "7963350",
+    "description": "",
+    "strategy_id": 2146476,
+    "title": "向导式价值投资",
+    "account_type": "stock",
+    "end_at": "2026-03-31T20:53:26.330000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 348 in rebalance_first_part\n    filtered = apply_filters(stocks, context, bar_dict)\n    --> context = Context({count = 0})\n    --> bar_dict = BarMap()\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n\n  File strategy.py, line 193 in apply_filters\n    data = get_fundamental_factor(stocks, rule['lhs']['name'])\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n    --> context = Context({count = 0})\n    --> factor_filter_rules = [{'operator': 'less_than', 'lhs': {'name': 'pe_ratio', 'type': 'fundamental'}, 'rhs': 15}, {'operator': 'less_than', 'lhs': {'name': 'pb_ratio', 'type': 'fundam ...\n    --> rule = {'operator': 'less_than', 'lhs': {'name': 'pe_ratio', 'type': 'fundamental'}, 'rhs': 15}\n    --> bar_dict = BarMap()\n\n  File strategy.py, line 57 in get_fundamental_factor\n    factor = fundamental_factor_map()[factor]\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n    --> factor = 'pe_ratio'\n\n  File strategy.py, line 41 in fundamental_factor_map\n    result.update(fundamentals.eod_derivative_indicator.__dict__)\n    --> result = {}\n\nNameError: name 'fundamentals' is not defined"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "logs": [
+    {
+      "timestamp": 1704178800000,
+      "level": "ERROR",
+      "msg": "策略运行产生异常",
+      "seq": 0
+    },
+    {
+      "timestamp": 1704178800000,
+      "level": "ERROR",
+      "msg": "Traceback (most recent call last):\n  File strategy.py, line 348 in rebalance_first_part\n    filtered = apply_filters(stocks, context, bar_dict)\n    --> context = Context({count = 0})\n    --> bar_dict = BarMap()\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n\n  File strategy.py, line 193 in apply_filters\n    data = get_fundamental_factor(stocks, rule['lhs']['name'])\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n    --> context = Context({count = 0})\n    --> factor_filter_rules = [{'operator': 'less_than', 'lhs': {'name': 'pe_ratio', 'type': 'fundamental'}, 'rhs': 15}, {'operator': 'less_than', 'lhs': {'name': 'pb_ratio', 'type': 'fundam ...\n    --> rule = {'operator': 'less_than', 'lhs': {'name': 'pe_ratio', 'type': 'fundamental'}, 'rhs': 15}\n    --> bar_dict = BarMap()\n\n  File strategy.py, line 57 in get_fundamental_factor\n    factor = fundamental_factor_map()[factor]\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n    --> factor = 'pe_ratio'\n\n  File strategy.py, line 41 in fundamental_factor_map\n    result.update(fundamentals.eod_derivative_indicator.__dict__)\n    --> result = {}\n\nNameError: name 'fundamentals' is not defined",
+      "seq": 1
+    }
+  ],
+  "exception": "Traceback (most recent call last):\n  File strategy.py, line 348 in rebalance_first_part\n    filtered = apply_filters(stocks, context, bar_dict)\n    --> context = Context({count = 0})\n    --> bar_dict = BarMap()\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n\n  File strategy.py, line 193 in apply_filters\n    data = get_fundamental_factor(stocks, rule['lhs']['name'])\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n    --> context = Context({count = 0})\n    --> factor_filter_rules = [{'operator': 'less_than', 'lhs': {'name': 'pe_ratio', 'type': 'fundamental'}, 'rhs': 15}, {'operator': 'less_than', 'lhs': {'name': 'pb_ratio', 'type': 'fundam ...\n    --> rule = {'operator': 'less_than', 'lhs': {'name': 'pe_ratio', 'type': 'fundamental'}, 'rhs': 15}\n    --> bar_dict = BarMap()\n\n  File strategy.py, line 57 in get_fundamental_factor\n    factor = fundamental_factor_map()[factor]\n    --> stocks = ['601872.XSHG', '601229.XSHG', '002179.XSHE', '600031.XSHG', '601899.XSHG', '000333.XSHE', '601877.XSHG', '601998.XSHG', '000425.XSHE', '300015.XSHE', '688012.X ...\n    --> factor = 'pe_ratio'\n\n  File strategy.py, line 41 in fundamental_factor_map\n    result.update(fundamentals.eod_derivative_indicator.__dict__)\n    --> result = {}\n\nNameError: name 'fundamentals' is not defined"
+}

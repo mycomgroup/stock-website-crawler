@@ -80,14 +80,15 @@ export function validateFilter(filter) {
     errors.push(`不支持的 operator: ${filter.operator}`);
   }
   
-  if (!filter.lhs) {
-    errors.push('缺少 lhs (因子引用)');
+  const lhs = filter.lhs || filter.factor;
+  if (!lhs) {
+    errors.push('缺少 factor (因子引用)');
   } else {
-    if (!filter.lhs.type) {
-      errors.push('lhs 缺少 type');
+    if (!lhs.type) {
+      errors.push('factor 缺少 type');
     }
-    if (!filter.lhs.name) {
-      errors.push('lhs 缺少 name');
+    if (!lhs.name) {
+      errors.push('factor 缺少 name');
     }
   }
   
