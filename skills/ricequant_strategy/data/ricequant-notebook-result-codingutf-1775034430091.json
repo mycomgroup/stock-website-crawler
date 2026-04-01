@@ -1,0 +1,67 @@
+{
+  "capturedAt": "2026-04-01T09:07:10.091Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/codingutf_20260401_170658.ipynb",
+  "notebookPath": "codingutf_20260401_170658.ipynb",
+  "kernelId": "38529b6c-2921-43c6-9e3c-1dc943fda480",
+  "sessionId": "457eb262-e8e1-4a5f-976d-b487222d3828",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "codingutf_20260401_170658.ipynb",
+    "path": "codingutf_20260401_170658.ipynb",
+    "last_modified": "2026-04-01T09:07:08.493815Z",
+    "created": "2026-04-01T09:07:08.494815Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 5422,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# -*- coding: utf-8 -*-\n\"\"\"\nML多因子测试 - RiceQuant版\n\"\"\"\n\nprint(\"=\" * 50)\nprint(\"ML多因子测试 (RiceQuant)\")\n\nimport numpy as np\nimport pandas as pd\nimport warnings\n\nwarnings.filterwarnings(\"ignore\")\n\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\n\n# 获取交易日\ndates = get_trading_dates(\"2024-07-01\", \"2024-12-31\")\nmonth_dates = []\nlast_m = None\nfor d in dates:\n    if d.month != last_m:\n        month_dates.append(d)\n        last_m = d.month\n\nprint(f\"调仓日期: {len(month_dates)}个月\")\n\n# 股票池\nstocks = index_components(\"000905.XSHG\")[:100]\nprint(f\"股票池: {len(stocks)}只\")\n\n# 收集数据\ndata = {}\nfor i, d in enumerate(month_dates[:-1]):\n    try:\n        # 获取因子\n        feat = get_factor(stocks, [\"pe_ratio\", \"pb_ratio\", \"roe\", \"roa\"], d, d)\n        if feat is None or len(feat) < 30:\n            continue\n\n        feat = feat.iloc[0].to_frame().T if len(feat.shape) == 1 else feat\n        feat = feat.replace([np.inf, -np.inf], np.nan).dropna()\n\n        if len(feat) < 30:\n            continue\n\n        # 下月收益\n        next_d = month_dates[i + 1]\n        p0 = history_bars(feat.index.tolist(), 1, \"1d\", \"close\", end_date=str(d))\n        p1 = history_bars(feat.index.tolist(), 1, \"1d\", \"close\", end_date=str(next_d))\n\n        if p0 is None or p1 is None:\n            continue\n\n        # 计算收益\n        ret = {}\n        for s in feat.index:\n            if s in p0 and s in p1 and len(p0[s]) > 0 and len(p1[s]) > 0:\n                ret[s] = p1[s][-1] / p0[s][-1] - 1\n\n        if len(ret) < 30:\n            continue\n\n        ret = pd.Series(ret)\n        label = (ret > ret.median()).astype(int)\n\n        data[i] = {\"feat\": feat, \"label\": label, \"ret\": ret}\n        print(f\"  {str(d)[:10]}: {len(feat)}只股票\")\n\n    except Exception as e:\n        print(f\"  {str(d)[:10]}: 错误 {e}\")\n\nprint(f\"\\n有效数据: {len(data)}个月\")\n\n# Walk-Forward\nif len(data) >= 4:\n    print(\"\\nWalk-Forward验证 (逻辑回归)...\")\n\n    idx = sorted(data.keys())\n    rets = []\n\n    for test_i in idx[2:]:\n        train_i = [i for i in idx if i < test_i][-2:]\n\n        X_train = pd.concat([data[i][\"feat\"] for i in train_i])\n        y_train = pd.concat([data[i][\"label\"] for i in train_i])\n        X_test = data[test_i][\"feat\"]\n        ret_test = data[test_i][\"ret\"]\n\n        scaler = StandardScaler()\n        X_train_s = scaler.fit_transform(X_train.fillna(0))\n        X_test_s = scaler.transform(X_test.fillna(0))\n\n        model = LogisticRegression(C=100, max_iter=200)\n        model.fit(X_train_s, y_train)\n\n        proba = model.predict_proba(X_test_s)[:, 1]\n        selected = pd.Series(proba, index=X_test.index).nlargest(10).index\n        available = [s for s in selected if s in ret_test.index]\n\n        if available:\n            net = ret_test.loc[available].mean() - 0.002\n            rets.append(net)\n            print(f\"  月{test_i}: 选{len(available)}只, 收益={net:.2%}\")\n\n    if rets:\n        s = pd.Series(rets)\n        total = (1 + s).prod() - 1\n        win = (s > 0).mean()\n\n        print(f\"\\n结果: 累计={total:.2%}, 胜率={win:.1%}\")\n\nprint(\"\\n完成!\")\n",
+      "msgId": "40d333de8bd949e08991b4071ae7f777",
+      "websocketSessionId": "51aab9e5a1e543a68b26d9efff8da584",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "==================================================\nML多因子测试 (RiceQuant)\n调仓日期: 6个月\n股票池: 100只\n\n有效数据: 0个月\n\n完成!\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "==================================================\nML多因子测试 (RiceQuant)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "调仓日期: 6个月\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票池: 100只\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n有效数据: 0个月\n\n完成!\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "codingutf",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "457eb262-e8e1-4a5f-976d-b487222d3828",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/457eb262-e8e1-4a5f-976d-b487222d3828: "
+  },
+  "autoShutdown": true
+}

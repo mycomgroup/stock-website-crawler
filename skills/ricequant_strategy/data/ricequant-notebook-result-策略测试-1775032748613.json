@@ -1,0 +1,62 @@
+{
+  "capturedAt": "2026-04-01T08:39:08.613Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_163859.ipynb",
+  "notebookPath": "策略测试_20260401_163859.ipynb",
+  "kernelId": "f5b9f3a5-1cbb-4a1e-9530-5d5acc8f2fe8",
+  "sessionId": "bb167b6c-4f08-4058-b109-6e0776cdb9ca",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_163859.ipynb",
+    "path": "策略测试_20260401_163859.ipynb",
+    "last_modified": "2026-04-01T08:39:06.865967Z",
+    "created": "2026-04-01T08:39:06.866967Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 6512,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板策略 - RiceQuant Notebook格式\n测试2021-2023年跨周期稳定性\n\"\"\"\n\nprint(\"=\" * 70)\nprint(\"二板策略 RiceQuant Notebook 测试\")\nprint(\"=\" * 70)\n\ntry:\n    from datetime import datetime, timedelta\n    import numpy as np\n\n    print(\"\\n步骤1: 获取交易日\")\n    test_dates = get_trading_dates(\"2022-04-01\", \"2022-04-30\")\n    print(f\"2022年4月交易日: {len(test_dates)}天\")\n\n    print(\"\\n步骤2: 统计涨停家数\")\n    results = []\n\n    for i, date in enumerate(test_dates[:10]):  # 只测试前10天\n        print(f\"\\n处理 {date.strftime('%Y-%m-%d')} ({i + 1}/10)\")\n\n        # 获取所有股票\n        all_stocks = all_instruments(\"CS\")\n        stock_list = [\n            s.order_book_id\n            for s in all_stocks\n            if not s.order_book_id.startswith((\"688\", \"4\", \"8\"))\n        ][:300]\n\n        # 统计涨停\n        zt_count = 0\n        zt_stocks = []\n\n        for stock in stock_list[:100]:  # 测试前100只\n            try:\n                bars = history_bars(stock, 1, \"1d\", \"close,limit_up\", end_date=date)\n                if bars is not None and len(bars) > 0:\n                    if bars[0][\"close\"] >= bars[0][\"limit_up\"] * 0.99:\n                        zt_count += 1\n                        zt_stocks.append(stock)\n            except:\n                pass\n\n        print(f\"  涨停家数(样本100只): {zt_count}\")\n\n        if zt_count >= 5:  # 降低阈值，样本只有100只\n            print(f\"  涨停股票: {zt_stocks[:5]}\")\n\n            # 测试第一个涨停股票\n            if len(zt_stocks) > 0:\n                test_stock = zt_stocks[0]\n                print(f\"  测试股票: {test_stock}\")\n\n                try:\n                    # 获取次日价格\n                    next_bars = history_bars(\n                        test_stock,\n                        1,\n                        \"1d\",\n                        \"open,close,limit_up\",\n                        end_date=test_dates[i + 1] if i + 1 < len(test_dates) else date,\n                    )\n                    if next_bars is not None and len(next_bars) > 0:\n                        open_p = next_bars[0][\"open\"]\n                        close_p = next_bars[0][\"close\"]\n                        limit_p = next_bars[0][\"limit_up\"]\n\n                        if open_p < limit_p * 0.99:  # 非涨停开盘\n                            buy_p = open_p * 1.005\n                            profit = (close_p / buy_p - 1) * 100\n                            results.append(\n                                {\n                                    \"date\": date.strftime(\"%Y-%m-%d\"),\n                                    \"stock\": test_stock,\n                                    \"profit\": profit,\n                                }\n                            )\n                            print(f\"  模拟买入，收益: {profit:.2f}%\")\n                except Exception as e:\n                    print(f\"  获取次日价格失败: {e}\")\n\n    print(\"\\n\" + \"=\" * 70)\n    print(\"测试结果\")\n    print(\"=\" * 70)\n\n    if results:\n        profits = [r[\"profit\"] for r in results]\n        wins = len([p for p in profits if p > 0])\n\n        print(f\"交易次数: {len(results)}\")\n        print(f\"胜率: {wins / len(results) * 100:.1f}%\")\n        print(f\"平均收益: {np.mean(profits):.2f}%\")\n        print(f\"总收益: {sum(profits):.2f}%\")\n\n        print(\"\\n交易详情:\")\n        for r in results:\n            print(f\"  {r['date']} {r['stock']}: {r['profit']:.2f}%\")\n    else:\n        print(\"未找到符合条件的交易机会\")\n\n    print(\"\\n\" + \"=\" * 70)\n    print(\"测试完成\")\n    print(\"=\" * 70)\n\nexcept Exception as e:\n    print(f\"\\n错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n",
+      "msgId": "4a08a61172af4cf6ade945c7e492f0e2",
+      "websocketSessionId": "2b66cadd0c214a06b3d2d74acc8f3aa0",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "======================================================================\n二板策略 RiceQuant Notebook 测试\n======================================================================\n\n步骤1: 获取交易日\n2022年4月交易日: 19天\n\n步骤2: 统计涨停家数\n\n处理 2022-04-01 (1/10)\n\n错误: 'str' object has no attribute 'order_book_id'\nTraceback (most recent call last):\n  File \"<ipython-input-1-439b8753eaf9>\", line 28, in <module>\n    for s in all_stocks\n  File \"<ipython-input-1-439b8753eaf9>\", line 29, in <listcomp>\n    if not s.order_book_id.startswith((\"688\", \"4\", \"8\"))\nAttributeError: 'str' object has no attribute 'order_book_id'\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "======================================================================\n二板策略 RiceQuant Notebook 测试\n======================================================================\n\n步骤1: 获取交易日\n2022年4月交易日: 19天\n\n步骤2: 统计涨停家数\n\n处理 2022-04-01 (1/10)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n错误: 'str' object has no attribute 'order_book_id'\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-439b8753eaf9>\", line 28, in <module>\n    for s in all_stocks\n  File \"<ipython-input-1-439b8753eaf9>\", line 29, in <listcomp>\n    if not s.order_book_id.startswith((\"688\", \"4\", \"8\"))\nAttributeError: 'str' object has no attribute 'order_book_id'\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "bb167b6c-4f08-4058-b109-6e0776cdb9ca",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/bb167b6c-4f08-4058-b109-6e0776cdb9ca: "
+  },
+  "autoShutdown": true
+}

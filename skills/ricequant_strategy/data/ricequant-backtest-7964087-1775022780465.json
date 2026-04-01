@@ -1,0 +1,46 @@
+{
+  "backtestId": "7964087",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-04-01T13:52:41.995000",
+    "start_at": "2026-04-01T13:52:45.725000",
+    "progress": 0,
+    "backtest_id": "7964087",
+    "description": "",
+    "strategy_id": 2416645,
+    "title": "Backtest_1775012889014",
+    "account_type": "stock",
+    "end_at": "2026-04-01T13:52:57.311000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 18 in <module>\n    context.mainline_trades = []\n\nNameError: name 'context' is not defined"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  }
+}

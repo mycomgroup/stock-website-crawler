@@ -4,80 +4,118 @@
 
 ---
 
-## 标准提示词（推荐使用）
+## 标准提示词（推荐使用）⭐
 
 ```
-我需要运行量化策略的 Notebook 回测。请按照以下步骤操作：
+我需要运行量化策略的回测。请按照以下步骤操作：
 
-**1. 确认策略类型和平台选择**
+**1. 确认策略所处阶段**
 
-请先分析我的策略，根据以下规则选择平台：
+请先分析我的策略，判断当前处于哪个开发阶段：
 
-- 如果策略依赖 jqfactor 特殊因子（technical_analysis/quality/momentum/volatility），使用 **JoinQuant Notebook**
-- 如果策略因子简单（仅用 PE/PB/ROA/ROE/市值等基础因子），使用 **RiceQuant Notebook**
-- 如果是首次验证策略，优先使用 **JoinQuant Notebook**
+**阶段判断规则（关键）：**
+
+| 阶段 | 场景特征 | 推荐平台 | 优先级 |
+|------|---------|---------|--------|
+| **阶段1：初步调研** | 探索新想法、验证概念可行性 | JoinQuant Notebook | 低 |
+| **阶段2：新策略开发** | 因子简单（基础因子），新写的策略 | **RiceQuant Notebook** | 高 ⭐ |
+| **阶段3：完整回测** | 策略逻辑较完整，需要风险指标 | **RiceQuant 策略编辑器** | 高 ⭐ |
+| **阶段4：最终验证** | 成熟策略，需要精确结果 | JoinQuant Strategy | 必做 |
+
+**关键判断标准：**
+- ✅ 如果因子简单（仅用 PE/PB/ROA/ROE/市值等），**优先 RiceQuant**（减少迁移成本）
+- ✅ 如果是新策略且因子简单，**用 RiceQuant Notebook**（Session自动管理）
+- ✅ 如果策略逻辑较完整，**用 RiceQuant 策略编辑器**（完整回测）
+- ✅ 如果策略已成熟，**最后必须用 JoinQuant Strategy** 验证
+- ❌ 如果因子复杂（jqfactor特殊因子），必须用 JoinQuant
+
+**默认优先选择：**
+- 新策略 + 简单因子 → **RiceQuant Notebook**（推荐）
+- 完整策略 + 简单因子 → **RiceQuant 策略编辑器**（推荐）
+- 复杂因子 → JoinQuant Notebook
 
 **2. 进入正确的 Skill 目录**
 
-根据选择的平台，进入对应目录：
+根据阶段选择，进入对应目录：
 - JoinQuant Notebook: `cd skills/joinquant_notebook`
-- RiceQuant Notebook: `cd skills/ricequant_strategy`
+- RiceQuant Notebook 或策略编辑器: `cd skills/ricequant_strategy`
 
-**3. 确认策略格式**
+**3. 确认策略格式（根据阶段）**
 
-请检查策略文件格式是否适合 Notebook 运行：
-
-**适合 Notebook 的格式（推荐）：**
+**Notebook 格式（阶段1-2）：**
 ```python
 print("=== 策略测试开始 ===")
 
 try:
-    # 直接执行代码，不依赖策略框架
     date = "2024-03-20"
     stocks = get_all_securities("stock", date)  # JoinQuant
     # 或 stocks = all_instruments("CS")  # RiceQuant
     
-    # 计算逻辑
     result = your_logic(stocks)
     print(f"结果: {result}")
     
 except Exception as e:
     print(f"错误: {e}")
-    import traceback
-    traceback.print_exc()
 
 print("=== 测试完成 ===")
 ```
 
-**不适合 Notebook 的格式：**
+**策略编辑器格式（阶段3-4）：**
 ```python
-def initialize(context):  # 策略编辑器格式，Notebook 不会调用
-    ...
-def handle_data(context, data):  # 不会被执行
+# RiceQuant 格式：
+def init(context):
+    context.month_count = 0
+    
+def handle_bar(context, bar_dict):
+    # 手动判断月份调仓（scheduler可能不触发）
+    current_month = context.now.month
+    if context.month_count == 0 or current_month != context.last_month:
+        rebalance(context, bar_dict)
+        context.last_month = current_month
+        context.month_count += 1
+
+# JoinQuant 格式：
+def initialize(context):
+    run_monthly(rebalance, 1)
+    
+def handle_data(context, data):
     ...
 ```
 
-如果策略是策略编辑器格式，请先转换为 Notebook 格式。
+**格式选择建议：**
+- 阶段1-2：Notebook格式（无时间限制，快速验证）
+- 阶段3：RiceQuant策略编辑器格式（完整回测框架）
+- 阶段4：JoinQuant策略编辑器格式（最终验证）
 
-**4. 运行策略**
+**4. 运行策略（根据阶段）**
 
-请根据平台使用正确的命令：
-
-**JoinQuant Notebook：**
+**JoinQuant Notebook（阶段1）：**
 ```bash
-# 确保已配置 .env 文件（JOINQUANT_USERNAME, JOINQUANT_PASSWORD, JOINQUANT_NOTEBOOK_URL）
-# 如果 session 过期，先运行：node browser/capture-joinquant-session.js --headed
-
+cd skills/joinquant_notebook
 node run-strategy.js --strategy your_strategy.py --timeout-ms 120000
 ```
 
-**RiceQuant Notebook：**
+**RiceQuant Notebook（阶段2 - 推荐）：**
 ```bash
-# 确保已配置 .env 文件（RICEQUANT_USERNAME, RICEQUANT_PASSWORD, RICEQUANT_NOTEBOOK_URL）
-# Session 会自动管理，无需手动抓取
-
+cd skills/ricequant_strategy
 node run-strategy.js --strategy your_strategy.py --create-new --timeout-ms 120000
 ```
+
+**RiceQuant 策略编辑器（阶段3 - 推荐）：**
+```bash
+cd skills/ricequant_strategy
+node run-skill.js --id <strategyId> --file ./strategy.py --start 2024-01-01 --end 2024-12-31
+node fetch-report.js --id <backtestId> --full  # 获取完整报告
+```
+
+**JoinQuant Strategy（阶段4）：**
+```bash
+# 待完善，目前建议直接在网页平台运行
+```
+
+**优先推荐：**
+- 新策略验证：**RiceQuant Notebook**（阶段2）
+- 完整策略回测：**RiceQuant 策略编辑器**（阶段3）
 
 **5. 增加超时时间**
 
