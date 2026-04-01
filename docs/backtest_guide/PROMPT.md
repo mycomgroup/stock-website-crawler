@@ -192,6 +192,42 @@ Session 自动管理，无需手动抓取。
 
 ---
 
+## RiceQuant 策略编辑器提示词 ⭐ 推荐
+
+```
+请帮我运行 RiceQuant 策略编辑器回测。
+
+策略文件：[填写路径]
+策略ID：[填写策略ID，如果不确定，先运行 list-strategies.js 查看列表]
+
+步骤：
+1. 进入目录：`cd skills/ricequant_strategy`
+2. 确保 .env 配置正确（RICEQUANT_USERNAME, RICEQUANT_PASSWORD）
+3. Session 自动管理，无需手动抓取
+4. 运行回测：`node run-skill.js --id [策略ID] --file [策略路径] --start 2024-01-01 --end 2024-12-31`
+5. 查看结果：回测完成后查看输出的风险指标
+
+策略格式要求：
+- 必须是策略编辑器格式（init + handle_bar）
+- 不能在 init() 中下单
+- 建议使用 handle_bar 手动判断月份调仓（scheduler.run_monthly 可能不触发）
+- 使用 context.xxx 存储全局变量
+- 使用 bar_dict[stock] 获取实时数据
+
+常见问题：
+1. 策略没有交易：检查 scheduler 是否触发，建议用 handle_bar 手动判断
+2. 获取因子：使用 get_factor(stocks, "pe_ratio", start_date, end_date)
+3. 涨停价：使用 history_bars(stock, 1, "1d", "limit_up")
+
+参考文档：
+- STRATEGY_EDITOR_GUIDE.md
+- joinquant_to_ricequant_migration_guide.md
+- ricequant_factor_list.md
+- skills/ricequant_strategy/README.md
+```
+
+---
+
 ## 策略转换提示词
 
 ```
@@ -281,8 +317,10 @@ print("=== 测试完成 ===")
 1. **首次运行策略**：使用"标准提示词"
 2. **快速运行已知策略**：使用"精简提示词"
 3. **运行特定平台策略**：使用对应平台提示词
-4. **转换策略格式**：使用"策略转换提示词"
-5. **跨平台迁移**：使用"迁移提示词"
+4. **精确回测（推荐）**：使用"RiceQuant 策略编辑器提示词"
+5. **快速验证逻辑**：使用"RiceQuant Notebook 提示词"
+6. **转换策略格式**：使用"策略转换提示词"
+7. **跨平台迁移**：使用"迁移提示词"
 
 请根据实际需求选择合适的提示词。
 
@@ -290,12 +328,21 @@ print("=== 测试完成 ===")
 
 ## 重要提醒
 
-**运行成功率关键因素：**
+**Notebook 回测成功率关键因素：**
 
 1. **策略格式**：必须是 Notebook 格式，不是策略编辑器格式
 2. **平台 API**：使用正确的平台 API 格式
 3. **超时时间**：复杂策略需要足够的超时时间
 4. **print 输出**：必须有 print 才能看到结果
 5. **Session 管理**：JoinQuant 需要手动抓取，RiceQuant 自动管理
+
+**策略编辑器回测成功率关键因素：**
+
+1. **策略格式**：必须是策略编辑器格式（init + handle_bar）
+2. **定时任务**：scheduler.run_monthly 可能不触发，建议用 handle_bar 手动判断
+3. **下单位置**：不能在 init() 中下单，只能在 handle_bar 或其他函数中下单
+4. **全局变量**：使用 context.xxx 存储
+5. **实时数据**：通过 bar_dict 参数获取
+6. **Session 管理**：RiceQuant 自动管理（有效期 7 天）
 
 **请务必检查以上因素后再运行。**

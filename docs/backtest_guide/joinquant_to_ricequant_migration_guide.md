@@ -1276,6 +1276,128 @@ def handle_bar(context, bar_dict):
 - [ ] 检查日志函数：确保使用 `logger.info()`
 - [ ] 测试最小策略验证交易是否正常
 
+### 11.7 Notebook 环境特殊要点 ⭐ 重要
+
+> 更新时间：2026-04-01
+> 来源：二板策略调试实测验证
+
+#### ❌ `history_bars` 在 Notebook 中未定义
+
+**问题**：在 Notebook 环境中直接调用 `history_bars()` 会报错 `NameError: name 'history_bars' is not defined`
+
+**原因**：Notebook 环境和策略编辑器环境的 API 不同
+
+**解决方案**：使用 `get_price()` 函数
+
+```python
+# ❌ Notebook 中不可用
+bars = history_bars(stock, 1, "1d", ["close", "limit_up"])
+
+# ✅ Notebook 中正确用法
+prices = get_price(
+    stock,
+    start_date=test_date,
+    end_date=test_date,
+    frequency="1d",
+    fields=["close", "limit_up"]
+)
+```
+
+#### ⭐ `get_price()` 返回 MultiIndex DataFrame
+
+**关键发现**：`get_price()` 返回的 DataFrame 使用 MultiIndex，索引名是 `['order_book_id', 'date']`
+
+**重要**：索引中的日期是 `Timestamp` 类型，不是字符串！
+
+```python
+# 获取数据
+prices = get_price(
+    ["000001.XSHE", "000002.XSHE"],
+    start_date="2024-03-15",
+    end_date="2024-03-15",
+    fields=["close", "limit_up"]
+)
+
+# 数据结构
+#                           close  limit_up
+# order_book_id date                        
+# 000001.XSHE   2024-03-15  9.20    9.76
+# 000002.XSHE   2024-03-15  9.47   10.68
+
+# ❌ 错误写法（使用字符串）
+key = ("000001.XSHE", "2024-03-15")  # 字符串格式
+close = prices.loc[key, "close"]  # KeyError 或返回 Series
+
+# ✅ 正确写法（使用 Timestamp）
+import pandas as pd
+test_date = pd.Timestamp("2024-03-15")  # 转换为 Timestamp
+key = ("000001.XSHE", test_date)
+close = prices.loc[key, "close"]  # 正确提取单个值
+```
+
+#### ✅ Notebook 环境完整示例
+
+```python
+"""
+RiceQuant Notebook 策略示例
+关键：使用 get_price() + pd.Timestamp()
+"""
+
+import pandas as pd
+
+test_date_str = "2024-03-15"
+test_date = pd.Timestamp(test_date_str)
+
+# 获取股票池
+all_inst = all_instruments("CS")
+stocks = all_inst["order_book_id"].tolist()
+stocks = [s for s in stocks if not (s.startswith("68") or s.startswith("4") or s.startswith("8"))]
+
+# 获取价格数据
+prices = get_price(
+    stocks[:500],
+    start_date=test_date_str,
+    end_date=test_date_str,
+    frequency="1d",
+    fields=["close", "limit_up"]
+)
+
+# 查找涨停股票
+zt_stocks = []
+for stock in stocks[:500]:
+    key = (stock, test_date)  # 必须使用 Timestamp
+    
+    if key in prices.index:
+        close = prices.loc[key, "close"]
+        limit_up = prices.loc[key, "limit_up"]
+        
+        if pd.notna(close) and pd.notna(limit_up) and limit_up > 0:
+            if close >= limit_up * 0.99:  # 涨停判断
+                zt_stocks.append(stock)
+
+print(f"涨停股票数: {len(zt_stocks)}")
+```
+
+#### 📋 Notebook vs 策略编辑器对比
+
+| 特性 | Notebook 环境 | 策略编辑器环境 |
+|------|--------------|----------------|
+| 数据获取 | `get_price()` | `history_bars()` |
+| 索引类型 | MultiIndex (Timestamp) | numpy array |
+| 字段名 | `"limit_up"` | `"limit_up"` |
+| 执行方式 | 直接执行 + print | init() + handle_bar() |
+| 实时数据 | 无 | `bar_dict` |
+| 适用场景 | 数据分析、验证逻辑 | 策略回测、实盘 |
+
+#### ⚠️ 常见错误排查
+
+| 错误信息 | 原因 | 解决方案 |
+|----------|------|----------|
+| `NameError: name 'history_bars' is not defined` | Notebook 环境不支持 | 使用 `get_price()` |
+| `unsupported format string passed to Series.__format__` | 使用字符串作为 MultiIndex 键 | 使用 `pd.Timestamp()` |
+| `KeyError` | 索引键格式不匹配 | 确保使用 `(stock, pd.Timestamp(date))` |
+| `fields: got invalided value high_limit` | 字段名错误 | 使用 `"limit_up"`（不是 `"high_limit"`） |
+
 ---
 
 ## 十二、因子数据 API 对照

@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-01T03:54:42.215Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_115435.ipynb",
+  "notebookPath": "策略测试_20260401_115435.ipynb",
+  "kernelId": "9c461793-df65-428c-9ebe-697f4e86a186",
+  "sessionId": "f3dcf5b7-19bf-4c4b-8cef-442251ba6465",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_115435.ipynb",
+    "path": "策略测试_20260401_115435.ipynb",
+    "last_modified": "2026-04-01T03:54:40.772879Z",
+    "created": "2026-04-01T03:54:40.773879Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 7835,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n简化测试 - 检查 get_price 数据结构\n\"\"\"\n\nprint(\"=\" * 80)\nprint(\"简化测试 - 检查数据结构\")\nprint(\"=\" * 80)\n\nimport pandas as pd\n\n# 测试一只股票\ntest_stock = \"000001.XSHE\"\ntest_date = \"2024-03-15\"\n\nprint(f\"\\n测试股票: {test_stock}\")\nprint(f\"测试日期: {test_date}\")\n\n# 方式1: 使用 get_price 单只股票\nprint(\"\\n=== 方式1: get_price 单只股票 ===\")\ntry:\n    prices1 = get_price(\n        test_stock,\n        start_date=test_date,\n        end_date=test_date,\n        frequency=\"1d\",\n        fields=[\"close\", \"limit_up\"],\n    )\n\n    print(f\"类型: {type(prices1)}\")\n    print(f\"形状: {prices1.shape}\")\n    print(f\"索引: {prices1.index}\")\n    print(f\"列: {prices1.columns.tolist()}\")\n    print(f\"数据:\")\n    print(prices1)\n\n    if not prices1.empty:\n        close = prices1[\"close\"].iloc[0]\n        limit_up = prices1[\"limit_up\"].iloc[0]\n        ratio = close / limit_up\n\n        print(f\"\\n收盘: {close:.2f}\")\n        print(f\"涨停价: {limit_up:.2f}\")\n        print(f\"比值: {ratio:.4f}\")\n        print(f\"涨停(≥0.995): {ratio >= 0.995}\")\n        print(f\"涨停(≥0.99): {ratio >= 0.99}\")\n\nexcept Exception as e:\n    print(f\"错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\n# 方式2: 使用 get_price 多只股票\nprint(\"\\n=== 方式2: get_price 多只股票 ===\")\ntry:\n    stocks = [\"000001.XSHE\", \"000002.XSHE\", \"600000.XSHG\"]\n\n    prices2 = get_price(\n        stocks,\n        start_date=test_date,\n        end_date=test_date,\n        frequency=\"1d\",\n        fields=[\"close\", \"limit_up\"],\n    )\n\n    print(f\"类型: {type(prices2)}\")\n    print(f\"形状: {prices2.shape}\")\n    print(f\"索引类型: {type(prices2.index)}\")\n    print(f\"是否MultiIndex: {isinstance(prices2.index, pd.MultiIndex)}\")\n\n    if isinstance(prices2.index, pd.MultiIndex):\n        print(f\"索引层级: {prices2.index.names}\")\n        print(f\"索引值: {list(prices2.index)[:5]}\")\n    else:\n        print(f\"索引: {prices2.index.tolist()}\")\n\n    print(f\"列: {prices2.columns.tolist()}\")\n    print(f\"\\n数据:\")\n    print(prices2)\n\n    # 尝试提取数据\n    print(\"\\n=== 尝试提取数据 ===\")\n\n    if isinstance(prices2.index, pd.MultiIndex):\n        # MultiIndex格式\n        for stock in stocks:\n            try:\n                key = (stock, test_date)\n                if key in prices2.index:\n                    close = prices2.loc[key, \"close\"]\n                    limit_up = prices2.loc[key, \"limit_up\"]\n\n                    print(f\"{stock}:\")\n                    print(f\"  收盘: {close:.2f}\")\n                    print(f\"  涨停价: {limit_up:.2f}\")\n                    print(f\"  比值: {close / limit_up:.4f}\")\n            except Exception as e:\n                print(f\"{stock}: 提取失败 - {e}\")\n    else:\n        # 单层索引格式\n        for stock in stocks:\n            try:\n                if stock in prices2.index:\n                    close = prices2.loc[stock, \"close\"]\n                    limit_up = prices2.loc[stock, \"limit_up\"]\n\n                    print(f\"{stock}:\")\n                    print(f\"  收盘: {close:.2f}\")\n                    print(f\"  涨停价: {limit_up:.2f}\")\n                    print(f\"  比值: {close / limit_up:.4f}\")\n            except Exception as e:\n                print(f\"{stock}: 提取失败 - {e}\")\n\nexcept Exception as e:\n    print(f\"错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"\\n\" + \"=\" * 80)\nprint(\"测试完成\")\nprint(\"=\" * 80)\n",
+      "msgId": "cad97fa1f44743c9b7f250940dd85600",
+      "websocketSessionId": "d17157d4d0434917902c1bda3f32e568",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n简化测试 - 检查数据结构\n================================================================================\n\n测试股票: 000001.XSHE\n测试日期: 2024-03-15\n\n=== 方式1: get_price 单只股票 ===\n类型: <class 'pandas.core.frame.DataFrame'>\n形状: (1, 2)\n索引: MultiIndex([('000001.XSHE', '2024-03-15')],\n           names=['order_book_id', 'date'])\n列: ['close', 'limit_up']\n数据:\n                           close  limit_up\norder_book_id date                        \n000001.XSHE   2024-03-15  9.1985    9.7626\n\n收盘: 9.20\n涨停价: 9.76\n比值: 0.9422\n涨停(≥0.995): False\n涨停(≥0.99): False\n\n=== 方式2: get_price 多只股票 ===\n类型: <class 'pandas.core.frame.DataFrame'>\n形状: (3, 2)\n索引类型: <class 'pandas.core.indexes.multi.MultiIndex'>\n是否MultiIndex: True\n索引层级: ['order_book_id', 'date']\n索引值: [('000001.XSHE', Timestamp('2024-03-15 00:00:00')), ('000002.XSHE', Timestamp('2024-03-15 00:00:00')), ('600000.XSHG', Timestamp('2024-03-15 00:00:00'))]\n列: ['close', 'limit_up']\n\n数据:\n                           close  limit_up\norder_book_id date                        \n000001.XSHE   2024-03-15  9.1985    9.7626\n000002.XSHE   2024-03-15  9.4700   10.6800\n600000.XSHG   2024-03-15  6.6370    7.2455\n\n=== 尝试提取数据 ===\n000001.XSHE:\n000001.XSHE: 提取失败 - unsupported format string passed to Series.__format__\n000002.XSHE:\n000002.XSHE: 提取失败 - unsupported format string passed to Series.__format__\n600000.XSHG:\n600000.XSHG: 提取失败 - unsupported format string passed to Series.__format__\n\n================================================================================\n测试完成\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n简化测试 - 检查数据结构\n================================================================================\n\n测试股票: 000001.XSHE\n测试日期: 2024-03-15\n\n=== 方式1: get_price 单只股票 ===\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "类型: <class 'pandas.core.frame.DataFrame'>\n形状: (1, 2)\n索引: MultiIndex([('000001.XSHE', '2024-03-15')],\n           names=['order_book_id', 'date'])\n列: ['close', 'limit_up']\n数据:\n                           close  limit_up\norder_book_id date                        \n000001.XSHE   2024-03-15  9.1985    9.7626\n\n收盘: 9.20\n涨停价: 9.76\n比值: 0.9422\n涨停(≥0.995): False\n涨停(≥0.99): False\n\n=== 方式2: get_price 多只股票 ===\n类型: <class 'pandas.core.frame.DataFrame'>\n形状: (3, 2)\n索引类型: <class 'pandas.core.indexes.multi.MultiIndex'>\n是否MultiIndex: True\n索引层级: ['order_book_id', 'date']\n索引值: [('000001.XSHE', Timestamp('2024-03-15 00:00:00')), ('000002.XSHE', Timestamp('2024-03-15 00:00:00')), ('600000.XSHG', Timestamp('2024-03-15 00:00:00'))]\n列: ['close', 'limit_up']\n\n数据:\n                           close  limit_up\norder_book_id date                        \n000001.XSHE   2024-03-15  9.1985    9.7626\n000002.XSHE   2024-03-15  9.4700   10.6800\n600000.XSHG   2024-03-15  6.6370    7.2455\n\n=== 尝试提取数据 ===\n000001.XSHE:\n000001.XSHE: 提取失败 - unsupported format string passed to Series.__format__\n000002.XSHE:\n000002.XSHE: 提取失败 - unsupported format string passed to Series.__format__\n600000.XSHG:\n600000.XSHG: 提取失败 - unsupported format string passed to Series.__format__\n\n================================================================================\n测试完成\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "f3dcf5b7-19bf-4c4b-8cef-442251ba6465",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/f3dcf5b7-19bf-4c4b-8cef-442251ba6465: "
+  },
+  "autoShutdown": true
+}

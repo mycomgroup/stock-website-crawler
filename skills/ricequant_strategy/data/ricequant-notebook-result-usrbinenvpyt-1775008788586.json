@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-04-01T01:59:48.586Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/usrbinenvpyt_20260401_095945.ipynb",
+  "notebookPath": "usrbinenvpyt_20260401_095945.ipynb",
+  "kernelId": "6147daa0-461b-42f9-bc32-089d8362ea74",
+  "sessionId": "2392af58-4044-4ae6-a7d0-83fc39093f67",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "usrbinenvpyt_20260401_095945.ipynb",
+    "path": "usrbinenvpyt_20260401_095945.ipynb",
+    "last_modified": "2026-04-01T01:59:48.665811Z",
+    "created": "2026-04-01T01:59:48.665811Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 6597,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "#!/usr/bin/env python3\n\"\"\"\n任务07：阈值搜索 - RiceQuant版本\n\"\"\"\n\nfrom datetime import datetime\n\nprint(\"=\" * 80)\nprint(\"任务07：情绪指标阈值搜索（RiceQuant版）\")\nprint(\"=\" * 80)\n\nthresholds = [20, 25, 30, 35, 40, 45, 50, 55, 60]\nstart_date = \"2024-01-01\"\nend_date = \"2025-03-30\"\n\nprint(f\"\\n阈值范围: {thresholds}\")\nprint(f\"测试期间: {start_date} ~ {end_date}\")\n\nprint(\"\\n获取交易日...\")\ntry:\n    days = get_trading_dates(start_date, end_date)\n    sample_days = days[-30:]\n    print(f\"采样天数: {len(sample_days)}\")\nexcept Exception as e:\n    print(f\"获取交易日失败: {e}\")\n    sample_days = []\n\nzt_counts = []\n\nprint(\"\\n统计涨停数...\")\nfor i in range(min(len(sample_days), 30)):\n    d = sample_days[i]\n    ds = d.strftime(\"%Y-%m-%d\") if hasattr(d, \"strftime\") else str(d)\n\n    try:\n        all_stocks = all_securities(type=\"stock\", date=ds).index.tolist()\n        all_stocks = [\n            s\n            for s in all_stocks\n            if not (s.startswith(\"68\") or s.startswith(\"4\") or s.startswith(\"8\"))\n        ]\n\n        prices = history(\n            all_stocks, 1, \"1d\", [\"close\", \"high_limit\"], ds, include_now=True\n        )\n\n        if prices is not None and len(prices) > 0:\n            zt_count = 0\n            for stock in all_stocks[:500]:\n                try:\n                    close = prices.loc[stock, \"close\"]\n                    high_limit = prices.loc[stock, \"high_limit\"]\n                    if close == high_limit:\n                        zt_count += 1\n                except:\n                    pass\n\n            zt_counts.append(zt_count)\n            print(f\"{ds}: 涨停数={zt_count}\")\n    except Exception as e:\n        print(f\"{ds}: 错误 {e}\")\n\nprint(\"\\n\" + \"=\" * 80)\nprint(\"阈值交易机会统计\")\nprint(\"=\" * 80)\n\nif len(zt_counts) > 0:\n    total_days = len(zt_counts)\n\n    for t in thresholds:\n        valid_days = len([c for c in zt_counts if c >= t])\n        ratio = valid_days / total_days * 100\n        print(f\"阈值{t}: 可交易天数={valid_days}/{total_days} ({ratio:.1f}%)\")\n\n    avg_zt = sum(zt_counts) / len(zt_counts)\n    print(f\"\\n平均涨停数: {avg_zt:.1f}\")\n    print(f\"最大涨停数: {max(zt_counts)}\")\n    print(f\"最小涨停数: {min(zt_counts)}\")\nelse:\n    print(\"未能获取涨停数据\")\n\nprint(\"\\n统计完成！\")\n",
+      "msgId": "351b592c4d4642d5bb23ee8340e09891",
+      "websocketSessionId": "5e0f495fee8d461293f7d822fbac2839",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n任务07：情绪指标阈值搜索（RiceQuant版）\n================================================================================\n\n阈值范围: [20, 25, 30, 35, 40, 45, 50, 55, 60]\n测试期间: 2024-01-01 ~ 2025-03-30\n\n获取交易日...\n采样天数: 30\n\n统计涨停数...\n2025-02-17: 错误 name 'all_securities' is not defined\n2025-02-18: 错误 name 'all_securities' is not defined\n2025-02-19: 错误 name 'all_securities' is not defined\n2025-02-20: 错误 name 'all_securities' is not defined\n2025-02-21: 错误 name 'all_securities' is not defined\n2025-02-24: 错误 name 'all_securities' is not defined\n2025-02-25: 错误 name 'all_securities' is not defined\n2025-02-26: 错误 name 'all_securities' is not defined\n2025-02-27: 错误 name 'all_securities' is not defined\n2025-02-28: 错误 name 'all_securities' is not defined\n2025-03-03: 错误 name 'all_securities' is not defined\n2025-03-04: 错误 name 'all_securities' is not defined\n2025-03-05: 错误 name 'all_securities' is not defined\n2025-03-06: 错误 name 'all_securities' is not defined\n2025-03-07: 错误 name 'all_securities' is not defined\n2025-03-10: 错误 name 'all_securities' is not defined\n2025-03-11: 错误 name 'all_securities' is not defined\n2025-03-12: 错误 name 'all_securities' is not defined\n2025-03-13: 错误 name 'all_securities' is not defined\n2025-03-14: 错误 name 'all_securities' is not defined\n2025-03-17: 错误 name 'all_securities' is not defined\n2025-03-18: 错误 name 'all_securities' is not defined\n2025-03-19: 错误 name 'all_securities' is not defined\n2025-03-20: 错误 name 'all_securities' is not defined\n2025-03-21: 错误 name 'all_securities' is not defined\n2025-03-24: 错误 name 'all_securities' is not defined\n2025-03-25: 错误 name 'all_securities' is not defined\n2025-03-26: 错误 name 'all_securities' is not defined\n2025-03-27: 错误 name 'all_securities' is not defined\n2025-03-28: 错误 name 'all_securities' is not defined\n\n================================================================================\n阈值交易机会统计\n================================================================================\n未能获取涨停数据\n\n统计完成！\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n任务07：情绪指标阈值搜索（RiceQuant版）\n================================================================================\n\n阈值范围: [20, 25, 30, 35, 40, 45, 50, 55, 60]\n测试期间: 2024-01-01 ~ 2025-03-30\n\n获取交易日...\n采样天数: 30\n\n统计涨停数...\n2025-02-17: 错误 name 'all_securities' is not defined\n2025-02-18: 错误 name 'all_securities' is not defined\n2025-02-19: 错误 name 'all_securities' is not defined\n2025-02-20: 错误 name 'all_securities' is not defined\n2025-02-21: 错误 name 'all_securities' is not defined\n2025-02-24: 错误 name 'all_securities' is not defined\n2025-02-25: 错误 name 'all_securities' is not defined\n2025-02-26: 错误 name 'all_securities' is not defined\n2025-02-27: 错误 name 'all_securities' is not defined\n2025-02-28: 错误 name 'all_securities' is not defined\n2025-03-03: 错误 name 'all_securities' is not defined\n2025-03-04: 错误 name 'all_securities' is not defined\n2025-03-05: 错误 name 'all_securities' is not defined\n2025-03-06: 错误 name 'all_securities' is not defined\n2025-03-07: 错误 name 'all_securities' is not defined\n2025-03-10: 错误 name 'all_securities' is not defined\n2025-03-11: 错误 name 'all_securities' is not defined\n2025-03-12: 错误 name 'all_securities' is not defined\n2025-03-13: 错误 name 'all_securities' is not defined\n2025-03-14: 错误 name 'all_securities' is not defined\n2025-03-17: 错误 name 'all_securities' is not defined\n2025-03-18: 错误 name 'all_securities' is not defined\n2025-03-19: 错误 name 'all_securities' is not defined\n2025-03-20: 错误 name 'all_securities' is not defined\n2025-03-21: 错误 name 'all_securities' is not defined\n2025-03-24: 错误 name 'all_securities' is not defined\n2025-03-25: 错误 name 'all_securities' is not defined\n2025-03-26: 错误 name 'all_securities' is not defined\n2025-03-27: 错误 name 'all_securities' is not defined\n2025-03-28: 错误 name 'all_securities' is not defined\n\n================================================================================\n阈值交易机会统计\n================================================================================\n未能获取涨停数据\n\n统计完成！\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "usrbinenvpyt"
+}

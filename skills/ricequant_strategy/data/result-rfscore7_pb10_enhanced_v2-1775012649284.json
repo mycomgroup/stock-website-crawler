@@ -1,0 +1,42 @@
+{
+  "strategyId": 2416643,
+  "backtestId": "7963951",
+  "strategyName": "rfscore7_pb10_enhanced_v2",
+  "startDate": "2023-01-01",
+  "endDate": "2024-06-30",
+  "capital": "100000",
+  "status": "error_exit",
+  "info": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-04-01T11:03:47.588000",
+    "start_at": "2026-04-01T11:03:51.594000",
+    "progress": 0,
+    "backtest_id": "7963951",
+    "description": "",
+    "strategy_id": 2416643,
+    "title": "Backtest_1775012627306",
+    "account_type": "stock",
+    "end_at": "2026-04-01T11:04:06.530000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 291 in rebalance\n    target_stocks, factor_table = choose_stocks(\n    --> context = Context({benchmark = '000300.XSHG', ipo_days = 180, base_hold_num = 20, reduced_hold_num = 10, breadth_reduce = 0.25, breadth_stop = 0.15, primary_pb_group = 1, ...\n    --> bar_dict = BarMap()\n    --> watch_date = datetime.date(2023, 1, 3)\n    --> market_state = {'breadth': 0.3466666666666667, 'trend_on': False, 'idx_close': 3887.8992, 'idx_ma20': 3904.00763}\n    --> target_hold_num = 20\n\n  File strategy.py, line 177 in choose_stocks\n    df = calc_rfscore_table(context, stocks, watch_date)\n    --> context = Context({benchmark = '000300.XSHG', ipo_days = 180, base_hold_num = 20, reduced_hold_num = 10, breadth_reduce = 0.25, breadth_stop = 0.15, primary_pb_group = 1, ...\n    --> watch_date = datetime.date(2023, 1, 3)\n    --> hold_num = 20\n    --> stocks = ['002531.XSHE', '601398.XSHG', '603858.XSHG', '600409.XSHG', '001914.XSHE', '600022.XSHG', '002249.XSHE', '600598.XSHG', '300124.XSHE', '601021.XSHG', '300274.X ...\n\n  File strategy.py, line 136 in calc_rfscore_table\n    df = calc_rfscore_factors(stocks, watch_date)\n    --> context = Context({benchmark = '000300.XSHG', ipo_days = 180, base_hold_num = 20, reduced_hold_num = 10, breadth_reduce = 0.25, breadth_stop = 0.15, primary_pb_group = 1, ...\n    --> stocks = ['002531.XSHE', '601398.XSHG', '603858.XSHG', '600409.XSHG', '001914.XSHE', '600022.XSHG', '002249.XSHE', '600598.XSHG', '300124.XSHE', '601021.XSHG', '300274.X ...\n    --> watch_date = datetime.date(2023, 1, 3)\n\nNameError: name 'calc_rfscore_factors' is not defined"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "totalReturn": 0,
+  "annualReturn": 0,
+  "timestamp": "2026-04-01T03:04:09.284Z"
+}

@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-04-01T02:33:53.779Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/test_fixed_session_20260401_103350.ipynb",
+  "notebookPath": "test_fixed_session_20260401_103350.ipynb",
+  "kernelId": "2032f2cd-421c-48e6-8abd-fec9c0228a91",
+  "sessionId": "d41fb426-2e0e-4a6c-9ef5-e675033ec357",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "test_fixed_session_20260401_103350.ipynb",
+    "path": "test_fixed_session_20260401_103350.ipynb",
+    "last_modified": "2026-04-01T02:33:53.776135Z",
+    "created": "2026-04-01T02:33:53.778135Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 1797,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n基本连接测试 - RiceQuant Notebook\n\n只测试 Python 基础功能，不使用量化 API\n\"\"\"\n\nprint(\"=== RiceQuant Notebook 基本连接测试 ===\")\n\nfrom datetime import datetime\nprint(f\"当前时间: {datetime.now()}\")\n\nimport sys\nprint(f\"Python 版本: {sys.version}\")\n\nimport os\nprint(f\"当前目录: {os.getcwd()}\")\n\n# 测试基本计算\ntest_list = [1, 2, 3, 4, 5]\nprint(f\"列表计算: sum={sum(test_list)}, avg={sum(test_list)/len(test_list)}\")\n\nprint(\"\\n✓ 基本连接测试成功！\")\nprint(\"=== 测试完成 ===\")\n",
+      "msgId": "421a0bd8f3954ae59ce324795ccf5565",
+      "websocketSessionId": "8af21a6e7ede4a98aa30ded634e51d44",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== RiceQuant Notebook 基本连接测试 ===\n当前时间: 2026-04-01 10:33:53.621618\nPython 版本: 3.6.10 |Anaconda, Inc.| (default, Jan  7 2020, 21:14:29) \n[GCC 7.3.0]\n当前目录: /home/rice/notebook\n列表计算: sum=15, avg=3.0\n\n✓ 基本连接测试成功！\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RiceQuant Notebook 基本连接测试 ===\n当前时间: 2026-04-01 10:33:53.621618\nPython 版本: 3.6.10 |Anaconda, Inc.| (default, Jan  7 2020, 21:14:29) \n[GCC 7.3.0]\n当前目录: /home/rice/notebook\n列表计算: sum=15, avg=3.0\n\n✓ 基本连接测试成功！\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

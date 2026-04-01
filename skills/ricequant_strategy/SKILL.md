@@ -96,7 +96,14 @@ node run-strategy.js [参数]
   --create-new                  创建新的独立 notebook
   --cleanup                     运行后自动清理 notebook（需配合 --create-new）
   --notebook-base-name <name>   新 notebook 基础名称（默认 strategy_run）
+  --no-shutdown                 禁用自动关闭 session（调试模式）
+  --auto-shutdown <bool>        执行后自动关闭 session（默认 true）
 ```
+
+**自动关闭 Session（新功能）**
+- 默认执行完成后自动关闭 session，释放资源
+- 使用 `--no-shutdown` 禁用自动关闭，便于调试查看运行状态
+- 详情见 [AUTO_SHUTDOWN.md](AUTO_SHUTDOWN.md)
 
 ### Notebook 管理策略
 

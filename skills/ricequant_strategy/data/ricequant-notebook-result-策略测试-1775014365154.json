@@ -1,0 +1,367 @@
+{
+  "capturedAt": "2026-04-01T03:32:45.154Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_112834.ipynb",
+  "notebookPath": "策略测试_20260401_112834.ipynb",
+  "kernelId": "67099e0e-7905-4432-b8a0-1b528e88a014",
+  "sessionId": "2c02063f-7ce8-470b-af4d-8ffd492e6823",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_112834.ipynb",
+    "path": "策略测试_20260401_112834.ipynb",
+    "last_modified": "2026-04-01T03:32:43.847188Z",
+    "created": "2026-04-01T03:32:43.847188Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 26178,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n影子策略完整回测 - RiceQuant Notebook\n\n修复：\n1. 确保所有持仓平仓\n2. 正确计算资产\n3. 延长测试时间\n\n运行方式：\ncd skills/ricequant_strategy\nnode run-strategy.js --strategy ../../strategies/shadow_strategies_20260330/backtest_final_rq.py --create-new --timeout-ms 300000\n\"\"\"\n\nimport numpy as np\nimport pandas as pd\n\nprint(\"=\" * 80)\nprint(\"影子策略完整回测 - RiceQuant Notebook\")\nprint(\"=\" * 80)\nprint(\"配置:\")\nprint(\"  时间段: 2015-05-01 至 2015-06-30\")\nprint(\"  测试股票数: 1000只\")\nprint(\"  情绪阈值: 50只涨停\")\nprint(\"  初始资金: 100,000元\")\nprint(\"=\" * 80)\n\nMAINLINE_PARAMS = {\n    \"emotion_threshold\": 50,\n    \"open_change_min\": 0.001,\n    \"open_change_max\": 0.03,\n    \"sell_profit_threshold\": 0.03,\n    \"limit_up_sample_size\": 1000,\n    \"signal_sample_size\": 500,\n}\n\n\ndef get_all_stocks_list():\n    try:\n        instruments = all_instruments(type=\"CS\")\n        return list(instruments.order_book_id)\n    except:\n        return []\n\n\ndef get_prev_trading_date(date, trading_dates):\n    date_str = str(date)[:10]\n    for i, d in enumerate(trading_dates):\n        if str(d)[:10] == date_str and i > 0:\n            return str(trading_dates[i - 1])[:10]\n    return None\n\n\ndef count_limit_ups(date, stock_list, trading_dates):\n    limit_up = 0\n    tested = 0\n    prev_date = get_prev_trading_date(date, trading_dates)\n\n    if prev_date is None:\n        return 0, 0\n\n    for stock in stock_list[: MAINLINE_PARAMS[\"limit_up_sample_size\"]]:\n        try:\n            df = get_price(\n                stock,\n                start_date=prev_date,\n                end_date=date,\n                frequency=\"1d\",\n                fields=[\"close\"],\n            )\n            if df is not None and len(df) >= 2:\n                prev_close = df[\"close\"].iloc[0]\n                curr_close = df[\"close\"].iloc[-1]\n                if prev_close > 0:\n                    pct = (curr_close - prev_close) / prev_close\n                    if pct >= 0.095:\n                        limit_up += 1\n                    tested += 1\n        except:\n            continue\n\n    return limit_up, tested\n\n\ndef check_fake_weak_high_open(stock, date, trading_dates):\n    try:\n        prev_date = get_prev_trading_date(date, trading_dates)\n        if prev_date is None:\n            return None\n\n        df = get_price(\n            stock,\n            start_date=prev_date,\n            end_date=date,\n            frequency=\"1d\",\n            fields=[\"close\", \"open\", \"high\"],\n        )\n        if df is None or len(df) < 2:\n            return None\n\n        prev_close = df[\"close\"].iloc[0]\n        open_price = df[\"open\"].iloc[-1]\n        high_price = df[\"high\"].iloc[-1]\n\n        if prev_close <= 0:\n            return None\n\n        open_change = (open_price - prev_close) / prev_close\n\n        if (\n            open_change <= MAINLINE_PARAMS[\"open_change_min\"]\n            or open_change >= MAINLINE_PARAMS[\"open_change_max\"]\n        ):\n            return None\n\n        if high_price > open_price:\n            return {\"open_price\": open_price, \"open_change\": open_change}\n\n        return None\n    except:\n        return None\n\n\nprint(\"\\n步骤1: 获取基础数据\")\nprint(\"-\" * 80)\n\nall_stocks = get_all_stocks_list()\nprint(f\"股票总数: {len(all_stocks)}\")\n\nall_trading_dates = [\n    str(d)[:10] for d in list(get_trading_dates(\"2015-01-01\", \"2015-12-31\"))\n]\ntest_dates = [d for d in all_trading_dates if \"2015-05-\" in d or \"2015-06-\" in d]\nprint(f\"测试交易日: {len(test_dates)}天 ({test_dates[0]} 至 {test_dates[-1]})\")\n\nif len(all_stocks) == 0 or len(test_dates) == 0:\n    print(\"\\n无法获取数据，请确保在 RiceQuant Notebook 环境运行\")\nelse:\n    print(\"\\n步骤2: 开始回测\")\n    print(\"-\" * 80)\n\n    capital = 100000.0\n    cash = 100000.0\n    positions = {}\n    trades = []\n\n    for i, date in enumerate(test_dates):\n        limit_up, tested = count_limit_ups(date, all_stocks, all_trading_dates)\n\n        emotion_ok = limit_up >= MAINLINE_PARAMS[\"emotion_threshold\"]\n        status = \"✓\" if emotion_ok else \"✗\"\n        print(f\"[{date}] 涨停{limit_up:3d}/{tested}只 {status}\", end=\"\")\n\n        if emotion_ok:\n            print()\n\n            signals = []\n            for stock in all_stocks[: MAINLINE_PARAMS[\"signal_sample_size\"]]:\n                result = check_fake_weak_high_open(stock, date, all_trading_dates)\n                if result:\n                    signals.append(\n                        {\n                            \"stock\": stock,\n                            \"open_price\": result[\"open_price\"],\n                            \"open_change\": result[\"open_change\"],\n                        }\n                    )\n\n            print(f\"        信号: {len(signals)}个\", end=\"\")\n\n            if signals and len(positions) < 3:\n                signal = signals[0]\n                stock = signal[\"stock\"]\n                price = signal[\"open_price\"]\n\n                max_amount = min(100000, cash)\n                shares = int(max_amount / price / 100) * 100\n\n                if shares > 0 and cash >= shares * price:\n                    cost = shares * price\n                    cash -= cost\n                    positions[stock] = {\n                        \"buy_date\": date,\n                        \"buy_price\": price,\n                        \"shares\": shares,\n                    }\n                    trades.append(\n                        {\n                            \"date\": date,\n                            \"stock\": stock,\n                            \"action\": \"buy\",\n                            \"price\": price,\n                            \"shares\": shares,\n                        }\n                    )\n                    print(f\" → 买入{stock}@{price:.2f}x{shares}\")\n                else:\n                    print()\n            else:\n                print()\n        else:\n            print()\n\n        for stock in list(positions.keys()):\n            pos = positions[stock]\n\n            if date <= pos[\"buy_date\"]:\n                continue\n\n            try:\n                df = get_price(\n                    stock,\n                    start_date=date,\n                    end_date=date,\n                    frequency=\"1d\",\n                    fields=[\"close\"],\n                )\n                if df is not None and len(df) > 0:\n                    current_price = df[\"close\"].iloc[-1]\n                    profit_pct = (current_price - pos[\"buy_price\"]) / pos[\"buy_price\"]\n\n                    should_sell = False\n                    reason = \"\"\n\n                    if profit_pct >= MAINLINE_PARAMS[\"sell_profit_threshold\"]:\n                        should_sell = True\n                        reason = \"冲高止盈\"\n                    else:\n                        should_sell = True\n                        reason = \"尾盘卖出\"\n\n                    if should_sell:\n                        revenue = current_price * pos[\"shares\"]\n                        cash += revenue\n                        profit = (current_price - pos[\"buy_price\"]) * pos[\"shares\"]\n\n                        trades.append(\n                            {\n                                \"date\": date,\n                                \"stock\": stock,\n                                \"action\": \"sell\",\n                                \"price\": current_price,\n                                \"shares\": pos[\"shares\"],\n                                \"profit\": profit,\n                                \"profit_pct\": profit_pct,\n                                \"reason\": reason,\n                            }\n                        )\n\n                        print(\n                            f\"        → 卖出{stock}@{current_price:.2f} {reason} 收益{profit_pct * 100:+.2f}%\"\n                        )\n                        del positions[stock]\n            except:\n                pass\n\n    print(\"\\n步骤3: 清理剩余持仓\")\n    print(\"-\" * 80)\n\n    last_date = test_dates[-1]\n    for stock in list(positions.keys()):\n        pos = positions[stock]\n        try:\n            df = get_price(\n                stock,\n                start_date=last_date,\n                end_date=last_date,\n                frequency=\"1d\",\n                fields=[\"close\"],\n            )\n            if df is not None and len(df) > 0:\n                final_price = df[\"close\"].iloc[-1]\n                revenue = final_price * pos[\"shares\"]\n                cash += revenue\n                profit = (final_price - pos[\"buy_price\"]) * pos[\"shares\"]\n                profit_pct = profit / (pos[\"buy_price\"] * pos[\"shares\"])\n\n                trades.append(\n                    {\n                        \"date\": last_date,\n                        \"stock\": stock,\n                        \"action\": \"sell\",\n                        \"price\": final_price,\n                        \"shares\": pos[\"shares\"],\n                        \"profit\": profit,\n                        \"profit_pct\": profit_pct,\n                        \"reason\": \"强制平仓\",\n                    }\n                )\n\n                print(\n                    f\"  强制平仓 {stock}@{final_price:.2f} 收益{profit_pct * 100:+.2f}%\"\n                )\n                del positions[stock]\n        except:\n            pass\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"回测结果\")\n    print(\"=\" * 80)\n\n    buy_trades = [t for t in trades if t[\"action\"] == \"buy\"]\n    sell_trades = [t for t in trades if t[\"action\"] == \"sell\"]\n\n    final_value = cash\n    total_return = (final_value - 100000) / 100000\n\n    print(f\"\\n资金情况:\")\n    print(f\"  初始资金: 100,000.00\")\n    print(f\"  最终资金: {final_value:.2f}\")\n    print(f\"  总收益率: {total_return * 100:.2f}%\")\n\n    print(f\"\\n交易情况:\")\n    print(f\"  买入次数: {len(buy_trades)}\")\n    print(f\"  卖出次数: {len(sell_trades)}\")\n\n    if len(sell_trades) > 0:\n        wins = [t for t in sell_trades if t.get(\"profit\", 0) > 0]\n        losses = [t for t in sell_trades if t.get(\"profit\", 0) <= 0]\n\n        win_rate = len(wins) / len(sell_trades)\n        avg_return = np.mean([t[\"profit_pct\"] for t in sell_trades])\n\n        print(f\"\\n盈亏分析:\")\n        print(f\"  胜率: {win_rate * 100:.1f}% ({len(wins)}/{len(sell_trades)})\")\n        print(f\"  平均收益率: {avg_return * 100:.2f}%\")\n\n        if len(wins) > 0:\n            avg_win = np.mean([t[\"profit_pct\"] for t in wins])\n            print(f\"  平均盈利: {avg_win * 100:.2f}%\")\n\n        if len(losses) > 0:\n            avg_loss = np.mean([t[\"profit_pct\"] for t in losses])\n            print(f\"  平均亏损: {avg_loss * 100:.2f}%\")\n\n        total_profit = sum([t.get(\"profit\", 0) for t in sell_trades])\n        print(f\"\\n  总盈亏: {total_profit:.2f}元\")\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"回测完成\")\n    print(\"=\" * 80)\n",
+      "msgId": "d4b684127d424ad7bbfc255d41168a07",
+      "websocketSessionId": "c1122057809e480e942653dc60e66863",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n影子策略完整回测 - RiceQuant Notebook\n================================================================================\n配置:\n  时间段: 2015-05-01 至 2015-06-30\n  测试股票数: 1000只\n  情绪阈值: 50只涨停\n  初始资金: 100,000元\n================================================================================\n\n步骤1: 获取基础数据\n--------------------------------------------------------------------------------\n股票总数: 5539\n测试交易日: 41天 (2015-05-04 至 2015-06-30)\n\n步骤2: 开始回测\n--------------------------------------------------------------------------------\n[2015-05-04] 涨停 32/846只 ✗\n[2015-05-05] 涨停 13/846只 ✗\n[2015-05-06] 涨停  6/846只 ✗\n[2015-05-07] 涨停 13/846只 ✗\n[2015-05-08] 涨停 59/846只 ✓\n        信号: 338个 → 买入000001.XSHE@10.05x9900\n[2015-05-11] 涨停 77/846只 ✓\n        信号: 323个\n        → 卖出000001.XSHE@10.25 尾盘卖出 收益+2.04%\n[2015-05-12] 涨停 62/846只 ✓\n        信号: 170个 → 买入000009.XSHE@12.26x8100\n[2015-05-13] 涨停 54/846只 ✓\n        信号: 68个 → 买入000001.XSHE@10.35x200\n        → 卖出000009.XSHE@12.26 尾盘卖出 收益-0.05%\n[2015-05-14] 涨停 45/846只 ✗\n        → 卖出000001.XSHE@10.16 尾盘卖出 收益-1.79%\n[2015-05-15] 涨停 33/846只 ✗\n[2015-05-18] 涨停 59/846只 ✓\n        信号: 65个 → 买入000014.XSHE@17.25x5700\n[2015-05-19] 涨停 68/846只 ✓\n        信号: 134个 → 买入000002.XSHE@9.42x300\n        → 卖出000014.XSHE@17.41 尾盘卖出 收益+0.92%\n[2015-05-20] 涨停 59/846只 ✓\n        信号: 200个 → 买入000001.XSHE@10.24x9700\n        → 卖出000002.XSHE@9.53 尾盘卖出 收益+1.23%\n[2015-05-21] 涨停107/846只 ✓\n        信号: 142个 → 买入000001.XSHE@10.11x300\n[2015-05-22] 涨停 67/846只 ✓\n        信号: 286个\n        → 卖出000001.XSHE@10.41 尾盘卖出 收益+2.97%\n[2015-05-25] 涨停 75/846只 ✓\n        信号: 74个 → 买入000001.XSHE@10.46x300\n[2015-05-26] 涨停 92/846只 ✓\n        信号: 214个\n        → 卖出000001.XSHE@10.63 尾盘卖出 收益+1.65%\n[2015-05-27] 涨停 68/846只 ✓\n        信号: 115个 → 买入000009.XSHE@13.18x200\n[2015-05-28] 涨停 18/846只 ✗\n        → 卖出000009.XSHE@12.60 尾盘卖出 收益-4.35%\n[2015-05-29] 涨停 60/846只 ✓\n        信号: 85个 → 买入000006.XSHE@12.12x200\n[2015-06-01] 涨停138/846只 ✓\n        信号: 228个 → 买入000002.XSHE@9.76x100\n        → 卖出000006.XSHE@13.34 冲高止盈 收益+10.00%\n[2015-06-02] 涨停131/846只 ✓\n        信号: 182个 → 买入000002.XSHE@10.18x200\n[2015-06-03] 涨停 75/846只 ✓\n        信号: 153个\n        → 卖出000002.XSHE@10.21 尾盘卖出 收益+0.33%\n[2015-06-04] 涨停 65/846只 ✓\n        信号: 93个 → 买入000001.XSHE@10.14x200\n[2015-06-05] 涨停 73/846只 ✓\n        信号: 301个\n        → 卖出000001.XSHE@10.43 尾盘卖出 收益+2.84%\n[2015-06-08] 涨停 41/846只 ✗\n[2015-06-09] 涨停 25/846只 ✗\n[2015-06-10] 涨停 43/846只 ✗\n[2015-06-11] 涨停 50/846只 ✓\n        信号: 85个 → 买入000016.XSHE@12.84x200\n[2015-06-12] 涨停 50/846只 ✓\n        信号: 182个\n        → 卖出000016.XSHE@13.85 冲高止盈 收益+7.87%\n[2015-06-15] 涨停 21/846只 ✗\n[2015-06-16] 涨停 12/846只 ✗\n[2015-06-17] 涨停 36/846只 ✗\n[2015-06-18] 涨停  8/846只 ✗\n[2015-06-19] 涨停  6/846只 ✗\n[2015-06-23] 涨停 28/846只 ✗\n[2015-06-24] 涨停 47/846只 ✗\n[2015-06-25] 涨停  8/846只 ✗\n[2015-06-26] 涨停  4/846只 ✗\n[2015-06-29] 涨停  7/846只 ✗\n[2015-06-30] 涨停 78/846只 ✓\n        信号: 50个 → 买入000002.XSHE@9.45x300\n\n步骤3: 清理剩余持仓\n--------------------------------------------------------------------------------\n  强制平仓 000002.XSHE@9.85 收益+4.31%\n\n================================================================================\n回测结果\n================================================================================\n\n资金情况:\n  初始资金: 100,000.00\n  最终资金: 3223.48\n  总收益率: -96.78%\n\n交易情况:\n  买入次数: 15\n  卖出次数: 13\n\n盈亏分析:\n  胜率: 76.9% (10/13)\n  平均收益率: 2.15%\n  平均盈利: 3.42%\n  平均亏损: -2.06%\n\n  总盈亏: 3536.95元\n\n================================================================================\n回测完成\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n影子策略完整回测 - RiceQuant Notebook\n================================================================================\n配置:\n  时间段: 2015-05-01 至 2015-06-30\n  测试股票数: 1000只\n  情绪阈值: 50只涨停\n  初始资金: 100,000元\n================================================================================\n\n步骤1: 获取基础数据\n--------------------------------------------------------------------------------\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票总数: 5539\n测试交易日: 41天 (2015-05-04 至 2015-06-30)\n\n步骤2: 开始回测\n--------------------------------------------------------------------------------\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-04] 涨停 32/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-05] 涨停 13/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-06] 涨停  6/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-07] 涨停 13/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-08] 涨停 59/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 338个 → 买入000001.XSHE@10.05x9900\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-11] 涨停 77/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 323个\n        → 卖出000001.XSHE@10.25 尾盘卖出 收益+2.04%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-12] 涨停 62/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 170个 → 买入000009.XSHE@12.26x8100\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-13] 涨停 54/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 68个 → 买入000001.XSHE@10.35x200\n        → 卖出000009.XSHE@12.26 尾盘卖出 收益-0.05%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-14] 涨停 45/846只 ✗\n        → 卖出000001.XSHE@10.16 尾盘卖出 收益-1.79%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-15] 涨停 33/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-18] 涨停 59/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 65个 → 买入000014.XSHE@17.25x5700\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-19] 涨停 68/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 134个 → 买入000002.XSHE@9.42x300\n        → 卖出000014.XSHE@17.41 尾盘卖出 收益+0.92%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-20] 涨停 59/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 200个 → 买入000001.XSHE@10.24x9700\n        → 卖出000002.XSHE@9.53 尾盘卖出 收益+1.23%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-21] 涨停107/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 142个 → 买入000001.XSHE@10.11x300\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-22] 涨停 67/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 286个\n        → 卖出000001.XSHE@10.41 尾盘卖出 收益+2.97%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-25] 涨停 75/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 74个 → 买入000001.XSHE@10.46x300\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-26] 涨停 92/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 214个\n        → 卖出000001.XSHE@10.63 尾盘卖出 收益+1.65%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-27] 涨停 68/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 115个 → 买入000009.XSHE@13.18x200\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-28] 涨停 18/846只 ✗\n        → 卖出000009.XSHE@12.60 尾盘卖出 收益-4.35%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-05-29] 涨停 60/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 85个 → 买入000006.XSHE@12.12x200\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-01] 涨停138/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 228个 → 买入000002.XSHE@9.76x100\n        → 卖出000006.XSHE@13.34 冲高止盈 收益+10.00%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-02] 涨停131/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 182个 → 买入000002.XSHE@10.18x200\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-03] 涨停 75/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 153个\n        → 卖出000002.XSHE@10.21 尾盘卖出 收益+0.33%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-04] 涨停 65/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 93个 → 买入000001.XSHE@10.14x200\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-05] 涨停 73/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 301个\n        → 卖出000001.XSHE@10.43 尾盘卖出 收益+2.84%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-08] 涨停 41/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-09] 涨停 25/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-10] 涨停 43/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-11] 涨停 50/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 85个 → 买入000016.XSHE@12.84x200\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-12] 涨停 50/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 182个\n        → 卖出000016.XSHE@13.85 冲高止盈 收益+7.87%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-15] 涨停 21/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-16] 涨停 12/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-17] 涨停 36/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-18] 涨停  8/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-19] 涨停  6/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-23] 涨停 28/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-24] 涨停 47/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-25] 涨停  8/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-26] 涨停  4/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-29] 涨停  7/846只 ✗\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2015-06-30] 涨停 78/846只 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "        信号: 50个 → 买入000002.XSHE@9.45x300\n\n步骤3: 清理剩余持仓\n--------------------------------------------------------------------------------\n  强制平仓 000002.XSHE@9.85 收益+4.31%\n\n================================================================================\n回测结果\n================================================================================\n\n资金情况:\n  初始资金: 100,000.00\n  最终资金: 3223.48\n  总收益率: -96.78%\n\n交易情况:\n  买入次数: 15\n  卖出次数: 13\n\n盈亏分析:\n  胜率: 76.9% (10/13)\n  平均收益率: 2.15%\n  平均盈利: 3.42%\n  平均亏损: -2.06%\n\n  总盈亏: 3536.95元\n\n================================================================================\n回测完成\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "2c02063f-7ce8-470b-af4d-8ffd492e6823",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/2c02063f-7ce8-470b-af4d-8ffd492e6823: "
+  },
+  "autoShutdown": true
+}

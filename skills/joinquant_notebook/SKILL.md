@@ -65,7 +65,14 @@ node run-strategy.js [参数]
   --timeout-ms <ms>      超时时间（默认 60000ms）
   --cell-index <index>   执行指定 cell（0, last）
   --mode <mode>          all: 执行所有 cells
+  --no-shutdown          禁用自动关闭 session（调试模式）
+  --auto-shutdown <bool> 执行后自动关闭 session（默认 true）
 ```
+
+**自动关闭 Session（新功能）**
+- 默认执行完成后自动关闭 session，释放资源
+- 使用 `--no-shutdown` 禁用自动关闭，便于调试查看运行状态
+- 详情见 [AUTO_SHUTDOWN.md](AUTO_SHUTDOWN.md)
 
 ## 策略代码适配
 
