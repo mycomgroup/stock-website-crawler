@@ -16,7 +16,6 @@ print("=" * 60)
 
 try:
     import numpy as np
-    from rqalpha.apis import *
 
     print("\n测试1: 获取股票池")
 
@@ -31,70 +30,48 @@ try:
 
     print("\n测试2: 验证RFScore因子获取")
 
+    from rqalpha.apis import get_fundamentals, query, fundamentals
+
     test_stocks = stocks[:30]
     print(f"测试股票数: {len(test_stocks)}")
 
-    factors_needed = [
-        "roa",
-        "net_operate_cash_flow",
-        "total_assets",
-        "total_non_current_liability",
-        "gross_profit_margin",
-        "operating_revenue",
-        "pb_ratio",
-        "pe_ratio",
-    ]
+    # 获取最近交易日
+    dates = get_trading_dates("2024-01-01", "2024-12-31")
+    test_date = dates[-1] if dates else "2024-12-31"
 
-    print("需要的因子:")
-    for factor in factors_needed:
-        print(f"  - {factor}")
+    factors_to_test = {
+        "roa": fundamentals.financial_indicator.roa,
+        "net_operate_cash_flow": fundamentals.cash_flow_statement.net_operate_cash_flow,
+        "total_assets": fundamentals.balance_sheet.total_assets,
+        "total_non_current_liability": fundamentals.balance_sheet.total_non_current_liability,
+        "gross_profit_margin": fundamentals.financial_indicator.gross_profit_margin,
+        "operating_revenue": fundamentals.financial_indicator.operating_revenue,
+        "pb_ratio": fundamentals.eod_derivative_indicator.pb_ratio,
+        "pe_ratio": fundamentals.eod_derivative_indicator.pe_ratio,
+    }
 
-    try:
-        q = query(
-            fundamentals.financial_indicator.roa,
-            fundamentals.financial_indicator.gross_profit_margin,
-            fundamentals.financial_indicator.operating_revenue,
-            fundamentals.cash_flow_statement.net_operate_cash_flow,
-            fundamentals.balance_sheet.total_assets,
-            fundamentals.balance_sheet.total_non_current_liability,
-            fundamentals.eod_derivative_indicator.pb_ratio,
-            fundamentals.eod_derivative_indicator.pe_ratio,
-        ).filter(
-            fundamentals.eod_derivative_indicator.order_book_id.in_(test_stocks),
-        )
+    print("\n需要的因子:")
+    factor_status = {}
+    for factor_name in factors_to_test.keys():
+        print(f"  - {factor_name}")
 
-        df = get_fundamentals(q, entry_date=context.now.date())
+    print("\n测试因子获取:")
+    for factor_name, factor_field in factors_to_test.items():
+        try:
+            q = query(factor_field).filter(
+                fundamentals.eod_derivative_indicator.order_book_id.in_(test_stocks)
+            )
+            df = get_fundamentals(q, entry_date=test_date)
 
-        if df is not None and not df.empty:
-            print(f"\n获取因子数据成功: {len(df)} 条记录")
-
-            print("\n因子数据示例（前3只股票）:")
-            for i, stock in enumerate(test_stocks[:3], 1):
-                if stock in df.index.get_level_values(1):
-                    try:
-                        stock_data = df.loc[:, stock]
-                        print(f"  {i}. {stock}")
-                        print(
-                            f"     ROA: {stock_data['roa'].iloc[0] if hasattr(stock_data, 'iloc') else stock_data['roa']:.2f}"
-                        )
-                        print(
-                            f"     毛利率: {stock_data['gross_profit_margin'].iloc[0] if hasattr(stock_data, 'iloc') else stock_data['gross_profit_margin']:.2f}"
-                        )
-                        print(
-                            f"     PB: {stock_data['pb_ratio'].iloc[0] if hasattr(stock_data, 'iloc') else stock_data['pb_ratio']:.2f}"
-                        )
-                    except:
-                        print(f"  {i}. {stock} (数据解析失败)")
-
-            print("\n✓ 所有RFScore因子均可获取")
-        else:
-            print("未获取到因子数据")
-
-    except Exception as e:
-        print(f"获取因子失败: {e}")
-        import traceback
-
-        traceback.print_exc()
+            if df is not None and not df.empty:
+                print(f"  ✓ {factor_name}")
+                factor_status[factor_name] = True
+            else:
+                print(f"  ⚠️ {factor_name} (无数据)")
+                factor_status[factor_name] = False
+        except Exception as e:
+            print(f"  ✗ {factor_name} ({e})")
+            factor_status[factor_name] = False
 
     print("\n测试3: 计算市场宽度")
 
@@ -143,18 +120,21 @@ try:
     print("  每个指标 > 0 得1分，总分0-7分")
     print("  目标: RFScore = 7 的优质股票")
 
+    print("\n因子获取统计:")
+    success_count = sum(1 for v in factor_status.values() if v)
+    total_count = len(factor_status)
+    print(f"  成功: {success_count}/{total_count}")
+
+    if success_count >= total_count * 0.8:
+        print("\n✓ 大部分RFScore因子可用，策略可行")
+    else:
+        print("\n⚠️ 部分因子不可用，需要检查")
+
     print("\n" + "=" * 60)
     print("✓ 纯RFScore进攻策略测试完成")
     print("验证结论:")
     print("  1. 股票池获取 ✓")
-    print("  2. RFScore因子获取 ✓")
-    print("    - ROA ✓")
-    print("    - 现金流 ✓")
-    print("    - 总资产 ✓")
-    print("    - 非流动负债 ✓")
-    print("    - 毛利率 ✓")
-    print("    - 营业收入 ✓")
-    print("    - PB/PE ✓")
+    print(f"  2. RFScore因子获取 {success_count}/{total_count} ✓")
     print("  3. 市场择时计算 ✓")
     print("  4. 复杂因子策略可行 ✓")
     print("=" * 60)

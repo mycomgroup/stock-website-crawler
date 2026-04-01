@@ -1,0 +1,62 @@
+{
+  "capturedAt": "2026-04-01T09:35:29.253Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_173521.ipynb",
+  "notebookPath": "策略测试_20260401_173521.ipynb",
+  "kernelId": "c6bbaaac-94d8-42f3-8135-9be16944bddf",
+  "sessionId": "acbe6153-068a-4cff-afc1-0eea7c7aec6a",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_173521.ipynb",
+    "path": "策略测试_20260401_173521.ipynb",
+    "last_modified": "2026-04-01T09:35:27.727413Z",
+    "created": "2026-04-01T09:35:27.728413Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 3258,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n验证RiceQuant涨停价API\n\"\"\"\n\nprint(\"=\" * 70)\nprint(\"验证 RiceQuant 涨停价 API\")\nprint(\"=\" * 70)\n\ntry:\n    # 获取一只股票\n    all_stocks = all_instruments(\"CS\")\n    stock_list = all_stocks[\"order_book_id\"].tolist()\n    test_stock = stock_list[0]\n\n    print(f\"\\n测试股票: {test_stock}\")\n\n    # 获取历史数据\n    bars = history_bars(\n        test_stock, 5, \"1d\", \"close,limit_up,limit_down\", end_date=\"2024-01-31\"\n    )\n\n    if bars is not None:\n        print(f\"\\n最近5天数据:\")\n        for i, bar in enumerate(bars):\n            print(\n                f\"  第{i + 1}天: 收盘{bar['close']:.2f}, 涨停价{bar['limit_up'] if bar['limit_up'] else 'None'}, 跌停价{bar['limit_down'] if bar['limit_down'] else 'None'}\"\n            )\n    else:\n        print(\"无法获取数据\")\n\n    # 测试多只股票\n    print(f\"\\n测试前10只股票的涨停价:\")\n    for stock in stock_list[:10]:\n        try:\n            bars = history_bars(stock, 1, \"1d\", \"close,limit_up\", end_date=\"2024-01-31\")\n            if bars is not None and len(bars) > 0:\n                bar = bars[0]\n                print(\n                    f\"  {stock}: 收盘{bar['close']:.2f}, 涨停价{bar['limit_up'] if bar['limit_up'] else 'None'}\"\n                )\n        except:\n            print(f\"  {stock}: 获取失败\")\n\nexcept Exception as e:\n    print(f\"\\n错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n",
+      "msgId": "11c4e06f5fb348b5a44a6d77eb8db5f8",
+      "websocketSessionId": "f483ecc0c43a4f39b2582ae507f42002",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "======================================================================\n验证 RiceQuant 涨停价 API\n======================================================================\n\n测试股票: 000001.XSHE\n\n错误: name 'history_bars' is not defined\nTraceback (most recent call last):\n  File \"<ipython-input-1-d47afe26c65b>\", line 18, in <module>\n    bars = history_bars(\nNameError: name 'history_bars' is not defined\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "======================================================================\n验证 RiceQuant 涨停价 API\n======================================================================\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n测试股票: 000001.XSHE\n\n错误: name 'history_bars' is not defined\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-d47afe26c65b>\", line 18, in <module>\n    bars = history_bars(\nNameError: name 'history_bars' is not defined\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "acbe6153-068a-4cff-afc1-0eea7c7aec6a",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/acbe6153-068a-4cff-afc1-0eea7c7aec6a: "
+  },
+  "autoShutdown": true
+}

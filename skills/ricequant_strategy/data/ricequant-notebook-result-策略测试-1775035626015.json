@@ -1,0 +1,172 @@
+{
+  "capturedAt": "2026-04-01T09:27:06.015Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_172652.ipynb",
+  "notebookPath": "策略测试_20260401_172652.ipynb",
+  "kernelId": "42e4557d-d0f9-4822-8ba5-ef0dc56147c7",
+  "sessionId": "561b1468-475d-48a3-9412-a2db5b09c394",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_172652.ipynb",
+    "path": "策略测试_20260401_172652.ipynb",
+    "last_modified": "2026-04-01T09:27:04.498264Z",
+    "created": "2026-04-01T09:27:04.498264Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 13211,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板策略 - RiceQuant Notebook格式\n测试2024年数据（扩大样本）\n\"\"\"\n\nprint(\"=\" * 70)\nprint(\"二板策略 RiceQuant Notebook 测试 - 2024年\")\nprint(\"=\" * 70)\n\ntry:\n    import numpy as np\n\n    print(\"\\n步骤1: 获取交易日\")\n    dates = get_trading_dates(\"2024-01-01\", \"2024-12-31\")\n    print(f\"2024年交易日: {len(dates)}天\")\n\n    print(\"\\n步骤2: 统计涨停家数（每10天测试1次）\")\n    results = []\n    zt_counts = []\n\n    # 每10个交易日测试1次\n    test_dates = dates[::10]\n\n    for i, date in enumerate(test_dates):\n        print(f\"\\n处理 {date.strftime('%Y-%m-%d')} ({i + 1}/{len(test_dates)})\")\n\n        # 扩大样本到500只股票\n        all_stocks = all_instruments(\"CS\")\n        stock_list = all_stocks[\"order_book_id\"].tolist()\n        stock_list = [\n            s\n            for s in stock_list\n            if isinstance(s, str) and not s.startswith((\"688\", \"4\", \"8\"))\n        ][:500]\n\n        # 统计涨停\n        zt_count = 0\n        zt_stocks = []\n\n        for stock in stock_list:\n            try:\n                bars = history_bars(stock, 1, \"1d\", \"close,limit_up\", end_date=date)\n                if bars is not None and len(bars) > 0:\n                    if bars[0][\"close\"] >= bars[0][\"limit_up\"] * 0.99:\n                        zt_count += 1\n                        zt_stocks.append(stock)\n            except:\n                pass\n\n        zt_counts.append(zt_count)\n        print(f\"  涨停: {zt_count}只 (样本500只)\")\n\n        # 如果涨停>=10只（全市场约100只）\n        if zt_count >= 5:  # 样本500只，阈值降低\n            print(f\"  触发情绪开关\")\n\n            # 尝试找二板\n            try:\n                prev_date = (\n                    dates[dates.index(date) - 1] if dates.index(date) > 0 else None\n                )\n                prev2_date = (\n                    dates[dates.index(date) - 2] if dates.index(date) > 1 else None\n                )\n\n                if prev_date and prev2_date:\n                    # 获取前两天的涨停\n                    zt_prev = []\n                    zt_prev2 = []\n\n                    for stock in stock_list[:200]:  # 限制数量避免超时\n                        try:\n                            # 前一天\n                            bars1 = history_bars(\n                                stock, 1, \"1d\", \"close,limit_up\", end_date=prev_date\n                            )\n                            if bars1 is not None and len(bars1) > 0:\n                                if bars1[0][\"close\"] >= bars1[0][\"limit_up\"] * 0.99:\n                                    zt_prev.append(stock)\n\n                            # 前两天\n                            bars2 = history_bars(\n                                stock, 1, \"1d\", \"close,limit_up\", end_date=prev2_date\n                            )\n                            if bars2 is not None and len(bars2) > 0:\n                                if bars2[0][\"close\"] >= bars2[0][\"limit_up\"] * 0.99:\n                                    zt_prev2.append(stock)\n                        except:\n                            pass\n\n                    # 二板 = 今天涨停 & 昨天涨停 & 前天不涨停\n                    sb = list(set(zt_stocks) & set(zt_prev) - set(zt_prev2))\n                    print(f\"  二板候选: {len(sb)}只\")\n\n                    if len(sb) > 0:\n                        # 测试第一个二板\n                        test_stock = sb[0]\n                        next_date_idx = dates.index(date) + 1\n                        next_date = (\n                            dates[next_date_idx] if next_date_idx < len(dates) else None\n                        )\n\n                        if next_date:\n                            next_bars = history_bars(\n                                test_stock,\n                                1,\n                                \"1d\",\n                                \"open,close,limit_up\",\n                                end_date=next_date,\n                            )\n                            if next_bars is not None and len(next_bars) > 0:\n                                open_p = next_bars[0][\"open\"]\n                                close_p = next_bars[0][\"close\"]\n                                limit_p = next_bars[0][\"limit_up\"]\n\n                                # 非涨停开盘\n                                if open_p < limit_p * 0.99:\n                                    buy_p = open_p * 1.005\n                                    profit = (close_p / buy_p - 1) * 100\n                                    results.append(\n                                        {\n                                            \"date\": date.strftime(\"%Y-%m-%d\"),\n                                            \"stock\": test_stock,\n                                            \"profit\": profit,\n                                        }\n                                    )\n                                    print(f\"  ✓ 买入{test_stock}, 收益{profit:.2f}%\")\n            except:\n                pass\n\n    print(\"\\n\" + \"=\" * 70)\n    print(\"测试结果\")\n    print(\"=\" * 70)\n\n    print(f\"平均涨停家数: {np.mean(zt_counts):.1f}只 (样本500只)\")\n    print(f\"估算全市场涨停: {np.mean(zt_counts) * 8:.0f}只\")\n\n    if results:\n        profits = [r[\"profit\"] for r in results]\n        wins = len([p for p in profits if p > 0])\n\n        print(f\"\\n交易次数: {len(results)}\")\n        print(f\"胜率: {wins / len(results) * 100:.1f}%\")\n        print(f\"平均收益: {np.mean(profits):.2f}%\")\n        print(f\"总收益: {sum(profits):.2f}%\")\n\n        print(\"\\n交易详情:\")\n        for r in results:\n            print(f\"  {r['date']} {r['stock']}: {r['profit']:.2f}%\")\n    else:\n        print(\"\\n未找到交易机会\")\n\n    print(\"\\n测试完成\")\n\nexcept Exception as e:\n    print(f\"\\n错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n",
+      "msgId": "25f4da1955514ad6a3148cc7390e03fd",
+      "websocketSessionId": "0085020311554d54a4c1dd479243a877",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "======================================================================\n二板策略 RiceQuant Notebook 测试 - 2024年\n======================================================================\n\n步骤1: 获取交易日\n2024年交易日: 242天\n\n步骤2: 统计涨停家数（每10天测试1次）\n\n处理 2024-01-02 (1/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-01-16 (2/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-01-30 (3/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-02-21 (4/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-03-06 (5/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-03-20 (6/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-04-03 (7/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-04-19 (8/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-05-08 (9/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-05-22 (10/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-06-05 (11/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-06-20 (12/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-07-04 (13/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-07-18 (14/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-08-01 (15/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-08-15 (16/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-08-29 (17/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-09-12 (18/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-09-30 (19/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-10-21 (20/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-11-04 (21/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-11-18 (22/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-12-02 (23/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-12-16 (24/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-12-30 (25/25)\n  涨停: 0只 (样本500只)\n\n======================================================================\n测试结果\n======================================================================\n平均涨停家数: 0.0只 (样本500只)\n估算全市场涨停: 0只\n\n未找到交易机会\n\n测试完成\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "======================================================================\n二板策略 RiceQuant Notebook 测试 - 2024年\n======================================================================\n\n步骤1: 获取交易日\n2024年交易日: 242天\n\n步骤2: 统计涨停家数（每10天测试1次）\n\n处理 2024-01-02 (1/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-01-16 (2/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-01-30 (3/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-02-21 (4/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-03-06 (5/25)\n  涨停: 0只 (样本500只)\n\n处理 2024-03-20 (6/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-04-03 (7/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-04-19 (8/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-05-08 (9/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-05-22 (10/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-06-05 (11/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-06-20 (12/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-07-04 (13/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-07-18 (14/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-08-01 (15/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-08-15 (16/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-08-29 (17/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-09-12 (18/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-09-30 (19/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-10-21 (20/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-11-04 (21/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-11-18 (22/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-12-02 (23/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-12-16 (24/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n处理 2024-12-30 (25/25)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  涨停: 0只 (样本500只)\n\n======================================================================\n测试结果\n======================================================================\n平均涨停家数: 0.0只 (样本500只)\n估算全市场涨停: 0只\n\n未找到交易机会\n\n测试完成\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "561b1468-475d-48a3-9412-a2db5b09c394",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/561b1468-475d-48a3-9412-a2db5b09c394: "
+  },
+  "autoShutdown": true
+}

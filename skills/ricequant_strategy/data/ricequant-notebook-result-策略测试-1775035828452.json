@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-01T09:30:28.452Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_173024.ipynb",
+  "notebookPath": "策略测试_20260401_173024.ipynb",
+  "kernelId": "5e2c659e-0672-4603-922e-fb9d772bec39",
+  "sessionId": "95c9b000-f69c-4127-91d4-6599877291e5",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_173024.ipynb",
+    "path": "策略测试_20260401_173024.ipynb",
+    "last_modified": "2026-04-01T09:30:27.983536Z",
+    "created": "2026-04-01T09:30:27.984536Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 3366,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n纯现金防守策略 - RiceQuant Notebook版本\n策略类型: 防守型\n复杂度: 最简单（验证基础功能）\n测试目的: 验证米筐基本回测框架\n\n策略逻辑:\n- 100% 现金（不投资任何资产）\n- 作为零风险的绝对基准\n\"\"\"\n\nprint(\"=\" * 60)\nprint(\"纯现金防守策略 - RiceQuant测试\")\nprint(\"=\" * 60)\n\ntry:\n    print(\"\\n测试1: 验证基本API\")\n\n    print(f\"当前时间: {context.now}\")\n    print(f\"总资产: {context.portfolio.total_value:.2f}\")\n    print(f\"可用现金: {context.portfolio.cash:.2f}\")\n\n    print(\"\\n测试2: 验证持仓信息\")\n    positions = context.portfolio.positions\n    print(f\"持仓数量: {len(positions)}\")\n\n    if len(positions) == 0:\n        print(\"持仓状态: 100%现金 ✓\")\n    else:\n        print(\"持仓状态: 有持仓（需清仓）\")\n        for stock, pos in positions.items():\n            print(f\"  {stock}: {pos.quantity}股\")\n\n    print(\"\\n测试3: 计算收益率\")\n    starting_cash = 1000000\n    returns = (context.portfolio.total_value / starting_cash - 1) * 100\n    print(f\"初始资金: {starting_cash:.0f}\")\n    print(f\"当前总资产: {context.portfolio.total_value:.2f}\")\n    print(f\"收益率: {returns:.2f}%\")\n\n    print(\"\\n\" + \"=\" * 60)\n    print(\"✓ 纯现金防守策略测试完成\")\n    print(\"验证结论:\")\n    print(\"  1. 基本API可用 ✓\")\n    print(\"  2. 现金持有正常 ✓\")\n    print(\"  3. 收益率计算正确 ✓\")\n    print(\"=\" * 60)\n\nexcept Exception as e:\n    print(f\"\\n错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n",
+      "msgId": "1dc1d0088ae84ef083812583cfe84bb3",
+      "websocketSessionId": "ccd15d11a65d42c8bb38a6be0c4b41b1",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "============================================================\n纯现金防守策略 - RiceQuant测试\n============================================================\n\n测试1: 验证基本API\n\n错误: name 'context' is not defined\nTraceback (most recent call last):\n  File \"<ipython-input-1-38e67ce1c82b>\", line 19, in <module>\n    print(f\"当前时间: {context.now}\")\nNameError: name 'context' is not defined\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "============================================================\n纯现金防守策略 - RiceQuant测试\n============================================================\n\n测试1: 验证基本API\n\n错误: name 'context' is not defined\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-38e67ce1c82b>\", line 19, in <module>\n    print(f\"当前时间: {context.now}\")\nNameError: name 'context' is not defined\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "95c9b000-f69c-4127-91d4-6599877291e5",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/95c9b000-f69c-4127-91d4-6599877291e5: "
+  },
+  "autoShutdown": true
+}

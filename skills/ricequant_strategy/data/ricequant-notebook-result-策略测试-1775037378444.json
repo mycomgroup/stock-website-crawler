@@ -1,0 +1,62 @@
+{
+  "capturedAt": "2026-04-01T09:56:18.444Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_175609.ipynb",
+  "notebookPath": "策略测试_20260401_175609.ipynb",
+  "kernelId": "0d2f1d28-5b13-40f4-986d-66442880ce09",
+  "sessionId": "f480620e-cbf5-4851-8834-a54703d3d6dc",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_175609.ipynb",
+    "path": "策略测试_20260401_175609.ipynb",
+    "last_modified": "2026-04-01T09:56:16.811399Z",
+    "created": "2026-04-01T09:56:16.812399Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 8583,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\nRFScore7 + PB 简化测试 - 米筐 Notebook 版本\n\n先测试 API 是否正常工作\n\"\"\"\n\nimport numpy as np\nimport pandas as pd\nfrom datetime import datetime\n\nprint(\"=\" * 70)\nprint(\"RFScore7 + PB API 测试 (米筐)\")\nprint(\"运行时间:\", datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\"))\nprint(\"=\" * 70)\n\n# 测试 1: 获取指数成分股\nprint(\"\\n【测试1】获取指数成分股\")\ntry:\n    hs300 = index_components(\"000300.XSHG\")\n    print(f\"  沪深300成分股数量: {len(hs300)}\")\n    print(f\"  示例: {hs300[:5]}\")\nexcept Exception as e:\n    print(f\"  错误: {e}\")\n\n# 测试 2: 获取历史数据\nprint(\"\\n【测试2】获取历史数据\")\ntry:\n    stock = hs300[0] if hs300 else \"000001.XSHE\"\n    bars = history_bars(stock, 20, \"1d\", [\"close\", \"volume\"], include_now=True)\n    if bars is not None:\n        print(f\"  {stock} 最近5天数据:\")\n        for i, bar in enumerate(bars[-5:]):\n            print(\n                f\"    Day {i + 1}: close={bar['close']:.2f}, volume={bar['volume']:.0f}\"\n            )\n    else:\n        print(\"  无数据\")\nexcept Exception as e:\n    print(f\"  错误: {e}\")\n\n# 测试 3: 获取财务因子\nprint(\"\\n【测试3】获取财务因子 (get_fundamentals)\")\ntry:\n    test_stocks = hs300[:5] if hs300 else [\"000001.XSHE\"]\n\n    for stock in test_stocks:\n        try:\n            # 获取 PE/PB\n            pe_data = get_fundamentals(\n                query(\n                    fundamentals.eod_derivative_indicator.pe_ratio,\n                    fundamentals.eod_derivative_indicator.pb_ratio,\n                ).filter(fundamentals.stockcode == stock),\n                \"2025-03-28\",\n            )\n            if pe_data is not None and not pe_data.empty:\n                pe = (\n                    pe_data[\"pe_ratio\"].iloc[0]\n                    if \"pe_ratio\" in pe_data.columns\n                    else \"N/A\"\n                )\n                pb = (\n                    pe_data[\"pb_ratio\"].iloc[0]\n                    if \"pb_ratio\" in pe_data.columns\n                    else \"N/A\"\n                )\n                print(f\"  {stock}: PE={pe}, PB={pb}\")\n            else:\n                print(f\"  {stock}: 无数据\")\n        except Exception as e:\n            print(f\"  {stock}: 错误 - {e}\")\nexcept Exception as e:\n    print(f\"  错误: {e}\")\n\n# 测试 4: 获取 ROE/ROA\nprint(\"\\n【测试4】获取 ROE/ROA (get_fundamentals)\")\ntry:\n    for stock in test_stocks[:2]:\n        try:\n            roe_data = get_fundamentals(\n                query(\n                    fundamentals.financial_indicator.roe,\n                    fundamentals.financial_indicator.roa,\n                ).filter(fundamentals.stockcode == stock),\n                \"2025-03-28\",\n            )\n            if roe_data is not None and not roe_data.empty:\n                roe = roe_data[\"roe\"].iloc[0] if \"roe\" in roe_data.columns else \"N/A\"\n                roa = roe_data[\"roa\"].iloc[0] if \"roa\" in roe_data.columns else \"N/A\"\n                print(f\"  {stock}: ROE={roe}, ROA={roa}\")\n            else:\n                print(f\"  {stock}: 无数据\")\n        except Exception as e:\n            print(f\"  {stock}: 错误 - {e}\")\nexcept Exception as e:\n    print(f\"  错误: {e}\")\n\n# 测试 5: 计算市场宽度\nprint(\"\\n【测试5】计算市场宽度\")\ntry:\n    test_count = 30\n    above_ma20 = 0\n    valid = 0\n\n    for stock in hs300[:test_count]:\n        try:\n            bars = history_bars(stock, 20, \"1d\", \"close\", include_now=True)\n            if bars is not None and len(bars) >= 20:\n                ma20 = np.mean(bars)\n                if bars[-1] > ma20:\n                    above_ma20 += 1\n                valid += 1\n        except:\n            continue\n\n    breadth = above_ma20 / valid if valid > 0 else 0.5\n    print(f\"  测试股票数: {valid}\")\n    print(f\"  MA20上方: {above_ma20}\")\n    print(f\"  市场宽度: {breadth:.2%}\")\nexcept Exception as e:\n    print(f\"  错误: {e}\")\n\n# 测试 6: 沪深300趋势\nprint(\"\\n【测试6】沪深300趋势\")\ntry:\n    idx_bars = history_bars(\"000300.XSHG\", 20, \"1d\", \"close\", include_now=True)\n    if idx_bars is not None and len(idx_bars) >= 20:\n        ma20 = np.mean(idx_bars)\n        current = idx_bars[-1]\n        trend = \"向上\" if current > ma20 else \"向下\"\n        print(f\"  当前价: {current:.2f}\")\n        print(f\"  MA20: {ma20:.2f}\")\n        print(f\"  趋势: {trend}\")\n    else:\n        print(\"  数据不足\")\nexcept Exception as e:\n    print(f\"  错误: {e}\")\n\nprint(\"\\n\" + \"=\" * 70)\nprint(\"测试完成!\")\nprint(\"=\" * 70)\n",
+      "msgId": "ea85837c01ec4d0fbd863629dd361534",
+      "websocketSessionId": "eda79546310747308af2f9c5da2e1b33",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "======================================================================\nRFScore7 + PB API 测试 (米筐)\n运行时间: 2026-04-01 17:56:13\n======================================================================\n\n【测试1】获取指数成分股\n  沪深300成分股数量: 300\n  示例: ['601336.XSHG', '688126.XSHG', '600958.XSHG', '688082.XSHG', '300628.XSHE']\n\n【测试2】获取历史数据\n  错误: name 'history_bars' is not defined\n\n【测试3】获取财务因子 (get_fundamentals)\n  601336.XSHG: 错误 - Can't find get_fundamentals.\n  688126.XSHG: 错误 - Can't find get_fundamentals.\n  600958.XSHG: 错误 - Can't find get_fundamentals.\n  688082.XSHG: 错误 - Can't find get_fundamentals.\n  300628.XSHE: 错误 - Can't find get_fundamentals.\n\n【测试4】获取 ROE/ROA (get_fundamentals)\n  601336.XSHG: 错误 - type object 'AnaStkFinIdx' has no attribute 'roe'\n  688126.XSHG: 错误 - type object 'AnaStkFinIdx' has no attribute 'roe'\n\n【测试5】计算市场宽度\n  测试股票数: 0\n  MA20上方: 0\n  市场宽度: 50.00%\n\n【测试6】沪深300趋势\n  错误: name 'history_bars' is not defined\n\n======================================================================\n测试完成!\n======================================================================\n/usr/local/lib/python3.6/site-packages/ipykernel_launcher.py:54: UserWarning: 'get_fundamentals' is deprecated, and will be removed soon. use get_factor instead.\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "======================================================================\nRFScore7 + PB API 测试 (米筐)\n运行时间: 2026-04-01 17:56:13\n======================================================================\n\n【测试1】获取指数成分股\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  沪深300成分股数量: 300\n  示例: ['601336.XSHG', '688126.XSHG', '600958.XSHG', '688082.XSHG', '300628.XSHE']\n\n【测试2】获取历史数据\n  错误: name 'history_bars' is not defined\n\n【测试3】获取财务因子 (get_fundamentals)\n  601336.XSHG: 错误 - Can't find get_fundamentals.\n  688126.XSHG: 错误 - Can't find get_fundamentals.\n  600958.XSHG: 错误 - Can't find get_fundamentals.\n  688082.XSHG: 错误 - Can't find get_fundamentals.\n  300628.XSHE: 错误 - Can't find get_fundamentals.\n\n【测试4】获取 ROE/ROA (get_fundamentals)\n  601336.XSHG: 错误 - type object 'AnaStkFinIdx' has no attribute 'roe'\n  688126.XSHG: 错误 - type object 'AnaStkFinIdx' has no attribute 'roe'\n\n【测试5】计算市场宽度\n  测试股票数: 0\n  MA20上方: 0\n  市场宽度: 50.00%\n\n【测试6】沪深300趋势\n  错误: name 'history_bars' is not defined\n\n======================================================================\n测试完成!\n======================================================================\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "/usr/local/lib/python3.6/site-packages/ipykernel_launcher.py:54: UserWarning: 'get_fundamentals' is deprecated, and will be removed soon. use get_factor instead.\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "f480620e-cbf5-4851-8834-a54703d3d6dc",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/f480620e-cbf5-4851-8834-a54703d3d6dc: "
+  },
+  "autoShutdown": true
+}

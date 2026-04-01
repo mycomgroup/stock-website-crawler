@@ -95,11 +95,18 @@ cat output/joinquant-notebook-result-*.json
 cat data/ricequant-notebook-result-*.json
 ```
 
-## 平台选择快速判断
+## 四阶段流程快速判断（重要）⭐
 
-- **首次验证策略** → JoinQuant Notebook
-- **因子简单** → RiceQuant Notebook（Session 自动管理）
-- **因子复杂** → JoinQuant Notebook（因子库丰富）
-- **精确回测** → 策略编辑器
+| 阶段 | 场景 | 推荐平台 | 原因 |
+|------|------|---------|------|
+| **阶段1** | 初步调研探索 | JoinQuant Notebook | 快速试错，无限制 |
+| **阶段2** | 新策略（简单因子）⭐ | **RiceQuant Notebook** | Session自动，减少迁移成本 |
+| **阶段3** | 完整策略 ⭐ | **RiceQuant 策略编辑器** | 完整回测框架 |
+| **阶段4** | 成熟策略 | JoinQuant Strategy | 最终精确验证 |
+
+**默认优先流程（新策略）：**
+```
+RiceQuant Notebook（阶段2） → RiceQuant 策略编辑器（阶段3） → JoinQuant Strategy（阶段4）
+```
 
 完整文档请查看 [README.md](README.md)

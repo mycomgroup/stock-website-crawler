@@ -125,15 +125,15 @@ node run-strategy.js --strategy your_strategy.py --timeout-ms 300000  # 5分钟
 node run-strategy.js --strategy your_strategy.py --timeout-ms 600000  # 10分钟
 ```
 
-**6. 查看和解读结果**
+**6. 查看和解读结果（根据阶段）**
 
-运行后查看结果文件：
-- JoinQuant: `cat output/joinquant-notebook-result-*.json`
-- RiceQuant: `cat data/ricequant-notebook-result-*.json`
+- JoinQuant Notebook: `cat output/joinquant-notebook-result-*.json`
+- RiceQuant Notebook: `cat data/ricequant-notebook-result-*.json`
+- RiceQuant 策略编辑器: `node fetch-report.js --id <backtestId> --full`
 
-请解读输出内容：
-- 如果看到 "执行成功" 且有 print 输出，说明策略运行正确
-- 如果看到 API 未定义错误，说明策略格式不对或需要在平台环境运行
+**结果解读：**
+- Notebook：看 print 输出内容，有输出说明运行成功
+- 策略编辑器：看风险指标（年化收益、夏普比率、最大回撤等）
 - 如果超时，增加 timeout-ms 参数重新运行
 
 **7. 故障排查**
@@ -352,13 +352,27 @@ print("=== 测试完成 ===")
 
 ## 使用建议
 
-1. **首次运行策略**：使用"标准提示词"
-2. **快速运行已知策略**：使用"精简提示词"
-3. **运行特定平台策略**：使用对应平台提示词
-4. **精确回测（推荐）**：使用"RiceQuant 策略编辑器提示词"
-5. **快速验证逻辑**：使用"RiceQuant Notebook 提示词"
-6. **转换策略格式**：使用"策略转换提示词"
-7. **跨平台迁移**：使用"迁移提示词"
+**根据策略开发阶段选择提示词：**
+
+| 阶段 | 场景 | 推荐提示词 |
+|------|------|-----------|
+| **阶段1** | 初步调研探索 | "标准提示词" 或 "JoinQuant Notebook 提示词" |
+| **阶段2** | 新策略开发（简单因子） | **"标准提示词"（重点）** 或 "RiceQuant Notebook 提示词" ⭐ |
+| **阶段3** | 完整策略回测 | **"标准提示词"（重点）** 或 "RiceQuant 策略编辑器提示词" ⭐ |
+| **阶段4** | 最终验证 | "JoinQuant Strategy 提示词"（待完善） |
+
+**典型使用流程：**
+```
+新策略（简单因子）：
+  1. 用"标准提示词" → RiceQuant Notebook（阶段2）
+  2. 效果好 → 用"RiceQuant 策略编辑器提示词"（阶段3）
+  3. 成熟后 → JoinQuant Strategy 最终验证（阶段4）
+
+复杂因子策略：
+  1. 用"JoinQuant Notebook 提示词"（阶段1）
+  2. 继续在 JoinQuant Notebook 开发
+  3. 成熟后 → JoinQuant Strategy 最终验证（阶段4）
+```
 
 请根据实际需求选择合适的提示词。
 
@@ -366,21 +380,38 @@ print("=== 测试完成 ===")
 
 ## 重要提醒
 
-**Notebook 回测成功率关键因素：**
+**四阶段策略开发流程（关键）：**
 
-1. **策略格式**：必须是 Notebook 格式，不是策略编辑器格式
-2. **平台 API**：使用正确的平台 API 格式
-3. **超时时间**：复杂策略需要足够的超时时间
-4. **print 输出**：必须有 print 才能看到结果
-5. **Session 管理**：JoinQuant 需要手动抓取，RiceQuant 自动管理
+```
+阶段1（初步调研）: JoinQuant Notebook → 探索验证
+阶段2（新策略开发）: RiceQuant Notebook → 快速开发（推荐）⭐
+阶段3（完整回测）: RiceQuant 策略编辑器 → 完整回测（推荐）⭐
+阶段4（最终验证）: JoinQuant Strategy → 最终验证
+```
 
-**策略编辑器回测成功率关键因素：**
+**默认优先选择（新策略）：**
+- 简单因子新策略 → **RiceQuant Notebook**（阶段2）
+- 完整策略 → **RiceQuant 策略编辑器**（阶段3）
+- 成熟策略 → **JoinQuant Strategy**（阶段4）
 
-1. **策略格式**：必须是策略编辑器格式（init + handle_bar）
-2. **定时任务**：scheduler.run_monthly 可能不触发，建议用 handle_bar 手动判断
-3. **下单位置**：不能在 init() 中下单，只能在 handle_bar 或其他函数中下单
-4. **全局变量**：使用 context.xxx 存储
-5. **实时数据**：通过 bar_dict 参数获取
-6. **Session 管理**：RiceQuant 自动管理（有效期 7 天）
+**关键成功因素：**
 
-**请务必检查以上因素后再运行。**
+**阶段1-2（Notebook）：**
+1. 策略格式：Notebook格式（直接执行 + print）
+2. 平台 API：使用正确的平台 API 格式
+3. 超时时间：复杂策略增加 timeout-ms
+4. print 输出：必须有 print 才能看到结果
+5. Session 管理：JoinQuant 手动抓取，RiceQuant 自动管理
+
+**阶段3（RiceQuant 策略编辑器）：**
+1. 策略格式：策略编辑器格式（init + handle_bar）
+2. 定时任务：scheduler 可能不触发，建议用 handle_bar 手动判断月份
+3. 下单位置：不能在 init() 中下单
+4. 全局变量：使用 context.xxx 存储
+5. 实时数据：通过 bar_dict 参数获取
+
+**阶段4（JoinQuant Strategy）：**
+1. 策略格式：策略编辑器格式（initialize + handle_data）
+2. 直接在网页平台运行，最权威验证
+
+**请务必按四阶段流程运行，不要只停留在阶段1。**

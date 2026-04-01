@@ -1,7 +1,7 @@
 """
 首板低开策略 Notebook 回测 - JoinQuant
 
-验证范围：2024-07-01 至 2025-03-31（历史期）
+验证范围：2026-01-01 至 2026-03-31（最新期）
 """
 
 print("=" * 80)
@@ -12,10 +12,12 @@ from jqdata import *
 import pandas as pd
 import numpy as np
 
-PERIOD_START = "2026-01-01"
+PERIOD_START = "2025-04-01"
 PERIOD_END = "2026-03-31"
 
 print(f"\n验证范围: {PERIOD_START} 至 {PERIOD_END} (最新期)")
+print("筛选条件：市值5-15亿，位置≤30%，开盘涨跌幅-2%~+1.5%")
+print("注意：由于筛选条件严格，信号可能很少\n")
 
 trading_dates = get_trade_days(PERIOD_START, PERIOD_END)
 print(f"交易日数: {len(trading_dates)}")
@@ -30,43 +32,63 @@ for i, date in enumerate(trading_dates):
     if i % 20 == 0:
         print(f"进度: {i}/{len(trading_dates)} ({date})")
 
-prev_dates = get_trade_days(end_date=date, count=2)
+    prev_dates = get_trade_days(end_date=date, count=2)
     if len(prev_dates) < 2:
         continue
-    
+
     prev_date = prev_dates[0]
-    
+
     all_stocks = get_all_securities(types=["stock"], date=date)
-    stocks_list = [s for s in all_stocks.index.tolist() 
-                   if not (s.startswith("688") or s.startswith("300") or 
-                          s.startswith("4") or s.startswith("8"))]
-    
-    df_zt = get_price(stocks_list, end_date=prev_date, frequency="daily",
-                      fields=["close", "high_limit"], count=1, panel=False)
-    
+    stocks_list = [
+        s
+        for s in all_stocks.index.tolist()
+        if not (
+            s.startswith("688")
+            or s.startswith("300")
+            or s.startswith("4")
+            or s.startswith("8")
+        )
+    ]
+
+    df_zt = get_price(
+        stocks_list,
+        end_date=prev_date,
+        frequency="daily",
+        fields=["close", "high_limit"],
+        count=1,
+        panel=False,
+    )
+
     df_zt = df_zt.dropna()
     zt_df = df_zt[df_zt["close"] == df_zt["high_limit"]]
     zt_stocks = zt_df["code"].tolist()
-    
+
     total_zt += len(zt_stocks)
-    
+
     if not zt_stocks:
         continue
-    
+
     prev_prev_dates = get_trade_days(end_date=prev_date, count=2)
+
     if len(prev_prev_dates) < 2:
-        total_fb += len(zt_stocks)
         first_board = zt_stocks
+        total_fb += len(first_board)
     else:
         prev_prev_date = prev_prev_dates[0]
-        
-        df_prev_zt = get_price(zt_stocks, end_date=prev_prev_date, frequency="daily",
-                                fields=["close", "high_limit"], count=1, panel=False)
-        
+
+        df_prev_zt = get_price(
+            zt_stocks,
+            end_date=prev_prev_date,
+            frequency="daily",
+            fields=["close", "high_limit"],
+            count=1,
+            panel=False,
+        )
+
         df_prev_zt = df_prev_zt.dropna()
         prev_zt_df = df_prev_zt[df_prev_zt["close"] == df_prev_zt["high_limit"]]
         prev_zt_stocks = prev_zt_df["code"].tolist()
-        
+
         first_board = [s for s in zt_stocks if s not in prev_zt_stocks]
         total_fb += len(first_board)
 
