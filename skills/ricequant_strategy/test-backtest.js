@@ -104,7 +104,7 @@ async function runBacktest(codeFile, startDate, endDate, capital) {
     let status = 'running';
     let attempts = 0;
     
-    while (status === 'running' && attempts < 60) {
+    while (status === 'running' && attempts < 200) {
       await new Promise(r => setTimeout(r, 3000));
       attempts++;
       

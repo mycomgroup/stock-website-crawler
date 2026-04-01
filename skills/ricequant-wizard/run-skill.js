@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { WizardClient } from './request/wizard-client.js';
 import { validateWizardConfig, normalizeConfig } from './lib/config-validator.js';
 import { EXAMPLES_DIR, DATA_DIR } from './paths.js';
+import { getAllFactorsFlat, OPERATORS, TEMPLATES, ST_OPTIONS, DEFAULT_UNIVERSES } from './lib/factor-definitions.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -276,8 +277,6 @@ function validateConfig(args) {
 }
 
 function listFactors() {
-  const { getAllFactorsFlat, OPERATORS, TEMPLATES, ST_OPTIONS, DEFAULT_UNIVERSES } = 
-    require('./lib/factor-definitions.js');
   
   const factors = getAllFactorsFlat();
   

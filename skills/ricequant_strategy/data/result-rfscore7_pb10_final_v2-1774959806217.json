@@ -1,0 +1,40 @@
+{
+  "strategyId": 2416466,
+  "backtestId": "7963283",
+  "strategyName": "rfscore7_pb10_final_v2",
+  "startDate": "2023-01-01",
+  "endDate": "2023-06-30",
+  "capital": "100000",
+  "status": "running",
+  "info": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "running",
+    "summary": null,
+    "create_at": "2026-03-31T20:20:21.875000",
+    "start_at": "2026-03-31T20:20:25.752000",
+    "progress": 0.5084745762711864,
+    "backtest_id": "7963283",
+    "description": "",
+    "strategy_id": 2416466,
+    "title": "Backtest_1774959621500",
+    "account_type": "stock",
+    "end_at": null,
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1680507000000,
+    "trading_date": 20230403,
+    "alpha": -0.019162,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.13626856417932343,
+    "annual_downside_risk": 0
+  },
+  "timestamp": "2026-03-31T12:23:26.218Z"
+}

@@ -1,0 +1,48 @@
+{
+  "backtestId": "7963355",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-03-31T20:54:28.720000",
+    "start_at": "2026-03-31T20:54:33.655000",
+    "progress": 1,
+    "backtest_id": "7963355",
+    "description": "",
+    "strategy_id": 2416292,
+    "title": "fengzhi",
+    "account_type": "stock",
+    "end_at": "2026-03-31T20:55:03.668000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1735630200000,
+    "trading_date": 20241231,
+    "alpha": 0.0015835734474852758,
+    "beta": 0.9684771143600357,
+    "sharpe": 0.6363993890253143,
+    "sortino": 0.9655462742917137,
+    "information_ratio": 0.02281012764475386,
+    "annual_volatility": 0.22922615134291818,
+    "max_drawdown": 0.20741920554047286,
+    "annual_tracking_error": 0.09844303931362541,
+    "annual_downside_risk": 0.1510848175249484
+  },
+  "summary": {
+    "timestamp": 1735630200000,
+    "trading_date": 20241231,
+    "alpha": 0.0015835734474852758,
+    "beta": 0.9684771143600357,
+    "sharpe": 0.6363993890253143,
+    "sortino": 0.9655462742917137,
+    "information_ratio": 0.02281012764475386,
+    "annual_volatility": 0.22922615134291818,
+    "max_drawdown": 0.20741920554047286,
+    "annual_tracking_error": 0.09844303931362541,
+    "annual_downside_risk": 0.1510848175249484
+  },
+  "logs": [],
+  "exception": null
+}

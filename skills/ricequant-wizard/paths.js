@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -14,7 +15,8 @@ export const FACTOR_CATALOG_FILE = path.join(SHARED_DIR, 'factor-catalog.json');
 
 export const RICEQUANT_STRATEGY_SESSION = path.join(
   ROOT_DIR, 
-  '..', ', 
+  '..', 
+  'ricequant_strategy', 
   'data', 
   'session.json'
 );
@@ -25,5 +27,3 @@ export function ensureDir(filePath) {
     fs.mkdirSync(dir, { recursive: true });
   }
 }
-
-import fs from 'node:fs';

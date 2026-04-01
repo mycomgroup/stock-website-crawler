@@ -1,0 +1,196 @@
+{
+  "capturedAt": "2026-03-31T12:14:25.981Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260331_201356.ipynb",
+  "notebookPath": "策略测试_20260331_201356.ipynb",
+  "kernelId": "52b892ee-c92c-4217-8e9c-c1690494bc4d",
+  "sessionId": "c7bb495c-d915-4400-9d9b-c352e196fb4d",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260331_201356.ipynb",
+    "path": "策略测试_20260331_201356.ipynb",
+    "last_modified": "2026-03-31T12:14:25.979050Z",
+    "created": "2026-03-31T12:14:25.980051Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 20365,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n影子策略回测 - 10年验证 (RiceQuant Notebook 版本)\n\n回测时间范围：2014-01-01 至 2024-12-31（10年）\n初始资金：100000\n\n策略：\n1. 主线策略：假弱高开 + 情绪开关\n2. 观察线策略：二板策略\n\n运行方式：\ncd skills/ricequant_strategy\nnode run-strategy.js --strategy ../../strategies/shadow_strategies_20260330/backtest_10years_rq.py --timeout-ms 600000\n\"\"\"\n\nimport numpy as np\nimport pandas as pd\n\nprint(\"=\" * 80)\nprint(\"影子策略 10年回测 - RiceQuant Notebook\")\nprint(\"=\" * 80)\nprint(f\"回测时间: 2014-01-01 至 2024-12-31\")\nprint(f\"初始资金: 100000\")\nprint(\"=\" * 80)\n\nSTRATEGY_MODE = \"mainline\"\n\nMAINLINE_PARAMS = {\n    \"market_cap_min\": 50,\n    \"market_cap_max\": 150,\n    \"position_limit\": 0.30,\n    \"emotion_threshold\": 30,\n    \"open_change_min\": 0.001,\n    \"open_change_max\": 0.03,\n    \"sell_profit_threshold\": 0.03,\n}\n\nOBSERVATION_PARAMS = {\n    \"board_count\": 2,\n}\n\n\ndef get_all_stocks_list():\n    \"\"\"获取所有A股股票列表\"\"\"\n    try:\n        instruments = all_instruments(type=\"CS\")\n        return list(instruments.order_book_id)\n    except Exception as e:\n        print(f\"all_instruments获取失败: {e}\")\n        try:\n            hs300 = index_components(\"000300.XSHG\")\n            zz500 = index_components(\"000905.XSHG\")\n            combined = list(set(hs300 + zz500))\n            print(f\"使用沪深300+中证500替代，共{len(combined)}只\")\n            return combined\n        except Exception as e2:\n            print(f\"获取指数成分股也失败: {e2}\")\n            return []\n\n\ndef get_price_on_date(stock, date, fields=[\"close\"]):\n    \"\"\"获取指定日期的价格数据\"\"\"\n    try:\n        df = get_price(\n            stock, start_date=date, end_date=date, frequency=\"1d\", fields=fields\n        )\n        if df is not None and len(df) > 0:\n            return df\n        return None\n    except:\n        return None\n\n\ndef get_prev_trading_date(date, trading_dates):\n    \"\"\"获取前一个交易日\"\"\"\n    date_str = str(date)[:10] if hasattr(date, \"__str__\") else date\n    for i, d in enumerate(trading_dates):\n        d_str = str(d)[:10]\n        if d_str == date_str and i > 0:\n            return str(trading_dates[i - 1])[:10]\n    return None\n\n\ndef get_limit_up_count(date, stock_list, trading_dates, max_count=200):\n    \"\"\"获取涨停股票数量\"\"\"\n    limit_up_count = 0\n    tested = 0\n    prev_date = get_prev_trading_date(date, trading_dates)\n\n    if prev_date is None:\n        print(f\"[{date}] 无法获取前一交易日\")\n        return 0\n\n    for stock in stock_list[:max_count]:\n        try:\n            curr_df = get_price_on_date(stock, date, [\"close\"])\n            prev_df = get_price_on_date(stock, prev_date, [\"close\"])\n\n            if curr_df is not None and prev_df is not None:\n                curr_close = curr_df[\"close\"].iloc[0]\n                prev_close = prev_df[\"close\"].iloc[0]\n\n                if prev_close > 0:\n                    pct_change = (curr_close - prev_close) / prev_close\n                    if pct_change >= 0.095:\n                        limit_up_count += 1\n                    tested += 1\n        except:\n            continue\n\n    print(f\"[{date}] 涨停统计: 测试{tested}只, 涨停{limit_up_count}只\")\n    return limit_up_count\n\n\ndef is_fake_weak_high_open(stock, date, trading_dates):\n    \"\"\"判断是否为假弱高开\"\"\"\n    try:\n        prev_date = get_prev_trading_date(date, trading_dates)\n        if prev_date is None:\n            return False\n\n        curr_df = get_price_on_date(stock, date, [\"close\", \"open\", \"high\"])\n        prev_df = get_price_on_date(stock, prev_date, [\"close\"])\n\n        if curr_df is None or prev_df is None:\n            return False\n\n        prev_close = prev_df[\"close\"].iloc[0]\n        open_price = curr_df[\"open\"].iloc[0]\n        high_price = curr_df[\"high\"].iloc[0]\n\n        if prev_close <= 0:\n            return False\n\n        open_change = (open_price - prev_close) / prev_close\n\n        if (\n            open_change <= MAINLINE_PARAMS[\"open_change_min\"]\n            or open_change >= MAINLINE_PARAMS[\"open_change_max\"]\n        ):\n            return False\n\n        if high_price > open_price:\n            return True\n\n        return False\n    except:\n        return False\n\n\ndef get_stock_market_cap(stock, date):\n    \"\"\"获取市值（亿元）\"\"\"\n    try:\n        factor_data = get_factor(stock, \"market_cap\", start_date=date, end_date=date)\n        if factor_data is not None and len(factor_data) > 0:\n            return float(factor_data.iloc[0]) / 1e8\n        return None\n    except:\n        return None\n\n\ndef has_consecutive_boards(stock, date, trading_dates):\n    \"\"\"判断是否有连板（简化版：检查最近2天是否有涨停）\"\"\"\n    try:\n        dates = []\n        for d in trading_dates:\n            d_str = str(d)[:10]\n            if d_str <= date:\n                dates.append(d_str)\n\n        if len(dates) < 3:\n            return False\n\n        recent_dates = dates[-3:]\n\n        for i in range(len(recent_dates) - 1):\n            curr_df = get_price_on_date(stock, recent_dates[i + 1], [\"close\"])\n            prev_df = get_price_on_date(stock, recent_dates[i], [\"close\"])\n\n            if curr_df is not None and prev_df is not None:\n                curr_close = curr_df[\"close\"].iloc[0]\n                prev_close = prev_df[\"close\"].iloc[0]\n\n                if prev_close > 0:\n                    pct = (curr_close - prev_close) / prev_close\n                    if pct >= 0.095:\n                        return True\n        return False\n    except:\n        return False\n\n\ndef generate_mainline_signals(date, stock_list, trading_dates):\n    \"\"\"生成主线信号\"\"\"\n    limit_up_count = get_limit_up_count(date, stock_list, trading_dates, max_count=100)\n\n    if limit_up_count < MAINLINE_PARAMS[\"emotion_threshold\"]:\n        print(f\"[{date}] 情绪不足: 涨停{limit_up_count}<30, 无信号\")\n        return []\n\n    signals = []\n\n    for stock in stock_list[:80]:\n        try:\n            if is_fake_weak_high_open(stock, date, trading_dates):\n                signals.append({\"stock\": stock, \"signal_type\": \"fake_weak_high_open\"})\n        except:\n            continue\n\n    print(f\"[{date}] 主线信号: {len(signals)}只\")\n    return signals\n\n\ndef generate_observation_signals(date, stock_list, trading_dates):\n    \"\"\"生成观察线信号（简化版）\"\"\"\n    print(f\"[{date}] 观察线策略待实现\")\n    return []\n\n\nprint(\"\\n获取交易日列表...\")\ntry:\n    trading_dates = list(get_trading_dates(\"2014-01-01\", \"2024-12-31\"))\n    print(f\"交易日数量: {len(trading_dates)}\")\nexcept Exception as e:\n    print(f\"获取交易日失败: {e}\")\n    trading_dates = []\n\nprint(\"\\n获取股票列表...\")\nall_stocks = get_all_stocks_list()\nprint(f\"股票总数: {len(all_stocks)}\")\n\nif len(all_stocks) == 0 or len(trading_dates) == 0:\n    print(\"无法获取数据，请确保在 RiceQuant Notebook 环境运行\")\nelse:\n    print(\"\\n开始回测（测试前30个交易日）...\")\n\n    capital = 100000\n    positions = {}\n    trades = []\n    daily_values = []\n\n    test_dates = [str(d)[:10] for d in trading_dates[:30]]\n\n    for i, date in enumerate(test_dates):\n        if STRATEGY_MODE == \"mainline\":\n            signals = generate_mainline_signals(\n                date, all_stocks, [str(d)[:10] for d in trading_dates]\n            )\n        else:\n            signals = generate_observation_signals(\n                date, all_stocks, [str(d)[:10] for d in trading_dates]\n            )\n\n        if signals and len(positions) < 3:\n            signal = signals[0]\n            stock = signal[\"stock\"]\n\n            try:\n                df = get_price_on_date(stock, date, [\"close\"])\n                if df is not None:\n                    price = df[\"close\"].iloc[0]\n                    max_amount = min(100000, capital)\n                    shares = int(max_amount / price / 100) * 100\n\n                    if shares > 0 and capital >= shares * price:\n                        capital -= shares * price\n                        positions[stock] = {\n                            \"buy_date\": date,\n                            \"buy_price\": price,\n                            \"shares\": shares,\n                        }\n                        trades.append(\n                            {\n                                \"date\": date,\n                                \"stock\": stock,\n                                \"action\": \"buy\",\n                                \"price\": price,\n                                \"shares\": shares,\n                            }\n                        )\n                        print(f\"[{date}] 买入 {stock}: 价格{price:.2f}, 数量{shares}\")\n            except Exception as e:\n                print(f\"买入失败: {e}\")\n\n        daily_values.append({\"date\": date, \"value\": capital})\n\n        if (i + 1) % 10 == 0:\n            print(f\"\\n--- 进度: {i + 1}/{len(test_dates)} ---\")\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"回测结果汇总\")\n    print(\"=\" * 80)\n\n    if len(daily_values) > 0:\n        print(f\"最终资产: {capital:.2f}\")\n        print(f\"交易次数: {len([t for t in trades if t['action'] == 'buy'])}\")\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"回测完成\")\n    print(\"=\" * 80)\n",
+      "msgId": "4589b37bd69e494da12a20660bee616b",
+      "websocketSessionId": "e56f7ba005d74221845a7cc2285a0dfd",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n影子策略 10年回测 - RiceQuant Notebook\n================================================================================\n回测时间: 2014-01-01 至 2024-12-31\n初始资金: 100000\n================================================================================\n\n获取交易日列表...\n交易日数量: 2676\n\n获取股票列表...\n股票总数: 5539\n\n开始回测（测试前30个交易日）...\n[2014-01-02] 无法获取前一交易日\n[2014-01-02] 情绪不足: 涨停0<30, 无信号\n[2014-01-03] 涨停统计: 测试92只, 涨停0只\n[2014-01-03] 情绪不足: 涨停0<30, 无信号\n[2014-01-06] 涨停统计: 测试92只, 涨停0只\n[2014-01-06] 情绪不足: 涨停0<30, 无信号\n[2014-01-07] 涨停统计: 测试92只, 涨停1只\n[2014-01-07] 情绪不足: 涨停1<30, 无信号\n[2014-01-08] 涨停统计: 测试92只, 涨停0只\n[2014-01-08] 情绪不足: 涨停0<30, 无信号\n[2014-01-09] 涨停统计: 测试92只, 涨停0只\n[2014-01-09] 情绪不足: 涨停0<30, 无信号\n[2014-01-10] 涨停统计: 测试92只, 涨停1只\n[2014-01-10] 情绪不足: 涨停1<30, 无信号\n[2014-01-13] 涨停统计: 测试92只, 涨停1只\n[2014-01-13] 情绪不足: 涨停1<30, 无信号\n[2014-01-14] 涨停统计: 测试92只, 涨停2只\n[2014-01-14] 情绪不足: 涨停2<30, 无信号\n[2014-01-15] 涨停统计: 测试92只, 涨停0只\n[2014-01-15] 情绪不足: 涨停0<30, 无信号\n\n--- 进度: 10/30 ---\n[2014-01-16] 涨停统计: 测试92只, 涨停2只\n[2014-01-16] 情绪不足: 涨停2<30, 无信号\n[2014-01-17] 涨停统计: 测试92只, 涨停1只\n[2014-01-17] 情绪不足: 涨停1<30, 无信号\n[2014-01-20] 涨停统计: 测试92只, 涨停0只\n[2014-01-20] 情绪不足: 涨停0<30, 无信号\n[2014-01-21] 涨停统计: 测试92只, 涨停1只\n[2014-01-21] 情绪不足: 涨停1<30, 无信号\n[2014-01-22] 涨停统计: 测试92只, 涨停0只\n[2014-01-22] 情绪不足: 涨停0<30, 无信号\n[2014-01-23] 涨停统计: 测试92只, 涨停0只\n[2014-01-23] 情绪不足: 涨停0<30, 无信号\n[2014-01-24] 涨停统计: 测试92只, 涨停1只\n[2014-01-24] 情绪不足: 涨停1<30, 无信号\n[2014-01-27] 涨停统计: 测试92只, 涨停1只\n[2014-01-27] 情绪不足: 涨停1<30, 无信号\n[2014-01-28] 涨停统计: 测试92只, 涨停1只\n[2014-01-28] 情绪不足: 涨停1<30, 无信号\n[2014-01-29] 涨停统计: 测试92只, 涨停1只\n[2014-01-29] 情绪不足: 涨停1<30, 无信号\n\n--- 进度: 20/30 ---\n[2014-01-30] 涨停统计: 测试92只, 涨停2只\n[2014-01-30] 情绪不足: 涨停2<30, 无信号\n[2014-02-07] 涨停统计: 测试92只, 涨停0只\n[2014-02-07] 情绪不足: 涨停0<30, 无信号\n[2014-02-10] 涨停统计: 测试92只, 涨停2只\n[2014-02-10] 情绪不足: 涨停2<30, 无信号\n[2014-02-11] 涨停统计: 测试92只, 涨停0只\n[2014-02-11] 情绪不足: 涨停0<30, 无信号\n[2014-02-12] 涨停统计: 测试92只, 涨停2只\n[2014-02-12] 情绪不足: 涨停2<30, 无信号\n[2014-02-13] 涨停统计: 测试92只, 涨停1只\n[2014-02-13] 情绪不足: 涨停1<30, 无信号\n[2014-02-14] 涨停统计: 测试92只, 涨停0只\n[2014-02-14] 情绪不足: 涨停0<30, 无信号\n[2014-02-17] 涨停统计: 测试92只, 涨停1只\n[2014-02-17] 情绪不足: 涨停1<30, 无信号\n[2014-02-18] 涨停统计: 测试92只, 涨停0只\n[2014-02-18] 情绪不足: 涨停0<30, 无信号\n[2014-02-19] 涨停统计: 测试92只, 涨停1只\n[2014-02-19] 情绪不足: 涨停1<30, 无信号\n\n--- 进度: 30/30 ---\n\n================================================================================\n回测结果汇总\n================================================================================\n最终资产: 100000.00\n交易次数: 0\n\n================================================================================\n回测完成\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n影子策略 10年回测 - RiceQuant Notebook\n================================================================================\n回测时间: 2014-01-01 至 2024-12-31\n初始资金: 100000\n================================================================================\n\n获取交易日列表...\n交易日数量: 2676\n\n获取股票列表...\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票总数: 5539\n\n开始回测（测试前30个交易日）...\n[2014-01-02] 无法获取前一交易日\n[2014-01-02] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-03] 涨停统计: 测试92只, 涨停0只\n[2014-01-03] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-06] 涨停统计: 测试92只, 涨停0只\n[2014-01-06] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-07] 涨停统计: 测试92只, 涨停1只\n[2014-01-07] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-08] 涨停统计: 测试92只, 涨停0只\n[2014-01-08] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-09] 涨停统计: 测试92只, 涨停0只\n[2014-01-09] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-10] 涨停统计: 测试92只, 涨停1只\n[2014-01-10] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-13] 涨停统计: 测试92只, 涨停1只\n[2014-01-13] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-14] 涨停统计: 测试92只, 涨停2只\n[2014-01-14] 情绪不足: 涨停2<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-15] 涨停统计: 测试92只, 涨停0只\n[2014-01-15] 情绪不足: 涨停0<30, 无信号\n\n--- 进度: 10/30 ---\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-16] 涨停统计: 测试92只, 涨停2只\n[2014-01-16] 情绪不足: 涨停2<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-17] 涨停统计: 测试92只, 涨停1只\n[2014-01-17] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-20] 涨停统计: 测试92只, 涨停0只\n[2014-01-20] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-21] 涨停统计: 测试92只, 涨停1只\n[2014-01-21] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-22] 涨停统计: 测试92只, 涨停0只\n[2014-01-22] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-23] 涨停统计: 测试92只, 涨停0只\n[2014-01-23] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-24] 涨停统计: 测试92只, 涨停1只\n[2014-01-24] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-27] 涨停统计: 测试92只, 涨停1只\n[2014-01-27] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-28] 涨停统计: 测试92只, 涨停1只\n[2014-01-28] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-29] 涨停统计: 测试92只, 涨停1只\n[2014-01-29] 情绪不足: 涨停1<30, 无信号\n\n--- 进度: 20/30 ---\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-01-30] 涨停统计: 测试92只, 涨停2只\n[2014-01-30] 情绪不足: 涨停2<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-07] 涨停统计: 测试92只, 涨停0只\n[2014-02-07] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-10] 涨停统计: 测试92只, 涨停2只\n[2014-02-10] 情绪不足: 涨停2<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-11] 涨停统计: 测试92只, 涨停0只\n[2014-02-11] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-12] 涨停统计: 测试92只, 涨停2只\n[2014-02-12] 情绪不足: 涨停2<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-13] 涨停统计: 测试92只, 涨停1只\n[2014-02-13] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-14] 涨停统计: 测试92只, 涨停0只\n[2014-02-14] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-17] 涨停统计: 测试92只, 涨停1只\n[2014-02-17] 情绪不足: 涨停1<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-18] 涨停统计: 测试92只, 涨停0只\n[2014-02-18] 情绪不足: 涨停0<30, 无信号\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "[2014-02-19] 涨停统计: 测试92只, 涨停1只\n[2014-02-19] 情绪不足: 涨停1<30, 无信号\n\n--- 进度: 30/30 ---\n\n================================================================================\n回测结果汇总\n================================================================================\n最终资产: 100000.00\n交易次数: 0\n\n================================================================================\n回测完成\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}
