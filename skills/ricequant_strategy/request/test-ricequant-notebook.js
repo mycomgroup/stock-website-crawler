@@ -337,6 +337,22 @@ async function executeNotebookTest(options = {}) {
   await client.saveNotebook(notebookContent);
   const notebookMetadata = await client.getNotebookMetadata();
 
+  let shutdownResult = null;
+  if (options.autoShutdown !== false) {
+    try {
+      console.log(`Shutting down session: ${session.id}`);
+      shutdownResult = await client.deleteSession(session.id);
+      if (shutdownResult.success) {
+        console.log(`Session ${session.id} shut down successfully`);
+      } else {
+        console.warn(`Failed to shutdown session: ${shutdownResult.error}`);
+      }
+    } catch (error) {
+      console.warn(`Shutdown error: ${error.message}`);
+      shutdownResult = { success: false, sessionId: session.id, error: error.message };
+    }
+  }
+
   const notebookSnapshotPath = client.writeArtifact('ricequant-notebook', notebookContent, 'ipynb');
   const resultPayload = {
     capturedAt: new Date().toISOString(),
@@ -352,7 +368,9 @@ async function executeNotebookTest(options = {}) {
     executions,
     newNotebookCreated,
     reuseNotebook,
-    strategyBaseName
+    strategyBaseName,
+    shutdownResult,
+    autoShutdown: options.autoShutdown !== false
   };
   const resultFile = client.writeArtifact(`ricequant-notebook-result-${notebookBaseName}`, resultPayload, 'json');
 
@@ -369,7 +387,9 @@ async function executeNotebookTest(options = {}) {
     session,
     newNotebookCreated,
     reuseNotebook,
-    strategyBaseName
+    strategyBaseName,
+    shutdownResult,
+    autoShutdown: options.autoShutdown !== false
   };
 }
 
@@ -384,7 +404,8 @@ async function main() {
     cellMarker: args['cell-marker'],
     timeoutMs: args['timeout-ms'],
     kernelName: args['kernel-name'],
-    appendCell: args['append-cell'] === 'false' ? false : true
+    appendCell: args['append-cell'] === 'false' ? false : true,
+    autoShutdown: args['no-shutdown'] ? false : (args['auto-shutdown'] !== 'false')
   });
 
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);

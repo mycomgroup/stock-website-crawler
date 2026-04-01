@@ -136,8 +136,9 @@ function extractTaskNameFromStrategy(strategyPath, cellSource) {
     }
   }
   
+  let taskName = '';
   if (firstLine) {
-    let taskName = firstLine
+    taskName = firstLine
       .replace(/\d{4}年\d{1,2}月\d{1,2}日?/g, '')
       .replace(/\d{4}年\d{1,2}月?/g, '')
       .replace(/\d{4}[\/\-]\d{1,2}[\/\-]?\d{0,2}/g, '')
@@ -147,15 +148,23 @@ function extractTaskNameFromStrategy(strategyPath, cellSource) {
       .replace(/[到至\-~]+\s*\d*/g, '')
       .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '')
       .slice(0, 12);
-    
-    if (taskName.length >= 2) {
-      return taskName;
-    }
   }
   
+  let fileName = '';
   if (strategyPath) {
-    const fileName = path.basename(strategyPath, '.py');
-    return fileName.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').slice(0, 12);
+    fileName = path.basename(strategyPath, '.py');
+  }
+  
+  if (fileName && taskName && taskName.length >= 2) {
+    return `${fileName}_${taskName}`.slice(0, 32);
+  }
+  
+  if (fileName) {
+    return fileName.slice(0, 20);
+  }
+  
+  if (taskName && taskName.length >= 2) {
+    return taskName;
   }
   
   return '策略测试';
@@ -337,6 +346,22 @@ async function executeNotebookTest(options = {}) {
   await client.saveNotebook(notebookContent);
   const notebookMetadata = await client.getNotebookMetadata();
 
+  let shutdownResult = null;
+  if (options.autoShutdown !== false) {
+    try {
+      console.log(`Shutting down session: ${session.id}`);
+      shutdownResult = await client.deleteSession(session.id);
+      if (shutdownResult.success) {
+        console.log(`Session ${session.id} shut down successfully`);
+      } else {
+        console.warn(`Failed to shutdown session: ${shutdownResult.error}`);
+      }
+    } catch (error) {
+      console.warn(`Shutdown error: ${error.message}`);
+      shutdownResult = { success: false, sessionId: session.id, error: error.message };
+    }
+  }
+
   const notebookSnapshotPath = client.writeArtifact('joinquant-notebook', notebookContent, 'ipynb');
   const resultPayload = {
     capturedAt: new Date().toISOString(),
@@ -352,7 +377,9 @@ async function executeNotebookTest(options = {}) {
     executions,
     newNotebookCreated,
     reuseNotebook,
-    strategyBaseName
+    strategyBaseName,
+    shutdownResult,
+    autoShutdown: options.autoShutdown !== false
   };
   const resultFile = client.writeArtifact(`joinquant-notebook-result-${notebookBaseName}`, resultPayload, 'json');
 
@@ -369,7 +396,9 @@ async function executeNotebookTest(options = {}) {
     session,
     newNotebookCreated,
     reuseNotebook,
-    strategyBaseName
+    strategyBaseName,
+    shutdownResult,
+    autoShutdown: options.autoShutdown !== false
   };
 }
 
@@ -384,7 +413,8 @@ async function main() {
     cellMarker: args['cell-marker'],
     timeoutMs: args['timeout-ms'],
     kernelName: args['kernel-name'],
-    appendCell: args['append-cell'] === 'false' ? false : true
+    appendCell: args['append-cell'] === 'false' ? false : true,
+    autoShutdown: args['no-shutdown'] ? false : (args['auto-shutdown'] !== 'false')
   });
 
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);

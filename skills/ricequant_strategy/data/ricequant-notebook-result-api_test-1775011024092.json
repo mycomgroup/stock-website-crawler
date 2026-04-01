@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-04-01T02:37:04.092Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/api_test_20260401_103701.ipynb",
+  "notebookPath": "api_test_20260401_103701.ipynb",
+  "kernelId": "2a332b89-780d-4349-9f9d-360e522bdd5b",
+  "sessionId": "0618ec14-7d20-4ff6-8e24-6d3c14613c57",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "api_test_20260401_103701.ipynb",
+    "path": "api_test_20260401_103701.ipynb",
+    "last_modified": "2026-04-01T02:37:04.093162Z",
+    "created": "2026-04-01T02:37:04.094162Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2212,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\nRiceQuant API 测试 - Notebook 版本\n\n测试 RiceQuant Notebook 中的量化 API\n\"\"\"\n\nprint(\"=== RiceQuant Notebook API 测试 ===\")\n\nfrom datetime import datetime\nprint(f\"当前时间: {datetime.now()}\")\n\n# 测试 RiceQuant 特有导入\ntry:\n    # 尝试不同的导入方式\n    import ricequant\n    print(f\"✓ ricequant 模块可用\")\nexcept ImportError:\n    print(\"✗ ricequant 模块不可用\")\n\n# 测试基本 Python\ntest_data = [i for i in range(10)]\nprint(f\"✓ 基本Python功能正常: {test_data}\")\n\n# 测试是否在 RiceQuant Notebook 环境\nimport os\nprint(f\"当前目录: {os.getcwd()}\")\n\n# RiceQuant Notebook 应该有特殊的全局变量或环境\nprint(\"\\n检查全局变量...\")\nglobals_list = [name for name in globals() if not name.startswith('_')]\nprint(f\"全局变量数量: {len(globals_list)}\")\n\nprint(\"\\n=== 测试完成 ===\")\n",
+      "msgId": "fc50a7a22001475c804007efaf44b16c",
+      "websocketSessionId": "89f4c815d65b4888862330acd9012070",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== RiceQuant Notebook API 测试 ===\n当前时间: 2026-04-01 10:37:03.885728\n✗ ricequant 模块不可用\n✓ 基本Python功能正常: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n当前目录: /home/rice/notebook\n\n检查全局变量...\n全局变量数量: 148\n\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RiceQuant Notebook API 测试 ===\n当前时间: 2026-04-01 10:37:03.885728\n✗ ricequant 模块不可用\n✓ 基本Python功能正常: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n当前目录: /home/rice/notebook\n\n检查全局变量...\n全局变量数量: 148\n\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

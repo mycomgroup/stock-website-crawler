@@ -1,22 +1,32 @@
 {
-  "capturedAt": "2026-03-31T12:13:56.102Z",
+  "capturedAt": "2026-04-01T02:26:37.332Z",
   "notebookUrl": "https://www.ricequant.com/research",
   "directNotebookUrl": "https://www.ricequant.com/research",
-  "cookieHeader": "jupyterhub-user-user_497381=2|1:0|10:1774958831|27:jupyterhub-user-user_497381|40:S2ZwcVFrcENqSzU1d3lnVjJjcDNWUmUyWUN4S1ZK|162cc2b0132fd6a2aaef4703cda7e629d39a4baaafae6634a0baa3caed3d85cc; sid=xwf6kJ7FZmdkqk4Y6PcipxzFgESJAo7J|7a20b00c9c4a520ec59736aec2a8636fbb4c22d0c24f7c56357afd80a84f971ff94c0f8eae2b12432e72bae26b691dcc6ad613f3f69ab0c344a36fb00eab60ce; jupyter-hub-token=; rqjwt=eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NDk0OTYxMSwgImV4cCI6IDE3Nzc1NDE2MTF9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.lnwXlbtv9i7FXWo1d8JfU6kshwpQb7TO-B5JXOb6MJasfU-B2xW4M-94K7IcAzJ_mEkULOOlYXwR-wfbPA6tvw; jupyterhub-session-id=b4f4e89a9c7445db9fcd1948c207afd8; jupyterhub-hub-login=\"2|1:0|10:1774951129|20:jupyterhub-hub-login|44:MmI0NjJhNDNmZWZkNGUyZmE5MjVkZmNiYWM5MzBiYjc=|d75ebdc7e4f474e1e53c9747e699609849a06c6ee02a21658d5bcbbd0b264629\"; _xsrf=2|a89b5dea|66046cf23742764d3baf8ffbb953d8cd|1774951130; Hm_lvt_cb81fd54150b99e25d085d58bbaf4a07=1774951131; HMACCOUNT=5847C8B3FF9872DF; tgw_l7_route=3596f940fbcd94bd2bec34c51be04477; Hm_lpvt_cb81fd54150b99e25d085d58bbaf4a07=1774959183",
+  "cookieHeader": "jupyterhub-user-user_497381=2|1:0|10:1775008213|27:jupyterhub-user-user_497381|40:VXBIRFlneTN0SWY2MWx6dFM5RmpadFF3REk3TnFN|53505df14885924a0d270a8c2c0c758c060030084c1f8ed4614d42f886e8284b; tgw_l7_route=3596f940fbcd94bd2bec34c51be04477; sid=xZp61Z5q6tes5ZIUjcUraYlD4SNxgbK8|f2fae1ade573274d4f50311046f91b3e7b9cc9e3f0fe1d9de7edbf5f3aa8a75ce45e420d297bb7ff8d0ec47b17c988e596a9c73067d078c8ff99338607b0dec8; jupyter-hub-token=; rqjwt=eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NTAwODA1NiwgImV4cCI6IDE3Nzc2MDAwNTZ9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.3796YlFTt-SsLStcODRPI08oR_AejLGA7fdxzHjIi9vm49GWWrEx2qwTfnMU8-vaHiYfFSAFJR9GDH_82XkgUw; jupyterhub-session-id=4a47a794212e43b3bb7ca14a8b771c3c; jupyterhub-hub-login=\"2|1:0|10:1775008213|20:jupyterhub-hub-login|44:MmI0NjJhNDNmZWZkNGUyZmE5MjVkZmNiYWM5MzBiYjc=|8faaee5df231e06a8bd8e80a7952184a4cda809854855abd580fef97b6d9110c\"; _xsrf=2|4d070716|b47ed75d44385fd904506d593449c4e9|1775008214; Hm_lvt_cb81fd54150b99e25d085d58bbaf4a07=1775008214; HMACCOUNT=8A143E6F2876FEDA; tgw_l7_route=006b76bf4a6398f05baf657858ca2891; Hm_lpvt_cb81fd54150b99e25d085d58bbaf4a07=1775010344",
   "cookies": [
     {
       "name": "jupyterhub-user-user_497381",
-      "value": "2|1:0|10:1774958831|27:jupyterhub-user-user_497381|40:S2ZwcVFrcENqSzU1d3lnVjJjcDNWUmUyWUN4S1ZK|162cc2b0132fd6a2aaef4703cda7e629d39a4baaafae6634a0baa3caed3d85cc",
+      "value": "2|1:0|10:1775008213|27:jupyterhub-user-user_497381|40:VXBIRFlneTN0SWY2MWx6dFM5RmpadFF3REk3TnFN|53505df14885924a0d270a8c2c0c758c060030084c1f8ed4614d42f886e8284b",
       "domain": "www.ricequant.com",
       "path": "/research/user/user_497381/",
-      "expires": 1777550831.555929,
+      "expires": 1777600213.906605,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
+      "name": "tgw_l7_route",
+      "value": "3596f940fbcd94bd2bec34c51be04477",
+      "domain": "www.ricequant.com",
+      "path": "/",
+      "expires": 1775011647.258024,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
       "name": "sid",
-      "value": "xwf6kJ7FZmdkqk4Y6PcipxzFgESJAo7J|7a20b00c9c4a520ec59736aec2a8636fbb4c22d0c24f7c56357afd80a84f971ff94c0f8eae2b12432e72bae26b691dcc6ad613f3f69ab0c344a36fb00eab60ce",
+      "value": "xZp61Z5q6tes5ZIUjcUraYlD4SNxgbK8|f2fae1ade573274d4f50311046f91b3e7b9cc9e3f0fe1d9de7edbf5f3aa8a75ce45e420d297bb7ff8d0ec47b17c988e596a9c73067d078c8ff99338607b0dec8",
       "domain": "www.ricequant.com",
       "path": "/",
       "expires": -1,
@@ -36,7 +46,7 @@
     },
     {
       "name": "rqjwt",
-      "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NDk0OTYxMSwgImV4cCI6IDE3Nzc1NDE2MTF9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.lnwXlbtv9i7FXWo1d8JfU6kshwpQb7TO-B5JXOb6MJasfU-B2xW4M-94K7IcAzJ_mEkULOOlYXwR-wfbPA6tvw",
+      "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NTAwODA1NiwgImV4cCI6IDE3Nzc2MDAwNTZ9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.3796YlFTt-SsLStcODRPI08oR_AejLGA7fdxzHjIi9vm49GWWrEx2qwTfnMU8-vaHiYfFSAFJR9GDH_82XkgUw",
       "domain": "www.ricequant.com",
       "path": "/",
       "expires": -1,
@@ -46,7 +56,7 @@
     },
     {
       "name": "jupyterhub-session-id",
-      "value": "b4f4e89a9c7445db9fcd1948c207afd8",
+      "value": "4a47a794212e43b3bb7ca14a8b771c3c",
       "domain": "www.ricequant.com",
       "path": "/",
       "expires": -1,
@@ -56,47 +66,47 @@
     },
     {
       "name": "jupyterhub-hub-login",
-      "value": "\"2|1:0|10:1774951129|20:jupyterhub-hub-login|44:MmI0NjJhNDNmZWZkNGUyZmE5MjVkZmNiYWM5MzBiYjc=|d75ebdc7e4f474e1e53c9747e699609849a06c6ee02a21658d5bcbbd0b264629\"",
+      "value": "\"2|1:0|10:1775008213|20:jupyterhub-hub-login|44:MmI0NjJhNDNmZWZkNGUyZmE5MjVkZmNiYWM5MzBiYjc=|8faaee5df231e06a8bd8e80a7952184a4cda809854855abd580fef97b6d9110c\"",
       "domain": "www.ricequant.com",
       "path": "/",
-      "expires": 1777543129.614195,
+      "expires": 1777600213.59232,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "_xsrf",
-      "value": "2|a89b5dea|66046cf23742764d3baf8ffbb953d8cd|1774951130",
+      "value": "2|4d070716|b47ed75d44385fd904506d593449c4e9|1775008214",
       "domain": "www.ricequant.com",
       "path": "/",
-      "expires": 1777543130.329593,
+      "expires": 1777600213.998822,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "HMACCOUNT_BFESS",
-      "value": "5847C8B3FF9872DF",
+      "value": "8A143E6F2876FEDA",
       "domain": ".hm.baidu.com",
       "path": "/",
-      "expires": 1809511130.563326,
+      "expires": 1809568214.218648,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "Hm_lvt_cb81fd54150b99e25d085d58bbaf4a07",
-      "value": "1774951131",
+      "value": "1775008214",
       "domain": ".ricequant.com",
       "path": "/",
-      "expires": 1806495183,
+      "expires": 1806546344,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "HMACCOUNT",
-      "value": "5847C8B3FF9872DF",
+      "value": "8A143E6F2876FEDA",
       "domain": ".ricequant.com",
       "path": "/",
       "expires": -1,
@@ -106,17 +116,17 @@
     },
     {
       "name": "tgw_l7_route",
-      "value": "3596f940fbcd94bd2bec34c51be04477",
-      "domain": "www.ricequant.com",
+      "value": "006b76bf4a6398f05baf657858ca2891",
+      "domain": "assets.ricequant.com",
       "path": "/",
-      "expires": 1774962424.0266,
+      "expires": 1775012315.234805,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "Hm_lpvt_cb81fd54150b99e25d085d58bbaf4a07",
-      "value": "1774959183",
+      "value": "1775010344",
       "domain": ".ricequant.com",
       "path": "/",
       "expires": -1,
@@ -147,8 +157,8 @@
       "https://www.ricequant.com/research/user/user_497381/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604",
       "https://www.ricequant.com/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1",
       "https://www.ricequant.com/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce",
-      "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260331200709",
-      "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260331200709",
+      "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260401095013",
+      "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260401095013",
       "https://www.ricequant.com/research/user/user_497381/static/tree/js/main.min.js?v=b274c2f44c0bf3be3f3dd463436ea516",
       "https://hm.baidu.com/hm.js?cb81fd54150b99e25d085d58bbaf4a07",
       "https://dn-growing.qbox.me/vds.js"
@@ -163,5 +173,5 @@
     "loggedIn": true,
     "mode": "existing-cookies"
   },
-  "reusedCookies": 12
+  "reusedCookies": 13
 }

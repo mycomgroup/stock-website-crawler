@@ -282,4 +282,4 @@ node run-skill.js --id <strategyId> --file ../strategies/Ricequant/rfscore7_pb10
 
 ## 详细迁移指南
 
-完整的迁移指南请参考: [docs/joinquant_to_ricequant_migration_guide.md](../../docs/joinquant_to_ricequant_migration_guide.md)
+完整的迁移指南请参考: [docs/backtest_guide/joinquant_to_ricequant_migration_guide.md](../../docs/backtest_guide/joinquant_to_ricequant_migration_guide.md)

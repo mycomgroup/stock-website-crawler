@@ -323,6 +323,25 @@ export class JoinQuantClient {
     return result.data;
   }
 
+  async listSessions() {
+    const url = this.buildApiUrl('sessions', { _: Date.now() });
+    const result = await this.requestJson(url);
+    return result.data || [];
+  }
+
+  async deleteSession(sessionId) {
+    const url = this.buildApiUrl(`sessions/${sessionId}`);
+    try {
+      await this.requestJson(url, {
+        method: 'DELETE',
+        headers: { accept: '*/*' }
+      });
+      return { success: true, sessionId };
+    } catch (error) {
+      return { success: false, sessionId, error: error.message };
+    }
+  }
+
   buildChannelsUrl(kernelId, websocketSessionId) {
     return `${this.origin}${this.baseUrl}api/kernels/${kernelId}/channels?session_id=${websocketSessionId}`;
   }

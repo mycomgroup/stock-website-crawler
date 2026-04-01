@@ -10,7 +10,7 @@
 
 运行方式：
 cd skills/ricequant_strategy
-node run-strategy.js --strategy ../../strategies/shadow_strategies_20260330/backtest_10years_rq.py --timeout-ms 600000
+node run-strategy.js --strategy ../../strategies/shadow_strategies_20260330/backtest_10years_rq.py --create-new --timeout-ms 600000
 """
 
 import numpy as np
@@ -35,9 +35,18 @@ MAINLINE_PARAMS = {
     "sell_profit_threshold": 0.03,
 }
 
-OBSERVATION_PARAMS = {
-    "board_count": 2,
+TEST_CONFIG = {
+    "limit_up_sample_size": 500,
+    "signal_sample_size": 300,
+    "test_days": 200,
+    "start_year": 2015,
 }
+
+print(f"\n测试配置:")
+print(f"  涨停统计股票数: {TEST_CONFIG['limit_up_sample_size']}")
+print(f"  信号筛选股票数: {TEST_CONFIG['signal_sample_size']}")
+print(f"  测试天数: {TEST_CONFIG['test_days']}")
+print(f"  起始年份: {TEST_CONFIG['start_year']}")
 
 
 def get_all_stocks_list():
@@ -50,8 +59,9 @@ def get_all_stocks_list():
         try:
             hs300 = index_components("000300.XSHG")
             zz500 = index_components("000905.XSHG")
-            combined = list(set(hs300 + zz500))
-            print(f"使用沪深300+中证500替代，共{len(combined)}只")
+            zz800 = index_components("000906.XSHG")
+            combined = list(set(hs300 + zz500 + zz800))
+            print(f"使用沪深300+中证500+中证800替代，共{len(combined)}只")
             return combined
         except Exception as e2:
             print(f"获取指数成分股也失败: {e2}")
@@ -81,15 +91,14 @@ def get_prev_trading_date(date, trading_dates):
     return None
 
 
-def get_limit_up_count(date, stock_list, trading_dates, max_count=200):
-    """获取涨停股票数量"""
+def get_limit_up_count_fast(date, stock_list, trading_dates, max_count=500):
+    """快速获取涨停股票数量"""
     limit_up_count = 0
     tested = 0
     prev_date = get_prev_trading_date(date, trading_dates)
 
     if prev_date is None:
-        print(f"[{date}] 无法获取前一交易日")
-        return 0
+        return 0, 0
 
     for stock in stock_list[:max_count]:
         try:
@@ -108,8 +117,7 @@ def get_limit_up_count(date, stock_list, trading_dates, max_count=200):
         except:
             continue
 
-    print(f"[{date}] 涨停统计: 测试{tested}只, 涨停{limit_up_count}只")
-    return limit_up_count
+    return limit_up_count, tested
 
 
 def is_fake_weak_high_open(stock, date, trading_dates):
@@ -159,62 +167,36 @@ def get_stock_market_cap(stock, date):
         return None
 
 
-def has_consecutive_boards(stock, date, trading_dates):
-    """判断是否有连板（简化版：检查最近2天是否有涨停）"""
-    try:
-        dates = []
-        for d in trading_dates:
-            d_str = str(d)[:10]
-            if d_str <= date:
-                dates.append(d_str)
-
-        if len(dates) < 3:
-            return False
-
-        recent_dates = dates[-3:]
-
-        for i in range(len(recent_dates) - 1):
-            curr_df = get_price_on_date(stock, recent_dates[i + 1], ["close"])
-            prev_df = get_price_on_date(stock, recent_dates[i], ["close"])
-
-            if curr_df is not None and prev_df is not None:
-                curr_close = curr_df["close"].iloc[0]
-                prev_close = prev_df["close"].iloc[0]
-
-                if prev_close > 0:
-                    pct = (curr_close - prev_close) / prev_close
-                    if pct >= 0.095:
-                        return True
-        return False
-    except:
-        return False
-
-
-def generate_mainline_signals(date, stock_list, trading_dates):
+def generate_mainline_signals(date, stock_list, trading_dates, limit_up_count):
     """生成主线信号"""
-    limit_up_count = get_limit_up_count(date, stock_list, trading_dates, max_count=100)
-
     if limit_up_count < MAINLINE_PARAMS["emotion_threshold"]:
-        print(f"[{date}] 情绪不足: 涨停{limit_up_count}<30, 无信号")
         return []
 
     signals = []
 
-    for stock in stock_list[:80]:
+    for stock in stock_list[: TEST_CONFIG["signal_sample_size"]]:
         try:
+            market_cap = get_stock_market_cap(stock, date)
+            if market_cap is None:
+                continue
+            if (
+                market_cap < MAINLINE_PARAMS["market_cap_min"]
+                or market_cap > MAINLINE_PARAMS["market_cap_max"]
+            ):
+                continue
+
             if is_fake_weak_high_open(stock, date, trading_dates):
-                signals.append({"stock": stock, "signal_type": "fake_weak_high_open"})
+                signals.append(
+                    {
+                        "stock": stock,
+                        "market_cap": market_cap,
+                        "signal_type": "fake_weak_high_open",
+                    }
+                )
         except:
             continue
 
-    print(f"[{date}] 主线信号: {len(signals)}只")
     return signals
-
-
-def generate_observation_signals(date, stock_list, trading_dates):
-    """生成观察线信号（简化版）"""
-    print(f"[{date}] 观察线策略待实现")
-    return []
 
 
 print("\n获取交易日列表...")
@@ -232,68 +214,155 @@ print(f"股票总数: {len(all_stocks)}")
 if len(all_stocks) == 0 or len(trading_dates) == 0:
     print("无法获取数据，请确保在 RiceQuant Notebook 环境运行")
 else:
-    print("\n开始回测（测试前30个交易日）...")
+    start_idx = 0
+    for i, d in enumerate(trading_dates):
+        if str(d)[:4] == str(TEST_CONFIG["start_year"]):
+            start_idx = i
+            break
+
+    test_dates = [
+        str(d)[:10]
+        for d in trading_dates[start_idx : start_idx + TEST_CONFIG["test_days"]]
+    ]
+    print(f"\n测试日期范围: {test_dates[0]} 至 {test_dates[-1]}")
+    print(f"测试天数: {len(test_dates)}")
+
+    print("\n开始回测...")
 
     capital = 100000
     positions = {}
     trades = []
     daily_values = []
-
-    test_dates = [str(d)[:10] for d in trading_dates[:30]]
+    signal_count = 0
+    buy_count = 0
 
     for i, date in enumerate(test_dates):
-        if STRATEGY_MODE == "mainline":
+        limit_up_count, tested = get_limit_up_count_fast(
+            date,
+            all_stocks,
+            [str(d)[:10] for d in trading_dates],
+            max_count=TEST_CONFIG["limit_up_sample_size"],
+        )
+
+        if limit_up_count >= MAINLINE_PARAMS["emotion_threshold"]:
             signals = generate_mainline_signals(
-                date, all_stocks, [str(d)[:10] for d in trading_dates]
+                date, all_stocks, [str(d)[:10] for d in trading_dates], limit_up_count
             )
-        else:
-            signals = generate_observation_signals(
-                date, all_stocks, [str(d)[:10] for d in trading_dates]
-            )
+            signal_count += len(signals)
 
-        if signals and len(positions) < 3:
-            signal = signals[0]
-            stock = signal["stock"]
+            if signals and len(positions) < 3:
+                signal = signals[0]
+                stock = signal["stock"]
 
+                try:
+                    df = get_price_on_date(stock, date, ["close"])
+                    if df is not None:
+                        price = df["close"].iloc[0]
+                        max_amount = min(100000, capital)
+                        shares = int(max_amount / price / 100) * 100
+
+                        if shares > 0 and capital >= shares * price:
+                            capital -= shares * price
+                            positions[stock] = {
+                                "buy_date": date,
+                                "buy_price": price,
+                                "shares": shares,
+                            }
+                            trades.append(
+                                {
+                                    "date": date,
+                                    "stock": stock,
+                                    "action": "buy",
+                                    "price": price,
+                                    "shares": shares,
+                                }
+                            )
+                            buy_count += 1
+                            print(
+                                f"[{date}] 涨停{limit_up_count}只 -> 买入 {stock}: 价格{price:.2f}"
+                            )
+                except Exception as e:
+                    pass
+
+        stocks_to_sell = []
+        for stock, pos in list(positions.items()):
             try:
                 df = get_price_on_date(stock, date, ["close"])
                 if df is not None:
-                    price = df["close"].iloc[0]
-                    max_amount = min(100000, capital)
-                    shares = int(max_amount / price / 100) * 100
+                    current_price = df["close"].iloc[0]
+                    profit_pct = (current_price - pos["buy_price"]) / pos["buy_price"]
 
-                    if shares > 0 and capital >= shares * price:
-                        capital -= shares * price
-                        positions[stock] = {
-                            "buy_date": date,
-                            "buy_price": price,
-                            "shares": shares,
-                        }
-                        trades.append(
-                            {
-                                "date": date,
-                                "stock": stock,
-                                "action": "buy",
-                                "price": price,
-                                "shares": shares,
-                            }
-                        )
-                        print(f"[{date}] 买入 {stock}: 价格{price:.2f}, 数量{shares}")
-            except Exception as e:
-                print(f"买入失败: {e}")
+                    if profit_pct >= MAINLINE_PARAMS["sell_profit_threshold"]:
+                        stocks_to_sell.append((stock, current_price, "冲高+3%止盈"))
+                    elif date > pos["buy_date"]:
+                        stocks_to_sell.append((stock, current_price, "尾盘卖出"))
+            except:
+                pass
 
-        daily_values.append({"date": date, "value": capital})
+        for stock, price, reason in stocks_to_sell:
+            if stock in positions:
+                pos = positions[stock]
+                profit = (price - pos["buy_price"]) * pos["shares"]
+                profit_pct = (price - pos["buy_price"]) / pos["buy_price"]
+                capital += price * pos["shares"]
+                trades.append(
+                    {
+                        "date": date,
+                        "stock": stock,
+                        "action": "sell",
+                        "price": price,
+                        "profit": profit,
+                        "profit_pct": profit_pct,
+                        "reason": reason,
+                    }
+                )
+                del positions[stock]
 
-        if (i + 1) % 10 == 0:
+        total_value = capital
+        for stock, pos in positions.items():
+            try:
+                df = get_price_on_date(stock, date, ["close"])
+                if df is not None:
+                    total_value += df["close"].iloc[0] * pos["shares"]
+            except:
+                pass
+
+        daily_values.append({"date": date, "value": total_value})
+
+        if (i + 1) % 20 == 0:
             print(f"\n--- 进度: {i + 1}/{len(test_dates)} ---")
+            print(
+                f"    涨停达标天数: {sum(1 for dv in daily_values if dv['value'] != 100000 or len(trades) > 0)}"
+            )
+            print(
+                f"    信号数: {signal_count}, 买入: {buy_count}, 卖出: {len([t for t in trades if t['action'] == 'sell'])}"
+            )
+            print(f"    总资产: {total_value:.2f}")
 
     print("\n" + "=" * 80)
     print("回测结果汇总")
     print("=" * 80)
 
+    sell_trades = [t for t in trades if t["action"] == "sell"]
+
     if len(daily_values) > 0:
-        print(f"最终资产: {capital:.2f}")
-        print(f"交易次数: {len([t for t in trades if t['action'] == 'buy'])}")
+        initial = 100000
+        final = daily_values[-1]["value"]
+        total_return = (final - initial) / initial
+
+        print(f"总收益率: {total_return:.2%}")
+        print(f"最终资产: {final:.2f}")
+        print(f"信号数量: {signal_count}")
+        print(f"买入次数: {buy_count}")
+        print(f"卖出次数: {len(sell_trades)}")
+
+        if len(sell_trades) > 0:
+            wins = [t for t in sell_trades if t.get("profit", 0) > 0]
+            win_rate = len(wins) / len(sell_trades)
+            avg_profit_pct = np.mean([t.get("profit_pct", 0) for t in sell_trades])
+
+            print(f"胜率: {win_rate:.2%}")
+            print(f"平均收益率: {avg_profit_pct:.2%}")
 
     print("\n" + "=" * 80)
     print("回测完成")

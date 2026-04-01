@@ -1,0 +1,77 @@
+{
+  "capturedAt": "2026-04-01T03:58:07.008Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_115758.ipynb",
+  "notebookPath": "策略测试_20260401_115758.ipynb",
+  "kernelId": "c20c1ed7-9f37-41ea-911b-7a51aa44cb5d",
+  "sessionId": "8c74aa85-38be-4ebb-90c3-b6bfdf3bdf4c",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_115758.ipynb",
+    "path": "策略测试_20260401_115758.ipynb",
+    "last_modified": "2026-04-01T03:58:05.576051Z",
+    "created": "2026-04-01T03:58:05.577051Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 15579,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板策略最终修正版 - 使用正确的Timestamp索引\n\"\"\"\n\nprint(\"=\" * 80)\nprint(\"二板策略 - RiceQuant Notebook（最终修正版）\")\nprint(\"=\" * 80)\n\nimport pandas as pd\nimport numpy as np\n\n# 测试日期\ntest_dates = [\"2024-03-15\", \"2024-03-20\", \"2024-06-20\", \"2024-09-20\"]\nzt_threshold = 0.99\n\nprint(f\"\\n涨停判断阈值: ≥{zt_threshold}\")\nprint(f\"测试日期: {test_dates}\")\n\nresults = {}\n\nfor test_date_str in test_dates:\n    print(f\"\\n{'=' * 60}\")\n    print(f\"测试日期: {test_date_str}\")\n    print(f\"{'=' * 60}\")\n\n    test_date = pd.Timestamp(test_date_str)\n\n    try:\n        # 1. 检查交易日\n        month_start = test_date_str[:7] + \"-01\"\n        month_end = test_date_str[:7] + \"-28\"\n\n        trading_days = get_trading_dates(month_start, month_end)\n        dates_ts = [pd.Timestamp(str(d)[:10]) for d in trading_days]\n\n        if test_date not in dates_ts:\n            print(f\"{test_date_str} 不是交易日，跳过\")\n            continue\n\n        print(f\"是交易日 ✓\")\n\n        # 2. 获取股票池\n        all_inst = all_instruments(\"CS\")\n        stock_list = all_inst[\"order_book_id\"].tolist()\n        stocks = [\n            s\n            for s in stock_list\n            if not (s.startswith(\"68\") or s.startswith(\"4\") or s.startswith(\"8\"))\n        ]\n\n        print(f\"股票池: {len(stocks)}只，测试前300只\")\n\n        # 3. 找涨停股票（使用Timestamp）\n        prices = get_price(\n            stocks[:300],\n            start_date=test_date_str,\n            end_date=test_date_str,\n            frequency=\"1d\",\n            fields=[\"close\", \"limit_up\"],\n        )\n\n        if prices is None or prices.empty:\n            print(\"无数据\")\n            continue\n\n        print(f\"获取价格数据成功\")\n\n        zt_stocks = []\n\n        # 使用Timestamp作为索引键\n        for stock in stocks[:300]:\n            try:\n                key = (stock, test_date)\n\n                if key in prices.index:\n                    close = prices.loc[key, \"close\"]\n                    limit_up = prices.loc[key, \"limit_up\"]\n\n                    if pd.notna(close) and pd.notna(limit_up) and limit_up > 0:\n                        ratio = close / limit_up\n\n                        if ratio >= zt_threshold:\n                            zt_stocks.append(\n                                {\n                                    \"stock\": stock,\n                                    \"close\": float(close),\n                                    \"limit\": float(limit_up),\n                                    \"ratio\": float(ratio),\n                                }\n                            )\n            except Exception as e:\n                pass\n\n        print(f\"涨停股票数: {len(zt_stocks)}\")\n\n        if len(zt_stocks) > 0:\n            print(f\"涨停示例:\")\n            for s in zt_stocks[:3]:\n                print(\n                    f\"  {s['stock']}: 收盘{s['close']:.2f}, 涨停价{s['limit']:.2f}, 比值{s['ratio']:.4f}\"\n                )\n\n            # 找二板\n            if len(dates_ts) > 2:\n                idx = dates_ts.index(test_date)\n\n                if idx >= 2:\n                    prev_date = dates_ts[idx - 1]\n                    prev2_date = dates_ts[idx - 2]\n\n                    print(f\"\\n找二板:\")\n                    print(f\"  昨天: {prev_date}\")\n                    print(f\"  前天: {prev2_date}\")\n\n                    zt_codes = [s[\"stock\"] for s in zt_stocks]\n\n                    prices_3d = get_price(\n                        zt_codes,\n                        start_date=str(prev2_date)[:10],\n                        end_date=test_date_str,\n                        frequency=\"1d\",\n                        fields=[\"close\", \"limit_up\"],\n                    )\n\n                    if prices_3d is not None and not prices_3d.empty:\n                        second_board = []\n\n                        for stock in zt_codes:\n                            try:\n                                # 今天涨停\n                                key_today = (stock, test_date)\n                                if key_today not in prices_3d.index:\n                                    continue\n\n                                today_close = float(prices_3d.loc[key_today, \"close\"])\n                                today_limit = float(\n                                    prices_3d.loc[key_today, \"limit_up\"]\n                                )\n\n                                # 昨天涨停\n                                key_prev = (stock, prev_date)\n                                if key_prev not in prices_3d.index:\n                                    continue\n\n                                yesterday_close = float(\n                                    prices_3d.loc[key_prev, \"close\"]\n                                )\n                                yesterday_limit = float(\n                                    prices_3d.loc[key_prev, \"limit_up\"]\n                                )\n\n                                # 前天不涨停\n                                key_prev2 = (stock, prev2_date)\n                                if key_prev2 not in prices_3d.index:\n                                    continue\n\n                                prev2_close = float(prices_3d.loc[key_prev2, \"close\"])\n                                prev2_limit = float(\n                                    prices_3d.loc[key_prev2, \"limit_up\"]\n                                )\n\n                                # 判断\n                                if today_close >= today_limit * zt_threshold:\n                                    if (\n                                        yesterday_close\n                                        >= yesterday_limit * zt_threshold\n                                    ):\n                                        if prev2_close < prev2_limit * zt_threshold:\n                                            second_board.append(\n                                                {\n                                                    \"stock\": stock,\n                                                    \"today_close\": today_close,\n                                                    \"today_limit\": today_limit,\n                                                    \"buy_price\": today_limit,  # 用涨停价买入\n                                                }\n                                            )\n                                            print(f\"  找到二板: {stock}\")\n\n                            except Exception as e:\n                                pass\n\n                        results[test_date_str] = {\n                            \"zt_count\": len(zt_stocks),\n                            \"sb_count\": len(second_board),\n                            \"sb_examples\": second_board[:3],\n                        }\n\n                        print(f\"二板数: {len(second_board)}\")\n\n                        if len(second_board) > 0:\n                            print(f\"二板示例:\")\n                            for sb in second_board[:3]:\n                                print(f\"  {sb['stock']}: 涨停价{sb['buy_price']:.2f}\")\n        else:\n            results[test_date_str] = {\"zt_count\": 0, \"sb_count\": 0}\n\n    except Exception as e:\n        print(f\"错误: {e}\")\n        import traceback\n\n        traceback.print_exc()\n\n# 汇总\nprint(f\"\\n{'=' * 80}\")\nprint(\"汇总结果\")\nprint(f\"{'=' * 80}\")\n\ntotal_zt = sum(r.get(\"zt_count\", 0) for r in results.values())\ntotal_sb = sum(r.get(\"sb_count\", 0) for r in results.values())\n\nprint(f\"涨停总数: {total_zt}\")\nprint(f\"二板总数: {total_sb}\")\n\nfor date, r in results.items():\n    print(f\"{date}: 涨停{r['zt_count']}只, 二板{r['sb_count']}只\")\n\nprint(f\"\\n结论:\")\nif total_zt > 0:\n    print(\"  ✓ API正确，能找到涨停股票\")\nelse:\n    print(\"  ✗ 未找到涨停股票，可能需要更多日期测试\")\n\nif total_sb > 0:\n    print(\"  ✓ 筛选逻辑正确，能找到二板股票\")\nelse:\n    print(\"  ✗ 未找到二板股票，可能筛选条件过严\")\n\nprint(\"=\" * 80)\n",
+      "msgId": "1d5a9e9d4e644913982eaa9847fec826",
+      "websocketSessionId": "7209ac28566a4bb2a38ff1c3aee9535b",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n二板策略 - RiceQuant Notebook（最终修正版）\n================================================================================\n\n涨停判断阈值: ≥0.99\n测试日期: ['2024-03-15', '2024-03-20', '2024-06-20', '2024-09-20']\n\n============================================================\n测试日期: 2024-03-15\n============================================================\n是交易日 ✓\n股票池: 4928只，测试前300只\n获取价格数据成功\n涨停股票数: 6\n涨停示例:\n  000416.XSHE: 收盘1.18, 涨停价1.18, 比值1.0000\n  000518.XSHE: 收盘2.72, 涨停价2.72, 比值1.0000\n  000564.XSHE: 收盘1.90, 涨停价1.90, 比值1.0000\n\n找二板:\n  昨天: 2024-03-14 00:00:00\n  前天: 2024-03-13 00:00:00\n  找到二板: 000416.XSHE\n  找到二板: 000571.XSHE\n二板数: 2\n二板示例:\n  000416.XSHE: 涨停价1.18\n  000571.XSHE: 涨停价2.82\n\n============================================================\n测试日期: 2024-03-20\n============================================================\n是交易日 ✓\n股票池: 4928只，测试前300只\n获取价格数据成功\n涨停股票数: 4\n涨停示例:\n  000525.XSHE: 收盘7.27, 涨停价7.27, 比值1.0000\n  000571.XSHE: 收盘3.75, 涨停价3.75, 比值1.0000\n  000584.XSHE: 收盘3.05, 涨停价3.05, 比值1.0000\n\n找二板:\n  昨天: 2024-03-19 00:00:00\n  前天: 2024-03-18 00:00:00\n二板数: 0\n\n============================================================\n测试日期: 2024-06-20\n============================================================\n是交易日 ✓\n股票池: 4928只，测试前300只\n获取价格数据成功\n涨停股票数: 4\n涨停示例:\n  000010.XSHE: 收盘1.60, 涨停价1.60, 比值1.0000\n  000504.XSHE: 收盘7.47, 涨停价7.47, 比值1.0000\n  000506.XSHE: 收盘1.20, 涨停价1.20, 比值1.0000\n\n找二板:\n  昨天: 2024-06-19 00:00:00\n  前天: 2024-06-18 00:00:00\n二板数: 0\n\n============================================================\n测试日期: 2024-09-20\n============================================================\n是交易日 ✓\n股票池: 4928只，测试前300只\n获取价格数据成功\n涨停股票数: 8\n涨停示例:\n  000004.XSHE: 收盘14.60, 涨停价14.60, 比值1.0000\n  000158.XSHE: 收盘10.75, 涨停价10.75, 比值1.0000\n  000514.XSHE: 收盘3.71, 涨停价3.71, 比值1.0000\n\n找二板:\n  昨天: 2024-09-19 00:00:00\n  前天: 2024-09-18 00:00:00\n  找到二板: 000584.XSHE\n  找到二板: 000615.XSHE\n二板数: 2\n二板示例:\n  000584.XSHE: 涨停价2.10\n  000615.XSHE: 涨停价1.63\n\n================================================================================\n汇总结果\n================================================================================\n涨停总数: 22\n二板总数: 4\n2024-03-15: 涨停6只, 二板2只\n2024-03-20: 涨停4只, 二板0只\n2024-06-20: 涨停4只, 二板0只\n2024-09-20: 涨停8只, 二板2只\n\n结论:\n  ✓ API正确，能找到涨停股票\n  ✓ 筛选逻辑正确，能找到二板股票\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n二板策略 - RiceQuant Notebook（最终修正版）\n================================================================================\n\n涨停判断阈值: ≥0.99\n测试日期: ['2024-03-15', '2024-03-20', '2024-06-20', '2024-09-20']\n\n============================================================\n测试日期: 2024-03-15\n============================================================\n是交易日 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票池: 4928只，测试前300只\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "获取价格数据成功\n涨停股票数: 6\n涨停示例:\n  000416.XSHE: 收盘1.18, 涨停价1.18, 比值1.0000\n  000518.XSHE: 收盘2.72, 涨停价2.72, 比值1.0000\n  000564.XSHE: 收盘1.90, 涨停价1.90, 比值1.0000\n\n找二板:\n  昨天: 2024-03-14 00:00:00\n  前天: 2024-03-13 00:00:00\n  找到二板: 000416.XSHE\n  找到二板: 000571.XSHE\n二板数: 2\n二板示例:\n  000416.XSHE: 涨停价1.18\n  000571.XSHE: 涨停价2.82\n\n============================================================\n测试日期: 2024-03-20\n============================================================\n是交易日 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票池: 4928只，测试前300只\n获取价格数据成功\n涨停股票数: 4\n涨停示例:\n  000525.XSHE: 收盘7.27, 涨停价7.27, 比值1.0000\n  000571.XSHE: 收盘3.75, 涨停价3.75, 比值1.0000\n  000584.XSHE: 收盘3.05, 涨停价3.05, 比值1.0000\n\n找二板:\n  昨天: 2024-03-19 00:00:00\n  前天: 2024-03-18 00:00:00\n二板数: 0\n\n============================================================\n测试日期: 2024-06-20\n============================================================\n是交易日 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票池: 4928只，测试前300只\n获取价格数据成功\n涨停股票数: 4\n涨停示例:\n  000010.XSHE: 收盘1.60, 涨停价1.60, 比值1.0000\n  000504.XSHE: 收盘7.47, 涨停价7.47, 比值1.0000\n  000506.XSHE: 收盘1.20, 涨停价1.20, 比值1.0000\n\n找二板:\n  昨天: 2024-06-19 00:00:00\n  前天: 2024-06-18 00:00:00\n二板数: 0\n\n============================================================\n测试日期: 2024-09-20\n============================================================\n是交易日 ✓\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票池: 4928只，测试前300只\n获取价格数据成功\n涨停股票数: 8\n涨停示例:\n  000004.XSHE: 收盘14.60, 涨停价14.60, 比值1.0000\n  000158.XSHE: 收盘10.75, 涨停价10.75, 比值1.0000\n  000514.XSHE: 收盘3.71, 涨停价3.71, 比值1.0000\n\n找二板:\n  昨天: 2024-09-19 00:00:00\n  前天: 2024-09-18 00:00:00\n  找到二板: 000584.XSHE\n  找到二板: 000615.XSHE\n二板数: 2\n二板示例:\n  000584.XSHE: 涨停价2.10\n  000615.XSHE: 涨停价1.63\n\n================================================================================\n汇总结果\n================================================================================\n涨停总数: 22\n二板总数: 4\n2024-03-15: 涨停6只, 二板2只\n2024-03-20: 涨停4只, 二板0只\n2024-06-20: 涨停4只, 二板0只\n2024-09-20: 涨停8只, 二板2只\n\n结论:\n  ✓ API正确，能找到涨停股票\n  ✓ 筛选逻辑正确，能找到二板股票\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "8c74aa85-38be-4ebb-90c3-b6bfdf3bdf4c",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/8c74aa85-38be-4ebb-90c3-b6bfdf3bdf4c: "
+  },
+  "autoShutdown": true
+}

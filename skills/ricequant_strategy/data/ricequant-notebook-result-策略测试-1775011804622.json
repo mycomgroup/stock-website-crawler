@@ -1,0 +1,211 @@
+{
+  "capturedAt": "2026-04-01T02:50:04.622Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260401_104802.ipynb",
+  "notebookPath": "策略测试_20260401_104802.ipynb",
+  "kernelId": "b94e341b-2601-46d8-8710-e6cbff20d1c8",
+  "sessionId": "96f0a0c4-9201-4e14-996d-2643f1f96ece",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260401_104802.ipynb",
+    "path": "策略测试_20260401_104802.ipynb",
+    "last_modified": "2026-04-01T02:50:04.535263Z",
+    "created": "2026-04-01T02:50:04.536263Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 20324,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n影子策略回测 - 优化版 (RiceQuant Notebook)\n\n基于诊断结果优化：\n- 时间段：2015年5月（牛市高峰，涨停比例7%）\n- 测试股票数：1000只\n- 情绪阈值：50只\n\n运行方式：\ncd skills/ricequant_strategy\nnode run-strategy.js --strategy ../../strategies/shadow_strategies_20260330/backtest_optimized_rq.py --create-new --timeout-ms 300000\n\"\"\"\n\nimport numpy as np\nimport pandas as pd\n\nprint(\"=\" * 80)\nprint(\"影子策略回测 - 优化版\")\nprint(\"=\" * 80)\nprint(\"参数配置：\")\nprint(\"  时间段: 2015-05-01 至 2015-05-31\")\nprint(\"  测试股票数: 1000只\")\nprint(\"  情绪阈值: 50只\")\nprint(\"=\" * 80)\n\nSTRATEGY_MODE = \"mainline\"\n\nMAINLINE_PARAMS = {\n    \"emotion_threshold\": 50,\n    \"open_change_min\": 0.001,\n    \"open_change_max\": 0.03,\n    \"sell_profit_threshold\": 0.03,\n    \"limit_up_sample_size\": 1000,\n    \"signal_sample_size\": 500,\n}\n\n\ndef get_all_stocks_list():\n    try:\n        instruments = all_instruments(type=\"CS\")\n        return list(instruments.order_book_id)\n    except:\n        return []\n\n\ndef get_prev_trading_date(date, trading_dates):\n    date_str = str(date)[:10]\n    for i, d in enumerate(trading_dates):\n        if str(d)[:10] == date_str and i > 0:\n            return str(trading_dates[i - 1])[:10]\n    return None\n\n\ndef get_limit_up_count(date, stock_list, trading_dates):\n    limit_up = 0\n    tested = 0\n    prev_date = get_prev_trading_date(date, trading_dates)\n\n    if prev_date is None:\n        return 0, 0\n\n    for stock in stock_list[: MAINLINE_PARAMS[\"limit_up_sample_size\"]]:\n        try:\n            df = get_price(\n                stock,\n                start_date=prev_date,\n                end_date=date,\n                frequency=\"1d\",\n                fields=[\"close\"],\n            )\n            if df is not None and len(df) >= 2:\n                prev_close = df[\"close\"].iloc[0]\n                curr_close = df[\"close\"].iloc[-1]\n                if prev_close > 0:\n                    pct = (curr_close - prev_close) / prev_close\n                    if pct >= 0.095:\n                        limit_up += 1\n                    tested += 1\n        except:\n            continue\n\n    return limit_up, tested\n\n\ndef is_fake_weak_high_open(stock, date, trading_dates):\n    try:\n        prev_date = get_prev_trading_date(date, trading_dates)\n        if prev_date is None:\n            return False, None\n\n        df = get_price(\n            stock,\n            start_date=prev_date,\n            end_date=date,\n            frequency=\"1d\",\n            fields=[\"close\", \"open\", \"high\"],\n        )\n        if df is None or len(df) < 2:\n            return False, None\n\n        prev_close = df[\"close\"].iloc[0]\n        open_price = df[\"open\"].iloc[-1]\n        high_price = df[\"high\"].iloc[-1]\n        close_price = df[\"close\"].iloc[-1]\n\n        if prev_close <= 0:\n            return False, None\n\n        open_change = (open_price - prev_close) / prev_close\n\n        if (\n            open_change <= MAINLINE_PARAMS[\"open_change_min\"]\n            or open_change >= MAINLINE_PARAMS[\"open_change_max\"]\n        ):\n            return False, None\n\n        if high_price > open_price:\n            return True, {\n                \"open_price\": open_price,\n                \"close_price\": close_price,\n                \"open_change\": open_change,\n            }\n\n        return False, None\n    except:\n        return False, None\n\n\nprint(\"\\n获取数据...\")\nall_stocks = get_all_stocks_list()\nprint(f\"股票总数: {len(all_stocks)}\")\n\ntrading_dates = [\n    str(d)[:10] for d in list(get_trading_dates(\"2015-05-01\", \"2015-05-31\"))\n]\nprint(f\"交易日: {len(trading_dates)}天\")\n\nif len(all_stocks) == 0 or len(trading_dates) == 0:\n    print(\"\\n无法获取数据\")\nelse:\n    print(\"\\n开始回测...\")\n\n    capital = 100000\n    positions = {}\n    trades = []\n    daily_values = []\n\n    for i, date in enumerate(trading_dates):\n        limit_up, tested = get_limit_up_count(date, all_stocks, trading_dates)\n\n        print(f\"\\n[{date}] 涨停{limit_up}/{tested}只\", end=\"\")\n\n        if limit_up >= MAINLINE_PARAMS[\"emotion_threshold\"]:\n            print(f\" ✓ 达标(>={MAINLINE_PARAMS['emotion_threshold']})\")\n\n            signals = []\n            for stock in all_stocks[: MAINLINE_PARAMS[\"signal_sample_size\"]]:\n                is_signal, info = is_fake_weak_high_open(stock, date, trading_dates)\n                if is_signal:\n                    signals.append(\n                        {\n                            \"stock\": stock,\n                            \"open_change\": info[\"open_change\"],\n                            \"open_price\": info[\"open_price\"],\n                        }\n                    )\n\n            print(f\"  发现{len(signals)}个信号\")\n\n            if signals and len(positions) < 3:\n                signal = signals[0]\n                stock = signal[\"stock\"]\n                price = signal[\"open_price\"]\n\n                max_amount = min(100000, capital)\n                shares = int(max_amount / price / 100) * 100\n\n                if shares > 0 and capital >= shares * price:\n                    capital -= shares * price\n                    positions[stock] = {\n                        \"buy_date\": date,\n                        \"buy_price\": price,\n                        \"shares\": shares,\n                    }\n                    trades.append(\n                        {\n                            \"date\": date,\n                            \"stock\": stock,\n                            \"action\": \"buy\",\n                            \"price\": price,\n                            \"shares\": shares,\n                            \"open_change\": signal[\"open_change\"],\n                        }\n                    )\n                    print(\n                        f\"  → 买入 {stock}: 价格{price:.2f}, 开盘涨幅{signal['open_change'] * 100:.2f}%\"\n                    )\n        else:\n            print(f\" ✗ 不足(<{MAINLINE_PARAMS['emotion_threshold']})\")\n\n        stocks_to_sell = []\n        for stock, pos in list(positions.items()):\n            try:\n                df = get_price(\n                    stock,\n                    start_date=date,\n                    end_date=date,\n                    frequency=\"1d\",\n                    fields=[\"close\"],\n                )\n                if df is not None and len(df) > 0:\n                    current_price = df[\"close\"].iloc[0]\n                    profit_pct = (current_price - pos[\"buy_price\"]) / pos[\"buy_price\"]\n\n                    if profit_pct >= MAINLINE_PARAMS[\"sell_profit_threshold\"]:\n                        stocks_to_sell.append(\n                            (stock, current_price, profit_pct, \"冲高+3%止盈\")\n                        )\n                    elif date > pos[\"buy_date\"]:\n                        stocks_to_sell.append(\n                            (stock, current_price, profit_pct, \"尾盘卖出\")\n                        )\n            except:\n                pass\n\n        for stock, price, profit_pct, reason in stocks_to_sell:\n            if stock in positions:\n                pos = positions[stock]\n                profit = (price - pos[\"buy_price\"]) * pos[\"shares\"]\n                capital += price * pos[\"shares\"]\n                trades.append(\n                    {\n                        \"date\": date,\n                        \"stock\": stock,\n                        \"action\": \"sell\",\n                        \"price\": price,\n                        \"profit\": profit,\n                        \"profit_pct\": profit_pct,\n                        \"reason\": reason,\n                    }\n                )\n                del positions[stock]\n                print(f\"  → 卖出 {stock}: {reason}, 收益{profit_pct * 100:.2f}%\")\n\n        total_value = capital\n        for stock, pos in positions.items():\n            try:\n                df = get_price(\n                    stock,\n                    start_date=date,\n                    end_date=date,\n                    frequency=\"1d\",\n                    fields=[\"close\"],\n                )\n                if df is not None:\n                    total_value += df[\"close\"].iloc[0] * pos[\"shares\"]\n            except:\n                pass\n\n        daily_values.append({\"date\": date, \"value\": total_value})\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"回测结果\")\n    print(\"=\" * 80)\n\n    sell_trades = [t for t in trades if t[\"action\"] == \"sell\"]\n    buy_trades = [t for t in trades if t[\"action\"] == \"buy\"]\n\n    if len(daily_values) > 0:\n        final_value = daily_values[-1][\"value\"]\n        total_return = (final_value - 100000) / 100000\n\n        print(f\"总收益率: {total_return * 100:.2f}%\")\n        print(f\"最终资产: {final_value:.2f}\")\n        print(f\"买入次数: {len(buy_trades)}\")\n        print(f\"卖出次数: {len(sell_trades)}\")\n\n        if len(sell_trades) > 0:\n            wins = [t for t in sell_trades if t.get(\"profit\", 0) > 0]\n            win_rate = len(wins) / len(sell_trades)\n            avg_profit_pct = np.mean([t.get(\"profit_pct\", 0) for t in sell_trades])\n\n            print(f\"胜率: {win_rate * 100:.1f}%\")\n            print(f\"平均收益率: {avg_profit_pct * 100:.2f}%\")\n\n            if len(wins) > 0:\n                avg_win = np.mean([t.get(\"profit_pct\", 0) for t in wins])\n                print(f\"平均盈利: {avg_win * 100:.2f}%\")\n\n            losses = [t for t in sell_trades if t.get(\"profit\", 0) <= 0]\n            if len(losses) > 0:\n                avg_loss = np.mean([t.get(\"profit_pct\", 0) for t in losses])\n                print(f\"平均亏损: {avg_loss * 100:.2f}%\")\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"回测完成\")\n    print(\"=\" * 80)\n",
+      "msgId": "40b964f9e43a422e99c9346dce42ab36",
+      "websocketSessionId": "a39421760a9c420fb2e2078417c58e7c",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n影子策略回测 - 优化版\n================================================================================\n参数配置：\n  时间段: 2015-05-01 至 2015-05-31\n  测试股票数: 1000只\n  情绪阈值: 50只\n================================================================================\n\n获取数据...\n股票总数: 5539\n交易日: 20天\n\n开始回测...\n\n[2015-05-04] 涨停0/0只 ✗ 不足(<50)\n\n[2015-05-05] 涨停13/846只 ✗ 不足(<50)\n\n[2015-05-06] 涨停6/846只 ✗ 不足(<50)\n\n[2015-05-07] 涨停13/846只 ✗ 不足(<50)\n\n[2015-05-08] 涨停59/846只 ✓ 达标(>=50)\n  发现338个信号\n  → 买入 000001.XSHE: 价格10.05, 开盘涨幅0.26%\n\n[2015-05-11] 涨停77/846只 ✓ 达标(>=50)\n  发现323个信号\n  → 卖出 000001.XSHE: 尾盘卖出, 收益2.04%\n\n[2015-05-12] 涨停62/846只 ✓ 达标(>=50)\n  发现170个信号\n  → 买入 000009.XSHE: 价格12.26, 开盘涨幅0.98%\n\n[2015-05-13] 涨停54/846只 ✓ 达标(>=50)\n  发现68个信号\n  → 买入 000001.XSHE: 价格10.35, 开盘涨幅1.38%\n  → 卖出 000009.XSHE: 尾盘卖出, 收益-0.05%\n\n[2015-05-14] 涨停45/846只 ✗ 不足(<50)\n  → 卖出 000001.XSHE: 尾盘卖出, 收益-1.79%\n\n[2015-05-15] 涨停33/846只 ✗ 不足(<50)\n\n[2015-05-18] 涨停59/846只 ✓ 达标(>=50)\n  发现65个信号\n  → 买入 000014.XSHE: 价格17.25, 开盘涨幅0.28%\n\n[2015-05-19] 涨停68/846只 ✓ 达标(>=50)\n  发现134个信号\n  → 买入 000002.XSHE: 价格9.42, 开盘涨幅0.29%\n  → 卖出 000014.XSHE: 尾盘卖出, 收益0.92%\n\n[2015-05-20] 涨停59/846只 ✓ 达标(>=50)\n  发现200个信号\n  → 买入 000001.XSHE: 价格10.24, 开盘涨幅2.69%\n  → 卖出 000002.XSHE: 尾盘卖出, 收益1.23%\n\n[2015-05-21] 涨停107/846只 ✓ 达标(>=50)\n  发现142个信号\n  → 买入 000001.XSHE: 价格10.11, 开盘涨幅0.38%\n\n[2015-05-22] 涨停67/846只 ✓ 达标(>=50)\n  发现286个信号\n  → 卖出 000001.XSHE: 尾盘卖出, 收益2.97%\n\n[2015-05-25] 涨停75/846只 ✓ 达标(>=50)\n  发现74个信号\n  → 买入 000001.XSHE: 价格10.46, 开盘涨幅0.49%\n\n[2015-05-26] 涨停92/846只 ✓ 达标(>=50)\n  发现214个信号\n  → 卖出 000001.XSHE: 尾盘卖出, 收益1.65%\n\n[2015-05-27] 涨停68/846只 ✓ 达标(>=50)\n  发现115个信号\n  → 买入 000009.XSHE: 价格13.18, 开盘涨幅1.10%\n  → 卖出 000009.XSHE: 冲高+3%止盈, 收益6.29%\n\n[2015-05-28] 涨停18/846只 ✗ 不足(<50)\n\n[2015-05-29] 涨停60/846只 ✓ 达标(>=50)\n  发现85个信号\n  → 买入 000006.XSHE: 价格12.12, 开盘涨幅1.60%\n\n================================================================================\n回测结果\n================================================================================\n总收益率: -96.06%\n最终资产: 3944.41\n买入次数: 10\n卖出次数: 8\n胜率: 75.0%\n平均收益率: 1.66%\n平均盈利: 2.52%\n平均亏损: -0.92%\n\n================================================================================\n回测完成\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n影子策略回测 - 优化版\n================================================================================\n参数配置：\n  时间段: 2015-05-01 至 2015-05-31\n  测试股票数: 1000只\n  情绪阈值: 50只\n================================================================================\n\n获取数据...\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票总数: 5539\n交易日: 20天\n\n开始回测...\n\n[2015-05-04] 涨停0/0只 ✗ 不足(<50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-05] 涨停13/846只 ✗ 不足(<50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-06] 涨停6/846只 ✗ 不足(<50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-07] 涨停13/846只 ✗ 不足(<50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-08] 涨停59/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现338个信号\n  → 买入 000001.XSHE: 价格10.05, 开盘涨幅0.26%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-11] 涨停77/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现323个信号\n  → 卖出 000001.XSHE: 尾盘卖出, 收益2.04%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-12] 涨停62/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现170个信号\n  → 买入 000009.XSHE: 价格12.26, 开盘涨幅0.98%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-13] 涨停54/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现68个信号\n  → 买入 000001.XSHE: 价格10.35, 开盘涨幅1.38%\n  → 卖出 000009.XSHE: 尾盘卖出, 收益-0.05%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-14] 涨停45/846只 ✗ 不足(<50)\n  → 卖出 000001.XSHE: 尾盘卖出, 收益-1.79%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-15] 涨停33/846只 ✗ 不足(<50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-18] 涨停59/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现65个信号\n  → 买入 000014.XSHE: 价格17.25, 开盘涨幅0.28%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-19] 涨停68/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现134个信号\n  → 买入 000002.XSHE: 价格9.42, 开盘涨幅0.29%\n  → 卖出 000014.XSHE: 尾盘卖出, 收益0.92%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-20] 涨停59/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现200个信号\n  → 买入 000001.XSHE: 价格10.24, 开盘涨幅2.69%\n  → 卖出 000002.XSHE: 尾盘卖出, 收益1.23%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-21] 涨停107/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现142个信号\n  → 买入 000001.XSHE: 价格10.11, 开盘涨幅0.38%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-22] 涨停67/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现286个信号\n  → 卖出 000001.XSHE: 尾盘卖出, 收益2.97%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-25] 涨停75/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现74个信号\n  → 买入 000001.XSHE: 价格10.46, 开盘涨幅0.49%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-26] 涨停92/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现214个信号\n  → 卖出 000001.XSHE: 尾盘卖出, 收益1.65%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-27] 涨停68/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现115个信号\n  → 买入 000009.XSHE: 价格13.18, 开盘涨幅1.10%\n  → 卖出 000009.XSHE: 冲高+3%止盈, 收益6.29%\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-28] 涨停18/846只 ✗ 不足(<50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n[2015-05-29] 涨停60/846只 ✓ 达标(>=50)\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  发现85个信号\n  → 买入 000006.XSHE: 价格12.12, 开盘涨幅1.60%\n\n================================================================================\n回测结果\n================================================================================\n总收益率: -96.06%\n最终资产: 3944.41\n买入次数: 10\n卖出次数: 8\n胜率: 75.0%\n平均收益率: 1.66%\n平均盈利: 2.52%\n平均亏损: -0.92%\n\n================================================================================\n回测完成\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试"
+}

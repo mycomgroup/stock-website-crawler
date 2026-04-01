@@ -75,6 +75,7 @@ async function main() {
   const timeoutMs = Number(args['timeout-ms'] || 60000);
   const createNew = args['create-new'] === true;
   const cleanup = args.cleanup === true;
+  const autoShutdown = args['no-shutdown'] ? false : (args['auto-shutdown'] !== 'false');
 
   console.log(`执行策略，超时设置: ${timeoutMs}ms`);
   console.log(`代码长度: ${cellSource.length} 字符`);
@@ -82,6 +83,7 @@ async function main() {
     console.log(`创建新 notebook: 是`);
     console.log(`自动清理: ${cleanup ? '是' : '否'}`);
   }
+  console.log(`自动关闭 session: ${autoShutdown}`);
 
   const result = await runNotebookTest({
     sessionFile: args['session-file'],
@@ -95,7 +97,8 @@ async function main() {
     appendCell: args['append-cell'] !== 'false',
     createNew,
     cleanup,
-    notebookBaseName: args['notebook-base-name']
+    notebookBaseName: args['notebook-base-name'],
+    autoShutdown
   });
 
   console.log('\n执行结果:');
@@ -121,6 +124,14 @@ async function main() {
 
   console.log(`\n结果文件: ${result.resultFile}`);
   console.log(`Notebook 快照: ${result.notebookSnapshotPath}`);
+
+  if (result.shutdownResult) {
+    if (result.shutdownResult.success) {
+      console.log(`Session 已关闭: ${result.shutdownResult.sessionId}`);
+    } else {
+      console.warn(`Session 关闭失败: ${result.shutdownResult.error || 'unknown error'}`);
+    }
+  }
 }
 
 main().catch(error => {

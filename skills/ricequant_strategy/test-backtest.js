@@ -125,9 +125,10 @@ async function runBacktest(codeFile, startDate, endDate, capital) {
     // Step 5: 获取结果
     console.log('\n5. Fetching results...');
     
-    const [info, risk] = await Promise.all([
+    const [info, risk, portfolios] = await Promise.all([
       client.request(`/api/backtest/v1/workspaces/${workspaceId}/backtests/${backtestId}`),
-      client.request(`/api/backtest/v1/workspaces/${workspaceId}/backtests/${backtestId}/risk`).catch(() => null)
+      client.request(`/api/backtest/v1/workspaces/${workspaceId}/backtests/${backtestId}/risk`).catch(() => null),
+      client.request(`/api/backtest/v1/workspaces/${workspaceId}/backtests/${backtestId}/portfolios`).catch(() => null)
     ]);
     
     // 获取日志
@@ -145,6 +146,16 @@ async function runBacktest(codeFile, startDate, endDate, capital) {
     // 保存结果
     const timestamp = Date.now();
     const resultFile = path.join(OUTPUT_DIR, `result-${strategyName}-${timestamp}.json`);
+    
+    // 从 portfolios 获取最终收益率
+    let totalReturn = 0;
+    let annualReturn = 0;
+    if (portfolios && portfolios.portfolios && portfolios.portfolios.length > 0) {
+      const lastPortfolio = portfolios.portfolios[portfolios.portfolios.length - 1];
+      totalReturn = lastPortfolio.total_returns || 0;
+      annualReturn = lastPortfolio.annualized_returns || 0;
+    }
+    
     const resultData = {
       strategyId,
       backtestId,
@@ -155,6 +166,8 @@ async function runBacktest(codeFile, startDate, endDate, capital) {
       status,
       info,
       risk,
+      totalReturn,
+      annualReturn,
       timestamp: new Date().toISOString()
     };
     fs.writeFileSync(resultFile, JSON.stringify(resultData, null, 2));
@@ -165,15 +178,14 @@ async function runBacktest(codeFile, startDate, endDate, capital) {
     console.log('RESULTS');
     console.log('='.repeat(60));
     
+    console.log('Total Return:', (totalReturn * 100).toFixed(2), '%');
+    console.log('Annual Return:', (annualReturn * 100).toFixed(2), '%');
+    
     if (risk) {
-      console.log('Total Return:', ((risk.total_returns || 0) * 100).toFixed(2), '%');
-      console.log('Annual Return:', ((risk.annual_returns || 0) * 100).toFixed(2), '%');
       console.log('Max Drawdown:', ((risk.max_drawdown || 0) * 100).toFixed(2), '%');
       console.log('Sharpe:', risk.sharpe || 'N/A');
-      console.log('Alpha:', (risk.alpha || 0).toFixed(4));
+      console.log('Alpha:', ((risk.alpha || 0) * 100).toFixed(2), '%');
       console.log('Beta:', (risk.beta || 0).toFixed(4));
-    } else {
-      console.log('(No risk data)');
     }
     
     if (info.exception) {

@@ -1,8 +1,21 @@
-# Notebook 回测系统使用指南
+# 回测系统使用指南
 
-## 一、概述
+本文档涵盖两种回测方式：
+- **Notebook 回测**：无时间限制，快速验证策略逻辑
+- **策略编辑器回测**：精确回测，自动计算风险指标
 
-本项目提供了两个量化平台的 Notebook 自动化运行系统，核心优势是**无每日时间限制**，可以快速验证策略逻辑。
+详细文档：
+- `README.md`（本文档）- Notebook 回测系统指南
+- `STRATEGY_EDITOR_GUIDE.md` - 策略编辑器回测系统指南 ⭐ 推荐
+- `INDEX.md` - 完整文档索引
+
+---
+
+## 一、Notebook 回测系统
+
+### 概述
+
+Notebook 回测的核心优势是**无每日时间限制**，可以快速验证策略逻辑。
 
 ### 核心优势
 
@@ -320,11 +333,19 @@ for param in params:
 
 ### 本目录文档
 
+- `STRATEGY_EDITOR_GUIDE.md` - 策略编辑器回测指南 ⭐ 推荐
 - `QUICK_START.md` - 快速入门指南
 - `API_DIFF.md` - API 详细差异对比
 - `MIGRATION.md` - JoinQuant 到 RiceQuant 迁移指南
 - `TEST_SUMMARY.md` - RiceQuant 测试总结报告
 - `PROMPT.md` - Agent 运行测试提示词
+- `INDEX.md` - 完整文档索引
+
+### 重要迁移文档
+
+- `joinquant_to_ricequant_migration_guide.md` - JoinQuant → RiceQuant 完整迁移指南
+- `ricequant_factor_list.md` - RiceQuant 因子列表速查表
+- `strategies/Ricequant/README.md` - RiceQuant API 对照表
 
 ### Skill 目录文档
 

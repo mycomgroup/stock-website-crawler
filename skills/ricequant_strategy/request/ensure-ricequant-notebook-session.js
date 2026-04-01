@@ -59,13 +59,24 @@ export async function ensureRiceQuantNotebookSession(options = {}) {
         });
         
         try {
-          await client.getNotebookMetadata();
-          console.log('✓ Session 验证成功');
-          return {
-            sessionFile,
-            refreshed: false,
-            reason: 'existing-session-valid'
-          };
+          const xsrfToken = client.xsrfToken;
+          const hasValidXsrf = xsrfToken && xsrfToken.length > 0;
+          const hasValidSession = client.cookieJar.some(c => 
+            c.name === 'jupyterhub-session-id' || 
+            c.name === 'jupyterhub-hub-login' ||
+            c.name === 'jupyterhub-user-user_497381'
+          );
+          
+          if (hasValidXsrf && hasValidSession) {
+            console.log('✓ Session 验证成功（cookies有效）');
+            return {
+              sessionFile,
+              refreshed: false,
+              reason: 'existing-session-valid'
+            };
+          } else {
+            throw new Error('缺少必要的认证 cookies');
+          }
         } catch (verifyError) {
           console.log(`✗ Session 验证失败: ${verifyError.message}`);
           console.log('  需要重新登录...');
