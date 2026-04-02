@@ -1,0 +1,86 @@
+{
+  "algoInfo": {
+    "raw": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"compiling_number\":0,\"algo_name\":\"PSY\\u4ea4\\u6613\\u7b56\\u7565\",\"user_id\":\"772028948\",\"algo_gen_method\":\"MANUAL\",\"algo_code\":\"# \\u95ee\\u8d22+PSY\\u7b56\\u7565\\r\\n# "
+  },
+  "tradeDays": {
+    "errorcode": -777,
+    "errormsg": "请设置回测id",
+    "result": ""
+  },
+  "updateResult": {
+    "errorcode": -777,
+    "errormsg": "请设置策略id",
+    "result": ""
+  },
+  "runTests": [
+    {
+      "test": "section-format",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "test": "with-stock_market",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "test": "with-jsonp",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "test": "beginDate-endDate",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "test": "start-end",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "test": "date_range",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "test": "time_range",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "test": "period",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    }
+  ],
+  "tradeDaysDetail": {
+    "errorcode": -777,
+    "errormsg": "请设置回测id",
+    "result": ""
+  }
+}
