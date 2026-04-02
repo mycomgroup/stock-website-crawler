@@ -1,0 +1,52 @@
+{
+  "capturedAt": "2026-04-02T08:34:43.730Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/ETF%E5%8A%A8%E9%87%8F%E8%BD%AE%E5%8A%A8%E7%AD%96%E7%95%A5Not_20260402_163440.ipynb",
+  "notebookPath": "ETF动量轮动策略Not_20260402_163440.ipynb",
+  "kernelId": "066e8f6b-7836-4441-84b1-5fdab27487cb",
+  "sessionId": "9eef7a92-0ae0-4d5d-8b12-e2a2b91d72e2",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "ETF动量轮动策略Not_20260402_163440.ipynb",
+    "path": "ETF动量轮动策略Not_20260402_163440.ipynb",
+    "last_modified": "2026-04-02T08:34:43.332069Z",
+    "created": "2026-04-02T08:34:43.332069Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2666,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# ETF动量轮动策略 - Notebook 版本\n\nprint(\"=== ETF动量轮动策略测试 ===\")\n\n# 定义ETF列表\netf_list = [\n    \"510300.XSHG\",  # 沪深300ETF\n    \"510500.XSHG\",  # 中证500ETF\n    \"159915.XSHE\",  # 创业板ETF\n    \"512100.XSHG\",  # 中证1000ETF\n    \"510050.XSHG\",  # 上证50ETF\n]\n\nprint(f\"\\n测试 ETF 列表: {len(etf_list)} 个\")\n\n# 计算动量\nprint(\"\\n计算动量...\")\nmomentum_scores = []\n\nfor etf in etf_list:\n    try:\n        bars = history_bars(etf, 21, \"1d\", \"close\")\n        if bars is not None and len(bars) >= 21:\n            momentum = (bars[-1] / bars[0] - 1) * 100\n            momentum_scores.append((etf, momentum))\n            print(f\"{etf}: 动量 {momentum:.2f}%\")\n    except Exception as e:\n        print(f\"{etf}: 获取数据失败\")\n\n# 排序选择\nif momentum_scores:\n    momentum_scores.sort(key=lambda x: x[1], reverse=True)\n    print(\"\\n=== 动量排名 ===\")\n    for i, (etf, mom) in enumerate(momentum_scores, 1):\n        print(f\"{i}. {etf}: {mom:.2f}%\")\n\n    top_2 = [etf for etf, _ in momentum_scores[:2]]\n    print(f\"\\n推荐买入: {top_2}\")\nelse:\n    print(\"\\n无法计算动量\")\n\nprint(\"\\n策略测试完成！\")\n",
+      "msgId": "86b1ba47835740239ae3f17b6ef7f00e",
+      "websocketSessionId": "285e88e9d3c4424bab61dd9690cffc34",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== ETF动量轮动策略测试 ===\n\n测试 ETF 列表: 5 个\n\n计算动量...\n510300.XSHG: 获取数据失败\n510500.XSHG: 获取数据失败\n159915.XSHE: 获取数据失败\n512100.XSHG: 获取数据失败\n510050.XSHG: 获取数据失败\n\n无法计算动量\n\n策略测试完成！\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== ETF动量轮动策略测试 ===\n\n测试 ETF 列表: 5 个\n\n计算动量...\n510300.XSHG: 获取数据失败\n510500.XSHG: 获取数据失败\n159915.XSHE: 获取数据失败\n512100.XSHG: 获取数据失败\n510050.XSHG: 获取数据失败\n\n无法计算动量\n\n策略测试完成！\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "ETF动量轮动策略Not",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "9eef7a92-0ae0-4d5d-8b12-e2a2b91d72e2",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/9eef7a92-0ae0-4d5d-8b12-e2a2b91d72e2: "
+  },
+  "autoShutdown": true
+}

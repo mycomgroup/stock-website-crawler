@@ -72,14 +72,14 @@
 
 ### 04 过滤器终审
 
-- 状态：**✅ 已完成**
+- 状态：**✅ 已完成（实测验证通过）**
 - 结果文件：`result_04_rfscore_filter_enhancement_final.md`
-- 一句话结论：**行业集中度约束必选，Turnover和CGO过滤可选保留，Combined双重过滤淘汰**
+- 一句话结论：**Turnover过滤实证有效（年化+4.67%），CGO过滤负面（年化-1.35%），Industry Cap需用完整RFScore再验证**
 - 是否进入正式版本：
-  - ✅ **Industry Cap**: 正式进入（必选）
-  - ✅ **Turnover Filter**: 正式进入（可选，默认启用）
-  - ✅ **CGO Filter**: 正式进入（可选，建议震荡市启用）
-  - ❌ **Combined Filter**: 淘汰（过度复杂）
+  - ✅ **Turnover Filter**: 实证有效，**推荐接入**（年化5.12%，夏普0.31）
+  - ⚠️ **Industry Cap**: 待验证（简化版测试负面，需完整RFScore验证）
+  - ❌ **CGO Filter**: 实证负面，**淘汰**（年化-0.90%）
+  - ❌ **Combined Filter**: 边际递减，**淘汰**（年化+1.42%）
 
 ### 05 市场状态与仓位控制
 

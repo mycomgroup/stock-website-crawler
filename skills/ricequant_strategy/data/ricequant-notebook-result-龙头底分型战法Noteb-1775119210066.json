@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-02T08:40:10.066Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E9%BE%99%E5%A4%B4%E5%BA%95%E5%88%86%E5%9E%8B%E6%88%98%E6%B3%95Noteb_20260402_164003.ipynb",
+  "notebookPath": "龙头底分型战法Noteb_20260402_164003.ipynb",
+  "kernelId": "e700d766-8ad3-43c7-9c4c-6a796abd263b",
+  "sessionId": "13226093-ee41-4788-b02d-8efa52ecfb64",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "龙头底分型战法Noteb_20260402_164003.ipynb",
+    "path": "龙头底分型战法Noteb_20260402_164003.ipynb",
+    "last_modified": "2026-04-02T08:40:08.794101Z",
+    "created": "2026-04-02T08:40:08.794101Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2594,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 龙头底分型战法 - Notebook 版本\n\nprint(\"=== 龙头底分型战法测试 ===\")\n\n# 1. 获取股票池\nprint(\"\\n步骤1: 获取股票池\")\nhs300 = index_components(\"000300.XSHG\")\nstocks = hs300[:100]  # 限制数量\nprint(f\"测试股票池: {len(stocks)} 只\")\n\n# 2. 寻找龙头底分型\nprint(\"\\n步骤2: 寻找龙头底分型形态\")\nfractal_stocks = []\n\nfor stock in stocks[:30]:  # 限制数量\n    try:\n        bars = history_bars(stock, 10, \"1d\", [\"high\", \"low\", \"close\"])\n        if bars is not None and len(bars) >= 10:\n            highs = bars[\"high\"]\n            lows = bars[\"low\"]\n\n            # 简化的底分型判断\n            if len(lows) >= 5:\n                if lows[-3] < lows[-2] and lows[-3] < lows[-4]:\n                    fractal_stocks.append(stock)\n                    print(f\"发现底分型: {stock}\")\n\n                if len(fractal_stocks) >= 5:\n                    break\n    except:\n        pass\n\nprint(f\"\\n发现底分型股票: {len(fractal_stocks)} 只\")\n\n# 3. 显示结果\nprint(\"\\n=== 筛选结果 ===\")\nprint(f\"选中股票: {fractal_stocks}\")\nprint(\"\\n策略执行完成！\")\n",
+      "msgId": "2624b1731e7341988eb403d4c6adc56b",
+      "websocketSessionId": "d13a0aabbdf845ff9ea6c11e2cb34c78",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== 龙头底分型战法测试 ===\n\n步骤1: 获取股票池\n测试股票池: 100 只\n\n步骤2: 寻找龙头底分型形态\n\n发现底分型股票: 0 只\n\n=== 筛选结果 ===\n选中股票: []\n\n策略执行完成！\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== 龙头底分型战法测试 ===\n\n步骤1: 获取股票池\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "测试股票池: 100 只\n\n步骤2: 寻找龙头底分型形态\n\n发现底分型股票: 0 只\n\n=== 筛选结果 ===\n选中股票: []\n\n策略执行完成！\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "龙头底分型战法Noteb",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "13226093-ee41-4788-b02d-8efa52ecfb64",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/13226093-ee41-4788-b02d-8efa52ecfb64: "
+  },
+  "autoShutdown": true
+}

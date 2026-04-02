@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-02T08:48:44.131Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E9%A6%96%E6%9D%BF%E4%BD%8E%E5%BC%80%E7%AD%96%E7%95%A5Notebo_20260402_164836.ipynb",
+  "notebookPath": "首板低开策略Notebo_20260402_164836.ipynb",
+  "kernelId": "11b125c8-4140-4524-a50c-f5482176be8b",
+  "sessionId": "c2f1eacf-9a34-4d98-ab22-9c0d13633a0e",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "首板低开策略Notebo_20260402_164836.ipynb",
+    "path": "首板低开策略Notebo_20260402_164836.ipynb",
+    "last_modified": "2026-04-02T08:48:42.876305Z",
+    "created": "2026-04-02T08:48:42.877305Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2810,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 首板低开策略 - Notebook 版本\n\nprint(\"=== 首板低开策略测试 ===\")\n\n# 1. 获取股票池\nprint(\"\\n步骤1: 获取股票池\")\nhs300 = index_components(\"000300.XSHG\")\nzz500 = index_components(\"000905.XSHG\")\nstocks = list(set(hs300) | set(zz500))\nstocks = [s for s in stocks if not s.startswith(\"688\")]\nprint(f\"初始股票池: {len(stocks)} 只\")\n\n# 2. 寻找昨日涨停股票\nprint(\"\\n步骤2: 寻找昨日涨停股票\")\nlimit_up_stocks = []\n\nfor stock in stocks[:100]:  # 限制数量\n    try:\n        bars = history_bars(stock, 2, \"1d\", [\"close\", \"limit_up\"])\n        if bars is not None and len(bars) >= 2:\n            close = bars[\"close\"][-2]\n            limit_up = bars[\"limit_up\"][-2]\n\n            # 判断是否涨停\n            if abs(close - limit_up) < 0.01:\n                limit_up_stocks.append(stock)\n                print(f\"发现涨停: {stock}\")\n\n            if len(limit_up_stocks) >= 10:\n                break\n    except:\n        pass\n\nprint(f\"\\n发现涨停股票: {len(limit_up_stocks)} 只\")\n\n# 3. 显示结果\nprint(\"\\n=== 筛选结果 ===\")\nprint(f\"昨日涨停股票: {limit_up_stocks}\")\nprint(\"\\n策略执行完成！\")\nprint(\"\\n提示: 完整策略需要检查今日开盘是否低开3-4%\")\n",
+      "msgId": "fda90a30c4784011bd28bfac32df5041",
+      "websocketSessionId": "2ce4e807c19943e5be7e42bc88cd9a51",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== 首板低开策略测试 ===\n\n步骤1: 获取股票池\n初始股票池: 716 只\n\n步骤2: 寻找昨日涨停股票\n\n发现涨停股票: 0 只\n\n=== 筛选结果 ===\n昨日涨停股票: []\n\n策略执行完成！\n\n提示: 完整策略需要检查今日开盘是否低开3-4%\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== 首板低开策略测试 ===\n\n步骤1: 获取股票池\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "初始股票池: 716 只\n\n步骤2: 寻找昨日涨停股票\n\n发现涨停股票: 0 只\n\n=== 筛选结果 ===\n昨日涨停股票: []\n\n策略执行完成！\n\n提示: 完整策略需要检查今日开盘是否低开3-4%\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "首板低开策略Notebo",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "c2f1eacf-9a34-4d98-ab22-9c0d13633a0e",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/c2f1eacf-9a34-4d98-ab22-9c0d13633a0e: "
+  },
+  "autoShutdown": true
+}

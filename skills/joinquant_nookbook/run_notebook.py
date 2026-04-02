@@ -96,6 +96,31 @@ def make_code_cell(source: str) -> dict:
     }
 
 
+def close_session(
+    opener, api_root: str, xsrf_token: str, session_id: str, referer: str
+) -> bool:
+    """
+    关闭 Jupyter Notebook session
+
+    Args:
+        opener: urllib opener with cookies
+        api_root: API base URL
+        xsrf_token: XSRF token for authentication
+        session_id: Session ID to close
+        referer: Referer URL
+
+    Returns:
+        True if successfully closed, False otherwise
+    """
+    try:
+        session_url = urllib.parse.urljoin(api_root, f"sessions/{session_id}")
+        request_json(opener, session_url, xsrf_token, method="DELETE", referer=referer)
+        return True
+    except Exception as e:
+        print(f"关闭 session 失败: {e}")
+        return False
+
+
 def execute_code(
     ws_url: str, cookie_header: str, origin: str, referer: str, code: str
 ) -> dict:
@@ -277,27 +302,33 @@ def main():
         referer=direct_notebook_url,
     )
 
-    cell_index = len(notebook_content["cells"]) - 1
-    cell = notebook_content["cells"][cell_index]
+    session_id = session_info["id"]
     kernel_id = session_info["kernel"]["id"]
-    ws_origin = origin.replace("https://", "wss://").replace("http://", "ws://")
-    ws_url = f"{ws_origin}{base_url}api/kernels/{kernel_id}/channels?session_id={uuid.uuid4().hex}"
-    result = execute_code(
-        ws_url, cookie_header, origin, direct_notebook_url, cell.get("source", "")
-    )
-    cell["execution_count"] = result["execution_count"]
-    cell["outputs"] = result["outputs"]
 
-    request_json(
-        opener,
-        save_url,
-        xsrf_token,
-        method="PUT",
-        payload={"type": "notebook", "content": notebook_content},
-        referer=direct_notebook_url,
-    )
+    try:
+        cell_index = len(notebook_content["cells"]) - 1
+        cell = notebook_content["cells"][cell_index]
+        ws_origin = origin.replace("https://", "wss://").replace("http://", "ws://")
+        ws_url = f"{ws_origin}{base_url}api/kernels/{kernel_id}/channels?session_id={uuid.uuid4().hex}"
+        result = execute_code(
+            ws_url, cookie_header, origin, direct_notebook_url, cell.get("source", "")
+        )
+        cell["execution_count"] = result["execution_count"]
+        cell["outputs"] = result["outputs"]
 
-    print(result["text_output"])
+        request_json(
+            opener,
+            save_url,
+            xsrf_token,
+            method="PUT",
+            payload={"type": "notebook", "content": notebook_content},
+            referer=direct_notebook_url,
+        )
+
+        print(result["text_output"])
+
+    finally:
+        close_session(opener, api_root, xsrf_token, session_id, direct_notebook_url)
 
 
 if __name__ == "__main__":

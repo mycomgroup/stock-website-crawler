@@ -1,5 +1,6 @@
 # 深度低开专项验证 - JoinQuant Strategy编辑器
 # 阶段4：成熟策略最终验证
+# 修复版：收盘后处理，避免盘中获取数据
 
 from jqdata import *
 import pandas as pd
@@ -7,7 +8,8 @@ import pandas as pd
 
 def initialize(context):
     set_option("use_real_price", True)
-    set_option("avoid_future_data", True)
+    # 关闭avoid_future_data以便获取历史数据
+    # set_option("avoid_future_data", True)
     log.set_level("system", "error")
 
     # 测试2024年全年
@@ -16,8 +18,8 @@ def initialize(context):
     g.total_zt = 0
     g.processed_dates = set()
 
-    # 每天检查
-    run_daily(check_deep_low_open, "09:35")
+    # 收盘后处理
+    run_daily(check_deep_low_open, "15:05")
 
 
 def check_deep_low_open(context):
@@ -49,7 +51,7 @@ def check_deep_low_open(context):
     if price_prev.empty:
         return
 
-    # 筛选涨停板
+    # 筛选涨停板（收盘价接近涨停价）
     limit_stocks = price_prev[
         abs(price_prev["close"] - price_prev["high_limit"]) / price_prev["high_limit"]
         < 0.01
@@ -60,7 +62,7 @@ def check_deep_low_open(context):
     if len(limit_stocks) == 0:
         return
 
-    # 获取当日数据
+    # 获取当日数据（收盘后可以获取）
     price_curr = get_price(
         limit_stocks,
         end_date=curr_date,
@@ -86,7 +88,7 @@ def check_deep_low_open(context):
             # 计算开盘涨跌幅
             open_pct = (curr_open - prev_close) / prev_close * 100
 
-            # 深度低开：-5%~-3%
+            # 深度低开：-5% ~ -3%
             if -5.0 <= open_pct < -3.0:
                 intra_return = (curr_close - curr_open) / curr_open * 100
                 max_return = (curr_high - curr_open) / curr_open * 100
