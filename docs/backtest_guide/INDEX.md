@@ -257,6 +257,7 @@ docs/backtest_guide/
 |---------|------------|
 | **首次使用 Notebook** | README.md → QUICK_START.md → 运行示例 |
 | **首次使用策略编辑器** | STRATEGY_EDITOR_GUIDE.md → 运行示例 |
+| **提交回测前** | PRE_RUN_CHECKLIST.md ⭐ 必读 |
 | **日常使用** | QUICK_START.md 或 STRATEGY_EDITOR_GUIDE.md |
 | **跨平台迁移** | STRATEGY_EDITOR_GUIDE.md → joinquant_to_ricequant_migration_guide.md |
 | **查找因子** | ricequant_factor_list.md |
@@ -270,19 +271,18 @@ docs/backtest_guide/
 |------|---------|
 | 如何开始 Notebook？ | README.md 或 QUICK_START.md |
 | 如何开始策略编辑器？ | STRATEGY_EDITOR_GUIDE.md |
+| 提交回测前要检查什么？ | PRE_RUN_CHECKLIST.md ⭐ |
+| 如何选择时间区间？ | PRE_RUN_CHECKLIST.md（时间区间建议） |
+| 如何设置超时时间？ | PRE_RUN_CHECKLIST.md（超时时间设置） |
 | 如何选择平台？ | STRATEGY_EDITOR_GUIDE.md（平台选择） |
 | 如何转换策略格式？ | README.md（策略代码适配） + PROMPT.md（策略转换提示词） |
 | API 如何替换？ | API_DIFF.md 或 joinquant_to_ricequant_migration_guide.md |
 | 如何迁移策略？ | joinquant_to_ricequant_migration_guide.md |
 | Session 过期怎么办？ | STRATEGY_EDITOR_GUIDE.md（常见问题） |
-| 超时怎么办？ | README.md（常见问题） |
+| 超时怎么办？ | PRE_RUN_CHECKLIST.md（Q1: 回测超时怎么办） |
 | 无输出怎么办？ | README.md（常见问题） |
 | 策略没有交易？ | STRATEGY_EDITOR_GUIDE.md（常见问题 Q2） |
-| **哪些因子平台提供？** | **ricequant_factors_guide.md** ⭐ NEW |
-| **因子要不要自己算？** | **ricequant_factors_guide.md** ⭐ NEW |
 | 如何获取因子？ | ricequant_factor_list.md 或 STRATEGY_EDITOR_GUIDE.md（常见问题 Q3） |
-| **查看运行结果？** | **ricequant_notebooks_list.md** ⭐ NEW |
-| **访问在线 Notebook？** | **ricequant_notebooks_list.md** ⭐ NEW |
 | Agent 如何运行？ | PROMPT.md |
 
 ## 文档更新
