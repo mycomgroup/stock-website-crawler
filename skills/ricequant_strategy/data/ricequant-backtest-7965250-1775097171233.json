@@ -1,0 +1,46 @@
+{
+  "backtestId": "7965250",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-04-02T10:32:35.865000",
+    "start_at": "2026-04-02T10:32:39.720000",
+    "progress": 0,
+    "backtest_id": "7965250",
+    "description": "",
+    "strategy_id": 2415370,
+    "title": "RFScore Pure Offensive",
+    "account_type": "stock",
+    "end_at": "2026-04-02T10:32:51.097000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 14 in buy_stocks\n    yesterday = context.previous_date\n    --> context = Context({benchmark = '000300.XSHG', max_holdings = 3, hold_days = 1})\n    --> bar_dict = BarMap()\n\nAttributeError: 'StrategyContext' object has no attribute 'previous_date'"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  }
+}

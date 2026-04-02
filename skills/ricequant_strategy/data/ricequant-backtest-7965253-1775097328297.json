@@ -1,0 +1,46 @@
+{
+  "backtestId": "7965253",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-04-02T10:35:09.821000",
+    "start_at": "2026-04-02T10:35:13.696000",
+    "progress": 0,
+    "backtest_id": "7965253",
+    "description": "",
+    "strategy_id": 2415370,
+    "title": "RFScore Pure Offensive",
+    "account_type": "stock",
+    "end_at": "2026-04-02T10:35:25.587000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 17 in buy_stocks\n    stock_list = [\n    --> context = Context({benchmark = '000300.XSHG', max_holdings = 3, hold_days = 1})\n    --> bar_dict = BarMap()\n    --> yesterday = '2024-01-02'\n    --> all_stocks =      order_book_id industry_code  ...  province   purchasedate\n0      000001.XSHE           J66  ...       广东省            NaN\n1      000002.XSHE           K70   ...\n\n  File strategy.py, line 20 in <listcomp>\n    if not s.order_book_id.startswith((\"688\", \"4\", \"8\"))\n    --> .0 = <map object at 0x7f43646787c0>\n    --> s = 'order_book_id'\n\nAttributeError: 'str' object has no attribute 'order_book_id'"
+  },
+  "risk": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 0,
+    "trading_date": 0,
+    "alpha": 0,
+    "beta": 0,
+    "sharpe": 0,
+    "sortino": 0,
+    "information_ratio": 0,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  }
+}
