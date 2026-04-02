@@ -114,7 +114,17 @@ def close_session(
     """
     try:
         session_url = urllib.parse.urljoin(api_root, f"sessions/{session_id}")
-        request_json(opener, session_url, xsrf_token, method="DELETE", referer=referer)
+        headers = {
+            "User-Agent": USER_AGENT,
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-Xsrftoken": xsrf_token,
+            "Referer": referer,
+        }
+        request = urllib.request.Request(session_url, headers=headers, method="DELETE")
+        with opener.open(request, timeout=30) as response:
+            response.read()
         return True
     except Exception as e:
         print(f"关闭 session 失败: {e}")

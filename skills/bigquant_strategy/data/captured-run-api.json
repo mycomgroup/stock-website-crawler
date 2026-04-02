@@ -1,0 +1,374 @@
+[
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/?folder=/home/aiuser/work",
+    "time": 1775122154519
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/settings/v1/user_records/reads",
+    "postData": "[\"visit_aistudio\",\"click_aistudio_editor_runall\",\"submit_paper_trading\",\"alpha_guide\"]",
+    "time": 1775122155483
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+    "postData": "{\"keys\":[\"aistudio\",\"common\"]}",
+    "time": 1775122155644
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+    "postData": "{\"keys\":[\"aistudio\"]}",
+    "time": 1775122155646
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/module/v1/modules",
+    "time": 1775122155659
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/modules/configuration/auto",
+    "time": 1775122155659
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/settings/v1/user_records",
+    "postData": "{\"key\":\"visit_aistudio\",\"value\":\"51\"}",
+    "time": 1775122155663
+  },
+  {
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=30-bit&ds=1440x900&vl=900&et=0&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=2129627179&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=41146&r=0&ww=1440&u=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork",
+    "time": 1775122155717
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/out/vsda_bg.wasm",
+    "time": 1775122155762
+  },
+  {
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63v0v879772846za200zd879772846&_p=1775122155869&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1440x900&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=1&tag_exp=0~115616986~115938465~115938468~116991817~117266401&sid=1775122155&sct=2&seg=0&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork&dt=&en=page_view&_ss=1&_ee=1&tfd=1364",
+    "time": 1775122155881
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/cdnuploads/aistudio/v1.88.37/out/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html?&vscodeWebWorkerExtHostId=436c18b7-bb55-4739-869a-ea8d2b0e7884&parentOrigin=https://bigquant.com",
+    "time": 1775122156388
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/out/vs/base/browser/ui/codicons/codicon/codicon.ttf?5d4d76ab2ce5108968ad644d591a16a6",
+    "time": 1775122156390
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=39cf8ad7-81b3-47cc-955f-56ed24645c0a&origin=39cf8ad7-81b3-47cc-955f-56ed24645c0a&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+    "time": 1775122156820
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/aistudioux/assets/avatar.svg",
+    "time": 1775122156821
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/aistudioux/assets/welcome-arrow.svg",
+    "time": 1775122156821
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/balance",
+    "time": 1775122156821
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+    "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\"]}",
+    "time": 1775122156822
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/daily/aistudio/sign_in/week",
+    "time": 1775122156822
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/activity",
+    "time": 1775122156822
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/studios/@default",
+    "time": 1775122156822
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+    "time": 1775122156822
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/aistudioux/assets/logo.svg",
+    "time": 1775122156823
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=845a532a-7f7a-4835-bf9e-caa20d9c09a7&origin=845a532a-7f7a-4835-bf9e-caa20d9c09a7&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+    "time": 1775122156884
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=845a532a-7f7a-4835-bf9e-caa20d9c09a7",
+    "time": 1775122157290
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/extensions/BigQuant.quantchat/assets/icon.svg",
+    "time": 1775122158088
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2FBigQuant.dai-chat%2Fassets%2Ficon.svg&tkn=",
+    "time": 1775122158088
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fvscode-icons-team.vscode-icons-12.7.0%2Ficons%2Fdefault_folder.svg&tkn=",
+    "time": 1775122158307
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fvscode-icons-team.vscode-icons-12.7.0%2Ficons%2Ffile_type_jupyter.svg&tkn=",
+    "time": 1775122158307
+  },
+  {
+    "method": "GET",
+    "url": "blob:https://bigquant.com/446598bb-8472-44db-a987-8f8c8b546da1",
+    "time": 1775122159743
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"8eeed3cc-db19-4d63-9349-47ff6db6097e\",\"event_name\":\"loadWebworkerIframe\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"aistudio\",\"timestamp\":\"2026-04-02 09:29:16.426\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/?folder=/home/aiuser/work\",\"referrer\":\"\",\"",
+    "time": 1775122160684
+  },
+  {
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63v0v879772846za200zd879772846&_p=1775122155869&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1440x900&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAEQ&_s=2&tag_exp=0~115616986~115938465~115938468~116991817~117266401&sid=1775122155&sct=2&seg=0&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork&dt=&en=scroll&epn.percent_scrolled=90&_et=4&tfd=6370",
+    "time": 1775122160885
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/aistudioux/assets/run_tips.jpg",
+    "time": 1775122654677,
+    "response": {
+      "status": 200,
+      "body": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0007}\u0000\u0000\u0003�\b\u0006\u0000\u0000\u0000�\u0012H\u0001\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000\u0004gAMA\u0000\u0000��\u000b�a\u0005\u0000\u0000\u0000\tpHYs\u0000\u0000\u000e�\u0000\u0000\u000e�\u0001�o�d\u0000\u0000��IDATx^�\u0007t\u001cǙ���߽����}w�wwe�\n�\u0015�`QV�$�s�9g\u0012�  1���L�s�Y\")���s�$\u0012��\f޿����\u0000\u0004(\u0000|���LWuUuuO\u000fX\u000f��HMME}$!!\u0001���#��z��>F\b!u���DB\b!�\u0010B\b9o���\u0006S�Hr�t�\u0010BH(���\u0010r\u000e���\b!����#�\u0010B\b!�\u0010B\u001a*~��R�Lu=ɹҝCB\b!�P�\u0012B�9@w\u001f#�����DB\b!�\u0010B\bi�T%��ۍ셉8ݻ\rNumJ�\u0002\u0019C\u0019K\u0019Ӫ$9g\t\u0013' ��툹�R̹�\"r\u0016�\u0018�Xʘz�\u001b���Ps��y $\u001cU���1Hjv\u000b���׈���]#�\u001buI�)F��6�@�K\b�O��c�\u0010RW���H\b!�\u0010B\b!\r�h��I\u0011��\u001f�\u0005Q�����I�P�Rƴ*�W��\b���}�\u0018\u001b�=��\n\u0018c(c)cZ\u0015���P�T�<\u0010\u0012�*Iߤ�\u0011���V\u0010�k3\u001c�������>F\b!u\u0005�\u001f��"
+    }
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=1b6816f3-6932-4bec-8767-a4c3b64817e1&origin=22235e06-ef08-4984-88f0-d30d0ccaa083&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com&purpose=notebookRenderer",
+    "time": 1775122663285
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=1b6816f3-6932-4bec-8767-a4c3b64817e1",
+    "time": 1775122663454
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/t.html",
+    "time": 1775122663545
+  },
+  {
+    "method": "GET",
+    "url": "blob:https://bigquant.com/9d573d94-84f2-46a6-951b-390c9b2a4460",
+    "time": 1775122663546
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/node_modules/vscode-oniguruma/release/onig.wasm",
+    "time": 1775122663564
+  },
+  {
+    "method": "GET",
+    "url": "blob:https://bigquant.com/0aec6a99-3740-4f37-8170-b5b0d44ad8eb",
+    "time": 1775122663630
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fbat%2Fsnippets%2Fbatchfile.code-snippets&tkn=",
+    "time": 1775122663652
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcoffeescript%2Fsnippets%2Fcoffeescript.code-snippets&tkn=",
+    "time": 1775122663652
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcpp%2Fsnippets%2Fc.code-snippets&tkn=",
+    "time": 1775122663652
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcpp%2Fsnippets%2Fcpp.code-snippets&tkn=",
+    "time": 1775122663652
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcsharp%2Fsnippets%2Fcsharp.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Ffsharp%2Fsnippets%2Ffsharp.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fgroovy%2Fsnippets%2Fgroovy.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fhtml%2Fsnippets%2Fhtml.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fjava%2Fsnippets%2Fjava.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fjavascript%2Fsnippets%2Fjavascript.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fmarkdown-basics%2Fsnippets%2Fmarkdown.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fphp%2Fsnippets%2Fphp.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fswift%2Fsnippets%2Fswift.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Ftypescript-basics%2Fsnippets%2Ftypescript.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fvb%2Fsnippets%2Fvb.code-snippets&tkn=",
+    "time": 1775122663653
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/mlstudio/static/img/icon-arrow.svg",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/mlstudio/static/img/icon-search.svg",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/mlstudio/static/fonts/segoeui.ttf",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/mlstudio/static/fonts/seguisb.ttf",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/mlstudio/static/fonts/icomoon6.ttf?ltlewt",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/mlstudio/static/img/icon-refresh.svg",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/static/img/collapse-22.svg",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/static/img/comment_bubble.svg",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/istatic/mlstudio/static/img/icon-none.svg",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/istatic/mlstudio/static/img/icon-validation-invalid.svg",
+    "time": 1775122666244
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistatic/aistudio/html/dev/mlstudio/static/img/icon-validation-valid.gif",
+    "time": 1775122666259
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/mint-key",
+    "time": 1775122671296
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/settings/v1/user_records",
+    "postData": "{\"key\":\"click_aistudio_editor_runall\",\"value\":\"2\"}",
+    "time": 1775122717874
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/event",
+    "postData": "{\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"event_type\":\"run_strategy\"}",
+    "time": 1775122717874
+  },
+  {
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/aistudioux/assets/scroll-arrow.svg",
+    "time": 1775122717874
+  },
+  {
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fms-toolsai.jupyter-2024.2.0-linux-x64%2Fresources%2Flight%2Frestart-kernel.svg&tkn=",
+    "time": 1775122717975,
+    "response": {
+      "status": 200,
+      "body": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path style=\"fill: #424242 !important; fill-rule: evenodd !important; clip-rule: evenodd !important\" d=\"M12.75 8C12.75 10.4853 10.7353 12.5 8.24999 12.5C6.41795 12.5 4.84162 11.4052 4.13953 9.83416L2.74882 10.399C3.67446 12.5186 5.78923 14 8.24999 14C11.5637 14 14.25 11.3137 14.25 8C14.25 4.68629 11.5637 2 8.24999 2C6.3169 2 4.59732 2.91418 3.5 4.3338V2.5H2V6.5L2.75 7.25H6.25V5.75H4.35201C5.13008 4.40"
+    }
+  },
+  {
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"0d46f438-bd8b-4980-95b8-6695f452945b\",\"event_name\":\"click_aistudio_editor_runall\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"aistudio\",\"timestamp\":\"2026-04-02 09:38:37.848\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/?folder=/home/aiuser/work\",\"refer",
+    "time": 1775122720640
+  },
+  {
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63v0v879772846za200zd879772846&_p=1775122155869&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1440x900&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=3&tag_exp=0~115616986~115938465~115938468~116991817~117266401&sid=1775122155&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork&dt=%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BA%BF%E6%80%A7%E7%AD%96%E7%95%A5-20260330204417.ipynb%20%E2%80%94%20work%20%E2%80%94%20AIStudio&en=click_aistudio_editor_runall&_ee=1&_et=561969&tfd=568390",
+    "time": 1775122722865
+  }
+]

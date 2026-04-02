@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-02T09:37:13.427Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260402_173709.ipynb",
+  "notebookPath": "策略测试_20260402_173709.ipynb",
+  "kernelId": "2fd18e97-551d-4189-8cb5-9dbcce4f5636",
+  "sessionId": "0bc2446d-042f-4aeb-9fcc-2e5183ce32ba",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260402_173709.ipynb",
+    "path": "策略测试_20260402_173709.ipynb",
+    "last_modified": "2026-04-02T09:37:12.718516Z",
+    "created": "2026-04-02T09:37:12.719516Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 7075,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板接力 2022年Q1测试 - 优化版\n测试范围：2022-01-01 至 2022-03-31\n优化：减少API调用，提升速度\n\"\"\"\n\nprint(\"=\" * 80)\nprint(\"二板接力 2022年Q1测试（优化版）\")\nprint(\"=\" * 80)\n\ntry:\n    import pandas as pd\n    import numpy as np\n\n    print(\"✓ 导入依赖成功\")\n\n    start_date = \"2022-01-01\"\n    end_date = \"2022-03-31\"\n\n    print(f\"\\n测试范围: {start_date} 至 {end_date}\")\n\n    # 获取交易日\n    all_dates = get_trading_dates(start_date, end_date)\n    print(f\"交易日数: {len(all_dates)}\")\n\n    # 预先获取所有股票列表\n    all_stocks_list = [s for s in get_all_securities([\"stock\"]).index.tolist()]\n    all_stocks_list = [\n        s\n        for s in all_stocks_list\n        if not (s.startswith(\"68\") or s.startswith(\"4\") or s.startswith(\"8\"))\n    ]\n    all_stocks_list = all_stocks_list[:300]  # 限制为300只，提升速度\n    print(f\"测试股票数: {len(all_stocks_list)}\")\n\n    signals = []\n\n    # 批量获取价格数据，减少API调用\n    print(\"\\n批量获取价格数据...\")\n\n    for i in range(2, min(len(all_dates), 40)):  # 限制前40天\n        prev_prev = all_dates[i - 2]\n        prev = all_dates[i - 1]\n        curr = all_dates[i]\n\n        if i % 10 == 0:\n            print(f\"处理第{i}天: {prev} -> {curr}\")\n\n        try:\n            # 批量获取三日数据\n            price_data = get_price(\n                all_stocks_list,\n                start_date=prev_prev,\n                end_date=curr,\n                frequency=\"1d\",\n                fields=[\"close\", \"limit_up\", \"open\"],\n                adjust_orig=None,\n            )\n\n            if price_data.empty:\n                continue\n\n            # 分析涨停股票\n            zt_stocks = []\n            for stock in all_stocks_list:\n                try:\n                    # 检查前一日是否涨停\n                    prev_close = price_data.loc[prev, (stock, \"close\")]\n                    prev_limit = price_data.loc[prev, (stock, \"limit_up\")]\n\n                    if abs(prev_close - prev_limit) / prev_limit < 0.01:\n                        # 检查前前一日是否涨停\n                        pp_close = price_data.loc[prev_prev, (stock, \"close\")]\n                        pp_limit = price_data.loc[prev_prev, (stock, \"limit_up\")]\n\n                        if abs(pp_close - pp_limit) / pp_limit < 0.01:\n                            zt_stocks.append(stock)\n                except:\n                    continue\n\n            if i % 10 == 0:\n                print(f\"  二板候选数: {len(zt_stocks)}\")\n\n            # 模拟交易\n            for stock in zt_stocks[:20]:  # 限制前20只\n                try:\n                    curr_open = price_data.loc[curr, (stock, \"open\")]\n                    curr_close = price_data.loc[curr, (stock, \"close\")]\n                    curr_limit = price_data.loc[curr, (stock, \"limit_up\")]\n\n                    # 涨停开盘跳过\n                    if abs(curr_open - curr_limit) / curr_limit < 0.01:\n                        continue\n\n                    ret = (curr_close - curr_open) / curr_open * 100\n                    signals.append(\n                        {\n                            \"date\": str(curr),\n                            \"stock\": stock,\n                            \"return\": ret,\n                            \"win\": ret > 0,\n                        }\n                    )\n                except:\n                    continue\n        except Exception as e:\n            if i % 10 == 0:\n                print(f\"  错误: {e}\")\n            continue\n\n    # 统计结果\n    print(\"\\n\" + \"=\" * 80)\n    print(\"2022年Q1测试结果\")\n    print(\"=\" * 80)\n\n    if len(signals) > 0:\n        df = pd.DataFrame(signals)\n        print(f\"信号数: {len(df)}\")\n        print(f\"平均收益: {df['return'].mean():.2f}%\")\n        print(f\"胜率: {df['win'].sum() / len(df) * 100:.1f}%\")\n        print(f\"最大收益: {df['return'].max():.2f}%\")\n        print(f\"最大亏损: {df['return'].min():.2f}%\")\n    else:\n        print(\"无信号\")\n\n    print(\"\\n✓ 2022年Q1测试完成\")\n\nexcept Exception as e:\n    print(f\"\\n❌ 测试失败: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"=\" * 80)\n",
+      "msgId": "d6f8df6ba83c40db8ed55e02ce054da5",
+      "websocketSessionId": "5b63833bcf2541a28a8b321ca95042e5",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n二板接力 2022年Q1测试（优化版）\n================================================================================\n✓ 导入依赖成功\n\n测试范围: 2022-01-01 至 2022-03-31\n交易日数: 58\n\n❌ 测试失败: name 'get_all_securities' is not defined\n================================================================================\nTraceback (most recent call last):\n  File \"<ipython-input-1-96119ddfc0eb>\", line 27, in <module>\n    all_stocks_list = [s for s in get_all_securities([\"stock\"]).index.tolist()]\nNameError: name 'get_all_securities' is not defined\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n二板接力 2022年Q1测试（优化版）\n================================================================================\n✓ 导入依赖成功\n\n测试范围: 2022-01-01 至 2022-03-31\n交易日数: 58\n\n❌ 测试失败: name 'get_all_securities' is not defined\n================================================================================\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-96119ddfc0eb>\", line 27, in <module>\n    all_stocks_list = [s for s in get_all_securities([\"stock\"]).index.tolist()]\nNameError: name 'get_all_securities' is not defined\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "0bc2446d-042f-4aeb-9fcc-2e5183ce32ba",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/0bc2446d-042f-4aeb-9fcc-2e5183ce32ba: "
+  },
+  "autoShutdown": true
+}

@@ -1,0 +1,62 @@
+{
+  "capturedAt": "2026-04-02T09:42:05.670Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/RiceQuantAPI_20260402_174157.ipynb",
+  "notebookPath": "RiceQuantAPI_20260402_174157.ipynb",
+  "kernelId": "4b93b1e6-57f6-4b03-a779-b9272aa4569f",
+  "sessionId": "dc16dec7-caac-4075-8bcb-467998ca3b77",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "RiceQuantAPI_20260402_174157.ipynb",
+    "path": "RiceQuantAPI_20260402_174157.ipynb",
+    "last_modified": "2026-04-02T09:42:04.051485Z",
+    "created": "2026-04-02T09:42:04.053485Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 2455,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# RiceQuant API 测试 - 修复版\nprint(\"=== RiceQuant API 测试 ===\")\n\ntry:\n    # RiceQuant API: 获取所有股票\n    all_stocks = all_instruments(\"CS\")\n    print(f\"股票总数: {len(all_stocks)}\")\n\n    # 获取交易日\n    dates = get_trading_dates(\"2024-03-01\", \"2024-03-10\")\n    print(f\"2024-03-01至2024-03-10交易日: {len(dates)}\")\n    print(f\"首个交易日: {dates[0]}\")\n\n    # 测试获取股票数据\n    test_stock = all_stocks.iloc[0].order_book_id\n    print(f\"测试股票: {test_stock}\")\n\n    bars = history_bars(test_stock, 5, \"1d\", \"close\")\n    print(f\"历史数据: {len(bars) if bars is not None else 0} 条\")\n\n    print(\"\\nAPI 测试成功!\")\n\nexcept Exception as e:\n    print(f\"API 测试错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"=== 测试完成 ===\")\n",
+      "msgId": "87df26663bfb4eba83d1046f651b6be2",
+      "websocketSessionId": "2a4a9cfdb0e946cfb4e7542fb240b643",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== RiceQuant API 测试 ===\n股票总数: 5539\n2024-03-01至2024-03-10交易日: 6\n首个交易日: 2024-03-01\n测试股票: 000001.XSHE\nAPI 测试错误: name 'history_bars' is not defined\n=== 测试完成 ===\nTraceback (most recent call last):\n  File \"<ipython-input-1-3261ca8b6b3f>\", line 18, in <module>\n    bars = history_bars(test_stock, 5, \"1d\", \"close\")\nNameError: name 'history_bars' is not defined\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RiceQuant API 测试 ===\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票总数: 5539\n2024-03-01至2024-03-10交易日: 6\n首个交易日: 2024-03-01\n测试股票: 000001.XSHE\nAPI 测试错误: name 'history_bars' is not defined\n=== 测试完成 ===\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-3261ca8b6b3f>\", line 18, in <module>\n    bars = history_bars(test_stock, 5, \"1d\", \"close\")\nNameError: name 'history_bars' is not defined\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "RiceQuantAPI",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "dc16dec7-caac-4075-8bcb-467998ca3b77",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/dc16dec7-caac-4075-8bcb-467998ca3b77: "
+  },
+  "autoShutdown": true
+}

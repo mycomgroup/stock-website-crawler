@@ -293,3 +293,39 @@ docs/backtest_guide/
   - 新增 `ricequant_notebooks_list.md` - Notebook 列表汇总
   - 更新 INDEX.md 添加新文档索引
 - 来源文档已保留在 `ORIGINAL_*.md` 文件中
+
+---
+
+## THSQuant 文档（新增）
+
+### thsquant_backtest_api.md - THSQuant 回测接口文档 ⭐ NEW
+**主要内容：**
+- HTTP API 端点（已验证的真实接口）
+- 参数格式（camelCase 规则）
+- 返回数据结构（绩效/交易/日志/持仓）
+- 与 JoinQuant 接口对比
+- Session 管理和错误码
+
+**适用场景：** 自动化提交 THSQuant 回测、获取结果数据
+
+### thsquant_api_guide.md - THSQuant 平台数据 API 指南 ⭐ NEW
+**主要内容：**
+- 策略框架函数（init/handle_bar/before_trading 等）
+- 行情数据 API（get_price/history/get_last_tick 等）
+- 财务数据 API（get_fundamentals/query 等）
+- 证券信息 API（get_index_stocks/get_all_securities 等）
+- 交易函数（order/order_target_percent 等）
+- 问财接口（get_iwencai/query_iwencai）
+- 与 JoinQuant API 对比表
+- 代码迁移注意事项
+
+**适用场景：** 将策略迁移到 THSQuant 平台运行
+
+### 平台选择更新（含 THSQuant）
+
+| 阶段 | 场景 | 推荐平台 | Skill |
+|------|------|---------|-------|
+| 初步调研 | 快速验证概念 | JoinQuant Notebook | `skills/joinquant_notebook` |
+| 新策略开发 | 因子简单 | RiceQuant Notebook | `skills/ricequant_strategy` |
+| 完整回测 | 需要风险指标 | RiceQuant/JoinQuant 策略编辑器 | `skills/joinquant_strategy` |
+| THSQuant 验证 | 同花顺平台验证 | THSQuant SuperMind | `skills/thsquant_strategy` |
