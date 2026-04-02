@@ -1,0 +1,91 @@
+{
+  "jsFiles": [
+    "https://s.thsi.cn/js/quant/activity/mgo-brochure/jquery.min.js",
+    "https://s.thsi.cn/cd/ths-frontend-common-lib-container/1.1.6/stat_v2_umd.js",
+    "https://s.thsi.cn/js/ta.min.js",
+    "https://s.thsi.cn/js/quant/lib/localwdatepicker/WdatePicker.js",
+    "https://s.thsi.cn/js/quant/lib/es6-promise.auto.min.js",
+    "https://s.thsi.cn/js/quant/lib/env.js",
+    "https://s.thsi.cn/js/upass/ths_iframe_login-2.0.min.js",
+    "https://s.thsi.cn/js/quant/lib/require.min.js",
+    "https://s.thsi.cn/cb?cd/weblog/0.0.1-alpha.27/weblog.js",
+    "https://s.thsi.cn/cd/b2blh-supermind-php/dd7751651857392805c255281e32db71315f5e36/js/study-index.js",
+    "https://s.thsi.cn/cd/b2blh-supermind-php/dd7751651857392805c255281e32db71315f5e36/js/study-index.js"
+  ],
+  "appJsFiles": [
+    "https://s.thsi.cn/cd/b2blh-supermind-php/dd7751651857392805c255281e32db71315f5e36/js/study-index.js"
+  ],
+  "apiPatterns": {
+    "scripts": [
+      "https://s.thsi.cn/cd/b2blh-supermind-php/dd7751651857392805c255281e32db71315f5e36/js/study-index.js",
+      "https://s.thsi.cn/js/quant/activity/mgo-brochure/jquery.min.js",
+      "https://s.thsi.cn/js/ta.min.js",
+      "https://s.thsi.cn/cd/ths-frontend-common-lib-container/1.1.6/stat_v2_umd.js",
+      "https://s.thsi.cn/cb?cd/weblog/0.0.1-alpha.27/weblog.js",
+      "https://s.thsi.cn/js/upass/ths_iframe_login-2.0.min.js",
+      "https://s.thsi.cn/js/quant/lib/env.js",
+      "https://www.googletagmanager.com/gtag/js?id=G-KQBDS1VPQF",
+      "https://s.thsi.cn/js/quant/lib/localwdatepicker/WdatePicker.js",
+      "https://s.thsi.cn/js/quant/lib/es6-promise.auto.min.js"
+    ],
+    "globalFunctions": [],
+    "vueComponents": [],
+    "ajaxCalls": []
+  },
+  "jsSearchResult": {
+    "study-index.js": {
+      "size": 454848,
+      "backtestUrls": [
+        "/platform/factors/cancelbacktest/",
+        "/platform/factors/getbacktestinfobygroup/",
+        "/platform/backtest/backtestdetail/",
+        "/platform/backtest/gettradedays/",
+        "/platform/backtest/queryinfo/",
+        "/platform/backtest/querylatest/",
+        "/platform/backtest/getrecord/",
+        "/platform/backtest/run/",
+        "/platform/backtest/cancel/",
+        "/platform/backtest/backtestlog/",
+        "/platform/backtest/backtestloop/",
+        "/platform/backtest/cancelselected/",
+        "/platform/backtest/backtestdetail",
+        "/platform/backtest/backtestperformance",
+        "/platform/backtest/getrecord",
+        "/platform/factors/getbacktestinfobygroup",
+        "/platform/backtest/tradelog",
+        "/platform/backtest/stindicator",
+        "/platform/backtest/dailypositiongains",
+        "/platform/backtest/backtestlog",
+        "/platform/backtest/backspecificinfo",
+        "/platform/backtest/getriskanalysis",
+        "/platform/backtest/getbrinsonanalysis",
+        "/platform/backtest/getassetanalysis",
+        "/platform/backtest/cancelattributionanalysis",
+        "/platform/backtest/attributionanalysis",
+        "/platform/backtest/tradeoperate",
+        "/platform/backtest/checkaddedmonitor",
+        "/platform/backtest/queryusermonitor",
+        "/platform/backtest/startmonitor",
+        "/platform/backtest/cancelmonitor"
+      ],
+      "runUrls": [
+        "/platform/factors/run/",
+        "/platform/backtest/run/"
+      ],
+      "algoUrls": [
+        "/platform/algorithms/delete/",
+        "/platform/algorithms/move/",
+        "/platform/algorithms/queryall2/",
+        "/platform/algorithms/update/",
+        "/platform/algorithms/add/",
+        "/platform/algorithms/queryinfo/",
+        "/platform/algoclone/recordclone/",
+        "/platform/algorithms/queryruninfo/",
+        "/platform/algorithms/goodlib",
+        "/platform/algoclone/queryclonenum",
+        "/platform/algorithms/goodlibresearchinfo"
+      ]
+    }
+  },
+  "timestamp": 1775113603045
+}

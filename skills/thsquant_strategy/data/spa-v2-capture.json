@@ -1,0 +1,631 @@
+{
+  "captured": [
+    {
+      "url": "https://quant.10jqka.com.cn/platform/message/hasnew",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/message/hasnew?callback=jQuery183027640776723655547_1775113410332",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775113410346,
+      "status": 200,
+      "responseRaw": "jQuery183027640776723655547_1775113410332({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"hasNew\":true,\"systemMessageCount\":1,\"userMessageCount\":0}});",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "hasNew": true,
+          "systemMessageCount": 1,
+          "userMessageCount": 0
+        }
+      }
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183027640776723655547_1775113410333",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775113410346,
+      "status": 200,
+      "responseRaw": "jQuery183027640776723655547_1775113410333({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"vip_apis\":[],\"auto_enable\":0,\"dash_server_quota\":0,\"sfactor_enable\":1,\"cpu_quota\":2,\"broker_quota\":3,\"auto_trade\":false,\"sfactor_monitor_quota\":3,\"terminals_enable\":false,\"inner\":0,\"image_spec\":\"\",\"simulate_quota\":5,\"sklearn_enable\":0,\"backtest_monitor_quota\":10,\"user_id\":\"772028948\",\"backtest_analysis\":0,\"forex_enable\":false,\"factor_group_quota\":3,\"name_server_quota\":0,\"auto_simu\":0,\"vip\":false,\"disk_quota\":1024,\"memory_request\":0,\"tick_enable\":false,\"algorithm_quota\":3,\"factor_num_quota\":5,\"third_parties\":\"\",\"r",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "vip_apis": [],
+          "auto_enable": 0,
+          "dash_server_quota": 0,
+          "sfactor_enable": 1,
+          "cpu_quota": 2,
+          "broker_quota": 3,
+          "auto_trade": false,
+          "sfactor_monitor_quota": 3,
+          "terminals_enable": false,
+          "inner": 0,
+          "image_spec": "",
+          "simulate_quota": 5,
+          "sklearn_enable": 0,
+          "backtest_monitor_quota": 10,
+          "user_id": "772028948",
+          "backtest_analysis": 0,
+          "forex_enable": false,
+          "factor_group_quota": 3,
+          "name_server_quota": 0,
+          "auto_simu": 0,
+          "vip": false,
+          "disk_quota": 1024,
+          "memory_request": 0,
+          "tick_enable": false,
+          "algorithm_quota": 3,
+          "factor_num_quota": 5,
+          "third_parties": "",
+          "research_age": 24,
+          "jupyter_cron": "crontabs",
+          "metal_enable": false,
+          "memory_quota": 2048,
+          "jupyter_share": "",
+          "node_selector": "",
+          "cpu_request": 0,
+          "inactive_limit": 0,
+          "sfactor_quota": 3,
+          "download_quota": 50
+        }
+      }
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+      "postData": "isajax=1",
+      "time": 1775113410346,
+      "status": 200,
+      "responseRaw": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"docs\":[{\"id\":\"3\",\"title\":\"\\u672c\\u5730SDK\",\"order\":5},{\"id\":\"4\",\"title\":\"API \\u6587\\u6863\",\"order\":4},{\"id\":\"8\",\"title\":\"\\u56e0\\u5b50\\u7814\\u7a76\",\"order\":0},{\"id\":\"10\",\"title\":\"\\u6a21\\u62df\\u4eff\\u771f\",\"order\":2},{\"id\":\"12\",\"title\":\"\\u56de\\u6d4b\\u5f15\\u64ce\",\"order\":1},{\"id\":\"14\",\"title\":\"\\u7814\\u7a76\\u73af\\u5883\\/\\u5b9e\\u76d8\",\"order\":3},{\"id\":\"16\",\"title\":\"\\u5e38\\u89c1\\u95ee\\u9898\",\"order\":6},{\"id\":\"20\",\"title\":\"\\u56e0\\u5b50\\u6570\\u636e\\u4ea7\\u54c1\",\"order\":7},{\"id\":\"22\",\"title\":\"\\u667a\\u80fd\\u4ea4\\u6613\\u5728\\u7ebf\\u6587\\u6863\",\"order\":8},{\"id\":\"24\"",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "docs": [
+            {
+              "id": "3",
+              "title": "本地SDK",
+              "order": 5
+            },
+            {
+              "id": "4",
+              "title": "API 文档",
+              "order": 4
+            },
+            {
+              "id": "8",
+              "title": "因子研究",
+              "order": 0
+            },
+            {
+              "id": "10",
+              "title": "模拟仿真",
+              "order": 2
+            },
+            {
+              "id": "12",
+              "title": "回测引擎",
+              "order": 1
+            },
+            {
+              "id": "14",
+              "title": "研究环境/实盘",
+              "order": 3
+            },
+            {
+              "id": "16",
+              "title": "常见问题",
+              "order": 6
+            },
+            {
+              "id": "20",
+              "title": "因子数据产品",
+              "order": 7
+            },
+            {
+              "id": "22",
+              "title": "智能交易在线文档",
+              "order": 8
+            },
+            {
+              "id": "24",
+              "title": "AI Lab",
+              "order": 9
+            }
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183027640776723655547_1775113410334",
+      "postData": "isajax=1&datatype=jsonp",
+      "time": 1775113410382,
+      "status": 200,
+      "responseRaw": "jQuery183027640776723655547_1775113410334({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"memory_quota\":2048,\"cpu_request\":0,\"vip\":false,\"research_age\":24,\"auto_trade\":false,\"name_server_quota\":0,\"broker_quota\":3,\"disk_quota\":1024,\"memory_request\":0,\"metal_enable\":false,\"factor_group_quota\":3,\"sfactor_enable\":1,\"auto_simu\":0,\"auto_enable\":0,\"jupyter_cron\":\"crontabs\",\"jupyter_share\":\"\",\"inactive_limit\":0,\"tick_enable\":false,\"image_spec\":\"\",\"vip_apis\":[],\"algorithm_quota\":3,\"backtest_monitor_quota\":10,\"node_selector\":\"\",\"dash_server_quota\":0,\"forex_enable\":false,\"download_quota\":50,\"sfactor_monitor_quot",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "memory_quota": 2048,
+          "cpu_request": 0,
+          "vip": false,
+          "research_age": 24,
+          "auto_trade": false,
+          "name_server_quota": 0,
+          "broker_quota": 3,
+          "disk_quota": 1024,
+          "memory_request": 0,
+          "metal_enable": false,
+          "factor_group_quota": 3,
+          "sfactor_enable": 1,
+          "auto_simu": 0,
+          "auto_enable": 0,
+          "jupyter_cron": "crontabs",
+          "jupyter_share": "",
+          "inactive_limit": 0,
+          "tick_enable": false,
+          "image_spec": "",
+          "vip_apis": [],
+          "algorithm_quota": 3,
+          "backtest_monitor_quota": 10,
+          "node_selector": "",
+          "dash_server_quota": 0,
+          "forex_enable": false,
+          "download_quota": 50,
+          "sfactor_monitor_quota": 3,
+          "third_parties": "",
+          "terminals_enable": false,
+          "cpu_quota": 2,
+          "sfactor_quota": 3,
+          "simulate_quota": 5,
+          "factor_num_quota": 5,
+          "sklearn_enable": 0,
+          "backtest_analysis": 0,
+          "user_id": "772028948",
+          "inner": 0
+        }
+      }
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/?callback=jQuery183027640776723655547_1775113410334",
+      "postData": "isajax=1&datatype=jsonp",
+      "time": 1775113410562,
+      "status": 200,
+      "responseRaw": "jQuery183027640776723655547_1775113410334({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"strategys\":[{\"algo_id\":\"67c935e607887b957629ad72\",\"algo_name\":\"PSY\\u4ea4\\u6613\\u7b56\\u7565\",\"config\":[],\"modified\":\"2026-03-30 20:38:33\",\"backtest_id\":\"69ca6ec93d1ca490b3c629da\",\"algonote\":\"\",\"backtest_number\":1,\"running_number\":0,\"source\":\"CLOUD\",\"stock_market\":\"STOCK\",\"new_flag\":true,\"folder_id\":-1},{\"algo_id\":\"67da5bb71d3a656411312359\",\"algo_name\":\"\\u9ad8\\u80a1\\u606f-\\u5c0f\\u5e02\\u503c\\u4f18\\u9009\\u7b56\\u7565(\\u526f\\u672c)\",\"config\":[],\"modified\":\"2025-03-19 13:55:02\",\"backtest_id\":\"67da5c372626dd7b856cd590\",\"",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "strategys": [
+            {
+              "algo_id": "67c935e607887b957629ad72",
+              "algo_name": "PSY交易策略",
+              "config": [],
+              "modified": "2026-03-30 20:38:33",
+              "backtest_id": "69ca6ec93d1ca490b3c629da",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": true,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67da5bb71d3a656411312359",
+              "algo_name": "高股息-小市值优选策略(副本)",
+              "config": [],
+              "modified": "2025-03-19 13:55:02",
+              "backtest_id": "67da5c372626dd7b856cd590",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d91c5707887bfc5a2cae7d",
+              "algo_name": "112(副本)",
+              "config": [],
+              "modified": "2025-03-19 08:56:54",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d8d13b14af672ef8850fd0",
+              "algo_name": "tt",
+              "config": [],
+              "modified": "2025-03-18 09:59:00",
+              "backtest_id": "67d8d22a1d10da749f9c8685",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c939922626dd4214718b7a",
+              "algo_name": "三因子选股模型",
+              "config": [],
+              "modified": "2025-03-06 13:59:44",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c90a8a1544e184b67ed697",
+              "algo_name": "SAR交易策略",
+              "config": [],
+              "modified": "2025-03-06 10:39:05",
+              "backtest_id": "67c90a976aada88ead2d4d33",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c905a61544e184b67ed690",
+              "algo_name": "多因子alpha",
+              "config": [],
+              "modified": "2025-03-06 10:18:13",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c8ff700f7cad1155d115a7",
+              "algo_name": "彼得林奇PEG价值选股策略",
+              "config": [],
+              "modified": "2025-03-06 09:59:42",
+              "backtest_id": "67c9016bd6aa7c457a87975e",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81be1e57bbe251ebdb749",
+              "algo_name": "MACD交易策略",
+              "config": [],
+              "modified": "2025-03-05 17:40:47",
+              "backtest_id": "67c81c066aada88ead2d4b1d",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81b1909b3e32628f49240",
+              "algo_name": "222",
+              "config": [],
+              "modified": "2025-03-05 17:37:29",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c819251d10da308ef50099",
+              "algo_name": "ff",
+              "config": [],
+              "modified": "2025-03-05 17:36:11",
+              "backtest_id": "67c8198c0f7cad1155d113b9",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            }
+          ],
+          "folders": []
+        }
+      }
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/checknewcomments",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/user/checknewcomments?callback=jQuery183027640776723655547_1775113410333",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775113411346,
+      "status": 200,
+      "responseRaw": "jQuery183027640776723655547_1775113410333({\"errorcode\":0,\"errormsg\":\"\",\"result\":0});",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": 0
+      }
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/user/getauthdata",
+      "postData": "isajax=1",
+      "time": 1775113415380,
+      "status": 200,
+      "responseRaw": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"vip_apis\":[],\"auto_enable\":0,\"dash_server_quota\":0,\"sfactor_enable\":1,\"cpu_quota\":2,\"broker_quota\":3,\"auto_trade\":false,\"sfactor_monitor_quota\":3,\"terminals_enable\":false,\"inner\":0,\"image_spec\":\"\",\"simulate_quota\":5,\"sklearn_enable\":0,\"backtest_monitor_quota\":10,\"user_id\":\"772028948\",\"backtest_analysis\":0,\"forex_enable\":false,\"factor_group_quota\":3,\"name_server_quota\":0,\"auto_simu\":0,\"vip\":false,\"disk_quota\":1024,\"memory_request\":0,\"tick_enable\":false,\"algorithm_quota\":3,\"factor_num_quota\":5,\"third_parties\":\"\",\"research_age\":24,\"jupyter_cron\":\"crontabs\",",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "vip_apis": [],
+          "auto_enable": 0,
+          "dash_server_quota": 0,
+          "sfactor_enable": 1,
+          "cpu_quota": 2,
+          "broker_quota": 3,
+          "auto_trade": false,
+          "sfactor_monitor_quota": 3,
+          "terminals_enable": false,
+          "inner": 0,
+          "image_spec": "",
+          "simulate_quota": 5,
+          "sklearn_enable": 0,
+          "backtest_monitor_quota": 10,
+          "user_id": "772028948",
+          "backtest_analysis": 0,
+          "forex_enable": false,
+          "factor_group_quota": 3,
+          "name_server_quota": 0,
+          "auto_simu": 0,
+          "vip": false,
+          "disk_quota": 1024,
+          "memory_request": 0,
+          "tick_enable": false,
+          "algorithm_quota": 3,
+          "factor_num_quota": 5,
+          "third_parties": "",
+          "research_age": 24,
+          "jupyter_cron": "crontabs",
+          "metal_enable": false,
+          "memory_quota": 2048,
+          "jupyter_share": "",
+          "node_selector": "",
+          "cpu_request": 0,
+          "inactive_limit": 0,
+          "sfactor_quota": 3,
+          "download_quota": 50
+        }
+      }
+    }
+  ],
+  "backtestReqs": [
+    {
+      "url": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/",
+      "fullUrl": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/?callback=jQuery183027640776723655547_1775113410334",
+      "postData": "isajax=1&datatype=jsonp",
+      "time": 1775113410562,
+      "status": 200,
+      "responseRaw": "jQuery183027640776723655547_1775113410334({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"strategys\":[{\"algo_id\":\"67c935e607887b957629ad72\",\"algo_name\":\"PSY\\u4ea4\\u6613\\u7b56\\u7565\",\"config\":[],\"modified\":\"2026-03-30 20:38:33\",\"backtest_id\":\"69ca6ec93d1ca490b3c629da\",\"algonote\":\"\",\"backtest_number\":1,\"running_number\":0,\"source\":\"CLOUD\",\"stock_market\":\"STOCK\",\"new_flag\":true,\"folder_id\":-1},{\"algo_id\":\"67da5bb71d3a656411312359\",\"algo_name\":\"\\u9ad8\\u80a1\\u606f-\\u5c0f\\u5e02\\u503c\\u4f18\\u9009\\u7b56\\u7565(\\u526f\\u672c)\",\"config\":[],\"modified\":\"2025-03-19 13:55:02\",\"backtest_id\":\"67da5c372626dd7b856cd590\",\"",
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "strategys": [
+            {
+              "algo_id": "67c935e607887b957629ad72",
+              "algo_name": "PSY交易策略",
+              "config": [],
+              "modified": "2026-03-30 20:38:33",
+              "backtest_id": "69ca6ec93d1ca490b3c629da",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": true,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67da5bb71d3a656411312359",
+              "algo_name": "高股息-小市值优选策略(副本)",
+              "config": [],
+              "modified": "2025-03-19 13:55:02",
+              "backtest_id": "67da5c372626dd7b856cd590",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d91c5707887bfc5a2cae7d",
+              "algo_name": "112(副本)",
+              "config": [],
+              "modified": "2025-03-19 08:56:54",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d8d13b14af672ef8850fd0",
+              "algo_name": "tt",
+              "config": [],
+              "modified": "2025-03-18 09:59:00",
+              "backtest_id": "67d8d22a1d10da749f9c8685",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c939922626dd4214718b7a",
+              "algo_name": "三因子选股模型",
+              "config": [],
+              "modified": "2025-03-06 13:59:44",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c90a8a1544e184b67ed697",
+              "algo_name": "SAR交易策略",
+              "config": [],
+              "modified": "2025-03-06 10:39:05",
+              "backtest_id": "67c90a976aada88ead2d4d33",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c905a61544e184b67ed690",
+              "algo_name": "多因子alpha",
+              "config": [],
+              "modified": "2025-03-06 10:18:13",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c8ff700f7cad1155d115a7",
+              "algo_name": "彼得林奇PEG价值选股策略",
+              "config": [],
+              "modified": "2025-03-06 09:59:42",
+              "backtest_id": "67c9016bd6aa7c457a87975e",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81be1e57bbe251ebdb749",
+              "algo_name": "MACD交易策略",
+              "config": [],
+              "modified": "2025-03-05 17:40:47",
+              "backtest_id": "67c81c066aada88ead2d4b1d",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81b1909b3e32628f49240",
+              "algo_name": "222",
+              "config": [],
+              "modified": "2025-03-05 17:37:29",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c819251d10da308ef50099",
+              "algo_name": "ff",
+              "config": [],
+              "modified": "2025-03-05 17:36:11",
+              "backtest_id": "67c8198c0f7cad1155d113b9",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            }
+          ],
+          "folders": []
+        }
+      }
+    }
+  ],
+  "editorInfo": {
+    "buttons": [
+      {
+        "text": "全局搜索",
+        "class": "header-usr-new",
+        "visible": true
+      },
+      {
+        "text": "+新建策略",
+        "class": "new_btn new_btn-newstrategy f-fl",
+        "visible": true
+      },
+      {
+        "text": "+新建文件夹",
+        "class": "new_btn new_btn-newfolder f-fl",
+        "visible": true
+      },
+      {
+        "text": "配置升级",
+        "class": "new_btn new_btn-upgrade f-fl",
+        "visible": true
+      }
+    ],
+    "iframes": [
+      {
+        "src": "https://quant.10jqka.com.cn/view/study-index.html",
+        "id": ""
+      }
+    ],
+    "hasMonaco": false,
+    "url": "https://quant.10jqka.com.cn/view/study-index.html#/",
+    "hash": "#/"
+  },
+  "timestamp": 1775113426901
+}

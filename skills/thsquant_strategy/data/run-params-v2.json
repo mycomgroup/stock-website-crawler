@@ -1,0 +1,46 @@
+{
+  "runContexts": [
+    "BacktestIds:\"/platform/factors/getbacktestinfobygroup/\",getBacktestDetail:\"/platform/backtest/backtestdetail/\",getTradeDayList:\"/platform/backtest/gettradedays/\",analyze:\"/platform/factors/analyze/\",getStrategyInfo:\"/platform/backtest/queryinfo/\"},\"study-strategy\":{getStrategys:\"/platform/algorithms/queryall2/\",folderRename:\"/platform/folder/modify/\",folderDelete:\"/platform/folder/delete/\",folderAdd:\"/platform/folder/add/\",strategysSave:\"/platform/algorithms/update/\",strategysMove:\"/platform/algorithms/move/\",strategysDelete:\"/platform/algorithms/delete/\",strategysRename:\"/platform/algorithms/update/\",strategysAdd:\"/platform/algorithms/add/\",getAceCode:\"/platform/algorithms/queryinfo/\",getBacktestId:\"/platform/backtest/querylatest/\",getAceMessage:\"/platform/utils/getautocode/\",getLastBacktestId:\"/platform/backtest/querylatest/\",getBacktestDetail:\"/platform/backtest/backtestdetail/\",getTradeDayList:\"/platform/backtest/gettradedays/\",getBacktestRecord:\"/platform/backtest/getrecord/\",run:\"/platform/backtest/run/\",getBacktestInfo:\"/platform/backtest/queryinfo/\",cancel:\"/platform/backtest/cancel/\",getBacktestlog:\"/platform/backtest/backtestlog/\",backtestLoop:\"/platform/backtest/backtestloop/\",recordclone:\"/platform/algoclone/recordclone/\",queryRunInfo:\"/platform/algorithms/queryruninfo/\",cancelSelected:\"/platform/backtest/cancelselected/\",addAlgoNote:\"/platform/algorithms/add/\"},\"backtest-result\":{getSimuaccountInfo:\"/platform/simuaccount/query\",getYbidList:\"/platform/simuaccount/getyybidlist\",getAddAccount:\"/platform/simuaccount/add/\",submitBindAccount:\"/platform/simuaccount/open\",getStrategysInfo:\"/platform/backtest/queryinfo/\",getBacktestDetail:\"/platform/backtest/backtestdetail\",getbacktestPerformance:\"/platform/backtest/backtestperformance\",getCustomDrawing:\"/platform/backtest/getrecord\",getbacktestByGroup:\"/platform/factors/getbacktestinfobygroup\",getTradelogByDate:\"/platform/simuaccount/gettradelogbydate\",getTradeLog:\"/platform/backtest/tradelog\",getPositionAccoun"
+  ],
+  "backtestRunContexts": [],
+  "paramPatterns": [
+    "run:function(t){var e,n=j.propHooks[this.prop];return this.options.duration?this.pos=e=V.easing[this.easing](t,this.options.duration*t,0,1,this.options.duration):this.pos=e=t,this.now=(this.end-this.start)*e+this.start,this.options.step&&this.options.step.call(this.elem,this.now,this),n&&n.set?n.set(this):j.propHooks._default.set(this),this",
+    "run:function(t,e,n){t.datatype=this.dataType,this._request(t,e,n)",
+    "run:function(t,e,n){t.datatype=this.dataType,this._request(t,e,n)",
+    ".run(i)",
+    ".run(1)",
+    ".run()"
+  ],
+  "sectionPattern": [
+    "section|summary|time|video\"",
+    "section",
+    "section=function(t){var e=s.call(arguments"
+  ],
+  "frequencyPattern": [
+    "frequency:\"DAILY\""
+  ],
+  "capitalPattern": [],
+  "benchmarkPattern": [
+    "benchmark('000300.SH')\\n    # 打印日志\\n    log.info('策略开始运行",
+    "benchmark(context.ins)\\n\\n    # 订阅需要交易的期货品种\\n    subscribe('RB9999')\\n\\n    # 回测区间、初始资金、运行频率请在右上方设置",
+    "benchmark('000300.SH')\\n    # 打印日志\\n    log.info('策略开始运行",
+    "benchmark(g.asset_index)\\n\\n    #最多可以购买的基金数量3只\\n    g.fund_num=1\\n\\n    #导入基金数据库"
+  ],
+  "algoIdPattern": [
+    "algo_id",
+    "algo_id",
+    "algo_id",
+    "algo_id].choosed=!0",
+    "algo_id}"
+  ],
+  "isajaxContexts": [],
+  "dataObjects": [
+    "data:{algoId:c.algo_id}",
+    "data:{algofolder:[{algo_id:e.strategyId,folder_id:t}",
+    "data:{factors_params:{algo_id:t.strategyId,algo_name:e}",
+    "data:{algofolder:[{algo_id:n||e.strategyId,folder_id:t}",
+    "data:{backtestIds:n.join(\",\")}",
+    "data:{backtestIds:t.join(\",\")}",
+    "data:{backTestId:t.$store.state.strategys[t.strategyId].backtest_id}"
+  ]
+}
