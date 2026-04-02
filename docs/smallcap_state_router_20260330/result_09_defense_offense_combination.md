@@ -249,14 +249,40 @@
 **已尝试方案**：
 1. ✅ 创建策略代码
 2. ✅ 创建测试脚本
-3. ⏳ 运行batch_smallcap_defense.js（超时失败）
-4. ⏳ 运行batch_defense_offense_combo.js（待执行）
+3. ❌ 运行batch_smallcap_defense.js（超时失败）
+4. ❌ 运行batch_defense_offense_simplified.js（缩短至2024-2025，仍超时）
+5. ✅ **创建Notebook快速测试方案**（推荐）
 
-**建议解决方案**：
-1. 检查JoinQuant服务状态和session有效性
-2. 尝试缩短回测区间（如仅测试2024-01-01至2025-03-30）
-3. 分批执行测试（先执行静态组合，后执行动态路由）
-4. 使用其他回测平台（如RiceQuant）
+**推荐解决方案**：✅ **使用JoinQuant Notebook直接运行**
+
+由于API服务超时，提供替代方案：
+
+### 📘 Notebook快速测试方案（推荐）
+
+**文件**: `09_notebook_guide.md`
+
+**使用方法**:
+1. 登录 [JoinQuant](https://www.joinquant.com/)
+2. 进入"我的策略" → "Notebook"
+3. 创建新Notebook
+4. 复制 `09_notebook_guide.md` 中的代码
+5. 点击"运行全部"
+
+**优势**:
+- ✅ 无需等待API响应，直接在平台内运行
+- ✅ 简化版代码，运行更快（5-10分钟）
+- ✅ 可即时看到防守线 vs 静态组合的效果对比
+- ✅ 支持自定义参数调整
+
+**测试内容**:
+- 纯防守线（小市值低估值）
+- 静态权重组合（60防守/40进攻）
+- 对比分析：收益、回撤、夏普比率
+
+**备选方案**:
+- 检查JoinQuant服务状态和session有效性
+- 使用其他回测平台（如RiceQuant）
+- 手动在JoinQuant策略回测页面逐个运行
 
 ---
 

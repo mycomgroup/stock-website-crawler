@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-02T10:02:44.558Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E5%AE%9E%E9%AA%8C1C%E5%88%A0%E9%99%A4%E8%B7%A8%E5%B8%82%E5%9C%BA%E8%B5%84%E4%BA%A7%E7%BE%8E_20260402_180241.ipynb",
+  "notebookPath": "实验1C删除跨市场资产美_20260402_180241.ipynb",
+  "kernelId": "b72c70c4-28f6-4d38-938c-941b9b4a5f72",
+  "sessionId": "99aeb003-783b-4ac9-bc38-dbb788957b09",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "实验1C删除跨市场资产美_20260402_180241.ipynb",
+    "path": "实验1C删除跨市场资产美_20260402_180241.ipynb",
+    "last_modified": "2026-04-02T10:02:44.147678Z",
+    "created": "2026-04-02T10:02:44.148678Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 6702,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 实验 1C: 删除跨市场资产（美股+黄金）\n# 研究: ETF Pool Optimization - Experiment 1C\n\nprint(\"=\" * 80)\nprint(\"【实验 1C】删除跨市场资产版本 - 8只ETF\")\nprint(\"=\" * 80)\nprint()\n\ntry:\n    from jqdata import *\n    import pandas as pd\n    import numpy as np\n    import warnings\n\n    warnings.filterwarnings(\"ignore\")\n\n    # 删除美股ETF和黄金ETF，保留国债\n    ETF_POOL = {\n        \"沪深300ETF\": \"510300.XSHG\",\n        \"中证500ETF\": \"510500.XSHG\",\n        \"创业板ETF\": \"159915.XSHE\",\n        \"科创50ETF\": \"588000.XSHG\",\n        \"中证1000ETF\": \"512100.XSHG\",\n        # \"纳指ETF\": \"513100.XSHG\",  # 删除\n        # \"标普500ETF\": \"513500.XSHG\",  # 删除\n        # \"黄金ETF\": \"518880.XSHG\",  # 删除\n        \"国债ETF\": \"511010.XSHG\",\n        \"医疗ETF\": \"512170.XSHG\",\n        \"消费ETF\": \"159928.XSHE\",\n        \"新能源ETF\": \"516160.XSHG\",\n    }\n\n    print(f\"池子规模: {len(ETF_POOL)} 只ETF (已删除纳指/标普/黄金)\")\n    print(\"成分:\", list(ETF_POOL.keys()))\n    print()\n\n    # 回测参数\n    START = \"2020-01-01\"\n    END = \"2024-12-31\"\n    COST = 0.001\n    MOM_WINDOW = 20\n    HOLD_DAYS = 10\n    TOP_N = 3\n\n    print(f\"回测区间: {START} ~ {END}\")\n    print(f\"策略: 动量{MOM_WINDOW}日 / 持有{HOLD_DAYS}日 / Top{TOP_N}\")\n    print()\n\n    # 回测函数\n    def get_rebal_dates(start, end, freq_days):\n        all_days = get_trade_days(start, end)\n        result = [all_days[0]]\n        for d in all_days[1:]:\n            if (d - result[-1]).days >= freq_days:\n                result.append(d)\n        return result\n\n    dates = get_rebal_dates(START, END, HOLD_DAYS)\n    codes = list(ETF_POOL.values())\n    rets = []\n    prev_holdings = []\n\n    print(f\"开始回测，共 {len(dates) - 1} 个调仓周期...\")\n\n    for i, d in enumerate(dates[:-1]):\n        if i % 20 == 0:\n            print(f\"  进度: {i}/{len(dates) - 1}\")\n\n        d_str = str(d)\n        next_d_str = str(dates[i + 1])\n\n        try:\n            # 计算动量\n            prices = get_price(\n                codes,\n                end_date=d_str,\n                count=MOM_WINDOW + 1,\n                fields=[\"close\"],\n                panel=False,\n            )\n            pivot = prices.pivot(index=\"time\", columns=\"code\", values=\"close\").dropna(\n                axis=1\n            )\n\n            if len(pivot) < MOM_WINDOW:\n                continue\n\n            mom = pivot.iloc[-1] / pivot.iloc[0] - 1\n            selected = mom.nlargest(TOP_N).index.tolist()\n\n            # 计算收益\n            p0 = get_price(\n                selected, end_date=d_str, count=1, fields=[\"close\"], panel=False\n            )\n            p1 = get_price(\n                selected, end_date=next_d_str, count=1, fields=[\"close\"], panel=False\n            )\n\n            if len(p0) == 0 or len(p1) == 0:\n                continue\n\n            p0 = p0.pivot(index=\"time\", columns=\"code\", values=\"close\").iloc[-1]\n            p1 = p1.pivot(index=\"time\", columns=\"code\", values=\"close\").iloc[-1]\n\n            gross_ret = ((p1 / p0) - 1).mean()\n            turnover = len(set(selected) - set(prev_holdings)) / TOP_N\n            net_ret = gross_ret - turnover * COST * 2\n\n            rets.append(net_ret)\n            prev_holdings = selected\n        except Exception as e:\n            continue\n\n    # 计算指标\n    s = pd.Series(rets)\n    cum = (1 + s).cumprod()\n    periods_per_year = 252 / HOLD_DAYS\n    ann = cum.iloc[-1] ** (periods_per_year / len(s)) - 1\n    dd = (cum / cum.cummax() - 1).min()\n    sharpe = s.mean() / s.std() * np.sqrt(periods_per_year) if s.std() > 0 else 0\n    win = (s > 0).mean()\n\n    print()\n    print(\"=\" * 80)\n    print(\"【实验结果】\")\n    print(\"=\" * 80)\n    print(f\"年化收益: {ann:.2%}\")\n    print(f\"最大回撤: {dd:.2%}\")\n    print(f\"夏普比率: {sharpe:.2f}\")\n    print(f\"胜率: {win:.1%}\")\n    print(f\"样本数: {len(s)}\")\n    print()\n    print(\"=\" * 80)\n    print(\"实验 1C 完成!\")\n\nexcept Exception as e:\n    print(f\"错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n",
+      "msgId": "90d1f26bf3e446a2a3e701c1e40cb16e",
+      "websocketSessionId": "031628c3532c4cb9b5bacfb9af4f1739",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n【实验 1C】删除跨市场资产版本 - 8只ETF\n================================================================================\n\n错误: No module named 'jqdata'\nTraceback (most recent call last):\n  File \"<ipython-input-1-3b7470cf8ba6>\", line 10, in <module>\n    from jqdata import *\nModuleNotFoundError: No module named 'jqdata'\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n【实验 1C】删除跨市场资产版本 - 8只ETF\n================================================================================\n\n错误: No module named 'jqdata'\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-3b7470cf8ba6>\", line 10, in <module>\n    from jqdata import *\nModuleNotFoundError: No module named 'jqdata'\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "实验1C删除跨市场资产美",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "99aeb003-783b-4ac9-bc38-dbb788957b09",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/99aeb003-783b-4ac9-bc38-dbb788957b09: "
+  },
+  "autoShutdown": true
+}

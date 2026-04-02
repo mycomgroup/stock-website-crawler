@@ -1,0 +1,62 @@
+{
+  "capturedAt": "2026-04-02T10:10:28.484Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260402_181021.ipynb",
+  "notebookPath": "策略测试_20260402_181021.ipynb",
+  "kernelId": "7e36de08-b0dd-488c-bc61-d6564c9a6cc1",
+  "sessionId": "dc0810eb-ea7e-47aa-a011-1f1e1e13573f",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260402_181021.ipynb",
+    "path": "策略测试_20260402_181021.ipynb",
+    "last_modified": "2026-04-02T10:10:27.141119Z",
+    "created": "2026-04-02T10:10:27.141119Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 4221,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\nRiceQuant Notebook API 测试\n测试哪些API可用\n\"\"\"\n\nprint(\"=\" * 80)\nprint(\"RiceQuant Notebook API 测试\")\nprint(\"=\" * 80)\n\ntry:\n    print(\"\\n测试1: 基础Python\")\n    from datetime import datetime\n\n    print(f\"✓ 当前时间: {datetime.now()}\")\n\n    print(\"\\n测试2: 尝试 all_instruments\")\n    try:\n        stocks = all_instruments(\"CS\")\n        print(f\"✓ 股票数: {len(stocks)}\")\n        print(f\"  示例: {stocks['order_book_id'].head(3).tolist()}\")\n    except Exception as e:\n        print(f\"✗ all_instruments 失败: {e}\")\n\n    print(\"\\n测试3: 尝试 get_trading_dates\")\n    try:\n        dates = get_trading_dates(\"2022-01-01\", \"2022-01-31\")\n        print(f\"✓ 交易日数: {len(dates)}\")\n    except Exception as e:\n        print(f\"✗ get_trading_dates 失败: {e}\")\n\n    print(\"\\n测试4: 尝试 get_price\")\n    try:\n        price = get_price(\n            \"000001.XSHE\",\n            start_date=\"2022-01-01\",\n            end_date=\"2022-01-05\",\n            frequency=\"1d\",\n            fields=[\"close\", \"limit_up\"],\n        )\n        print(f\"✓ 获取价格数据成功\")\n        print(f\"  数据形状: {price.shape}\")\n    except Exception as e:\n        print(f\"✗ get_price 失败: {e}\")\n\n    print(\"\\n测试5: 尝试 history_bars\")\n    try:\n        bars = history_bars(\"000001.XSHE\", 5, \"1d\", \"close,limit_up\")\n        print(f\"✓ 获取历史数据成功\")\n        print(f\"  数据长度: {len(bars) if bars is not None else 0}\")\n    except Exception as e:\n        print(f\"✗ history_bars 失败: {e}\")\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"API 测试完成\")\n    print(\"=\" * 80)\n\nexcept Exception as e:\n    print(f\"\\n❌ 测试失败: {e}\")\n    import traceback\n\n    traceback.print_exc()\n",
+      "msgId": "304f70ce8bb840738eb3554dfcde0d5b",
+      "websocketSessionId": "c8303c0d84ae465dad1d6365fe75d588",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\nRiceQuant Notebook API 测试\n================================================================================\n\n测试1: 基础Python\n✓ 当前时间: 2026-04-02 18:10:24.176749\n\n测试2: 尝试 all_instruments\n✓ 股票数: 5539\n  示例: ['000001.XSHE', '000002.XSHE', '000003.XSHE']\n\n测试3: 尝试 get_trading_dates\n✓ 交易日数: 19\n\n测试4: 尝试 get_price\n✓ 获取价格数据成功\n  数据形状: (2, 2)\n\n测试5: 尝试 history_bars\n✗ history_bars 失败: name 'history_bars' is not defined\n\n================================================================================\nAPI 测试完成\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\nRiceQuant Notebook API 测试\n================================================================================\n\n测试1: 基础Python\n✓ 当前时间: 2026-04-02 18:10:24.176749\n\n测试2: 尝试 all_instruments\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "✓ 股票数: 5539\n  示例: ['000001.XSHE', '000002.XSHE', '000003.XSHE']\n\n测试3: 尝试 get_trading_dates\n✓ 交易日数: 19\n\n测试4: 尝试 get_price\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "✓ 获取价格数据成功\n  数据形状: (2, 2)\n\n测试5: 尝试 history_bars\n✗ history_bars 失败: name 'history_bars' is not defined\n\n================================================================================\nAPI 测试完成\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "dc0810eb-ea7e-47aa-a011-1f1e1e13573f",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/dc0810eb-ea7e-47aa-a011-1f1e1e13573f: "
+  },
+  "autoShutdown": true
+}

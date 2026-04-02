@@ -1,5 +1,5 @@
-# 策略B：小市值 + 事件（首板低开）
-# 选股：流通市值5-15亿 + 首板 + 低开
+# 策略C：纯事件（全市场首板低开）
+# 选股：全市场首板 + 低开（不限制市值）
 # 次日退出
 
 from datetime import timedelta
@@ -33,28 +33,13 @@ def find_and_buy(context, bar_dict):
     # 获取昨日数据
     yesterday = context.now - timedelta(days=1)
 
-    # 获取所有股票
+    # 获取所有股票（更多样本）
     stocks_df = all_instruments("CS")
-    all_codes = list(stocks_df.order_book_id)[:300]  # 限制数量
-
-    # 筛选小市值股票（5-15亿）
-    small_cap_stocks = []
-    for code in all_codes:
-        try:
-            df = get_factor(code, factor=["market_cap"])
-            if df is not None and len(df) > 0:
-                cap = df["market_cap"].iloc[0]
-                if 5 <= cap <= 15:
-                    small_cap_stocks.append(code)
-        except:
-            pass
-
-    if not small_cap_stocks:
-        return
+    all_codes = list(stocks_df.order_book_id)[:500]  # 比策略B检查更多股票
 
     # 寻找首板股票（昨日涨停）
     limit_up_stocks = []
-    for code in small_cap_stocks[:50]:  # 限制检查数量
+    for code in all_codes[:100]:  # 限制检查数量避免超时
         try:
             bars = history_bars(code, 1, "1d", ["close", "limit_up"], yesterday)
             if bars is not None and len(bars) > 0:
@@ -67,6 +52,8 @@ def find_and_buy(context, bar_dict):
 
     if not limit_up_stocks:
         return
+
+    logger.info("发现 %d 只首板股票" % len(limit_up_stocks))
 
     # 检查今日低开
     for code in limit_up_stocks:
