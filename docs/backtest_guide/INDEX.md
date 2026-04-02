@@ -128,6 +128,15 @@
 
 **适用场景：** 查看运行结果、访问在线 Notebook
 
+### 12. UPDATE_LOG.md - 文档更新日志 ⭐ NEW
+**主要内容：**
+- 2026-03-31 更新详情
+- 新增文档说明
+- 重要发现总结
+- 使用建议
+
+**适用场景：** 了解文档更新、快速查找新功能
+
 ## 迁移指南（重要）
 
 ### JoinQuant → RiceQuant 完整迁移指南
@@ -192,6 +201,7 @@ docs/backtest_guide/
 ├── ricequant_factor_list.md                     # 因子列表速查（重要）
 ├── ricequant_factors_guide.md                   # 平台因子使用指南 ⭐ NEW
 ├── ricequant_notebooks_list.md                  # Notebook 列表汇总 ⭐ NEW
+├── UPDATE_LOG.md                                # 文档更新日志 ⭐ NEW
 ├── QUICK_START.md                               # 快速入门（常用）
 ├── API_DIFF.md                                  # API 差异（迁移参考）
 ├── MIGRATION.md                                 # Notebook 迁移指南

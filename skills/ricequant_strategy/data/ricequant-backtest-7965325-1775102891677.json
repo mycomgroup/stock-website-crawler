@@ -1,0 +1,46 @@
+{
+  "backtestId": "7965325",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "error_exit",
+    "summary": null,
+    "create_at": "2026-04-02T12:07:56.386000",
+    "start_at": "2026-04-02T12:08:00.316000",
+    "progress": 0.017241379310344827,
+    "backtest_id": "7965325",
+    "description": "",
+    "strategy_id": 2416771,
+    "title": "低估值高股息",
+    "account_type": "stock",
+    "end_at": "2026-04-02T12:08:11.062000",
+    "exception": "Traceback (most recent call last):\n  File strategy.py, line 13 in before_trading\n    do_rebalance(context)\n    --> context = Context({stock_list = [], rebalance_day = 1})\n\n  File strategy.py, line 58 in do_rebalance\n    order_target_percent(code, weight)\n    --> context = Context({stock_list = [], rebalance_day = 1})\n    --> stocks_df =      order_book_id industry_code  ...  province   purchasedate\n0      000001.XSHE           J66  ...       广东省            NaN\n1      000002.XSHE           K70   ...\n    --> all_codes = ['000001.XSHE', '000002.XSHE', '000004.XSHE', '000005.XSHE', '000006.XSHE', '000007.XSHE', '000008.XSHE', '000009.XSHE', '000010.XSHE', '000011.XSHE', '000012.X ...\n    --> stocks_with_cap = [('000046.XSHE', 0.38), ('000005.XSHE', 0.94), ('000413.XSHE', 1.69), ('000416.XSHE', 2.0), ('000415.XSHE', 2.05), ('000008.XSHE', 2.13), ('000010.XSHE', 2.46), ...\n    --> count = 100\n    --> code = '000046.XSHE'\n    --> bars = array([(3.31,)],\n      dtype={'names': ['close'], 'formats': ['<f8'], 'offsets': [16], 'itemsize': 80})\n    --> price = 3.31\n    --> target_codes = ['000046.XSHE', '000005.XSHE', '000413.XSHE', '000416.XSHE', '000415.XSHE', '000008.XSHE', '000010.XSHE', '000078.XSHE', '000420.XSHE', '000031.XSHE', '000056.X ...\n    --> weight = 0.05\n\nRuntimeError: order_target_percent 不能在 [日内交易前] 中调用。"
+  },
+  "risk": {
+    "timestamp": 1704180600000,
+    "trading_date": 20240102,
+    "alpha": null,
+    "beta": null,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 1704180600000,
+    "trading_date": 20240102,
+    "alpha": null,
+    "beta": null,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0,
+    "annual_downside_risk": 0
+  }
+}
