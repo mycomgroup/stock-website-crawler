@@ -1,0 +1,19 @@
+{
+  "strategyId": "67c935e607887b957629ad72",
+  "totalCalls": 1,
+  "backtestApis": [],
+  "algoApis": [],
+  "allCalls": [
+    {
+      "id": 0,
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata",
+      "method": "POST",
+      "postData": "isajax=1",
+      "time": 1775095508521,
+      "status": 200,
+      "response": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"user_id\":\"772028948\",\"cpu_request\":0,\"metal_enable\":false,\"auto_simu\":0,\"terminals_enable\":false,\"jupyter_cron\":\"crontabs\",\"algorithm_quota\":3,\"auto_trade\":false,\"download_quota\":50,\"sklearn_enable\":0,\"research_age\":24,\"broker_quota\":3,\"forex_enable\":false,\"di"
+    }
+  ],
+  "backtestRunApi": null,
+  "timestamp": 1775095563191
+}

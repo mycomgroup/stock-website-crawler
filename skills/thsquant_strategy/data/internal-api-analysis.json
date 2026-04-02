@@ -1,0 +1,92 @@
+{
+  "globalObjects": {
+    "specialKeys": [
+      "requestAnimationFrame",
+      "requestIdleCallback",
+      "onYouTubeIframeAPIReady"
+    ],
+    "hasVue": false,
+    "hasReact": false,
+    "hasAxios": false,
+    "hasJQuery": true,
+    "hasFetch": true,
+    "mindgoKeys": [
+      "ths_stat",
+      "_thsclogArr",
+      "_thsclog",
+      "ths_iframe_login"
+    ]
+  },
+  "storage": {
+    "localStorage": {
+      "weblogConfig": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyODA4MzQsImRldmljZUlkIjoiMzk4YTFlYzhlMTlmZDJhNDA4MWFjYjFiYjNkMDE4YTQiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.Tc4uCLz5sN0OpEHYoGvVPMnF1rIiw1qo-4A0pHMnkYE\",\"produceId\":\"177502116833810.244.88.205fs174513\",\"queueId\":7173608,\"sign\":\"b2bsm\",\"configVersion\":\"d1e1fa590edc442cbc48beb34ce6ddd7\",\"time\":1775021634503,\"salt\":\"iC8pCxFHqHvWEOVPxBY0eA==\",\"batchSize\":20,\"bufferS\":10000}",
+      "ffid": "b2bsm_b2b_SuperMindCLYJ",
+      "weblogList": "[]"
+    },
+    "sessionStorage": {}
+  },
+  "networkInfo": {
+    "fetchExists": true,
+    "fetchStr": "function fetch() { [native code] }",
+    "xhrExists": true,
+    "requestLibs": [
+      "requestAnimationFrame",
+      "requestIdleCallback",
+      "webkitRequestAnimationFrame",
+      "webkitRequestFileSystem"
+    ]
+  },
+  "apiTestResult": {
+    "getauthdata": "{\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"}",
+    "/platform/strategy/list": {
+      "status": 200,
+      "response": "{\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"}"
+    },
+    "/platform/strategy/mylist": {
+      "status": 200,
+      "response": "{\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"}"
+    },
+    "/platform/backtest/list": {
+      "status": 200,
+      "response": "{\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"}"
+    },
+    "/api/strategy/list": {
+      "status": 502,
+      "response": "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>openresty/1.17.8.2</center>\r\n</body>\r\n</html>\r\n"
+    },
+    "/api/strategy/my": {
+      "status": 502,
+      "response": "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>openresty/1.17.8.2</center>\r\n</body>\r\n</html>\r\n"
+    },
+    "/platform/research/strategylist": {
+      "status": 200,
+      "response": "{\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"}"
+    }
+  },
+  "appInstance": {
+    "vueComponents": 0,
+    "specialElements": [
+      {
+        "tag": "A",
+        "class": "header-nav-item index-backtest-navigator-link",
+        "id": ""
+      },
+      {
+        "tag": "SPAN",
+        "class": "icon icon-2 icon-strategy",
+        "id": ""
+      },
+      {
+        "tag": "A",
+        "class": "item index-backtest-navigator-link",
+        "id": "indexstrategy"
+      },
+      {
+        "tag": "DIV",
+        "class": "index-backtest-navigator",
+        "id": ""
+      }
+    ]
+  },
+  "timestamp": 1775021643865
+}

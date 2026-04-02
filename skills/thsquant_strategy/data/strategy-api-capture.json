@@ -1,0 +1,294 @@
+[
+  {
+    "url": "https://quant.10jqka.com.cn/view/study-index.html",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "<!DOCTYPE html>\n<html lang=\"zh-CN\" class=\"g-out\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n    <title>策略研究 - SuperMind量化交易平台</title>\n    <meta name=\"keywords\" content=\"策略、编辑、量化、回测、SuperMind、量化交易、量化回测、量化投资、宽客、回测平台、量化投资策略、量化交易模型、量化交易策略、量化回测平台、什么是量化投资、quant、python\">\n    <meta name=\"description\" content=\"SuperMind 是同花顺旗下的量化投资平台，免费提供高质全面的量化交易数据、极速便携的量化回测体验、极度仿真的模拟交易环境及开放的宽客交流社区，一起开启AI时代，让量化投资变得更简单！\">\n    <link rel=\"stylesheet\" href=\"//s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/css/study-index.css\">\n  </head>\n  <body>\n    <div class=\"body-container\">\n      <div id=\"header\" class=\"header\"><a href=\"/view\" class=\"header-logo link_home\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/logo.png\" alt=\"Smorrebrod\"></a>\n        <div class=\"split-line\"></div><a style=\"cursor: default\" class=\"enterprise-logo\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/ths_logo.png\"></a>\n  "
+  },
+  {
+    "url": "https://i.thsi.cn/images/quant/201711021212/strategy-monitor.png",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000\u001e\u0000\u0000\u0000<\b\u0006\u0000\u0000\u0000qT\n�\u0000\u0000\u0000\u0019tEXtSoftware\u0000Adobe ImageReadyq�e<\u0000\u0000\u0003viTXtXML:com.adobe.xmp\u0000\u0000\u0000\u0000\u0000<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.6-c138 79.159824, 2016/09/14-01:09:01        \"> <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> <rdf:Description rdf:about=\"\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\" xmlns:stRef=\"http://ns.adobe.com/xap/1.0/sType/ResourceRef#\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmpMM:OriginalDocumentID=\"xmp.did:28d45464-a1d9-8840-9fc4-565d1ee72b9e\" xmpMM:DocumentID=\"xmp.did:B90C7294B92611E78021F900AAB79E70\" xmpMM:InstanceID=\"xmp.iid:B90C7293B92611E78021F900AAB79E70\" xmp:CreatorTool=\"Adobe Photoshop CC 2017 (Windows)\"> <xmpMM:DerivedFrom stRef:instanceID=\"xmp.iid:19f34705-633a-4311-89e2-198768eff0cd\" stRef:documentID=\"xmp.did:28d45464-a1d9-8840-9fc4-565d1ee72b9e\"/> </rdf:Description> </rdf:RDF> </x:xmpmeta> <?xpacket end=\"r\"?>\n��\u0016\u0000\u0000\u0005@IDATx�ܙ}h�U\u0018��\\\u0016��(�\u00195\u0015m��I��b"
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?dt=0&tt=42&rt=19&bt=65&opentime=0&sp=1&id=mindgo_wdcl_clyj_index&ld=browser&size=1280x800&url=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&cs=1280x800&ts=1774963181616",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": ""
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183022859013242497983_1774963181735",
+    "method": "POST",
+    "postData": "datatype=jsonp&isajax=1",
+    "status": 200,
+    "response": "jQuery183022859013242497983_1774963181735({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+    "method": "POST",
+    "postData": "isajax=1",
+    "status": 200,
+    "response": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"docs\":[{\"id\":\"3\",\"title\":\"\\u672c\\u5730SDK\",\"order\":5},{\"id\":\"4\",\"title\":\"API \\u6587\\u6863\",\"order\":4},{\"id\":\"8\",\"title\":\"\\u56e0\\u5b50\\u7814\\u7a76\",\"order\":0},{\"id\":\"10\",\"title\":\"\\u6a21\\u62df\\u4eff\\u771f\",\"order\":2},{\"id\":\"12\",\"title\":\"\\u56de\\u6d4b\\u5f15\\u64ce\",\"order\":1},{\"id\":\"14\",\"title\":\"\\u7814\\u7a76\\u73af\\u5883\\/\\u5b9e\\u76d8\",\"order\":3},{\"id\":\"16\",\"title\":\"\\u5e38\\u89c1\\u95ee\\u9898\",\"order\":6},{\"id\":\"20\",\"title\":\"\\u56e0\\u5b50\\u6570\\u636e\\u4ea7\\u54c1\",\"order\":7},{\"id\":\"22\",\"title\":\"\\u667a\\u80fd\\u4ea4\\u6613\\u5728\\u7ebf\\u6587\\u6863\",\"order\":8},{\"id\":\"24\",\"title\":\"AI Lab\",\"order\":9}]}}"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183022859013242497983_1774963181736",
+    "method": "POST",
+    "postData": "isajax=1&datatype=jsonp",
+    "status": 200,
+    "response": "jQuery183022859013242497983_1774963181736({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  },
+  {
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/access_token",
+    "method": "POST",
+    "postData": "{\"app_key\":\"c83ebad679\",\"app_version\":\"none\",\"device_id\":\"5d5b06ba7dcbc2965ff6d477ebacb378\",\"platform\":\"web\",\"platform_version\":\"Intel Mac OS X 10_15_7\",\"log_version\":\"0.0.1-alpha.27\"}",
+    "status": 200,
+    "response": "{\"code\":0,\"msg\":\"success\",\"data\":{\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyMjIzODIsImRldmljZUlkIjoiNWQ1YjA2YmE3ZGNiYzI5NjVmZjZkNDc3ZWJhY2IzNzgiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.xNBO1Nx4H1NGGcbDjbijb4TRJefemhz65fTEJb0-E8Y\",\"sign\":\"b2bsm\",\"produce_id\":\"177495983533910.244.90.31fs384464\",\"config_version\":\"d1e1fa590edc442cbc48beb34ce6ddd7\"}}"
+  },
+  {
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_config",
+    "method": "POST",
+    "postData": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyMjIzODIsImRldmljZUlkIjoiNWQ1YjA2YmE3ZGNiYzI5NjVmZjZkNDc3ZWJhY2IzNzgiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.xNBO1Nx4H1NGGcbDjbijb4TRJefemhz65fTEJb0-E8Y\",\"sign\":\"b2bsm\"}",
+    "status": 200,
+    "response": "{\"code\":0,\"msg\":\"success\",\"data\":{\"ak\":\"iDC983pACyxWFzHZqrHPvCW3EhObVVPuxsBcYH0NeTAZ=x=W\",\"batch_size\":20,\"buffer_s\":10,\"config_version\":\"d1e1fa590edc442cbc48beb34ce6ddd7\"}}"
+  },
+  {
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_info",
+    "method": "POST",
+    "postData": "{\"msg_encrypt\":\"AktDKqJwMIGvap/1vDA3DqlfOVXNuYgU+I7aKiTwMri/+J4XnUL1SOxntibM+y5+Mt8MfOW5htkrJ/emS5vZWhwFPzdF7Oi6FabuIZmao97QSvOAtMX+7LJigz2OGEhqKYjp7trmq/BS8mqQyULptA==\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyMjIzODIsImRldmljZUlkIjoiNWQ1YjA2YmE3ZGNiYzI5NjVmZjZkNDc3ZWJhY2IzNzgiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.xNBO1Nx4H1NGGcbDjbijb4TRJefemhz65fTEJb0-E8Y\",\"produce_id\":\"177495983533910.244.90.31fs384464\",\"queue_id\":41748412,\"sign\":\"b2bsm\",\"send_time\":1774963182231}",
+    "status": 200,
+    "response": "{\"code\":0,\"msg\":\"success\",\"data\":\"\"}"
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963181612&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=1&tag_exp=0~115938465~115938469~116133313~116991817~117266402~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=page_view&_ee=1&tfd=2260",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963181612&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAQ&_s=2&tag_exp=0~115938465~115938469~116133313~116991817~117266402~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=scroll&epn.percent_scrolled=90&_et=5&tfd=7265",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/view/study-index.html",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963181612&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=3&tag_exp=0~115938465~115938469~116133313~116991817~117266402~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=user_engagement&_et=5938&tfd=8205",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://i.thsi.cn/images/quant/201711021212/strategy-monitor.png",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?dt=0&tt=0&rt=0&bt=3&opentime=0&sp=1&id=mindgo_wdcl_clyj_index&ld=browser&size=1280x800&url=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&cs=1280x800&ts=1774963189525",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": ""
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963189522&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=1&tag_exp=0~115938465~115938468~116991816~117384406~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=page_view&_ee=1&tfd=111",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183016129558048079973_1774963189549",
+    "method": "POST",
+    "postData": "datatype=jsonp&isajax=1",
+    "status": 200,
+    "response": "jQuery183016129558048079973_1774963189549({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+    "method": "POST",
+    "postData": "isajax=1"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183016129558048079973_1774963189550",
+    "method": "POST",
+    "postData": "isajax=1&datatype=jsonp",
+    "status": 200,
+    "response": "jQuery183016129558048079973_1774963189550({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  },
+  {
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_info",
+    "method": "POST",
+    "postData": "{\"msg_encrypt\":\"LMu+IAhDwtyMV+ifKQsQIer9FmbENkXYFN/J7t1289YJEC2jRKkzglElOQDTqwHKSZymdzYytfHbnOk5w/s0UI9qKP373e3OABF9TGm3f0iNBP3r+GqPGWGeOmSmbetbByUt0RKyJXcgi7wlgB9C+Q==\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyMjIzODIsImRldmljZUlkIjoiNWQ1YjA2YmE3ZGNiYzI5NjVmZjZkNDc3ZWJhY2IzNzgiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.xNBO1Nx4H1NGGcbDjbijb4TRJefemhz65fTEJb0-E8Y\",\"produce_id\":\"177495983533910.244.90.31fs384464\",\"queue_id\":41748412,\"sign\":\"b2bsm\",\"send_time\":1774963189634}"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/view/study-research.html",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "<!DOCTYPE html>\n<html lang=\"zh-CN\" class=\"g-out\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n    <title>我的研究 - SuperMind量化交易平台</title>\n    <meta name=\"keywords\" content=\"研究、量化、回测、SuperMind、量化交易、量化回测、量化投资、宽客、回测平台、量化投资策略、量化交易模型、量化交易策略、量化回测平台、什么是量化投资、quant、python\">\n    <meta name=\"description\" content=\"SuperMind 是同花顺旗下的量化投资平台，免费提供高质全面的量化交易数据、极速便携的量化回测体验、极度仿真的模拟交易环境及开放的宽客交流社区，一起开启AI时代，让量化投资变得更简单！\">\n    <link rel=\"stylesheet\" href=\"//s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/css/study.css\">\n  </head>\n  <body>\n    <div class=\"body-container\">\n      <div id=\"header\" class=\"header\"><a href=\"/view\" class=\"header-logo link_home\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/logo.png\" alt=\"Smorrebrod\"></a>\n        <div class=\"split-line\"></div><a style=\"cursor: default\" class=\"enterprise-logo\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/ths_logo.png\"></a>\n        <ul"
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963189522&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAQ&_s=2&tag_exp=0~115938465~115938468~116991816~117384406~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=scroll&epn.percent_scrolled=90&_et=1&tfd=3962",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963189522&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=3&tag_exp=0~115938465~115938468~116991816~117384406~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=user_engagement&_et=3845&tfd=3963",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?dt=0&tt=0&rt=60&bt=65&opentime=0&sp=1&id=mindgo_wdyj_index&ld=browser&size=1280x800&url=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-research.html&cs=1280x800&ts=1774963193570",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963193560&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=1&tag_exp=0~115616986~115938465~115938468~116991817~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-research.html&dt=%E6%88%91%E7%9A%84%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=page_view&_ee=1&tfd=261",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_info",
+    "method": "POST",
+    "postData": "{\"msg_encrypt\":\"LMu+IAhDwtyMV+ifKQsQIer9FmbENkXYFN/J7t1289YiOhtszwlNdnkjcaLj0bURSZymdzYytfHbnOk5w/s0UBCGd35bnF2bbVxerXFXMdYXOt921+W7ZUGg65JdyS/dNd0bbYLrM/ABn3VaZfvok0a0nUXVCRaDTiwh3Hs3opk=\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyMjIzODIsImRldmljZUlkIjoiNWQ1YjA2YmE3ZGNiYzI5NjVmZjZkNDc3ZWJhY2IzNzgiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.xNBO1Nx4H1NGGcbDjbijb4TRJefemhz65fTEJb0-E8Y\",\"produce_id\":\"177495983533910.244.90.31fs384464\",\"queue_id\":41748412,\"sign\":\"b2bsm\",\"send_time\":1774963193607}"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18308913085356171553_1774963193634",
+    "method": "POST",
+    "postData": "datatype=jsonp&isajax=1"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+    "method": "POST",
+    "postData": "isajax=1"
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963193560&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAQ&_s=2&tag_exp=0~115616986~115938465~115938468~116991817~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-research.html&dt=%E6%88%91%E7%9A%84%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=scroll&epn.percent_scrolled=90&_et=1&tfd=496",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://sp.10jqka.com.cn/ads/api/get/adinfo/225-1372/return/jsonp/?callback=jQuery35005344197391137286_1774963194340&_=1774963194341",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "jQuery35005344197391137286_1774963194340({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"225-1372\":{\"id\":100385189,\"ctime\":\"2026-03-31 21:14:05\",\"mtime\":\"2026-03-31 21:14:05\",\"pos_id\":225,\"name\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"project_id\":77,\"stat_id\":\"page1\",\"show_id\":167,\"tpl_id\":0,\"case_id\":1372,\"data\":{\"pro\":{\"name\":\"web\\u767b\\u5f55\\u9875\",\"id\":77},\"case\":{\"name\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"desc\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"id\":1372,\"stat_id\":null},\"ad\":[{\"id\":1650,\"ctime\":\"2020-06-08 17:55:40\",\"mtime\":\"2020-06-08 17:55:40\",\"name\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"text\":\"\",\"image\":\"\\/\\/u.thsi.cn\\/imgsrc\\/level\\/445ec384134806ff6358fce520e0f39b.png\",\"description\":\"default\",\"isvalid\":1,\"interaction_id\":2,\"style\":{\"color\":\"\",\"size\":14},\"openstyle_web\":\"window.open('\\/\\/www.10jqka.com.cn');\",\"ad_url\":\"\\/\\/www.10jqka.com.cn\",\"openstyle_client\":{\"FuncName\":\"browserOpen\",\"Params\":{\"url\":\"\\/\\/www.10jqka.com.cn\"}}}],\"show\":{\"name\":\"web\\u767b\\u5f55\\u"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/view/trade.html",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "<!DOCTYPE html>\n<html lang=\"zh-CN\" class=\"g-out\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n    <title>模拟交易 - SuperMind量化交易平台</title>\n    <meta name=\"keywords\" content=\"模拟交易、量化、回测、SuperMind、量化交易、量化回测、量化投资、宽客、回测平台、量化投资策略、量化交易模型、量化交易策略、量化回测平台、什么是量化投资、quant、python\">\n    <meta name=\"description\" content=\"SuperMind 是同花顺旗下的量化投资平台，免费提供高质全面的量化交易数据、极速便携的量化回测体验、极度仿真的模拟交易环境及开放的宽客交流社区，一起开启AI时代，让量化投资变得更简单！\">\n    <link rel=\"stylesheet\" href=\"//s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/css/trade.css\">\n  </head>\n  <body>\n    <div class=\"body-container\">\n      <div id=\"header\" class=\"header\"><a href=\"/view\" class=\"header-logo link_home\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/logo.png\" alt=\"Smorrebrod\"></a>\n        <div class=\"split-line\"></div><a style=\"cursor: default\" class=\"enterprise-logo\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/ths_logo.png\"></a>\n        <"
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963199224&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=1&tag_exp=0~115616986~115938465~115938468~116991816~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Ftrade.html&dt=%E6%A8%A1%E6%8B%9F%E4%BA%A4%E6%98%93%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=page_view&_ee=1&tfd=88",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?dt=0&tt=0&rt=29&bt=30&opentime=0&sp=1&id=mindgo_mnjy&ld=browser&size=1280x800&url=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Ftrade.html&cs=1366x800&ts=1774963199451",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": ""
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183040702074252222853_1774963200428",
+    "method": "POST",
+    "postData": "datatype=jsonp&isajax=1"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+    "method": "POST",
+    "postData": "isajax=1"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/simuaccount/getyybidlist",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/simuassetaccount/validlogin/",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata/",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/simupaper/queryall/",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/simupaper/queryall/",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/view/iframe/messagepost",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://upass.10jqka.com.cn/login?isIframe=1&source=mindgo&pannel=0&auto=0&detail=7&main=11&style=blue&redir=%2F%2Fquant.10jqka.com.cn%2Freload.html",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_info",
+    "method": "POST",
+    "postData": "{\"msg_encrypt\":\"LMu+IAhDwtyMV+ifKQsQIer9FmbENkXYFN/J7t1289Z0GlXOlQsSDI7c5HkU18n5SZymdzYytfHbnOk5w/s0UJqA6onZESZrjU4bRtTBm55gAParKGkWdFEYadh6oYjYJr4T6XHM2FMt/LhgRbPDFGOo78nDH5KJjVR5729TsxM=\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyMjIzODIsImRldmljZUlkIjoiNWQ1YjA2YmE3ZGNiYzI5NjVmZjZkNDc3ZWJhY2IzNzgiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.xNBO1Nx4H1NGGcbDjbijb4TRJefemhz65fTEJb0-E8Y\",\"produce_id\":\"177495983533910.244.90.31fs384464\",\"queue_id\":41748412,\"sign\":\"b2bsm\",\"send_time\":1774963200623}"
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963199224&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAQ&_s=2&tag_exp=0~115616986~115938465~115938468~116991816~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Ftrade.html&dt=%E6%A8%A1%E6%8B%9F%E4%BA%A4%E6%98%93%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=scroll&epn.percent_scrolled=90&_et=1&tfd=1544",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63r2v9164889671za200zd9164889671&_p=1774963199224&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=369306297.1774963096&ul=zh-cn&sr=1280x800&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=3&tag_exp=0~115616986~115938465~115938468~116991816~117484252&sid=1774963095&sct=1&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Ftrade.html&dt=%E6%A8%A1%E6%8B%9F%E4%BA%A4%E6%98%93%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=user_engagement&_et=1454&tfd=1545",
+    "method": "POST",
+    "postData": null
+  },
+  {
+    "url": "https://sp.10jqka.com.cn/ads/api/get/adinfo/225-1372/return/jsonp/?callback=jQuery35009155962196108449_1774963200704&_=1774963200705",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": "jQuery35009155962196108449_1774963200704({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"225-1372\":{\"id\":100385189,\"ctime\":\"2026-03-31 21:14:05\",\"mtime\":\"2026-03-31 21:14:05\",\"pos_id\":225,\"name\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"project_id\":77,\"stat_id\":\"page1\",\"show_id\":167,\"tpl_id\":0,\"case_id\":1372,\"data\":{\"pro\":{\"name\":\"web\\u767b\\u5f55\\u9875\",\"id\":77},\"case\":{\"name\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"desc\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"id\":1372,\"stat_id\":null},\"ad\":[{\"id\":1650,\"ctime\":\"2020-06-08 17:55:40\",\"mtime\":\"2020-06-08 17:55:40\",\"name\":\"web\\u767b\\u5f55\\u9875\\u8fd0\\u8425\\u4f4d\",\"text\":\"\",\"image\":\"\\/\\/u.thsi.cn\\/imgsrc\\/level\\/445ec384134806ff6358fce520e0f39b.png\",\"description\":\"default\",\"isvalid\":1,\"interaction_id\":2,\"style\":{\"color\":\"\",\"size\":14},\"openstyle_web\":\"window.open('\\/\\/www.10jqka.com.cn');\",\"ad_url\":\"\\/\\/www.10jqka.com.cn\",\"openstyle_client\":{\"FuncName\":\"browserOpen\",\"Params\":{\"url\":\"\\/\\/www.10jqka.com.cn\"}}}],\"show\":{\"name\":\"web\\u767b\\u5f55\\u"
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?dt=0&tt=0&rt=90&bt=169&opentime=0&sp=1&id=pc_web_web_login&ld=browser&size=1280x800&fid=pc_web_web_login&ref=https%3A%2F%2Fquant.10jqka.com.cn%2F&url=https%3A%2F%2Fupass.10jqka.com.cn%2Flogin%3Fredir%3DHTTP_REFERER&cs=0x0&ts=1774963200739",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": ""
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?id=pc_web_web_login.msg&ld=browser&size=1280x800&ref=https%3A%2F%2Fquant.10jqka.com.cn%2F&url=https%3A%2F%2Fupass.10jqka.com.cn%2Flogin%3Fredir%3DHTTP_REFERER&cs=1280x774&ts=1774963200742",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": ""
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?id=pc_web_web_login.msg.free.on&ld=browser&size=1280x800&ref=https%3A%2F%2Fquant.10jqka.com.cn%2F&url=https%3A%2F%2Fupass.10jqka.com.cn%2Flogin%3Fredir%3DHTTP_REFERER&cs=1280x774&ts=1774963200742",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": ""
+  },
+  {
+    "url": "https://stat.10jqka.com.cn/q?id=pc_web_web_login.ad%5B1650%5D.reveal&ld=browser&size=1280x800&ref=https%3A%2F%2Fquant.10jqka.com.cn%2F&url=https%3A%2F%2Fupass.10jqka.com.cn%2Flogin%3Fredir%3DHTTP_REFERER&cs=1280x774&ts=1774963200842",
+    "method": "GET",
+    "postData": null,
+    "status": 200,
+    "response": ""
+  }
+]

@@ -1,0 +1,96 @@
+{
+  "strategyInfo": {
+    "errorcode": 0,
+    "errormsg": "",
+    "result": {
+      "modified": "2026-03-30T20:38:33",
+      "created": "2025-03-06T13:43:02",
+      "user_id": "772028948",
+      "algo_name": "PSY交易策略",
+      "_id": "67c935e607887b957629ad72",
+      "backtest_number": 1,
+      "algo_code": "# 问财+PSY策略\r\n# 每日通过问财选股，选出的股票中，若PSY向下突破15则买入；\r\n# 在持有的股票中，若PSY向上突破85则卖出。\r\n# 此策略为日级，经简单修改可改为问财+分钟级PSY选股。\r\n# 问财语句可调整，也可进一步加入止损和最大持仓日限制。\r\n\r\n# --- 1.导入所需库包----------------------------------------------------------------\r\nimport numpy as np\r\n\r\n# --- 2.初始化账户------------------------------------------------------------------\r\ndef init(context):\r\n    context.n = 4 # 设置交易股票数量\r\n    # 使用get_iwencai函数进行智能选股\r\n    get_iwencai('PB<1，dde大单净量由大到小排名')\r\n\r\n# --- 3.自定义PSY函数----------------------------------------------------------\r\ndef PSY_cal(prices, timeperiod=12):\r\n    PSY = np.zeros(len(prices))\r\n    for i in range(len(PSY)):\r\n        PSY[i] = np.nan\r\n    if len(prices) <= timeperiod:\r\n        return PSY\r\n    for i in range(timeperiod, len(prices)):\r\n        PSY[i] = 0\r\n        for j in range(timeperiod):\r\n            if prices[i-j] > prices[i-j-1]:\r\n                PSY[i] += 1\r\n        PSY[i] *= 100/timeperiod\r\n    return PSY\r\n\r\n# --- 4. 盘中设置买卖条件，每个交易频率（日/分钟）调用一次-------------\r\ndef handle_bar(context, bar_dict):\r\n    # 卖出股票\r\n    for stock in list(context.portfolio.stock_account.positions.keys()):\r\n        # 获取股票收盘价数据\r\n        values = history(stock, ['close'], 14, '1d', False, None)\r\n        if values.empty or len(values) < 14:\r\n            continue\r\n        # 计算PSY值\r\n        PSY = PSY_cal(values['close'].values, timeperiod=12)\r\n        # 若PSY向上突破85，则卖出股票\r\n        if PSY[-2] < 85 and PSY[-1] > 85:\r\n            order_target(stock, 0)\r\n    \r\n    # 买入股票\r\n    for stock in context.iwencai_securities:\r\n        # 若股票数量到达限制，则跳出\r\n        if len(list(context.portfolio.stock_account.positions.keys())) >= context.n:\r\n            break\r\n        if stock not in list(context.portfolio.stock_account.positions.keys()):\r\n            # 获取股票收盘价数据\r\n            values = history(stock, ['close'], 14, '1d', False, None)\r\n            if values.empty or len(values) < 14:\r\n                continue\r\n            # 计算PSY值\r\n            PSY = PSY_cal(values['close'].values, timeperiod=12)\r\n            # 若PSY向下突破15，则买入1/n仓位的股票\r\n            if PSY[-2] > 15 and PSY[-1] < 15:\r\n                order_target_percent(stock, 1/context.n)\r\n",
+      "language": "PYTHON",
+      "compiling_number": 0,
+      "algo_gen_method": "MANUAL",
+      "stock_market": "STOCK"
+    }
+  },
+  "backtestList": {
+    "errorcode": 0,
+    "errormsg": "",
+    "result": {
+      "count": 1,
+      "algo_name": "PSY交易策略",
+      "history": [
+        {
+          "backtest_id": "67c935ed2ad7be00b52fc990",
+          "name": "PSY交易策略",
+          "created": "2025-03-06 13:43:09",
+          "modified": "2025-03-06 13:43:20",
+          "yield": 0.1758,
+          "max_drawdown": 0.2505,
+          "frequency": "DAILY",
+          "section": "2024-03-05--2025-02-28",
+          "status": "SUCCESS",
+          "config": "--",
+          "is_monitor": false,
+          "monitor_time": "--"
+        }
+      ]
+    }
+  },
+  "runTests": [
+    {
+      "api": "backtest/run",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "api": "backtest/create",
+      "result": {
+        "raw": ""
+      }
+    },
+    {
+      "api": "backtest/add",
+      "result": {
+        "raw": ""
+      }
+    },
+    {
+      "api": "algorithms/backtest",
+      "result": {
+        "raw": ""
+      }
+    },
+    {
+      "api": "backtest/run with user_id",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "api": "backtest/run JSONP",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "api": "backtest/run camelCase",
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    }
+  ],
+  "timestamp": 1775096416130
+}

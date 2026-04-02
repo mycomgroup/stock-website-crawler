@@ -1,0 +1,16 @@
+{
+  "name": "thsquant-strategy",
+  "version": "1.0.0",
+  "description": "同花顺量化平台策略运行器",
+  "type": "module",
+  "scripts": {
+    "run": "node run-skill.js",
+    "list": "node list-strategies.js",
+    "report": "node fetch-report.js",
+    "test-session": "node test-session.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "playwright": "^1.40.0"
+  }
+}

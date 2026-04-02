@@ -1,0 +1,13 @@
+{
+  "taskId": "2a470e0e-d30b-4a4b-b47a-a2647d853a35",
+  "taskrunId": "f75f9532-4550-41de-8332-32b4ea8d004f",
+  "name": "simple_backtest",
+  "options": {
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "capital": 100000,
+    "benchmark": "000300.XSHG",
+    "taskType": "run_once"
+  },
+  "timestamp": "2026-04-02T01:59:09.532Z"
+}

@@ -1,0 +1,114 @@
+{
+  "user": [
+    {
+      "id": 2,
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18307152311541865135_1775019099300",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775019099316,
+      "type": "complete",
+      "status": 200,
+      "response": "jQuery18307152311541865135_1775019099300({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});",
+      "responseHeaders": {
+        "transfer-encoding": "chunked",
+        "cache-control": "no-store, no-cache, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "age": "0",
+        "connection": "keep-alive",
+        "via": "1.1 cachewc7.10jqka.com.cn (squid/3.5.20), http/1.1 cachehhhtyd-177-41.10jqka.com.cn (ApacheTrafficServer/10.0.3 [cMsSf ])",
+        "expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+        "x-cache": "MISS from cachewc7.10jqka.com.cn",
+        "date": "Wed, 01 Apr 2026 04:51:39 GMT",
+        "content-type": "text/html; charset=UTF-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx/1.8.0",
+        "x-powered-by": "PHP/8.2.27"
+      }
+    },
+    {
+      "id": 4,
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18307152311541865135_1775019099301",
+      "method": "POST",
+      "postData": "isajax=1&datatype=jsonp",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775019099330,
+      "type": "complete",
+      "status": 200,
+      "response": "jQuery18307152311541865135_1775019099301({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});",
+      "responseHeaders": {
+        "transfer-encoding": "chunked",
+        "cache-control": "no-store, no-cache, must-revalidate",
+        "content-encoding": "gzip",
+        "pragma": "no-cache",
+        "age": "0",
+        "connection": "keep-alive",
+        "via": "1.1 cachemd204191.10jqka.com.cn (squid/3.5.20), http/1.1 cachehhhtyd-177-41.10jqka.com.cn (ApacheTrafficServer/10.0.3 [cMsSf ])",
+        "expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+        "x-cache": "MISS from cachemd204191.10jqka.com.cn",
+        "date": "Wed, 01 Apr 2026 04:51:39 GMT",
+        "content-type": "text/html; charset=UTF-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx/1.8.0",
+        "x-powered-by": "PHP/8.2.27"
+      }
+    }
+  ],
+  "strategy": [],
+  "backtest": [],
+  "other": [
+    {
+      "id": 3,
+      "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+      "method": "POST",
+      "postData": "isajax=1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775019099316,
+      "type": "complete",
+      "status": 200,
+      "response": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"docs\":[{\"id\":\"3\",\"title\":\"\\u672c\\u5730SDK\",\"order\":5},{\"id\":\"4\",\"title\":\"API \\u6587\\u6863\",\"order\":4},{\"id\":\"8\",\"title\":\"\\u56e0\\u5b50\\u7814\\u7a76\",\"order\":0},{\"id\":\"10\",\"title\":\"\\u6a21\\u62df\\u4eff\\u771f\",\"order\":2},{\"id\":\"12\",\"title\":\"\\u56de\\u6d4b\\u5f15\\u64ce\",\"order\":1},{\"id\":\"14\",\"title\":\"\\u7814\\u7a76\\u73af\\u5883\\/\\u5b9e\\u76d8\",\"order\":3},{\"id\":\"16\",\"title\":\"\\u5e38\\u89c1\\u95ee\\u9898\",\"order\":6},{\"id\":\"20\",\"title\":\"\\u56e0\\u5b50\\u6570\\u636e\\u4ea7\\u54c1\",\"order\":7},{\"id\":\"22\",\"title\":\"\\u667a\\u80fd\\u4ea4\\u6613\\u5728\\u7ebf\\u6587\\u6863\",\"order\":8},{\"id\":\"24\",\"title\":\"AI Lab\",\"order\":9}]}}",
+      "responseHeaders": {
+        "transfer-encoding": "chunked",
+        "cache-control": "no-store, no-cache, must-revalidate",
+        "pragma": "no-cache",
+        "age": "0",
+        "connection": "keep-alive",
+        "via": "1.1 cachewc60.10jqka.com.cn (squid/3.5.20), http/1.1 cachehhhtyd-177-41.10jqka.com.cn (ApacheTrafficServer/10.0.3 [cMsSf ])",
+        "expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+        "x-cache": "MISS from cachewc60.10jqka.com.cn",
+        "date": "Wed, 01 Apr 2026 04:51:39 GMT",
+        "content-type": "application/json",
+        "x-powered-by": "PHP/8.2.27",
+        "server": "nginx/1.8.0"
+      }
+    }
+  ]
+}

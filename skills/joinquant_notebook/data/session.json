@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-04-02T02:31:38.127Z",
+  "capturedAt": "2026-04-02T06:48:44.761Z",
   "notebookUrl": "https://www.joinquant.com/user/notebook?url=/user/21333940833/notebooks/test.ipynb",
   "directNotebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/test.ipynb",
   "cookieHeader": "user-21333940833=2|1:0|10:1775097059|16:user-21333940833|48:NWM0M2E3M2MtODVlZC00ZTU0LThiZTEtZDY5YzAyZDU3YWFm|41796f2a394f96d0edf66c5d2bb710670c5a5809ca00de953e98364b1712103d; jupyter-hub-token=\"2|1:0|10:1774854313|17:jupyter-hub-token|44:NmRlNjA5NjYxZmRkNDI3MDlmZmZlZmNjYmU3NjM2Mjc=|1e889573bd673043539ebb6266a9b37469912751b6d79cc012dfdb04ef71ab25\"; uid=wKgyrWnKG1yASwW6MgaOAg==; token=477b039f7d4ad76732ac51371dcdd391711fce7a; PHPSESSID=c8s7reuurreslsui8sdhg1u5g0; _xsrf=2|bcb7d5ad|59a439f7e0d6fcb73e1b6813df0f3b8e|1774854313; uid=wKiXm2nKIKpY8gWIHOfKAg==",
@@ -124,15 +124,15 @@
       "baseUrl": "/user/21333940833/",
       "kernelId": "f2b5d989-2414-4c9b-908a-a724e3d68590",
       "sessionId": "e1a0e478-365b-4270-992f-780d07a1ec50",
-      "ncells": 229
+      "ncells": 231
     }
   },
   "actionResult": {
     "hasJupyter": true,
     "inserted": true,
-    "cellIndex": 229,
-    "startCount": 229,
-    "endCount": 230,
+    "cellIndex": 231,
+    "startCount": 231,
+    "endCount": 232,
     "kernelId": "f2b5d989-2414-4c9b-908a-a724e3d68590",
     "sessionId": "e1a0e478-365b-4270-992f-780d07a1ec50",
     "notebookPath": "test.ipynb"

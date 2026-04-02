@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery1830565548996819626_1774965794832",
+    "method": "POST",
+    "postData": "datatype=jsonp&isajax=1",
+    "timestamp": 1774965794854,
+    "status": 200,
+    "response": "jQuery1830565548996819626_1774965794832({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+    "method": "POST",
+    "postData": "isajax=1",
+    "timestamp": 1774965794855,
+    "status": 200,
+    "response": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"docs\":[{\"id\":\"3\",\"title\":\"\\u672c\\u5730SDK\",\"order\":5},{\"id\":\"4\",\"title\":\"API \\u6587\\u6863\",\"order\":4},{\"id\":\"8\",\"title\":\"\\u56e0\\u5b50\\u7814\\u7a76\",\"order\":0},{\"id\":\"10\",\"title\":\"\\u6a21\\u62df\\u4eff\\u771f\",\"order\":2},{\"id\":\"12\",\"title\":\"\\u56de\\u6d4b\\u5f15\\u64ce\",\"order\":1},{\"id\":\"14\",\"title\":\"\\u7814\\u7a76\\u73af\\u5883\\/\\u5b9e\\u76d8\",\"order\":3},{\"id\":\"16\",\"title\":\"\\u5e38\\u89c1\\u95ee\\u9898\",\"order\":6},{\"id\":\"20\",\"title\":\"\\u56e0\\u5b50\\u6570\\u636e\\u4ea7\\u54c1\",\"order\":7},{\"id\":\"22\",\"title\":\"\\u667a\\u80fd\\u4ea4\\u6613\\u5728\\u7ebf\\u6587\\u6863\",\"order\":8},{\"id\":\"24\",\"title\":\"AI Lab\",\"order\":9}]}}"
+  },
+  {
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery1830565548996819626_1774965794833",
+    "method": "POST",
+    "postData": "isajax=1&datatype=jsonp",
+    "timestamp": 1774965794918,
+    "status": 200,
+    "response": "jQuery1830565548996819626_1774965794833({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  }
+]

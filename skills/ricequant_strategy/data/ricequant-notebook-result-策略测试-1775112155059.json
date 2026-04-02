@@ -1,0 +1,52 @@
+{
+  "capturedAt": "2026-04-02T06:42:35.059Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260402_144231.ipynb",
+  "notebookPath": "策略测试_20260402_144231.ipynb",
+  "kernelId": "49936c81-2f7e-4669-a494-82b8e839eba2",
+  "sessionId": "dbd130a5-45ce-4498-ac25-38546c424e85",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260402_144231.ipynb",
+    "path": "策略测试_20260402_144231.ipynb",
+    "last_modified": "2026-04-02T06:42:34.435034Z",
+    "created": "2026-04-02T06:42:34.436033Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 7410,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板接力 2022年Q2测试 - RiceQuant Notebook格式\n测试范围：2022-04-01 至 2022-06-30\n\"\"\"\n\nprint(\"=\" * 80)\nprint(\"二板接力 2022年Q2测试\")\nprint(\"=\" * 80)\n\ntry:\n    import pandas as pd\n    import numpy as np\n\n    print(\"✓ 导入依赖成功\")\n\n    year = 2022\n    start_date = f\"{year}-04-01\"\n    end_date = f\"{year}-06-30\"\n\n    print(f\"\\n测试范围: {start_date} 至 {end_date}\")\n\n    all_dates = get_trading_dates(start_date, end_date)\n    print(f\"交易日数: {len(all_dates)}\")\n\n    signals = []\n\n    for i in range(2, min(len(all_dates), 50)):\n        prev_prev = all_dates[i - 2]\n        prev = all_dates[i - 1]\n        curr = all_dates[i]\n\n        if i % 5 == 0:\n            print(f\"处理第{i}天: {prev} -> {curr}\")\n\n        try:\n            all_stocks = [s for s in get_all_securities([\"stock\"]).index.tolist()]\n            all_stocks = [\n                s\n                for s in all_stocks\n                if not (s.startswith(\"68\") or s.startswith(\"4\") or s.startswith(\"8\"))\n            ]\n\n            if len(all_stocks) > 500:\n                all_stocks = all_stocks[:500]\n\n            price_prev = get_price(\n                all_stocks,\n                end_date=prev,\n                frequency=\"1d\",\n                fields=[\"close\", \"limit_up\"],\n                count=1,\n            )\n\n            if price_prev.empty:\n                continue\n\n            zt_stocks = []\n            for stock in all_stocks:\n                try:\n                    close = price_prev.loc[prev, (stock, \"close\")]\n                    limit_up = price_prev.loc[prev, (stock, \"limit_up\")]\n                    if abs(close - limit_up) / limit_up < 0.01:\n                        zt_stocks.append(stock)\n                except:\n                    continue\n\n            zt_count = len(zt_stocks)\n            if i % 5 == 0:\n                print(f\"  涨停数: {zt_count}\")\n\n            if zt_count < 10:\n                continue\n\n            price_pp = get_price(\n                zt_stocks,\n                end_date=prev_prev,\n                frequency=\"1d\",\n                fields=[\"close\", \"limit_up\"],\n                count=1,\n            )\n\n            if price_pp.empty:\n                continue\n\n            for stock in zt_stocks[:30]:\n                try:\n                    pp_close = price_pp.loc[prev_prev, (stock, \"close\")]\n                    pp_limit = price_pp.loc[prev_prev, (stock, \"limit_up\")]\n\n                    if abs(pp_close - pp_limit) / pp_limit >= 0.01:\n                        continue\n\n                    price_curr = get_price(\n                        stock,\n                        end_date=curr,\n                        frequency=\"1d\",\n                        fields=[\"open\", \"close\", \"limit_up\"],\n                        count=1,\n                    )\n\n                    if price_curr.empty:\n                        continue\n\n                    curr_open = price_curr.loc[curr, \"open\"]\n                    curr_close = price_curr.loc[curr, \"close\"]\n                    curr_limit = price_curr.loc[curr, \"limit_up\"]\n\n                    if abs(curr_open - curr_limit) / curr_limit < 0.01:\n                        continue\n\n                    ret = (curr_close - curr_open) / curr_open * 100\n                    signals.append(\n                        {\n                            \"date\": str(curr),\n                            \"stock\": stock,\n                            \"return\": ret,\n                            \"win\": ret > 0,\n                        }\n                    )\n\n                except:\n                    continue\n        except:\n            continue\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"2022年Q2测试结果\")\n    print(\"=\" * 80)\n\n    if len(signals) > 0:\n        df = pd.DataFrame(signals)\n        print(f\"信号数: {len(df)}\")\n        print(f\"平均收益: {df['return'].mean():.2f}%\")\n        print(f\"胜率: {df['win'].sum() / len(df) * 100:.1f}%\")\n    else:\n        print(\"无信号\")\n\n    print(\"\\n✓ 2022年Q2测试完成\")\n\nexcept Exception as e:\n    print(f\"\\n❌ 测试失败: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"=\" * 80)\n",
+      "msgId": "bdef9845782344e8a51bf0e154a2d2b4",
+      "websocketSessionId": "11133df32eb94982bda5f16b5c5aa9b4",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n二板接力 2022年Q2测试\n================================================================================\n✓ 导入依赖成功\n\n测试范围: 2022-04-01 至 2022-06-30\n交易日数: 59\n处理第5天: 2022-04-11 -> 2022-04-12\n处理第10天: 2022-04-18 -> 2022-04-19\n处理第15天: 2022-04-25 -> 2022-04-26\n处理第20天: 2022-05-05 -> 2022-05-06\n处理第25天: 2022-05-12 -> 2022-05-13\n处理第30天: 2022-05-19 -> 2022-05-20\n处理第35天: 2022-05-26 -> 2022-05-27\n处理第40天: 2022-06-02 -> 2022-06-06\n处理第45天: 2022-06-10 -> 2022-06-13\n\n================================================================================\n2022年Q2测试结果\n================================================================================\n无信号\n\n✓ 2022年Q2测试完成\n================================================================================\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n二板接力 2022年Q2测试\n================================================================================\n✓ 导入依赖成功\n\n测试范围: 2022-04-01 至 2022-06-30\n交易日数: 59\n处理第5天: 2022-04-11 -> 2022-04-12\n处理第10天: 2022-04-18 -> 2022-04-19\n处理第15天: 2022-04-25 -> 2022-04-26\n处理第20天: 2022-05-05 -> 2022-05-06\n处理第25天: 2022-05-12 -> 2022-05-13\n处理第30天: 2022-05-19 -> 2022-05-20\n处理第35天: 2022-05-26 -> 2022-05-27\n处理第40天: 2022-06-02 -> 2022-06-06\n处理第45天: 2022-06-10 -> 2022-06-13\n\n================================================================================\n2022年Q2测试结果\n================================================================================\n无信号\n\n✓ 2022年Q2测试完成\n================================================================================\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "dbd130a5-45ce-4498-ac25-38546c424e85",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/dbd130a5-45ce-4498-ac25-38546c424e85: "
+  },
+  "autoShutdown": true
+}

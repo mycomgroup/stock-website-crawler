@@ -1,0 +1,2883 @@
+[
+  {
+    "timestamp": "2026-04-01T09:27:11.611Z",
+    "method": "GET",
+    "url": "https://bigquant.com/trading/list",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.019Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+    "postData": "{\"keys\":[\"web\",\"common\"]}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"web\":{\"advert\":false,\"baidu_analytics_id\":\"c58f67ca105d070ca7563b4b14210980\",\"banner_header\":false,\"bigquant_analytics_id\":\"3\",\"config_ignore_list\":[],\"enable_aistock\":true,\"enable_bqcollege\":true,\"enable_copyright\":true,\"enable_customer_service\":true,\"enable_futures\":false,\"enable_strategy_comment\":true,\"enable_strategy_mall\":true,\"enable_strategy_rank\":true,\"enable_timed_task\":false,\"enable_wechat_official_account\":true,\"enable_zhinikefu\":true,\"enable_zhihu\":true,\"enterprise_edition_text\":\"了解企业版\",\"enterprise_edition_url\":\"https://bigai.cn/product-bigquant/\",\"google_analytics_id\":\"G-B58V018K6L\",\"icon105\":\"/static/img/logo-Q-105.png\",\"logo_white\":\"/static/img/logo-bigquant-red.png\",\"user_develop_free_server_renew\":500,\"user_creation_free_server\":48,\"navbar_main\":[{\"children\":[],\"icon\":\"\",\"name\":\"首页\",\"path\":\"/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"编写策略\",\"path\":\"/bigapis/userbox/v1/workspaces/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"因子研究\",\"path\":\"/aifrontend/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"我的交易\",\"path\":\"/trade/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"发现策略\",\"path\":\"/armory/mall\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"知识库\",\"path\":\"/wiki/home\",\"open_in_new_tab\":false},{\"children\":[{\"icon\":\"\",\"name\":\"培训报名\",\"path\":\"/quantcamp\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"宽客学院\",\"path\":\"/tutorial/\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"量化白皮书\",\"path\":\"/activity\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"量化策略会\",\"path\":\"/quantcamp/2022\",\"open_in_new_tab\":false}],\"icon\":\"\",\"name\":\"学院\",\"path\":\"\"},{\"children\":[{\"icon\":\"\",\"name\":\"社区\",\"path\":\"/community\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"数据\",\"path\":\"/wiki/doc/tUU2aLMSPJ\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"模块\",\"path\":\"/wiki/doc/Mc52f9c80z\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"文档\",\"path\":\"/wiki/collection/zbdYBM8MsM\",\"open_in_new_tab\":false},{\"icon\":\""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.125Z",
+    "method": "GET",
+    "url": "https://unpkg.zhimg.com/@efe/zhad-tracker@1.4.1",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.125Z",
+    "method": "GET",
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-B58V018K6L",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.126Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"updated_at\":\"2026-04-01T17:06:12.311518+08:00\",\"created_at\":\"2020-09-15T14:21:40.324016+08:00\",\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"allowed_ip\":null,\"status\":\"Active\",\"nickname\":null,\"last_login_at\":\"2026-04-01T17:06:12.311441+08:00\",\"config\":{\"points\":5,\"level\":4,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"avatar\":null,\"introduction\":null,\"phone\":\"\",\"wechat\":\"\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.126Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/useraction",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":52202,\"created_at\":\"2026-03-30T20:42:41.103433+08:00\",\"updated_at\":\"2026-03-30T20:42:41.103452+08:00\",\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"active_time\":0.0,\"meta_data\":{}}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.126Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"updated_at\":\"2026-04-01T17:06:12.311518+08:00\",\"created_at\":\"2020-09-15T14:21:40.324016+08:00\",\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"allowed_ip\":null,\"status\":\"Active\",\"nickname\":null,\"last_login_at\":\"2026-04-01T17:06:12.311441+08:00\",\"config\":{\"points\":5,\"level\":4,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"avatar\":null,\"introduction\":null,\"phone\":\"\",\"wechat\":\"\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.147Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/refactor/orders?constraints=%7B%22product_id__in%22%3A%5B%2279137090-4ea5-4772-b4a8-ad05599f9040%22%2C%22076dd251-ea40-4773-a55b-95b7e1630674%22%2C%22bc562ecd-b37a-49f4-b9ef-16f33bf59706%22%5D%2C%22status%22%3A%22paid%22%7D",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":0,\"total\":0,\"page\":1,\"size\":10,\"items\":[]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.147Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/setting",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"data\":{\"username\":\"yuping322\",\"nickname\":null,\"user_status\":\"Active\",\"set_password\":true,\"mobile\":\"13311390323\",\"email\":\"yuping322@163.com\",\"open_id\":\"oBDSlw9h-CwoavOtk4tS2j2RSx94\",\"avatar\":null,\"introduction\":null}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.180Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/refactor/orders?constraints=%7B%22product_id__in%22%3A%5B%2279137090-4ea5-4772-b4a8-ad05599f9040%22%2C%22076dd251-ea40-4773-a55b-95b7e1630674%22%2C%22bc562ecd-b37a-49f4-b9ef-16f33bf59706%22%5D%2C%22status%22%3A%22paid%22%7D",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":0,\"total\":0,\"page\":1,\"size\":10,\"items\":[]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.180Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/setting",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"data\":{\"username\":\"yuping322\",\"nickname\":null,\"user_status\":\"Active\",\"set_password\":true,\"mobile\":\"13311390323\",\"email\":\"yuping322@163.com\",\"open_id\":\"oBDSlw9h-CwoavOtk4tS2j2RSx94\",\"avatar\":null,\"introduction\":null}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.191Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&et=0&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=1783730658&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20158&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist&tt=BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaces/00000000-0000-0000-0000-000000000000",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\",\"created_at\":\"2022-09-21T11:51:16+08:00\",\"updated_at\":\"2025-04-02T10:29:23.958652+08:00\",\"user_id\":\"10000000-0000-0000-0000-000000000001\",\"status\":\"active\",\"name\":\"BigQuant\",\"icon\":\"/TODO.icon\",\"visibility\":\"public\",\"requires_approval_to_join\":false,\"domain\":null,\"alias\":\"\",\"custom_style\":\"\",\"custom_javascript\":\"<script type=\\\"text/javascript\\\">\\nwindow.__future_users__=[\\\"bqadm\\\",\\\"huxianc\\\",\\\"dr390987677\\\",\\\"yzhzheng\\\",\\\"yzhzheng2\\\",\\\"dandelion4\\\",\\\"svnquant\\\",\\\"lkthanks\\\",\\\"maxhaozi\\\",\\\"dulian\\\",\\\"aro710\\\",\\\"jk8023599\\\",\\\"bqn737zt\\\",\\\"bqq6068t\\\",\\\"cuex\\\",\\\"bq57nbe8\\\",\\\"bqg8vhd1\\\",\\\"wangsonghjt\\\",\\\"bqhtlwos\\\",\\\"bqkzh1gu\\\",\\\"bqd17wit\\\",\\\"bqs2th6e\\\",\\\"ws76\\\",\\\"bq3nyj6j\\\",\\\"xiaoshao\\\",\\\"bqt7rt7p\\\",\\\"bq7739v8\\\",\\\"zhliaoli\\\",\\\"bquzx5o8\\\",\\\"bqt8rb8j\\\",\\\"fafafacai\\\",\\\"ydong\\\",\\\"bqtest150\\\",\\\"jliang\\\"];\\n</script>\",\"settings\":{\"fullname\":\"BigQuant人工智能量化投资交易平台\",\"favicon\":\"/favicon.ico\",\"logo\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAAEi6oPRAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAASKADAAQAAAABAAAASAAAAACQMUbvAAAOBklEQVR4Ae1cCZBUxRn+3ryZ2WXZg52dZVEkssshLIiiqyJixDJlTMhh1BCPxCoTTRUxsTSFGjVHmXgEkiheCLGi4lEaKCUe0RhMIIdGjbeuINdyCnuz7DW7M29evv/NzJs3M2923ixvgQrbVbOvj7///vvvv//+++/uVcDQPB4d8s0SFCUOUJoFwMj22BYqqbkpQEU/uQt6D+A7az7U6loTMqW5YIOOlmrFAKxsjMUFMgVToqrexlioN5GE14wx0lKjILhFY1WPgTFRlgIEnYAT1ESZ+ZXm0vpilpkRpWU8fk0EC8yctIjix2nSO8IMHDJ7Z9N4CpDwSfAaXwtyEyjaDESb9yaLLBhNIMnzjKpIAlkoTQJVAr3Pr4Jv+uloLrOgYbVB9i7ZoBkTZi5i8zeYOYOMpIjTIHEY1UwG2CFRx9Qg8HEnoB2N4FYd3mmz7MCMvFSJi4PpXUBlsw69L4TWKSMACmGTX8HosAwsBX8C27cMh1Szpcg7YZyBUt+/L46aw1Iejyqpw5UAsEWkNe40yj2VYxCNC45v9tlGXnOAiNKokQJbRFIgc1h+nqOYYN3+59ai+45bUNnCGWlDlHujpqs4WSg40KCwu2rLsVSVCkjzoMKWym04ydEcyYVeZCgrs3NVtpZH3EIkSHNTJENtM9xS2RqyIwoBgTc/g/q5aSh/pR6Bt5uojaxVU+NZEQX36Ai/vg7a9nq0nzcNnopKBPdyjLNQZ4uo9NE1RnMdF14aazZKBbCrIR63rWLPI/+cs41KSkmsrvyN1H9sJAousV9QsqDPzFb8fgNR+JXVxjf"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/user/@me/spaces?page=1&size=100",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"page\":1,\"size\":100,\"total\":1,\"count\":1,\"items\":[{\"id\":\"00000000-0000-0000-0000-000000000000\",\"created_at\":\"2022-09-21T11:51:16+08:00\",\"updated_at\":\"2025-04-02T10:29:23.958652+08:00\",\"user_id\":\"10000000-0000-0000-0000-000000000001\",\"status\":\"active\",\"name\":\"BigQuant\",\"icon\":\"/TODO.icon\",\"visibility\":\"public\",\"requires_approval_to_join\":false,\"domain\":null,\"alias\":\"\",\"custom_style\":\"\",\"custom_javascript\":\"<script type=\\\"text/javascript\\\">\\nwindow.__future_users__=[\\\"bqadm\\\",\\\"huxianc\\\",\\\"dr390987677\\\",\\\"yzhzheng\\\",\\\"yzhzheng2\\\",\\\"dandelion4\\\",\\\"svnquant\\\",\\\"lkthanks\\\",\\\"maxhaozi\\\",\\\"dulian\\\",\\\"aro710\\\",\\\"jk8023599\\\",\\\"bqn737zt\\\",\\\"bqq6068t\\\",\\\"cuex\\\",\\\"bq57nbe8\\\",\\\"bqg8vhd1\\\",\\\"wangsonghjt\\\",\\\"bqhtlwos\\\",\\\"bqkzh1gu\\\",\\\"bqd17wit\\\",\\\"bqs2th6e\\\",\\\"ws76\\\",\\\"bq3nyj6j\\\",\\\"xiaoshao\\\",\\\"bqt7rt7p\\\",\\\"bq7739v8\\\",\\\"zhliaoli\\\",\\\"bquzx5o8\\\",\\\"bqt8rb8j\\\",\\\"fafafacai\\\",\\\"ydong\\\",\\\"bqtest150\\\",\\\"jliang\\\"];\\n</script>\",\"settings\":{\"fullname\":\"BigQuant人工智能量化投资交易平台\",\"favicon\":\"/favicon.ico\",\"logo\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAAEi6oPRAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAASKADAAQAAAABAAAASAAAAACQMUbvAAAOBklEQVR4Ae1cCZBUxRn+3ryZ2WXZg52dZVEkssshLIiiqyJixDJlTMhh1BCPxCoTTRUxsTSFGjVHmXgEkiheCLGi4lEaKCUe0RhMIIdGjbeuINdyCnuz7DW7M29evv/NzJs3M2923ixvgQrbVbOvj7///vvvv//+++/uVcDQPB4d8s0SFCUOUJoFwMj22BYqqbkpQEU/uQt6D+A7az7U6loTMqW5YIOOlmrFAKxsjMUFMgVToqrexlioN5GE14wx0lKjILhFY1WPgTFRlgIEnYAT1ESZ+ZXm0vpilpkRpWU8fk0EC8yctIjix2nSO8IMHDJ7Z9N4CpDwSfAaXwtyEyjaDESb9yaLLBhNIMnzjKpIAlkoTQJVAr3Pr4Jv+uloLrOgYbVB9i7ZoBkTZi5i8zeYOYOMpIjTIHEY1UwG2CFRx9Qg8HEnoB2N4FYd3mmz7MCMvFSJi4PpXUBlsw69L4TWKSMACmGTX8HosAwsBX8C27cMh1Szpcg7YZyBUt+/L46aw1Iejyqpw5UAsEWkNe40yj2VYxCNC45v9tlGXnOAiNKokQJbRFIgc1h+nqOYYN3+59ai+45bUNnCGWlDlHujpqs4WSg40KCwu2rLsVSVCkjzoMKWym04ydEcyYVeZCgrs3NVtpZH3EIkSHNTJENtM9xS2RqyIwoBgTc/g/q5aSh/pR6Bt5uojaxVU+NZEQX36Ai/vg7a9nq0nzcNnopKBPdyjLNQZ4uo9NE1RnMdF14aazZKBbCrIR63r"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+    "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/bigauth/badge/membership/plus\",\"/dataapiserver/spacedatasources/manage\",\"/alphaapiserver/factors/manage\",\"/bigauth/spaceusers/read_space_users\",\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\",\"/extra/privateshare/equity/*\"]}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"/bigauth/badge/membership/plus\":false,\"/dataapiserver/spacedatasources/manage\":false,\"/alphaapiserver/factors/manage\":false,\"/bigauth/spaceusers/read_space_users\":false}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/notify/v1/record/unread",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"system\":18,\"resource\":1,\"community\":0,\"papertrading\":0,\"sum\":19}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aiflow/v1/tasks?constraints={%22task_type__in%22:[%22papertrading%22,%22service%22],%22space_id%22:%2200000000-0000-0000-0000-000000000000%22,%22creator%22:%22e6277718-0f37-11ed-93bb-da75731aa77c%22}&page=1&size=30&exclude_fields=data&order_by=-updated_at",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"page\":1,\"size\":30,\"total\":1,\"count\":8,\"items\":[{\"id\":\"d3ecb2af-c36e-4b43-88fb-9af4256e5aa6\",\"created_at\":\"2026-03-30T20:42:12.206992+08:00\",\"updated_at\":\"2026-03-31T19:39:57.310010+08:00\",\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"creator\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"盈利能力评估策略\",\"task_type\":\"papertrading\",\"labels\":{\"in_labels\":[\"papertrading\"],\"out_labels\":[]},\"conf\":{\"envs\":{\"isBackTest\":false,\"livetrading\":{},\"replace_by_id\":\"\",\"strategy_params\":{\"capital_base\":\"1000000.00\"}},\"retries\":0,\"timezone\":\"Asia/Shanghai\",\"file_type\":\"ipynb\",\"trade_mode\":0,\"task_source\":\"community\",\"from_task_id\":\"d983e306-2dc8-44e2-802e-da5d30a990bc\",\"scheduled_time\":\"\",\"aistudio_version\":300,\"resource_expired\":null,\"resource_options\":{\"id\":\"a059c996-0938-4726-ab6d-97b7e6cb2de5\",\"cpu\":1,\"gpu\":0,\"memory\":4},\"task_tune_parameters\":[]},\"last_run\":{\"id\":\"be3ba09a-64b8-45cb-9d66-5696e861db49\",\"event\":\"20260331\",\"state\":\"failed\"},\"priority\":10,\"deployment_id\":\"00000000-0000-0000-0000-000000000000\",\"status\":\"active\",\"strategy_type\":0},{\"id\":\"5ba7b11e-414a-4eb5-b785-4817d167965c\",\"created_at\":\"2026-03-30T20:42:12.143009+08:00\",\"updated_at\":\"2026-03-30T20:42:12.143027+08:00\",\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"creator\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"因子筛选大盘股策略\",\"task_type\":\"papertrading\",\"labels\":{\"in_labels\":[\"@user_formydream_d36b72e8\"],\"out_labels\":[]},\"conf\":{\"envs\":{\"new_user_subscribed\":1},\"retries\":0,\"timezone\":\"Asia/Shanghai\",\"file_type\":\"ipynb\",\"trade_mode\":0,\"task_source\":\"aibox\",\"from_task_id\":\"af08029e-0233-406b-a9eb-030457e420a0\",\"scheduled_time\":\"\",\"aistudio_version\":300,\"resource_expired\":null,\"resource_options\":{},\"task_tune_parameters\":null},\"last_run\":{},\"priority\":10,\"deployment_id\":\"00000000-0000-0000-0000-000000000000\",\"status\":\"paused\",\"strategy_type\":0},{\"id\":\"b9b76e6f-908f-4862-9c08-c344a344df93\",\"created_at\":\"2026-03-30T20:42:10.208698+08:00\",\"updated_at\":\"2026-03-30T20:"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aiflow/v1/tasks/paper_trading/@get",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":null}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aiflow/v1/resourcespecs",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"id\":\"a059c996-0938-4726-ab6d-97b7e6cb2de5\",\"name\":\"D1(1C/4G) 免费\",\"price\":0.0,\"cpu\":1,\"memory\":4,\"gpu\":0,\"rank\":100,\"count\":1,\"used_count\":1,\"usable\":false,\"specification\":\"D1\",\"expire_at\":\"2026-04-29T20:42:51.785655+08:00\",\"type\":\"default\",\"resource_survival_time\":[60,120,240,480],\"remaining_duration\":40516,\"server_id\":\"dcbf1cdf-b1f2-484b-b9cb-b511dcdeb69f\"},{\"id\":\"a059c996-0938-4726-ab6d-97b7e6cb2de5\",\"name\":\"D1(1C/4G) 免费\",\"price\":0.0,\"cpu\":1,\"memory\":4,\"gpu\":0,\"rank\":100,\"count\":1,\"used_count\":0,\"usable\":true,\"specification\":\"D1\",\"expire_at\":null,\"type\":\"default\",\"resource_survival_time\":[60,120,240,480],\"remaining_duration\":43200,\"server_id\":null}]}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/balance/space",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"line_of_credit_used\":0.0,\"virtual_userid\":null,\"status\":\"正常\",\"line_of_credit\":0.0,\"created_at\":\"2026-03-30T20:42:00.910479+08:00\",\"point\":0.0,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"cash_withdraw\":0.0,\"balance\":860.0,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"id\":\"4e2fb48d-1a24-4149-bdc1-999d1d4972e5\",\"updated_at\":\"2026-03-30T20:44:20.891793+08:00\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.403Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/trading/v1/accounts?constraints={%22broker_id__not_isnull%22:true,%22status%22:%221%22}&page=1&size=100",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"page\":1,\"size\":100,\"total\":1,\"count\":1,\"items\":[{\"id\":256863,\"created_at\":\"2026-03-30T20:42:31.516686+08:00\",\"updated_at\":\"2026-03-30T20:42:31.516709+08:00\",\"creator\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"account_type\":\"0\",\"account_id\":\"384b3312-f5e2-47ea-8ccc-a43f54b74d8a\",\"environment_type\":2,\"broker_id\":\"a12d5a02-25e9-4d26-80f3-0bb6f6fd6062\",\"account_name\":\"BigQuant 股票仿真_S00cbefcd2a\",\"status\":1,\"initial_capital\":1000000.0,\"trading_rights\":null,\"market_data_rights\":null,\"risk_params\":{},\"trade_mode\":0,\"data\":{\"md_broker_id\":\"a12d5a02-25e9-4d26-80f3-0bb6f6fd6062\",\"fund_account_id\":\"S00cbefcd2a\",\"initial_capital\":1000000,\"environment_type\":2,\"is_sync_fund_account_cash\":false},\"client_id\":\"\",\"metadata\":null}]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.403Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/coupons/@me",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"items\":[{\"coupon\":{\"id\":\"3808b590-197c-4481-bebe-0140b5430853\",\"created_at\":\"2025-09-12T12:03:36.237186+08:00\",\"updated_at\":\"2025-09-12T12:03:36.237221+08:00\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"coupon_template_id\":\"dc5e4c7d-4080-4fe7-8fb5-f316252e5e25\",\"status\":\"unused\",\"effective_at\":\"2025-09-12T00:00:00+08:00\",\"expire_at\":\"2025-10-09T23:59:59+08:00\"},\"coupon_template\":{\"id\":\"dc5e4c7d-4080-4fe7-8fb5-f316252e5e25\",\"all_space_useful\":true,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"coupon_type\":\"discount\",\"name\":\"周年庆8折券\",\"description\":\"周年庆通用8折优惠\",\"lower_limit\":0.0,\"amount\":0.0,\"discount\":0.8,\"stock\":879483,\"use_range\":[\"course\",\"plus_1999\",\"bigvip\",\"bigvip_v3\",\"activity\",\"bigpro\",\"bigpro_v2\",\"assistant_employ\"],\"default_effective_at\":\"2025-09-09T09:51:20+08:00\",\"default_expire_at\":\"2025-10-09T23:59:59+08:00\",\"metadata\":{\"desc\":\"还在看K线？我们的 AI 已经在读《孙子兵法》👉BigQuant人工智能量化平台\",\"title\":\"【优惠券已躺进你账户】赶紧收了它！\",\"duration\":1}}},{\"coupon\":{\"id\":\"491ea763-81a0-4bcd-b610-cba247b89b8e\",\"created_at\":\"2025-03-24T18:58:57.196350+08:00\",\"updated_at\":\"2025-03-24T18:58:57.196385+08:00\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"coupon_template_id\":\"ca76ae85-a3c8-4179-9d65-c1fa147aa4cb\",\"status\":\"unused\",\"effective_at\":\"2025-03-24T15:12:45+08:00\",\"expire_at\":\"2025-03-28T23:59:59+08:00\"},\"coupon_template\":{\"id\":\"ca76ae85-a3c8-4179-9d65-c1fa147aa4cb\",\"all_space_useful\":true,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"coupon_type\":\"discount\",\"name\":\"AI量化年度分享会95折券\",\"description\":\"AI量化年度分享会95折券\",\"lower_limit\":0.0,\"amount\":0.0,\"discount\":0.95,\"stock\":552454,\"use_range\":[\"bigpro_v2\",\"plus\",\"plus_1999\",\"activity\"],\"default_effective_at\":\"2025-03-24T15:03:32+08:00\",\"default_expire_at\":\"2025-03-24T15:03:32+08:00\",\"metadata\":{}}},{\"coupon\":{\"id\":\"4b7e01d0-d8d5-4cd0-9db2-ae0e17be411b\",\"created_at\":\"2026-01-15T10:59:03.415946+08:00\",\"updated_at\":\"2026-01-15T10:59:03.415950+08:00\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731a"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.403Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/private.membership.user",
+    "postData": "{}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"data\":{\"因子研究投研团\":[\"18eb986a-7be8-43f4-a1ca-cf6b313c6a9b\",\"d348144a-b0e7-4333-bd1b-eb1335bf0494\"],\"日内策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\",\"4ec7bc56-0f38-11ed-93bb-da75731aa77c\"],\"可转债策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\"],\"期货期权投研团\":[\"05ce6ed3-7082-418a-b77b-e604b5fd635c\"]},\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.403Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aiflow/v1/tasks?constraints={%22space_id%22:%2200000000-0000-0000-0000-000000000000%22,%22creator%22:%22e6277718-0f37-11ed-93bb-da75731aa77c%22}&page=1&size=200&exclude_fields=data&order_by=-created_at",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"page\":1,\"size\":200,\"total\":1,\"count\":8,\"items\":[{\"id\":\"d3ecb2af-c36e-4b43-88fb-9af4256e5aa6\",\"created_at\":\"2026-03-30T20:42:12.206992+08:00\",\"updated_at\":\"2026-03-31T19:39:57.310010+08:00\",\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"creator\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"盈利能力评估策略\",\"task_type\":\"papertrading\",\"labels\":{\"in_labels\":[\"papertrading\"],\"out_labels\":[]},\"conf\":{\"envs\":{\"isBackTest\":false,\"livetrading\":{},\"replace_by_id\":\"\",\"strategy_params\":{\"capital_base\":\"1000000.00\"}},\"retries\":0,\"timezone\":\"Asia/Shanghai\",\"file_type\":\"ipynb\",\"trade_mode\":0,\"task_source\":\"community\",\"from_task_id\":\"d983e306-2dc8-44e2-802e-da5d30a990bc\",\"scheduled_time\":\"\",\"aistudio_version\":300,\"resource_expired\":null,\"resource_options\":{\"id\":\"a059c996-0938-4726-ab6d-97b7e6cb2de5\",\"cpu\":1,\"gpu\":0,\"memory\":4},\"task_tune_parameters\":[]},\"last_run\":{\"id\":\"be3ba09a-64b8-45cb-9d66-5696e861db49\",\"event\":\"20260331\",\"state\":\"failed\"},\"priority\":10,\"deployment_id\":\"00000000-0000-0000-0000-000000000000\",\"status\":\"active\",\"strategy_type\":0},{\"id\":\"5ba7b11e-414a-4eb5-b785-4817d167965c\",\"created_at\":\"2026-03-30T20:42:12.143009+08:00\",\"updated_at\":\"2026-03-30T20:42:12.143027+08:00\",\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"creator\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"因子筛选大盘股策略\",\"task_type\":\"papertrading\",\"labels\":{\"in_labels\":[\"@user_formydream_d36b72e8\"],\"out_labels\":[]},\"conf\":{\"envs\":{\"new_user_subscribed\":1},\"retries\":0,\"timezone\":\"Asia/Shanghai\",\"file_type\":\"ipynb\",\"trade_mode\":0,\"task_source\":\"aibox\",\"from_task_id\":\"af08029e-0233-406b-a9eb-030457e420a0\",\"scheduled_time\":\"\",\"aistudio_version\":300,\"resource_expired\":null,\"resource_options\":{},\"task_tune_parameters\":null},\"last_run\":{},\"priority\":10,\"deployment_id\":\"00000000-0000-0000-0000-000000000000\",\"status\":\"paused\",\"strategy_type\":0},{\"id\":\"b9b76e6f-908f-4862-9c08-c344a344df93\",\"created_at\":\"2026-03-30T20:42:10.208698+08:00\",\"updated_at\":\"2026-03-30T20"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.403Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/trading/v1/accounts?constraints={%22status__in%22:[1],%22environment_type%22:1}&page=1&size=100",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"page\":1,\"size\":100,\"total\":0,\"count\":0,\"items\":[]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.403Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/trading/v1/livetrading/broker_infos",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"id\":\"0210bd4a-5098-478e-a2f3-a140c73a898b\",\"broker_id\":\"WHZQ\",\"broker_name\":\"BigTrader（联系客服）\",\"broker_desc\":\"经过认证的用户可以添加策略到实盘账户，实时获取模拟交易的运行结果。\",\"environment_type\":1,\"api_name\":\"实盘\",\"td_address\":\"test\",\"md_address\":\"\",\"metadata\":{\"logo\":\"https://cdn.bigquant.com/cdnuploads/filebaseapiserver/upload_images/7a/7a2807f2-a727-4b65-9bd7-0bbe7302572b.webp\",\"rank\":0,\"enabled\":true,\"qr_code\":\"\",\"terminals\":[],\"is_visible\":true,\"account_type\":\"0\",\"is_recommended\":false},\"auth_code\":\"\",\"app_id\":\"\"},{\"id\":\"0f38056f-5ea2-4408-8ab8-4cd03750afce\",\"broker_id\":\"XYZQ\",\"broker_name\":\"兴业证券\",\"broker_desc\":\"请联系对应券商客户经理合作开通BigTrader终端服务\",\"environment_type\":1,\"api_name\":\"兴业证券\",\"td_address\":\"123\",\"md_address\":\"\",\"metadata\":{\"logo\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAgEAkACQAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAoACgDAREAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+++7u4rOIySknJwiD7zt6D0A6ljwB6kgGoQc3ZfN9kJuxyVzqd3ckjzDFH2jiJUY/2mHzPx1ydueQorrjShHpd93r+GyM3Jvy9DP3HO7J3dc5Oc/XrWnl0EX7bU7u2IxIZY+8cpLDH+yTlk9tpx6g1EqUJdLPutP+HGpNefqdbaXcV5EJIyRg4dD95G9D6g9VYcEehBA45wcHZ/J9GaJ3OS1O5NzdyHP7uImKMdsKcFv+BsC2fTA7V10o8sF3er+f+S0M5O79D+Zn9uL9v74/ftFftYaf/wAE+f2J/FWp+ABL8QB8MvHfxU8Oy3ui+MNQ8UaLLef8LETSNfje08Q+EfA3woTTtZv/ABXrPhRdP8Ya5N4K11vD+p3vhOWG"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.431Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/3rd/pyodide/v0.25.1/pyodide.asm.wasm",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.432Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/3rd/pyodide/v0.25.1/python_stdlib.zip",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.453Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+    "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/bigauth/badge/membership/plus\",\"/dataapiserver/spacedatasources/manage\",\"/alphaapiserver/factors/manage\",\"/bigauth/spaceusers/read_space_users\",\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\",\"/extra/privateshare/equity/*\"]}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"/bigauth/badge/membership/plus\":false,\"/dataapiserver/spacedatasources/manage\":false,\"/alphaapiserver/factors/manage\":false,\"/bigauth/spaceusers/read_space_users\":false}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.453Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/notify/v1/record/unread",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"system\":18,\"resource\":1,\"community\":0,\"papertrading\":0,\"sum\":19}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.481Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/trading/v1/livetrading/broker_infos",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"id\":\"0210bd4a-5098-478e-a2f3-a140c73a898b\",\"broker_id\":\"WHZQ\",\"broker_name\":\"BigTrader（联系客服）\",\"broker_desc\":\"经过认证的用户可以添加策略到实盘账户，实时获取模拟交易的运行结果。\",\"environment_type\":1,\"api_name\":\"实盘\",\"td_address\":\"test\",\"md_address\":\"\",\"metadata\":{\"logo\":\"https://cdn.bigquant.com/cdnuploads/filebaseapiserver/upload_images/7a/7a2807f2-a727-4b65-9bd7-0bbe7302572b.webp\",\"rank\":0,\"enabled\":true,\"qr_code\":\"\",\"terminals\":[],\"is_visible\":true,\"account_type\":\"0\",\"is_recommended\":false},\"auth_code\":\"\",\"app_id\":\"\"},{\"id\":\"0f38056f-5ea2-4408-8ab8-4cd03750afce\",\"broker_id\":\"XYZQ\",\"broker_name\":\"兴业证券\",\"broker_desc\":\"请联系对应券商客户经理合作开通BigTrader终端服务\",\"environment_type\":1,\"api_name\":\"兴业证券\",\"td_address\":\"123\",\"md_address\":\"\",\"metadata\":{\"logo\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAgEAkACQAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAoACgDAREAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+++7u4rOIySknJwiD7zt6D0A6ljwB6kgGoQc3ZfN9kJuxyVzqd3ckjzDFH2jiJUY/2mHzPx1ydueQorrjShHpd93r+GyM3Jvy9DP3HO7J3dc5Oc/XrWnl0EX7bU7u2IxIZY+8cpLDH+yTlk9tpx6g1EqUJdLPutP+HGpNefqdbaXcV5EJIyRg4dD95G9D6g9VYcEehBA45wcHZ/J9GaJ3OS1O5NzdyHP7uImKMdsKcFv+BsC2fTA7V10o8sF3er+f+S0M5O79D+Zn9uL9v74/ftFftYaf/wAE+f2J/FWp+ABL8QB8MvHfxU8Oy3ui+MNQ8UaLLef8LETSNfje08Q+EfA3woTTtZv/ABXrPhRdP8Ya5N4K11vD+p3vhOWG"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.481Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035633457&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=1&tag_exp=0~115938466~115938468~116133312~116991816&dt=routes.trade.mock&dp=%2Ftrading%2Flist&dl=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist&sid=1775035633&sct=2&seg=0&en=page_view&_ss=1&_ee=1&ep.transport_type=beacon&tfd=1882",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.482Z",
+    "method": "POST",
+    "url": "https://stats.g.doubleclick.net/g/collect?v=2&tid=G-B58V018K6L&cid=519780893.1775021156&gtm=45je63u1h2v879772846za200zd879772846&aip=1&dma=0&gcd=13l3l3l3l1l1&npa=0&frm=0&tag_exp=0~115938466~115938468~116133312~116991816",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.482Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035633457&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=2&tag_exp=0~115938466~115938468~116133312~116991816&dt=routes.trade.mock&dp=%2Ftrading%2Flist&dl=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist&sid=1775035633&sct=2&seg=0&en=visit_trade&_ee=1&ep.transport_type=beacon&_et=2&tfd=1887",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.493Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035633457&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAACAEQ&_s=3&tag_exp=0~115938466~115938468~116133312~116991816&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist&dt=%E6%88%91%E7%9A%84%E7%AD%96%E7%95%A5%20-%20BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&en=page_view&_ee=1&tfd=1899",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.495Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aiflow/v1/taskruns/update_time?task_id=d3ecb2af-c36e-4b43-88fb-9af4256e5aa6",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"d3ecb2af-c36e-4b43-88fb-9af4256e5aa6\":\"2026-03-31 19:39:57.308323+08:00\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.500Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+    "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/extra/bigprov2/equity/*\"]}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.560Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/trading/v1/livetrading/strategies/is_never_bound",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"never_bound\":true}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.610Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/aiflow/v1/tasks/data/subscription",
+    "postData": "[\"d3ecb2af-c36e-4b43-88fb-9af4256e5aa6\",\"5ba7b11e-414a-4eb5-b785-4817d167965c\",\"b9b76e6f-908f-4862-9c08-c344a344df93\",\"22611e45-0154-4dd0-a423-2a91aff7e4b4\",\"caf8b57e-2d71-49a1-925e-07f55949a5d3\",\"252425fb-95af-4ac4-a461-4caca45dc5e1\",\"5b9a58ad-d5a3-415c-bf16-66cbca704e2e\",\"6943897c-2ca9-4335-adfa-16033a86e8ff\"]",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"22611e45-0154-4dd0-a423-2a91aff7e4b4\":0,\"252425fb-95af-4ac4-a461-4caca45dc5e1\":0,\"5b9a58ad-d5a3-415c-bf16-66cbca704e2e\":0,\"5ba7b11e-414a-4eb5-b785-4817d167965c\":0,\"6943897c-2ca9-4335-adfa-16033a86e8ff\":0,\"b9b76e6f-908f-4862-9c08-c344a344df93\":0,\"caf8b57e-2d71-49a1-925e-07f55949a5d3\":0,\"d3ecb2af-c36e-4b43-88fb-9af4256e5aa6\":0}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:13.713Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/trading/v1/portfolio/strategies?constraints={%22status__not_in%22:[2],%22id__in%22:[%22d3ecb2af-c36e-4b43-88fb-9af4256e5aa6%22,%225ba7b11e-414a-4eb5-b785-4817d167965c%22,%22b9b76e6f-908f-4862-9c08-c344a344df93%22,%2222611e45-0154-4dd0-a423-2a91aff7e4b4%22,%22caf8b57e-2d71-49a1-925e-07f55949a5d3%22,%22252425fb-95af-4ac4-a461-4caca45dc5e1%22,%225b9a58ad-d5a3-415c-bf16-66cbca704e2e%22,%226943897c-2ca9-4335-adfa-16033a86e8ff%22]}&page=1&size=8",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":0,\"total\":0,\"page\":1,\"size\":8,\"items\":[]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:15.024Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/3rd/pyodide/v0.25.1/numpy-1.26.4-cp311-cp311-emscripten_3_1_46_wasm32.whl",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:15.024Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/3rd/pyodide/v0.25.1/pandas-1.5.3-cp311-cp311-emscripten_3_1_46_wasm32.whl",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:15.024Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/3rd/pyodide/v0.25.1/python_dateutil-2.8.2-py2.py3-none-any.whl",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:15.025Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/3rd/pyodide/v0.25.1/six-1.16.0-py2.py3-none-any.whl",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:15.025Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/s6/3rd/pyodide/v0.25.1/pytz-2023.3-py2.py3-none-any.whl",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:18.134Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"ca3dc125-7dd5-4ab1-9416-31f76f6aac03\",\"event_name\":\"navigation\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:13.125\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/trading/list\",\"referrer\":\"\",\"properties\":{\"dns\":20,\"tcp\":102.79999995231628,\"ssl\":72.10000002384186,\"ttfb\":51.10000002384186,\"download\":29.799999952316284,\"domReady\":1410.2999999523163,\"load\":0,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:18.135Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"c93e2d36-56c6-462c-bb39-325709ef4b25\",\"event_name\":\"paint\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:13.125\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/trading/list\",\"referrer\":\"\",\"properties\":{\"name\":\"first-paint\",\"value\":256,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:18.135Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"d7905de2-2d08-47f2-b2ff-f8e6dcd16b51\",\"event_name\":\"longtask\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:13.125\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/trading/list\",\"referrer\":\"\",\"properties\":{\"name\":\"self\",\"startTime\":1063.2999999523163,\"value\":350,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:18.135Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"6fc6a6ec-3d67-41d5-909c-a0e4be64253d\",\"event_name\":\"visit_trade\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:13.392\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/trading/list\",\"referrer\":\"\",\"properties\":{\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:18.135Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"fbc73637-8956-4cf8-a4f1-91f365e1b0ca\",\"event_name\":\"longtask\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:13.405\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/trading/list\",\"referrer\":\"\",\"properties\":{\"name\":\"self\",\"startTime\":1725.7999999523163,\"value\":79,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:18.493Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035633457&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAEQ&_s=4&tag_exp=0~115938466~115938468~116133312~116991816&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist&dt=%E6%88%91%E7%9A%84%E7%AD%96%E7%95%A5%20-%20BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&en=scroll&epn.percent_scrolled=90&_et=11&tfd=6901",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.648Z",
+    "method": "GET",
+    "url": "https://bigquant.com/wiki",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.745Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035633457&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=5&tag_exp=0~115938466~115938468~116133312~116991816&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist&dt=%E6%88%91%E7%9A%84%E7%AD%96%E7%95%A5%20-%20BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&en=user_engagement&_et=8235&tfd=10135",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.745Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&ep=8541%2C8541&et=3&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=547956499&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20158&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.745Z",
+    "method": "GET",
+    "url": "https://bigquant.com/wiki/api/attachments.redirect?id=a7f809d0-511a-412f-98db-aec63923d77f",
+    "postData": null,
+    "response": {
+      "status": 302,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.924Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/user/@me/spaces?page=1&size=100",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"page\":1,\"size\":100,\"total\":1,\"count\":1,\"items\":[{\"id\":\"00000000-0000-0000-0000-000000000000\",\"created_at\":\"2022-09-21T11:51:16+08:00\",\"updated_at\":\"2025-04-02T10:29:23.958652+08:00\",\"user_id\":\"10000000-0000-0000-0000-000000000001\",\"status\":\"active\",\"name\":\"BigQuant\",\"icon\":\"/TODO.icon\",\"visibility\":\"public\",\"requires_approval_to_join\":false,\"domain\":null,\"alias\":\"\",\"custom_style\":\"\",\"custom_javascript\":\"<script type=\\\"text/javascript\\\">\\nwindow.__future_users__=[\\\"bqadm\\\",\\\"huxianc\\\",\\\"dr390987677\\\",\\\"yzhzheng\\\",\\\"yzhzheng2\\\",\\\"dandelion4\\\",\\\"svnquant\\\",\\\"lkthanks\\\",\\\"maxhaozi\\\",\\\"dulian\\\",\\\"aro710\\\",\\\"jk8023599\\\",\\\"bqn737zt\\\",\\\"bqq6068t\\\",\\\"cuex\\\",\\\"bq57nbe8\\\",\\\"bqg8vhd1\\\",\\\"wangsonghjt\\\",\\\"bqhtlwos\\\",\\\"bqkzh1gu\\\",\\\"bqd17wit\\\",\\\"bqs2th6e\\\",\\\"ws76\\\",\\\"bq3nyj6j\\\",\\\"xiaoshao\\\",\\\"bqt7rt7p\\\",\\\"bq7739v8\\\",\\\"zhliaoli\\\",\\\"bquzx5o8\\\",\\\"bqt8rb8j\\\",\\\"fafafacai\\\",\\\"ydong\\\",\\\"bqtest150\\\",\\\"jliang\\\"];\\n</script>\",\"settings\":{\"fullname\":\"BigQuant人工智能量化投资交易平台\",\"favicon\":\"/favicon.ico\",\"logo\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAAEi6oPRAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAASKADAAQAAAABAAAASAAAAACQMUbvAAAOBklEQVR4Ae1cCZBUxRn+3ryZ2WXZg52dZVEkssshLIiiqyJixDJlTMhh1BCPxCoTTRUxsTSFGjVHmXgEkiheCLGi4lEaKCUe0RhMIIdGjbeuINdyCnuz7DW7M29evv/NzJs3M2923ixvgQrbVbOvj7///vvvv//+++/uVcDQPB4d8s0SFCUOUJoFwMj22BYqqbkpQEU/uQt6D+A7az7U6loTMqW5YIOOlmrFAKxsjMUFMgVToqrexlioN5GE14wx0lKjILhFY1WPgTFRlgIEnYAT1ESZ+ZXm0vpilpkRpWU8fk0EC8yctIjix2nSO8IMHDJ7Z9N4CpDwSfAaXwtyEyjaDESb9yaLLBhNIMnzjKpIAlkoTQJVAr3Pr4Jv+uloLrOgYbVB9i7ZoBkTZi5i8zeYOYOMpIjTIHEY1UwG2CFRx9Qg8HEnoB2N4FYd3mmz7MCMvFSJi4PpXUBlsw69L4TWKSMACmGTX8HosAwsBX8C27cMh1Szpcg7YZyBUt+/L46aw1Iejyqpw5UAsEWkNe40yj2VYxCNC45v9tlGXnOAiNKokQJbRFIgc1h+nqOYYN3+59ai+45bUNnCGWlDlHujpqs4WSg40KCwu2rLsVSVCkjzoMKWym04ydEcyYVeZCgrs3NVtpZH3EIkSHNTJENtM9xS2RqyIwoBgTc/g/q5aSh/pR6Bt5uojaxVU+NZEQX36Ai/vg7a9nq0nzcNnopKBPdyjLNQZ4uo9NE1RnMdF14aazZKBbCrIR63r"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.925Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/notifications.list",
+    "postData": "{\"viewedAt\":true}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"pagination\":{\"limit\":15,\"offset\":0,\"nextPath\":\"/api/notifications.list?limit=15&offset=15\",\"total\":0},\"data\":{\"notifications\":[],\"unseen\":0},\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.925Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/user/@me/spaces?page=1&size=100",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"page\":1,\"size\":100,\"total\":1,\"count\":1,\"items\":[{\"id\":\"00000000-0000-0000-0000-000000000000\",\"created_at\":\"2022-09-21T11:51:16+08:00\",\"updated_at\":\"2025-04-02T10:29:23.958652+08:00\",\"user_id\":\"10000000-0000-0000-0000-000000000001\",\"status\":\"active\",\"name\":\"BigQuant\",\"icon\":\"/TODO.icon\",\"visibility\":\"public\",\"requires_approval_to_join\":false,\"domain\":null,\"alias\":\"\",\"custom_style\":\"\",\"custom_javascript\":\"<script type=\\\"text/javascript\\\">\\nwindow.__future_users__=[\\\"bqadm\\\",\\\"huxianc\\\",\\\"dr390987677\\\",\\\"yzhzheng\\\",\\\"yzhzheng2\\\",\\\"dandelion4\\\",\\\"svnquant\\\",\\\"lkthanks\\\",\\\"maxhaozi\\\",\\\"dulian\\\",\\\"aro710\\\",\\\"jk8023599\\\",\\\"bqn737zt\\\",\\\"bqq6068t\\\",\\\"cuex\\\",\\\"bq57nbe8\\\",\\\"bqg8vhd1\\\",\\\"wangsonghjt\\\",\\\"bqhtlwos\\\",\\\"bqkzh1gu\\\",\\\"bqd17wit\\\",\\\"bqs2th6e\\\",\\\"ws76\\\",\\\"bq3nyj6j\\\",\\\"xiaoshao\\\",\\\"bqt7rt7p\\\",\\\"bq7739v8\\\",\\\"zhliaoli\\\",\\\"bquzx5o8\\\",\\\"bqt8rb8j\\\",\\\"fafafacai\\\",\\\"ydong\\\",\\\"bqtest150\\\",\\\"jliang\\\"];\\n</script>\",\"settings\":{\"fullname\":\"BigQuant人工智能量化投资交易平台\",\"favicon\":\"/favicon.ico\",\"logo\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAAEi6oPRAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAASKADAAQAAAABAAAASAAAAACQMUbvAAAOBklEQVR4Ae1cCZBUxRn+3ryZ2WXZg52dZVEkssshLIiiqyJixDJlTMhh1BCPxCoTTRUxsTSFGjVHmXgEkiheCLGi4lEaKCUe0RhMIIdGjbeuINdyCnuz7DW7M29evv/NzJs3M2923ixvgQrbVbOvj7///vvvv//+++/uVcDQPB4d8s0SFCUOUJoFwMj22BYqqbkpQEU/uQt6D+A7az7U6loTMqW5YIOOlmrFAKxsjMUFMgVToqrexlioN5GE14wx0lKjILhFY1WPgTFRlgIEnYAT1ESZ+ZXm0vpilpkRpWU8fk0EC8yctIjix2nSO8IMHDJ7Z9N4CpDwSfAaXwtyEyjaDESb9yaLLBhNIMnzjKpIAlkoTQJVAr3Pr4Jv+uloLrOgYbVB9i7ZoBkTZi5i8zeYOYOMpIjTIHEY1UwG2CFRx9Qg8HEnoB2N4FYd3mmz7MCMvFSJi4PpXUBlsw69L4TWKSMACmGTX8HosAwsBX8C27cMh1Szpcg7YZyBUt+/L46aw1Iejyqpw5UAsEWkNe40yj2VYxCNC45v9tlGXnOAiNKokQJbRFIgc1h+nqOYYN3+59ai+45bUNnCGWlDlHujpqs4WSg40KCwu2rLsVSVCkjzoMKWym04ydEcyYVeZCgrs3NVtpZH3EIkSHNTJENtM9xS2RqyIwoBgTc/g/q5aSh/pR6Bt5uojaxVU+NZEQX36Ai/vg7a9nq0nzcNnopKBPdyjLNQZ4uo9NE1RnMdF14aazZKBbCrIR63r"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.932Z",
+    "method": "GET",
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-B58V018K6L",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.933Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/private.membership.user",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"data\":{\"因子研究投研团\":[\"18eb986a-7be8-43f4-a1ca-cf6b313c6a9b\",\"d348144a-b0e7-4333-bd1b-eb1335bf0494\"],\"日内策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\",\"4ec7bc56-0f38-11ed-93bb-da75731aa77c\"],\"可转债策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\"],\"期货期权投研团\":[\"05ce6ed3-7082-418a-b77b-e604b5fd635c\"]},\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.944Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&ep=8541%2C8541&et=3&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=547956499&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20158&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Ftrading%2Flist",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.945Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&et=0&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=779081528&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20167&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Fwiki&tt=AI%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%9F%A5%E8%AF%86-BigQuant%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.952Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035641925&gcd=13l3l3l3l1l1&npa=1&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&ngs=1&_eu=AAAAAEQ&_s=1&tag_exp=0~115616986~115938466~115938468~116133313~116991816~117266400&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Fwiki&dt=AI%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%9F%A5%E8%AF%86-BigQuant%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93&_tu=AAo&en=page_view&_ee=1&tfd=317",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.956Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/auth.info",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"data\":{\"user\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"yuping322\",\"avatarUrl\":null,\"color\":\"#e600e0\",\"isAdmin\":false,\"isSuspended\":false,\"isViewer\":false,\"createdAt\":\"2026-04-01T09:27:21.783Z\",\"updatedAt\":\"2026-04-01T09:27:21.789Z\",\"lastActiveAt\":\"2026-04-01T09:27:21.789Z\",\"originalId\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"email\":\"yuping322@bigquant.ai\",\"language\":\"zh_CN\",\"preferences\":null,\"notificationSettings\":{}},\"team\":{\"id\":\"00000000-0000-0000-0000-000000000000\",\"name\":\"AI量化知识库-BigQuant\",\"avatarUrl\":\"https://bigquant.com/community/user_avatar/bigquant/100/get_gravatar\",\"sharing\":false,\"memberCollectionCreate\":true,\"defaultCollectionId\":null,\"documentEmbeds\":true,\"guestSignin\":false,\"subdomain\":null,\"domain\":null,\"url\":\"https://bigquant.com/wiki\",\"defaultUserRole\":\"member\",\"inviteRequired\":false,\"allowedDomains\":[],\"preferences\":{\"commenting\":true,\"customTheme\":{\"accent\":\"#e74c3c\"},\"seamlessEdit\":false,\"viewersCanExport\":false}},\"collaborationToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU2Mjc3NzE4LTBmMzctMTFlZC05M2JiLWRhNzU3MzFhYTc3YyIsImV4cGlyZXNBdCI6IjIwMjYtMDQtMDJUMDk6Mjc6MjIuMDA5WiIsInR5cGUiOiJjb2xsYWJvcmF0aW9uIiwiaWF0IjoxNzc1MDM1NjQyfQ.U7k4vclSZDzEAYuCc0HUQWhDqAxo5SmMBf98MyHvWlM\",\"availableTeams\":[{\"id\":\"00000000-0000-0000-0000-000000000000\",\"name\":\"AI量化知识库-BigQuant\",\"avatarUrl\":\"https://bigquant.com/community/user_avatar/bigquant/100/get_gravatar\",\"url\":\"https://bigquant.com/wiki\",\"isSignedIn\":true}]},\"policies\":[{\"id\":\"00000000-0000-0000-0000-000000000000\",\"abilities\":{\"createApiKey\":true,\"createAttachment\":true,\"createAuthenticationProvider\":false,\"createCollection\":true,\"importCollection\":false,\"createComment\":true,\"createDocument\":true,\"createFileOperation\":false,\"createImport\":false,\"createExport\":false,\"createIntegration\":false,\"inviteUser\":false,\"read\":true,\"share\":false,\"createTeam\":false,\"update\":false,\"delete\":false,\"audit\":false,\"createGroup\":false,\"listWebhookSubscription\":false,\"createWebhookSubscription\":false}}],\"s"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.957Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+    "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\",\"/bigauth/badge/membership/plus\",\"/extra/privateshare/equity/*\"]}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"/bigauth/badge/membership/plus\":false}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:21.982Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/auth.config",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"data\":{\"name\":\"启明星量化大赛\",\"customTheme\":{\"accent\":\"#e74c3c\"},\"providers\":[]},\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.018Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/refactor/orders?constraints=%7B%22product_id__in%22%3A%5B%2279137090-4ea5-4772-b4a8-ad05599f9040%22%2C%22076dd251-ea40-4773-a55b-95b7e1630674%22%2C%22bc562ecd-b37a-49f4-b9ef-16f33bf59706%22%5D%2C%22status%22%3A%22paid%22%7D",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":0,\"total\":0,\"page\":1,\"size\":10,\"items\":[]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.258Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/avatar",
+    "postData": "{\"user_ids\":[\"e6277718-0f37-11ed-93bb-da75731aa77c\"]}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"avatar\":null,\"username\":\"yuping322\",\"nickname\":null,\"introduction\":null,\"config\":{\"points\":5,\"level\":4,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"roles\":[501],\"extra_privileges\":null}]}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.258Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+    "postData": "{\"keys\":[\"web\"]}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"web\":{\"advert\":false,\"baidu_analytics_id\":\"c58f67ca105d070ca7563b4b14210980\",\"banner_header\":false,\"bigquant_analytics_id\":\"3\",\"config_ignore_list\":[],\"enable_aistock\":true,\"enable_bqcollege\":true,\"enable_copyright\":true,\"enable_customer_service\":true,\"enable_futures\":false,\"enable_strategy_comment\":true,\"enable_strategy_mall\":true,\"enable_strategy_rank\":true,\"enable_timed_task\":false,\"enable_wechat_official_account\":true,\"enable_zhinikefu\":true,\"enable_zhihu\":true,\"enterprise_edition_text\":\"了解企业版\",\"enterprise_edition_url\":\"https://bigai.cn/product-bigquant/\",\"google_analytics_id\":\"G-B58V018K6L\",\"icon105\":\"/static/img/logo-Q-105.png\",\"logo_white\":\"/static/img/logo-bigquant-red.png\",\"user_develop_free_server_renew\":500,\"user_creation_free_server\":48,\"navbar_main\":[{\"children\":[],\"icon\":\"\",\"name\":\"首页\",\"path\":\"/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"编写策略\",\"path\":\"/bigapis/userbox/v1/workspaces/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"因子研究\",\"path\":\"/aifrontend/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"我的交易\",\"path\":\"/trade/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"发现策略\",\"path\":\"/armory/mall\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"知识库\",\"path\":\"/wiki/home\",\"open_in_new_tab\":false},{\"children\":[{\"icon\":\"\",\"name\":\"培训报名\",\"path\":\"/quantcamp\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"宽客学院\",\"path\":\"/tutorial/\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"量化白皮书\",\"path\":\"/activity\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"量化策略会\",\"path\":\"/quantcamp/2022\",\"open_in_new_tab\":false}],\"icon\":\"\",\"name\":\"学院\",\"path\":\"\"},{\"children\":[{\"icon\":\"\",\"name\":\"社区\",\"path\":\"/community\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"数据\",\"path\":\"/wiki/doc/tUU2aLMSPJ\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"模块\",\"path\":\"/wiki/doc/Mc52f9c80z\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"文档\",\"path\":\"/wiki/collection/zbdYBM8MsM\",\"open_in_new_tab\":false},{\"icon\":\""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.258Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/notify/v1/record/unread",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"system\":18,\"resource\":1,\"community\":0,\"papertrading\":0,\"sum\":19}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.258Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/activity/has_alert",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"is_alert\":true}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.259Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/documents.drafts",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"pagination\":{\"limit\":15,\"offset\":0,\"nextPath\":\"/api/documents.drafts?limit=15&offset=15\"},\"data\":[],\"policies\":[],\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.259Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/documents.list",
+    "postData": "{\"template\":true}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"pagination\":{\"limit\":15,\"offset\":0,\"nextPath\":\"/api/documents.list?limit=15&offset=15\"},\"data\":[{\"id\":\"4084ffc1-36ad-421f-b21a-22605d109f18\",\"url\":\"/doc/vaN1dQGN7K\",\"urlId\":\"vaN1dQGN7K\",\"title\":\"137-配对交易策略（Pairs Trading）\",\"text\":\"## 绩效截图\\n\\n我们先来看一个策略回测曲线，年化12.4%，最大回撤18个点，交易不是特别频繁，但总体是一个正收益系统的策略\\n\\n ![](/wiki/api/attachments.redirect?id=ce3b98ae-bed1-4509-ac27-e2c557cb2c6f)\\n\\n这就是一个配对交易策略，只买两只票。下面我们详细介绍！\\n\\n\\\\\\n### 配对策略的交易规则\\n\\n* 对于股价有长期协整关系的两只股票X和Y, 可以通过历史数据回归计算两只股票的股价关系,即 Y = a\\\\*X + b, 得到相关系数a和残差项b；\\n* 如果两个股票所属同一行业，我们可以认为两者的股价未来应该保持上述关系，即序列 zscore=(b-mean(b,N))/std(b,N) 存在比较稳定的均值回归特性，保持在-1和1之间往复震荡;\\n* 当zscore小于-1时, Y股票低估，此时卖出X, 全仓买入Y；\\n* 当zscore大于 1时,  X股票低估，此时卖出Y, 全仓买入X；\\n\\n### 策略构建步骤\\n\\n### 1、确定股票池和回测时间\\n\\n* 通过证券代码列表输入要回测的两只股票，以及回测的起止日期\\n\\n### 2、获取历史价格数据\\n\\n* 通过输入特征列表输入 close/adjust_factor 因子,指定获取股票的收盘价真实价格。\\n* 通过基础特征抽取模块获取股票的价格数据。\\n* 通过缺失数据处理模块删去有缺失值的数据。\\n\\n### 3、确定买卖原则\\n\\n* 当zscore小于-1时,卖出X股票, 全仓买入Y；\\n* 当zscore大于 1时,卖出Y股票, 全仓买入X；\\n\\n### 4、模拟回测\\n\\n* 通过 bigtrader 模块中的初始化函数定义交易手续费和滑点;\\n* 通过 bigtrader 模块中的盘前处理函数每日用当日之前的历史数据计算一次zscore变量序列，并存放在context.zscore 变量中；\\n* 回测第一天用过去240个自然日的历史数据计算，后面每日用于计算zscore的历史数据逐日递增；\\n* 通过 bigtrader 模块中的主函数(handle_data函数)查看每日zscore值，按照买卖原则执行相应的卖出/买入操作。\\n\\n\\\\\\n## 模块介绍\\n\\n通过close / adjust_factor as close 抽取价格因子\\n\\n ![](/wiki/api/attachments.redirect?id=e2747bc2-5790-4699-87c9-58cd631f3a9f \\\" =865x350\\\")\\n\\n\\\\\\n\\\\\\n抽取有高相关性的两只股票，分别为中信银行（601998）、交通银行（601328）\\n\\n ![](/wiki/api/attachments.redirect?id=35ad9b4d-986e-4982-92ee-4d07e2a3b4d0 \\\" =618x187\\\")\\n\\n\\\\\\n将价格数据转换下格式，转换成日期、股票1、股票2这三列数据。\\n\\n ![](/wiki/api/attachments.redirect?id=7bff16a7-6cfd-4953-85ce-38d0d008e456 \\\" =741x263\\\")\\n\\n\\\\\\n通过回归（ols）得到价格的残差，并通过残差确定交易信号\\n\\n ![](/wiki/api/attachments.redirect?id=f7e13bc0-8b33-4b14-8344-a97c5e7c469c \\\" =865x366\\\")\\n\\n\\\\\\n执行交易信号\\n\\n ![](/wiki/api/attachments.redirect?id=63dd2ffd-fc9c-42e1-9670-1a57c113a1f8)\\n\\n\\\\\\n## 代码克隆 \\n\\n[https://bigquant.com/codesharev3/52dcca45-0e9c-4fcd-8d18-d55b89f16b8e](https://bigquant.com/codesharev3/52dcca45-0e9c-4fcd"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.259Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/collections.list",
+    "postData": "{\"limit\":100,\"offset\":0}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"pagination\":{\"limit\":100,\"offset\":0,\"nextPath\":\"/api/collections.list?limit=100&offset=100\"},\"data\":[{\"id\":\"e3bd6ee2-2b66-465f-9125-cc51deba9b1b\",\"url\":\"/collection/SkPzwuq9oo\",\"urlId\":\"SkPzwuq9oo\",\"name\":\"BigQuant使用文档\",\"description\":\"\\\\\\n\",\"sort\":{\"field\":\"index\",\"direction\":\"asc\"},\"icon\":\"palette\",\"index\":\",\",\"color\":\"#e74c3c\",\"permission\":\"read\",\"sharing\":true,\"createdAt\":\"2021-02-25T09:03:23.077Z\",\"updatedAt\":\"2026-03-30T10:19:23.138Z\",\"deletedAt\":null,\"userWiki\":false,\"privateMembership\":false},{\"id\":\"cf40c582-74e7-43a4-814f-e4d5653921c8\",\"url\":\"/collection/1rppcme9Zo\",\"urlId\":\"1rppcme9Zo\",\"name\":\"BigQuant 2026年度私享会\",\"description\":\"\\\\\\n\",\"sort\":{\"field\":\"index\",\"direction\":\"asc\"},\"icon\":\"academicCap\",\"index\":\"M\",\"color\":\"#FFBE0B\",\"permission\":\"read_write\",\"sharing\":true,\"createdAt\":\"2025-10-14T02:59:03.398Z\",\"updatedAt\":\"2026-03-29T11:53:40.519Z\",\"deletedAt\":null,\"userWiki\":false,\"privateMembership\":true},{\"id\":\"443b9b35-fbb7-4ea0-ba06-3f47ab915248\",\"url\":\"/collection/dhj0C1Hfqz\",\"urlId\":\"dhj0C1Hfqz\",\"name\":\"精华帖子\",\"description\":null,\"sort\":{\"field\":\"index\",\"direction\":\"asc\"},\"icon\":\"coins\",\"index\":\"n\",\"color\":\"#ff825c\",\"permission\":\"read_write\",\"sharing\":true,\"createdAt\":\"2024-06-25T08:56:06.526Z\",\"updatedAt\":\"2026-04-01T03:02:55.518Z\",\"deletedAt\":null,\"userWiki\":false,\"privateMembership\":false},{\"id\":\"ab22f19e-fe75-4681-a78f-d4861b88b19c\",\"url\":\"/collection/vHvL2mwsbm\",\"urlId\":\"vHvL2mwsbm\",\"name\":\"量化数据分析\",\"description\":null,\"sort\":{\"field\":\"index\",\"direction\":\"asc\"},\"icon\":null,\"index\":\"p\",\"color\":\"#42DED1\",\"permission\":\"read_write\",\"sharing\":true,\"createdAt\":\"2024-08-23T09:39:56.823Z\",\"updatedAt\":\"2026-03-30T06:10:57.241Z\",\"deletedAt\":null,\"userWiki\":false,\"privateMembership\":false},{\"id\":\"955ffb23-528a-45ab-9082-1eaeacf98dbe\",\"url\":\"/collection/QkFJ6ZCzEq\",\"urlId\":\"QkFJ6ZCzEq\",\"name\":\"AI量化知识树\",\"description\":\"* 本空间涵盖量化学习所必须掌握的”金融市场“、”数据因子“、”AI算法“、”AI策略“内容，可快速掌握对AI量化的认知，随手查询相关知识，并可搭配BigQuant平台学习，从而完成AI量化的“理解、复现、创新”三个阶梯。\\n\\n\\\\\\n\",\"sort\":{\"field\":\"index\",\"dire"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.259Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/stars.list",
+    "postData": "{\"limit\":11,\"offset\":0}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"pagination\":{\"limit\":11,\"offset\":0,\"nextPath\":\"/api/stars.list?limit=11&offset=11\"},\"data\":{\"stars\":[],\"documents\":[]},\"policies\":[],\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.294Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/documents.list",
+    "postData": "{\"limit\":25,\"offset\":0}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"pagination\":{\"limit\":25,\"offset\":0,\"nextPath\":\"/api/documents.list?limit=25&offset=25\"},\"data\":[{\"id\":\"50557f79-8fd7-49b7-8736-1fa00f2ed66c\",\"url\":\"/doc/KIqNIevlhS\",\"urlId\":\"KIqNIevlhS\",\"title\":\"【平台使用】初上手问题反馈\",\"text\":\"我正在使用标普500的数据写一个简单的动量因子策略，运行时一直打印以下日志：\\\\n\\n\\n## 问题一\\n\\n```python\\n日志 103 条 ▼\\n[2026-03-18 15:40:22] INFO: bigtrader.v35 开始运行 ..[2026-03-18 15:40:22] INFO: pybacktest run 2020-12-31 ~ 2024-12-31, , equity, instruments=501[2026-03-18 15:40:22] INFO: bigtrader module V2.2.0[2026-03-18 15:40:22] INFO: bigtrader engine v0.1.0.post9+g6d7300d 2026-02-10[2026-03-18 15:40:23] INFO: pybacktest read history data done, run backtest ...order_target_percent: price is null for 'NVDA.O' at '2020-12-31 15:00:00'\\norder_target_percent: price is null for 'BBWI.N' at '2020-12-31 15:00:00'\\norder_target_percent: price is null for 'MRNA.O' at '2020-12-31 15:00:00'\\norder_target_percent: price is null for 'ETSY.O' at '2020-12-31 15:00:00'\\norder_target_percent: price is null for 'ENPH.O' at '2020-12-31 15:00:00'\\norder_target_percent: price is null for 'NVDA.O' at '2021-01-04 15:00:00'\\norder_target_percent: price is null for 'MRNA.O' at '2021-01-04 15:00:00'\\norder_target_percent: price is null for 'ETSY.O' at '2021-01-04 15:00:00'\\norder_target_percent: price is null for 'GNRC.N' at '2021-01-04 15:00:00'\\norder_target_percent: price is null for 'ENPH.O' at '2021-01-04 15:00:00'\\norder_target_percent: price is null for 'NVDA.O' at '2021-01-05 15:00:00'\\norder_target_percent: price is null for 'BBWI.N' at '2021-01-05 15:00:00'\\norder_target_percent: price is null for 'MRNA.O' at '2021-01-05 15:00:00'\\norder_target_percent: price is null for 'ETSY.O' at '2021-01-05 15:00:00'\\norder_target_percent: price is null for 'ENPH.O' at '2021-01-05 15:00:00'\\norder_target_percent: price is null for 'BBWI.N' at '2021-01-06 15:00:00'\\norder_target_percent: price is null for 'MRNA.O' at '2021-01-06 15:00:00'\\norder_target_percent: price is null for 'ETSY.O' at '2021-01-06 15:00:00'\\nord"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.294Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/documents.hot",
+    "postData": "{\"collectionId\":\"\",\"teamId\":\"00000000-0000-0000-0000-000000000000\",\"end_date\":\"2026-04-01 17:27:22\",\"start_date\":\"2026-01-01 17:27:22\"}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"data\":[{\"id\":\"8140edb8-488c-448b-9cd5-11c76619faa3\",\"title\":\"数据平台/DAI\",\"total\":\"2879\",\"url\":\"/doc/PLSbc1SbZX\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"},{\"id\":\"ec3dc92e-6115-4e86-8d7f-b91013eaff18\",\"title\":\"BigTrader AI量化交易终端（股票实盘）\",\"total\":\"1838\",\"url\":\"/doc/sRPJjoVBCo\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"},{\"id\":\"f35762d9-18aa-49cc-9ef3-082d925cdef1\",\"title\":\"【历史文档】平台使用指南\",\"total\":\"1790\",\"url\":\"/doc/htT8CrjJJh\",\"collectionName\":\"历史文档\",\"collectionUrl\":\"/collection/d4VYXxD5JF\"},{\"id\":\"e5ac80a0-c6ae-4b9e-958e-9c9d90bbc9ec\",\"title\":\"快速入门\",\"total\":\"1506\",\"url\":\"/doc/Oold2mbXjZ\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"},{\"id\":\"c92e9580-0bbf-4860-b7d9-880e8d164469\",\"title\":\"◆快速入门\",\"total\":\"953\",\"url\":\"/doc/vUUNGn59Qf\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"},{\"id\":\"9b16d049-da5f-4de8-ad6a-5b55c16cf955\",\"title\":\"策略模版/Demos\",\"total\":\"946\",\"url\":\"/doc/ecdRvuM1TU\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"},{\"id\":\"bee67b2d-764d-4650-8dda-179a1bbe5feb\",\"title\":\"编写策略/AIStudio\",\"total\":\"785\",\"url\":\"/doc/NzAjgKapzW\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"},{\"id\":\"dc4cabda-b3a2-4243-a208-055b031a4533\",\"title\":\"DAI SQL 函数列表\",\"total\":\"751\",\"url\":\"/doc/Rceb2JQBdS\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"},{\"id\":\"c1b5ceea-ce2e-482d-b9a3-45509ded9cff\",\"title\":\"【历史文档】算子\",\"total\":\"739\",\"url\":\"/doc/thlWdUsV8g\",\"collectionName\":\"历史文档\",\"collectionUrl\":\"/collection/d4VYXxD5JF\"},{\"id\":\"b9252b79-94d7-49ed-a756-2bb3551168a4\",\"title\":\"101-简单动量策略\",\"total\":\"723\",\"url\":\"/doc/YsplgQ2tWF\",\"collectionName\":\"BigQuant使用文档\",\"collectionUrl\":\"/collection/SkPzwuq9oo\"}],\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.295Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/pins.list",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"pagination\":{\"limit\":15,\"offset\":0,\"nextPath\":\"/api/pins.list?limit=15&offset=15\"},\"data\":{\"pins\":[{\"id\":\"88816e98-8430-4ad9-a07b-180772bede01\",\"documentId\":\"c3cbe538-856f-41bf-8fb0-202090a5014d\",\"collectionId\":null,\"index\":\"P\",\"createdAt\":\"2025-09-25T03:01:22.524Z\",\"updatedAt\":\"2025-09-25T03:01:22.524Z\"}],\"documents\":[]},\"policies\":[{\"id\":\"88816e98-8430-4ad9-a07b-180772bede01\",\"abilities\":{\"update\":false,\"delete\":false}}],\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.344Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/avatar",
+    "postData": "{\"user_ids\":[\"57f411c6-0f38-11ed-93bb-da75731aa77c\",\"0f9d5a9a-0f38-11ed-93bb-da75731aa77c\",\"473a834c-0f38-11ed-93bb-da75731aa77c\",\"e7968cb0-0f37-11ed-93bb-da75731aa77c\",\"a7104b30-aae2-4298-8dfe-727da40e8ca8\",\"d62c3be8-150f-4cff-bd3c-e7d406f583d0\",\"c8c6d22c-b51f-44fb-8c9d-e847d359fb0d\",\"9290028d-b98d-4cb2-8bf3-e3e4375c3777\",\"4bb56460-0feb-11ed-b91a-da75731aa77c\",\"6b53f82a-be28-4e26-98d8-e73a4f4ea9c3\",\"5e88d9ae-0f38-11ed-93bb-da75731aa77c\",\"00215954-e499-4d98-90be-1774c6cae89d\"]}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"id\":\"00215954-e499-4d98-90be-1774c6cae89d\",\"avatar\":null,\"username\":\"bqb6siz4\",\"nickname\":null,\"introduction\":null,\"config\":{\"points\":2,\"level\":2,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"roles\":[501],\"extra_privileges\":null},{\"id\":\"0f9d5a9a-0f38-11ed-93bb-da75731aa77c\",\"avatar\":null,\"username\":\"lifei521\",\"nickname\":null,\"introduction\":null,\"config\":{\"points\":5,\"level\":4,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"roles\":[501],\"extra_privileges\":null},{\"id\":\"473a834c-0f38-11ed-93bb-da75731aa77c\",\"avatar\":\"1\",\"username\":\"small_q\",\"nickname\":\"小Q\",\"introduction\":null,\"config\":{\"points\":139,\"level\":13,\"points_last_updated_date\":\"2026-03-27\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":\"bigquant.pro\",\"unbind_mobiles\":null,\"unbind_wechats\":null},\"roles\":[501],\"extra_privileges\":[\"/extra/bigprov2/equity/{\\\"storage\\\": {\\\"disk\\\": 10, \\\"price\\\": 0, \\\"specification\\\": \\\"S3\\\"}, \\\"expire_at\\\": \\\"2027-03-31\\\", \\\"datasource\\\": {\\\"limit\\\": 0}, \\\"product_id\\\": \\\"98d43028-8b51-4dbd-85d2-6ed4db8596ce\\\", \\\"effective_at\\\": \\\"2024-12-12\\\", \\\"order_amount\\\": 487.0, \\\"aiflow_server\\\": [{\\\"cpu\\\": 1, \\\"memory\\\": 6, \\\"specification\\\": \\\"P1\\\", \\\"count\\\": 16}, {\\\"cpu\\\": 2, \\\"memory\\\": 8, \\\"specification\\\": \\\"P2\\\", \\\"count\\\": 2}], \\\"specification\\\": \\\"pro\\\", \\\"aistudio_server\\\": {\\\"cpu\\\": 2, \\\"memory\\\": 8, \\\"specification\\\": \\\"D1\\\"}, \\\"product_version\\\": \\\"v2\\\", \\\"datasource_amount\\\": 0, \\\"is_reward\\\": true}\",\"/extra/privateshare/equity/{\\\"expire_at\\\": \\\"2026-12-31 23:59:59\\\"}\"]},{\"id\":\"4bb56460-0feb-11ed-b91a-da75731aa77c\",\"avatar\":\"fa9e447a4ad84cbdae9cefdf2466481c.png\",\"username\":\"ydong\",\"nickname\":\"大大怪将军\",\"introduction\":\"大家好，我是ave\",\"config\":{\"points\":73,\"level\":11,\"points_last_up"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.505Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/avatar",
+    "postData": "{\"user_ids\":[\"72318efc-af8c-4c40-9420-7d5af324a935\",\"cc65fe2f-435f-4742-8814-1cb840077809\",\"b7c94878-3e79-4ddd-9e63-fbf2d473918f\",\"0c71d751-84a0-4f30-bb5e-218fc42db992\",\"134071a4-016c-4c08-bfd1-e540f4296adb\",\"3bba9f55-d76c-435e-90ff-a651ac0cf77a\",\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\",\"9cb9183d-85cc-49bc-a710-52de38c7d23d\",\"5345b3a5-cd1e-41d4-81f9-a098e3ebfdfa\",\"9da41105-85bf-4bdd-abd2-0888e9fcb429\",\"eea823d7-2cef-4f5d-a25a-0187e82849e6\",\"798d582e-133d-4507-8770-73b5c95a1334\",\"20daed4b-e070-4437-9e41-8df5a8112d94\",\"60b50502-f32f-4e62-aa82-97420e1f4f39\",\"ec1da547-6352-426e-9b56-336a55fa27d5\",\"381c2f54-d58f-4a05-a653-0e1f33962697\",\"4ec7bc56-0f38-11ed-93bb-da75731aa77c\"]}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"id\":\"0c71d751-84a0-4f30-bb5e-218fc42db992\",\"avatar\":\"6c18167c5d9b4b60b8b05d40f71cbee4.jpg\",\"username\":\"bqb18wzv\",\"nickname\":\"EmilyLi\",\"introduction\":\"111222222111\",\"config\":{\"points\":66,\"level\":11,\"points_last_updated_date\":\"2026-03-27\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":[\"oBDSlw10N55l7yUblLsEfGU3_Vk4\"]},\"roles\":null,\"extra_privileges\":null},{\"id\":\"134071a4-016c-4c08-bfd1-e540f4296adb\",\"avatar\":\"3\",\"username\":\"bqngvsu2\",\"nickname\":\"James\",\"introduction\":null,\"config\":{\"points\":25,\"level\":8,\"points_last_updated_date\":\"2026-03-27\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"roles\":[501],\"extra_privileges\":[\"/extra/bigprov2/equity/{\\\"aistudio_server\\\": {\\\"cpu\\\": 2, \\\"memory\\\": 8, \\\"specification\\\": \\\"D1\\\"}, \\\"aiflow_server\\\": [{\\\"cpu\\\": 1, \\\"count\\\": 3, \\\"memory\\\": 6, \\\"specification\\\": \\\"P1\\\"}, {\\\"cpu\\\": 1, \\\"count\\\": 2, \\\"memory\\\": 6, \\\"specification\\\": \\\"R1\\\"}], \\\"datasource\\\": {\\\"limit\\\": 2}, \\\"is_reward\\\": true, \\\"specification\\\": \\\"spro\\\", \\\"effective_at\\\": \\\"2026-03-18\\\", \\\"expire_at\\\": \\\"2026-03-23\\\", \\\"product_version\\\": \\\"v2\\\"}\"]},{\"id\":\"20daed4b-e070-4437-9e41-8df5a8112d94\",\"avatar\":\"d5c2598cbec8459387ed4f7f2be52cc3.png\",\"username\":\"bq0sxhmu\",\"nickname\":\"9点半量化\",\"introduction\":null,\"config\":{\"points\":60,\"level\":11,\"points_last_updated_date\":\"2026-03-26\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"roles\":[501],\"extra_privileges\":[\"/extra/bigprov2/equity/{\\\"aistudio_server\\\": {\\\"cpu\\\": 2, \\\"memory\\\": 8, \\\"specification\\\": \\\"D1\\\"}, \\\"aiflow_server\\\": [{\\\"cpu\\\": 1, \\\"count\\\": 3, \\\"memory\\\": 6, \\\"specification\\\": \\\"P1\\\"}, {\\\"cpu\\\": 1, \\\"count\\\": 2, \\\"memory\\\": 6, \\\"specification\\\": \\\"R1\\\"}], \\\"datasource\\\": {\\\"limit\\\": 2}, \\\"is_reward\\\": true, \\\"specification\\\": \\\"spro\\\", \\\"effe"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.646Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/cdnuploads/bigauth/avatar/6c18167c5d9b4b60b8b05d40f71cbee4.jpg",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.674Z",
+    "method": "GET",
+    "url": "https://bigquant.com/wiki/api/attachments.redirect?id=f67ae70b-53ff-457a-b55d-fbda504f8cf5",
+    "postData": null,
+    "response": {
+      "status": 302,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.674Z",
+    "method": "GET",
+    "url": "https://bigquant.com/wiki/api/attachments.redirect?id=e1f7a564-fb9c-4ad1-b492-8d204c8e8a1a",
+    "postData": null,
+    "response": {
+      "status": 302,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:22.762Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/wiki/static/upload/e1/e1f7a564-fb9c-4ad1-b492-8d204c8e8a1a.jpg",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:26.958Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035641925&gcd=13l3l3l3l1l1&npa=1&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&ngs=1&_eu=AEAAAEQ&tag_exp=0~115616986~115938466~115938468~116133313~116991816~117266400&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Fwiki&dt=AI%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%9F%A5%E8%AF%86-BigQuant%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93&_tu=AAo&_s=2&tfd=5319",
+    "postData": "en=scroll&epn.percent_scrolled=90&_et=2\r\nen=page_view&_et=1051&dl=https%3A%2F%2Fbigquant.com%2Fwiki%2Fhome&dr=https%3A%2F%2Fbigquant.com%2Fwiki",
+    "contentType": "text/plain;charset=UTF-8",
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:28.815Z",
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:28.861Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035641925&gcd=13l3l3l3l1l1&npa=1&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&ngs=1&_eu=AAAAAEQ&_s=3&tag_exp=0~115616986~115938466~115938468~116133313~116991816~117266400&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Fwiki%2Fhome&dr=https%3A%2F%2Fbigquant.com%2Fwiki&dt=AI%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%9F%A5%E8%AF%86-BigQuant%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93&_tu=AAo&en=user_engagement&_et=5848&tfd=7217",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:28.861Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&ep=6912%2C6911&et=3&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=1931111312&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20167&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Fwiki",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:28.862Z",
+    "method": "POST",
+    "url": "https://www.google.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035641925&gcd=13l3l3l3l1l1&npa=1&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&ngs=1&_eu=AAAAAEQ&_s=3&tag_exp=0%7E115616986%7E115938466%7E115938468%7E116133313%7E116991816%7E117266400&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Fwiki%2Fhome&dr=https%3A%2F%2Fbigquant.com%2Fwiki&dt=AI%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E7%9F%A5%E8%AF%86-BigQuant%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93&_tu=AAo&en=user_engagement&_et=5848&tfd=7217&gaf=1",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.166Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+    "postData": "{\"keys\":[\"web\",\"common\"]}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"web\":{\"advert\":false,\"baidu_analytics_id\":\"c58f67ca105d070ca7563b4b14210980\",\"banner_header\":false,\"bigquant_analytics_id\":\"3\",\"config_ignore_list\":[],\"enable_aistock\":true,\"enable_bqcollege\":true,\"enable_copyright\":true,\"enable_customer_service\":true,\"enable_futures\":false,\"enable_strategy_comment\":true,\"enable_strategy_mall\":true,\"enable_strategy_rank\":true,\"enable_timed_task\":false,\"enable_wechat_official_account\":true,\"enable_zhinikefu\":true,\"enable_zhihu\":true,\"enterprise_edition_text\":\"了解企业版\",\"enterprise_edition_url\":\"https://bigai.cn/product-bigquant/\",\"google_analytics_id\":\"G-B58V018K6L\",\"icon105\":\"/static/img/logo-Q-105.png\",\"logo_white\":\"/static/img/logo-bigquant-red.png\",\"user_develop_free_server_renew\":500,\"user_creation_free_server\":48,\"navbar_main\":[{\"children\":[],\"icon\":\"\",\"name\":\"首页\",\"path\":\"/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"编写策略\",\"path\":\"/bigapis/userbox/v1/workspaces/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"因子研究\",\"path\":\"/aifrontend/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"我的交易\",\"path\":\"/trade/\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"发现策略\",\"path\":\"/armory/mall\",\"open_in_new_tab\":false},{\"children\":[],\"icon\":\"\",\"name\":\"知识库\",\"path\":\"/wiki/home\",\"open_in_new_tab\":false},{\"children\":[{\"icon\":\"\",\"name\":\"培训报名\",\"path\":\"/quantcamp\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"宽客学院\",\"path\":\"/tutorial/\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"量化白皮书\",\"path\":\"/activity\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"量化策略会\",\"path\":\"/quantcamp/2022\",\"open_in_new_tab\":false}],\"icon\":\"\",\"name\":\"学院\",\"path\":\"\"},{\"children\":[{\"icon\":\"\",\"name\":\"社区\",\"path\":\"/community\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"数据\",\"path\":\"/wiki/doc/tUU2aLMSPJ\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"模块\",\"path\":\"/wiki/doc/Mc52f9c80z\",\"open_in_new_tab\":false},{\"icon\":\"\",\"name\":\"文档\",\"path\":\"/wiki/collection/zbdYBM8MsM\",\"open_in_new_tab\":false},{\"icon\":\""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.238Z",
+    "method": "GET",
+    "url": "https://unpkg.zhimg.com/@efe/zhad-tracker@1.4.1",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.238Z",
+    "method": "GET",
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-B58V018K6L",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.238Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"updated_at\":\"2026-04-01T17:06:12.311518+08:00\",\"created_at\":\"2020-09-15T14:21:40.324016+08:00\",\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"allowed_ip\":null,\"status\":\"Active\",\"nickname\":null,\"last_login_at\":\"2026-04-01T17:06:12.311441+08:00\",\"config\":{\"points\":5,\"level\":4,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"avatar\":null,\"introduction\":null,\"phone\":\"\",\"wechat\":\"\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.238Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/useraction",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":52202,\"created_at\":\"2026-03-30T20:42:41.103433+08:00\",\"updated_at\":\"2026-03-30T20:42:41.103452+08:00\",\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"active_time\":0.0,\"meta_data\":{}}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.238Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"updated_at\":\"2026-04-01T17:06:12.311518+08:00\",\"created_at\":\"2020-09-15T14:21:40.324016+08:00\",\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"allowed_ip\":null,\"status\":\"Active\",\"nickname\":null,\"last_login_at\":\"2026-04-01T17:06:12.311441+08:00\",\"config\":{\"points\":5,\"level\":4,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"avatar\":null,\"introduction\":null,\"phone\":\"\",\"wechat\":\"\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.255Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035649248&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=1&tag_exp=0~115938465~115938469~116991817~117266400~117884344&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Faistudio&dt=BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&en=page_view&_ee=1&tfd=440",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.258Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&ep=6912%2C6911&et=3&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=1931111312&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20167&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Fwiki",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.258Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&et=0&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=1021013997&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20174&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Faistudio&tt=BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.271Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/refactor/orders?constraints=%7B%22product_id__in%22%3A%5B%2279137090-4ea5-4772-b4a8-ad05599f9040%22%2C%22076dd251-ea40-4773-a55b-95b7e1630674%22%2C%22bc562ecd-b37a-49f4-b9ef-16f33bf59706%22%5D%2C%22status%22%3A%22paid%22%7D",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":0,\"total\":0,\"page\":1,\"size\":10,\"items\":[]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.271Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/setting",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"data\":{\"username\":\"yuping322\",\"nickname\":null,\"user_status\":\"Active\",\"set_password\":true,\"mobile\":\"13311390323\",\"email\":\"yuping322@163.com\",\"open_id\":\"oBDSlw9h-CwoavOtk4tS2j2RSx94\",\"avatar\":null,\"introduction\":null}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.316Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/refactor/orders?constraints=%7B%22product_id__in%22%3A%5B%2279137090-4ea5-4772-b4a8-ad05599f9040%22%2C%22076dd251-ea40-4773-a55b-95b7e1630674%22%2C%22bc562ecd-b37a-49f4-b9ef-16f33bf59706%22%5D%2C%22status%22%3A%22paid%22%7D",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":0,\"total\":0,\"page\":1,\"size\":10,\"items\":[]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.316Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/setting",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"data\":{\"username\":\"yuping322\",\"nickname\":null,\"user_status\":\"Active\",\"set_password\":true,\"mobile\":\"13311390323\",\"email\":\"yuping322@163.com\",\"open_id\":\"oBDSlw9h-CwoavOtk4tS2j2RSx94\",\"avatar\":null,\"introduction\":null}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.400Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035649248&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAEQ&_s=2&tag_exp=0~115938465~115938469~116991817~117266400~117884344&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Faistudio&dt=BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&en=scroll&epn.percent_scrolled=90&_et=1&tfd=551",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+    "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\"]}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/balance",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"line_of_credit_used\":0.0,\"virtual_userid\":null,\"status\":\"正常\",\"line_of_credit\":0.0,\"created_at\":\"2026-03-30T20:42:00.910479+08:00\",\"point\":0.0,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"cash_withdraw\":0.0,\"balance\":860.0,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"id\":\"4e2fb48d-1a24-4149-bdc1-999d1d4972e5\",\"updated_at\":\"2026-03-30T20:44:20.891793+08:00\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/daily/aistudio/sign_in/week",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":1,\"sign_in\":false,\"seven_day\":20,\"not_seven_day\":10}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/activity",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"name\":\"新建一个策略\",\"type\":\"create_strategy\",\"count\":1,\"kbb\":50,\"icon_idx\":0,\"complete\":true},{\"name\":\"通过AI新建一个策略\",\"type\":\"create_ai_strategy\",\"count\":1,\"kbb\":50,\"icon_idx\":3,\"complete\":false},{\"name\":\"运行第一个策略\",\"type\":\"run_strategy\",\"count\":1,\"kbb\":50,\"icon_idx\":1,\"complete\":false},{\"name\":\"提交第一个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":1,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第一条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":1,\"kbb\":200,\"icon_idx\":4,\"complete\":true},{\"name\":\"新建三个策略\",\"type\":\"create_strategy\",\"count\":3,\"kbb\":50,\"icon_idx\":0,\"complete\":false},{\"name\":\"运行第三个策略\",\"type\":\"run_strategy\",\"count\":3,\"kbb\":50,\"icon_idx\":1,\"complete\":false},{\"name\":\"提交第三个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":3,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第三条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":3,\"kbb\":200,\"icon_idx\":4,\"complete\":true},{\"name\":\"新建五个策略\",\"type\":\"create_strategy\",\"count\":5,\"kbb\":50,\"icon_idx\":0,\"complete\":false},{\"name\":\"运行第五个策略\",\"type\":\"run_strategy\",\"count\":5,\"kbb\":50,\"icon_idx\":1,\"complete\":false},{\"name\":\"提交第五个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":5,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第五条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":5,\"kbb\":200,\"icon_idx\":4,\"complete\":true},{\"name\":\"新建十个策略\",\"type\":\"create_strategy\",\"count\":10,\"kbb\":50,\"icon_idx\":0,\"complete\":false},{\"name\":\"运行第十个策略\",\"type\":\"run_strategy\",\"count\":10,\"kbb\":50,\"icon_idx\":2,\"complete\":false},{\"name\":\"提交第十个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":10,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第十条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":10,\"kbb\":200,\"icon_idx\":4,\"complete\":true}]}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/studios/e6277718-0f37-11ed-93bb-da75731aa77c",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"created_at\":\"2026-03-30T20:43:14.150484+08:00\",\"updated_at\":\"2026-04-01T17:06:19.206023+08:00\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"base_dir\":\"\",\"image\":\"\",\"expires_at\":\"2026-04-01T19:06:14.162443+08:00\",\"status\":\"running\",\"status_details\":{},\"conf\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"port\":8888,\"type\":\"free\",\"image\":\"local.dockerhub.bigquant.ai:5000/aios/aibox:master_3b906f3a_260328114116\",\"no_cdn\":true,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"base_dir\":\"\",\"order_id\":null,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"username\":\"yuping322\",\"BQ_LOCALE\":\"zh-cn\",\"cpu_limit\":\"1\",\"gpu_limit\":\"0\",\"namespace\":\"userbox\",\"studio_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"expires_at\":\"2026-04-01T19:06:14.162443\",\"user_level\":\"new_free_90\",\"cpu_request\":\"200m\",\"updated_tag\":\"U6dVN8\",\"free_minutes\":0,\"memory_limit\":\"6Gi\",\"node_selector\":{},\"not_free_user\":false,\"memory_request\":\"1Gi\",\"priority_class\":\"high-priority-nonpreempting\",\"resource_spec_id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"redpanda_privilege\":\"disallowed\",\"resource_spec_name\":\"D0(1C/6G) 免费\",\"toleration_seconds\":60,\"internal_service_namespace\":\"bigquant\"}}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/userresourcespecs",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"name\":\"D0(1C/6G) 免费\",\"price\":0,\"cpu\":1,\"memory\":6,\"gpu\":0,\"min_bqc_required\":0,\"node_selector\":{},\"cpu_overcommit_ratio\":0.5,\"memory_overcommit_ratio\":0.5,\"rank\":0,\"type\":\"free\",\"resource_survival_time\":[60,120,240,480,960,1440,4320,10080]}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/resourcespecs",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"name\":\"D0(1C/6G) 免费\",\"price\":0.0,\"cpu\":1,\"memory\":6.0,\"gpu\":0,\"rank\":0,\"resource_survival_time\":[60,120,240,480,960,1440,4320,10080],\"type\":\"free\",\"remaining_duration\":100,\"min_bqc_required\":0,\"node_selector\":{},\"cpu_overcommit_ratio\":0.5,\"memory_overcommit_ratio\":0.5,\"requests\":{}},{\"id\":\"f35dcb36-8155-42cb-8255-ecee63b5a723\",\"name\":\"K1(2C/8G) 0.7宽币/分钟\",\"price\":0.7,\"cpu\":2,\"memory\":8.0,\"gpu\":0,\"rank\":1,\"resource_survival_time\":[60,120,240,480,960,1440,4320,10080],\"type\":\"\",\"remaining_duration\":null,\"min_bqc_required\":10,\"node_selector\":{},\"cpu_overcommit_ratio\":0.5,\"memory_overcommit_ratio\":0.5,\"requests\":{}},{\"id\":\"413f7eca-0a1f-47b5-a167-c44237ae1975\",\"name\":\"K2(4C/16G) 1.6宽币/分钟\",\"price\":1.6,\"cpu\":4,\"memory\":16.0,\"gpu\":0,\"rank\":2,\"resource_survival_time\":[60,120,240,480,960,1440,4320,10080],\"type\":\"\",\"remaining_duration\":null,\"min_bqc_required\":10,\"node_selector\":{},\"cpu_overcommit_ratio\":0.5,\"memory_overcommit_ratio\":0.5,\"requests\":{}},{\"id\":\"cf0b6198-fe0a-43eb-b574-a2cd073c0a2f\",\"name\":\"K3(8C/32G) 3.2宽币/分钟\",\"price\":3.2,\"cpu\":8,\"memory\":32.0,\"gpu\":0,\"rank\":3,\"resource_survival_time\":[60,120,240,480,960,1440,4320,10080],\"type\":\"\",\"remaining_duration\":null,\"min_bqc_required\":10,\"node_selector\":{},\"cpu_overcommit_ratio\":0.5,\"memory_overcommit_ratio\":0.5,\"requests\":{}},{\"id\":\"e2833894-7af9-4cc0-8b43-29c716e8bdfe\",\"name\":\"K4(16C/32G) 6.4宽币/分钟\",\"price\":6.4,\"cpu\":16,\"memory\":32.0,\"gpu\":0,\"rank\":4,\"resource_survival_time\":[60,120,240,480,960,1440,4320,10080],\"type\":\"\",\"remaining_duration\":null,\"min_bqc_required\":10,\"node_selector\":{},\"cpu_overcommit_ratio\":0.5,\"memory_overcommit_ratio\":0.5,\"requests\":{}},{\"id\":\"0b3f960d-0c8f-475c-9e63-830634cbaec2\",\"name\":\"K5(16C/64G) 6.9宽币/分钟\",\"price\":6.9,\"cpu\":16,\"memory\":64.0,\"gpu\":0,\"rank\":5,\"resource_survival_time\":[60,120,240,480,960,1440,4320,10080],\"type\":\"\",\"remaining_duration\":null,\"min_bqc_required\":10,\"node_selector\":{},\"cpu_overcomm"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:29.412Z",
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/private.membership.user",
+    "postData": "{}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"data\":{\"因子研究投研团\":[\"18eb986a-7be8-43f4-a1ca-cf6b313c6a9b\",\"d348144a-b0e7-4333-bd1b-eb1335bf0494\"],\"日内策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\",\"4ec7bc56-0f38-11ed-93bb-da75731aa77c\"],\"可转债策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\"],\"期货期权投研团\":[\"05ce6ed3-7082-418a-b77b-e604b5fd635c\"]},\"status\":200,\"ok\":true}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.084Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/studios/@default",
+    "postData": "{\"aistudio_version\":300}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"created_at\":\"2026-03-30T20:43:14.150484+08:00\",\"updated_at\":\"2026-04-01T17:06:19.206023+08:00\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"base_dir\":\"\",\"image\":\"\",\"expires_at\":\"2026-04-01T19:06:14.162443+08:00\",\"status\":\"running\",\"status_details\":{},\"conf\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"port\":8888,\"type\":\"free\",\"image\":\"local.dockerhub.bigquant.ai:5000/aios/aibox:master_3b906f3a_260328114116\",\"no_cdn\":true,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"base_dir\":\"\",\"order_id\":null,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"username\":\"yuping322\",\"BQ_LOCALE\":\"zh-cn\",\"cpu_limit\":\"1\",\"gpu_limit\":\"0\",\"namespace\":\"userbox\",\"studio_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"expires_at\":\"2026-04-01T19:06:14.162443\",\"user_level\":\"new_free_90\",\"cpu_request\":\"200m\",\"updated_tag\":\"U6dVN8\",\"free_minutes\":0,\"memory_limit\":\"6Gi\",\"node_selector\":{},\"not_free_user\":false,\"memory_request\":\"1Gi\",\"priority_class\":\"high-priority-nonpreempting\",\"resource_spec_id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"redpanda_privilege\":\"disallowed\",\"resource_spec_name\":\"D0(1C/6G) 免费\",\"toleration_seconds\":60,\"internal_service_namespace\":\"bigquant\"}}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.124Z",
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"status\":\"alive\",\"lastHeartbeat\":1775035640993}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.124Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/balance",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"id\":\"4e2fb48d-1a24-4149-bdc1-999d1d4972e5\",\"cash_withdraw\":0.0,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"point\":0.0,\"virtual_userid\":null,\"created_at\":\"2026-03-30T20:42:00.910479+08:00\",\"status\":\"正常\",\"balance\":860.0,\"line_of_credit_used\":0.0,\"updated_at\":\"2026-03-30T20:44:20.891793+08:00\",\"line_of_credit\":0.0}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.154Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/studios/e6277718-0f37-11ed-93bb-da75731aa77c",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"created_at\":\"2026-03-30T20:43:14.150484+08:00\",\"updated_at\":\"2026-04-01T17:06:19.206023+08:00\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"base_dir\":\"\",\"image\":\"\",\"expires_at\":\"2026-04-01T19:06:14.162443+08:00\",\"status\":\"running\",\"status_details\":{},\"conf\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"port\":8888,\"type\":\"free\",\"image\":\"local.dockerhub.bigquant.ai:5000/aios/aibox:master_3b906f3a_260328114116\",\"no_cdn\":true,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"base_dir\":\"\",\"order_id\":null,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"username\":\"yuping322\",\"BQ_LOCALE\":\"zh-cn\",\"cpu_limit\":\"1\",\"gpu_limit\":\"0\",\"namespace\":\"userbox\",\"studio_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"expires_at\":\"2026-04-01T19:06:14.162443\",\"user_level\":\"new_free_90\",\"cpu_request\":\"200m\",\"updated_tag\":\"U6dVN8\",\"free_minutes\":0,\"memory_limit\":\"6Gi\",\"node_selector\":{},\"not_free_user\":false,\"memory_request\":\"1Gi\",\"priority_class\":\"high-priority-nonpreempting\",\"resource_spec_id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"redpanda_privilege\":\"disallowed\",\"resource_spec_name\":\"D0(1C/6G) 免费\",\"toleration_seconds\":60,\"internal_service_namespace\":\"bigquant\"}}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.366Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035649248&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAACAEQ&_s=3&tag_exp=0~115938465~115938469~116991817~117266400~117884344&dt=aistudio%E5%8A%A0%E8%BD%BD%E9%A1%B5&dp=%2Faistudio%2Flanding&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&sid=1775035633&sct=2&seg=1&en=page_view&_ee=1&ep.transport_type=beacon&_et=110&tfd=1552",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.BQhdFMY1.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.Dq_IR9rO.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.Di6jR-x-.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.CL6g_b3V.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.CTYiF6lA.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.Cx986IdX.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.DxDJ3AOS.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.NWA7e6Wa.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.B22Nviop.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.CZnvNsCZ.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.764Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.t53AETM-.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.765Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.D1sUS0GD.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.765Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.C3H0VqGB.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.765Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.DDBCnlJ7.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.765Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.D3wIWfF6.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.765Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.mCD8mA8B.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.765Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.Dy4dx90m.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size3-Regular.CTq5MqoE.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.Dl5lxZxV.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.CO6r4hn1.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://at.alicdn.com/t/c/font_2553510_ciljc7axaw7.woff?t=1705587463221",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://at.alicdn.com/t/c/font_2553510_ciljc7axaw7.woff?t=1705587463221",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/AlimamaShuHeiTi-Bold.B58jJXpv.otf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/AlimamaDongFangDaKai-Regular.ybWDgO5X.otf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/Poppins.Bnr16EOz.otf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.766Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/AlimamaFangYuanTiVF-Thin.BbHzK-Pj.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.782Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.DMm9YOAa.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.782Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.BEiXGLvX.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.783Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.CTRA-rTL.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.789Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.BsDP51OF.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.789Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.Dxdc4cR9.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.792Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.BMLOBm91.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.793Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.SpSLRI95.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.796Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.Jm3AIy58.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.801Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.Dr94JaBh.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.801Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.iY-2wyZ7.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.809Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.DA0__PXp.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.810Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.DbIhKOiC.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.810Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.DN2j7dab.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.810Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.D5yQViql.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.811Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.CS6fqUqJ.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.815Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.C195tn64.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.815Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.oD1tc_U0.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.816Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size3-Regular.DgpXs0kz.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.818Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.BF-4gkZK.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:30.819Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.C0xS9mPB.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.204Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035649248&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAEQ&_s=4&tag_exp=0~115938465~115938469~116991817~117266400~117884344&dt=aistudio%E5%8A%A0%E8%BD%BD%E9%A1%B5&dp=%2Faistudio%2Flanding&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&dr=https%3A%2F%2Fbigquant.com%2Faistudio&sid=1775035633&sct=2&seg=1&en=page_view&ep.transport_type=beacon&_et=1000&tfd=2030",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.208Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.BQhdFMY1.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.Dq_IR9rO.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.Di6jR-x-.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.CL6g_b3V.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.CTYiF6lA.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.Cx986IdX.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.DxDJ3AOS.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.NWA7e6Wa.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.B22Nviop.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.CZnvNsCZ.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.t53AETM-.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.D1sUS0GD.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.C3H0VqGB.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.DDBCnlJ7.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.D3wIWfF6.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.mCD8mA8B.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.Dy4dx90m.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size3-Regular.CTq5MqoE.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.Dl5lxZxV.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.CO6r4hn1.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://at.alicdn.com/t/c/font_2553510_ciljc7axaw7.woff?t=1705587463221",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://at.alicdn.com/t/c/font_2553510_ciljc7axaw7.woff?t=1705587463221",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/AlimamaShuHeiTi-Bold.B58jJXpv.otf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/AlimamaDongFangDaKai-Regular.ybWDgO5X.otf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.214Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/Poppins.Bnr16EOz.otf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.215Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/AlimamaFangYuanTiVF-Thin.BbHzK-Pj.woff2",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.248Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.DRggAlZN.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.248Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.ATXxdsX0.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.248Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.wX97UBjC.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.248Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.BdnERNNW.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.248Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.CB_wures.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.248Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.3WenGoN9.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.249Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.DzxPMmG6.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.249Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.waoOVXN0.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.249Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.ypZvNtVU.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.253Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.B3XSjfu4.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.253Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.flOr_0UB.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.253Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.CFMepnvq.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.253Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.YYjJ1zSn.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.253Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.C5JkGWo-.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.253Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.BNo7hRIc.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.253Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.Dbsnue_I.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.254Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.DWFBv043.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.254Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.B7gKUWhC.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.254Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.D3Ib7_Hf.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.254Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.DMm9YOAa.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.270Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.BEiXGLvX.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.270Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.CTRA-rTL.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.270Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.BsDP51OF.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.270Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.Dxdc4cR9.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.270Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.Jm3AIy58.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.SpSLRI95.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.BMLOBm91.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.Dr94JaBh.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.iY-2wyZ7.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.DA0__PXp.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.DbIhKOiC.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.DN2j7dab.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.CS6fqUqJ.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.D5yQViql.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.C195tn64.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.oD1tc_U0.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size3-Regular.DgpXs0kz.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.BF-4gkZK.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.271Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.C0xS9mPB.woff",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.279Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.DRggAlZN.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.280Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.ATXxdsX0.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.280Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.wX97UBjC.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.280Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.BdnERNNW.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.280Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.CB_wures.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.280Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.waoOVXN0.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.280Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.DzxPMmG6.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.280Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.3WenGoN9.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.ypZvNtVU.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.B3XSjfu4.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.flOr_0UB.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.CFMepnvq.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.YYjJ1zSn.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.BNo7hRIc.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.C5JkGWo-.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.Dbsnue_I.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.B7gKUWhC.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.DWFBv043.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:31.281Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.D3Ib7_Hf.ttf",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.356Z",
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/",
+    "postData": null,
+    "response": {
+      "status": 302,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.359Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"4f8a3624-e42b-41d7-a29d-3a86d6b00be0\",\"event_name\":\"navigation\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:29.236\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio\",\"referrer\":\"\",\"properties\":{\"dns\":0,\"tcp\":0,\"ssl\":0,\"ttfb\":33,\"download\":0.5,\"domReady\":338.89999997615814,\"load\":0,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"632c076e-ede8-4d94-b8e1-85762c7526cb\",\"event_name\":\"paint\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:29.236\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio\",\"referrer\":\"\",\"properties\":{\"name\":\"first-paint\",\"value\":84,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"7d610e54-dfd0-408a-8780-67b7112655bc\",\"event_name\":\"longtask\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:29.236\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio\",\"referrer\":\"\",\"properties\":{\"name\":\"self\",\"startTime\":169.80000007152557,\"value\":171,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"0655e847-fbf7-4747-89c2-0b7ecd94930e\",\"event_name\":\"visit_aistudio\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:29.403\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/landing\",\"referrer\":\"\",\"properties\":{\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"8b0c720c-bbf7-448c-876e-2d871965fc4e\",\"event_name\":\"longtask\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:30.760\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/landing\",\"referrer\":\"\",\"properties\":{\"name\":\"self\",\"startTime\":1590.5,\"value\":354,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"4f4708ae-c8e1-40df-ad19-8a1bb166f722\",\"event_name\":\"studio_startup_time\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:30.844\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/landing\",\"referrer\":\"\",\"properties\":{\"time\":\"0.4\",\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"045782e2-18da-49f4-9565-1c3e3a5ddfd6\",\"event_name\":\"longtask\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:31.191\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/landing\",\"referrer\":\"\",\"properties\":{\"name\":\"self\",\"startTime\":2026.8999999761581,\"value\":348,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"7ad29fae-bc5e-4413-9f6c-dac884b21259\",\"event_name\":\"longtask\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:32.008\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/landing\",\"referrer\":\"\",\"properties\":{\"name\":\"self\",\"startTime\":2904.5,\"value\":289,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.360Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"f304f940-e884-43bf-a997-016cb74fa9af\",\"event_name\":\"aistudio_landing_success\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"bigwebux\",\"timestamp\":\"2026-04-01 09:27:32.320\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/landing\",\"referrer\":\"\",\"properties\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.402Z",
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/?folder=/home/aiuser/work",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.444Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035649248&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&tag_exp=0~115938465~115938469~116991817~117266400~117884344&dt=aistudio%E5%8A%A0%E8%BD%BD%E9%A1%B5&dp=%2Faistudio%2Flanding&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&sid=1775035633&sct=2&seg=1&dr=https%3A%2F%2Fbigquant.com%2Faistudio&_s=5&tfd=3629",
+    "postData": "en=studio_startup_time&_ee=1&ep.transport_type=beacon&ep.time=0.4&_et=477\r\nen=user_engagement&ep.transport_type=beacon&_et=1596",
+    "contentType": "text/plain;charset=UTF-8"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.445Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&ep=3187%2C3187&et=3&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=1790443983&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20174&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Faistudio",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:32.445Z",
+    "method": "POST",
+    "url": "https://www.google.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035649248&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&tag_exp=0%7E115938465%7E115938469%7E116991817%7E117266400%7E117884344&dt=aistudio%E5%8A%A0%E8%BD%BD%E9%A1%B5&dp=%2Faistudio%2Flanding&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&sid=1775035633&sct=2&seg=1&dr=https%3A%2F%2Fbigquant.com%2Faistudio&_s=5&tfd=3629&gaf=1",
+    "postData": "en=studio_startup_time&_ee=1&ep.transport_type=beacon&ep.time=0.4&_et=477\r\nen=user_engagement&ep.transport_type=beacon&_et=1596",
+    "contentType": "text/plain;charset=UTF-8"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.237Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/settings/v1/user_records/reads",
+    "postData": "[\"visit_aistudio\",\"click_aistudio_editor_runall\",\"submit_paper_trading\",\"alpha_guide\"]",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"key\":\"visit_aistudio\",\"value\":\"43\"},{\"key\":\"alpha_guide\",\"value\":\"0\"},{\"key\":\"click_aistudio_editor_runall\",\"value\":\"0\"},{\"key\":\"submit_paper_trading\",\"value\":\"0\"}]}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.372Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+    "postData": "{\"keys\":[\"aistudio\",\"common\"]}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"aistudio\":{\"favicon\":\"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAz1BMVEUAAADrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHQDrIADpBQDoAADrGgDqEgDsIgDqDQDuQi72loz0gXX3o5X4sqrxZVT3oZv////4saTrIybsMS/97er72NXtOyzpCQD7zMT70c3nAADsJQj/+vnsJxn2nYz5t6/5vLPtLhHtMh3zf3DzdGH96ufxX0rwXEX3n5TrFgDwUDfybFn1k4X+9PPwVTnvSTH71czsLhrkAADuPCHwVknsJxHxZWTyc3L82tz+7vDvTkEQOs4LAAAACnRSTlMAQb/zwEM80tT6Yn5qEAAAAAFiS0dEGnVn5DIAAAAHdElNRQfnBQUGOgFuiGyFAAABKklEQVQ4y5XTaVPCMBAG4CiK0iTbplIoLyrUhiKHRS2KB4rX//9NRh1nHJK2437amTw5NrPL2M5uozT29hlrepXRZAfV4JC1qkGLNapB49+Ac14OBJfk+0SBcgMV0lE76nTjgJRwACXDHvrHJ6cYDEnZQATJGVId6hGQjaWwgT4HYq24ngBT4hZIZgDm0sALk8wSC+gcWPDA8+jSgCvaBlxfA4OiMGBpQG4DMlenwS+4cYDu3xOWZL/hFliNQgNiU+dXsgXozmy8JyF0BPS1XWYhH4C2FlxPgUfHRyk5XpgVvX5C9uz6ak/RppetXl6RzdeBsk8wIqFNnHfe3tP2sOAOYPohJCI5jybdj9AFfpSfEKkZLwXf4fuiGpT0pBvUDk7t6NUOb934fwLbvDcFUvXrcgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMy0wNS0wNVQwNjo1ODowMSswMDowMBUlo8EAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjMtMDUtMDVUMDY6NTg6MDErMDA6MDBkeBt9AAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDIzLTA1LTA1VDA2OjU4OjAxKzAwOjAwM206ogAAAABJRU5ErkJggg==\",\"logo\":\"iVBORw0KGgoAAAANSUhEUgAAATUAAABWCAYAAACuCAFEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3ppVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDYuMC1jMDAyIDc5LjE2NDQ2MCwgMjAyMC8wNS8xMi0xNjowNDoxNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozY2VhMWU0OS1lY2ZhLTRlMGItOGZmYS1hYmZlZDU0NjNhZmQiIHhtcE1NOkRvY3VtZW50SUQ9Inht"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.379Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+    "postData": "{\"keys\":[\"aistudio\"]}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"aistudio\":{\"favicon\":\"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAz1BMVEUAAADrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHwDrHQDrIADpBQDoAADrGgDqEgDsIgDqDQDuQi72loz0gXX3o5X4sqrxZVT3oZv////4saTrIybsMS/97er72NXtOyzpCQD7zMT70c3nAADsJQj/+vnsJxn2nYz5t6/5vLPtLhHtMh3zf3DzdGH96ufxX0rwXEX3n5TrFgDwUDfybFn1k4X+9PPwVTnvSTH71czsLhrkAADuPCHwVknsJxHxZWTyc3L82tz+7vDvTkEQOs4LAAAACnRSTlMAQb/zwEM80tT6Yn5qEAAAAAFiS0dEGnVn5DIAAAAHdElNRQfnBQUGOgFuiGyFAAABKklEQVQ4y5XTaVPCMBAG4CiK0iTbplIoLyrUhiKHRS2KB4rX//9NRh1nHJK2437amTw5NrPL2M5uozT29hlrepXRZAfV4JC1qkGLNapB49+Ac14OBJfk+0SBcgMV0lE76nTjgJRwACXDHvrHJ6cYDEnZQATJGVId6hGQjaWwgT4HYq24ngBT4hZIZgDm0sALk8wSC+gcWPDA8+jSgCvaBlxfA4OiMGBpQG4DMlenwS+4cYDu3xOWZL/hFliNQgNiU+dXsgXozmy8JyF0BPS1XWYhH4C2FlxPgUfHRyk5XpgVvX5C9uz6ak/RppetXl6RzdeBsk8wIqFNnHfe3tP2sOAOYPohJCI5jybdj9AFfpSfEKkZLwXf4fuiGpT0pBvUDk7t6NUOb934fwLbvDcFUvXrcgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMy0wNS0wNVQwNjo1ODowMSswMDowMBUlo8EAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjMtMDUtMDVUMDY6NTg6MDErMDA6MDBkeBt9AAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDIzLTA1LTA1VDA2OjU4OjAxKzAwOjAwM206ogAAAABJRU5ErkJggg==\",\"logo\":\"iVBORw0KGgoAAAANSUhEUgAAATUAAABWCAYAAACuCAFEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3ppVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDYuMC1jMDAyIDc5LjE2NDQ2MCwgMjAyMC8wNS8xMi0xNjowNDoxNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozY2VhMWU0OS1lY2ZhLTRlMGItOGZmYS1hYmZlZDU0NjNhZmQiIHhtcE1NOkRvY3VtZW50SUQ9Inht"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.396Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/module/v1/modules",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"Category\":\"数据\",\"ClientVersion\":\"v1\",\"ServiceVersion\":1,\"CreatedDate\":\"/Date(0)/\",\"Description\":\"\",\"DeterministicByDefault\":true,\"FamilyId\":\"dai_datasource\",\"Id\":\"BigQuantSpace.dai_datasource.dai_datasource-v1\",\"InformationUrl\":\"https://bigquant.com/data/home\",\"InterfaceString\":\"dai_datasource.v1\",\"IsDeprecated\":null,\"IsDeterministic\":true,\"IsLatest\":false,\"ModuleInterface\":{\"InputPorts\":[],\"InterfaceString\":null,\"OutputPorts\":[{\"Description\":\"输出DAI DataSource\",\"FriendlyName\":\"输出DAI DataSource\",\"IsOptional\":false,\"MarkupType\":\"OutputPort\",\"Name\":\"data\",\"ScriptName\":null,\"Type\":{\"Id\":\"通用\"}}],\"Parameters\":[{\"Description\":\"DataSource ID\",\"Docs\":\"\",\"FriendlyName\":\"DataSource ID\",\"IsOptional\":false,\"Name\":\"id\",\"MarkupType\":\"Parameter\",\"CredentialDescriptor\":null,\"ModeValuesInfo\":null,\"HasDefaultValue\":false,\"ParameterType\":\"String\",\"HasRules\":false,\"ScriptName\":null,\"CanSetLiverunParam\":null}],\"TopLevelMarkupElements\":null},\"ModuleLanguage\":{\"Language\":\"Python\",\"Version\":\"3\"},\"ModuleType\":\"DefaultModule\",\"Name\":\"DataSource (DAI) (v1)\",\"Owner\":\"bigquant\",\"Opensource\":false,\"Cacheable\":true,\"Shared\":true},{\"Category\":\"数据\",\"ClientVersion\":\"v3\",\"ServiceVersion\":3,\"CreatedDate\":\"/Date(0)/\",\"Description\":\"\",\"DeterministicByDefault\":true,\"FamilyId\":\"dai_datasource\",\"Id\":\"BigQuantSpace.dai_datasource.dai_datasource-v3\",\"InformationUrl\":\"https://bigquant.com/data/home\",\"InterfaceString\":\"dai_datasource.v3\",\"IsDeprecated\":null,\"IsDeterministic\":true,\"IsLatest\":false,\"ModuleInterface\":{\"InputPorts\":[],\"InterfaceString\":null,\"OutputPorts\":[{\"Description\":\"输出DAI DataSource\",\"FriendlyName\":\"输出DAI DataSource\",\"IsOptional\":false,\"MarkupType\":\"OutputPort\",\"Name\":\"data\",\"ScriptName\":null,\"Type\":{\"Id\":\"通用\"}}],\"Parameters\":[{\"Description\":\"DataSource ID\",\"Docs\":\"\",\"FriendlyName\":\"DataSource ID\",\"IsOptional\":false,\"Name\":\"id\",\"MarkupType\":\"Parameter\",\"CredentialDescriptor\":null,\"ModeValuesInfo\":null,\"HasDefaultValue\":false,\"ParameterType\":\"Stri"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.396Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/modules/configuration/auto",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"message\":\"OK\",\"reason\":\"OK\",\"data\":[{\"name\":\"date\",\"desc\":\"日期\",\"table\":\"cerm_specific_risk\"},{\"name\":\"SpecRisk\",\"desc\":\"残差风险（单位：%）\",\"table\":\"cerm_specific_risk\"},{\"name\":\"instrument\",\"desc\":\"股票代码\",\"table\":\"cerm_specific_risk\"},{\"name\":\"cerm_specific_risk\",\"desc\":\"特质风险表\"},{\"name\":\"name\",\"desc\":\"债券简称\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"list_date\",\"desc\":\"上市日期\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"par_value\",\"desc\":\"发行面值\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"instrument\",\"desc\":\"债券代码\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"issue_term\",\"desc\":\"发行期限\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"stock_code\",\"desc\":\"正股代码\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"stock_name\",\"desc\":\"正股简称\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"value_date\",\"desc\":\"起息日期\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"delist_date\",\"desc\":\"退市日期\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"issue_price\",\"desc\":\"发行价格\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"credit_agent\",\"desc\":\"评级机构\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"credit_rating\",\"desc\":\"发行评级\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"maturity_date\",\"desc\":\"到期日期\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"interest_rate_type\",\"desc\":\"利率类型\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"issue_total_amount\",\"desc\":\"发行总额\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"issue_interest_rate\",\"desc\":\"发行利率\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"actual_maturity_date\",\"desc\":\"\",\"table\":\"cn_cbond_basic_info\"},{\"name\":\"cn_cbond_basic_info\",\"desc\":\"基本信息\"},{\"name\":\"date\",\"desc\":\"修正开始日期\",\"table\":\"cn_cbond_revise_item\"},{\"name\":\"end_date\",\"desc\":\"修正结束日期\",\"table\":\"cn_cbond_revise_item\"},{\"name\":\"instrument\",\"desc\":\"债券编码\",\"table\":\"cn_cbond_revise_item\"},{\"name\":\"revise_extent\",\"desc\":\"特别修正幅度\",\"table\":\"cn_cbond_revise_item\"},{\"name\":\"is_arith_avg_price\",\"desc\":\"是否为算数平均\",\"table\":\"cn_cbond_revise_item\"},{\"name\":\"correct_times_limit\",\"desc\":\"修正次数限制\",\"table\":\"cn_cbond_revise_item\"},{\"name\":\"conversion_price_ratio\",\"desc\":\"触发比例\",\"table\":\"cn_cbond_revise_item\"},{\"name\":\"down"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.398Z",
+    "method": "GET",
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-B58V018K6L",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.398Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/settings/v1/user_records",
+    "postData": "{\"key\":\"visit_aistudio\",\"value\":\"44\"}",
+    "contentType": "application/json",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"key\":\"visit_aistudio\",\"value\":\"44\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.419Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035653400&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=1&tag_exp=0~115616986~115938465~115938469~116991816~117266401~117384405~118089342&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork&dr=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&dt=&en=page_view&_ee=1&tfd=1085",
+    "postData": null,
+    "response": {
+      "status": 204,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.419Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&ep=3187%2C3187&et=3&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=1790443983&si=c58f67ca105d070ca7563b4b14210980&v=1.3.2&lv=2&sn=20174&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Faistudio",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.419Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&et=0&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=602786490&si=c58f67ca105d070ca7563b4b14210980&su=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&v=1.3.2&lv=2&sn=20178&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:33.498Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/out/vsda_bg.wasm",
+    "postData": null,
+    "response": {
+      "status": 404,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.122Z",
+    "method": "GET",
+    "url": "https://bigquant.com/cdnuploads/aistudio/v1.88.37/out/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html?&vscodeWebWorkerExtHostId=7b5ba4f0-f52d-4a79-a0b9-6bd8e0c42f1a&parentOrigin=https://bigquant.com",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.122Z",
+    "method": "GET",
+    "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/out/vs/base/browser/ui/codicons/codicon/codicon.ttf?5d4d76ab2ce5108968ad644d591a16a6",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.296Z",
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=e0aa2039-e597-442e-9515-c82ce21ec5b4&origin=e0aa2039-e597-442e-9515-c82ce21ec5b4&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.298Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/kbb2/v1/balance",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"created_at\":\"2026-03-30T20:42:00.910479+08:00\",\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"updated_at\":\"2026-03-30T20:44:20.891793+08:00\",\"id\":\"4e2fb48d-1a24-4149-bdc1-999d1d4972e5\",\"balance\":860.0,\"line_of_credit\":0.0,\"virtual_userid\":null,\"cash_withdraw\":0.0,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"line_of_credit_used\":0.0,\"point\":0.0,\"status\":\"正常\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.298Z",
+    "method": "POST",
+    "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+    "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\"]}",
+    "contentType": "application/json;charset=UTF-8",
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.298Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/daily/aistudio/sign_in/week",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"count\":1,\"sign_in\":false,\"seven_day\":20,\"not_seven_day\":10}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.299Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/bigactivity/v1/activity",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":[{\"name\":\"新建一个策略\",\"type\":\"create_strategy\",\"count\":1,\"kbb\":50,\"icon_idx\":0,\"complete\":true},{\"name\":\"通过AI新建一个策略\",\"type\":\"create_ai_strategy\",\"count\":1,\"kbb\":50,\"icon_idx\":3,\"complete\":false},{\"name\":\"运行第一个策略\",\"type\":\"run_strategy\",\"count\":1,\"kbb\":50,\"icon_idx\":1,\"complete\":false},{\"name\":\"提交第一个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":1,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第一条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":1,\"kbb\":200,\"icon_idx\":4,\"complete\":true},{\"name\":\"新建三个策略\",\"type\":\"create_strategy\",\"count\":3,\"kbb\":50,\"icon_idx\":0,\"complete\":false},{\"name\":\"运行第三个策略\",\"type\":\"run_strategy\",\"count\":3,\"kbb\":50,\"icon_idx\":1,\"complete\":false},{\"name\":\"提交第三个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":3,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第三条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":3,\"kbb\":200,\"icon_idx\":4,\"complete\":true},{\"name\":\"新建五个策略\",\"type\":\"create_strategy\",\"count\":5,\"kbb\":50,\"icon_idx\":0,\"complete\":false},{\"name\":\"运行第五个策略\",\"type\":\"run_strategy\",\"count\":5,\"kbb\":50,\"icon_idx\":1,\"complete\":false},{\"name\":\"提交第五个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":5,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第五条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":5,\"kbb\":200,\"icon_idx\":4,\"complete\":true},{\"name\":\"新建十个策略\",\"type\":\"create_strategy\",\"count\":10,\"kbb\":50,\"icon_idx\":0,\"complete\":false},{\"name\":\"运行第十个策略\",\"type\":\"run_strategy\",\"count\":10,\"kbb\":50,\"icon_idx\":2,\"complete\":false},{\"name\":\"提交第十个模拟交易\",\"type\":\"submit_demo_trade\",\"count\":10,\"kbb\":100,\"icon_idx\":2,\"complete\":false},{\"name\":\"接收第十条微信更新通知\",\"type\":\"accepted_trading_signal\",\"count\":10,\"kbb\":200,\"icon_idx\":4,\"complete\":true}]}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.299Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/aistudio/v1/studios/@default",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"created_at\":\"2026-03-30T20:43:14.150484+08:00\",\"updated_at\":\"2026-04-01T17:06:19.206023+08:00\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"base_dir\":\"\",\"image\":\"\",\"expires_at\":\"2026-04-01T19:06:14.162443+08:00\",\"status\":\"running\",\"status_details\":{},\"conf\":{\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"name\":\"studio\",\"port\":8888,\"type\":\"free\",\"image\":\"local.dockerhub.bigquant.ai:5000/aios/aibox:master_3b906f3a_260328114116\",\"no_cdn\":true,\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"base_dir\":\"\",\"order_id\":null,\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"username\":\"yuping322\",\"BQ_LOCALE\":\"zh-cn\",\"cpu_limit\":\"1\",\"gpu_limit\":\"0\",\"namespace\":\"userbox\",\"studio_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"expires_at\":\"2026-04-01T19:06:14.162443\",\"user_level\":\"new_free_90\",\"cpu_request\":\"200m\",\"updated_tag\":\"U6dVN8\",\"free_minutes\":0,\"memory_limit\":\"6Gi\",\"node_selector\":{},\"not_free_user\":false,\"memory_request\":\"1Gi\",\"priority_class\":\"high-priority-nonpreempting\",\"resource_spec_id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"redpanda_privilege\":\"disallowed\",\"resource_spec_name\":\"D0(1C/6G) 免费\",\"toleration_seconds\":60,\"internal_service_namespace\":\"bigquant\"}}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.299Z",
+    "method": "GET",
+    "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": "{\"code\":0,\"reason\":\"OK\",\"message\":\"OK\",\"data\":{\"updated_at\":\"2026-04-01T17:06:12.311518+08:00\",\"created_at\":\"2020-09-15T14:21:40.324016+08:00\",\"id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"allowed_ip\":null,\"status\":\"Active\",\"nickname\":null,\"last_login_at\":\"2026-04-01T17:06:12.311441+08:00\",\"config\":{\"points\":5,\"level\":4,\"points_last_updated_date\":\"2026-03-04\",\"default_space\":null,\"user_group_id\":null,\"metadata\":null,\"default_site\":null,\"unbind_mobiles\":null,\"unbind_wechats\":null},\"avatar\":null,\"introduction\":null,\"phone\":\"\",\"wechat\":\"\"}}"
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.354Z",
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=ef8facd9-25d3-4e07-8248-b78d93fa02c5&origin=ef8facd9-25d3-4e07-8248-b78d93fa02c5&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:34.528Z",
+    "method": "GET",
+    "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=ef8facd9-25d3-4e07-8248-b78d93fa02c5",
+    "postData": null,
+    "response": {
+      "status": 200,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:36.131Z",
+    "method": "POST",
+    "url": "https://open-vsx.org/vscode/gallery/extensionquery",
+    "postData": "{\"filters\":[{\"criteria\":[{\"filterType\":1,\"value\":\"lp-zh-cn\"},{\"filterType\":8,\"value\":\"Microsoft.VisualStudio.Code\"},{\"filterType\":12,\"value\":\"4096\"}],\"pageNumber\":1,\"pageSize\":5,\"sortBy\":0,\"sortOrder\":0}],\"assetTypes\":[],\"flags\":950}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:36.247Z",
+    "method": "POST",
+    "url": "https://open-vsx.org/vscode/gallery/extensionquery",
+    "postData": "{\"filters\":[{\"criteria\":[{\"filterType\":1,\"value\":\"lp-zh-cn\"},{\"filterType\":8,\"value\":\"Microsoft.VisualStudio.Code\"},{\"filterType\":12,\"value\":\"4096\"}],\"pageNumber\":1,\"pageSize\":5,\"sortBy\":0,\"sortOrder\":0}],\"assetTypes\":[],\"flags\":950}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:36.627Z",
+    "method": "POST",
+    "url": "https://open-vsx.org/vscode/gallery/extensionquery",
+    "postData": "{\"filters\":[{\"criteria\":[{\"filterType\":4,\"value\":\"MS-CEINTL.vscode-language-pack-zh-hans\"},{\"filterType\":4,\"value\":\"ms-python.debugpy\"},{\"filterType\":4,\"value\":\"ms-python.python\"},{\"filterType\":4,\"value\":\"ms-python.vscode-pylance\"},{\"filterType\":4,\"value\":\"ms-toolsai.jupyter\"},{\"filterType\":4,\"value\":\"ms-toolsai.jupyter-keymap\"},{\"filterType\":4,\"value\":\"ms-toolsai.jupyter-renderers\"},{\"filterType\":4,\"value\":\"ms-toolsai.vscode-jupyter-cell-tags\"},{\"filterType\":4,\"value\":\"ms-toolsai.vscode-jupyter-slideshow\"},{\"filterType\":4,\"value\":\"oderwat.indent-rainbow\"},{\"filterType\":4,\"value\":\"vscode-icons-team.vscode-icons\"},{\"filterType\":8,\"value\":\"Microsoft.VisualStudio.Code\"},{\"filterType\":12,\"value\":\"4096\"}],\"pageNumber\":1,\"pageSize\":11,\"sortBy\":0,\"sortOrder\":0}],\"assetTypes\":[],\"flags\":950}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:37.285Z",
+    "method": "POST",
+    "url": "https://open-vsx.org/vscode/gallery/extensionquery",
+    "postData": "{\"filters\":[{\"criteria\":[{\"filterType\":1,\"value\":\"lp-zh-cn\"},{\"filterType\":8,\"value\":\"Microsoft.VisualStudio.Code\"},{\"filterType\":12,\"value\":\"4096\"}],\"pageNumber\":1,\"pageSize\":5,\"sortBy\":0,\"sortOrder\":0}],\"assetTypes\":[],\"flags\":950}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:37.285Z",
+    "method": "POST",
+    "url": "https://open-vsx.org/vscode/gallery/extensionquery",
+    "postData": "{\"filters\":[{\"criteria\":[{\"filterType\":1,\"value\":\"lp-zh-cn\"},{\"filterType\":8,\"value\":\"Microsoft.VisualStudio.Code\"},{\"filterType\":12,\"value\":\"4096\"}],\"pageNumber\":1,\"pageSize\":5,\"sortBy\":0,\"sortOrder\":0}],\"assetTypes\":[],\"flags\":950}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:37.345Z",
+    "method": "POST",
+    "url": "https://bigquant.com/telemetry/track",
+    "postData": "{\"event_id\":\"ebdaeb0d-2ecf-4eeb-ad96-6f45e4b8ec35\",\"event_name\":\"loadWebworkerIframe\",\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"username\":\"yuping322\",\"category\":\"aistudio\",\"timestamp\":\"2026-04-01 09:27:34.138\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"is_touch_device\":\"false\",\"url\":\"https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/?folder=/home/aiuser/work\",\"referrer\":\"https://bigquant.com/aistudio/landing\",\"properties\":{\"time\":0.06,\"bigdid\":\"5bdce067-3676-4d54-a5a3-5c487626d3f0\",\"space_id\":\"00000000-0000-0000-0000-000000000000\"},\"site\":\"bigquant.com\"}",
+    "contentType": "application/json"
+  },
+  {
+    "timestamp": "2026-04-01T09:27:37.391Z",
+    "method": "GET",
+    "url": "https://bigquant.com/api",
+    "postData": null,
+    "response": {
+      "status": 404,
+      "body": ""
+    }
+  },
+  {
+    "timestamp": "2026-04-01T09:27:37.402Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035653400&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAEQ&_s=2&tag_exp=0~115616986~115938465~115938469~116991816~117266401~117384405~118089342&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork&dr=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&dt=&en=scroll&epn.percent_scrolled=90&_et=3&tfd=5065",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:37.402Z",
+    "method": "POST",
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je63u1h2v879772846za200zd879772846&_p=1775035653400&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1280x720&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&_s=3&tag_exp=0~115616986~115938465~115938469~116991816~117266401~117384405~118089342&sid=1775035633&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork&dr=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&dt=%E6%AC%A2%E8%BF%8E%20%E2%80%94%20work%20%E2%80%94%20AIStudio&en=user_engagement&_et=3979&tfd=5066",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:37.402Z",
+    "method": "GET",
+    "url": "https://hm.baidu.com/hm.gif?hca=42C86FE219BC3FEB&cc=1&ck=1&cl=24-bit&ds=1280x720&vl=720&ep=3979%2C3978&et=3&ja=0&ln=zh-cn&lo=0&lt=1775021156&rnd=864972734&si=c58f67ca105d070ca7563b4b14210980&su=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding&v=1.3.2&lv=2&sn=20178&r=0&ww=1280&u=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork",
+    "postData": null
+  },
+  {
+    "timestamp": "2026-04-01T09:27:40.931Z",
+    "method": "GET",
+    "url": "https://bigquant.com/doc/api",
+    "postData": null,
+    "response": {
+      "status": 404,
+      "body": ""
+    }
+  }
+]

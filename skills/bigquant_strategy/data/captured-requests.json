@@ -1,0 +1,24 @@
+[
+  {
+    "timestamp": 1775035154475,
+    "method": "POST",
+    "url": "https://bigquant.com/wiki/api/private.membership.user",
+    "postData": "{}",
+    "responseStatus": 200,
+    "responseBody": "{\"data\":{\"因子研究投研团\":[\"18eb986a-7be8-43f4-a1ca-cf6b313c6a9b\",\"d348144a-b0e7-4333-bd1b-eb1335bf0494\"],\"日内策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\",\"4ec7bc56-0f38-11ed-93bb-da75731aa77c\"],\"可转债策略投研团\":[\"a2fc6345-3b00-493a-9631-2cb8e84c93bd\"],\"期货期权投研团\":[\"05ce6ed3-7082-418a-b77b-e604b5fd635c\"]},\"status\":200,\"ok\":true}"
+  },
+  {
+    "timestamp": 1775035159743,
+    "method": "GET",
+    "url": "https://bigquant.com/cdnuploads/aistudio/v1.88.37/out/vs/workbench/api/worker/extensionHostWorker.js",
+    "responseStatus": 200,
+    "responseBody": "\"use strict\";/*!--------------------------------------------------------\n * Copyright (C) Microsoft Corporation. All rights reserved.\n *--------------------------------------------------------*/(function(){var Ce=[\"exports\",\"require\",\"vs/base/common/uri\",\"vs/platform/instantiation/common/instantiation\",\"vs/workbench/api/common/extHost.protocol\",\"vs/base/common/event\",\"vs/base/common/lifecycle\",\"vs/workbench/api/common/extHostTypes\",\"vs/workbench/api/common/extHostTypeConverters\",\"vs/nls\",\"vs/nls!vs/workbench/api/worker/extensionHostWorker\",\"vs/base/common/async\",\"vs/base/common/network\",\"vs/platform/log/common/log\",\"vs/base/common/errors\",\"vs/base/common/strings\",\"vs/workbench/api/common/extHostRpcService\",\"vs/base/common/types\",\"vs/base/common/arrays\",\"vs/base/common/path\",\"vs/platform/extensions/common/extensions\",\"vs/base/common/platform\",\"vs/base/common/buffer\",\"vs/base/common/resources\",\"vs/base/common/cancellation\",\"vs/workbench/services/extensions/common/extensions\",\"vs/base/com"
+  },
+  {
+    "timestamp": 1775035159867,
+    "method": "GET",
+    "url": "https://bigquant.com/cdnuploads/aistudio/v1.88.37/out/vs/workbench/api/worker/extensionHostWorker.nls.js",
+    "responseStatus": 200,
+    "responseBody": "\"use strict\";/*!--------------------------------------------------------\n * Copyright (C) Microsoft Corporation. All rights reserved.\n *--------------------------------------------------------*/define(\"vs/workbench/api/worker/extensionHostWorker.nls\",{\"vs/base/common/actions\":[\"(empty)\"],\"vs/base/common/date\":[\"in {0}\",\"now\",\"{0} second ago\",\"{0} sec ago\",\"{0} seconds ago\",\"{0} secs ago\",\"{0} second\",\"{0} sec\",\"{0} seconds\",\"{0} secs\",\"{0} minute ago\",\"{0} min ago\",\"{0} minutes ago\",\"{0} mins ago\",\"{0} minute\",\"{0} min\",\"{0} minutes\",\"{0} mins\",\"{0} hour ago\",\"{0} hr ago\",\"{0} hours ago\",\"{0} hrs ago\",\"{0} hour\",\"{0} hr\",\"{0} hours\",\"{0} hrs\",\"{0} day ago\",\"{0} days ago\",\"{0} day\",\"{0} days\",\"{0} week ago\",\"{0} wk ago\",\"{0} weeks ago\",\"{0} wks ago\",\"{0} week\",\"{0} wk\",\"{0} weeks\",\"{0} wks\",\"{0} month ago\",\"{0} mo ago\",\"{0} months ago\",\"{0} mos ago\",\"{0} month\",\"{0} mo\",\"{0} months\",\"{0} mos\",\"{0} year ago\",\"{0} yr ago\",\"{0} years ago\",\"{0} yrs ago\",\"{0} year\",\"{0} yr\",\"{0} years\",\"{0} "
+  }
+]

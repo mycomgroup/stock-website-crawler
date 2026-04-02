@@ -1,0 +1,13 @@
+{
+  "connections": [
+    {
+      "url": "wss://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc?reconnectionToken=91947302-8776-4f3d-b52f-d15935dd730b&reconnection=false&skipWebSocketFrames=false",
+      "timestamp": "2026-04-01T12:26:38.992Z"
+    },
+    {
+      "url": "wss://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc?reconnectionToken=437a801f-24b0-4a28-af32-aef0468160b9&reconnection=false&skipWebSocketFrames=false",
+      "timestamp": "2026-04-01T12:26:39.724Z"
+    }
+  ],
+  "frames": []
+}

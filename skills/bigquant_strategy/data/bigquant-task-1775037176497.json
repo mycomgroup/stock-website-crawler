@@ -1,0 +1,12 @@
+{
+  "taskId": "6cc44026-572e-4101-8aa3-b6b4755e234b",
+  "taskrunId": "0495bd64-2508-4eec-bf93-99e0d3b8bcde",
+  "config": {
+    "name": "test_strategy",
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "capital": 100000,
+    "benchmark": "000300.XSHG"
+  },
+  "timestamp": "2026-04-01T09:52:56.497Z"
+}

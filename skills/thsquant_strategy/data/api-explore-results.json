@@ -1,0 +1,222 @@
+{
+  "/platform/user/getauthdata": {
+    "status": 200,
+    "errorcode": 0,
+    "errormsg": "",
+    "hasResult": true,
+    "resultType": "object",
+    "resultKeys": [
+      "third_parties",
+      "auto_simu",
+      "terminals_enable",
+      "name_server_quota",
+      "factor_num_quota",
+      "algorithm_quota",
+      "disk_quota",
+      "sfactor_monitor_quota",
+      "user_id",
+      "auto_trade",
+      "vip_apis",
+      "inner",
+      "cpu_request",
+      "research_age",
+      "sfactor_enable",
+      "memory_quota",
+      "cpu_quota",
+      "broker_quota",
+      "download_quota",
+      "dash_server_quota",
+      "inactive_limit",
+      "sklearn_enable",
+      "simulate_quota",
+      "tick_enable",
+      "vip",
+      "node_selector",
+      "backtest_monitor_quota",
+      "memory_request",
+      "jupyter_cron",
+      "backtest_analysis",
+      "jupyter_share",
+      "forex_enable",
+      "metal_enable",
+      "factor_group_quota",
+      "auto_enable",
+      "image_spec",
+      "sfactor_quota"
+    ]
+  },
+  "/platform/user/info": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/user/info/": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/strategy/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/strategy/mylist": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/strategy/my": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/strategy/getMyStrategyList": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/research/strategylist": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/research/mystrategy": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/backtest/mystrategy": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/backtest/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/backtest/mylist": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/backtest/history": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/backtest/results": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/research/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/research/my": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/jupyter/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/factor/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/factor/my": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/sfactor/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/simuaccount/getyybidlist": {
+    "status": 200,
+    "errorcode": 0,
+    "errormsg": "",
+    "hasResult": true,
+    "resultType": "object",
+    "resultKeys": [
+      "futures",
+      "simu",
+      "futuresMapSimu"
+    ]
+  },
+  "/platform/simupaper/queryall/": {
+    "status": 200,
+    "errorcode": 0,
+    "errormsg": "",
+    "hasResult": true,
+    "resultType": "array",
+    "resultCount": 1,
+    "sample": [
+      {
+        "frequency": "DAILY",
+        "run_env": "py35",
+        "max_drawdown": 0,
+        "stop_run_time": "2025-03-05T17:29:51",
+        "algo_id": "67c819251d10da308ef50099",
+        "name": "ff",
+        "stock_market": "STOCK",
+        "published": false,
+        "run_days": 393,
+        "ending_cash": 1000000,
+        "style": "NORMAL",
+        "user_id": "772028948",
+        "begin_date": "2025-03-05",
+        "benchmark": "000300.SH",
+        "annual_yield": 0,
+        "profit_and_loss": 0,
+        "_id": "67c81a456aada88ead2d4b14",
+        "start_run_time": "2025-03-05T17:32:53",
+        "modified": "2025-03-05T17:34:43",
+        "market_value": 0,
+        "end_date": null,
+        "created": "2025-03-05T17:32:53",
+        "capital_base": 1000000,
+        "notify": false,
+        "inner": false,
+        "modified_by": "hxquantdclient",
+        "source_backtest_id": "67c8198c0f7cad1155d113b9",
+        "total_assets": 1000000,
+        "status": "PAUSE",
+        "alert_status": true
+      }
+    ]
+  },
+  "/platform/simutrade/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/stock/pool": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/data/query": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/algo/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/algorithm/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  }
+}

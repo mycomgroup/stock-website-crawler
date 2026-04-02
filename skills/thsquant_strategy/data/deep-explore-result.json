@@ -1,0 +1,372 @@
+{
+  "totalCalls": 13,
+  "backtestApis": [],
+  "allCalls": [
+    {
+      "id": 0,
+      "url": "https://quant.10jqka.com.cn/platform/message/hasnew?callback=jQuery183036272431572689623_1775095879672",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775095879690,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "hasNew": true,
+          "systemMessageCount": 1,
+          "userMessageCount": 0
+        }
+      }
+    },
+    {
+      "id": 1,
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183036272431572689623_1775095879673",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775095879691,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "tick_enable": false,
+          "jupyter_share": "",
+          "memory_quota": 2048,
+          "jupyter_cron": "crontabs",
+          "image_spec": "",
+          "research_age": 24,
+          "backtest_analysis": 0,
+          "user_id": "772028948",
+          "sfactor_monitor_quota": 3,
+          "factor_group_quota": 3,
+          "algorithm_quota": 3,
+          "factor_num_quota": 5,
+          "inner": 0,
+          "backtest_monitor_quota": 10,
+          "auto_simu": 0,
+          "inactive_limit": 0,
+          "vip": false,
+          "cpu_request": 0,
+          "simulate_quota": 5,
+          "memory_request": 0,
+          "vip_apis": [],
+          "auto_enable": 0,
+          "download_quota": 50,
+          "name_server_quota": 0,
+          "cpu_quota": 2,
+          "disk_quota": 1024,
+          "forex_enable": false,
+          "sfactor_quota": 3,
+          "terminals_enable": false,
+          "auto_trade": false,
+          "dash_server_quota": 0,
+          "sklearn_enable": 0,
+          "metal_enable": false,
+          "node_selector": "",
+          "broker_quota": 3,
+          "sfactor_enable": 1,
+          "third_parties": ""
+        }
+      }
+    },
+    {
+      "id": 2,
+      "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+      "method": "POST",
+      "postData": "isajax=1",
+      "time": 1775095879691,
+      "status": 200
+    },
+    {
+      "id": 3,
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery183036272431572689623_1775095879674",
+      "method": "POST",
+      "postData": "isajax=1&datatype=jsonp",
+      "time": 1775095879723,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "user_id": "772028948",
+          "sfactor_monitor_quota": 3,
+          "backtest_analysis": 0,
+          "terminals_enable": false,
+          "tick_enable": false,
+          "memory_quota": 2048,
+          "metal_enable": false,
+          "auto_simu": 0,
+          "vip_apis": [],
+          "sfactor_quota": 3,
+          "sklearn_enable": 0,
+          "simulate_quota": 5,
+          "algorithm_quota": 3,
+          "cpu_request": 0,
+          "image_spec": "",
+          "node_selector": "",
+          "memory_request": 0,
+          "cpu_quota": 2,
+          "jupyter_cron": "crontabs",
+          "third_parties": "",
+          "download_quota": 50,
+          "dash_server_quota": 0,
+          "research_age": 24,
+          "auto_trade": false,
+          "name_server_quota": 0,
+          "broker_quota": 3,
+          "jupyter_share": "",
+          "disk_quota": 1024,
+          "factor_group_quota": 3,
+          "forex_enable": false,
+          "vip": false,
+          "inner": 0,
+          "backtest_monitor_quota": 10,
+          "sfactor_enable": 1,
+          "factor_num_quota": 5,
+          "inactive_limit": 0,
+          "auto_enable": 0
+        }
+      }
+    },
+    {
+      "id": 4,
+      "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/access_token",
+      "method": "POST",
+      "postData": "{\"app_key\":\"c83ebad679\",\"app_version\":\"145.0.0.0\",\"device_id\":\"398a1ec8e19fd2a4081acb1bb3d018a4\",\"platform\":\"web\",\"platform_version\":\"Intel Mac OS X 10_15_7\",\"log_version\":\"0.0.1-alpha.27\"}",
+      "time": 1775095879859,
+      "status": 200
+    },
+    {
+      "id": 5,
+      "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_config",
+      "method": "POST",
+      "postData": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiIxNDUuMC4wLjAiLCJsb2dWZXIiOiIwLjAuMS1hbHBoYS4yNyIsImV4cCI6MTc3NTM1NTA4MCwiZGV2aWNlSWQiOiIzOThhMWVjOGUxOWZkMmE0MDgxYWNiMWJiM2QwMThhNCIsInBsYXRmb3JtIjoid2ViIiwiZGV2aWNlSW5mbyI6Im5vbmUiLCJwbGF0Zm9ybVZlciI6IkludGVsIE1hYyBPUyBYIDEwXzE1XzcifQ.vzF5yrqcRhOlx5IThQy-XZVFQI2YjBj28dhoccnnkVY\",\"sign\":\"b2bsm\"}",
+      "time": 1775095879962,
+      "status": 200
+    },
+    {
+      "id": 6,
+      "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_info",
+      "method": "POST",
+      "postData": "{\"msg_encrypt\":\"EzmtrCLNaVLszSprwDDnP2Zh8DPak8WX4Lt49u7DA4rGk+mHtpH4+PfBpYd1Vv1t17WlsowvJBWkmZeNQgrjQ+S0RVZbCJa1HBBKD8H+CqQUHB3bmdc4t7HJn5gNwMNu/0KGvfRNBEB5isciCuhSV2Oo78nDH5KJjVR5729TsxM=\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiIxNDUuMC4wLjAiLCJsb2dWZXIiOiIwLjAuMS1hbHBoYS4yNyIsImV4cCI6MTc3NTM1NTA4MCwiZGV2aWNlSWQiOiIzOThhMWVjOGUxOWZkMmE0MDgxYWNiMWJiM2QwMThhNCIsInBsYXRmb3JtIjoid2ViIiwiZGV2aWNlSW5mbyI6Im5vbmUiLCJwbGF0Zm9ybVZlciI6IkludGVsIE1hYyBPUyBYIDEwXzE1XzcifQ.vzF5yrqcRhOlx5IThQy-XZVFQI2YjBj28dhoccnnkVY\",\"produce_id\":\"177509406459710.244.179.136lf512576\",\"queue_id\":36461754,\"sign\":\"b2bsm\",\"send_time\":1775095880006}",
+      "time": 1775095880009,
+      "status": 200
+    },
+    {
+      "id": 7,
+      "url": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/?callback=jQuery183036272431572689623_1775095879674",
+      "method": "POST",
+      "postData": "isajax=1&datatype=jsonp",
+      "time": 1775095880017,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "strategys": [
+            {
+              "algo_id": "67c935e607887b957629ad72",
+              "algo_name": "PSY交易策略",
+              "config": [],
+              "modified": "2026-03-30 20:38:33",
+              "backtest_id": "69ca6ec93d1ca490b3c629da",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": true,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67da5bb71d3a656411312359",
+              "algo_name": "高股息-小市值优选策略(副本)",
+              "config": [],
+              "modified": "2025-03-19 13:55:02",
+              "backtest_id": "67da5c372626dd7b856cd590",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d91c5707887bfc5a2cae7d",
+              "algo_name": "112(副本)",
+              "config": [],
+              "modified": "2025-03-19 08:56:54",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d8d13b14af672ef8850fd0",
+              "algo_name": "tt",
+              "config": [],
+              "modified": "2025-03-18 09:59:00",
+              "backtest_id": "67d8d22a1d10da749f9c8685",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c939922626dd4214718b7a",
+              "algo_name": "三因子选股模型",
+              "config": [],
+              "modified": "2025-03-06 13:59:44",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c90a8a1544e184b67ed697",
+              "algo_name": "SAR交易策略",
+              "config": [],
+              "modified": "2025-03-06 10:39:05",
+              "backtest_id": "67c90a976aada88ead2d4d33",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c905a61544e184b67ed690",
+              "algo_name": "多因子alpha",
+              "config": [],
+              "modified": "2025-03-06 10:18:13",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c8ff700f7cad1155d115a7",
+              "algo_name": "彼得林奇PEG价值选股策略",
+              "config": [],
+              "modified": "2025-03-06 09:59:42",
+              "backtest_id": "67c9016bd6aa7c457a87975e",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81be1e57bbe251ebdb749",
+              "algo_name": "MACD交易策略",
+              "config": [],
+              "modified": "2025-03-05 17:40:47",
+              "backtest_id": "67c81c066aada88ead2d4b1d",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81b1909b3e32628f49240",
+              "algo_name": "222",
+              "config": [],
+              "modified": "2025-03-05 17:37:29",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c819251d10da308ef50099",
+              "algo_name": "ff",
+              "config": [],
+              "modified": "2025-03-05 17:36:11",
+              "backtest_id": "67c8198c0f7cad1155d113b9",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            }
+          ],
+          "folders": []
+        }
+      }
+    },
+    {
+      "id": 8,
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63v0h1v9164889671za200zd9164889671&_p=1775095879596&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=79049458.1775037622&ul=zh-cn&sr=1400x900&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=1&tag_exp=0~115616986~115938466~115938469~116991816~117266400~118131808&sid=1775095742&sct=3&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=page_view&_ee=1&tfd=845",
+      "method": "POST",
+      "postData": "",
+      "time": 1775095880070,
+      "status": 204
+    },
+    {
+      "id": 9,
+      "url": "https://quant.10jqka.com.cn/platform/user/checknewcomments?callback=jQuery183036272431572689623_1775095879673",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775095880687,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": 0
+      }
+    },
+    {
+      "id": 10,
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63v0h1v9164889671za200zd9164889671&_p=1775095879596&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=79049458.1775037622&ul=zh-cn&sr=1400x900&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAQ&_s=2&tag_exp=0~115616986~115938466~115938469~116991816~117266400~118131808&sid=1775095742&sct=3&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=scroll&epn.percent_scrolled=90&_et=7&tfd=5848",
+      "method": "POST",
+      "postData": "",
+      "time": 1775095885070,
+      "status": 204
+    },
+    {
+      "id": 11,
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63v0h1v9164889671za200zd9164889671&_p=1775095879596&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=79049458.1775037622&ul=zh-cn&sr=1400x900&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=3&tag_exp=0~115616986~115938466~115938469~116991816~117266400~118131808&sid=1775095742&sct=3&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=user_engagement&_et=9000&tfd=9845",
+      "method": "POST",
+      "postData": "",
+      "time": 1775095889071
+    },
+    {
+      "id": 12,
+      "url": "https://www.google.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63v0h1v9164889671za200zd9164889671&_p=1775095879596&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=79049458.1775037622&ul=zh-cn&sr=1400x900&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=3&tag_exp=0%7E115616986%7E115938466%7E115938469%7E116991816%7E117266400%7E118131808&sid=1775095742&sct=3&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6+-+SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=user_engagement&_et=9000&tfd=9845&gaf=1",
+      "method": "POST",
+      "postData": "",
+      "time": 1775095889071
+    }
+  ],
+  "timestamp": 1775095929974
+}

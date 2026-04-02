@@ -1,0 +1,11 @@
+{
+  "taskId": "bb71d642-683f-4e7f-bfe8-2ffb52074c8e",
+  "taskrunId": "dba792d0-5562-4ef0-a18f-19bd283bbb0a",
+  "name": "test_execution",
+  "options": {
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "capital": 100000
+  },
+  "timestamp": "2026-04-01T12:33:18.706Z"
+}

@@ -1,0 +1,16 @@
+{
+  "/platform/user/getauthdata": {
+    "errorcode": 0,
+    "hasResult": true,
+    "preview": "{\"user_id\":\"772028948\",\"sfactor_monitor_quota\":3,\"backtest_analysis\":0,\"terminals_enable\":false,\"tick_enable\":false,\"memory_quota\":2048,\"metal_enable\":false,\"auto_simu\":0,\"vip_apis\":[],\"sfactor_quota\""
+  },
+  "/platform/strategy/list": {
+    "error": "Failed to execute 'json' on 'Response': Unexpected end of JSON input"
+  },
+  "/platform/strategy/mylist": {
+    "error": "Failed to execute 'json' on 'Response': Unexpected end of JSON input"
+  },
+  "/platform/backtest/list": {
+    "error": "Failed to execute 'json' on 'Response': Unexpected end of JSON input"
+  }
+}

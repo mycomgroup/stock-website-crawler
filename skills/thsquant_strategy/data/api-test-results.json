@@ -1,0 +1,145 @@
+{
+  "/platform/user/getauthdata": {
+    "status": 200,
+    "errorcode": 0,
+    "errormsg": "",
+    "hasResult": true,
+    "resultType": "object",
+    "resultKeys": [
+      "third_parties",
+      "cpu_quota",
+      "auto_simu",
+      "name_server_quota",
+      "auto_trade",
+      "disk_quota",
+      "dash_server_quota",
+      "backtest_analysis",
+      "metal_enable",
+      "forex_enable",
+      "vip_apis",
+      "memory_request",
+      "user_id",
+      "terminals_enable",
+      "broker_quota",
+      "image_spec",
+      "factor_num_quota",
+      "inner",
+      "memory_quota",
+      "jupyter_cron",
+      "inactive_limit",
+      "factor_group_quota",
+      "sklearn_enable",
+      "simulate_quota",
+      "algorithm_quota",
+      "tick_enable",
+      "sfactor_monitor_quota",
+      "auto_enable",
+      "research_age",
+      "download_quota",
+      "sfactor_enable",
+      "node_selector",
+      "cpu_request",
+      "vip",
+      "jupyter_share",
+      "backtest_monitor_quota",
+      "sfactor_quota"
+    ],
+    "sample": "{\"third_parties\":\"\",\"cpu_quota\":2,\"auto_simu\":0,\"name_server_quota\":0,\"auto_trade\":false,\"disk_quota\":1024,\"dash_server_quota\":0,\"backtest_analysis\":0"
+  },
+  "/platform/strategy/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/strategy/mylist": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/research/strategylist": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/backtest/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/simuaccount/getyybidlist": {
+    "status": 200,
+    "errorcode": 0,
+    "errormsg": "",
+    "hasResult": true,
+    "resultType": "object",
+    "resultKeys": [
+      "futures",
+      "simu",
+      "futuresMapSimu"
+    ],
+    "sample": "{\"futures\":{\"100\":[\"432\"],\"200\":[\"433\"],\"300\":[\"434\"],\"1000\":[\"435\"]},\"simu\":{\"10\":[\"39006\",\"39007\",\"39008\",\"39009\",\"39010\",\"48915\"],\"50\":[\"48916\",\"49"
+  },
+  "/platform/simupaper/queryall/": {
+    "status": 200,
+    "errorcode": 0,
+    "errormsg": "",
+    "hasResult": true,
+    "resultType": "object",
+    "resultCount": 1,
+    "sample": [
+      {
+        "algo_id": "67c819251d10da308ef50099",
+        "start_run_time": "2025-03-05T17:32:53",
+        "frequency": "DAILY",
+        "max_drawdown": 0,
+        "stock_market": "STOCK",
+        "modified_by": "hxquantdclient",
+        "run_days": 393,
+        "capital_base": 1000000,
+        "inner": false,
+        "created": "2025-03-05T17:32:53",
+        "source_backtest_id": "67c8198c0f7cad1155d113b9",
+        "published": false,
+        "annual_yield": 0,
+        "_id": "67c81a456aada88ead2d4b14",
+        "profit_and_loss": 0,
+        "stop_run_time": "2025-03-05T17:29:51",
+        "total_assets": 1000000,
+        "market_value": 0,
+        "begin_date": "2025-03-05",
+        "end_date": null,
+        "run_env": "py35",
+        "name": "ff",
+        "ending_cash": 1000000,
+        "modified": "2025-03-05T17:34:43",
+        "user_id": "772028948",
+        "benchmark": "000300.SH",
+        "style": "NORMAL",
+        "status": "PAUSE",
+        "notify": false,
+        "alert_status": true
+      }
+    ]
+  },
+  "/platform/newhelp/directory": {
+    "status": 200,
+    "errorcode": 0,
+    "errormsg": "",
+    "hasResult": true,
+    "resultType": "object",
+    "resultKeys": [
+      "docs"
+    ],
+    "sample": "{\"docs\":[{\"id\":\"3\",\"title\":\"本地SDK\",\"order\":5},{\"id\":\"4\",\"title\":\"API 文档\",\"order\":4},{\"id\":\"8\",\"title\":\"因子研究\",\"order\":0},{\"id\":\"10\",\"title\":\"模拟仿真\",\"ord"
+  },
+  "/platform/factor/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  },
+  "/platform/research/list": {
+    "status": 200,
+    "hasResult": false,
+    "resultType": null
+  }
+}

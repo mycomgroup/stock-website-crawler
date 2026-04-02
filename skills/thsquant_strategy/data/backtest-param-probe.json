@@ -1,0 +1,186 @@
+{
+  "testResults": [
+    {
+      "case": 1,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 2,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "user_id": "772028948",
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-31",
+        "capital_base": "100000",
+        "frequency": "DAILY",
+        "benchmark": "000300.SH",
+        "stock_market": "STOCK",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 3,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-31",
+        "capital_base": "100000",
+        "frequency": "DAILY",
+        "benchmark": "000300.SH",
+        "stock_market": "STOCK",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 4,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "algo_name": "PSY交易策略",
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-31",
+        "capital_base": "100000",
+        "frequency": "DAILY",
+        "benchmark": "000300.SH",
+        "stock_market": "STOCK",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 5,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "section": "2024-01-01--2024-12-31",
+        "capital_base": "100000",
+        "frequency": "DAILY",
+        "benchmark": "000300.SH",
+        "stock_market": "STOCK",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 6,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "capitalBase": "100000",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 7,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "config": "{\"start_date\":\"2024-01-01\",\"end_date\":\"2024-12-31\",\"capital_base\":100000,\"frequency\":\"DAILY\",\"benchmark\":\"000300.SH\"}",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 8,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "user_id": "772028948",
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-31",
+        "capital_base": "100000",
+        "frequency": "DAILY",
+        "benchmark": "000300.SH",
+        "stock_market": "STOCK",
+        "language": "PYTHON",
+        "run_type": "BACKTEST",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 9,
+      "params": {
+        "algoId": "67c935e607887b957629ad72",
+        "userId": "772028948",
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "capitalBase": "100000",
+        "frequency": "DAILY",
+        "benchmark": "000300.SH",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    },
+    {
+      "case": 10,
+      "params": {
+        "algo_id": "67c935e607887b957629ad72",
+        "user_id": "772028948",
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-31",
+        "capital_base": "100000",
+        "frequency": "DAILY",
+        "benchmark": "000300.SH",
+        "stock_market": "STOCK",
+        "language": "PYTHON",
+        "isajax": "1"
+      },
+      "result": {
+        "errorcode": -777,
+        "errormsg": "参数设置错误",
+        "result": ""
+      }
+    }
+  ],
+  "latestBacktest": {
+    "errorcode": 0,
+    "errormsg": "",
+    "result": {
+      "algo_name": "PSY交易策略",
+      "status": "SUCCESS",
+      "backtest_id": "67c935ed2ad7be00b52fc990"
+    }
+  },
+  "timestamp": 1775096481453
+}

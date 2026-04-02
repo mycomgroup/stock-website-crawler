@@ -1,0 +1,736 @@
+[
+  {
+    "id": 0,
+    "url": "https://quant.10jqka.com.cn/view/study-index.html",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"macOS\""
+    },
+    "time": 1775022417706,
+    "status": 200,
+    "response": "<!DOCTYPE html>\n<html lang=\"zh-CN\" class=\"g-out\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n    <title>策略研究 - SuperMind量化交易平台</title>\n    <meta name=\"keywords\" content=\"策略、编辑、量化、回测、SuperMind、量化交易、量化回测、量化投资、宽客、回测平台、量化投资策略、量化交易模型、量化交易策略、量化回测平台、什么是量化投资、quant、python\">\n    <meta name=\"description\" content=\"SuperMind 是同花顺旗下的量化投资平台，免费提供高质全面的量化交易数据、极速便携的量化回测体验、极度仿真的模拟交易环境及开放的宽客交流社区，一起开启AI时代，让量化投资变得更简单！\">\n    <link rel=\"stylesheet\" href=\"//s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/css/study-index.css\">\n  </head>\n  <body>\n    <div class=\"body-container\">\n      <div id=\"header\" class=\"header\"><a href=\"/view\" class=\"header-logo link_home\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/logo.png\" alt=\"Smorrebrod\"></a>\n        <div class=\"split-line\"></div><a style=\"cursor: default\" class=\"enterprise-logo\"><img src=\"//s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/ths_logo.png\"></a>\n  "
+  },
+  {
+    "id": 1,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/css/study-index.css",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "@charset \"UTF-8\";\n/* @author 李璐慧<liluhui@myhexin.com> @Create on 2016-07-25 @style 开始研究样式 */\n/* @author 李璐慧<liluhui@myhexin.com> @Create on 2016-07-25 @style 方法定义 */\n/** css3 pixed */\n/* @author 李璐慧<liluhui@myhexin.com> @Create on 2016-07-25 @style 总体布局样式 */\n/* @author 李璐慧<liluhui@myhexin.com> @Create on 2016-07-25 @style 常量定义 */\n/* @author 李璐慧<liluhui@myhexin.com> @Create on 2016-07-25 @style 方法定义 */\n/** css3 pixed */\nbody { min-width: 1100px; }\n\nhtml, body { height: 100%; }\n\nbody, input, ul, p { margin: 0; padding: 0; }\n\nbody { font: 14px/1.5 \"Microsoft yahei\",sans-serif; color: #4A4A4A; background: #F0F0F2; position: relative; }\n\ninput, table, tr, td, img { border: 0; }\n\ninput { outline: none; }\n\ninput[type=\"number\"] { -webkit-appearance: none; }\n\ninput::-ms-clear { display: none; width: 0; height: 0; }\n\ntable { border-collapse: collapse; border-spacing: 0; }\n\nul { list-style: none; }\n\na { color: #676A74; }\n\na, a:hover, a:active, a:visited { text-decoration: none; }\n\n.clearfix { zoo"
+  },
+  {
+    "id": 2,
+    "url": "https://s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/logo.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0001�\u0000\u0000\u0000Z\b\u0006\u0000\u0000\u0000�NЗ\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000DeXIfMM\u0000*\u0000\u0000\u0000\b\u0000\u0001�i\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0003�\u0001\u0000\u0003\u0000\u0000\u0000\u0001\u0000\u0001\u0000\u0000�\u0002\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0001��\u0003\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000Z\u0000\u0000\u0000\u0000����\u0000\u0000>7IDATx\u0001�]\t�\u0014�ծ�]\u000e9�P\u0010E�KAD\u0005\u0015�\u001a�&��E<0�xFQA�&��_���x�\u0012�\b+xk4Q�DQ\u0004\u0014/P9DQP�\u0006ww������ٞ����c!J?x�U��{U���^\u001d�=B�\u0010[ �@l��\u0002�\u0005b\u000b�\u0016�-\u0010[ �@l��\u0002�\u0005b\u000b�\u0016�-\u0010[ �@l��\u0002�\u0005b\u000b�\u0016�-\u0010[ �@l��\u0002�\u0005b\u000b�\u0016�-\u0010[ �@l��\u0002\u001b�\u0002Ɔ�J���8�5b�\u0011�N\u001d�0�=*���)��Ia}�0�[\t��\u0011�NK�\u001a��\u0002�\u0005b\u000b�\u0016�X\u0016���\ngiO�Z��)R���-\u0012�%�LDR ,R@[T��jSؗ�a�~��2T�ol��\u0002�\u0005b\u000b�-`��\u001b�:�Y<вk�9�\u0018�ɑ���\u0007���l�i�����9oޜ�\u0003�\u0005b\u000b�\u0016�-�?a���\"����C�^=\u0013+��\u0012\u0002+��j$�^�`k\u000b�\u0012\u0017�0W(���9'\u0019{�^.���\u0015�\t�\u001a*���!��\tC<y밿�P.����\u0002�\u0005b\u000b��-��\u001c�E��[M'u��@���mkI���-nm9)�`�ͅ�/��Ua:+[���6v_V��9���&\f�\u0002ñ\r\u001a��\u001f\u0003�!S8��<��3\f��(��\u0002�\u0005b\u000b�\u0016\b��F��\u001a�|�\u0012�W��\\����\u0018�A%:�\r3�\u000b;v�ub���-\u0005Μp���;\n\u0005@6�/]\u0016��\u0011��7�J�\u001f��\u0016�-\u0010[`S��Fq$)a\u001ed;��F�v�t\u001b\r\u0006�\u0007$>j� OFyt\"��4�\u0017\u0017�������\u001cn6�,ҵ9���4�R�\u0005b\u000b�\u0016ش,�Q\u001c�e\u001b==3�A\u001b÷{�N*Ft��\r+\u0015w��w7��{y��\\��T7E�;4\u001c��UHډ�e@\u0011�^�tu�b��2�\u0005b\u000b�\u0016ؔ,�(�dĪU��p��:C�U�J/-��\u0015]�t\u0014rő���H�.\u0012��'\u0017��\by����7gj��ּ��\u0014gJR��\u000e��P��:7\u0007߶\u0019s�K\u0013�\u001c�6*׬���\u0005b\u000b�\u0016�-�Z��dD}��b�f�ե�F�\\W����_{{I�\u0000n����(�����&r�O\u000f�.뒠^�1nI�8"
+  },
+  {
+    "id": 3,
+    "url": "https://s.thsi.cn/cd/b2blh-mindgo-webserver/202209231510/img/ths_logo.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0001\u0017\u0000\u0000\u0000Z\b\u0006\u0000\u0000\u0000�b\u0012�\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000DeXIfMM\u0000*\u0000\u0000\u0000\b\u0000\u0001�i\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0003�\u0001\u0000\u0003\u0000\u0000\u0000\u0001\u0000\u0001\u0000\u0000�\u0002\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0001\u0017�\u0003\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000Z\u0000\u0000\u0000\u0000����\u0000\u0000+�IDATx\u0001�}\u0007�\u001cřvwϬ\u0012B\"\u001a0«\r\u0012���\u0012\u0012 !\u0019\u0013��9\u001d\"�g�\u0011'��O\u0018c\u001b\f:\u0013l0'\f\b\u0003&\b�H\u0006\u0004�\u0007\u0003V�]��$�A�\u001c\u0015��a���ީٚ����\t+\t������X�u�ו��0�\u0010Y �@d��\u0002�\u0005\"\u000bD\u0016�,\u0010Y �@d��\u0002�\u0005\"\u000bD\u0016�,\u0010Y �@d��\u0002�\u0005\"\u000bD\u0016�,\u0010Y �@d��\u0002�\u0005\"\u000bD\u0016�,\u0010Y �@d��\u0002�\u0005>�\u00160��z�76~�I82\u001cg�c\u001ak\fÜ\u001f�b��n^��i���T����\u0005>�\u0016�j��\u0007\u0007\u001c��O7�f8��Y7�4:\rӜ5�,6�|Ѣ�,|\u0004�,\u0010Y`�-��8���Ƌm�����P\u0019�1��-Ӹm������\u000b���#\\d��\u0002���V�\\��6̅�8*�)0M�\b�٦��^���L4m\nj��.�@q,P\u0012�r���d�ipl{\u000f,�����Pԃ���K\u0013��\u001d�L��B�(C�\u0017�AFo�4{c���\u0003�2������\n�Q�T�4�U�ô�n�Z�`y>2\"��\u0002�\u0005�Y���e�~�\r���s���߅S)�lU��4�v,�a�9�3\u0005��C1/\u001a��\u00150�4^����f̼���i��{���r�.\u001b\\պ�\r/.�G\u0016�,��\u0002Eu\u0000m5\r7;�sAn��S`��r�ت:������q��Ď��\u00185\u001d\n'2\u0015Ng��\u0017i�o�4�A˴n�8�y���\u0018H\u0019Fgc�^Ʉ}\u000b���}�fG<n�Q���o�\u001bő\u0005\"\u000b�@ќ����\u0006Lz�r�,\u000e�iZ?�nm��O�s�\u0011�;��p��$\u000f3l�08��*�M�-��\f�Q۰��ݑ�\b�ˌ9��ZZ\u0016+�#`d��\u0002Y\u0016(�si�m����Wgi�\u0007tc$�\u001e�Q\u0012��\tLO\u0012@�:��@!\u00128���I\u0018�\u0003���\ntX�q\u00003̯�g�~Q�1(6h��\u0005�ʰ\\�U��_�M8\u00198\u001a�9\u0004�;���oƆ\u000e\u001aW�`�{\u0012,JF\u0016�,��@ќ\u000bvsf`��#�\u001e(@_�~XUf�h65q!7t�tk\u001e���\u0005#\u0017h��6��|>�3}��9�q�{�c؇��\u0013YP?Y\\�"
+  },
+  {
+    "id": 4,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/bot_head.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"48px\" height=\"48px\" viewBox=\"0 0 48 48\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <title>头</title>\n    <defs>\n        <linearGradient x1=\"50%\" y1=\"0%\" x2=\"50%\" y2=\"100%\" id=\"linearGradient-1\">\n            <stop stop-color=\"#FAFAF8\" offset=\"0%\"></stop>\n            <stop stop-color=\"#E0DEEA\" offset=\"100%\"></stop>\n        </linearGradient>\n        <circle id=\"path-2\" cx=\"24\" cy=\"24\" r=\"24\"></circle>\n        <filter x=\"-4.2%\" y=\"-4.2%\" width=\"108.3%\" height=\"108.3%\" filterUnits=\"objectBoundingBox\" id=\"filter-3\">\n            <feGaussianBlur stdDeviation=\"1\" in=\"SourceAlpha\" result=\"shadowBlurInner1\"></feGaussianBlur>\n            <feOffset dx=\"0\" dy=\"-2\" in=\"shadowBlurInner1\" result=\"shadowOffsetInner1\"></feOffset>\n            <feComposite in=\"shadowOffsetInner1\" in2=\"SourceAlpha\" operator=\"arithmetic\" k2=\"-1\" k3=\"1\" result=\"shadowInnerInner1\"></feComposite>\n            <feColorMatrix va"
+  },
+  {
+    "id": 5,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/bot_face.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"40px\" height=\"26px\" viewBox=\"0 0 40 26\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <title>脸</title>\n    <defs>\n        <linearGradient x1=\"50%\" y1=\"-8.8817842e-13%\" x2=\"50%\" y2=\"100%\" id=\"linearGradient-1\">\n            <stop stop-color=\"#323E72\" offset=\"0%\"></stop>\n            <stop stop-color=\"#141A32\" offset=\"100%\"></stop>\n        </linearGradient>\n        <rect id=\"path-2\" x=\"3.04761905\" y=\"2\" width=\"32\" height=\"21\" rx=\"10\"></rect>\n        <filter x=\"-1.6%\" y=\"-2.4%\" width=\"103.1%\" height=\"109.5%\" filterUnits=\"objectBoundingBox\" id=\"filter-3\">\n            <feOffset dx=\"0\" dy=\"1\" in=\"SourceAlpha\" result=\"shadowOffsetOuter1\"></feOffset>\n            <feColorMatrix values=\"0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.5 0\" type=\"matrix\" in=\"shadowOffsetOuter1\"></feColorMatrix>\n        </filter>\n        <filter x=\"-3.1%\" y=\"-4.8%\" width=\"106.2%\" height=\"114.3%\" filterUnits=\"objectBoundin"
+  },
+  {
+    "id": 6,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/bot_eye_open.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"49px\" height=\"37px\" viewBox=\"0 0 49 37\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <title>眼睛睁开</title>\n    <defs>\n        <ellipse id=\"path-1\" cx=\"3.5\" cy=\"4.5\" rx=\"3.5\" ry=\"4.5\"></ellipse>\n        <filter x=\"-157.1%\" y=\"-111.1%\" width=\"414.3%\" height=\"344.4%\" filterUnits=\"objectBoundingBox\" id=\"filter-2\">\n            <feGaussianBlur stdDeviation=\"2\" in=\"SourceGraphic\"></feGaussianBlur>\n        </filter>\n        <filter x=\"-200.0%\" y=\"-144.4%\" width=\"500.0%\" height=\"411.1%\" filterUnits=\"objectBoundingBox\" id=\"filter-3\">\n            <feOffset dx=\"0\" dy=\"1\" in=\"SourceAlpha\" result=\"shadowOffsetOuter1\"></feOffset>\n            <feGaussianBlur stdDeviation=\"2.5\" in=\"shadowOffsetOuter1\" result=\"shadowBlurOuter1\"></feGaussianBlur>\n            <feComposite in=\"shadowBlurOuter1\" in2=\"SourceAlpha\" operator=\"out\" result=\"shadowBlurOuter1\"></feComposite>\n            <feColorMatrix values=\"0 0 0"
+  },
+  {
+    "id": 7,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/bot_eye_close.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"21px\" height=\"3px\" viewBox=\"0 0 21 3\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <title>编组 19</title>\n    <g id=\"页面-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\n        <g id=\"眨眼\" transform=\"translate(-14, -19)\" fill=\"#EBEEF5\">\n            <g id=\"编组-19\" transform=\"translate(14, 19.5)\">\n                <path d=\"M0,2.5 C2.66666667,-0.833333333 5.33333333,-0.833333333 8,2.5 C6.22222222,1.83333333 4.88888889,1.5 4,1.5 C3.11111111,1.5 1.77777778,1.83333333 0,2.5 Z\" id=\"路径-5\"></path>\n                <path d=\"M13,2.5 C15.6666667,-0.833333333 18.3333333,-0.833333333 21,2.5 C19.2222222,1.83333333 17.8888889,1.5 17,1.5 C16.1111111,1.5 14.7777778,1.83333333 13,2.5 Z\" id=\"路径-5\"></path>\n            </g>\n        </g>\n    </g>\n</svg>"
+  },
+  {
+    "id": 8,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/letter.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417847,
+    "status": 200,
+    "response": "<svg width=\"28\" height=\"28\" viewBox=\"0 0 28 28\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M22.1818 5.81836C22.664 5.81836 23.1265 6.00992 23.4675 6.35089C23.8084 6.69187 24 7.15433 24 7.63654V20.3638C24 20.846 23.8084 21.3085 23.4675 21.6495C23.1265 21.9904 22.664 22.182 22.1818 22.182H5.81818C5.33597 22.182 4.87351 21.9904 4.53253 21.6495C4.19156 21.3085 4 20.846 4 20.3638V7.63654C4 7.15433 4.19156 6.69187 4.53253 6.35089C4.87351 6.00992 5.33597 5.81836 5.81818 5.81836H22.1818ZM22.1818 8.78745L14.5582 14.7179C14.409 14.8338 14.2275 14.9004 14.0387 14.9084C13.85 14.9164 13.6634 14.8654 13.505 14.7625L13.4418 14.7179L5.81818 8.7879V20.3638H22.1818V8.78745ZM20.7009 7.63654H7.29864L13.9995 12.8484L20.7009 7.63654Z\" fill=\"#999B9E\"/>\n</svg>\n"
+  },
+  {
+    "id": 9,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/letter_hover.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "<svg width=\"28\" height=\"28\" viewBox=\"0 0 28 28\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M22.1818 5.81836C22.664 5.81836 23.1265 6.00992 23.4675 6.35089C23.8084 6.69187 24 7.15433 24 7.63654V20.3638C24 20.846 23.8084 21.3085 23.4675 21.6495C23.1265 21.9904 22.664 22.182 22.1818 22.182H5.81818C5.33597 22.182 4.87351 21.9904 4.53253 21.6495C4.19156 21.3085 4 20.846 4 20.3638V7.63654C4 7.15433 4.19156 6.69187 4.53253 6.35089C4.87351 6.00992 5.33597 5.81836 5.81818 5.81836H22.1818ZM22.1818 8.78745L14.5582 14.7179C14.409 14.8338 14.2275 14.9004 14.0387 14.9084C13.85 14.9164 13.6634 14.8654 13.505 14.7625L13.4418 14.7179L5.81818 8.7879V20.3638H22.1818V8.78745ZM20.7009 7.63654H7.29864L13.9995 12.8484L20.7009 7.63654Z\" fill=\"#ffffff\"/>\n</svg>\n"
+  },
+  {
+    "id": 10,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/close.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"20px\" height=\"20px\" viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <title>编组 35</title>\n    <g id=\"页面-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\n        <g id=\"12.参考手册\" transform=\"translate(-1096.000000, -174.000000)\">\n            <g id=\"编组-36\" transform=\"translate(300.000000, 150.000000)\">\n                <g id=\"编组-35\" transform=\"translate(796.000000, 24.000000)\">\n                    <rect id=\"矩形\" fill=\"currentColor\" opacity=\"0\" x=\"0\" y=\"0\" width=\"20\" height=\"20\"></rect>\n                    <path d=\"M17.1464466,2.14644661 L17.8535534,2.85355339 L10.7074466,10.0004466 L17.8535534,17.1464466 L17.1464466,17.8535534 L10.0004466,10.7074466 L2.85355339,17.8535534 L2.14644661,17.1464466 L9.29344661,10.0004466 L2.14644661,2.85355339 L2.85355339,2.14644661 L10.0004466,9.29344661 L17.1464466,2.14644661 Z\" id=\"形状结合\" fill=\"currentColor\" fill-rule=\"nonzer"
+  },
+  {
+    "id": 11,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/svg/close_hover.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg width=\"20px\" height=\"20px\" viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <title>编组 35</title>\n    <g id=\"页面-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\n        <g id=\"12.参考手册\" transform=\"translate(-1096.000000, -174.000000)\">\n            <g id=\"编组-36\" transform=\"translate(300.000000, 150.000000)\">\n                <g id=\"编组-35\" transform=\"translate(796.000000, 24.000000)\">\n                    <rect id=\"矩形\" fill=\"#255dff\" opacity=\"0\" x=\"0\" y=\"0\" width=\"20\" height=\"20\"></rect>\n                    <path d=\"M17.1464466,2.14644661 L17.8535534,2.85355339 L10.7074466,10.0004466 L17.8535534,17.1464466 L17.1464466,17.8535534 L10.0004466,10.7074466 L2.85355339,17.8535534 L2.14644661,17.1464466 L9.29344661,10.0004466 L2.14644661,2.85355339 L2.85355339,2.14644661 L10.0004466,9.29344661 L17.1464466,2.14644661 Z\" id=\"形状结合\" fill=\"#255dff\" fill-rule=\"nonzero\"></path>"
+  },
+  {
+    "id": 12,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/img/backtest_stock.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000�\u0000\u0000\u0000�\b\u0006\u0000\u0000\u0000�F�\u0000\u0000\u0000\tpHYs\u0000\u0000\u000b\u0013\u0000\u0000\u000b\u0013\u0001\u0000��\u0018\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000\u0004gAMA\u0000\u0000��\u000b�a\u0005\u0000\u0000D�IDATx\u0001�}\u0007�$Wu�U�չ_����4\n(�\u0000��\u0001D\u0010\u0002\u0019�X#��&\u001a�b\u001b��\u0005V���ƀ�\u001ac���b�\u0000�\u0002\u0002��3\u001ai\u0014&j4�&�˯s��w�9���zoF�h\u0014�=�g����]]]]��s�\u0013�\u0000]�JW�ҕ�t�+]�JW�ҕ�t�+]�JW�ҕ�tev�\u0003]�ă�<��O��;�z�%\u0017~��h\f&�~�\u0015����{>\u0007]�D@W�T&o������RR:��\u0000��\u000b>���g����\u0015��:>��CUt��r�\t�u%�z��p\u001bЕH�&쨂��p�m�\u0014�kW$\u0015t%�.��\"�\u0019\u0001\u000e�F�\u0007\u0002��jAW:�\u0005�Q�q@j�\u0018K�۾\u000f]�I�\u0003\u001dE�V\tGk\u001f�_��U@Ӥ���&B��|�GW\u0005M�.��\"J9Jk �Ց�F=fJ\u0017@G\u00155C\u0003u-�L�\u0002�(�\u0016L�c�x|8]\r4S�\u0000:�\b��ȄI�A��\u0006�)]\u0000\u001dE\u0014\u0005\u000fɅ��X�\u0003\u001d&�[�(�pa\u0013F�Ɂn��p�\u0002�(��\u0010s\u0017\t\r �DЕ\u0019�\u0005�QD��\n\u0012)��\\\u001dKtU��Ť{1�\"�QW���UB��!���V�\u0005P\\�\u0017c����'��2���f,�\u0001���\u000b�.K��y�\u001b��;��\u0001���O�}�3\u001f�≻��+��P���N�-\u000fa\b�\u000352\u0001r�\u0019���W�\u0017\u001c�����}�\u001f��.;�I������\u001dd��t���K_���_��3?pʅ��:��\nphB�F\u000bD:�ԃ�\u000b�n\u00004�l��>\u0005jՅ ��F\u000f_\b1�+ ��=����6|������7l�Ў\u0007����\u0005@���\u000f�������%\u001f<���-=P�\u000fc\b�r\r�Ą\u0017��c=\n��ʂ|�Z�Ψ��\u001bSA\b�>\t��\u0019�.[\u000b��\fL��-D6���~Q\u001d����\u001d�}��?������ͻ�\u0013���\u0004��\u0006@\u000f����;����@y�S�\u0015%\u0014eHM��ݔf�\u0015��\r��[@��\u0000AKk�&>�x&��\u0013�\u0017%ujñ\u0011ji\u001f\n\\|m��\u0003n�1t�\u0003_Zu���\u0012�@\u0016\u000e!����\u0002@\u001f�\u0005'��U��U\u0006��,�K\u001b��^�F͸�& O�g~ \u0010B�D�q�j\u0019\u0001�ԯ!hTa\u0010\tu\u0016�f\u0003�\n��ń�_���۷"
+  },
+  {
+    "id": 13,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/img/backtest_future.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000�\u0000\u0000\u0000�\b\u0006\u0000\u0000\u0000�F�\u0000\u0000\u0000\tpHYs\u0000\u0000\u000b\u0013\u0000\u0000\u000b\u0013\u0001\u0000��\u0018\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000\u0004gAMA\u0000\u0000��\u000b�a\u0005\u0000\u0000_\u0018IDATx\u0001��\u0007�\u001cWu6�ܙ����ջ,Yr��m�\u0018\u001b�q��\u0014�1�|\u0001>�\u0017\u0012Z\bI(!!@�\u0000\u0001Bo\u0006\u0002v�\f�\r۲eK�%�����u�����s��}e���a[z�G�^��[fgg�9�9�9�\\��81N�\u0013��81N��\u001f\r�\u0013��j��\u001f(an���yI��s\u001a�[JO���}߾�\"=o��Éqb<�`p�o�|�ȶ[��,�Û�[~�� ����[~�/��~�>\u0007'��\u001d�\u0016HY��\u001b��O'_���\u0003)ݗ�s��\u0018M�׿�R��5{S���Pߡ��S_���k��ǉqb�\\4����OH\u001a��C�t��\u001f�����\u0013���[o�Ï��\u000e>�3w��?�7^uɥ�\u0000:1�e�1Z �/^wޚ/���-�r^�IZ����\u0016R]������\u001d��[vֵ��c��������\n�_��4N�\u0013\u0003ƒ������TNZ���~\\����\\OOO\f�����㺿��F��/����-_q�Y�q\"�x��Gg����?s�iQ���������k9�L���u����\n�,�f}�\u001b_��KS;�GG}�Jy���3�\u001d��\u0002�\u001f[��_s���\u0015p�k���=��y�[��օI�\u001b���yh�֟_vJ�m������\u000b��\u000b?��Y~����䓖�,\u0012����Ц�~���?�9*)�1Y q��'�H�/m��\u0017>g_y�98�{�;��i<K�58:�XCC\u0018��\u0001�t/l�\u000b;�B����w��2����O}����������\u00197<��\u000f�����cc��?&\u0000ɫ���M���\u001f�G���m}��_~\u000b��x�{\u001a���%cQ��y�\u001f�\u000b7���v�W�w�\u0007������m���=G�_��O�/��_uҧ����~\u0005\u001aDs���Q��\r������o��V8&\u0017����[����޻��#Η���\f2Q��Ҁ\u0018\f�o��Ꮽy�;ޔ\u001d��u,�w��C?��i�h\u0007��o����UK�����\\�����=l1�+{�\u0003�O\u0000[QnhX�x�)�L:=9thw����7n�X�sg������(���W�\u001d�w��?m�����L�h�;�������\f�"
+  },
+  {
+    "id": 14,
+    "url": "https://s.thsi.cn/js/quant/activity/mgo-brochure/jquery.min.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "/*! jQuery v3.3.1 | (c) JS Foundation and other contributors | jquery.org/license */\n!function(e,t){\"use strict\";\"object\"==typeof module&&\"object\"==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error(\"jQuery requires a window with a document\");return t(e)}:t(e)}(\"undefined\"!=typeof window?window:this,function(e,t){\"use strict\";var n=[],r=e.document,i=Object.getPrototypeOf,o=n.slice,a=n.concat,s=n.push,u=n.indexOf,l={},c=l.toString,f=l.hasOwnProperty,p=f.toString,d=p.call(Object),h={},g=function e(t){return\"function\"==typeof t&&\"number\"!=typeof t.nodeType},y=function e(t){return null!=t&&t===t.window},v={type:!0,src:!0,noModule:!0};function m(e,t,n){var i,o=(t=t||r).createElement(\"script\");if(o.text=e,n)for(i in v)n[i]&&(o[i]=n[i]);t.head.appendChild(o).parentNode.removeChild(o)}function x(e){return null==e?e+\"\":\"object\"==typeof e||\"function\"==typeof e?l[c.call(e)]||\"object\":typeof e}var b=\"3.3.1\",w=function(e,t){return new w.fn.init(e,t)},"
+  },
+  {
+    "id": 15,
+    "url": "https://s.thsi.cn/js/ta.min.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "var ths_stat=function(){this.id=0;this.ld=this.getLd();try{if(\"undefined\"!=typeof external&&\"undefined\"!=typeof external.createObject)this.ld=\"client\"}catch(a){}var b=\"https:\"==document.location.protocol?\"https:\":\"http:\";this._top=!0;this.size=screen.width+\"x\"+screen.height;this._base=b+\"//stat.10jqka.com.cn/q?\";this._sid=\"__ths_stat__\"};\nths_stat.prototype.getLd=function(){var a=\"browser\",a=navigator.userAgent.toLowerCase();return a=-1!=a.indexOf(\"android\")?\"mobile\":-1!=a.indexOf(\"iphone\")?\"mobile\":-1!=a.indexOf(\"ipad\")?\"mobile\":\"browser\"};\nths_stat.prototype.getPlatform=function(a){try{if(\"undefined\"!=typeof external&&\"undefined\"!=typeof external.createObject){this.ld=\"client\";var b={\"0\":\"tongyi\",1:\"dyj\",2:\"cfxf\",3:\"dzl\",4:\"cde\",5:\"dxb\",6:\"jrds\"},c=function(a,b,c,d){if(window.cefQuery)window.cefQuery({request:JSON.stringify({v:\"1.0\",method:b,params:c||[],sessionId:window.cefNewSession(a).sessionId}),persistent:!1,timeout:3E4,onSuccess:function(a){d(a)},onFailure:function(){d(0)}});el"
+  },
+  {
+    "id": 16,
+    "url": "https://s.thsi.cn/cd/ths-frontend-common-lib-container/1.1.6/stat_v2_umd.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "(function (factory) {\n  typeof define === 'function' && define.amd ? define(factory) :\n  factory();\n})((function () { 'use strict';\n\n  function _typeof(obj) {\n    \"@babel/helpers - typeof\";\n\n    return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (obj) {\n      return typeof obj;\n    } : function (obj) {\n      return obj && \"function\" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj;\n    }, _typeof(obj);\n  }\n\n  var EVENT_TRACKING_GLOBAL = {\n    naUserAgent: navigator.userAgent,\n    cookie: document.cookie\n  };\n  var EVENT_TRACKING_METHOD = {\n    // 副函数集合\n    buildQuery: function buildQuery(obj, father) {\n      var str = '';\n\n      switch (true) {\n        case _typeof(obj) === 'object':\n          {\n            var param = '';\n\n            for (var i in obj) {\n              if (father) {\n                param = \"\".concat(father, \"[\").concat(i, \"]\");\n              } else {\n                param = i;"
+  },
+  {
+    "id": 17,
+    "url": "https://s.thsi.cn/cb?cd/weblog/0.0.1-alpha.27/weblog.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "/*! weblog v0.0.1-alpha.27 - Copyright (c) weblog, Inc, 2023, author lushiyi@myhexin.com */\n!function(t,e){\"object\"==typeof exports&&\"object\"==typeof module?module.exports=e():\"function\"==typeof define&&define.amd?define([],e):\"object\"==typeof exports?exports.weblog=e():t.weblog=e()}(this,(function(){return function(t){var e={};function r(n){if(e[n])return e[n].exports;var o=e[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=t,r.c=e,r.d=function(t,e,n){r.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:n})},r.r=function(t){\"undefined\"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:\"Module\"}),Object.defineProperty(t,\"__esModule\",{value:!0})},r.t=function(t,e){if(1&e&&(t=r(t)),8&e)return t;if(4&e&&\"object\"==typeof t&&t&&t.__esModule)return t;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,\"default\",{enumerable:!0,value:t}),2&e&&\"string\"!=typeof t)for(var o in t)r.d(n,o,function(e){return "
+  },
+  {
+    "id": 18,
+    "url": "https://s.thsi.cn/js/upass/ths_iframe_login-2.0.min.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "var ths_iframe_login=function(a){this.useOptions=$.extend(!0,{width:380,height:400,crossDomainHostname:\"\",zIndex:100,opacity:0.5,loginCfg:{}},a);this.popup=this.mask=null;this.maskId=\"ths_iframe_login_mask\";this.popupId=\"ths_iframe_login_popup\"};\r\nths_iframe_login.prototype.getCookie=function(a){var b=document.cookie.indexOf(a+\"=\"),c=b+a.length+1;if(!b&&a!=document.cookie.substring(0,a.length)||-1==b)return null;a=document.cookie.indexOf(\";\",c);if(-1==a)a=document.cookie.length;return unescape(document.cookie.substring(c,a))};ths_iframe_login.prototype.show=function(){!this.mask||!this.popup?this.create():(this.mask.show(),this.popup.show())};ths_iframe_login.prototype.hide=function(){this.mask&&this.mask.hide();this.popup&&this.popup.hide()};\r\nths_iframe_login.prototype.create=function(){var a=this;$(\"#\"+this.maskId).remove();$(\"#\"+this.popupId).remove();var b=this.useOptions.width,c=this.useOptions.height,d=this.useOptions.opacity,e=100*d,f=this.getIframeSrc();a.mask=$('<div id=\"'+th"
+  },
+  {
+    "id": 19,
+    "url": "https://s.thsi.cn/js/quant/lib/env.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "// @charset \"utf-8\";\r\n(() => \r\n\twindow.__defineGetter__('__env', () =>\r\n\t\twindow.location.href.indexOf('ifind') < 0 ? 'browser' : (sessionStorage.getItem('navError') ? 'ifind_s' : 'ifind_g')\r\n\t)\r\n)()"
+  },
+  {
+    "id": 20,
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-KQBDS1VPQF",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "\n// Copyright 2012 Google Inc. All rights reserved.\n \n(function(){\n\nvar data = {\n\"resource\": {\n  \"version\":\"1\",\n  \n  \"macros\":[{\"function\":\"__e\"},{\"function\":\"__c\",\"vtp_value\":\"google.cn\"},{\"function\":\"__c\",\"vtp_value\":1}],\n  \"tags\":[{\"function\":\"__ogt_1p_data_v2\",\"priority\":13,\"vtp_isAutoEnabled\":true,\"vtp_autoCollectExclusionSelectors\":[\"list\",[\"map\",\"exclusionSelector\",\"\"]],\"vtp_isEnabled\":true,\"vtp_cityType\":\"CSS_SELECTOR\",\"vtp_manualEmailEnabled\":false,\"vtp_firstNameType\":\"CSS_SELECTOR\",\"vtp_countryType\":\"CSS_SELECTOR\",\"vtp_cityValue\":\"\",\"vtp_emailType\":\"CSS_SELECTOR\",\"vtp_regionType\":\"CSS_SELECTOR\",\"vtp_autoEmailEnabled\":true,\"vtp_postalCodeValue\":\"\",\"vtp_lastNameValue\":\"\",\"vtp_phoneType\":\"CSS_SELECTOR\",\"vtp_phoneValue\":\"\",\"vtp_streetType\":\"CSS_SELECTOR\",\"vtp_autoPhoneEnabled\":false,\"vtp_postalCodeType\":\"CSS_SELECTOR\",\"vtp_emailValue\":\"\",\"vtp_firstNameValue\":\"\",\"vtp_streetValue\":\"\",\"vtp_lastNameType\":\"CSS_SELECTOR\",\"vtp_autoAddressEnabled\":false,\"vtp_regionValue\":\"\",\"vtp_countryV"
+  },
+  {
+    "id": 21,
+    "url": "https://s.thsi.cn/js/quant/lib/localwdatepicker/WdatePicker.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "//@charset \"utf-8\";\r\n/*\r\n * My97 DatePicker 4.8 Beta4\r\n * License: http://www.my97.net/dp/license.asp\r\n */\r\nvar $dp,WdatePicker;(function(){var $={\r\n$langList:[\r\n {name:\"en\",charset:\"UTF-8\"},\r\n {name:\"zh-cn\",charset:\"gb2312\"},\r\n {name:\"zh-tw\",charset:\"GBK\"}],\r\n$skinList:[\r\n {name:\"default\",charset:\"gb2312\"},\r\n {name:\"whyGreen\",charset:\"gb2312\"},\r\n {name:\"blue\",charset:\"gb2312\"},\r\n {name:\"green\",charset:\"gb2312\"},\r\n {name:\"simple\",charset:\"gb2312\"},\r\n {name:\"ext\",charset:\"gb2312\"},\r\n {name:\"blueFresh\",charset:\"gb2312\"},\r\n {name:\"twoer\",charset:\"gb2312\"},\r\n {name:\"grey\",charset:\"gb2312\"},\r\n {name:\"greyplus\",charset:\"gb2312\"},\r\n {name:\"smorrebrod\",charset:\"gb2312\"}],\r\n$wdate:true,\r\n$crossFrame:true,\r\n$preLoad:false,\r\n$dpPath:\"\",\r\ndoubleCalendar:false,\r\nenableKeyboard:true,\r\nenableInputMask:true,\r\nautoUpdateOnChanged:null,\r\nweekMethod:\"ISO8601\",\r\nposition:{},\r\nlang:\"auto\",\r\nskin:\"smorrebrod\",\r\ndateFmt:\"yyyy-MM-dd\",\r\nrealDateFmt:\"yyyy-MM-dd\",\r\nrealTimeFmt:\"HH:mm:ss\",\r\nrealFullFmt:\"%Date %Ti"
+  },
+  {
+    "id": 22,
+    "url": "https://s.thsi.cn/js/quant/lib/es6-promise.auto.min.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417848,
+    "status": 200,
+    "response": "!function(t,e){\"object\"==typeof exports&&\"undefined\"!=typeof module?module.exports=e():\"function\"==typeof define&&define.amd?define(e):t.ES6Promise=e()}(this,function(){\"use strict\";function t(t){var e=typeof t;return null!==t&&(\"object\"===e||\"function\"===e)}function e(t){return\"function\"==typeof t}function n(t){I=t}function r(t){J=t}function o(){return function(){return process.nextTick(a)}}function i(){return\"undefined\"!=typeof H?function(){H(a)}:c()}function s(){var t=0,e=new V(a),n=document.createTextNode(\"\");return e.observe(n,{characterData:!0}),function(){n.data=t=++t%2}}function u(){var t=new MessageChannel;return t.port1.onmessage=a,function(){return t.port2.postMessage(0)}}function c(){var t=setTimeout;return function(){return t(a,1)}}function a(){for(var t=0;t<G;t+=2){var e=$[t],n=$[t+1];e(n),$[t]=void 0,$[t+1]=void 0}G=0}function f(){try{var t=require,e=t(\"vertx\");return H=e.runOnLoop||e.runOnContext,i()}catch(n){return c()}}function l(t,e){var n=arguments,r=this,o=new this"
+  },
+  {
+    "id": 23,
+    "url": "https://s.thsi.cn/js/quant/lib/require.min.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417849,
+    "status": 200,
+    "response": "/*\n RequireJS 2.1.14 Copyright (c) 2010-2014, The Dojo Foundation All Rights Reserved.\n Available via the MIT or new BSD license.\n see: http://github.com/jrburke/requirejs for details\n*/\nvar requirejs,require,define;\n(function(ba){function G(b){return\"[object Function]\"===K.call(b)}function H(b){return\"[object Array]\"===K.call(b)}function v(b,c){if(b){var d;for(d=0;d<b.length&&(!b[d]||!c(b[d],d,b));d+=1);}}function T(b,c){if(b){var d;for(d=b.length-1;-1<d&&(!b[d]||!c(b[d],d,b));d-=1);}}function t(b,c){return fa.call(b,c)}function m(b,c){return t(b,c)&&b[c]}function B(b,c){for(var d in b)if(t(b,d)&&c(b[d],d))break}function U(b,c,d,e){c&&B(c,function(c,g){if(d||!t(b,g))e&&\"object\"===typeof c&&c&&!H(c)&&!G(c)&&!(c instanceof\nRegExp)?(b[g]||(b[g]={}),U(b[g],c,d,e)):b[g]=c});return b}function u(b,c){return function(){return c.apply(b,arguments)}}function ca(b){throw b;}function da(b){if(!b)return b;var c=ba;v(b.split(\".\"),function(b){c=c[b]});return c}function C(b,c,d,e){c=Error(c+\"\\nhttp:/"
+  },
+  {
+    "id": 24,
+    "url": "https://i.thsi.cn/images/quant/201707191022/icon4.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417980,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0001,\u0000\u0000\u0000�\b\u0006\u0000\u0000\u0000R��U\u0000\u0000\u0000\u0019tEXtSoftware\u0000Adobe ImageReadyq�e<\u0000\u0000\u0003fiTXtXML:com.adobe.xmp\u0000\u0000\u0000\u0000\u0000<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.3-c011 66.145661, 2012/02/06-14:56:27        \"> <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> <rdf:Description rdf:about=\"\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\" xmlns:stRef=\"http://ns.adobe.com/xap/1.0/sType/ResourceRef#\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmpMM:OriginalDocumentID=\"xmp.did:772B2B59D56DE7118D1CE9DFD125F633\" xmpMM:DocumentID=\"xmp.did:4C1D5848735C11E787C9C4742696712D\" xmpMM:InstanceID=\"xmp.iid:4C1D5847735C11E787C9C4742696712D\" xmp:CreatorTool=\"Adobe Photoshop CS6 (Windows)\"> <xmpMM:DerivedFrom stRef:instanceID=\"xmp.iid:B84D9FE27572E711AB2DE4B45127A4AE\" stRef:documentID=\"xmp.did:772B2B59D56DE7118D1CE9DFD125F633\"/> </rdf:Description> </rdf:RDF> </x:xmpmeta> <?xpacket end=\"r\"?>5ie�\u0000\u0000\u0019�IDATx��\t�\u0014Օ�O\u001b$��Ⴂ���DE��\b\u0002F\u0010pø$\u0010w�D��D\u0003��Fy��"
+  },
+  {
+    "id": 25,
+    "url": "https://i.thsi.cn/images/quant/Performanceicon.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417980,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000!\u0000\u0000\u0000!\b\u0006\u0000\u0000\u0000W��o\u0000\u0000\u0000\u0019tEXtSoftware\u0000Adobe ImageReadyq�e<\u0000\u0000\u0003&iTXtXML:com.adobe.xmp\u0000\u0000\u0000\u0000\u0000<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.6-c067 79.157747, 2015/03/30-23:40:42        \"> <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> <rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\" xmlns:stRef=\"http://ns.adobe.com/xap/1.0/sType/ResourceRef#\" xmp:CreatorTool=\"Adobe Photoshop CC 2015 (Windows)\" xmpMM:InstanceID=\"xmp.iid:4CA3FAE534DC11E99E70CBEBBD985A32\" xmpMM:DocumentID=\"xmp.did:4CA3FAE634DC11E99E70CBEBBD985A32\"> <xmpMM:DerivedFrom stRef:instanceID=\"xmp.iid:4CA3FAE334DC11E99E70CBEBBD985A32\" stRef:documentID=\"xmp.did:4CA3FAE434DC11E99E70CBEBBD985A32\"/> </rdf:Description> </rdf:RDF> </x:xmpmeta> <?xpacket end=\"r\"?>r�G�\u0000\u0000\u0000�IDATx�b�9{\u001e�@\u0003&:�w\u0018������v�\r61�\u0001�\u0001F(\u001e��\u0018\u0014i�\"G`MP�v�\r�bt�\u000e�\u00045\"�Ĩ#��#����t\u0004�٘\u0016�Ar6\u001e4i��E2���i�LjtФH\u001e-�F\u001d1�\bJ\u0000\u000b\u0012�"
+  },
+  {
+    "id": 26,
+    "url": "https://i.thsi.cn/images/quant/guideicon.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417980,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000@\u0000\u0000\u0000�\b\u0006\u0000\u0000\u0000'�(J\u0000\u0000\u0007�IDATx��yl\u0014U\u001c��L�-�\u0010�K0\u0018\u0011\u0015�#^1�1J\u0000\u000f4�\u0002\n*�\n\u0004#\u0011A\u0012P\u0014�x\u0003^�'* �\u001ab�\u00021\u001e�\u0007\n\u0005\u0014�P�B8\u000b؃�������ɸ;�m����{ɗ�����{�w��N2�4�rk�^��j��;��D�D-B�K������u��ԋ�F\f�\u000b@\u000e-&�\u0016u\u0015M\u0012�!Z�\u0005@��7am\u0016}b�\f\bi�h ;�@t���#�?��)\u001a$:Q�)�\u0013\u0019\u0000�D#EO�� ��xm�hyH��TwQ;��6v>\f\u0000�������K�^\"zQT,�\\�\b\u0001���EK�6��V �����O��O���/E��ɰgo\u0015�j�\u0017\b�>�ɢ�E\u0013}�/�̨\u0015�\u0010m���$a\u001eA[�+\n\u0000ڈ\u001e\u0011���\u001f�(\u0017��9\rX�Iz�-�i��6\u0003�Tt��\u0006�2�\b���\u000fi�\n�L�`K�=W�\u001e\u0012��=�\u001a\u0000\u0018��\\�k}F���\"�B��FZr<s��t�D+�˟\bn��:��p�R��E���\u001b��%Uh�\u0012��~?e���f�6�����U|O}�\u0000�3\\T#��F\u0000\u0007����'\u0018\u0004%\u0019\u0017�F\u001a�;\u0018\u0016[\u0007�aѣts\bu�\u001d���ʹ<\u001e�q�����o{\t5\u0016�+�\u00000�\u001dF��c�ĥ�.� d\u00068�\u0018�2�=G��\u0011�un�3ʤ�\r�!��\b\u0003���F4�F�0\u001c>��TLWh%�t\r\u001e`��\u0007S�Ґ��p���}��U�\u0014�@;s'3Dk\u0003�8G��\u0017\u0007�#�)z7�g�g�\b{1��p?�\u001c�\u0001��\n��\u0011`g\u001a�\n�>Zo\u0004CkD�i\u0007�5��#yo)g�2��H��0\u0018:h+\u0000t���.���\u001c�\u0019��\u001c��!��0z����_�n��[o{2�\u0011�GC5�\u001f\u001e��{��'��\u0005V�6\u0004B�Ȥ���w��b^0�w}���榉�\u0016q�O�L�o���/dvi�4\u0003\f=�\u0014F�\u000f�:rV�R\u0004=���/�^�tzQTf@����B�2J�9]Zː��\u0006t�\u0017H�Ӛ0�Gi\u0006��>\u00063_3W��J\u0011��/X\u001c�K����LB\nf��&s���H\u0010�#vz\b��\u0001��-|#��\u000f\r�R�#�gL\u0011Y\u0000�>�5�\u000b�f\u001d\b\u0001���N�-]�\u0010�\u0014\u001fp֘�\u0003��Y��Z�\r�hM�V2�Z��ڤ[�{ܩ1�c��\u0001(t��'�H�7W�5qy�]��\u001b��\u000e�2"
+  },
+  {
+    "id": 27,
+    "url": "https://i.thsi.cn/images/quant/factor/factoricon.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417980,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000B\u0000\u0000\u0000B\b\u0006\u0000\u0000\u0000�T\u0000�\u0000\u0000\u0000\u0019tEXtSoftware\u0000Adobe ImageReadyq�e<\u0000\u0000\u0003&iTXtXML:com.adobe.xmp\u0000\u0000\u0000\u0000\u0000<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.6-c138 79.159824, 2016/09/14-01:09:01        \"> <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> <rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\" xmlns:stRef=\"http://ns.adobe.com/xap/1.0/sType/ResourceRef#\" xmp:CreatorTool=\"Adobe Photoshop CC 2017 (Windows)\" xmpMM:InstanceID=\"xmp.iid:E450C393C22911E8954BDA61420649E0\" xmpMM:DocumentID=\"xmp.did:E450C394C22911E8954BDA61420649E0\"> <xmpMM:DerivedFrom stRef:instanceID=\"xmp.iid:E450C391C22911E8954BDA61420649E0\" stRef:documentID=\"xmp.did:E450C392C22911E8954BDA61420649E0\"/> </rdf:Description> </rdf:RDF> </x:xmpmeta> <?xpacket end=\"r\"?>*laq\u0000\u0000\u0010�IDATx��[{�\u0015�\u0019?�ܻ,��'\u0006\u0014\u0016\u001f�\u001f\u001f+H[l��h�\n��U�Q.J1�d7�hZ����I�E��\u0005�U�GTd�\u0011��X\n�V*,���(K\u0013�A�K5���9����7sϝ;3�����\u0013>�޹"
+  },
+  {
+    "id": 28,
+    "url": "https://i.thsi.cn/images/quant/201711021212/strategy-monitor.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417980,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000\u001e\u0000\u0000\u0000<\b\u0006\u0000\u0000\u0000qT\n�\u0000\u0000\u0000\u0019tEXtSoftware\u0000Adobe ImageReadyq�e<\u0000\u0000\u0003viTXtXML:com.adobe.xmp\u0000\u0000\u0000\u0000\u0000<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.6-c138 79.159824, 2016/09/14-01:09:01        \"> <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> <rdf:Description rdf:about=\"\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\" xmlns:stRef=\"http://ns.adobe.com/xap/1.0/sType/ResourceRef#\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmpMM:OriginalDocumentID=\"xmp.did:28d45464-a1d9-8840-9fc4-565d1ee72b9e\" xmpMM:DocumentID=\"xmp.did:B90C7294B92611E78021F900AAB79E70\" xmpMM:InstanceID=\"xmp.iid:B90C7293B92611E78021F900AAB79E70\" xmp:CreatorTool=\"Adobe Photoshop CC 2017 (Windows)\"> <xmpMM:DerivedFrom stRef:instanceID=\"xmp.iid:19f34705-633a-4311-89e2-198768eff0cd\" stRef:documentID=\"xmp.did:28d45464-a1d9-8840-9fc4-565d1ee72b9e\"/> </rdf:Description> </rdf:RDF> </x:xmpmeta> <?xpacket end=\"r\"?>\n��\u0016\u0000\u0000\u0005@IDATx�ܙ}h�U\u0018��\\\u0016��(�\u00195\u0015m��I��b"
+  },
+  {
+    "id": 29,
+    "url": "https://i.thsi.cn/images/quant/201608191400/icon.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022417980,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000�\u0000\u0000\u0000�\b\u0006\u0000\u0000\u0001S�\fA\u0000\u0000\u0000\tpHYs\u0000\u0000\u000b\u0013\u0000\u0000\u000b\u0013\u0001\u0000��\u0018\u0000\u0000\nMiCCPPhotoshop ICC profile\u0000\u0000xڝSwX��\u0016>��e\u000fVB��l�\u0000\"#�\b�\u0010Y�\u0010�\u0000a�\u0010\u0012@Ņ�\nV\u0014\u0015\u0011�HUĂ�\nH���(�gA��Z�U\\8�\u001fܧ�}z�����������y�\u000f�\u0011\u0012&��j\u00009R�<:�\u001f�OH�ɽ�\u0002\u0015H�\u0004 \u0010���g\u0005�\u0000\u0000�\u0003yx~t�?�\u0001�o\u0000\u0002\u0000p�.$\u0012�����P&W\u0000 �\u0000�\"\u0012�\u000b\u0001�R\u0000�.T�\u0014\u0000�\u0018\u0000�S�d\n\u0000�\u0000\u0000ly|B\"\u0000�\r\u0000��I>\u0005\u0000ة��\u0017\u0000آ\u001c�\b\u0000�\u0001\u0000�(G$\u0002@�\u0000`U�R,\u0002��\u0000��@\".\u0004��\u0001�Y�2G\u0002��\u0005\u0000v�X�\u000f@`\u0000��B,�\u0000 8\u0002\u0000C\u001e\u0013�\u0003 L\u0003�0ҿ�_p��H\u0001\u0000�˕͗K�3\u0014���\u001aw����!��l�Ba\u0017)\u0010f\t�\"���#\u0013H�\u0003L�\f\u0000\u0000\u001a����8?������f�l��Ţ�k�o\">!�����\u0002\u0004\u0000\u0010N���_���\u0003p�\u0001�u�k�[\u0000�V\u0000h��]3�\t�Z\n�z��y8�@\u001e��P�<\u001d\u001c\n\u000b\u000b�%b��0�>�3�o��~��@\u001e��z�\u0000q�@������qanv�R���\u0004B1n��#�ǅ��)��4�\\,\u0015��X��P\"M�y�R�D!ɕ�\u0012�2�\u001f��\t�w\r\u0000��O�N�\u0007��l�~�\u0001\u0002�\u000eX�v\u0000@~�-�\u001a\u000b�\u0000\u0010g42y�\u0000\u0000����@+\u0001\u0000͗��\u0000\u0000��\u0018\\��\u0017L�\b\u0000\u0000D��*�A\u0007\f�\u0014��\u000e��\u001d��\u0017\u0002a\u0006D@\f$�<\u0010B\u0006�\u001c\n�\u0018�A\u0019T�:�\u0004��\u0003\u001a�\u0011��\u0010��18\r��\u0012\\��p\u0017\u0006`\u0018��\u0018��\t\u0004A�\b\u0013a!:�\u0011b��\"�\b\u0017��\u0004\"aH4��� �\u0014Q\"��r�\u0002�Bj�]H#�-r\u00149�\\@���� 2����G1���Q\u0003�\u0002u@��\u001f\u001a�Ơs�t4\u000f]���k�\u001a�\u001e=�����K�ut\u0000}��c��1\u000ef��a\\��E`�X\u001a&�\u0016c�X5V�5c\u001dX7v\u0015\u001b��a�\b$\u0002��\u0013�\b^�\u0010�l���GXLXC�%�#�\u0012�\bW\t��1�'\"��O�%z\u0012��xb:��XF�&�!\u001e!�%^'\u000e\u0013_�H$\u000eɒ�N\n!%�2I\u000bIkH�H-�S�>�\u0010i�L&�m���\b��� ����\u000f�O�����\u0014:ň�L\t�$R��\u0012J"
+  },
+  {
+    "id": 30,
+    "url": "https://s.thsi.cn/js/quant/lib/wdatepicker/skin/WdatePicker.css",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418022,
+    "status": 200,
+    "response": "@charset \"utf-8\";\r\n.Wdate{\r\n\tborder:#999 1px solid;\r\n\theight:20px;\r\n\tbackground:#fff url(datePicker.gif) no-repeat right;\r\n}\r\n.Wdate::-ms-clear{display:none;}\r\n\r\n.WdateFmtErr{\r\n\tfont-weight:bold;\r\n\tcolor:red;\r\n}"
+  },
+  {
+    "id": 31,
+    "url": "https://stat.10jqka.com.cn/q?dt=27&tt=49&rt=60&bt=136&opentime=0&sp=1&id=mindgo_wdcl_clyj_index&ld=browser&size=1400x900&url=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&cs=1400x900&ts=1775022418021",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418022,
+    "status": 200,
+    "response": ""
+  },
+  {
+    "id": 32,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/js/study-index.js",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418027,
+    "status": 200,
+    "response": "/*! jQuery v1.8.3 jquery.com | jquery.org/license */\n!function(t,e){function n(t,n,i){if(i===e&&1===t.nodeType){var r=\"data-\"+n.replace(ct,\"-$1\").toLowerCase();if(\"string\"==typeof(i=t.getAttribute(r))){try{i=\"true\"===i||\"false\"!==i&&(\"null\"===i?null:+i+\"\"===i?+i:lt.test(i)?V.parseJSON(i):i)}catch(t){}V.data(t,n,i)}else i=e}return i}function i(t){var e;for(e in t)if((\"data\"!==e||!V.isEmptyObject(t[e]))&&\"toJSON\"!==e)return!1;return!0}function r(){return!1}function a(){return!0}function o(t){return!t||!t.parentNode||11===t.parentNode.nodeType}function s(t,e){do{t=t[e]}while(t&&1!==t.nodeType);return t}function l(t,e,n){if(e=e||0,V.isFunction(e))return V.grep(t,(function(t,i){return!!e.call(t,i,t)===n}));if(e.nodeType)return V.grep(t,(function(t,i){return t===e===n}));if(\"string\"==typeof e){var i=V.grep(t,(function(t){return 1===t.nodeType}));if(jt.test(e))return V.filter(e,i,!n);e=V.filter(e,i)}return V.grep(t,(function(t,i){return V.inArray(t,e)>=0===n}))}function c(t){var e=Ot.split(\"|"
+  },
+  {
+    "id": 33,
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18309532829124685748_1775022418081",
+    "method": "POST",
+    "postData": "datatype=jsonp&isajax=1",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+    },
+    "time": 1775022418097,
+    "status": 200,
+    "response": "jQuery18309532829124685748_1775022418081({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  },
+  {
+    "id": 34,
+    "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+    "method": "POST",
+    "postData": "isajax=1",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+    },
+    "time": 1775022418097,
+    "status": 200,
+    "response": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"docs\":[{\"id\":\"3\",\"title\":\"\\u672c\\u5730SDK\",\"order\":5},{\"id\":\"4\",\"title\":\"API \\u6587\\u6863\",\"order\":4},{\"id\":\"8\",\"title\":\"\\u56e0\\u5b50\\u7814\\u7a76\",\"order\":0},{\"id\":\"10\",\"title\":\"\\u6a21\\u62df\\u4eff\\u771f\",\"order\":2},{\"id\":\"12\",\"title\":\"\\u56de\\u6d4b\\u5f15\\u64ce\",\"order\":1},{\"id\":\"14\",\"title\":\"\\u7814\\u7a76\\u73af\\u5883\\/\\u5b9e\\u76d8\",\"order\":3},{\"id\":\"16\",\"title\":\"\\u5e38\\u89c1\\u95ee\\u9898\",\"order\":6},{\"id\":\"20\",\"title\":\"\\u56e0\\u5b50\\u6570\\u636e\\u4ea7\\u54c1\",\"order\":7},{\"id\":\"22\",\"title\":\"\\u667a\\u80fd\\u4ea4\\u6613\\u5728\\u7ebf\\u6587\\u6863\",\"order\":8},{\"id\":\"24\",\"title\":\"AI Lab\",\"order\":9}]}}"
+  },
+  {
+    "id": 35,
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18309532829124685748_1775022418082",
+    "method": "POST",
+    "postData": "isajax=1&datatype=jsonp",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+    },
+    "time": 1775022418113,
+    "status": 200,
+    "response": "jQuery18309532829124685748_1775022418082({\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"});"
+  },
+  {
+    "id": 36,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/img/upgrade.svg",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/css/study-index.css",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418113,
+    "status": 200,
+    "response": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M6.44436 14.0371C6.16822 14.0371 5.94436 13.8133 5.94436 13.5371L5.94474 8.00011L3.13882 7.99971C2.86267 7.99971 2.63882 7.77585 2.63882 7.49971C2.63882 7.36907 2.68995 7.24362 2.78127 7.1502L7.59223 2.22867C7.78526 2.0312 8.10183 2.02761 8.29929 2.22064L8.30733 2.22867L13.1183 7.1502C13.3113 7.34767 13.3077 7.66423 13.1103 7.85726C13.0168 7.94858 12.8914 7.99971 12.7607 7.99971L9.94474 8.00011L9.94436 13.5371C9.94436 13.8133 9.72051 14.0371 9.44436 14.0371H6.44436Z\" fill=\"white\"/>\n</svg>\n"
+  },
+  {
+    "id": 37,
+    "url": "https://s.thsi.cn/cd/b2blh-supermind-php/img/icon/search.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://s.thsi.cn/cd/b2blh-supermind-php/978160d92aa400213bcd58f9011aee4921690a1d/css/study-index.css",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418113,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000\u0010\u0000\u0000\u0000\u0010\b\u0006\u0000\u0000\u0000\u001f��a\u0000\u0000\u0000\tpHYs\u0000\u0000\u000b\u0013\u0000\u0000\u000b\u0013\u0001\u0000��\u0018\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000\u0004gAMA\u0000\u0000��\u000b�a\u0005\u0000\u0000\u0001mIDATx\u0001�SAR�@\u0010�͢�1O�\u001f�\u000f�\u0007\\��!wT�\u0005�\u0017\u0004�\u0007���\u0002x\u0002O�\t\\E�kϚ\u0015J#����d3�3�3�\u0001N4����u��͓�s�ҵᥕ\u0005&/#3>���>M��WPK��)�\u0003c\u001e5y���:�hL�f�+A\u001e���̞ͼ\u0000Y�Z��<�j\\͇f#�(\u001cJe\u0007��`1����P,ynY(7��='\u0002���C�U\u001d\u001e�\u001e��4�N \u0003��Q��5�|�\u0017;��\b8m\u0019X�\u0004��m�3�\u0019�\u0011���(c���~��3\u001f�2���<pu�`�\u0016ڞ���Sd2�\u0005�`��{���cID+��Vi�\t�Jذ�\u000e,\u00166���.\u001d|h̃Xry'�.�,$�\u001c���&ܞ�(�/��2m\u0006�~O�:sf\u0017yY'\\�ٓ\u0019��ය\u001c\u0016��\u000e�m\u0005ˀƷ�M��o�F�\u0012��'s���_���\u0000\u0000\u0000\u0000IEND�B`�"
+  },
+  {
+    "id": 38,
+    "url": "https://i.thsi.cn/images/quant/201706161111/empty.png",
+    "method": "GET",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418113,
+    "status": 200,
+    "response": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000�\u0000\u0000\u0000�\b\u0006\u0000\u0000\u0000�X��\u0000\u0000\u0000\u0019tEXtSoftware\u0000Adobe ImageReadyq�e<\u0000\u0000\u0003\"iTXtXML:com.adobe.xmp\u0000\u0000\u0000\u0000\u0000<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.3-c011 66.145661, 2012/02/06-14:56:27        \"> <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> <rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\" xmlns:stRef=\"http://ns.adobe.com/xap/1.0/sType/ResourceRef#\" xmp:CreatorTool=\"Adobe Photoshop CS6 (Windows)\" xmpMM:InstanceID=\"xmp.iid:D0AF7D17523F11E7A268818505C8F268\" xmpMM:DocumentID=\"xmp.did:D0AF7D18523F11E7A268818505C8F268\"> <xmpMM:DerivedFrom stRef:instanceID=\"xmp.iid:D0AF7D15523F11E7A268818505C8F268\" stRef:documentID=\"xmp.did:D0AF7D16523F11E7A268818505C8F268\"/> </rdf:Description> </rdf:RDF> </x:xmpmeta> <?xpacket end=\"r\"?>��j;\u0000\u0000\u0019:IDATx��]�u۸\u0012������p+\bo\u0005f*��\u0002k+�R��\u0015D��J\u0005�T\u0010���+�܁Ҁp1��\u0004)��[ 9���%�\u00108\u001f�y��R4�����I~U�}\u0011\u0002��I���P0\u000f���dΐ��{Y�P0��kd��"
+  },
+  {
+    "id": 39,
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/access_token",
+    "method": "POST",
+    "postData": "{\"app_key\":\"c83ebad679\",\"app_version\":\"none\",\"device_id\":\"398a1ec8e19fd2a4081acb1bb3d018a4\",\"platform\":\"web\",\"platform_version\":\"Intel Mac OS X 10_15_7\",\"log_version\":\"0.0.1-alpha.27\"}",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418208,
+    "status": 200,
+    "response": "{\"code\":0,\"msg\":\"success\",\"data\":{\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyODE2MTgsImRldmljZUlkIjoiMzk4YTFlYzhlMTlmZDJhNDA4MWFjYjFiYjNkMDE4YTQiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.9kik5mh4E5rfJRjQxcLtOWRz2wgCBT3XG1d_a9qZ2ys\",\"sign\":\"b2bsm\",\"produce_id\":\"177502118372210.244.104.195yz190881\",\"config_version\":\"d1e1fa590edc442cbc48beb34ce6ddd7\"}}"
+  },
+  {
+    "id": 40,
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63u0v9164889671za200zd9164889671&_p=1775022418018&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=873632299.1775022418&ul=zh-cn&sr=1400x900&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_s=1&tag_exp=0~115938466~115938468~116991816&sid=1775022418&sct=1&seg=0&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=519",
+    "method": "POST",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418225,
+    "status": 204
+  },
+  {
+    "id": 41,
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_config",
+    "method": "POST",
+    "postData": "{\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyODE2MTgsImRldmljZUlkIjoiMzk4YTFlYzhlMTlmZDJhNDA4MWFjYjFiYjNkMDE4YTQiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.9kik5mh4E5rfJRjQxcLtOWRz2wgCBT3XG1d_a9qZ2ys\",\"sign\":\"b2bsm\"}",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418342,
+    "status": 200,
+    "response": "{\"code\":0,\"msg\":\"success\",\"data\":{\"ak\":\"i0Cq8UpNC4xAFkHJqAHpvCW7EMOXVSPXxaBjY10DeEAq=X=y\",\"batch_size\":20,\"buffer_s\":10,\"config_version\":\"d1e1fa590edc442cbc48beb34ce6ddd7\"}}"
+  },
+  {
+    "id": 42,
+    "url": "https://cbasspider.10jqka.com.cn:8443/spider/api/v1/report/track_info",
+    "method": "POST",
+    "postData": "{\"msg_encrypt\":\"AktDKqJwMIGvap/1vDA3DhAFP1X9RHENxNeTJW11CLKOUQ6P1nEj/mq+u52048+YMt8MfOW5htkrJ/emS5vZWhwFPzdF7Oi6FabuIZmao97QSvOAtMX+7LJigz2OGEhqKYjp7trmq/BS8mqQyULptA==\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBWZXIiOiJub25lIiwibG9nVmVyIjoiMC4wLjEtYWxwaGEuMjciLCJleHAiOjE3NzUyODE2MTgsImRldmljZUlkIjoiMzk4YTFlYzhlMTlmZDJhNDA4MWFjYjFiYjNkMDE4YTQiLCJwbGF0Zm9ybSI6IndlYiIsImRldmljZUluZm8iOiJub25lIiwicGxhdGZvcm1WZXIiOiJJbnRlbCBNYWMgT1MgWCAxMF8xNV83In0.9kik5mh4E5rfJRjQxcLtOWRz2wgCBT3XG1d_a9qZ2ys\",\"produce_id\":\"177502118372210.244.104.195yz190881\",\"queue_id\":65313933,\"sign\":\"b2bsm\",\"send_time\":1775022418397}",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022418398,
+    "status": 200,
+    "response": "{\"code\":0,\"msg\":\"success\",\"data\":\"\"}"
+  },
+  {
+    "id": 43,
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63u0v9164889671za200zd9164889671&_p=1775022418018&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=873632299.1775022418&ul=zh-cn&sr=1400x900&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAQ&_s=2&tag_exp=0~115938466~115938468~116991816&sid=1775022418&sct=1&seg=0&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fstudy-index.html&dt=%E7%AD%96%E7%95%A5%E7%A0%94%E7%A9%B6%20-%20SuperMind%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0&en=scroll&epn.percent_scrolled=90&_et=5&tfd=5527",
+    "method": "POST",
+    "postData": null,
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022423232,
+    "status": 204
+  },
+  {
+    "id": 44,
+    "url": "https://quant.10jqka.com.cn/platform/user/getauthdata",
+    "method": "POST",
+    "postData": "isajax=1",
+    "headers": {
+      "sec-ch-ua-platform": "\"macOS\"",
+      "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+      "content-type": "application/x-www-form-urlencoded",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "time": 1775022452001,
+    "status": 200,
+    "response": "{\"errorcode\":-1,\"errormsg\":\"\\u60a8\\u5c1a\\u672a\\u767b\\u5f55\\uff0c\\u8bf7\\u5148\\u767b\\u5f55\\u3002\",\"result\":\"\"}"
+  }
+]

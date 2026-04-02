@@ -1,0 +1,487 @@
+{
+  "strategyInfo": {
+    "algo_id": "67c935e607887b957629ad72",
+    "algo_name": "PSY交易策略",
+    "config": [],
+    "modified": "2026-03-30 20:38:33",
+    "backtest_id": "69ca6ec93d1ca490b3c629da",
+    "algonote": "",
+    "backtest_number": 1,
+    "running_number": 0,
+    "source": "CLOUD",
+    "stock_market": "STOCK",
+    "new_flag": true,
+    "folder_id": -1
+  },
+  "backtestHistory": {
+    "errorcode": 0,
+    "errormsg": "",
+    "result": {
+      "count": 1,
+      "algo_name": "PSY交易策略",
+      "history": [
+        {
+          "backtest_id": "67c935ed2ad7be00b52fc990",
+          "name": "PSY交易策略",
+          "created": "2025-03-06 13:43:09",
+          "modified": "2025-03-06 13:43:20",
+          "yield": 0.1758,
+          "max_drawdown": 0.2505,
+          "frequency": "DAILY",
+          "section": "2024-03-05--2025-02-28",
+          "status": "SUCCESS",
+          "config": "--",
+          "is_monitor": false,
+          "monitor_time": "--"
+        }
+      ]
+    }
+  },
+  "totalCalls": 12,
+  "backtestApis": [
+    {
+      "id": 4,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/querylatest/?callback=jQuery18307959640262859605_1775096286036",
+      "method": "POST",
+      "postData": "algoId=67c935e607887b957629ad72&query=status&datatype=jsonp&isajax=1",
+      "time": 1775096286054,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "algo_name": "PSY交易策略",
+          "status": "SUCCESS",
+          "backtest_id": "67c935ed2ad7be00b52fc990"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/queryall/?callback=jQuery18307959640262859605_1775096286037",
+      "method": "POST",
+      "postData": "complete=false&algo_id=67c935e607887b957629ad72&page=1&num=10&datatype=jsonp&isajax=1",
+      "time": 1775096286054,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "count": 1,
+          "algo_name": "PSY交易策略",
+          "history": [
+            {
+              "backtest_id": "67c935ed2ad7be00b52fc990",
+              "name": "PSY交易策略",
+              "created": "2025-03-06 13:43:09",
+              "modified": "2025-03-06 13:43:20",
+              "yield": 0.1758,
+              "max_drawdown": 0.2505,
+              "frequency": "DAILY",
+              "section": "2024-03-05--2025-02-28",
+              "status": "SUCCESS",
+              "config": "--",
+              "is_monitor": false,
+              "monitor_time": "--"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 7,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/checkaddedmonitor/?callback=jQuery18307959640262859605_1775096286037",
+      "method": "POST",
+      "postData": "backtestid=67c935ed2ad7be00b52fc990&datatype=jsonp&isajax=1",
+      "time": 1775096287028,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": []
+      }
+    },
+    {
+      "id": 11,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/queryall/",
+      "method": "POST",
+      "postData": "isajax=1&algo_id=67c935e607887b957629ad72",
+      "time": 1775096293733,
+      "status": 200
+    }
+  ],
+  "allCalls": [
+    {
+      "id": 0,
+      "url": "https://quant.10jqka.com.cn/platform/message/hasnew?callback=jQuery18307959640262859605_1775096286033",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775096286053,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "hasNew": true,
+          "systemMessageCount": 1,
+          "userMessageCount": 0
+        }
+      }
+    },
+    {
+      "id": 1,
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18307959640262859605_1775096286034",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775096286053,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "third_parties": "",
+          "cpu_quota": 2,
+          "auto_simu": 0,
+          "name_server_quota": 0,
+          "auto_trade": false,
+          "disk_quota": 1024,
+          "dash_server_quota": 0,
+          "backtest_analysis": 0,
+          "metal_enable": false,
+          "forex_enable": false,
+          "vip_apis": [],
+          "memory_request": 0,
+          "user_id": "772028948",
+          "terminals_enable": false,
+          "broker_quota": 3,
+          "image_spec": "",
+          "factor_num_quota": 5,
+          "inner": 0,
+          "memory_quota": 2048,
+          "jupyter_cron": "crontabs",
+          "inactive_limit": 0,
+          "factor_group_quota": 3,
+          "sklearn_enable": 0,
+          "simulate_quota": 5,
+          "algorithm_quota": 3,
+          "tick_enable": false,
+          "sfactor_monitor_quota": 3,
+          "auto_enable": 0,
+          "research_age": 24,
+          "download_quota": 50,
+          "sfactor_enable": 1,
+          "node_selector": "",
+          "cpu_request": 0,
+          "vip": false,
+          "jupyter_share": "",
+          "backtest_monitor_quota": 10,
+          "sfactor_quota": 3
+        }
+      }
+    },
+    {
+      "id": 2,
+      "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+      "method": "POST",
+      "postData": "isajax=1",
+      "time": 1775096286054,
+      "status": 200
+    },
+    {
+      "id": 3,
+      "url": "https://quant.10jqka.com.cn/platform/algorithms/queryinfo/?callback=jQuery18307959640262859605_1775096286035",
+      "method": "POST",
+      "postData": "algoId=67c935e607887b957629ad72&datatype=jsonp&isajax=1",
+      "time": 1775096286054,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "language": "PYTHON",
+          "user_id": "772028948",
+          "backtest_number": 1,
+          "created": "2025-03-06T13:43:02",
+          "modified": "2026-03-30T20:38:33",
+          "compiling_number": 0,
+          "algo_name": "PSY交易策略",
+          "_id": "67c935e607887b957629ad72",
+          "algo_gen_method": "MANUAL",
+          "stock_market": "STOCK",
+          "algo_code": "# 问财+PSY策略\r\n# 每日通过问财选股，选出的股票中，若PSY向下突破15则买入；\r\n# 在持有的股票中，若PSY向上突破85则卖出。\r\n# 此策略为日级，经简单修改可改为问财+分钟级PSY选股。\r\n# 问财语句可调整，也可进一步加入止损和最大持仓日限制。\r\n\r\n# --- 1.导入所需库包----------------------------------------------------------------\r\nimport numpy as np\r\n\r\n# --- 2.初始化账户------------------------------------------------------------------\r\ndef init(context):\r\n    context.n = 4 # 设置交易股票数量\r\n    # 使用get_iwencai函数进行智能选股\r\n    get_iwencai('PB<1，dde大单净量由大到小排名')\r\n\r\n# --- 3.自定义PSY函数----------------------------------------------------------\r\ndef PSY_cal(prices, timeperiod=12):\r\n    PSY = np.zeros(len(prices))\r\n    for i in range(len(PSY)):\r\n        PSY[i] = np.nan\r\n    if len(prices) <= timeperiod:\r\n        return PSY\r\n    for i in range(timeperiod, len(prices)):\r\n        PSY[i] = 0\r\n        for j in range(timeperiod):\r\n            if prices[i-j] > prices[i-j-1]:\r\n                PSY[i] += 1\r\n        PSY[i] *= 100/timeperiod\r\n    return PSY\r\n\r\n# --- 4. 盘中设置买卖条件，每个交易频率（日/分钟）调用一次-------------\r\ndef handle_bar(context, bar_dict):\r\n    # 卖出股票\r\n    for stock in list(context.portfolio.stock_account.positions.keys()):\r\n        # 获取股票收盘价数据\r\n        values = history(stock, ['close'], 14, '1d', False, None)\r\n        if values.empty or len(values) < 14:\r\n            continue\r\n        # 计算PSY值\r\n        PSY = PSY_cal(values['close'].values, timeperiod=12)\r\n        # 若PSY向上突破85，则卖出股票\r\n        if PSY[-2] < 85 and PSY[-1] > 85:\r\n            order_target(stock, 0)\r\n    \r\n    # 买入股票\r\n    for stock in context.iwencai_securities:\r\n        # 若股票数量到达限制，则跳出\r\n        if len(list(context.portfolio.stock_account.positions.keys())) >= context.n:\r\n            break\r\n        if stock not in list(context.portfolio.stock_account.positions.keys()):\r\n            # 获取股票收盘价数据\r\n            values = history(stock, ['close'], 14, '1d', False, None)\r\n            if values.empty or len(values) < 14:\r\n                continue\r\n            # 计算PSY值\r\n            PSY = PSY_cal(values['close'].values, timeperiod=12)\r\n            # 若PSY向下突破15，则买入1/n仓位的股票\r\n            if PSY[-2] > 15 and PSY[-1] < 15:\r\n                order_target_percent(stock, 1/context.n)\r\n"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/querylatest/?callback=jQuery18307959640262859605_1775096286036",
+      "method": "POST",
+      "postData": "algoId=67c935e607887b957629ad72&query=status&datatype=jsonp&isajax=1",
+      "time": 1775096286054,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "algo_name": "PSY交易策略",
+          "status": "SUCCESS",
+          "backtest_id": "67c935ed2ad7be00b52fc990"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/queryall/?callback=jQuery18307959640262859605_1775096286037",
+      "method": "POST",
+      "postData": "complete=false&algo_id=67c935e607887b957629ad72&page=1&num=10&datatype=jsonp&isajax=1",
+      "time": 1775096286054,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "count": 1,
+          "algo_name": "PSY交易策略",
+          "history": [
+            {
+              "backtest_id": "67c935ed2ad7be00b52fc990",
+              "name": "PSY交易策略",
+              "created": "2025-03-06 13:43:09",
+              "modified": "2025-03-06 13:43:20",
+              "yield": 0.1758,
+              "max_drawdown": 0.2505,
+              "frequency": "DAILY",
+              "section": "2024-03-05--2025-02-28",
+              "status": "SUCCESS",
+              "config": "--",
+              "is_monitor": false,
+              "monitor_time": "--"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 6,
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63v0v9164889671za200zd9164889671&_p=1775096285935&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=79049458.1775037622&ul=zh-cn&sr=1400x900&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAQ&_s=1&tag_exp=0~115938465~115938469~116991817&sid=1775095742&sct=3&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fbackreport-history.html&dt=%E5%9B%9E%E6%B5%8B%E5%88%97%E8%A1%A8-SuperMind&en=page_view&_ee=1&tfd=670",
+      "method": "POST",
+      "postData": "",
+      "time": 1775096286311,
+      "status": 204
+    },
+    {
+      "id": 7,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/checkaddedmonitor/?callback=jQuery18307959640262859605_1775096286037",
+      "method": "POST",
+      "postData": "backtestid=67c935ed2ad7be00b52fc990&datatype=jsonp&isajax=1",
+      "time": 1775096287028,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": []
+      }
+    },
+    {
+      "id": 8,
+      "url": "https://quant.10jqka.com.cn/platform/user/checknewcomments?callback=jQuery18307959640262859605_1775096286035",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "time": 1775096287048,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": 0
+      }
+    },
+    {
+      "id": 9,
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-KQBDS1VPQF&gtm=45je63v0v9164889671za200zd9164889671&_p=1775096285935&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=79049458.1775037622&ul=zh-cn&sr=1400x900&uaa=arm&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAQ&_s=2&tag_exp=0~115938465~115938469~116991817&sid=1775095742&sct=3&seg=1&dl=https%3A%2F%2Fquant.10jqka.com.cn%2Fview%2Fbackreport-history.html&dt=%E5%9B%9E%E6%B5%8B%E5%88%97%E8%A1%A8-SuperMind&en=scroll&epn.percent_scrolled=90&_et=2&tfd=5674",
+      "method": "POST",
+      "postData": "",
+      "time": 1775096291315,
+      "status": 204
+    },
+    {
+      "id": 10,
+      "url": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/",
+      "method": "POST",
+      "postData": "isajax=1&datatype=jsonp",
+      "time": 1775096292833,
+      "status": 200,
+      "responseJson": {
+        "errorcode": 0,
+        "errormsg": "",
+        "result": {
+          "strategys": [
+            {
+              "algo_id": "67c935e607887b957629ad72",
+              "algo_name": "PSY交易策略",
+              "config": [],
+              "modified": "2026-03-30 20:38:33",
+              "backtest_id": "69ca6ec93d1ca490b3c629da",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": true,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67da5bb71d3a656411312359",
+              "algo_name": "高股息-小市值优选策略(副本)",
+              "config": [],
+              "modified": "2025-03-19 13:55:02",
+              "backtest_id": "67da5c372626dd7b856cd590",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d91c5707887bfc5a2cae7d",
+              "algo_name": "112(副本)",
+              "config": [],
+              "modified": "2025-03-19 08:56:54",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67d8d13b14af672ef8850fd0",
+              "algo_name": "tt",
+              "config": [],
+              "modified": "2025-03-18 09:59:00",
+              "backtest_id": "67d8d22a1d10da749f9c8685",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c939922626dd4214718b7a",
+              "algo_name": "三因子选股模型",
+              "config": [],
+              "modified": "2025-03-06 13:59:44",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c90a8a1544e184b67ed697",
+              "algo_name": "SAR交易策略",
+              "config": [],
+              "modified": "2025-03-06 10:39:05",
+              "backtest_id": "67c90a976aada88ead2d4d33",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c905a61544e184b67ed690",
+              "algo_name": "多因子alpha",
+              "config": [],
+              "modified": "2025-03-06 10:18:13",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c8ff700f7cad1155d115a7",
+              "algo_name": "彼得林奇PEG价值选股策略",
+              "config": [],
+              "modified": "2025-03-06 09:59:42",
+              "backtest_id": "67c9016bd6aa7c457a87975e",
+              "algonote": "",
+              "backtest_number": 2,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81be1e57bbe251ebdb749",
+              "algo_name": "MACD交易策略",
+              "config": [],
+              "modified": "2025-03-05 17:40:47",
+              "backtest_id": "67c81c066aada88ead2d4b1d",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c81b1909b3e32628f49240",
+              "algo_name": "222",
+              "config": [],
+              "modified": "2025-03-05 17:37:29",
+              "backtest_id": false,
+              "algonote": "",
+              "backtest_number": 0,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            },
+            {
+              "algo_id": "67c819251d10da308ef50099",
+              "algo_name": "ff",
+              "config": [],
+              "modified": "2025-03-05 17:36:11",
+              "backtest_id": "67c8198c0f7cad1155d113b9",
+              "algonote": "",
+              "backtest_number": 1,
+              "running_number": 0,
+              "source": "CLOUD",
+              "stock_market": "STOCK",
+              "new_flag": false,
+              "folder_id": -1
+            }
+          ],
+          "folders": []
+        }
+      }
+    },
+    {
+      "id": 11,
+      "url": "https://quant.10jqka.com.cn/platform/backtest/queryall/",
+      "method": "POST",
+      "postData": "isajax=1&algo_id=67c935e607887b957629ad72",
+      "time": 1775096293733,
+      "status": 200
+    }
+  ],
+  "timestamp": 1775096324435
+}

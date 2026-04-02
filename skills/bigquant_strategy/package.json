@@ -1,0 +1,30 @@
+{
+  "name": "bigquant-strategy",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "在 BigQuant AIStudio 中运行策略代码和回测",
+  "main": "run-skill.js",
+  "scripts": {
+    "capture": "node browser/capture-session.js",
+    "manual-capture": "node browser/manual-capture.js",
+    "run": "node run-skill.js",
+    "strategy": "node run-strategy.js",
+    "list": "node list-strategies.js",
+    "report": "node fetch-report.js",
+    "test": "node test-all.js",
+    "test:api": "node test-api.js",
+    "test:session": "node test-session.js",
+    "test:strategy": "node test-strategy.js",
+    "test:backtest": "node test-backtest.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "minimist": "^1.2.8",
+    "playwright": "^1.41.0",
+    "ws": "^8.20.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

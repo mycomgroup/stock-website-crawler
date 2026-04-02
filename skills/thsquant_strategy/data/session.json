@@ -1,0 +1,245 @@
+{
+  "cookies": [
+    {
+      "name": "uid",
+      "value": "CvQMUGnM7LUzPNIKA4CjAg==",
+      "domain": "stat.10jqka.com.cn",
+      "path": "/",
+      "expires": 1809597621.615366,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.79049458.1775037622",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1809597621.949637,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "PHPSESSID",
+      "value": "serhi1ou8mrhj4nrire9oj2rf274gs6j",
+      "domain": "upass.10jqka.com.cn",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ta_random_userid",
+      "value": "pf3hw2r2eu",
+      "domain": "upass.10jqka.com.cn",
+      "path": "/",
+      "expires": 1809597626.000035,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "u_ukey",
+      "value": "A10702B8689642C6BE607730E11E6E4A",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1776081152.599926,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "u_uver",
+      "value": "1.0.0",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1776081152.600011,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "u_dpass",
+      "value": "qhhx%2Bp%2B5R19Ic6juenvmYFCcyYrj82EILrq6Ko8bg9GruiwfLXnJiwSDoUoIn7fdHi80LrSsTFH9a%2B6rtRvqGg%3D%3D",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1776081152.600024,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "u_did",
+      "value": "6C5A6593E67B4912AEC7F9FA8DB27D60",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1776081152.600039,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "u_ttype",
+      "value": "WEB",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1776081152.600045,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ttype",
+      "value": "WEB",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775124037.996446,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ths_login_uname",
+      "value": "mx_kj1ku00qp",
+      "domain": "upass.10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996481,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "user",
+      "value": "MDpteF9rajFrdTAwcXA6Ok5vbmU6NTAwOjc4MjAyODk0ODo3LDExMTExMTExMTExLDQwOzQ0LDExLDQwOzYsMSw0MDs1LDEsNDA7MSwxMDEsNDA7MiwxLDQwOzMsMSw0MDs1LDEsNDA7OCwwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMSw0MDsxMDIsMSw0MDoxNjo6Ojc3MjAyODk0ODoxNzc1MDM3NjM3Ojo6MTc0MTE2NjgyMDo2MDQ4MDA6MDoxYTBmYmYxNTNkZDNlMzUxY2M4ZDYyZmQ5ZDY2OTlkZjI6ZGVmYXVsdF81OjA%3D",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996488,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "userid",
+      "value": "772028948",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996497,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "u_name",
+      "value": "mx_kj1ku00qp",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996503,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "escapename",
+      "value": "mx_kj1ku00qp",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996511,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ticket",
+      "value": "2c4b23a1600934c615f379c7cbd9ba91",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996516,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "user_status",
+      "value": "0",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996523,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "utk",
+      "value": "d8c8021ed35f28cfa374559d0c395d46",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996533,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sess_tk",
+      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6InNlc3NfdGtfMSIsImJ0eSI6InNlc3NfdGsifQ.eyJqdGkiOiJmMjlkNjlkNmQ5MmZkNmM4MWMzNTNlZGQ1M2YxZmJhMDEiLCJpYXQiOjE3NzUwMzc2MzcsImV4cCI6MTc3NTY0MjQzNywic3ViIjoiNzcyMDI4OTQ4IiwiaXNzIjoidXBhc3MuMTBqcWthLmNvbS5jbiIsImF1ZCI6IjIwMjAxMTE4NTI4ODkwNzIiLCJhY3QiOiJvZmMiLCJjdWhzIjoiNWJhZTE1OWNlOGQyNTk0ODJjZDQ1YjJjNDUxNDE0MThlZGEyNjZiZDAxYjg3OWE4Nzk1NzdkY2YxYWY0NjhhMiJ9.qshZZ1h_zvIHQbpJAIcg8bvRDeZStY0eZYTFNG-NKvzB_JFcdSaoLv98ftFNFQKN4KZswgtX978d2FpMqVnxgg",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.99654,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cuc",
+      "value": "20c38zh63uzi",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775642437.996548,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "v",
+      "value": "BIXsqtkwzKovysx6xokWVb6gCo8AYQBcAOsAvgDFADAAYaQyAJX4R_8zAeXf",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1806573638,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "quantoken",
+      "value": "c6de042b8bf50e1416ece7bb05be272857fcee20a30748ed588457f7776a47e732e5855c3cf28e8cc6b28b2552f5b9260c950a6f9c406a481fe6260e1e2872325a4159c6ee4adbddf246a823a783afd5",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1775296838.419324,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "QUANT_RESEARCH_SESSIONID",
+      "value": "ma3bulds64e5r2sfr1qhj85gr7",
+      "domain": "quant.10jqka.com.cn",
+      "path": "/",
+      "expires": 1775296838.419231,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_KQBDS1VPQF",
+      "value": "GS2.1.s1775095742$o3$g1$t1775096286$j60$l0$h0",
+      "domain": ".10jqka.com.cn",
+      "path": "/",
+      "expires": 1809656286.308762,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "timestamp": 1775096324309
+}

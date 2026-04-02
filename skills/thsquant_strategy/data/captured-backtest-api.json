@@ -1,0 +1,149 @@
+{
+  "allCalls": [
+    {
+      "url": "https://quant.10jqka.com.cn/platform/message/hasnew?callback=jQuery18309984312558447848_1775095306697",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775095306719,
+      "response": "jQuery18309984312558447848_1775095306697({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"hasNew\":true,\"systemMessageCount\":1,\"userMessageCount\":0}});",
+      "status": 200
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18309984312558447848_1775095306698",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775095306720,
+      "response": "jQuery18309984312558447848_1775095306698({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"user_id\":\"772028948\",\"auto_enable\":0,\"tick_enable\":false,\"jupyter_share\":\"\",\"backtest_analysis\":0,\"vip\":false,\"third_parties\":\"\",\"memory_request\":0,\"auto_trade\":false,\"sfactor_quota\":3,\"name_server_quota\":0,\"factor_num_quota\":5,\"sfactor_monitor_quota\":3,\"sklearn_enable\":0,\"algorithm_quota\":3,\"forex_enable\":false,\"metal_enable\":false,\"cpu_request\":0,\"sfactor_enable\":1,\"inner\":0,\"node_selector\":\"\",\"backtest_monitor_qu",
+      "status": 200
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/newhelp/directory",
+      "method": "POST",
+      "postData": "isajax=1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775095306722,
+      "response": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"docs\":[{\"id\":\"3\",\"title\":\"\\u672c\\u5730SDK\",\"order\":5},{\"id\":\"4\",\"title\":\"API \\u6587\\u6863\",\"order\":4},{\"id\":\"8\",\"title\":\"\\u56e0\\u5b50\\u7814\\u7a76\",\"order\":0},{\"id\":\"10\",\"title\":\"\\u6a21\\u62df\\u4eff\\u771f\",\"order\":2},{\"id\":\"12\",\"title\":\"\\u56de\\u6d4b\\u5f15\\u64ce\",\"order\":1},{\"id\":\"14\",\"title\":\"\\u7814\\u7a76\\u73af\\u5883\\/\\u5b9e\\u76d8\",\"order\":3},{\"id\":\"16\",\"title\":\"\\u5e38\\u89c1\\u95ee\\u9898\",\"order\":6},{\"id\":\"20\",\"title\":\"\\u56e0\\u5b50\\u6570\\u636e\\u4ea7\\u54c1\",\"o",
+      "status": 200
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata?callback=jQuery18309984312558447848_1775095306699",
+      "method": "POST",
+      "postData": "isajax=1&datatype=jsonp",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775095306738,
+      "response": "jQuery18309984312558447848_1775095306699({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"auto_simu\":0,\"disk_quota\":1024,\"jupyter_share\":\"\",\"forex_enable\":false,\"jupyter_cron\":\"crontabs\",\"sfactor_monitor_quota\":3,\"algorithm_quota\":3,\"factor_group_quota\":3,\"name_server_quota\":0,\"image_spec\":\"\",\"tick_enable\":false,\"backtest_monitor_quota\":10,\"dash_server_quota\":0,\"sklearn_enable\":0,\"sfactor_enable\":1,\"backtest_analysis\":0,\"factor_num_quota\":5,\"sfactor_quota\":3,\"vip_apis\":[],\"broker_quota\":3,\"user_id\":\"7720",
+      "status": 200
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/?callback=jQuery18309984312558447848_1775095306699",
+      "method": "POST",
+      "postData": "isajax=1&datatype=jsonp",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775095307006,
+      "response": "jQuery18309984312558447848_1775095306699({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"strategys\":[{\"algo_id\":\"67c935e607887b957629ad72\",\"algo_name\":\"PSY\\u4ea4\\u6613\\u7b56\\u7565\",\"config\":[],\"modified\":\"2026-03-30 20:38:33\",\"backtest_id\":\"69ca6ec93d1ca490b3c629da\",\"algonote\":\"\",\"backtest_number\":1,\"running_number\":0,\"source\":\"CLOUD\",\"stock_market\":\"STOCK\",\"new_flag\":true,\"folder_id\":-1},{\"algo_id\":\"67da5bb71d3a656411312359\",\"algo_name\":\"\\u9ad8\\u80a1\\u606f-\\u5c0f\\u5e02\\u503c\\u4f18\\u9009\\u7b56\\u7565(\\u5",
+      "status": 200
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/checknewcomments?callback=jQuery18309984312558447848_1775095306698",
+      "method": "POST",
+      "postData": "datatype=jsonp&isajax=1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775095307714,
+      "response": "jQuery18309984312558447848_1775095306698({\"errorcode\":0,\"errormsg\":\"\",\"result\":0});",
+      "status": 200
+    },
+    {
+      "url": "https://quant.10jqka.com.cn/platform/user/getauthdata",
+      "method": "POST",
+      "postData": "isajax=1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "content-type": "application/x-www-form-urlencoded",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "time": 1775095309645,
+      "response": "{\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"third_parties\":\"\",\"node_selector\":\"\",\"vip_apis\":[],\"inner\":0,\"inactive_limit\":0,\"factor_group_quota\":3,\"sfactor_monitor_quota\":3,\"user_id\":\"772028948\",\"terminals_enable\":false,\"auto_simu\":0,\"cpu_request\":0,\"auto_enable\":0,\"memory_request\":0,\"sklearn_enable\":0,\"metal_enable\":false,\"sfactor_quota\":3,\"auto_trade\":false,\"jupyter_share\":\"\",\"tick_enable\":false,\"sfactor_enable\":1,\"backtest_monitor_quota\":10,\"simulate_quota\":5,\"name_server_quota\":0,\"broker_quota\":",
+      "status": 200
+    }
+  ],
+  "backtestCalls": [
+    {
+      "url": "https://quant.10jqka.com.cn/platform/algorithms/queryall2/?callback=jQuery18309984312558447848_1775095306699",
+      "method": "POST",
+      "postData": "isajax=1&datatype=jsonp",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://quant.10jqka.com.cn/view/study-index.html",
+        "sec-ch-ua": "\"Chromium\";v=\"145\", \"Not:A-Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      "time": 1775095307006,
+      "response": "jQuery18309984312558447848_1775095306699({\"errorcode\":0,\"errormsg\":\"\",\"result\":{\"strategys\":[{\"algo_id\":\"67c935e607887b957629ad72\",\"algo_name\":\"PSY\\u4ea4\\u6613\\u7b56\\u7565\",\"config\":[],\"modified\":\"2026-03-30 20:38:33\",\"backtest_id\":\"69ca6ec93d1ca490b3c629da\",\"algonote\":\"\",\"backtest_number\":1,\"running_number\":0,\"source\":\"CLOUD\",\"stock_market\":\"STOCK\",\"new_flag\":true,\"folder_id\":-1},{\"algo_id\":\"67da5bb71d3a656411312359\",\"algo_name\":\"\\u9ad8\\u80a1\\u606f-\\u5c0f\\u5e02\\u503c\\u4f18\\u9009\\u7b56\\u7565(\\u5",
+      "status": 200
+    }
+  ],
+  "timestamp": 1775095330081
+}

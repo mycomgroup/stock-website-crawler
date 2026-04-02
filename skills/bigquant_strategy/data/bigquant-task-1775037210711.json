@@ -1,0 +1,12 @@
+{
+  "taskId": "2574578e-4aba-4044-a58b-8ce851828371",
+  "taskrunId": "f2c70282-a65b-48f4-b04c-b8dcbfd1a47b",
+  "config": {
+    "name": "pure_cash_defense",
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "capital": 100000,
+    "benchmark": "000300.XSHG"
+  },
+  "timestamp": "2026-04-01T09:53:30.711Z"
+}

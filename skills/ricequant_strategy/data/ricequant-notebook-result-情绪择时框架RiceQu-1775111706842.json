@@ -1,0 +1,67 @@
+{
+  "capturedAt": "2026-04-02T06:35:06.842Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E6%83%85%E7%BB%AA%E6%8B%A9%E6%97%B6%E6%A1%86%E6%9E%B6RiceQu_20260402_143459.ipynb",
+  "notebookPath": "情绪择时框架RiceQu_20260402_143459.ipynb",
+  "kernelId": "f9a58477-733d-43a8-802c-d4be2000d3d2",
+  "sessionId": "12849a9d-54f8-4f2e-ba28-74374458b73e",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "情绪择时框架RiceQu_20260402_143459.ipynb",
+    "path": "情绪择时框架RiceQu_20260402_143459.ipynb",
+    "last_modified": "2026-04-02T06:35:05.562370Z",
+    "created": "2026-04-02T06:35:05.562370Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 7201,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 情绪择时框架 - RiceQuant Notebook测试 v2\n# 测试目标：验证情绪开关对首板低开的增益\n\nprint(\"=== 情绪择时框架测试 v2 ===\")\n\ntry:\n    # 测试参数\n    test_start = \"2024-03-01\"\n    test_end = \"2024-03-15\"\n\n    # 获取交易日\n    trading_dates = get_trading_dates(test_start, test_end)\n    print(f\"测试期间: {test_start} 至 {test_end}\")\n    print(f\"交易日数: {len(trading_dates)}\")\n\n    # 统计变量\n    signals = []\n\n    # 遍历前5个交易日进行快速测试\n    for i in range(min(5, len(trading_dates))):\n        date = trading_dates[i]\n\n        try:\n            # 获取当日所有股票\n            all_stocks = all_instruments(\"CS\", date=date)\n            if all_stocks is None or len(all_stocks) == 0:\n                print(f\"{date}: 无股票数据\")\n                continue\n\n            # 限制股票数量避免超时（取前200只）\n            test_stocks = all_stocks[:200]\n\n            # 统计涨停家数（涨幅>=9.8%）\n            zt_count = 0\n\n            for stock in test_stocks:\n                try:\n                    # 获取当日和前一日收盘价\n                    bars = history_bars(\n                        stock.order_book_id, 2, \"1d\", \"close\", date, date\n                    )\n                    if bars is not None and len(bars) >= 2:\n                        today_close = bars[-1]\n                        prev_close = bars[-2]\n                        if prev_close > 0:\n                            pct_change = (today_close / prev_close - 1) * 100\n                            if pct_change >= 9.8:  # 涨幅>=9.8%视为涨停\n                                zt_count += 1\n                except:\n                    continue\n\n            # 情绪开关判断\n            sentiment_on = zt_count >= 10  # 简化阈值\n\n            print(f\"{date}: 涨停≈{zt_count}, 情绪={'开' if sentiment_on else '关'}\")\n\n            if sentiment_on:\n                # 统计低开股票（次日低开-5%~-1%）\n                if i + 1 < len(trading_dates):\n                    next_date = trading_dates[i + 1]\n                    low_open_count = 0\n\n                    for stock in test_stocks:\n                        try:\n                            # 获取次日开盘价和前日收盘价\n                            bars_next = history_bars(\n                                stock.order_book_id,\n                                2,\n                                \"1d\",\n                                \"close\",\n                                next_date,\n                                next_date,\n                            )\n                            if bars_next is not None and len(bars_next) >= 2:\n                                # RiceQuant获取开盘价需要用history_bars的open字段\n                                bars_open = history_bars(\n                                    stock.order_book_id,\n                                    1,\n                                    \"1d\",\n                                    \"open\",\n                                    next_date,\n                                    next_date,\n                                )\n                                if bars_open is not None and len(bars_open) > 0:\n                                    next_open = bars_open[0]\n                                    prev_close = bars_next[-2]\n                                    if prev_close > 0:\n                                        open_ratio = (next_open / prev_close - 1) * 100\n                                        if -5 <= open_ratio <= -1:\n                                            low_open_count += 1\n                        except:\n                            continue\n\n                    signals.append(\n                        {\n                            \"date\": date,\n                            \"zt_count\": zt_count,\n                            \"sentiment\": \"on\",\n                            \"next_date\": next_date,\n                            \"low_open_count\": low_open_count,\n                        }\n                    )\n                    print(f\"  -> 次日低开股票数: {low_open_count}\")\n\n        except Exception as e:\n            print(f\"{date}: 错误 - {e}\")\n            continue\n\n    # 输出统计\n    print(f\"\\n=== 测试结果 ===\")\n    print(f\"信号数: {len(signals)}\")\n    if len(signals) > 0:\n        for sig in signals:\n            print(\n                f\"  {sig['date']}: 涨停{sig['zt_count']} -> 次日低开{sig['low_open_count']}只\"\n            )\n\nexcept Exception as e:\n    print(f\"整体错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"=== 测试完成 ===\")\n",
+      "msgId": "fede9c4331414f4b99cd06cb55173897",
+      "websocketSessionId": "587bc8cc7b144f1bae30be76ebf27ed3",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== 情绪择时框架测试 v2 ===\n测试期间: 2024-03-01 至 2024-03-15\n交易日数: 11\n2024-03-01: 涨停≈0, 情绪=关\n2024-03-04: 涨停≈0, 情绪=关\n2024-03-05: 涨停≈0, 情绪=关\n2024-03-06: 涨停≈0, 情绪=关\n2024-03-07: 涨停≈0, 情绪=关\n\n=== 测试结果 ===\n信号数: 0\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== 情绪择时框架测试 v2 ===\n测试期间: 2024-03-01 至 2024-03-15\n交易日数: 11\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "2024-03-01: 涨停≈0, 情绪=关\n2024-03-04: 涨停≈0, 情绪=关\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "2024-03-05: 涨停≈0, 情绪=关\n2024-03-06: 涨停≈0, 情绪=关\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "2024-03-07: 涨停≈0, 情绪=关\n\n=== 测试结果 ===\n信号数: 0\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "情绪择时框架RiceQu",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "12849a9d-54f8-4f2e-ba28-74374458b73e",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/12849a9d-54f8-4f2e-ba28-74374458b73e: "
+  },
+  "autoShutdown": true
+}
