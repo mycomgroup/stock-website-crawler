@@ -1,8 +1,9 @@
 # 任务 09：状态路由器 V2 + 真实切换回测 - 最终报告
 
-**生成时间**: 2026-03-31  
+**生成时间**: 2026-04-01  
 **数据来源**: 聚宽量化研究平台真实运行  
-**文档位置**: `/Users/fengzhi/Downloads/git/testlixingren/docs/parallel_strategy_tasks_20260328/09_regime_router_v2_backtest_2026-03-31.md`
+**Notebook URL**: https://www.joinquant.com/user/21333940833/notebooks/%E7%8A%B6%E6%80%81%E8%B7%AF%E7%94%B1%E5%99%A8V2%E6%9E%81%E7%AE%80%E5%9B%9E%E6%B5%8B_20260401_164240.ipynb  
+**文档位置**: `/Users/fengzhi/Downloads/git/testlixingren/docs/parallel_strategy_tasks_20260328/09_regime_router_v2_final_report_2026-03-31.md`
 
 ---
 

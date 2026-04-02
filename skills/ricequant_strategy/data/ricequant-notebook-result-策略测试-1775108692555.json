@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-02T05:44:52.555Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260402_134447.ipynb",
+  "notebookPath": "策略测试_20260402_134447.ipynb",
+  "kernelId": "99d0c3eb-4d77-4311-9971-85c24bf94128",
+  "sessionId": "4ce0e124-7b63-4b6d-ac79-51e8a4d05f8a",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260402_134447.ipynb",
+    "path": "策略测试_20260402_134447.ipynb",
+    "last_modified": "2026-04-02T05:44:51.624145Z",
+    "created": "2026-04-02T05:44:51.624145Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 8587,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n二板接力 2022年Q1测试 - RiceQuant Notebook格式\n测试范围：2022-01-01 至 2022-03-31\n\"\"\"\n\nprint(\"=\" * 80)\nprint(\"二板接力 2022年Q1测试\")\nprint(\"=\" * 80)\n\ntry:\n    import pandas as pd\n    import numpy as np\n\n    # RiceQuant API\n    from rqalpha.apis import *\n\n    print(\"✓ 导入依赖成功\")\n\n    # 测试配置\n    year = 2022\n    quarter = 1\n    start_date = f\"{year}-01-01\"\n    end_date = f\"{year}-03-31\"\n\n    print(f\"\\n测试范围: {start_date} 至 {end_date}\")\n\n    # 获取交易日\n    all_dates = get_trading_dates(start_date, end_date)\n    print(f\"交易日数: {len(all_dates)}\")\n\n    signals = []\n\n    for i in range(2, min(len(all_dates), 50)):  # 限制前50天，防止超时\n        prev_prev = all_dates[i - 2].strftime(\"%Y-%m-%d\")\n        prev = all_dates[i - 1].strftime(\"%Y-%m-%d\")\n        curr = all_dates[i].strftime(\"%Y-%m-%d\")\n\n        if i % 5 == 0:\n            print(f\"处理第{i}天: {prev} -> {curr}\")\n\n        try:\n            # 获取所有股票\n            all_stocks = all_instruments(\"CS\", prev)\n            all_stocks = [s.order_book_id for s in all_stocks]\n\n            # 过滤科创板、北交所等\n            all_stocks = [\n                s\n                for s in all_stocks\n                if not (s.startswith(\"68\") or s.startswith(\"4\") or s.startswith(\"8\"))\n            ]\n\n            if len(all_stocks) > 500:\n                all_stocks = all_stocks[:500]\n\n            # 获取涨停数据\n            price_prev = history_bars(\n                all_stocks, 1, \"1d\", \"close,limit_up\", prev, include_now=True\n            )\n\n            if not price_prev:\n                continue\n\n            # 找涨停股票\n            zt_stocks = []\n            for stock, bars in price_prev.items():\n                if len(bars) > 0:\n                    close = bars[0][\"close\"]\n                    limit_up = bars[0][\"limit_up\"]\n                    if abs(close - limit_up) / limit_up < 0.01:\n                        zt_stocks.append(stock)\n\n            zt_count = len(zt_stocks)\n            if i % 5 == 0:\n                print(f\"  涨停数: {zt_count}\")\n\n            if zt_count < 10:\n                continue\n\n            # 获取前一日涨停数据\n            price_pp = history_bars(\n                zt_stocks, 1, \"1d\", \"close,limit_up\", prev_prev, include_now=True\n            )\n\n            if not price_pp:\n                continue\n\n            # 筛选二板候选\n            for stock in zt_stocks[:30]:\n                try:\n                    # 前一日涨停价\n                    prev_bars = price_prev.get(stock)\n                    if not prev_bars or len(prev_bars) == 0:\n                        continue\n\n                    prev_limit = prev_bars[0][\"limit_up\"]\n\n                    # 前前一日是否涨停\n                    pp_bars = price_pp.get(stock)\n                    if not pp_bars or len(pp_bars) == 0:\n                        continue\n\n                    pp_close = pp_bars[0][\"close\"]\n                    pp_limit = pp_bars[0][\"limit_up\"]\n\n                    if abs(pp_close - pp_limit) / pp_limit >= 0.01:\n                        continue\n\n                    # 当日数据\n                    price_curr = history_bars(\n                        stock, 1, \"1d\", \"open,close,limit_up\", curr, include_now=True\n                    )\n\n                    if not price_curr or len(price_curr) == 0:\n                        continue\n\n                    curr_bar = price_curr[0]\n                    curr_open = curr_bar[\"open\"]\n                    curr_close = curr_bar[\"close\"]\n                    curr_limit = curr_bar[\"limit_up\"]\n\n                    # 涨停开盘则跳过\n                    if abs(curr_open - curr_limit) / curr_limit < 0.01:\n                        continue\n\n                    # 计算收益\n                    ret = (curr_close - curr_open) / curr_open * 100\n                    signals.append(\n                        {\"date\": curr, \"stock\": stock, \"return\": ret, \"win\": ret > 0}\n                    )\n\n                except Exception as e:\n                    continue\n\n        except Exception as e:\n            continue\n\n    # 统计结果\n    print(\"\\n\" + \"=\" * 80)\n    print(\"2022年Q1测试结果\")\n    print(\"=\" * 80)\n\n    if len(signals) > 0:\n        df = pd.DataFrame(signals)\n        print(f\"信号数: {len(df)}\")\n        print(f\"平均收益: {df['return'].mean():.2f}%\")\n        print(f\"胜率: {df['win'].sum() / len(df) * 100:.1f}%\")\n        print(f\"最大收益: {df['return'].max():.2f}%\")\n        print(f\"最大亏损: {df['return'].min():.2f}%\")\n    else:\n        print(\"无信号\")\n\n    print(\"\\n✓ 2022年Q1测试完成\")\n\nexcept Exception as e:\n    print(f\"\\n❌ 测试失败: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"=\" * 80)\n",
+      "msgId": "d25ef2d3930f48b684a3e30377f2ca2d",
+      "websocketSessionId": "370de0861e3e4ca783e77ac63a12c879",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "================================================================================\n二板接力 2022年Q1测试\n================================================================================\n✓ 导入依赖成功\n\n测试范围: 2022-01-01 至 2022-03-31\n\n❌ 测试失败: Environment 并没有被创建，请再 RQAlpha 初始化之后使用 `Environment.get_instance() 函数`\n================================================================================\nTraceback (most recent call last):\n  File \"<ipython-input-1-6185d57d0bf2>\", line 28, in <module>\n    all_dates = get_trading_dates(start_date, end_date)\n  File \"/usr/local/lib/python3.6/site-packages/rqalpha/utils/arg_checker.py\", line 449, in api_rule_check_wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.6/site-packages/rqalpha/apis/api_base.py\", line 694, in get_trading_dates\n    return Environment.get_instance().data_proxy.get_trading_dates(start_date, end_date)\n  File \"/usr/local/lib/python3.6/site-packages/rqalpha/environment.py\", line 70, in get_instance\n    _(u\"Environment has not been created. Please Use `Environment.get_instance()` after RQAlpha init\"))\nRuntimeError: Environment 并没有被创建，请再 RQAlpha 初始化之后使用 `Environment.get_instance() 函数`\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "================================================================================\n二板接力 2022年Q1测试\n================================================================================\n✓ 导入依赖成功\n\n测试范围: 2022-01-01 至 2022-03-31\n\n❌ 测试失败: Environment 并没有被创建，请再 RQAlpha 初始化之后使用 `Environment.get_instance() 函数`\n================================================================================\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Traceback (most recent call last):\n  File \"<ipython-input-1-6185d57d0bf2>\", line 28, in <module>\n    all_dates = get_trading_dates(start_date, end_date)\n  File \"/usr/local/lib/python3.6/site-packages/rqalpha/utils/arg_checker.py\", line 449, in api_rule_check_wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.6/site-packages/rqalpha/apis/api_base.py\", line 694, in get_trading_dates\n    return Environment.get_instance().data_proxy.get_trading_dates(start_date, end_date)\n  File \"/usr/local/lib/python3.6/site-packages/rqalpha/environment.py\", line 70, in get_instance\n    _(u\"Environment has not been created. Please Use `Environment.get_instance()` after RQAlpha init\"))\nRuntimeError: Environment 并没有被创建，请再 RQAlpha 初始化之后使用 `Environment.get_instance() 函数`\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "4ce0e124-7b63-4b6d-ac79-51e8a4d05f8a",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/4ce0e124-7b63-4b6d-ac79-51e8a4d05f8a: "
+  },
+  "autoShutdown": true
+}

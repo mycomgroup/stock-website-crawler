@@ -199,10 +199,8 @@ def get_valuation_stats(codes, trade_day):
 
 
 # 主程序
-print("=" * 60)
-print("RFScore PB10 历史行业分布分析")
-print("=" * 60)
-
+#!/usr/bin/env node
+console.log("Hello World")
 # 获取最近24个月的月度调仓日
 today = datetime.now().date()
 trade_days = get_trade_days(end_date=today, count=500)
