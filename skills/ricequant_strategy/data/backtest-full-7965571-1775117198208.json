@@ -1,0 +1,46 @@
+{
+  "backtestId": "7965571",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-04-02T16:03:33.110000",
+    "start_at": "2026-04-02T16:03:36.803000",
+    "progress": 1,
+    "backtest_id": "7965571",
+    "description": "",
+    "strategy_id": 2416264,
+    "title": "ultra_simple",
+    "account_type": "stock",
+    "end_at": "2026-04-02T16:03:52.229000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1711697400000,
+    "trading_date": 20240329,
+    "alpha": -0.018000000000000002,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.16468264448110198,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 1711697400000,
+    "trading_date": 20240329,
+    "alpha": -0.018000000000000002,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.16468264448110198,
+    "annual_downside_risk": 0
+  }
+}

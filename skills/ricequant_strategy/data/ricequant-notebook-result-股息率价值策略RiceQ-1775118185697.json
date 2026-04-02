@@ -1,0 +1,55 @@
+{
+  "capturedAt": "2026-04-02T08:23:05.697Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E8%82%A1%E6%81%AF%E7%8E%87%E4%BB%B7%E5%80%BC%E7%AD%96%E7%95%A5RiceQ_20260402_162302.ipynb",
+  "notebookPath": "股息率价值策略RiceQ_20260402_162302.ipynb",
+  "kernelId": "6f2bf2b0-b2b1-4fb2-b8d3-0cad874492d1",
+  "sessionId": "cf05da34-26c9-49bc-93e6-26ec1f56c0f2",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "股息率价值策略RiceQ_20260402_162302.ipynb",
+    "path": "股息率价值策略RiceQ_20260402_162302.ipynb",
+    "last_modified": "2026-04-02T08:23:05.295707Z",
+    "created": "2026-04-02T08:23:05.296707Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 4438,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 股息率价值策略 - RiceQuant 版本\n# 高股息 + 低PE + 低PB 策略\n# 测试日期: 2024-01-01 到 2024-12-31\n\n\ndef init(context):\n    context.stock_num = 20\n    context.dividend_threshold = 0.03\n    context.pe_threshold = 20\n    context.pb_threshold = 2.0\n\n    scheduler.run_monthly(rebalance, monthday=1)\n\n\ndef get_stock_list(context):\n    \"\"\"获取股票池：高股息 + 低估值\"\"\"\n    hs300 = index_components(\"000300.XSHG\")\n    zz500 = index_components(\"000905.XSHG\")\n    stocks = list(set(hs300) | set(zz500))\n\n    stocks = [s for s in stocks if not s.startswith(\"688\")]\n\n    logger.info(f\"初始股票池: {len(stocks)}\")\n\n    return filter_dividend_and_valuation(stocks, context)\n\n\ndef filter_dividend_and_valuation(stocks, context):\n    \"\"\"按股息率和估值筛选\"\"\"\n    from rqalpha.apis import *\n\n    q = (\n        query(\n            fundamentals.eod_derivative_indicator.pe_ratio,\n            fundamentals.eod_derivative_indicator.pb_ratio,\n        )\n        .filter(\n            fundamentals.eod_derivative_indicator.order_book_id.in_(stocks),\n            fundamentals.eod_derivative_indicator.pe_ratio > 0,\n            fundamentals.eod_derivative_indicator.pe_ratio < context.pe_threshold,\n            fundamentals.eod_derivative_indicator.pb_ratio > 0,\n            fundamentals.eod_derivative_indicator.pb_ratio < context.pb_threshold,\n        )\n        .order_by(fundamentals.eod_derivative_indicator.pe_ratio.asc())\n        .limit(50)\n    )\n\n    df = get_fundamentals(q, entry_date=context.now.date())\n\n    if df is None or df.empty:\n        logger.warning(\"未获取到估值数据\")\n        return []\n\n    selected = df.index.get_level_values(1).tolist()[: context.stock_num]\n    logger.info(f\"筛选后股票数: {len(selected)}\")\n\n    return selected\n\n\ndef rebalance(context, bar_dict):\n    \"\"\"每月调仓\"\"\"\n    target_list = get_stock_list(context)\n\n    if not target_list:\n        logger.warning(\"无目标股票\")\n        return\n\n    current_positions = list(context.portfolio.positions.keys())\n\n    for stock in current_positions:\n        if stock not in target_list:\n            order_target_value(stock, 0)\n            logger.info(f\"卖出: {stock}\")\n\n    if target_list:\n        value_per_stock = context.portfolio.total_value / len(target_list)\n\n        for stock in target_list:\n            if stock not in context.portfolio.positions:\n                try:\n                    order_target_value(stock, value_per_stock)\n                    logger.info(f\"买入: {stock}\")\n                except Exception as e:\n                    logger.warning(f\"买入 {stock} 失败: {e}\")\n",
+      "msgId": "00904311fc9843ca99593f24b54d3fc5",
+      "websocketSessionId": "efddccd58cee4fbab5c93bf62d51b6ea",
+      "executionCount": 1,
+      "status": "error",
+      "textOutput": "SyntaxError: import * only allowed at module level (<ipython-input-1-7a08c9b5a3cf>, line 31)",
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "SyntaxError",
+          "evalue": "import * only allowed at module level (<ipython-input-1-7a08c9b5a3cf>, line 31)",
+          "traceback": [
+            "\u001b[0;36m  File \u001b[0;32m\"<ipython-input-1-7a08c9b5a3cf>\"\u001b[0;36m, line \u001b[0;32m31\u001b[0m\n\u001b[0;31m    \u001b[0m\n\u001b[0m    ^\u001b[0m\n\u001b[0;31mSyntaxError\u001b[0m\u001b[0;31m:\u001b[0m import * only allowed at module level\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "股息率价值策略RiceQ",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "cf05da34-26c9-49bc-93e6-26ec1f56c0f2",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/cf05da34-26c9-49bc-93e6-26ec1f56c0f2: "
+  },
+  "autoShutdown": true
+}

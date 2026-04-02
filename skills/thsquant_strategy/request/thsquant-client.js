@@ -3,7 +3,7 @@ import path from 'node:path';
 import '../load-env.js';
 import { OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
 
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36';
 
 function ensureDir(filePath) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -11,387 +11,317 @@ function ensureDir(filePath) {
 
 export function loadJson(filePath) {
   if (!fs.existsSync(filePath)) return {};
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (e) {
-    return {};
-  }
+  try { return JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch (e) { return {}; }
 }
 
 /**
- * THSQuant (同花顺量化/SuperMind) API Client
+ * THSQuant (同花顺 SuperMind) HTTP Client
  *
- * 实现与 JoinQuant/RiceQuant 相似的接口
+ * 已验证的 API 端点和参数格式（通过逆向工程确认）:
  *
- * 已验证的API端点:
- * - /platform/user/getauthdata - 检查登录
- * - /platform/algorithms/queryall2/ - 策略列表
- * - /platform/simupaper/queryall/ - 模拟交易列表
+ * 策略相关 (camelCase 参数):
+ *   POST /platform/algorithms/queryinfo/   algoId=
+ *   POST /platform/algorithms/update/      algoId= algo_name= code=
+ *   POST /platform/algorithms/queryall2/   isajax=1
+ *   POST /platform/algorithms/add/         algo_name= code= stock_market=
+ *   POST /platform/algorithms/delete/      algo_id=
  *
- * 待验证的API端点 (需要浏览器捕获):
- * - /platform/algorithms/add/ - 创建策略
- * - /platform/backtest/run/ - 运行回测
- * - /platform/backtest/result/ - 回测结果
+ * 回测相关 (混合 camelCase):
+ *   POST /platform/backtest/run/           algoId= beginDate= endDate= capitalBase= frequency= benchmark=
+ *   POST /platform/backtest/queryinfo/     backTestId=   (注意 T 大写)
+ *   POST /platform/backtest/backtestdetail/ backTestId=
+ *   POST /platform/backtest/backtestperformance  backTestId=
+ *   POST /platform/backtest/tradelog       backTestId=
+ *   POST /platform/backtest/backtestlog/   backTestId=
+ *   POST /platform/backtest/dailypositiongains  backTestId=
+ *   POST /platform/backtest/backtestloop/  backTestId=
+ *   POST /platform/backtest/backspecificinfo  backTestId= type=profit
+ *   POST /platform/backtest/querylatest/   algoId= query=status
+ *   POST /platform/backtest/queryall/      algo_id= page= num=
+ *   POST /platform/backtest/cancel/        backTestId=
  */
 export class THSQuantClient {
   constructor(options = {}) {
     this.sessionFile = path.resolve(options.sessionFile || SESSION_FILE);
     this.outputRoot = path.resolve(options.outputRoot || OUTPUT_ROOT);
-    this.sessionPayload = options.sessionPayload || loadJson(this.sessionFile);
     this.origin = 'https://quant.10jqka.com.cn';
-    this.cookieJar = options.cookies || this.sessionPayload.cookies || [];
+    const session = options.sessionPayload || loadJson(this.sessionFile);
+    this.cookieJar = options.cookies || session.cookies || [];
   }
 
   getCookieHeader() {
     return this.cookieJar.map(c => `${c.name}=${c.value}`).join('; ');
   }
 
-  buildHeaders(url, overrides = {}) {
-    const headers = {
+  buildHeaders(referer) {
+    return {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
       'User-Agent': USER_AGENT,
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'Accept-Language': 'zh-CN,zh;q=0.9',
-      'X-Requested-With': 'XMLHttpRequest',
-      'Referer': url,
+      'Referer': referer || `${this.origin}/view/study-index.html`,
       'Origin': this.origin,
-      'Cookie': this.getCookieHeader(),
-      ...overrides
+      'Cookie': this.getCookieHeader()
     };
-    return headers;
   }
 
-  /**
-   * 发送请求并解析JSONP响应
-   */
-  async request(url, options = {}) {
-    const fullUrl = url.startsWith('http') ? url : `${this.origin}${url}`;
-
-    const response = await fetch(fullUrl, {
-      method: options.method || 'POST',
-      headers: this.buildHeaders(fullUrl, options.headers),
-      body: options.body || 'isajax=1'
+  async request(endpoint, body = 'isajax=1') {
+    const url = endpoint.startsWith('http') ? endpoint : `${this.origin}${endpoint}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: this.buildHeaders(url),
+      body: body.includes('isajax') ? body : body + '&isajax=1'
     });
 
     const text = await response.text();
-
     if (!response.ok) {
-      throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
+      throw new Error(`HTTP ${response.status} ${url}: ${text.slice(0, 200)}`);
     }
 
-    // 解析JSONP响应: jQuery183...( {...} );
-    const jsonpMatch = text.match(/\((.+)\)/s);
-    if (jsonpMatch) {
-      try {
-        return JSON.parse(jsonpMatch[1]);
-      } catch (e) {
-        // JSONP解析失败，尝试直接解析
-      }
-    }
-
-    // 直接解析JSON
+    // 解析 JSONP 或 JSON
     try {
-      return JSON.parse(text);
+      const m = text.match(/\((\{.+\})\)/s);
+      return m ? JSON.parse(m[1]) : JSON.parse(text);
     } catch (e) {
-      return { raw: text, error: 'parse_failed' };
+      return { raw: text.slice(0, 500), parseError: e.message };
     }
   }
 
-  /**
-   * 检查登录状态 (对应 JoinQuant checkLogin)
-   */
+  // ─── 认证 ───────────────────────────────────────────────
+
   async checkLogin() {
-    try {
-      const data = await this.request('/platform/user/getauthdata');
-      return {
-        code: data.errorcode,
-        logged: data.errorcode === 0,
-        userId: data.result?.user_id,
-        vip: data.result?.vip,
-        data
-      };
-    } catch (e) {
-      return { code: -1, logged: false, message: e.message };
-    }
+    const data = await this.request('/platform/user/getauthdata');
+    return {
+      logged: data.errorcode === 0,
+      userId: data.result?.user_id,
+      data
+    };
   }
 
-  /**
-   * 获取策略列表 (对应 JoinQuant listStrategies)
-   */
+  // ─── 策略管理 ────────────────────────────────────────────
+
   async listStrategies() {
-    const data = await this.request('/platform/algorithms/queryall2/', {
-      body: 'isajax=1&datatype=jsonp'
-    });
-
-    if (data.errorcode !== 0) {
-      throw new Error(data.errormsg || '获取策略列表失败');
-    }
-
-    const strategies = data.result?.strategys || [];
-
-    return strategies.map(s => ({
+    const data = await this.request('/platform/algorithms/queryall2/', 'isajax=1&datatype=jsonp');
+    if (data.errorcode !== 0) throw new Error(data.errormsg || '获取策略列表失败');
+    return (data.result?.strategys || []).map(s => ({
       id: s.algo_id,
       name: s.algo_name,
       backtestCount: s.backtest_number,
+      latestBacktestId: s.backtest_id,
       modified: s.modified,
       raw: s
     }));
   }
 
-  /**
-   * 获取策略上下文 (对应 JoinQuant getStrategyContext)
-   * THSQuant没有编辑页面token，直接返回策略基本信息
-   */
-  async getStrategyContext(strategyId) {
-    // THSQuant没有单独的策略详情API，需要从列表中查找
-    const strategies = await this.listStrategies();
-    const strategy = strategies.find(s => s.id === strategyId);
+  async getStrategyInfo(algoId) {
+    // 注意: queryinfo 用 algoId (camelCase)
+    const data = await this.request('/platform/algorithms/queryinfo/', `algoId=${algoId}&isajax=1`);
+    if (data.errorcode !== 0) throw new Error(data.errormsg || '获取策略信息失败');
+    return data.result;
+  }
 
-    if (!strategy) {
-      throw new Error(`策略不存在: ${strategyId}`);
-    }
+  async saveStrategy(algoId, name, code) {
+    // update 用 algoId (camelCase)
+    const body = new URLSearchParams({
+      algoId,
+      algo_name: name,
+      code,
+      isajax: '1'
+    }).toString();
+    const data = await this.request('/platform/algorithms/update/', body);
+    return { success: data.errorcode === 0, message: data.errormsg, data };
+  }
 
+  async createStrategy(name, code = '', stockMarket = 'STOCK') {
+    const body = new URLSearchParams({
+      algo_name: name,
+      code,
+      stock_market: stockMarket,
+      isajax: '1'
+    }).toString();
+    const data = await this.request('/platform/algorithms/add/', body);
     return {
-      strategyId: strategy.id,
-      name: strategy.name,
-      userId: await this.getUserId(),
-      raw: strategy.raw
+      success: data.errorcode === 0,
+      algoId: data.result?.algo_id,
+      message: data.errormsg,
+      data
     };
   }
 
-  /**
-   * 获取用户ID
-   */
-  async getUserId() {
-    const login = await this.checkLogin();
-    return login.userId;
+  async deleteStrategy(algoId) {
+    const data = await this.request('/platform/algorithms/delete/', `algo_id=${algoId}&isajax=1`);
+    return { success: data.errorcode === 0, message: data.errormsg };
   }
 
-  /**
-   * 保存策略代码 (对应 JoinQuant saveStrategy)
-   * 注意: 此API端点未完全验证，可能需要浏览器辅助
-   */
-  async saveStrategy(strategyId, name, code, context) {
-    const userId = context?.userId || await this.getUserId();
-
-    const body = new URLSearchParams({
-      isajax: '1',
-      user_id: userId,
-      algo_id: strategyId,
-      algo_name: name,
-      code: code,
-      stock_market: 'STOCK'
-    }).toString();
-
-    try {
-      const data = await this.request('/platform/algorithms/edit/', { body });
-      return {
-        success: data.errorcode === 0,
-        message: data.errormsg,
-        data
-      };
-    } catch (e) {
-      // 如果API失败，返回需要浏览器操作的提示
-      return {
-        success: false,
-        message: e.message,
-        requiresBrowser: true
-      };
-    }
-  }
+  // ─── 回测运行 ────────────────────────────────────────────
 
   /**
-   * 运行回测 (对应 JoinQuant runBacktest)
-   * 注意: 此API端点未完全验证，可能需要浏览器辅助
+   * 运行回测
+   * @param {string} algoId
+   * @param {object} config - { beginDate, endDate, capitalBase, frequency, benchmark }
    */
-  async runBacktest(strategyId, code, config, context) {
-    const userId = context?.userId || await this.getUserId();
-
+  async runBacktest(algoId, config = {}) {
     const body = new URLSearchParams({
-      isajax: '1',
-      algo_id: strategyId,
-      user_id: userId,
-      start_date: config.startTime || config.start_date || '2023-01-01',
-      end_date: config.endTime || config.end_date || '2024-12-31',
-      capital_base: String(config.baseCapital || config.capital_base || 100000),
+      algoId,
+      beginDate: config.beginDate || config.startDate || config.start_date || '2023-01-01',
+      endDate: config.endDate || config.end_date || '2024-12-31',
+      capitalBase: String(config.capitalBase || config.capital_base || 100000),
       frequency: config.frequency || 'DAILY',
-      benchmark: config.benchmark || '000300.SH'
+      benchmark: config.benchmark || '000300.SH',
+      isajax: '1'
     }).toString();
 
-    try {
-      const data = await this.request('/platform/backtest/run/', { body });
+    const data = await this.request('/platform/backtest/run/', body);
+    if (data.errorcode !== 0) throw new Error(data.errormsg || '启动回测失败');
 
-      if (data.errorcode !== 0) {
-        throw new Error(data.errormsg || '启动回测失败');
+    return {
+      backtestId: data.result?.backtest_id,
+      progress: data.result?.progress || 0,
+      data
+    };
+  }
+
+  async cancelBacktest(backtestId) {
+    const data = await this.request('/platform/backtest/cancel/', `backTestId=${backtestId}&isajax=1`);
+    return { success: data.errorcode === 0, message: data.errormsg };
+  }
+
+  // ─── 回测状态轮询 ─────────────────────────────────────────
+
+  /**
+   * 轮询回测状态（用 backtestloop，最高效）
+   */
+  async pollBacktestStatus(backtestId) {
+    const data = await this.request('/platform/backtest/backtestloop/', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) return { status: 'ERROR', error: data.errormsg };
+    return {
+      status: data.result?.status,   // SUCCESS / RUNNING / FAILED / ERROR
+      progress: data.result?.progress || 0,
+      debug: data.result?.debug,
+      raw: data.result
+    };
+  }
+
+  /**
+   * 等待回测完成（轮询直到 SUCCESS 或 FAILED）
+   */
+  async waitForBacktest(backtestId, { maxWait = 300000, interval = 3000, onProgress } = {}) {
+    const start = Date.now();
+    while (Date.now() - start < maxWait) {
+      await new Promise(r => setTimeout(r, interval));
+      const status = await this.pollBacktestStatus(backtestId);
+
+      if (onProgress) onProgress(status);
+
+      if (status.status === 'SUCCESS') return { success: true, status };
+      if (status.status === 'FAILED' || status.status === 'ERROR') {
+        return { success: false, status, error: status.error || '回测失败' };
       }
-
-      return {
-        backtestId: data.result?.backtest_id || data.result?.id,
-        success: true,
-        data
-      };
-    } catch (e) {
-      return {
-        success: false,
-        message: e.message,
-        requiresBrowser: true
-      };
     }
+    return { success: false, error: '回测超时' };
   }
 
-  /**
-   * 获取回测结果 (对应 JoinQuant getBacktestResult)
-   */
-  async getBacktestResult(backtestId, context = {}, offset = 0) {
-    const body = new URLSearchParams({
-      isajax: '1',
-      backtest_id: backtestId,
-      offset: String(offset)
-    }).toString();
+  // ─── 回测结果 ────────────────────────────────────────────
 
-    try {
-      const data = await this.request('/platform/backtest/result/', { body });
-      return data;
-    } catch (e) {
-      return { error: e.message };
-    }
+  async getBacktestInfo(backtestId) {
+    // backTestId (T 大写)
+    const data = await this.request('/platform/backtest/queryinfo/', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) throw new Error(data.errormsg || '获取回测信息失败');
+    return data.result;
   }
 
-  /**
-   * 获取回测列表 (对应 JoinQuant getBacktests)
-   */
-  async getBacktests(strategyId) {
-    // THSQuant可能没有单独的回测列表API
-    // 需要从策略详情获取
-    const strategies = await this.listStrategies();
-    const strategy = strategies.find(s => s.id === strategyId);
-
-    return {
-      strategyId,
-      backtestCount: strategy?.backtestCount || 0,
-      backtests: [] // 需要浏览器捕获真实API
-    };
+  async getBacktestDetail(backtestId) {
+    const data = await this.request('/platform/backtest/backtestdetail/', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) throw new Error(data.errormsg || '获取回测详情失败');
+    return data.result;
   }
 
-  /**
-   * 获取回测统计 (对应 JoinQuant getBacktestStats)
-   */
-  async getBacktestStats(backtestId, context = {}) {
-    const result = await this.getBacktestResult(backtestId, context);
-
-    // THSQuant的统计数据可能直接在result中
-    return {
-      backtestId,
-      stats: result.result?.stats || result.stats || {},
-      raw: result
-    };
+  async getBacktestPerformance(backtestId) {
+    const data = await this.request('/platform/backtest/backtestperformance', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) throw new Error(data.errormsg || '获取回测绩效失败');
+    return data.result;
   }
 
-  /**
-   * 创建新策略 (对应 JoinQuant createStrategy)
-   */
-  async createStrategy(name, code = '') {
-    const userId = await this.getUserId();
-
-    const body = new URLSearchParams({
-      isajax: '1',
-      user_id: userId,
-      algo_name: name,
-      code: code,
-      stock_market: 'STOCK'
-    }).toString();
-
-    try {
-      const data = await this.request('/platform/algorithms/add/', { body });
-
-      return {
-        success: data.errorcode === 0,
-        strategyId: data.result?.algo_id,
-        message: data.errormsg,
-        data
-      };
-    } catch (e) {
-      return {
-        success: false,
-        message: e.message,
-        requiresBrowser: true
-      };
-    }
+  async getTradeLog(backtestId) {
+    const data = await this.request('/platform/backtest/tradelog', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) return [];
+    return data.result?.data || data.result || [];
   }
 
-  /**
-   * 删除策略
-   */
-  async deleteStrategy(strategyId) {
-    const body = new URLSearchParams({
-      isajax: '1',
-      algo_id: strategyId
-    }).toString();
-
-    try {
-      const data = await this.request('/platform/algorithms/delete/', { body });
-      return {
-        success: data.errorcode === 0,
-        message: data.errormsg
-      };
-    } catch (e) {
-      return { success: false, message: e.message };
-    }
+  async getBacktestLog(backtestId) {
+    const data = await this.request('/platform/backtest/backtestlog/', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) return [];
+    return data.result?.list || data.result || [];
   }
 
-  /**
-   * 获取模拟交易列表
-   */
-  async listSimuPapers() {
-    const data = await this.request('/platform/simupaper/queryall/', {
-      body: 'isajax=1'
-    });
-
-    if (data.errorcode !== 0) {
-      throw new Error(data.errormsg || '获取模拟交易列表失败');
-    }
-
-    return data.result || [];
+  async getDailyPositionGains(backtestId) {
+    const data = await this.request('/platform/backtest/dailypositiongains', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) return [];
+    return data.result?.data || data.result || [];
   }
 
-  /**
-   * 获取完整回测报告 (对应 JoinQuant getFullReport)
-   */
-  async getFullReport(backtestId, context = {}) {
-    console.log(`Generating full report for backtest ${backtestId}...`);
+  async getBacktestSpecificInfo(backtestId, type = 'profit') {
+    const data = await this.request('/platform/backtest/backspecificinfo', `backTestId=${backtestId}&type=${type}&isajax=1`);
+    if (data.errorcode !== 0) return null;
+    return data.result;
+  }
 
-    const results = await Promise.allSettled([
-      this.getBacktestResult(backtestId, context),
-      this.getBacktestStats(backtestId, context)
+  async getRiskAnalysis(backtestId) {
+    const data = await this.request('/platform/backtest/getriskanalysis', `backTestId=${backtestId}&isajax=1`);
+    if (data.errorcode !== 0) return null;
+    return data.result;
+  }
+
+  // ─── 回测历史 ────────────────────────────────────────────
+
+  async getLatestBacktest(algoId) {
+    const data = await this.request('/platform/backtest/querylatest/', `algoId=${algoId}&query=status&isajax=1`);
+    if (data.errorcode !== 0) return null;
+    return data.result;
+  }
+
+  async listBacktests(algoId, page = 1, num = 10) {
+    // queryall 用 algo_id (snake_case)
+    const data = await this.request('/platform/backtest/queryall/', `algo_id=${algoId}&page=${page}&num=${num}&isajax=1`);
+    if (data.errorcode !== 0) return [];
+    return data.result?.history || [];
+  }
+
+  // ─── 完整报告 ────────────────────────────────────────────
+
+  /**
+   * 获取完整回测报告（并行拉取所有数据）
+   */
+  async getFullReport(backtestId) {
+    const [detail, performance, tradeLog, backtestLog, dailyGains, specificInfo] = await Promise.allSettled([
+      this.getBacktestDetail(backtestId),
+      this.getBacktestPerformance(backtestId),
+      this.getTradeLog(backtestId),
+      this.getBacktestLog(backtestId),
+      this.getDailyPositionGains(backtestId),
+      this.getBacktestSpecificInfo(backtestId, 'profit')
     ]);
 
-    const getValue = (r) => r.status === 'fulfilled' ? r.value : {};
-    const [result, stats] = results.map(getValue);
-
-    const resultData = result.result || result.data?.result || {};
-    const statsData = stats.stats || {};
+    const get = r => r.status === 'fulfilled' ? r.value : null;
 
     return {
       backtestId,
-      summary: statsData,
-      backtest: resultData.backtest || {},
-      benchmark: resultData.benchmark || {},
-      equityCurve: resultData.overallReturn || resultData.equity_curve || {},
-      transactions: resultData.transactions || [],
-      positions: resultData.positions || [],
-      log: resultData.log || [],
-      raw: { result, stats }
+      detail: get(detail),
+      performance: get(performance),
+      tradeLog: get(tradeLog),
+      backtestLog: get(backtestLog),
+      dailyGains: get(dailyGains),
+      specificInfo: get(specificInfo)
     };
   }
 
-  /**
-   * 保存文件
-   */
-  writeArtifact(baseName, data, extension = 'json') {
-    const timestamp = Date.now();
-    const filePath = path.join(this.outputRoot, `${baseName}-${timestamp}.${extension}`);
+  // ─── 工具 ────────────────────────────────────────────────
+
+  writeArtifact(baseName, data, ext = 'json') {
+    const filePath = path.join(this.outputRoot, `${baseName}-${Date.now()}.${ext}`);
     ensureDir(filePath);
-    const content = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-    fs.writeFileSync(filePath, content, 'utf8');
+    fs.writeFileSync(filePath, typeof data === 'string' ? data : JSON.stringify(data, null, 2), 'utf8');
     return filePath;
   }
 }
