@@ -246,7 +246,7 @@ print(f"\n{'股息率阈值':<12}{'候选数量':>10}{'筛选率':>10}")
 print("-" * 35)
 
 for div_th in div_thresholds:
-    df_div_filtered = df_div[df_div["dividend_yield_ratio"] >= div_th]
+    df_div_filtered = df_div[df_div["dividend_ratio"] >= div_th]
     rate = len(df_div_filtered) / len(df_div) * 100 if len(df_div) > 0 else 0
     print(f"股息率 >= {div_th}%{len(df_div_filtered):>10}{rate:>9.1f}%")
 
@@ -367,7 +367,7 @@ if len(final_candidates) > 0:
         valuation.market_cap,
         valuation.pe_ratio,
         indicator.roe,
-        valuation.dividend_yield_ratio,
+        valuation.dividend_ratio,
     ).filter(valuation.code.in_(final_candidates["code"].tolist()[:15]))
     df_final = get_fundamentals(q_final, date=test_date)
     df_final = df_final.merge(
