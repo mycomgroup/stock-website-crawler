@@ -1,16 +1,15 @@
-# 深度低开专项验证 - RiceQuant Notebook
-# 阶段2：简单因子策略验证
-# 深度低开：-5%~-3%
+# 深度低开专项验证 - RiceQuant Notebook（修正版）
+# 使用与JoinQuant相同的测试日期
 
 print("=== 深度低开专项验证 - RiceQuant Notebook ===")
-print("阶段2：简单因子策略验证")
+print("阶段2：与JoinQuant对比验证")
 
 try:
     import pandas as pd
     import numpy as np
 
-    # 测试2024年多个日期
-    test_dates = ["2024-01-15", "2024-04-15", "2024-07-15", "2024-10-15"]
+    # 使用与JoinQuant相同的测试日期
+    test_dates = ["2024-03-01", "2024-11-01"]
 
     signals = []
 
@@ -18,16 +17,18 @@ try:
         print(f"\n处理日期: {test_date}")
 
         try:
-            # 获取所有股票（RiceQuant API）
+            # 获取所有股票
             all_stocks = all_instruments("CS", test_date)
             print(f"  股票总数: {len(all_stocks)}")
 
-            # 只测试前200只股票
-            stocks_sample = all_stocks["order_book_id"].tolist()[:200]
+            # 测试前500只股票（增加样本）
+            stocks_sample = all_stocks["order_book_id"].tolist()[:500]
+
+            limit_stocks_count = 0
 
             for stock in stocks_sample:
                 try:
-                    # 获取前2日数据（RiceQuant API）
+                    # 获取前2日数据
                     bars = history_bars(
                         stock, 2, "1d", "close,limit_up", end_date=test_date
                     )
@@ -37,31 +38,30 @@ try:
 
                     prev_close = bars[-2]["close"]
                     prev_limit = bars[-2]["limit_up"]
-                    curr_open = bars[-1]["close"]  # 注：history_bars返回收盘价
 
                     # 检查昨日是否涨停
-                    if abs(prev_close - prev_limit) / prev_limit > 0.01:
-                        continue
+                    if abs(prev_close - prev_limit) / prev_limit < 0.01:
+                        limit_stocks_count += 1
 
-                    # 计算开盘涨跌幅
-                    open_pct = (curr_open - prev_close) / prev_close * 100
-
-                    # 筛选深度低开：-5%~-3%
-                    if -5.0 <= open_pct < -3.0:
-                        # 获取当日数据
+                        # 获取当日数据（包括开盘价）
                         daily_bars = history_bars(
                             stock, 1, "1d", "open,close,high", end_date=test_date
                         )
 
-                        if daily_bars is not None and len(daily_bars) > 0:
-                            actual_open = daily_bars[-1]["open"]
-                            curr_close = daily_bars[-1]["close"]
-                            curr_high = daily_bars[-1]["high"]
+                        if daily_bars is None or len(daily_bars) < 1:
+                            continue
 
-                            intra_return = (
-                                (curr_close - actual_open) / actual_open * 100
-                            )
-                            max_return = (curr_high - actual_open) / actual_open * 100
+                        curr_open = daily_bars[-1]["open"]
+                        curr_close = daily_bars[-1]["close"]
+                        curr_high = daily_bars[-1]["high"]
+
+                        # 计算开盘涨跌幅
+                        open_pct = (curr_open - prev_close) / prev_close * 100
+
+                        # 筛选深度低开：-5%~-3%
+                        if -5.0 <= open_pct < -3.0:
+                            intra_return = (curr_close - curr_open) / curr_open * 100
+                            max_return = (curr_high - curr_open) / curr_open * 100
 
                             signals.append(
                                 {
@@ -81,8 +81,13 @@ try:
                 except Exception as e:
                     continue
 
+            print(f"  涨停板股票数: {limit_stocks_count}")
+
         except Exception as e:
             print(f"  错误: {e}")
+            import traceback
+
+            traceback.print_exc()
             continue
 
     print("\n" + "=" * 80)
