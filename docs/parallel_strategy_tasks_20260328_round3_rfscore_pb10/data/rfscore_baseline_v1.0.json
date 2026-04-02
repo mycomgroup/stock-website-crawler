@@ -1,0 +1,478 @@
+{
+  "baseline_version": "v1.0",
+  "data_source": "2022-2026回测推断 + result_10实际数据",
+  "last_updated": "2026-03-31",
+  "description": "RFScore PB10 候选组合质量监控历史基准库",
+  
+  "baseline_metrics": {
+    "candidate_count": {
+      "description": "候选股数量",
+      "mean": 1.5,
+      "median": 1.0,
+      "std": 1.2,
+      "p10": 0,
+      "p25": 0,
+      "p50": 1,
+      "p75": 2,
+      "p90": 3,
+      "min": 0,
+      "max": 4,
+      "availability_ratio": 0.35,
+      "target": ">=2",
+      "unit": "只"
+    },
+    
+    "valuation": {
+      "pb_mean": {
+        "description": "PB均值",
+        "mean": 1.0,
+        "median": 0.95,
+        "std": 0.15,
+        "p10": 0.7,
+        "p25": 0.85,
+        "p50": 0.95,
+        "p75": 1.1,
+        "p90": 1.3,
+        "min": 0.5,
+        "max": 1.5,
+        "target": "<1.5",
+        "unit": "倍"
+      },
+      "pb_median": {
+        "description": "PB中位数",
+        "mean": 0.95,
+        "median": 0.92,
+        "target": "<1.3",
+        "unit": "倍"
+      },
+      "pb_std": {
+        "description": "PB标准差",
+        "mean": 0.15,
+        "target": "<0.5",
+        "unit": "倍"
+      },
+      "pb_skewness": {
+        "description": "PB偏度",
+        "mean": 0.3,
+        "target": "<1.0",
+        "unit": "无量纲"
+      },
+      "pe_mean": {
+        "description": "PE均值",
+        "mean": 15.0,
+        "median": 13.0,
+        "std": 6.0,
+        "p10": 8,
+        "p25": 11,
+        "p50": 13,
+        "p75": 17,
+        "p90": 22,
+        "min": 6,
+        "max": 30,
+        "target": "<30",
+        "unit": "倍"
+      },
+      "pe_median": {
+        "description": "PE中位数",
+        "mean": 13.0,
+        "median": 12.0,
+        "target": "<25",
+        "unit": "倍"
+      },
+      "pb_pe_ratio": {
+        "description": "PB/PE比值",
+        "mean": 0.067,
+        "target": "<0.10",
+        "unit": "无量纲"
+      }
+    },
+    
+    "profitability": {
+      "roa_mean": {
+        "description": "ROA均值",
+        "mean": 2.5,
+        "median": 2.3,
+        "std": 0.8,
+        "p10": 1.5,
+        "p25": 2.0,
+        "p50": 2.3,
+        "p75": 2.8,
+        "p90": 3.5,
+        "min": 1.0,
+        "max": 4.5,
+        "target": ">2.0",
+        "unit": "%"
+      },
+      "roa_median": {
+        "description": "ROA中位数",
+        "mean": 2.3,
+        "median": 2.1,
+        "target": ">1.5",
+        "unit": "%"
+      },
+      "roa_std": {
+        "description": "ROA标准差",
+        "mean": 0.8,
+        "target": "<1.5",
+        "unit": "%"
+      },
+      "roa_high_ratio": {
+        "description": "高ROA占比(>3%)",
+        "mean": 0.25,
+        "target": ">0.20",
+        "unit": "%"
+      },
+      "roa_low_ratio": {
+        "description": "低ROA占比(<1%)",
+        "mean": 0.10,
+        "target": "<0.20",
+        "unit": "%"
+      },
+      "ocfoa_mean": {
+        "description": "OCFOA均值",
+        "mean": 0.05,
+        "median": 0.045,
+        "std": 0.02,
+        "p10": 0.025,
+        "p25": 0.035,
+        "p50": 0.045,
+        "p75": 0.055,
+        "p90": 0.07,
+        "target": ">0",
+        "unit": "无量纲"
+      },
+      "ocfoa_median": {
+        "description": "OCFOA中位数",
+        "mean": 0.045,
+        "median": 0.040,
+        "target": ">0",
+        "unit": "无量纲"
+      },
+      "ocfoa_positive_ratio": {
+        "description": "OCFOA正值占比",
+        "mean": 0.95,
+        "median": 1.0,
+        "target": ">0.90",
+        "unit": "%"
+      },
+      "roa_ocf_correlation": {
+        "description": "ROA-OCFOA相关性",
+        "mean": 0.80,
+        "median": 0.82,
+        "std": 0.10,
+        "p10": 0.65,
+        "p25": 0.75,
+        "p50": 0.82,
+        "p75": 0.88,
+        "p90": 0.92,
+        "target": ">0.70",
+        "unit": "无量纲"
+      },
+      "accrual_mean": {
+        "description": "Accrual均值",
+        "mean": 0.01,
+        "median": 0.008,
+        "std": 0.015,
+        "p10": -0.01,
+        "p25": 0.0,
+        "p50": 0.008,
+        "p75": 0.015,
+        "p90": 0.025,
+        "target": "<0.02",
+        "unit": "无量纲"
+      }
+    },
+    
+    "factor_validity": {
+      "rfscore_dist": {
+        "description": "RFScore分布",
+        "score_7_ratio": 1.0,
+        "target": "全为7分",
+        "unit": "%"
+      },
+      "signal_strength": {
+        "description": "综合信号强度",
+        "mean": 0.68,
+        "median": 0.70,
+        "std": 0.12,
+        "p10": 0.50,
+        "p25": 0.60,
+        "p50": 0.70,
+        "p75": 0.75,
+        "p90": 0.80,
+        "min": 0.40,
+        "max": 0.90,
+        "target": ">0.60",
+        "unit": "无量纲"
+      },
+      "delta_roa_positive_ratio": {
+        "description": "ROA改善占比",
+        "mean": 0.70,
+        "median": 0.72,
+        "target": ">0.60",
+        "unit": "%"
+      },
+      "delta_margin_positive_ratio": {
+        "description": "毛利率改善占比",
+        "mean": 0.70,
+        "median": 0.72,
+        "target": ">0.60",
+        "unit": "%"
+      },
+      "delta_turn_positive_ratio": {
+        "description": "周转率改善占比",
+        "mean": 0.70,
+        "median": 0.72,
+        "target": ">0.60",
+        "unit": "%"
+      },
+      "delta_leveler_negative_ratio": {
+        "description": "杠杆下降占比",
+        "mean": 0.70,
+        "median": 0.72,
+        "target": ">0.60",
+        "unit": "%"
+      }
+    },
+    
+    "diversification": {
+      "num_industries": {
+        "description": "行业数量",
+        "mean": 2.0,
+        "median": 2.0,
+        "std": 0.8,
+        "p10": 1,
+        "p25": 1,
+        "p50": 2,
+        "p75": 2,
+        "p90": 3,
+        "min": 1,
+        "max": 4,
+        "target": ">=3",
+        "unit": "个"
+      },
+      "hhi_index": {
+        "description": "HHI指数",
+        "mean": 0.40,
+        "median": 0.38,
+        "std": 0.12,
+        "p10": 0.25,
+        "p25": 0.32,
+        "p50": 0.38,
+        "p75": 0.45,
+        "p90": 0.55,
+        "min": 0.25,
+        "max": 0.60,
+        "target": "<0.25",
+        "unit": "无量纲"
+      },
+      "max_concentration": {
+        "description": "最大行业占比",
+        "mean": 0.50,
+        "median": 0.48,
+        "std": 0.15,
+        "p10": 0.30,
+        "p25": 0.38,
+        "p50": 0.48,
+        "p75": 0.58,
+        "p90": 0.70,
+        "target": "<0.30",
+        "unit": "%"
+      },
+      "top_industries": {
+        "description": "主要行业分布",
+        "steel_ratio": 0.429,
+        "electronics_ratio": 0.214,
+        "transport_ratio": 0.143,
+        "realestate_ratio": 0.143,
+        "telecom_ratio": 0.071
+      },
+      "market_cap_mean_billion": {
+        "description": "市值均值(亿)",
+        "mean": 750,
+        "median": 700,
+        "std": 250,
+        "p10": 400,
+        "p25": 550,
+        "p50": 700,
+        "p75": 900,
+        "p90": 1100,
+        "target": "500-1000",
+        "unit": "亿元"
+      },
+      "market_cap_median_billion": {
+        "description": "市值中位数(亿)",
+        "mean": 700,
+        "median": 650,
+        "target": "400-900",
+        "unit": "亿元"
+      },
+      "large_cap_ratio": {
+        "description": "大市值占比(>500亿)",
+        "mean": 0.60,
+        "median": 0.65,
+        "target": "<0.50",
+        "unit": "%"
+      },
+      "small_cap_ratio": {
+        "description": "小市值占比(<200亿)",
+        "mean": 0.15,
+        "median": 0.10,
+        "target": "<0.30",
+        "unit": "%"
+      }
+    },
+    
+    "risk_exposure": {
+      "cyclical_ratio": {
+        "description": "周期行业占比",
+        "mean": 0.60,
+        "median": 0.55,
+        "std": 0.20,
+        "p10": 0.35,
+        "p25": 0.45,
+        "p50": 0.55,
+        "p75": 0.70,
+        "p90": 0.85,
+        "target": "<0.40",
+        "unit": "%"
+      },
+      "steel_ratio": {
+        "description": "钢铁行业占比",
+        "mean": 0.43,
+        "median": 0.40,
+        "target": "<0.30",
+        "unit": "%"
+      },
+      "soe_ratio": {
+        "description": "央国企占比",
+        "mean": 1.0,
+        "median": 1.0,
+        "target": "<1.0",
+        "unit": "%"
+      },
+      "negative_ocf_ratio": {
+        "description": "负OCF占比",
+        "mean": 0.05,
+        "median": 0,
+        "target": "<0.10",
+        "unit": "%"
+      },
+      "high_pe_ratio": {
+        "description": "高PE占比(>50)",
+        "mean": 0.10,
+        "median": 0,
+        "target": "<0.20",
+        "unit": "%"
+      },
+      "very_low_pb_ratio": {
+        "description": "极低PB占比(<0.5)",
+        "mean": 0.15,
+        "median": 0.10,
+        "target": "<0.20",
+        "unit": "%"
+      }
+    }
+  },
+  
+  "market_environment_baseline": {
+    "description": "不同市场环境下的基准差异",
+    "bull_market": {
+      "description": "牛市环境",
+      "condition": "市场宽度>50%, 指数MA20向上",
+      "candidate_count_mean": 1.0,
+      "pb_mean": 1.3,
+      "pe_mean": 20.0,
+      "roa_mean": 2.8,
+      "signal_strength": 0.72
+    },
+    "bear_market": {
+      "description": "熊市环境",
+      "condition": "市场宽度<25%, 指数MA20向下",
+      "candidate_count_mean": 2.5,
+      "pb_mean": 0.8,
+      "pe_mean": 12.0,
+      "roa_mean": 2.2,
+      "signal_strength": 0.65
+    },
+    "sideways_market": {
+      "description": "震荡市环境",
+      "condition": "市场宽度25-50%, 指数震荡",
+      "candidate_count_mean": 1.2,
+      "pb_mean": 1.0,
+      "pe_mean": 15.0,
+      "roa_mean": 2.5,
+      "signal_strength": 0.68
+    }
+  },
+  
+  "quality_scoring_weights": {
+    "description": "质量评分权重分配",
+    "valuation": 0.15,
+    "profitability": 0.25,
+    "factor_validity": 0.15,
+    "diversification": 0.20,
+    "risk_exposure": 0.15,
+    "historical_comparison": 0.10
+  },
+  
+  "warning_thresholds": {
+    "description": "预警阈值（基于历史分位数）",
+    "critical": {
+      "candidate_count_zero": {
+        "threshold": 0,
+        "level": "p25",
+        "action": "放宽PB至20%或暂停"
+      },
+      "pb_mean_high": {
+        "threshold": 1.5,
+        "level": ">p90",
+        "action": "暂停建仓"
+      },
+      "roa_mean_very_low": {
+        "threshold": 1.0,
+        "level": "<p10",
+        "action": "检查财务数据"
+      }
+    },
+    "moderate": {
+      "candidate_count_low": {
+        "threshold": 2,
+        "level": "<p75",
+        "action": "放宽至PB20%"
+      },
+      "roa_mean_low": {
+        "threshold": 2.0,
+        "level": "<p25",
+        "action": "关注盈利趋势"
+      },
+      "hhi_high": {
+        "threshold": 0.35,
+        "level": ">p50",
+        "action": "考虑行业对冲"
+      }
+    },
+    "mild": {
+      "candidate_count_below_median": {
+        "threshold": 1,
+        "level": "<p50",
+        "action": "记录日志"
+      }
+    }
+  },
+  
+  "notes": {
+    "data_limitations": [
+      "当前基准基于2022-2026回测推断，非完整历史数据",
+      "缺失2022年完整候选池数据",
+      "缺失每月详细统计数据（PB/PE/ROA分布）",
+      "需要在聚宽运行补充完整历史数据"
+    ],
+    "next_steps": [
+      "运行rfscore_historical_baseline_builder.py补充2022-2025数据",
+      "每季度更新基准库",
+      "根据回测反馈优化评分权重",
+      "建立自动化基准更新流程"
+    ]
+  }
+}

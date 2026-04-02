@@ -47,7 +47,23 @@
 
 **适用场景：** 跨平台迁移、API 选择
 
-### 5. MIGRATION.md - Notebook 迁移指南
+### 5. PRE_RUN_CHECKLIST.md - 回测提交前检查规则 ⭐ 必读
+**主要内容：**
+- 时间区间建议
+- 股票池筛选规则
+- 多因子策略建议
+- 超时时间设置
+- 平台选择指南
+- 数据获取优化
+- 策略格式检查
+- 分批运行长区间
+- 日志输出规则
+- 错误处理要求
+- 提交前检查清单
+
+**适用场景：** 提交回测前必读，避免超时、报错、资源浪费
+
+### 6. MIGRATION.md - Notebook 迁移指南
 **主要内容：**
 - 迁移策略列表和优先级
 - 详细迁移步骤
@@ -58,7 +74,7 @@
 
 **适用场景：** JoinQuant → RiceQuant Notebook 迁移
 
-### 6. PROMPT.md - Agent 运行提示词
+### 7. PROMPT.md - Agent 运行提示词
 **主要内容：**
 - 标准提示词（推荐）
 - 精简提示词
@@ -193,6 +209,25 @@
 
 ## 文档关系图
 
+```
+docs/backtest_guide/
+├── README.md                                    # Notebook 回测指南（必读）
+├── STRATEGY_EDITOR_GUIDE.md                     # 策略编辑器回测指南（必读）⭐
+├── PRE_RUN_CHECKLIST.md                         # 回测提交前检查规则（必读）⭐
+├── joinquant_to_ricequant_migration_guide.md    # 完整迁移指南（重要）
+├── ricequant_factor_list.md                     # 因子列表速查（重要）
+├── QUICK_START.md                               # 快速入门（常用）
+├── API_DIFF.md                                  # API 差异（迁移参考）
+├── MIGRATION.md                                 # Notebook 迁移指南
+├── PROMPT.md                                    # Agent 提示词（自动化必读）
+├── ORIGINAL_SUMMARY.md                          # 原始总结（参考）
+├── MIGRATION_PLAN.md                            # 迁移计划（参考）
+├── RICEQUANT_API_SUMMARY.md                     # RiceQuant API（参考）
+├── RICEQUANT_TEST_SUMMARY.md                    # RiceQuant 测试（参考）
+└── INDEX.md                                     # 本文档
+
+相关文档：
+└── strategies/Ricequant/README.md               # RiceQuant API 对照表
 ```
 docs/backtest_guide/
 ├── README.md                                    # Notebook 回测指南（必读）
