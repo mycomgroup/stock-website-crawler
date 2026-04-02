@@ -121,6 +121,23 @@ export class THSQuantClient {
     return data.result;
   }
 
+  /**
+   * 获取策略上下文（对标 JoinQuant getStrategyContext）
+   * THSQuant 不需要 CSRF token，直接返回策略信息
+   */
+  async getStrategyContext(algoId) {
+    const info = await this.getStrategyInfo(algoId);
+    const login = await this.checkLogin();
+    return {
+      algoId: info._id || algoId,
+      name: info.algo_name,
+      userId: login.userId,
+      language: info.language,
+      stockMarket: info.stock_market,
+      raw: info
+    };
+  }
+
   async saveStrategy(algoId, name, code) {
     // update 用 algoId (camelCase)
     const body = new URLSearchParams({
