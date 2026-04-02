@@ -1,0 +1,55 @@
+{
+  "capturedAt": "2026-04-02T05:33:44.521Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E5%B0%8F%E5%B8%82%E5%80%BC%E6%88%90%E9%95%BF%E8%82%A1%E7%AD%96%E7%95%A5Rice_20260402_130259.ipynb",
+  "notebookPath": "小市值成长股策略Rice_20260402_130259.ipynb",
+  "kernelId": "e6f7094b-9758-4cf0-90e6-2bc9deea54cf",
+  "sessionId": "4d6fb91e-6f20-40a0-953a-dc4410eb6229",
+  "appendedCellIndex": 1,
+  "managedCellIndex": 1,
+  "mode": "partial",
+  "targetCellIndices": [
+    1
+  ],
+  "notebookMetadata": {
+    "name": "小市值成长股策略Rice_20260402_130259.ipynb",
+    "path": "小市值成长股策略Rice_20260402_130259.ipynb",
+    "last_modified": "2026-04-02T05:33:44.145900Z",
+    "created": "2026-04-02T05:33:44.146900Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 10024,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 1,
+      "source": "# 小市值成长股策略 - RiceQuant 版本\n# 基于 JoinQuant 策略迁移，简化因子计算\n# 测试日期: 2024-01-01 到 2024-12-31\n\nfrom rqalpha.apis import *\n\n\ndef init(context):\n    context.stock_num = 10\n    context.limit_days = 20\n    context.hold_list = []\n    context.history_hold_list = []\n    context.not_buy_again_list = []\n\n    scheduler.run_monthly(rebalance, monthday=1)\n    scheduler.run_daily(check_limit_up, time_rule=market_open(minute=30))\n\n\ndef get_stock_list(context):\n    \"\"\"获取股票池：小市值 + 成长性\"\"\"\n    hs300 = index_components(\"000300.XSHG\")\n    zz500 = index_components(\"000905.XSHG\")\n    stocks = list(set(hs300) | set(zz500))\n\n    stocks = [s for s in stocks if not s.startswith(\"688\")]\n\n    logger.info(f\"初始股票池: {len(stocks)}\")\n\n    return filter_by_market_cap_and_growth(stocks, context)\n\n\ndef filter_by_market_cap_and_growth(stocks, context):\n    \"\"\"按市值和成长性筛选\"\"\"\n    from rqalpha.apis import *\n\n    q = (\n        query(\n            fundamentals.eod_derivative_indicator.market_cap,\n            fundamentals.financial_indicator.roe,\n            fundamentals.financial_indicator.net_profit_growth_rate,\n        )\n        .filter(\n            fundamentals.eod_derivative_indicator.order_book_id.in_(stocks),\n            fundamentals.eod_derivative_indicator.market_cap > 0,\n            fundamentals.financial_indicator.roe > 0.05,\n        )\n        .order_by(fundamentals.eod_derivative_indicator.market_cap.asc())\n        .limit(30)\n    )\n\n    df = get_fundamentals(q, entry_date=context.now.date())\n\n    if df is None or df.empty:\n        logger.warning(\"未获取到财务数据\")\n        return []\n\n    selected = df.index.get_level_values(1).tolist()[: context.stock_num]\n    logger.info(f\"筛选后股票数: {len(selected)}\")\n\n    return selected\n\n\ndef rebalance(context, bar_dict):\n    \"\"\"每月调仓\"\"\"\n    target_list = get_stock_list(context)\n\n    if not target_list:\n        logger.warning(\"无目标股票\")\n        return\n\n    current_positions = list(context.portfolio.positions.keys())\n\n    for stock in current_positions:\n        if stock not in target_list:\n            order_target_value(stock, 0)\n            logger.info(f\"卖出: {stock}\")\n\n    if target_list:\n        value_per_stock = context.portfolio.total_value / len(target_list)\n\n        for stock in target_list:\n            if stock not in context.portfolio.positions:\n                try:\n                    order_target_value(stock, value_per_stock)\n                    logger.info(f\"买入: {stock}, 金额: {value_per_stock:.0f}\")\n                except Exception as e:\n                    logger.warning(f\"买入 {stock} 失败: {e}\")\n\n\ndef check_limit_up(context, bar_dict):\n    \"\"\"检查涨停股票\"\"\"\n    positions = list(context.portfolio.positions.keys())\n\n    for stock in positions:\n        try:\n            bars = history_bars(stock, 1, \"1d\", [\"close\", \"limit_up\"])\n            if bars is not None and len(bars) > 0:\n                close = bars[-1][\"close\"]\n                limit_up = bars[-1][\"limit_up\"]\n\n                if abs(close - limit_up) < 0.01:\n                    logger.info(f\"{stock} 涨停\")\n        except:\n            pass\n",
+      "msgId": "de880284120741f39bb5491903dca834",
+      "websocketSessionId": "412ec40d60e54e7b9a09dbae7fe0d5e5",
+      "executionCount": 1,
+      "status": "error",
+      "textOutput": "SyntaxError: import * only allowed at module level (<ipython-input-1-5600af2b9104>, line 2)",
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "SyntaxError",
+          "evalue": "import * only allowed at module level (<ipython-input-1-5600af2b9104>, line 2)",
+          "traceback": [
+            "\u001b[0;36m  File \u001b[0;32m\"<ipython-input-1-5600af2b9104>\"\u001b[0;36m, line \u001b[0;32m2\u001b[0m\n\u001b[0;31m    # 基于 JoinQuant 策略迁移，简化因子计算\u001b[0m\n\u001b[0m         ^\u001b[0m\n\u001b[0;31mSyntaxError\u001b[0m\u001b[0;31m:\u001b[0m import * only allowed at module level\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": false,
+  "reuseNotebook": true,
+  "strategyBaseName": "小市值成长股策略Rice",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "4d6fb91e-6f20-40a0-953a-dc4410eb6229",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/4d6fb91e-6f20-40a0-953a-dc4410eb6229: "
+  },
+  "autoShutdown": true
+}

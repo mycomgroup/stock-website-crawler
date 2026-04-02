@@ -2,6 +2,8 @@
 # 基于 JoinQuant 策略迁移，简化因子计算
 # 测试日期: 2024-01-01 到 2024-12-31
 
+from rqalpha.apis import *
+
 
 def init(context):
     context.stock_num = 10

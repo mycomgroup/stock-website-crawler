@@ -103,7 +103,29 @@ else:
 
 ## 五、回测对比分析
 
-### 5.1 模拟对比 (基于历史状态数据)
+### 5.1 真实回测结果 (2024-10 ~ 2025-03)
+
+**Notebook URL**: [点击查看完整运行结果](https://www.joinquant.com/user/21333940833/notebooks/%E7%8A%B6%E6%80%81%E8%B7%AF%E7%94%B1%E5%99%A8V2%E6%9E%81%E7%AE%80%E5%9B%9E%E6%B5%8B_20260401_164240.ipynb)
+
+**回测数据**:
+- 沪深300区间收益: **-8.01%**（下跌市场）
+- 国债ETF区间收益: **+1.75%**（避险资产上涨）
+
+**月度收益对比**:
+
+| 月份 | 状态 | 状态配置 | 静态配置 | 差异 |
+|------|------|----------|----------|------|
+| 2024-10 | 震荡轮动 | -4.88% | -4.29% | -0.59% |
+| 2024-11 | 震荡轮动 | +0.51% | +0.53% | -0.01% |
+| 2024-12 | 震荡轮动 | +0.09% | +0.14% | -0.05% |
+| 2025-01 | 震荡轮动 | -0.03% | -0.02% | -0.00% |
+| 2025-02 | 震荡轮动 | +1.21% | +1.02% | +0.19% |
+| 2025-03 | 震荡轮动 | +0.30% | +0.25% | +0.05% |
+| **累计** | - | **-2.88%** | **-2.44%** | **-0.44%** |
+
+**结论**: 在此期间，静态配置略优于状态切换（差异 -0.44%），主要因为市场处于单边下跌，状态机未能有效切换到防守状态。
+
+### 5.2 模拟对比 (基于历史状态数据)
 
 基于2024年以来的状态序列，对比两种配置：
 
@@ -112,7 +134,7 @@ else:
 | 静态配置 | 牛市稳定持仓 | 熊市/震荡市回撤大 |
 | 状态切换 | 高估防守避险、底部保留现金 | 可能踏空快速上涨 |
 
-### 5.2 状态切换的核心价值
+### 5.3 状态切换的核心价值
 
 | 价值维度 | 说明 |
 |----------|------|
@@ -166,8 +188,10 @@ else:
 |------|------|
 | 状态机V2代码 | `/Users/fengzhi/Downloads/git/testlixingren/output/regime_router_v2.py` |
 | 状态诊断代码 | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_notebook/output/09_state_diag.py` |
-| 实验结果 | `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-状态路由器V2极简数据获-1774952930492.json` |
-| 总结文档 | `/Users/fengzhi/Downloads/git/testlixingren/docs/parallel_strategy_tasks_20260328/09_regime_router_v2_backtest_2026-03-31.md` |
+| 极简回测策略 | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_notebook/strategies/regime_ultra_simple.py` |
+| 实验结果1 | `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-状态路由器V2极简数据获-1774952930492.json` |
+| 实验结果2 | `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-状态路由器V2极简回测-1775032966807.json` |
+| 总结文档 | `/Users/fengzhi/Downloads/git/testlixingren/docs/parallel_strategy_tasks_20260328/09_regime_router_v2_final_report_2026-03-31.md` |
 
 ---
 

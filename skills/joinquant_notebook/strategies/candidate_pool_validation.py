@@ -367,7 +367,7 @@ if len(final_candidates) > 0:
         valuation.market_cap,
         valuation.pe_ratio,
         indicator.roe,
-        indicator.dividend_yield_ratio,
+        valuation.dividend_yield_ratio,
     ).filter(valuation.code.in_(final_candidates["code"].tolist()[:15]))
     df_final = get_fundamentals(q_final, date=test_date)
     df_final = df_final.merge(
