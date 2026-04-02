@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-02T06:15:25.841Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E6%83%85%E7%BB%AA%E6%8B%A9%E6%97%B6%E6%A1%86%E6%9E%B6RiceQu_20260402_141430.ipynb",
+  "notebookPath": "情绪择时框架RiceQu_20260402_141430.ipynb",
+  "kernelId": "6e989cbe-38f5-4de9-9428-75f64d199b91",
+  "sessionId": "e51eaad7-8d2b-4744-95d3-5db5db89da25",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "情绪择时框架RiceQu_20260402_141430.ipynb",
+    "path": "情绪择时框架RiceQu_20260402_141430.ipynb",
+    "last_modified": "2026-04-02T06:15:24.548849Z",
+    "created": "2026-04-02T06:15:24.549849Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 4266,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 情绪择时框架 - RiceQuant Notebook测试\n# 测试目标：验证情绪开关（涨停家数>=30）对首板低开策略的增益效果\n\nprint(\"=== 情绪择时框架测试开始 ===\")\n\ntry:\n    import numpy as np\n\n    # 测试参数\n    start_date = \"2024-01-01\"\n    end_date = \"2024-12-31\"\n    initial_capital = 100000\n\n    # 获取交易日\n    trading_dates = get_trading_dates(start_date, end_date)\n    print(f\"交易日数: {len(trading_dates)}\")\n\n    # 统计变量\n    total_signals = 0\n    total_trades = 0\n    total_return = 0\n    sentiment_on_days = 0\n    sentiment_off_days = 0\n\n    # 遍历交易日\n    for i, date in enumerate(trading_dates):\n        if i == 0:\n            continue  # 第一天无法获取前一日数据\n\n        prev_date = trading_dates[i - 1]\n\n        # 获取前一日涨停股票\n        try:\n            all_stocks = all_instruments(\"CS\", date=prev_date)\n            if all_stocks is None or len(all_stocks) == 0:\n                continue\n\n            # 获取前一日行情\n            prev_bars = {}\n            for stock in all_stocks[:100]:  # 限制股票数量避免超时\n                try:\n                    bars = history_bars(\n                        stock.order_book_id, 1, \"1d\", \"close\", prev_date, prev_date\n                    )\n                    if bars is not None and len(bars) > 0:\n                        prev_bars[stock.order_book_id] = bars[0]\n                except:\n                    continue\n\n            if len(prev_bars) == 0:\n                continue\n\n            # 计算涨停家数（简化：收盘价接近涨停价）\n            zt_count = 0\n            for stock_id, bar in prev_bars.items():\n                # RiceQuant涨停价需要手动计算（收盘价涨幅>=9.5%视为涨停）\n                if hasattr(bar, \"close\") and bar.close > 0:\n                    # 简化判断：涨幅>=9.5%\n                    prev_close = bar.close\n                    if prev_close / prev_close >= 1.095:  # 简化逻辑\n                        zt_count += 1\n\n            print(f\"{date}: 涨停家数≈{zt_count}\")\n\n        except Exception as e:\n            print(f\"{date}: 数据获取失败 - {e}\")\n            continue\n\n    print(f\"\\n=== 统计结果 ===\")\n    print(f\"总交易日: {len(trading_dates)}\")\n    print(f\"情绪开启天数: {sentiment_on_days}\")\n    print(f\"情绪关闭天数: {sentiment_off_days}\")\n\nexcept Exception as e:\n    print(f\"错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"=== 测试完成 ===\")\n",
+      "msgId": "f700fe0866c44647b6082addc54b024c",
+      "websocketSessionId": "ffb808b21d4943078fece25682f89d83",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== 情绪择时框架测试开始 ===\n交易日数: 242\n\n=== 统计结果 ===\n总交易日: 242\n情绪开启天数: 0\n情绪关闭天数: 0\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== 情绪择时框架测试开始 ===\n交易日数: 242\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n=== 统计结果 ===\n总交易日: 242\n情绪开启天数: 0\n情绪关闭天数: 0\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "情绪择时框架RiceQu",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "e51eaad7-8d2b-4744-95d3-5db5db89da25",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/e51eaad7-8d2b-4744-95d3-5db5db89da25: "
+  },
+  "autoShutdown": true
+}

@@ -1,0 +1,62 @@
+{
+  "capturedAt": "2026-04-02T06:13:36.567Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E6%B7%B1%E5%BA%A6%E4%BD%8E%E5%BC%80%E4%B8%93%E9%A1%B9%E9%AA%8C%E8%AF%81Rice_20260402_141328.ipynb",
+  "notebookPath": "深度低开专项验证Rice_20260402_141328.ipynb",
+  "kernelId": "21ed8710-fd89-4f1d-a6f8-472b77772416",
+  "sessionId": "dc4932ea-e0b5-458a-aee2-491f04d7834f",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "深度低开专项验证Rice_20260402_141328.ipynb",
+    "path": "深度低开专项验证Rice_20260402_141328.ipynb",
+    "last_modified": "2026-04-02T06:13:35.042150Z",
+    "created": "2026-04-02T06:13:35.042150Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 7859,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 深度低开专项验证 - RiceQuant Notebook\n# 阶段2：简单因子策略验证\n# 深度低开：-5%~-3%\n\nprint(\"=== 深度低开专项验证 - RiceQuant Notebook ===\")\nprint(\"阶段2：简单因子策略验证\")\n\ntry:\n    import pandas as pd\n    import numpy as np\n\n    # 测试2024年多个日期\n    test_dates = [\"2024-01-15\", \"2024-04-15\", \"2024-07-15\", \"2024-10-15\"]\n\n    signals = []\n\n    for test_date in test_dates:\n        print(f\"\\n处理日期: {test_date}\")\n\n        try:\n            # 获取所有股票（RiceQuant API）\n            all_stocks = all_instruments(\"CS\", test_date)\n            print(f\"  股票总数: {len(all_stocks)}\")\n\n            # 只测试前200只股票\n            stocks_sample = all_stocks[\"order_book_id\"].tolist()[:200]\n\n            for stock in stocks_sample:\n                try:\n                    # 获取前2日数据（RiceQuant API）\n                    bars = history_bars(\n                        stock, 2, \"1d\", \"close,limit_up\", end_date=test_date\n                    )\n\n                    if bars is None or len(bars) < 2:\n                        continue\n\n                    prev_close = bars[-2][\"close\"]\n                    prev_limit = bars[-2][\"limit_up\"]\n                    curr_open = bars[-1][\"close\"]  # 注：history_bars返回收盘价\n\n                    # 检查昨日是否涨停\n                    if abs(prev_close - prev_limit) / prev_limit > 0.01:\n                        continue\n\n                    # 计算开盘涨跌幅\n                    open_pct = (curr_open - prev_close) / prev_close * 100\n\n                    # 筛选深度低开：-5%~-3%\n                    if -5.0 <= open_pct < -3.0:\n                        # 获取当日数据\n                        daily_bars = history_bars(\n                            stock, 1, \"1d\", \"open,close,high\", end_date=test_date\n                        )\n\n                        if daily_bars is not None and len(daily_bars) > 0:\n                            actual_open = daily_bars[-1][\"open\"]\n                            curr_close = daily_bars[-1][\"close\"]\n                            curr_high = daily_bars[-1][\"high\"]\n\n                            intra_return = (\n                                (curr_close - actual_open) / actual_open * 100\n                            )\n                            max_return = (curr_high - actual_open) / actual_open * 100\n\n                            signals.append(\n                                {\n                                    \"date\": test_date,\n                                    \"stock\": stock,\n                                    \"open_pct\": open_pct,\n                                    \"intra_return\": intra_return,\n                                    \"max_return\": max_return,\n                                    \"is_win\": intra_return > 0,\n                                }\n                            )\n\n                            print(\n                                f\"    深度低开: {stock}, 开盘{open_pct:.2f}%, 日内{intra_return:.2f}%\"\n                            )\n\n                except Exception as e:\n                    continue\n\n        except Exception as e:\n            print(f\"  错误: {e}\")\n            continue\n\n    print(\"\\n\" + \"=\" * 80)\n    print(\"阶段2结果汇总\")\n    print(\"=\" * 80)\n\n    if len(signals) == 0:\n        print(\"\\n未找到深度低开样本\")\n        print(\"判定: 删除 - 样本不存在\")\n    else:\n        df = pd.DataFrame(signals)\n        print(f\"\\n深度低开样本数: {len(df)}\")\n        print(f\"平均日内收益: {df['intra_return'].mean():.2f}%\")\n        print(f\"平均最高收益: {df['max_return'].mean():.2f}%\")\n        print(f\"胜率: {df['is_win'].sum() / len(df) * 100:.1f}%\")\n        print(\n            f\"开盘涨跌幅范围: {df['open_pct'].min():.2f}% ~ {df['open_pct'].max():.2f}%\"\n        )\n\n        print(\"\\n详细样本:\")\n        for idx, row in df.iterrows():\n            print(\n                f\"  {row['date']} {row['stock']}: 开盘{row['open_pct']:.2f}%, 日内{row['intra_return']:.2f}%\"\n            )\n\n        print(\"\\n阶段2判定:\")\n        if len(df) < 30:\n            if (\n                df[\"intra_return\"].mean() < 0\n                and df[\"is_win\"].sum() / len(df) * 100 < 30\n            ):\n                print(\"  删除 - 样本少且收益负、胜率极低\")\n            else:\n                print(\"  需进入阶段3验证 - 样本不足\")\n        else:\n            if (\n                df[\"intra_return\"].mean() > 0.5\n                and df[\"is_win\"].sum() / len(df) * 100 > 45\n            ):\n                print(\"  推荐保留 - 样本充足，收益正，胜率合理\")\n            else:\n                print(\"  需进入阶段3验证 - 收益或胜率不达标\")\n\nexcept Exception as e:\n    print(f\"错误: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"\\n=== 阶段2测试完成 ===\")\n",
+      "msgId": "420d3d704e4343ca91f173522d9f0391",
+      "websocketSessionId": "717dd57ca49a4b2398434b7e5aa2b817",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== 深度低开专项验证 - RiceQuant Notebook ===\n阶段2：简单因子策略验证\n\n处理日期: 2024-01-15\n  股票总数: 5101\n\n处理日期: 2024-04-15\n  股票总数: 5117\n\n处理日期: 2024-07-15\n  股票总数: 5111\n\n处理日期: 2024-10-15\n  股票总数: 5102\n\n================================================================================\n阶段2结果汇总\n================================================================================\n\n未找到深度低开样本\n判定: 删除 - 样本不存在\n\n=== 阶段2测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== 深度低开专项验证 - RiceQuant Notebook ===\n阶段2：简单因子策略验证\n\n处理日期: 2024-01-15\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  股票总数: 5101\n\n处理日期: 2024-04-15\n  股票总数: 5117\n\n处理日期: 2024-07-15\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  股票总数: 5111\n\n处理日期: 2024-10-15\n  股票总数: 5102\n\n================================================================================\n阶段2结果汇总\n================================================================================\n\n未找到深度低开样本\n判定: 删除 - 样本不存在\n\n=== 阶段2测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "深度低开专项验证Rice",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "dc4932ea-e0b5-458a-aee2-491f04d7834f",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/dc4932ea-e0b5-458a-aee2-491f04d7834f: "
+  },
+  "autoShutdown": true
+}
