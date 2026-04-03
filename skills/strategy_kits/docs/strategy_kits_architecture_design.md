@@ -241,7 +241,7 @@ target_weights = PortfolioBuilder(...).build(merged, score_col="final_score")
 
 ### P0（继续强化）
 
-1. 实现 `integrations/factorhub/` 薄桥接层（`pool_panel/score_panel -> strategy_kits` 可消费输入）。
+1. 强化 `integrations/factorhub/`（当前已完成第一版桥接；下一步补 profile/meta 一致性校验与远端加载适配）。
 2. 补齐回测 symbol 规范化适配（如 `000001.XSHE` 与 `sz000001` 的映射容错）。
 3. 增加 CI gate：PR 默认跑 `unit + smoke`，失败阻断合并。
 4. 固化 contract 文档版本号（例如 `v1.0`），避免后续增强时字段漂移。

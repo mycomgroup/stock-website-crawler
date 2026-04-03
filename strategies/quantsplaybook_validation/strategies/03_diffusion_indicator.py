@@ -17,10 +17,11 @@ def handle_bar(context, bar_dict):
     # 获取沪深300成分股
     try:
         stocks = index_components(security)
-    except:
-        stocks = all_instruments('CS')['order_book_id'][:context.N].tolist()
+    except Exception as e:
+        print(f"获取成分股失败: {e}")
+        return
 
-    if len(stocks) < 50:
+    if stocks is None or len(stocks) < 50:
         return
 
     # 计算扩散指标：上涨股票占比

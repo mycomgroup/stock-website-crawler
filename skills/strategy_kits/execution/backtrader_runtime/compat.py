@@ -18,6 +18,43 @@ from typing import Dict, List, Tuple, Callable, Optional, Any, Union
 import pandas as pd
 import math
 
+from ..data_gateways.symbol import to_ak, to_jq, to_qlib, to_ts
+
+
+def _symbol_aliases(code: Any) -> set[str]:
+    """Generate comparable aliases for robust symbol matching."""
+    if code is None:
+        return set()
+
+    raw = str(code).strip()
+    if not raw:
+        return set()
+
+    aliases = {raw, raw.lower(), raw.upper()}
+
+    dot_base = raw.split(".", 1)[0]
+    if dot_base.isdigit():
+        aliases.add(dot_base.zfill(6))
+        aliases.add(dot_base[-6:])
+
+    try:
+        jq = to_jq(raw)
+        aliases.update({jq, jq.lower(), jq.upper()})
+
+        bare = jq.split(".", 1)[0]
+        aliases.add(bare)
+        aliases.add(bare.zfill(6))
+
+        ak = to_ak(raw)
+        ts = to_ts(raw)
+        qlib = to_qlib(raw)
+        aliases.update({ak, ak.lower(), ak.upper(), ts, ts.lower(), ts.upper(), qlib, qlib.lower(), qlib.upper()})
+    except Exception:
+        # Keep raw aliases only when symbol normalization fails.
+        pass
+
+    return {x for x in aliases if x}
+
 
 class PortfolioCompat:
     """
@@ -381,11 +418,14 @@ class JQ2BTBaseStrategy(bt.Strategy):
         Raises:
             ValueError: 找不到对应数据源
         """
-        if isinstance(code, bt.feeds.PandasData):
+        if isinstance(code, bt.DataBase):
             return code
 
+        target_aliases = _symbol_aliases(code)
         for data in self.datas:
-            if data._name == code or getattr(data, 'code', None) == code:
+            data_aliases = _symbol_aliases(getattr(data, "_name", None))
+            data_aliases.update(_symbol_aliases(getattr(data, "code", None)))
+            if target_aliases.intersection(data_aliases):
                 return data
 
         raise ValueError(f"找不到数据源: {code}")

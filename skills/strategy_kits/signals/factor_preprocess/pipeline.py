@@ -184,14 +184,15 @@ class FactorPreprocessPipeline:
         for col, meta in self._stats.get("fill_stats", {}).items():
             if col not in out.columns:
                 continue
+            series = pd.to_numeric(out[col], errors="coerce")
             group_col = meta.get("group_col")
             group_stats = meta.get("group_stats", {})
             global_val = meta.get("global", 0.0)
             if group_col and group_col in out.columns and group_stats:
-                out[col] = out[col].fillna(out[group_col].map(group_stats))
-                out[col] = out[col].fillna(global_val)
+                series = series.fillna(out[group_col].map(group_stats))
+                out[col] = series.fillna(global_val)
             else:
-                out[col] = out[col].fillna(global_val)
+                out[col] = series.fillna(global_val)
         return out
 
     def _apply_fitted_winsorize(self, df: pd.DataFrame) -> pd.DataFrame:

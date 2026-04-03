@@ -20,6 +20,8 @@
 3. `signals/factor_preprocess/pipeline.py`：`fit()` 统计量已被 `transform()` 实际消费，避免训练-测试统计泄露。
 4. `strategy_templates/presets/weighting_strategies.py`：接入预测面板 contract 校验。
 5. `portfolio/runtime_state/rebalance_diff.py`：接入输入 contract 校验与统一日志。
+6. `integrations/factorhub/`：支持 `pool_panel/score_panel` 读取、校验、转 `pred_df`，并支持“截面 + 时序”分数合成。
+7. `execution/backtrader_runtime/compat.py`：`_find_data` 支持 JQ/AK/TS/QLib/裸代码格式容错匹配。
 
 ### 2.2 工程化能力
 
@@ -116,7 +118,6 @@ uv run pytest skills/strategy_kits/tests
 
 ## 7. 下一步建议（衔接 skill.md 自动化）
 
-1. 增加 `integrations/factorhub/contracts.py` 与 `pool_panel -> pred_df` 适配器。  
-2. 新增一份 `skill.md` 的输入规范模板：把 `pool_panel`、`strategy intent`、`risk profile` 映射到统一任务参数。  
-3. 把 smoke 测试升级为 CI gating：PR 必须通过 unit + smoke 才允许合并。  
-
+1. 新增一份 `skill.md` 的输入规范模板：把 `pool_panel`、`strategy intent`、`risk profile` 映射到统一任务参数。  
+2. 把 smoke 测试升级为 CI gating：PR 必须通过 unit + smoke 才允许合并。  
+3. 增加模板策略的参数 schema 校验（例如 `rebalance_threshold`、`hold_days`、`top_n` 的边界检查）。  

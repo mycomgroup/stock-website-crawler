@@ -155,10 +155,12 @@ function extractTaskNameFromStrategy(strategyPath, cellSource) {
   
   if (strategyPath) {
     const fileName = path.basename(strategyPath, '.py');
-    return fileName.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').slice(0, 12);
+    const timestamp = new Date().getTime().toString().slice(-6);
+    return `${fileName.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_')}_${timestamp}`.slice(0, 40);
   }
   
-  return '策略测试';
+  const finalTimestamp = new Date().getTime().toString().slice(-6);
+  return `策略测试_${finalTimestamp}`;
 }
 
 function findRecentNotebookWithError(outputRoot, notebookBaseName) {
@@ -353,7 +355,7 @@ async function executeNotebookTest(options = {}) {
     }
   }
 
-  const notebookSnapshotPath = client.writeArtifact('ricequant-notebook', notebookContent, 'ipynb');
+  const notebookSnapshotPath = client.writeArtifact(`ricequant-notebook-${notebookBaseName}`, notebookContent, 'ipynb');
   const resultPayload = {
     capturedAt: new Date().toISOString(),
     notebookUrl: client.directNotebookUrl,
