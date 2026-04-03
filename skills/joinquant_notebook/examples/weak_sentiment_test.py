@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """弱转强+情绪过滤 - 2024年"""
-
 import pandas as pd
 from jqdata import *
 
@@ -15,21 +14,14 @@ END = "2024-03-31"
 trade_days = get_trade_days(start_date=START, end_date=END)
 print(f"\n交易日: {len(trade_days)}天")
 
-# 获取每日涨停家数
 zt_counts = []
 for d in trade_days[:60]:
     d_str = d.strftime("%Y-%m-%d")
     try:
         stocks = get_all_securities("stock", d_str).index.tolist()
-        stocks = [s for s in stocks if s[0] not in ["3", "4", "8"] and s[:2] != "68"]
-        prices = get_price(
-            stocks,
-            end_date=d_str,
-            frequency="daily",
-            fields=["close", "high_limit"],
-            count=1,
-            panel=False,
-        )
+        stocks = [s for s in stocks if s[0] not in ["3","4","8"] and s[:2] != "68"]
+        prices = get_price(stocks, end_date=d_str, frequency="daily",
+                          fields=["close", "high_limit"], count=1, panel=False)
         if not prices.empty:
             prices = prices.dropna()
             zt = len(prices[prices["close"] == prices["high_limit"]])
@@ -37,89 +29,67 @@ for d in trade_days[:60]:
     except:
         pass
 
-print(
-    f"涨停家数统计: 平均{sum([x['zt_count'] for x in zt_counts]) / len(zt_counts):.0f}"
-)
+if zt_counts:
+    avg_zt = sum([x['zt_count'] for x in zt_counts])/len(zt_counts)
+    print(f"涨停家数统计: 平均{avg_zt:.0f}")
 
 capital = INITIAL_CAPITAL
 positions = {}
 trades = []
-
-# 情绪开关: 涨停家数>=30
 SENTIMENT_THRESHOLD = 30
 
 for i in range(1, len(trade_days) - 1):
     current_date = trade_days[i]
     current_str = current_date.strftime("%Y-%m-%d")
-    prev_date = trade_days[i - 1]
+    prev_date = trade_days[i-1]
     prev_str = prev_date.strftime("%Y-%m-%d")
-
-    # 获取昨日涨停家数作为情绪指标
+    
     zt_count = 0
     for z in zt_counts:
         if z["date"] == prev_str:
             zt_count = z["zt_count"]
             break
-
-    # 情绪过滤: 只在涨停家数>=30时开仓
+    
     if zt_count < SENTIMENT_THRESHOLD:
         continue
-
+    
     try:
         all_stocks = get_all_securities("stock", prev_str).index.tolist()
-        stocks = [
-            s for s in all_stocks if s[0] not in ["3", "4", "8"] and s[:2] != "68"
-        ]
-
-        prices = get_price(
-            stocks,
-            end_date=prev_str,
-            frequency="daily",
-            fields=["close", "high_limit", "money"],
-            count=1,
-            panel=False,
-        )
+        stocks = [s for s in all_stocks if s[0] not in ["3","4","8"] and s[:2] != "68"]
+        
+        prices = get_price(stocks, end_date=prev_str, frequency="daily",
+                          fields=["close", "high_limit", "money"], count=1, panel=False)
         if prices.empty:
             continue
         prices = prices.dropna()
-
+        
         prices["is_hl"] = prices["close"] == prices["high_limit"]
         hl_df = prices[prices["is_hl"]].copy()
-
+        
         if len(hl_df) == 0:
             continue
-
+        
         hl_df = hl_df[hl_df["money"] > 5e8]
-
+        
         if len(hl_df) == 0:
             continue
-
+        
         stock_codes = list(hl_df["code"])
-
-        today_prices = get_price(
-            stock_codes,
-            end_date=current_str,
-            frequency="daily",
-            fields=["open", "high_limit"],
-            count=1,
-            panel=False,
-        )
+        
+        today_prices = get_price(stock_codes, end_date=current_str, frequency="daily",
+                                fields=["open", "high_limit"], count=1, panel=False)
         if today_prices.empty:
             continue
         today_prices = today_prices.dropna()
-
-        today_prices["ratio"] = today_prices["open"] / (
-            today_prices["high_limit"] / 1.1
-        )
-        qualified = today_prices[
-            (today_prices["ratio"] >= 1.02) & (today_prices["ratio"] < 1.05)
-        ]
-
+        
+        today_prices["ratio"] = today_prices["open"] / (today_prices["high_limit"] / 1.1)
+        qualified = today_prices[(today_prices["ratio"] >= 1.02) & (today_prices["ratio"] < 1.05)]
+        
         if len(qualified) == 0:
             continue
-
+        
         buy_codes = list(qualified["code"])
-
+        
         if len(buy_codes) > 0 and capital > 1000:
             per_stock = capital / len(buy_codes)
             for code in buy_codes:
@@ -129,22 +99,14 @@ for i in range(1, len(trade_days) - 1):
                     if amount >= 100:
                         capital -= amount * open_price
                         positions[code] = {"cost": open_price, "amount": amount}
-                        trades.append(
-                            {"date": current_str, "code": code, "type": "buy"}
-                        )
+                        trades.append({"date": current_str, "code": code, "type": "buy"})
                 except:
                     continue
-
+        
         if len(positions) > 0:
             pos_codes = list(positions.keys())
-            close_prices = get_price(
-                pos_codes,
-                end_date=current_str,
-                frequency="daily",
-                fields=["close", "high_limit"],
-                count=1,
-                panel=False,
-            )
+            close_prices = get_price(pos_codes, end_date=current_str, frequency="daily",
+                                    fields=["close", "high_limit"], count=1, panel=False)
             if not close_prices.empty:
                 close_prices = close_prices.dropna()
                 for code in list(positions.keys()):
@@ -160,33 +122,18 @@ for i in range(1, len(trade_days) - 1):
                         proceeds = pos["amount"] * close_price * 0.999
                         ret = close_price / pos["cost"] - 1
                         capital += proceeds
-                        trades.append(
-                            {
-                                "date": current_str,
-                                "code": code,
-                                "type": "sell",
-                                "return": ret,
-                            }
-                        )
+                        trades.append({"date": current_str, "code": code, "type": "sell", "return": ret})
                         del positions[code]
                     except:
                         continue
     except:
         continue
 
-# 最后一天清理
 if len(positions) > 0:
     last = trade_days[-1].strftime("%Y-%m-%d")
     for code in list(positions.keys()):
         try:
-            p = get_price(
-                code,
-                end_date=last,
-                frequency="daily",
-                fields=["close"],
-                count=1,
-                panel=False,
-            )
+            p = get_price(code, end_date=last, frequency="daily", fields=["close"], count=1, panel=False)
             if not p.empty:
                 capital += positions[code]["amount"] * p["close"].iloc[0] * 0.999
         except:
@@ -203,8 +150,8 @@ if len(returns) > 0:
     total_ret = (capital - INITIAL_CAPITAL) / INITIAL_CAPITAL
     annual_ret = (1 + total_ret) ** (252 / len(trade_days)) - 1
     win_rate = len([r for r in returns if r > 0]) / len(returns)
-    print(f"  总收益率: {total_ret * 100:.2f}%")
-    print(f"  年化收益率: {annual_ret * 100:.2f}%")
-    print(f"  胜率: {win_rate * 100:.1f}%")
+    print(f"  总收益率: {total_ret*100:.2f}%")
+    print(f"  年化收益率: {annual_ret*100:.2f}%")
+    print(f"  胜率: {win_rate*100:.1f}%")
 print(f"  最终资金: {capital:.2f}")
 print("=" * 60)
