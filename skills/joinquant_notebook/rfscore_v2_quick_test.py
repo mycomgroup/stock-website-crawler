@@ -79,11 +79,18 @@ class RFScore(Factor):
         def sign(ser):
             return ser.apply(lambda x: np.where(x > 0, 1, 0))
 
-        indicators = pd.concat(
-            [roa, delta_roa, ocfoa, accrual, delta_leveler, delta_margin, delta_turn],
-            axis=1,
+        # 确保所有指标都是DataFrame格式
+        indicator_tuple = (
+            roa,
+            delta_roa,
+            ocfoa,
+            accrual,
+            delta_leveler,
+            delta_margin,
+            delta_turn,
         )
-        indicators.columns = [
+        self.basic = pd.concat(indicator_tuple).T.replace([-np.inf, np.inf], np.nan)
+        self.basic.columns = [
             "ROA",
             "DELTA_ROA",
             "OCFOA",
@@ -92,7 +99,6 @@ class RFScore(Factor):
             "DELTA_MARGIN",
             "DELTA_TURN",
         ]
-        self.basic = indicators.replace([-np.inf, np.inf], np.nan)
         self.fscore = self.basic.apply(sign).sum(axis=1)
 
 
@@ -110,10 +116,8 @@ def get_universe(watch_date):
 
     sec = get_all_securities(types=["stock"], date=watch_date)
     sec = sec.loc[sec.index.intersection(stocks)]
-    watch_date_dt = (
-        pd.Timestamp(watch_date) if isinstance(watch_date, str) else watch_date
-    )
-    sec = sec[sec["start_date"] <= watch_date_dt - pd.Timedelta(days=180)]
+    cutoff_date = (pd.Timestamp(watch_date) - pd.Timedelta(days=180)).date()
+    sec = sec[sec["start_date"].apply(lambda x: x <= cutoff_date)]
     stocks = sec.index.tolist()
 
     is_st = get_extras("is_st", stocks, end_date=watch_date, count=1).iloc[-1]

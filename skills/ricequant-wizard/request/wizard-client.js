@@ -23,6 +23,11 @@ export class WizardClient {
   constructor(options = {}) {
     this.sessionFile = options.sessionFile || RICEQUANT_STRATEGY_SESSION;
     this.sessionPayload = options.sessionPayload || loadJson(this.sessionFile) || {};
+    
+    if (!this.sessionPayload.cookies?.length && process.env._RQ_SESSION_MISSING === '1') {
+      console.warn('警告: 未找到 session 文件，请先运行 ricequant_strategy skill 登录，或在本 skill 的 data/session.json 中配置 cookies');
+    }
+    
     this.origin = 'https://www.ricequant.com';
     this.cookieJar = options.cookies || this.sessionPayload.cookies || [];
     this.workspaceId = null;
@@ -248,6 +253,7 @@ export class WizardClient {
   async waitForBacktest(backtestId, options = {}) {
     const maxAttempts = options.maxAttempts || 60;
     const interval = options.interval || 3000;
+    const terminalStatuses = new Set(['error_exit', 'cancelled', 'failed', 'stopped']);
     
     for (let i = 0; i < maxAttempts; i++) {
       const result = await this.getBacktestResult(backtestId);
@@ -256,8 +262,8 @@ export class WizardClient {
         return { status: 'finished', result };
       }
       
-      if (result.status === 'error_exit') {
-        return { status: 'error', result, exception: result.exception };
+      if (terminalStatuses.has(result.status)) {
+        return { status: 'error', result, exception: result.exception || result.status };
       }
       
       await new Promise(r => setTimeout(r, interval));
@@ -373,32 +379,40 @@ export class WizardClient {
   }
 
 generateWizardCode(config) {
-    const filters = config.filters || [];
-    const sorting = config.sorting || [];
-    const risk = config.risk || {};
+    const isThreePeriods = config.template === 'three_periods' || config.buy || config.sell;
     
-    const filterCode = filters.map(f => {
+    if (isThreePeriods) {
+      return this._generateThreePeriodsCode(config);
+    }
+    return this._generateSinglePeriodCode(config);
+  }
+
+  _buildFilterCodeLines(filters) {
+    return (filters || []).map(f => {
       const factorName = f.factor?.name || f.name;
       const factorType = f.factor?.type || 'fundamental';
       const rhsValue = JSON.stringify(f.rhs || f.value);
       return `    {'operator': '${f.operator}', 'lhs': {'type': '${factorType}', 'name': '${factorName}'}, 'rhs': ${rhsValue}},`;
     }).join('\n');
+  }
 
-    const sortingCode = sorting.map(s => {
+  _buildSortingCodeLines(sorting) {
+    return (sorting || []).map(s => {
       const factorName = s.factor?.name || s.name;
       const factorType = s.factor?.type || 'fundamental';
       const ascending = s.ascending === false ? 'False' : 'True';
       return `    {'weight': ${s.weight || 1}, 'ascending': ${ascending}, 'factor': {'type': '${factorType}', 'name': '${factorName}'}},`;
     }).join('\n');
+  }
 
+  _commonCodeHeader(config) {
+    const risk = config.risk || {};
     const universeStr = JSON.stringify(config.universe || ['000300.XSHG']);
     const industriesStr = JSON.stringify(config.industries || ['*']);
     const boardStr = JSON.stringify(config.board || ['*']);
     const stOption = config.stOption || 'exclude';
     const profitTaken = risk.profitTaking ?? 'None';
     const stopLoss = risk.stopLoss ?? 'None';
-    const maxHoldingNum = config.maxHoldingNum || 10;
-    const rebalanceInterval = config.rebalanceInterval || 5;
 
     return `import numpy as np
 import pandas as pd
@@ -409,23 +423,15 @@ BOARDS = ${boardStr}
 INDUSTRIES = ${industriesStr}
 ST_OPTION = '${stOption}'
 
-REBALANCE_INTERVAL = ${rebalanceInterval}
-MAX_HOLDING_NUM = ${maxHoldingNum}
-
 SINGLE_PROFIT_TAKEN = ${profitTaken}
 SINGLE_STOP_LOSS = ${stopLoss}
 
 MARKET_ENTER_SIGNALS = []
-MARKET_PANIC_SIGNALS = []
+MARKET_PANIC_SIGNALS = []`;
+  }
 
-FILTERS = [
-${filterCode}
-]
-
-SORTING_RULES = [
-${sortingCode}
-]
-
+  _commonFilterFunctions() {
+    return `
 SIMPLE_OPERATOR = {"greater_than", "less_than", "in_range", "rank_in_range"}
 
 def apply_simple_operator(operator, data, rhs):
@@ -540,7 +546,32 @@ def get_universe(universe, industries, boards, st_option):
 def sell_out_all(portfolio):
     for order_book_id, position in portfolio.positions.items():
         if position.quantity > 0:
-            order_target_value(order_book_id, 0)
+            order_target_value(order_book_id, 0)`;
+  }
+
+  _generateSinglePeriodCode(config) {
+    const filters = config.filters || [];
+    const sorting = config.sorting || [];
+    const risk = config.risk || {};
+    const maxHoldingNum = config.maxHoldingNum || 10;
+    const rebalanceInterval = config.rebalanceInterval || 5;
+
+    const filterCode = this._buildFilterCodeLines(filters);
+    const sortingCode = this._buildSortingCodeLines(sorting);
+
+    return `${this._commonCodeHeader(config)}
+
+REBALANCE_INTERVAL = ${rebalanceInterval}
+MAX_HOLDING_NUM = ${maxHoldingNum}
+
+FILTERS = [
+${filterCode}
+]
+
+SORTING_RULES = [
+${sortingCode}
+]
+${this._commonFilterFunctions()}
 
 import random
 
@@ -597,8 +628,130 @@ def rebalance_second_part(context, bar_dict):
 `;
   }
 
+  _generateThreePeriodsCode(config) {
+    const filters = config.filters || [];
+    const sorting = config.sorting || [];
+    const buyFilters = config.buy?.filters || [];
+    const sellFilters = config.sell?.filters || [];
+    const maxHoldingNum = config.maxHoldingNum || 10;
+    const maxHoldingPercent = config.maxHoldingPercent || 0.2;
+    const rebalanceInterval = config.rebalanceInterval || 5;
+    const buyInterval = config.buy?.rebalanceInterval || 1;
+    const sellInterval = config.sell?.rebalanceInterval || 1;
+
+    const filterCode = this._buildFilterCodeLines(filters);
+    const sortingCode = this._buildSortingCodeLines(sorting);
+    const buyFilterCode = this._buildFilterCodeLines(buyFilters);
+    const sellFilterCode = this._buildFilterCodeLines(sellFilters);
+
+    return `${this._commonCodeHeader(config)}
+
+REBALANCE_INTERVAL = ${rebalanceInterval}
+MAX_HOLDING_NUM = ${maxHoldingNum}
+MAX_HOLDING_PERCENT = ${maxHoldingPercent}
+
+BUY_REBALANCE_INTERVAL = ${buyInterval}
+SELL_REBALANCE_INTERVAL = ${sellInterval}
+
+# 基础筛选（持仓期）
+FILTERS = [
+${filterCode}
+]
+
+# 买入额外条件
+BUY_FILTERS = [
+${buyFilterCode}
+]
+
+# 卖出触发条件
+SELL_FILTERS = [
+${sellFilterCode}
+]
+
+SORTING_RULES = [
+${sortingCode}
+]
+${this._commonFilterFunctions()}
+
+import random
+
+def init(context):
+    context.count = -1
+    context.buy_count = -1
+    context.sell_count = -1
+    context.strategy_stop = False
+    minute = random.randint(1, 15)
+    scheduler.run_daily(sell_rebalance, time_rule=market_open(minute=minute))
+    scheduler.run_daily(buy_rebalance, time_rule=market_open(minute=minute+1))
+
+def before_trading(context):
+    context.count += 1
+    context.buy_count += 1
+    context.sell_count += 1
+
+def handle_bar(context, bar_dict):
+    if context.strategy_stop:
+        sell_out_all(context.portfolio)
+        return
+    if SINGLE_STOP_LOSS is None and SINGLE_PROFIT_TAKEN is None:
+        return
+    for order_book_id, position in context.portfolio.positions.items():
+        if position.quantity == 0:
+            continue
+        profit = bar_dict[order_book_id].last / position.avg_price - 1
+        if SINGLE_PROFIT_TAKEN is not None and SINGLE_PROFIT_TAKEN < profit:
+            order_target_value(order_book_id, 0)
+        elif SINGLE_STOP_LOSS is not None and SINGLE_STOP_LOSS > profit:
+            order_target_value(order_book_id, 0)
+
+def sell_rebalance(context, bar_dict):
+    """卖出期：检查持仓是否触发卖出条件"""
+    if context.sell_count % SELL_REBALANCE_INTERVAL != 0 or context.strategy_stop:
+        return
+    held = list(context.stock_account.positions.keys())
+    if not held:
+        return
+    # 触发卖出条件的股票直接清仓
+    if SELL_FILTERS:
+        to_sell = apply_filters(held, SELL_FILTERS, bar_dict)
+        for s in to_sell:
+            if context.stock_account.positions[s].quantity > 0:
+                order_target_value(s, 0)
+    # 不再满足基础筛选条件的也卖出
+    valid = apply_filters(held, FILTERS, bar_dict)
+    valid_set = set(valid)
+    for s in held:
+        if s not in valid_set and context.stock_account.positions[s].quantity > 0:
+            order_target_value(s, 0)
+
+def buy_rebalance(context, bar_dict):
+    """买入期：从候选池中选股买入"""
+    if context.buy_count % BUY_REBALANCE_INTERVAL != 0 or context.strategy_stop:
+        return
+    stocks = get_universe(UNIVERSE, INDUSTRIES, BOARDS, ST_OPTION)
+    stocks = [s for s in stocks if not is_suspended(s)]
+    stocks = apply_filters(stocks, FILTERS, bar_dict)
+    if BUY_FILTERS:
+        stocks = apply_filters(stocks, BUY_FILTERS, bar_dict)
+    stocks = [s for s in stocks if bar_dict[s].last < bar_dict[s].limit_up]
+    sorted_pool = sort_stocks(stocks, SORTING_RULES, bar_dict)
+    
+    current_holdings = {s for s, p in context.stock_account.positions.items() if p.quantity > 0}
+    slots_available = MAX_HOLDING_NUM - len(current_holdings)
+    
+    if slots_available <= 0:
+        return
+    
+    candidates = [s for s in sorted_pool if s not in current_holdings][:slots_available]
+    
+    target_value = context.portfolio.total_value * MAX_HOLDING_PERCENT
+    for s in candidates:
+        order_target_value(s, target_value)
+`;
+  }
+
   saveReport(backtestId, report) {
-    const filePath = path.join(DATA_DIR, `wizard-backtest-${backtestId}-${Date.now()}.json`);
+    const filePath = path.join(DATA_DIR, `report-${backtestId}-${Date.now()}.json`);
     saveJson(filePath, report);
     return filePath;
   }

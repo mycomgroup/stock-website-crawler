@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-04-03T03:41:35.296Z",
+  "capturedAt": "2026-04-03T03:47:44.873Z",
   "notebookUrl": "https://www.ricequant.com/research",
   "directNotebookUrl": "https://www.ricequant.com/research",
   "login": {
@@ -84,7 +84,7 @@
         "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "138",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 03:40:22 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:31 GMT",
         "location": "https://www.ricequant.com/welcome/",
         "server": "nginx"
       },
@@ -171,7 +171,7 @@
         "content-encoding": "gzip",
         "content-security-policy": "default-src *.ricequant.com;connect-src *.ricequant.com blob: wss://*.ricequant.com *.amap.com http://localhost:11984 *.algolia.net *.algolianet.com aegis.qq.com *.supabase.co;script-src 'unsafe-inline' 'unsafe-eval' *.ricequant.com dn-growing.qbox.me *.amap.com turing.captcha.qcloud.com turing.captcha.gtimg.com cdn-go.cn;style-src 'unsafe-inline' *.ricequant.com;font-src *.ricequant.com data:;img-src *.ricequant.com data: blob: http://thirdwx.qlogo.cn *.amap.com *.autonavi.com aq.qq.com turing.captcha.qcloud.com;frame-src *.ricequant.com open.weixin.qq.com turing.captcha.qcloud.com turing.captcha.gtimg.com;frame-ancestors 'self';",
         "content-type": "text/html; charset=utf-8",
-        "date": "Fri, 03 Apr 2026 03:40:22 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:31 GMT",
         "etag": "W/\"69c64e44-b09\"",
         "last-modified": "Fri, 27 Mar 2026 09:30:44 GMT",
         "server": "nginx",
@@ -191,7 +191,7 @@
       "headers": {
         "content-encoding": "gzip",
         "etag": "W/\"666a53f5-c75\"",
-        "age": "65426",
+        "age": "65796",
         "x-content-type-options": "nosniff",
         "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "date": "Thu, 02 Apr 2026 03:45:02 GMT",
@@ -200,7 +200,7 @@
         "vary": "Accept-Encoding",
         "strict-transport-security": "max-age=604800;includeSubDomains",
         "cache-control": "max-age=2592000",
-        "x-nws-log-uuid": "5502958862564940760",
+        "x-nws-log-uuid": "9612389049418641245",
         "accept-ranges": "bytes",
         "access-control-allow-origin": "https://www.ricequant.com",
         "content-length": "1326",
@@ -212,6 +212,33 @@
     },
     {
       "id": 10,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://assets.ricequant.com/welcome/index.3277d67c.js",
+      "status": 200,
+      "headers": {
+        "strict-transport-security": "max-age=604800;includeSubDomains",
+        "cache-control": "max-age=2592000",
+        "x-nws-log-uuid": "18231621044894526526",
+        "etag": "\"69c64de9-e1\"",
+        "age": "237062",
+        "x-content-type-options": "nosniff",
+        "accept-ranges": "bytes",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "access-control-allow-origin": "https://www.ricequant.com",
+        "content-length": "225",
+        "date": "Fri, 27 Mar 2026 09:45:19 GMT",
+        "x-cache-lookup": "Cache Hit",
+        "last-modified": "Fri, 27 Mar 2026 09:29:13 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "server": "nginx"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "const{search:a,pathname:e,hash:n}=window.location;/iphone|android|micromessenger/i.test(window.navigator.userAgent)&&\"pc\"!==new URLSearchParams(a).get(\"platform\")&&(window.location.href=`https://m.ricequant.com${e}${a}${n}`);"
+    },
+    {
+      "id": 11,
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
@@ -227,36 +254,28 @@
       "postData": null
     },
     {
-      "id": 11,
+      "id": 12,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://assets.ricequant.com/welcome/index.1e8f1826.js",
+      "url": "https://plausible.ricequant.com/js/script.js",
       "status": 200,
       "headers": {
-        "content-encoding": "gzip",
-        "etag": "W/\"69c64e44-d544a\"",
-        "age": "582541",
+        "cache-control": "public, max-age=86400, must-revalidate",
+        "cross-origin-resource-policy": "cross-origin",
         "x-content-type-options": "nosniff",
         "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
-        "date": "Fri, 27 Mar 2026 09:42:37 GMT",
-        "last-modified": "Fri, 27 Mar 2026 09:30:44 GMT",
-        "content-type": "application/javascript; charset=utf-8",
-        "vary": "Accept-Encoding",
-        "strict-transport-security": "max-age=604800;includeSubDomains",
-        "cache-control": "max-age=2592000",
-        "x-nws-log-uuid": "4276191139631102084",
-        "accept-ranges": "bytes",
-        "access-control-allow-origin": "https://www.ricequant.com",
-        "content-length": "255518",
-        "x-cache-lookup": "Cache Hit",
-        "server": "nginx"
+        "access-control-allow-origin": "*",
+        "content-length": "1321",
+        "date": "Fri, 03 Apr 2026 03:46:32 GMT",
+        "content-type": "application/javascript",
+        "server": "Cowboy"
       },
-      "contentType": "application/javascript; charset=utf-8",
-      "body": "function e(e,t,n,o){Object.defineProperty(e,t,{get:n,set:o,enumerable:!0,configurable:!0})}var t=\"undefined\"!=typeof globalThis?globalThis:\"undefined\"!=typeof self?self:\"undefined\"!=typeof window?window:\"undefined\"!=typeof global?global:{};function n(e){return e&&e.__esModule?e.default:e}function o(e){Object.defineProperty(e,\"__esModule\",{value:!0,configurable:!0})}var r={},a={},l=t.parcelRequire6722;null==l&&((l=function(e){if(e in r)return r[e].exports;if(e in a){var t=a[e];delete a[e];var n={id:e,exports:{}};return r[e]=n,t.call(n.exports,n,n.exports),n.exports}var o=new Error(\"Cannot find module '\"+e+\"'\");throw o.code=\"MODULE_NOT_FOUND\",o}).register=function(e,t){a[e]=t},t.parcelRequire6722=l),l.register(\"6ZMeS\",(function(t,n){var o,r;e(t.exports,\"register\",(function(){return o}),(function(e){return o=e})),e(t.exports,\"resolve\",(function(){return r}),(function(e){return r=e}));var a={};o=function(e){for(var t=Object.keys(e),n=0;n<t.length;n++)a[t[n]]=e[t[n]]},r=function(e){var t=a[e];if(null==t)throw new Error(\"Could not resolve bundle with id \"+e);return t}})),l.register(\"4jAoi\",(function(t,n){e(t.exports,\"cloneVNode\",(function(){return l(\"4aEAo\").cloneVNode})),e(t.exports,\"Comment\",(function(){return l(\"4aEAo\").Comment})),e(t.exports,\"computed\",(function(){return l(\"4aEAo\").computed})),e(t.exports,\"createBlock\",(function(){return l(\"4aEAo\").createBlock})),e(t.exports,\"createCommentVNode\",(function(){return l(\"4aEAo\").createCommentVNode})),e(t.exports,\"createElementBlock\",(function(){return l(\"4aEAo\").createElementBlock})),e(t.exports,\"createElementVNode\",(function(){return l(\"4aEAo\").createElementVNode})),e(t.exports,\"createSlots\",(function(){return l(\"4aEAo\").createSlots})),e(t.exports,\"createStaticVNode\",(function(){return l(\"4aEAo\").createStaticVNode})),e(t.exports,\"createTextVNode\",(function(){return l(\"4aEAo\").createTextVNode})),e(t.exports,\"createVNode\",(function(){return l(\"4aEAo\").createVNode})),e(t.exports,\"defineComponent\",(function(){return l(\"4aEAo\").defineComponent})),e(t.exports,\"Fragment\",(function(){return l(\"4aEAo\").Fragment})),e(t.exports,\"getCurrentInstance\",(function(){return l(\"4aEAo\").getCurrentInstance})),e(t.exports,\"guardReactiveProps\",(function(){return l(\"4aEAo\").guardReactiveProps})),e(t.exports,\"h\",(function(){return l(\"4aEAo\").h})),e(t.exports,\"initCustomFormatter\",(function(){return l(\"4aEAo\").initCustomFormatter})),e(t.exports,\"inject\",(function(){return l(\"4aEAo\").inject})),e(t.exports,\"isReactive\",(function(){return l(\"d1QDs\").isReactive})),e(t.exports,\"isRef\",(function(){return l(\"d1QDs\").isRef})),e(t.exports,\"isVNode\",(function(){return l(\"4aEAo\").isVNode})),e(t.exports,\"markRaw\",(function(){return l(\"d1QDs\").markRaw})),e(t.exports,\"mergeProps\",(function(){return l(\"4aEAo\").mergeProps})),e(t.exports,\"nextTick\",(function(){return l(\"4aEAo\").nextTick})),e(t.exports,\"normalizeClass\",(function(){return l(\"3qmf1\").normalizeClass})),e(t.exports,\"normalizeStyle\",(function(){return l(\"3qmf1\").normalizeStyle})),e(t.exports,\"onActivated\",(function(){return l(\"4aEAo\").onActivated})),e(t.exports,\"onBeforeMount\",(function(){return l(\"4aEAo\").onBeforeMount})),e(t.exports,\"onBeforeUnmount\",(function(){return l(\"4aEAo\").onBeforeUnmount})),e(t.exports,\"onBeforeUpdate\",(function(){return l(\"4aEAo\").onBeforeUpdate})),e(t.exports,\"onDeactivated\",(function(){return l(\"4aEAo\").onDeactivated})),e(t.exports,\"onMounted\",(function(){return l(\"4aEAo\").onMounted})),e(t.exports,\"onUnmounted\",(function(){return l(\"4aEAo\").onUnmounted})),e(t.exports,\"onUpdated\",(function(){return l(\"4aEAo\").onUpdated})),e(t.exports,\"openBlock\",(function(){return l(\"4aEAo\").openBlock})),e(t.exports,\"popScopeId\",(function(){return l(\"4aEAo\").popScopeId})),e(t.exports,\"provide\",(function(){return l(\"4aEAo\").provide})),e(t.exports,\"pushScopeId\",(function(){return l(\"4aEAo\").pushScopeId})),e(t.exports,\"reactive\",(function(){return l(\"d1QDs\").reactive})),e(t.exports,\"ref\",(function(){return l(\"d1QDs\").ref})),e(t.exports,\"ren...<truncated>"
+      "contentType": "application/javascript",
+      "body": "!function(){\"use strict\";var a=window.location,r=window.document,o=r.currentScript,s=o.getAttribute(\"data-api\")||new URL(o.src).origin+\"/api/event\";function l(t){console.warn(\"Ignoring Event: \"+t)}function t(t,e){if(/^localhost$|^127(\\.[0-9]+){0,2}\\.[0-9]+$|^\\[::1?\\]$/.test(a.hostname)||\"file:\"===a.protocol)return l(\"localhost\");if(!(window._phantom||window.__nightmare||window.navigator.webdriver||window.Cypress)){try{if(\"true\"===window.localStorage.plausible_ignore)return l(\"localStorage flag\")}catch(t){}var i={};i.n=t,i.u=a.href,i.d=o.getAttribute(\"data-domain\"),i.r=r.referrer||null,i.w=window.innerWidth,e&&e.meta&&(i.m=JSON.stringify(e.meta)),e&&e.props&&(i.p=e.props);var n=new XMLHttpRequest;n.open(\"POST\",s,!0),n.setRequestHeader(\"Content-Type\",\"text/plain\"),n.send(JSON.stringify(i)),n.onreadystatechange=function(){4===n.readyState&&e&&e.callback&&e.callback()}}}var e=window.plausible&&window.plausible.q||[];window.plausible=t;for(var i,n=0;n<e.length;n++)t.apply(this,e[n]);function p(){i!==a.pathname&&(i=a.pathname,t(\"pageview\"))}var w,d=window.history;d.pushState&&(w=d.pushState,d.pushState=function(){w.apply(this,arguments),p()},window.addEventListener(\"popstate\",p)),\"prerender\"===r.visibilityState?r.addEventListener(\"visibilitychange\",function(){i||\"visible\"!==r.visibilityState||p()}):p()}();"
     },
     {
-      "id": 12,
+      "id": 13,
       "phase": "request",
       "resourceType": "xhr",
       "method": "POST",
@@ -274,7 +293,7 @@
       "postData": null
     },
     {
-      "id": 13,
+      "id": 14,
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
@@ -291,7 +310,7 @@
       "postData": null
     },
     {
-      "id": 14,
+      "id": 15,
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
@@ -308,59 +327,40 @@
       "postData": null
     },
     {
-      "id": 15,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
-      "url": "https://assets.ricequant.com/welcome/index.3277d67c.js",
-      "status": 200,
-      "headers": {
-        "strict-transport-security": "max-age=604800;includeSubDomains",
-        "cache-control": "max-age=2592000",
-        "x-nws-log-uuid": "7545128401974083898",
-        "etag": "\"69c64de9-e1\"",
-        "age": "236692",
-        "x-content-type-options": "nosniff",
-        "accept-ranges": "bytes",
-        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
-        "access-control-allow-origin": "https://www.ricequant.com",
-        "content-length": "225",
-        "date": "Fri, 27 Mar 2026 09:45:19 GMT",
-        "x-cache-lookup": "Cache Hit",
-        "last-modified": "Fri, 27 Mar 2026 09:29:13 GMT",
-        "content-type": "application/javascript; charset=utf-8",
-        "server": "nginx"
-      },
-      "contentType": "application/javascript; charset=utf-8",
-      "body": "const{search:a,pathname:e,hash:n}=window.location;/iphone|android|micromessenger/i.test(window.navigator.userAgent)&&\"pc\"!==new URLSearchParams(a).get(\"platform\")&&(window.location.href=`https://m.ricequant.com${e}${a}${n}`);"
-    },
-    {
       "id": 16,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://plausible.ricequant.com/js/script.js",
+      "url": "https://assets.ricequant.com/welcome/index.1e8f1826.js",
       "status": 200,
       "headers": {
-        "cache-control": "public, max-age=86400, must-revalidate",
-        "cross-origin-resource-policy": "cross-origin",
+        "content-encoding": "gzip",
+        "etag": "W/\"69c64e44-d544a\"",
+        "age": "582911",
         "x-content-type-options": "nosniff",
         "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
-        "access-control-allow-origin": "*",
-        "content-length": "1321",
-        "date": "Fri, 03 Apr 2026 03:40:22 GMT",
-        "content-type": "application/javascript",
-        "server": "Cowboy"
+        "date": "Fri, 27 Mar 2026 09:42:37 GMT",
+        "last-modified": "Fri, 27 Mar 2026 09:30:44 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "strict-transport-security": "max-age=604800;includeSubDomains",
+        "cache-control": "max-age=2592000",
+        "x-nws-log-uuid": "1765972782796356676",
+        "accept-ranges": "bytes",
+        "access-control-allow-origin": "https://www.ricequant.com",
+        "content-length": "255518",
+        "x-cache-lookup": "Cache Hit",
+        "server": "nginx"
       },
-      "contentType": "application/javascript",
-      "body": "!function(){\"use strict\";var a=window.location,r=window.document,o=r.currentScript,s=o.getAttribute(\"data-api\")||new URL(o.src).origin+\"/api/event\";function l(t){console.warn(\"Ignoring Event: \"+t)}function t(t,e){if(/^localhost$|^127(\\.[0-9]+){0,2}\\.[0-9]+$|^\\[::1?\\]$/.test(a.hostname)||\"file:\"===a.protocol)return l(\"localhost\");if(!(window._phantom||window.__nightmare||window.navigator.webdriver||window.Cypress)){try{if(\"true\"===window.localStorage.plausible_ignore)return l(\"localStorage flag\")}catch(t){}var i={};i.n=t,i.u=a.href,i.d=o.getAttribute(\"data-domain\"),i.r=r.referrer||null,i.w=window.innerWidth,e&&e.meta&&(i.m=JSON.stringify(e.meta)),e&&e.props&&(i.p=e.props);var n=new XMLHttpRequest;n.open(\"POST\",s,!0),n.setRequestHeader(\"Content-Type\",\"text/plain\"),n.send(JSON.stringify(i)),n.onreadystatechange=function(){4===n.readyState&&e&&e.callback&&e.callback()}}}var e=window.plausible&&window.plausible.q||[];window.plausible=t;for(var i,n=0;n<e.length;n++)t.apply(this,e[n]);function p(){i!==a.pathname&&(i=a.pathname,t(\"pageview\"))}var w,d=window.history;d.pushState&&(w=d.pushState,d.pushState=function(){w.apply(this,arguments),p()},window.addEventListener(\"popstate\",p)),\"prerender\"===r.visibilityState?r.addEventListener(\"visibilitychange\",function(){i||\"visible\"!==r.visibilityState||p()}):p()}();"
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "function e(e,t,n,o){Object.defineProperty(e,t,{get:n,set:o,enumerable:!0,configurable:!0})}var t=\"undefined\"!=typeof globalThis?globalThis:\"undefined\"!=typeof self?self:\"undefined\"!=typeof window?window:\"undefined\"!=typeof global?global:{};function n(e){return e&&e.__esModule?e.default:e}function o(e){Object.defineProperty(e,\"__esModule\",{value:!0,configurable:!0})}var r={},a={},l=t.parcelRequire6722;null==l&&((l=function(e){if(e in r)return r[e].exports;if(e in a){var t=a[e];delete a[e];var n={id:e,exports:{}};return r[e]=n,t.call(n.exports,n,n.exports),n.exports}var o=new Error(\"Cannot find module '\"+e+\"'\");throw o.code=\"MODULE_NOT_FOUND\",o}).register=function(e,t){a[e]=t},t.parcelRequire6722=l),l.register(\"6ZMeS\",(function(t,n){var o,r;e(t.exports,\"register\",(function(){return o}),(function(e){return o=e})),e(t.exports,\"resolve\",(function(){return r}),(function(e){return r=e}));var a={};o=function(e){for(var t=Object.keys(e),n=0;n<t.length;n++)a[t[n]]=e[t[n]]},r=function(e){var t=a[e];if(null==t)throw new Error(\"Could not resolve bundle with id \"+e);return t}})),l.register(\"4jAoi\",(function(t,n){e(t.exports,\"cloneVNode\",(function(){return l(\"4aEAo\").cloneVNode})),e(t.exports,\"Comment\",(function(){return l(\"4aEAo\").Comment})),e(t.exports,\"computed\",(function(){return l(\"4aEAo\").computed})),e(t.exports,\"createBlock\",(function(){return l(\"4aEAo\").createBlock})),e(t.exports,\"createCommentVNode\",(function(){return l(\"4aEAo\").createCommentVNode})),e(t.exports,\"createElementBlock\",(function(){return l(\"4aEAo\").createElementBlock})),e(t.exports,\"createElementVNode\",(function(){return l(\"4aEAo\").createElementVNode})),e(t.exports,\"createSlots\",(function(){return l(\"4aEAo\").createSlots})),e(t.exports,\"createStaticVNode\",(function(){return l(\"4aEAo\").createStaticVNode})),e(t.exports,\"createTextVNode\",(function(){return l(\"4aEAo\").createTextVNode})),e(t.exports,\"createVNode\",(function(){return l(\"4aEAo\").createVNode})),e(t.exports,\"defineComponent\",(function(){return l(\"4aEAo\").defineComponent})),e(t.exports,\"Fragment\",(function(){return l(\"4aEAo\").Fragment})),e(t.exports,\"getCurrentInstance\",(function(){return l(\"4aEAo\").getCurrentInstance})),e(t.exports,\"guardReactiveProps\",(function(){return l(\"4aEAo\").guardReactiveProps})),e(t.exports,\"h\",(function(){return l(\"4aEAo\").h})),e(t.exports,\"initCustomFormatter\",(function(){return l(\"4aEAo\").initCustomFormatter})),e(t.exports,\"inject\",(function(){return l(\"4aEAo\").inject})),e(t.exports,\"isReactive\",(function(){return l(\"d1QDs\").isReactive})),e(t.exports,\"isRef\",(function(){return l(\"d1QDs\").isRef})),e(t.exports,\"isVNode\",(function(){return l(\"4aEAo\").isVNode})),e(t.exports,\"markRaw\",(function(){return l(\"d1QDs\").markRaw})),e(t.exports,\"mergeProps\",(function(){return l(\"4aEAo\").mergeProps})),e(t.exports,\"nextTick\",(function(){return l(\"4aEAo\").nextTick})),e(t.exports,\"normalizeClass\",(function(){return l(\"3qmf1\").normalizeClass})),e(t.exports,\"normalizeStyle\",(function(){return l(\"3qmf1\").normalizeStyle})),e(t.exports,\"onActivated\",(function(){return l(\"4aEAo\").onActivated})),e(t.exports,\"onBeforeMount\",(function(){return l(\"4aEAo\").onBeforeMount})),e(t.exports,\"onBeforeUnmount\",(function(){return l(\"4aEAo\").onBeforeUnmount})),e(t.exports,\"onBeforeUpdate\",(function(){return l(\"4aEAo\").onBeforeUpdate})),e(t.exports,\"onDeactivated\",(function(){return l(\"4aEAo\").onDeactivated})),e(t.exports,\"onMounted\",(function(){return l(\"4aEAo\").onMounted})),e(t.exports,\"onUnmounted\",(function(){return l(\"4aEAo\").onUnmounted})),e(t.exports,\"onUpdated\",(function(){return l(\"4aEAo\").onUpdated})),e(t.exports,\"openBlock\",(function(){return l(\"4aEAo\").openBlock})),e(t.exports,\"popScopeId\",(function(){return l(\"4aEAo\").popScopeId})),e(t.exports,\"provide\",(function(){return l(\"4aEAo\").provide})),e(t.exports,\"pushScopeId\",(function(){return l(\"4aEAo\").pushScopeId})),e(t.exports,\"reactive\",(function(){return l(\"d1QDs\").reactive})),e(t.exports,\"ref\",(function(){return l(\"d1QDs\").ref})),e(t.exports,\"ren...<truncated>"
     },
     {
       "id": 17,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=c8069d0b-258c-426a-a3ca-0551fd8cdd30&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-8dca720003d2468e95cdd19939f63102&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+      "url": "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=ce80389f-702f-49e7-af77-671f38459d37&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-97aa15a0320a4d9a9c7b15c1fbbeb3a3&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
       "headers": {
         "referer": "https://www.ricequant.com/"
       },
@@ -376,7 +376,7 @@
       "headers": {
         "content-encoding": "gzip",
         "etag": "\"e6a9fb5090c3860b36929c5511bc854d\"",
-        "age": "424",
+        "age": "128",
         "x-cos-hash-crc64ecma": "9752381629274317013",
         "alt-svc": "h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"",
         "x-sername": "cdn-go.cn",
@@ -387,7 +387,7 @@
         "vary": "Origin",
         "x-cos-trace-id": "OGVmYzZiMmQzYjA2OWNhODk0NTRkMTBiOWVmMDAxODc0OWRkZjk0ZDM1NmI1M2E2MTRlY2MzZDhmNmI5MWI1OWE4OGMxZjNjY2JiNTBmMTVmMWY1MzAzYzkyZGQ2ZWM4MzZkMTZiZDQxYTg4MzRiMzIwYzRkYTRjMWFkNDM3YjQ=",
         "cache-control": "max-age=666",
-        "x-nws-log-uuid": "10705586583766364619",
+        "x-nws-log-uuid": "6604868895157066302",
         "x-cos-version-id": "MTg0NDQ5NzM3MDgwMzgxOTc0ODU",
         "x-cos-request-id": "Njk4NWE0ZmZfYzQ4ZDFiMDlfMWNlYjJfMTI1Y2JiMA==",
         "accept-ranges": "bytes",
@@ -410,7 +410,7 @@
       "headers": {
         "content-encoding": "gzip",
         "etag": "W/\"69c64e14-14cd\"",
-        "age": "249327",
+        "age": "249697",
         "x-content-type-options": "nosniff",
         "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "date": "Tue, 31 Mar 2026 02:34:33 GMT",
@@ -419,7 +419,7 @@
         "vary": "Accept-Encoding",
         "strict-transport-security": "max-age=604800;includeSubDomains",
         "cache-control": "max-age=2592000",
-        "x-nws-log-uuid": "17813787066409520341",
+        "x-nws-log-uuid": "10220905259468780415",
         "accept-ranges": "bytes",
         "access-control-allow-origin": "https://www.ricequant.com",
         "content-length": "1227",
@@ -432,6 +432,22 @@
     {
       "id": 20,
       "phase": "response",
+      "resourceType": "xhr",
+      "method": "POST",
+      "url": "https://www.ricequant.com/api/user/isLogin.do",
+      "status": 200,
+      "headers": {
+        "content-length": "318",
+        "date": "Fri, 03 Apr 2026 03:46:32 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{\"code\": 0, \"message\": \"OK\", \"username\": \"\", \"email\": null, \"phone\": \"+8613311390323\", \"fullname\": \"yuping322\", \"userId\": 497381, \"user_id\": \"497381\", \"wxname\": \"\", \"avatar\": \"https://qcdn.ricequant.com/img/avatar/default-avatar.png\", \"third_party\": null, \"init_password\": false, \"agreed_disclaimer\": false, \"rank\": 0}"
+    },
+    {
+      "id": 21,
+      "phase": "response",
       "resourceType": "script",
       "method": "GET",
       "url": "https://assets.ricequant.com/welcome/Home.808e8a00.js",
@@ -439,7 +455,7 @@
       "headers": {
         "content-encoding": "gzip",
         "etag": "W/\"69c64e22-80b1\"",
-        "age": "331928",
+        "age": "332298",
         "x-content-type-options": "nosniff",
         "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "date": "Fri, 27 Mar 2026 09:39:04 GMT",
@@ -448,7 +464,7 @@
         "vary": "Accept-Encoding",
         "strict-transport-security": "max-age=604800;includeSubDomains",
         "cache-control": "max-age=2592000",
-        "x-nws-log-uuid": "8025880761352609831",
+        "x-nws-log-uuid": "18298600396950349716",
         "accept-ranges": "bytes",
         "access-control-allow-origin": "https://www.ricequant.com",
         "content-length": "9294",
@@ -459,27 +475,11 @@
       "body": "function e(e){Object.defineProperty(e,\"__esModule\",{value:!0,configurable:!0})}function t(e,t,r,n){Object.defineProperty(e,t,{get:r,set:n,enumerable:!0,configurable:!0})}function r(e){return e&&e.__esModule?e.default:e}var n=(\"undefined\"!=typeof globalThis?globalThis:\"undefined\"!=typeof self?self:\"undefined\"!=typeof window?window:\"undefined\"!=typeof global?global:{}).parcelRequire6722;n.register(\"vOyNE\",(function(r,a){let o;e(r.exports),t(r.exports,\"default\",(function(){return l}));o=n(\"85cPk\"),o.__esModule&&(o=o.default),o.render=n(\"4PTag\").render,o.__cssModules={},n(\"1zzxX\").default(o),o.__scopeId=\"data-v-75ef4b\",o.__file=\"Home.vue\";var l=o})),n.register(\"85cPk\",(function(r,a){e(r.exports),t(r.exports,\"default\",(function(){return c}));var o=n(\"jYvXr\"),l=n(\"brgAa\"),s=n(\"3uO5h\"),i=n(\"FNP2g\"),c={name:\"Home\",components:{HomeBanner:o.default,HomeShowCase:l.default,HomeSituation:i.default,HomeCompany:s.default}}})),n.register(\"jYvXr\",(function(e,r){let a;t(e.exports,\"default\",(function(){return o}));a=n(\"2EuRg\"),a.__esModule&&(a=a.default),a.render=n(\"bjD8n\").render,a.__cssModules={},n(\"2ztEm\").default(a),a.__scopeId=\"data-v-179467\",a.__file=\"Banner.vue\";var o=a})),n.register(\"2EuRg\",(function(a,o){e(a.exports),t(a.exports,\"default\",(function(){return m}));var l=n(\"iIWky\"),s=n(\"4PWjb\"),i=n(\"92joN\"),c=n(\"4nzpX\"),d=n(\"4PQqx\"),m={name:\"Banner\",components:{CommonButton:l.default},setup:()=>({userStore:(0,d.useUserStore)()}),data:()=>({...s.banner,phone:\"\",title:r(i)}),methods:{handleBtnClick({mode:e,link:t}){\"entry\"===e?(t.href=(0,c.getRecentlyProduct)(),this.$handleLink(t)):(sessionStorage.setItem(\"anka_user_status_register\",JSON.stringify({from:\"home\",defaultPhone:this.phone})),this.userStore.showUserStatus({dialogMode:e}))}}}})),n.register(\"4PWjb\",(function(e,t){e.exports={banner:{title:\"让投资更高效 让风险更透明\",description:[\"以高质量、高速访问的金融数据API为基础，\",\"上层搭建多资产回测引擎、因子挖掘框架、风险因子及组合优化器、多资产投后管理和归因系统，\",\"使投资流程更高效，量化投资风险更透明\"],btns:[{label:\"立即使用\",mode:\"login\",login:!1,hasInput:!0},{label:\"进入平台\",mode:\"entry\",login:!0,hasInput:!1,link:{outer:!0}}]},showCase:{title:\"各类数据源\",rqdata:{functions:[{label:\"数据自动化清洗、校验、分发\",img:\"rqdata-1\"}],iconId:\"rqdata\",title:\"RQDATA金融数据API\",name:\"rqdata\",desc:\"米筐量化投研套件RQSDK中的金融数据方案，为专业投资者提供丰富整齐的金融数据与易用高效的API接口。\",features:[\"准：针对量化需求精细清洗，避免未来数据\",\"快：调取全市场1年日线数据只需几秒钟\",\"稳：云端多线多活，稳定供应数据\"],link:\"/rqdata\"},rqalpha:{functions:[{label:\"发挥投研能力，产生投资想法\",img:\"rqalpha-1\"},{label:\"使用金融数据进行因子挖掘和检验\",img:\"rqalpha-2\"},{label:\"在RQAlpha Plus中编写交易算法检验投资想法有效性\",img:\"rqalpha-3\"}],iconId:\"rqalphaplus\",title:\"RQAlpha plus回测引擎\",name:\"rqalphaplus\",desc:\"米筐量化投研套件RQSDK中的回测引擎，为程序化交易者集成数据获取、交易算法、回测引擎和数据分析工具。\",features:[\"透明：核心逻辑完全开源\",\"灵活：模块化设计，可插拔、易扩展\",\"简单：结合RQData作为数据源，开箱即用\"],link:\"/rq-alpha-plus\"},rqbeta:{functions:[{label:\"优化投资组合,控制风险暴露\",img:\"rqbeta-1\"}],iconId:\"rqoptimizer\",title:\"RQBeta风险模型\",name:\"rqoptimizer\",desc:\"帮助研究者精确衡量投资组合的风格和行业风险敞口、控制风险暴露约束、减少策略业绩回撤、获取特定因子溢价。\",features:[\"用风格因子、行业因子、市场联动因子充分解释收益\",\"贴合中国市场特征\",\"根据风险因子进行组合优化\"],link:\"/rqoptimizer\"},rqams:{functions:[{label:\"交易系统\",img:\"rqams-1\"},{label:\"收盘对账\",img:\"rqams-2\"},{label:\"交易结算\",img:\"rqams-3\"},{label:\"产品管理、业绩归因、实时监控\"}],iconCls:\"content__card__logo icon-saas icon-saas-ams text-rqams\",title:\"RQAMS智能资产管理系统\",name:\"rqams\",desc:\"RQAMS是米筐为专业资管机构打造的可落地部署的智能资产管理系统，帮助投资机构提升管理效率，满足在新形势下的管理需求。\",features:[\"支持多资产管理\",\"支持多职能视角、多维度投资管理\",\"支持本地化部署\"],link:\"/ams\"},rqai:{title:\"RQAI 应用\",desc:\"赋能研究，无缝衔接RQSDK与AI工具（Claude Code、Open Code等）。官方SKILL文件现已就位，助你加速投研。\",details:[{title:\"无缝集成，开箱即用\",desc:\"SKILL 文件将 RQSDK 与 Claude Code、Open Code 等主流 AI 工具深度打通，免去繁琐的环境配置与接口调试，让你能直接调用数据与策略模块，真正实现“即加即用”。\"},{title:\"标准化流程，降低错误率\",desc:\"官方提供的 SKILL 遵循统一的交互规范与最佳实践，确保 AI 生成的代码、查询与分析流程符合量化投研的专业要求，显著减少因“手写对接”带来的 bug 与逻辑偏差。\"},{title:\"投研效率倍增\",desc:\"通过 SKILL 将重复性工作交给 AI 自动完成，你可以更专注于策略构思与模型优化，大幅缩短从想法到验证的迭代周期。\"}]},quant:{title:\"在线量化投研平台\",desc:\"轻量化、低成本、随时随地开箱即用\",features:[{summary:\"图形化界面简单易用\",detail:\"为量化工具的输入输出提供可交互的图形化界面，使用者只需要专注于实现策略本身\"},{summary:\"多人协作，统一管理\",detail:\"分享策略代码、策略结果给团队成员，灵活设定权限，对团队产出内容进行统一管理\"},{summary:\"云端计算，资源充沛\",detail:\"计算...<truncated>"
     },
     {
-      "id": 21,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "POST",
-      "url": "https://www.ricequant.com/api/user/isLogin.do",
-      "status": 200,
-      "headers": {
-        "content-length": "318",
-        "date": "Fri, 03 Apr 2026 03:40:22 GMT",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "{\"code\": 0, \"message\": \"OK\", \"username\": \"\", \"email\": null, \"phone\": \"+8613311390323\", \"fullname\": \"yuping322\", \"userId\": 497381, \"user_id\": \"497381\", \"wxname\": \"\", \"avatar\": \"https://qcdn.ricequant.com/img/avatar/default-avatar.png\", \"third_party\": null, \"init_password\": false, \"agreed_disclaimer\": false, \"rank\": 0}"
-    },
-    {
       "id": 22,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=c8069d0b-258c-426a-a3ca-0551fd8cdd30&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-8dca720003d2468e95cdd19939f63102&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+      "url": "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=ce80389f-702f-49e7-af77-671f38459d37&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-97aa15a0320a4d9a9c7b15c1fbbeb3a3&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
       "headers": {
         "referer": "https://www.ricequant.com/"
       },
@@ -529,7 +529,7 @@
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:34 GMT",
         "location": "/research/hub/",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -565,7 +565,7 @@
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:34 GMT",
         "location": "/research/hub/login",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -633,7 +633,7 @@
         "content-encoding": "gzip",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=utf-8",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:34 GMT",
         "etag": "W/\"cc20525204882b93659923f5c29f3d479b632af4\"",
         "server": "nginx",
         "vary": "Accept-Encoding",
@@ -647,20 +647,20 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/hub/static/components/bootstrap/dist/js/bootstrap.min.js?v=5869c96cc8f19086aee625d670d741f9",
+      "url": "https://www.ricequant.com/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa",
       "status": 200,
       "headers": {
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:25 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:34 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:34 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
-        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
+        "last-modified": "Wed, 09 Sep 2020 10:06:51 GMT"
       },
       "contentType": "application/javascript; charset=utf-8",
-      "body": "/*!\n * Bootstrap v3.3.7 (http://getbootstrap.com)\n * Copyright 2011-2016 Twitter, Inc.\n * Licensed under the MIT license\n */\nif(\"undefined\"==typeof jQuery)throw new Error(\"Bootstrap's JavaScript requires jQuery\");+function(a){\"use strict\";var b=a.fn.jquery.split(\" \")[0].split(\".\");if(b[0]<2&&b[1]<9||1==b[0]&&9==b[1]&&b[2]<1||b[0]>3)throw new Error(\"Bootstrap's JavaScript requires jQuery version 1.9.1 or higher, but lower than version 4\")}(jQuery),+function(a){\"use strict\";function b(){var a=document.createElement(\"bootstrap\"),b={WebkitTransition:\"webkitTransitionEnd\",MozTransition:\"transitionend\",OTransition:\"oTransitionEnd otransitionend\",transition:\"transitionend\"};for(var c in b)if(void 0!==a.style[c])return{end:b[c]};return!1}a.fn.emulateTransitionEnd=function(b){var c=!1,d=this;a(this).one(\"bsTransitionEnd\",function(){c=!0});var e=function(){c||a(d).trigger(a.support.transition.end)};return setTimeout(e,b),this},a(function(){a.support.transition=b(),a.support.transition&&(a.event.special.bsTransitionEnd={bindType:a.support.transition.end,delegateType:a.support.transition.end,handle:function(b){if(a(b.target).is(this))return b.handleObj.handler.apply(this,arguments)}})})}(jQuery),+function(a){\"use strict\";function b(b){return this.each(function(){var c=a(this),e=c.data(\"bs.alert\");e||c.data(\"bs.alert\",e=new d(this)),\"string\"==typeof b&&e[b].call(c)})}var c='[data-dismiss=\"alert\"]',d=function(b){a(b).on(\"click\",c,this.close)};d.VERSION=\"3.3.7\",d.TRANSITION_DURATION=150,d.prototype.close=function(b){function c(){g.detach().trigger(\"closed.bs.alert\").remove()}var e=a(this),f=e.attr(\"data-target\");f||(f=e.attr(\"href\"),f=f&&f.replace(/.*(?=#[^\\s]*$)/,\"\"));var g=a(\"#\"===f?[]:f);b&&b.preventDefault(),g.length||(g=e.closest(\".alert\")),g.trigger(b=a.Event(\"close.bs.alert\")),b.isDefaultPrevented()||(g.removeClass(\"in\"),a.support.transition&&g.hasClass(\"fade\")?g.one(\"bsTransitionEnd\",c).emulateTransitionEnd(d.TRANSITION_DURATION):c())};var e=a.fn.alert;a.fn.alert=b,a.fn.alert.Constructor=d,a.fn.alert.noConflict=function(){return a.fn.alert=e,this},a(document).on(\"click.bs.alert.data-api\",c,d.prototype.close)}(jQuery),+function(a){\"use strict\";function b(b){return this.each(function(){var d=a(this),e=d.data(\"bs.button\"),f=\"object\"==typeof b&&b;e||d.data(\"bs.button\",e=new c(this,f)),\"toggle\"==b?e.toggle():b&&e.setState(b)})}var c=function(b,d){this.$element=a(b),this.options=a.extend({},c.DEFAULTS,d),this.isLoading=!1};c.VERSION=\"3.3.7\",c.DEFAULTS={loadingText:\"loading...\"},c.prototype.setState=function(b){var c=\"disabled\",d=this.$element,e=d.is(\"input\")?\"val\":\"html\",f=d.data();b+=\"Text\",null==f.resetText&&d.data(\"resetText\",d[e]()),setTimeout(a.proxy(function(){d[e](null==f[b]?this.options[b]:f[b]),\"loadingText\"==b?(this.isLoading=!0,d.addClass(c).attr(c,c).prop(c,!0)):this.isLoading&&(this.isLoading=!1,d.removeClass(c).removeAttr(c).prop(c,!1))},this),0)},c.prototype.toggle=function(){var a=!0,b=this.$element.closest('[data-toggle=\"buttons\"]');if(b.length){var c=this.$element.find(\"input\");\"radio\"==c.prop(\"type\")?(c.prop(\"checked\")&&(a=!1),b.find(\".active\").removeClass(\"active\"),this.$element.addClass(\"active\")):\"checkbox\"==c.prop(\"type\")&&(c.prop(\"checked\")!==this.$element.hasClass(\"active\")&&(a=!1),this.$element.toggleClass(\"active\")),c.prop(\"checked\",this.$element.hasClass(\"active\")),a&&c.trigger(\"change\")}else this.$element.attr(\"aria-pressed\",!this.$element.hasClass(\"active\")),this.$element.toggleClass(\"active\")};var d=a.fn.button;a.fn.button=b,a.fn.button.Constructor=c,a.fn.button.noConflict=function(){return a.fn.button=d,this},a(document).on(\"click.bs.button.data-api\",'[data-toggle^=\"button\"]',function(c){var d=a(c.target).closest(\".btn\");b.call(d,\"toggle\"),a(c.target).is('input[type=\"radio\"], input[type=\"checkbox\"]')||(c.preventDefault(),d.is(\"input,button\")?d.trigger(\"focus\"):d.find(\"input:visible,button:visible\").first().trigger(\"focus\"))}).on(\"focus.bs.button.data-api blur.bs.button.data-api\",'[data-toggle^=...<truncated>"
+      "body": "/** vim: et:ts=4:sw=4:sts=4\n * @license RequireJS 2.3.6 Copyright jQuery Foundation and other contributors.\n * Released under MIT license, https://github.com/requirejs/requirejs/blob/master/LICENSE\n */\n//Not using strict: uneven strict support in browsers, #392, and causes\n//problems with requirejs.exec()/transpiler plugins that may not be strict.\n/*jslint regexp: true, nomen: true, sloppy: true */\n/*global window, navigator, document, importScripts, setTimeout, opera */\n\nvar requirejs, require, define;\n(function (global, setTimeout) {\n    var req, s, head, baseElement, dataMain, src,\n        interactiveScript, currentlyAddingScript, mainScript, subPath,\n        version = '2.3.6',\n        commentRegExp = /\\/\\*[\\s\\S]*?\\*\\/|([^:\"'=]|^)\\/\\/.*$/mg,\n        cjsRequireRegExp = /[^.]\\s*require\\s*\\(\\s*[\"']([^'\"\\s]+)[\"']\\s*\\)/g,\n        jsSuffixRegExp = /\\.js$/,\n        currDirRegExp = /^\\.\\//,\n        op = Object.prototype,\n        ostring = op.toString,\n        hasOwn = op.hasOwnProperty,\n        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),\n        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',\n        //PS3 indicates loaded and complete, but need to wait for complete\n        //specifically. Sequence is 'loading', 'loaded', execution,\n        // then 'complete'. The UA check is unfortunate, but not sure how\n        //to feature test w/o causing perf issues.\n        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?\n                      /^complete$/ : /^(complete|loaded)$/,\n        defContextName = '_',\n        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.\n        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',\n        contexts = {},\n        cfg = {},\n        globalDefQueue = [],\n        useInteractive = false;\n\n    //Could match something like ')//comment', do not lose the prefix to comment.\n    function commentReplace(match, singlePrefix) {\n        return singlePrefix || '';\n    }\n\n    function isFunction(it) {\n        return ostring.call(it) === '[object Function]';\n    }\n\n    function isArray(it) {\n        return ostring.call(it) === '[object Array]';\n    }\n\n    /**\n     * Helper function for iterating over an array. If the func returns\n     * a true value, it will break out of the loop.\n     */\n    function each(ary, func) {\n        if (ary) {\n            var i;\n            for (i = 0; i < ary.length; i += 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Helper function for iterating over an array backwards. If the func\n     * returns a true value, it will break out of the loop.\n     */\n    function eachReverse(ary, func) {\n        if (ary) {\n            var i;\n            for (i = ary.length - 1; i > -1; i -= 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    function hasProp(obj, prop) {\n        return hasOwn.call(obj, prop);\n    }\n\n    function getOwn(obj, prop) {\n        return hasProp(obj, prop) && obj[prop];\n    }\n\n    /**\n     * Cycles over properties in an object and calls a function for each\n     * property value. If the function returns a truthy value, then the\n     * iteration is stopped.\n     */\n    function eachProp(obj, func) {\n        var prop;\n        for (prop in obj) {\n            if (hasProp(obj, prop)) {\n                if (func(obj[prop], prop)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Simple function to mix in properties from source into target,\n     * but only if target does not already have a property of the same name.\n     */\n    function mixin(target, source, force, deepStringMixin) {\n        if (source) {\n            eachProp(source, function (value, prop) {\n                if (force || !hasProp(target,...<truncated>"
     },
     {
       "id": 33,
@@ -672,8 +672,8 @@
       "headers": {
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:25 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:34 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:34 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -704,20 +704,20 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa",
+      "url": "https://www.ricequant.com/research/hub/static/components/bootstrap/dist/js/bootstrap.min.js?v=5869c96cc8f19086aee625d670d741f9",
       "status": 200,
       "headers": {
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:25 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:34 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:34 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
-        "last-modified": "Wed, 09 Sep 2020 10:06:51 GMT"
+        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
       },
       "contentType": "application/javascript; charset=utf-8",
-      "body": "/** vim: et:ts=4:sw=4:sts=4\n * @license RequireJS 2.3.6 Copyright jQuery Foundation and other contributors.\n * Released under MIT license, https://github.com/requirejs/requirejs/blob/master/LICENSE\n */\n//Not using strict: uneven strict support in browsers, #392, and causes\n//problems with requirejs.exec()/transpiler plugins that may not be strict.\n/*jslint regexp: true, nomen: true, sloppy: true */\n/*global window, navigator, document, importScripts, setTimeout, opera */\n\nvar requirejs, require, define;\n(function (global, setTimeout) {\n    var req, s, head, baseElement, dataMain, src,\n        interactiveScript, currentlyAddingScript, mainScript, subPath,\n        version = '2.3.6',\n        commentRegExp = /\\/\\*[\\s\\S]*?\\*\\/|([^:\"'=]|^)\\/\\/.*$/mg,\n        cjsRequireRegExp = /[^.]\\s*require\\s*\\(\\s*[\"']([^'\"\\s]+)[\"']\\s*\\)/g,\n        jsSuffixRegExp = /\\.js$/,\n        currDirRegExp = /^\\.\\//,\n        op = Object.prototype,\n        ostring = op.toString,\n        hasOwn = op.hasOwnProperty,\n        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),\n        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',\n        //PS3 indicates loaded and complete, but need to wait for complete\n        //specifically. Sequence is 'loading', 'loaded', execution,\n        // then 'complete'. The UA check is unfortunate, but not sure how\n        //to feature test w/o causing perf issues.\n        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?\n                      /^complete$/ : /^(complete|loaded)$/,\n        defContextName = '_',\n        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.\n        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',\n        contexts = {},\n        cfg = {},\n        globalDefQueue = [],\n        useInteractive = false;\n\n    //Could match something like ')//comment', do not lose the prefix to comment.\n    function commentReplace(match, singlePrefix) {\n        return singlePrefix || '';\n    }\n\n    function isFunction(it) {\n        return ostring.call(it) === '[object Function]';\n    }\n\n    function isArray(it) {\n        return ostring.call(it) === '[object Array]';\n    }\n\n    /**\n     * Helper function for iterating over an array. If the func returns\n     * a true value, it will break out of the loop.\n     */\n    function each(ary, func) {\n        if (ary) {\n            var i;\n            for (i = 0; i < ary.length; i += 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Helper function for iterating over an array backwards. If the func\n     * returns a true value, it will break out of the loop.\n     */\n    function eachReverse(ary, func) {\n        if (ary) {\n            var i;\n            for (i = ary.length - 1; i > -1; i -= 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    function hasProp(obj, prop) {\n        return hasOwn.call(obj, prop);\n    }\n\n    function getOwn(obj, prop) {\n        return hasProp(obj, prop) && obj[prop];\n    }\n\n    /**\n     * Cycles over properties in an object and calls a function for each\n     * property value. If the function returns a truthy value, then the\n     * iteration is stopped.\n     */\n    function eachProp(obj, func) {\n        var prop;\n        for (prop in obj) {\n            if (hasProp(obj, prop)) {\n                if (func(obj[prop], prop)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Simple function to mix in properties from source into target,\n     * but only if target does not already have a property of the same name.\n     */\n    function mixin(target, source, force, deepStringMixin) {\n        if (source) {\n            eachProp(source, function (value, prop) {\n                if (force || !hasProp(target,...<truncated>"
+      "body": "/*!\n * Bootstrap v3.3.7 (http://getbootstrap.com)\n * Copyright 2011-2016 Twitter, Inc.\n * Licensed under the MIT license\n */\nif(\"undefined\"==typeof jQuery)throw new Error(\"Bootstrap's JavaScript requires jQuery\");+function(a){\"use strict\";var b=a.fn.jquery.split(\" \")[0].split(\".\");if(b[0]<2&&b[1]<9||1==b[0]&&9==b[1]&&b[2]<1||b[0]>3)throw new Error(\"Bootstrap's JavaScript requires jQuery version 1.9.1 or higher, but lower than version 4\")}(jQuery),+function(a){\"use strict\";function b(){var a=document.createElement(\"bootstrap\"),b={WebkitTransition:\"webkitTransitionEnd\",MozTransition:\"transitionend\",OTransition:\"oTransitionEnd otransitionend\",transition:\"transitionend\"};for(var c in b)if(void 0!==a.style[c])return{end:b[c]};return!1}a.fn.emulateTransitionEnd=function(b){var c=!1,d=this;a(this).one(\"bsTransitionEnd\",function(){c=!0});var e=function(){c||a(d).trigger(a.support.transition.end)};return setTimeout(e,b),this},a(function(){a.support.transition=b(),a.support.transition&&(a.event.special.bsTransitionEnd={bindType:a.support.transition.end,delegateType:a.support.transition.end,handle:function(b){if(a(b.target).is(this))return b.handleObj.handler.apply(this,arguments)}})})}(jQuery),+function(a){\"use strict\";function b(b){return this.each(function(){var c=a(this),e=c.data(\"bs.alert\");e||c.data(\"bs.alert\",e=new d(this)),\"string\"==typeof b&&e[b].call(c)})}var c='[data-dismiss=\"alert\"]',d=function(b){a(b).on(\"click\",c,this.close)};d.VERSION=\"3.3.7\",d.TRANSITION_DURATION=150,d.prototype.close=function(b){function c(){g.detach().trigger(\"closed.bs.alert\").remove()}var e=a(this),f=e.attr(\"data-target\");f||(f=e.attr(\"href\"),f=f&&f.replace(/.*(?=#[^\\s]*$)/,\"\"));var g=a(\"#\"===f?[]:f);b&&b.preventDefault(),g.length||(g=e.closest(\".alert\")),g.trigger(b=a.Event(\"close.bs.alert\")),b.isDefaultPrevented()||(g.removeClass(\"in\"),a.support.transition&&g.hasClass(\"fade\")?g.one(\"bsTransitionEnd\",c).emulateTransitionEnd(d.TRANSITION_DURATION):c())};var e=a.fn.alert;a.fn.alert=b,a.fn.alert.Constructor=d,a.fn.alert.noConflict=function(){return a.fn.alert=e,this},a(document).on(\"click.bs.alert.data-api\",c,d.prototype.close)}(jQuery),+function(a){\"use strict\";function b(b){return this.each(function(){var d=a(this),e=d.data(\"bs.button\"),f=\"object\"==typeof b&&b;e||d.data(\"bs.button\",e=new c(this,f)),\"toggle\"==b?e.toggle():b&&e.setState(b)})}var c=function(b,d){this.$element=a(b),this.options=a.extend({},c.DEFAULTS,d),this.isLoading=!1};c.VERSION=\"3.3.7\",c.DEFAULTS={loadingText:\"loading...\"},c.prototype.setState=function(b){var c=\"disabled\",d=this.$element,e=d.is(\"input\")?\"val\":\"html\",f=d.data();b+=\"Text\",null==f.resetText&&d.data(\"resetText\",d[e]()),setTimeout(a.proxy(function(){d[e](null==f[b]?this.options[b]:f[b]),\"loadingText\"==b?(this.isLoading=!0,d.addClass(c).attr(c,c).prop(c,!0)):this.isLoading&&(this.isLoading=!1,d.removeClass(c).removeAttr(c).prop(c,!1))},this),0)},c.prototype.toggle=function(){var a=!0,b=this.$element.closest('[data-toggle=\"buttons\"]');if(b.length){var c=this.$element.find(\"input\");\"radio\"==c.prop(\"type\")?(c.prop(\"checked\")&&(a=!1),b.find(\".active\").removeClass(\"active\"),this.$element.addClass(\"active\")):\"checkbox\"==c.prop(\"type\")&&(c.prop(\"checked\")!==this.$element.hasClass(\"active\")&&(a=!1),this.$element.toggleClass(\"active\")),c.prop(\"checked\",this.$element.hasClass(\"active\")),a&&c.trigger(\"change\")}else this.$element.attr(\"aria-pressed\",!this.$element.hasClass(\"active\")),this.$element.toggleClass(\"active\")};var d=a.fn.button;a.fn.button=b,a.fn.button.Constructor=c,a.fn.button.noConflict=function(){return a.fn.button=d,this},a(document).on(\"click.bs.button.data-api\",'[data-toggle^=\"button\"]',function(c){var d=a(c.target).closest(\".btn\");b.call(d,\"toggle\"),a(c.target).is('input[type=\"radio\"], input[type=\"checkbox\"]')||(c.preventDefault(),d.is(\"input,button\")?d.trigger(\"focus\"):d.find(\"input:visible,button:visible\").first().trigger(\"focus\"))}).on(\"focus.bs.button.data-api blur.bs.button.data-api\",'[data-toggle^=...<truncated>"
     },
     {
       "id": 36,
@@ -748,7 +748,7 @@
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "location": "/research/hub/",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -785,7 +785,7 @@
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "location": "/research/user/user_497381/",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -820,7 +820,7 @@
       "headers": {
         "content-length": "0",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "location": "/research/user/user_497381/tree?",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -833,7 +833,7 @@
       "phase": "request",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImExNmNmYmM4ZDE1OTQwYmQ4M2FjNWJmOWRhMThmYzZiIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImViZDcwNTMzZTZjYzQ2MDhiZTNiNzJiNDUzMDMxNmFjIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "headers": {
         "accept-language": "zh-CN",
         "referer": "https://www.ricequant.com/research/hub/login",
@@ -856,8 +856,8 @@
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
-        "location": "/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImExNmNmYmM4ZDE1OTQwYmQ4M2FjNWJmOWRhMThmYzZiIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
+        "location": "/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImViZDcwNTMzZTZjYzQ2MDhiZTNiNzJiNDUzMDMxNmFjIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
       },
@@ -869,7 +869,7 @@
       "phase": "request",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=STQrA5aAxCRVs5S38jffFYblcmBOac&state=eyJ1dWlkIjogImExNmNmYmM4ZDE1OTQwYmQ4M2FjNWJmOWRhMThmYzZiIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=kkXxOtDpcjPgEufxTiHRvQNzb4JWRQ&state=eyJ1dWlkIjogImViZDcwNTMzZTZjYzQ2MDhiZTNiNzJiNDUzMDMxNmFjIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "headers": {
         "accept-language": "zh-CN",
         "referer": "https://www.ricequant.com/research/hub/login",
@@ -886,15 +886,15 @@
       "phase": "response",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImExNmNmYmM4ZDE1OTQwYmQ4M2FjNWJmOWRhMThmYzZiIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImViZDcwNTMzZTZjYzQ2MDhiZTNiNzJiNDUzMDMxNmFjIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "status": 302,
       "headers": {
         "access-control-allow-headers": "accept, content-type, authorization",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 03:40:25 GMT",
-        "location": "/research/user/user_497381/oauth_callback?code=STQrA5aAxCRVs5S38jffFYblcmBOac&state=eyJ1dWlkIjogImExNmNmYmM4ZDE1OTQwYmQ4M2FjNWJmOWRhMThmYzZiIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
+        "location": "/research/user/user_497381/oauth_callback?code=kkXxOtDpcjPgEufxTiHRvQNzb4JWRQ&state=eyJ1dWlkIjogImViZDcwNTMzZTZjYzQ2MDhiZTNiNzJiNDUzMDMxNmFjIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
       },
@@ -923,13 +923,13 @@
       "phase": "response",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=STQrA5aAxCRVs5S38jffFYblcmBOac&state=eyJ1dWlkIjogImExNmNmYmM4ZDE1OTQwYmQ4M2FjNWJmOWRhMThmYzZiIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=kkXxOtDpcjPgEufxTiHRvQNzb4JWRQ&state=eyJ1dWlkIjogImViZDcwNTMzZTZjYzQ2MDhiZTNiNzJiNDUzMDMxNmFjIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "status": 302,
       "headers": {
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "location": "/research/user/user_497381/tree?",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -1044,7 +1044,7 @@
         "content-encoding": "gzip",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "etag": "W/\"b1e0b12a0ffa5d9e2fc5ca7c29b831eaac7f63ab\"",
         "server": "nginx",
         "vary": "Accept-Encoding",
@@ -1058,28 +1058,6 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
-        "cache-control": "max-age=315360000",
-        "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
-        "content-type": "application/javascript; charset=utf-8",
-        "vary": "Accept-Encoding",
-        "server": "nginx",
-        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
-      },
-      "contentType": "application/javascript; charset=utf-8",
-      "body": "!function(e,n){\"object\"==typeof exports&&\"undefined\"!=typeof module?n(exports):\"function\"==typeof define&&define.amd?define([\"exports\"],n):n(e.preact=e.preact||{})}(this,function(e){function n(e,n,t){this.nodeName=e,this.attributes=n,this.children=t,this.key=n&&n.key}function t(e,t){var o,r,i,l,a;for(a=arguments.length;a-- >2;)H.push(arguments[a]);t&&t.children&&(H.length||H.push(t.children),delete t.children);while(H.length)if((i=H.pop())instanceof Array)for(a=i.length;a--;)H.push(i[a]);else null!=i&&i!==!0&&i!==!1&&(\"number\"==typeof i&&(i+=\"\"),l=\"string\"==typeof i,l&&r?o[o.length-1]+=i:((o||(o=[])).push(i),r=l));var s=new n(e,t||void 0,o||V);return j.vnode&&j.vnode(s),s}function o(e,n){if(n)for(var t in n)e[t]=n[t];return e}function r(e){return o({},e)}function i(e,n){for(var t=n.split(\".\"),o=0;o<t.length&&e;o++)e=e[t[o]];return e}function l(e){return\"function\"==typeof e}function a(e){return\"string\"==typeof e}function s(e){var n=\"\";for(var t in e)e[t]&&(n&&(n+=\" \"),n+=t);return n}function c(e,n){return t(e.nodeName,o(r(e.attributes),n),arguments.length>2?[].slice.call(arguments,2):e.children)}function u(e,n,t){var o=n.split(\".\");return function(n){for(var r=n&&n.target||this,l={},s=l,c=a(t)?i(n,t):r.nodeName?r.type.match(/^che|rad/)?r.checked:r.value:n,u=0;u<o.length-1;u++)s=s[o[u]]||(s[o[u]]=!u&&e.state[o[u]]||{});s[o[u]]=c,e.setState(l)}}function p(e){!e._dirty&&(e._dirty=!0)&&1==Q.push(e)&&(j.debounceRendering||R)(f)}function f(){var e,n=Q;Q=[];while(e=n.pop())e._dirty&&E(e)}function d(e){var n=e&&e.nodeName;return n&&l(n)&&!(n.prototype&&n.prototype.render)}function m(e,n){return e.nodeName(_(e),n||F)}function h(e,n){return a(n)?e instanceof Text:a(n.nodeName)?!e._componentConstructor&&v(e,n.nodeName):l(n.nodeName)?!e._componentConstructor||e._componentConstructor===n.nodeName||d(n):void 0}function v(e,n){return e.normalizedNodeName===n||I(e.nodeName)===I(n)}function _(e){var n=r(e.attributes);n.children=e.children;var t=e.nodeName.defaultProps;if(t)for(var o in t)void 0===n[o]&&(n[o]=t[o]);return n}function y(e){var n=e.parentNode;n&&n.removeChild(e)}function b(e,n,t,o,r){if(\"className\"===n&&(n=\"class\"),\"class\"===n&&o&&\"object\"==typeof o&&(o=s(o)),\"key\"===n);else if(\"class\"!==n||r)if(\"style\"===n){if((!o||a(o)||a(t))&&(e.style.cssText=o||\"\"),o&&\"object\"==typeof o){if(!a(t))for(var i in t)i in o||(e.style[i]=\"\");for(var i in o)e.style[i]=\"number\"!=typeof o[i]||J[i]?o[i]:o[i]+\"px\"}}else if(\"dangerouslySetInnerHTML\"===n)o&&(e.innerHTML=o.__html||\"\");else if(\"o\"==n[0]&&\"n\"==n[1]){var c=e._listeners||(e._listeners={});n=I(n.substring(2)),o?c[n]||e.addEventListener(n,N,!!K[n]):c[n]&&e.removeEventListener(n,N,!!K[n]),c[n]=o}else if(\"list\"!==n&&\"type\"!==n&&!r&&n in e)x(e,n,null==o?\"\":o),null!=o&&o!==!1||e.removeAttribute(n);else{var u=r&&n.match(/^xlink\\:?(.+)/);null==o||o===!1?u?e.removeAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1])):e.removeAttribute(n):\"object\"==typeof o||l(o)||(u?e.setAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1]),o):e.setAttribute(n,o))}else e.className=o||\"\"}function x(e,n,t){try{e[n]=t}catch(e){}}function N(e){return this._listeners[e.type](j.event&&j.event(e)||e)}function C(e){if(y(e),e instanceof Element){e._component=e._componentConstructor=null;var n=e.normalizedNodeName||I(e.nodeName);(X[n]||(X[n]=[])).push(e)}}function g(e,n){var t=I(e),o=X[t]&&X[t].pop()||(n?document.createElementNS(\"http://www.w3.org/2000/svg\",e):document.createElement(e));return o.normalizedNodeName=t,o}function w(){var e;while(e=Y.pop())j.afterMount&&j.afterMount(e),e.componentDidMount&&e.componentDidMount()}function k(e,n,t,o,r,i){Z++||($=r&&void 0!==r.ownerSVGElement,ee=e&&!(q in e));var l=S(e,n,t,o);return r&&l.parentNode!==r&&r.appendChild(l),--Z||(ee=!1,i||w()),l}function S(e,n,t,o){var r=n&&n.attributes&&n.attributes.ref;while(d(n))n=m(n,t);if(null==n&&(n=\"\"),a(n))return e&&e instanceof Text&&e.parentNode?e.nodeValue!=n&&(e.nodeValue=n):(e&&T(e),e=document.createTextNode(n)),e;if(l(n.nodeName))return ...<truncated>"
-    },
-    {
-      "id": 56,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
       "url": "https://www.ricequant.com/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe",
       "status": 200,
       "headers": {
@@ -1087,8 +1065,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1098,29 +1076,29 @@
       "body": "!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if(\".\"!==b.charAt(0))return b;for(var c=b.split(\"/\"),d=a.split(\"/\").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(\"..\"===g)d.pop();else{if(\".\"===g)continue;d.push(g)}}return d.join(\"/\")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error(\"Could not find module \"+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)\"exports\"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a(\"promise/all\",[\"./utils\",\"exports\"],function(a,b){\"use strict\";function c(a){var b=this;if(!d(a))throw new TypeError(\"You must pass an array to all.\");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a(\"promise/asap\",[\"exports\"],function(a){\"use strict\";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode(\"\");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h=\"undefined\"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j=\"undefined\"!=typeof global?global:void 0===this?window:this,k=[];g=\"undefined\"!=typeof process&&\"[object process]\"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a(\"promise/config\",[\"exports\"],function(a){\"use strict\";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a(\"promise/polyfill\",[\"./promise\",\"./utils\",\"exports\"],function(a,b,c){\"use strict\";function d(){var a;a=\"undefined\"!=typeof global?global:\"undefined\"!=typeof window&&window.document?window:self;var b=\"Promise\"in a&&\"resolve\"in a.Promise&&\"reject\"in a.Promise&&\"all\"in a.Promise&&\"race\"in a.Promise&&function(){var b;return new a.Promise(function(a){b=a}),f(b)}();b||(a.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a(\"promise/promise\",[\"./config\",\"./utils\",\"./all\",\"./race\",\"./resolve\",\"./reject\",\"./asap\",\"exports\"],function(a,b,c,d,e,f,g,h){\"use strict\";function i(a){if(!v(a))throw new TypeError(\"You must pass a resolver function as the first argument to the promise constructor\");if(!(this instanceof i))throw new TypeError(\"Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.\");this._subscribers=[],j(a,this)}function j(a,b){function c(a){o(b,a)}function d(a){q(b,a)}try{a(c,d)}catch(e){d(e)}}function k(a,b,c,d){var e,f,g,h,i=v(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;n(b,e)||(i&&g?o(b,e):h?q(b,f):a===D?o(b,e):a===E&&q(b,e))}function l(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+D]=c,e[f+E]=d}function m(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],k(b,c,d,f);a._subscribers=null}function n(a,b){var c,d=null;try{if(a===b)throw new TypeError(\"A promises callback cannot return that same promise.\");if(u(b)&&(d=b.then,v(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?o(a,d):p(a,d),void 0)},function(b){return c?!0:(c=!0,q(a,b),void 0)}),!0}catch(e){return c?!0:(q(a,e),!0)}return!1}function o(a,b){a===b?p(a,b):n(a,b)||p(a,b)}function p(a,b){a._state===B&&(a._state=C,a._detail=b,t.async(r,a))}function q(a,b){a._state===B&&(a._state=C,a._detail=b,t.async(s,a))}function r(a){m(a,a._state=D)}function s(a){m(a,a._state=E)}var t=a.config,u=(a.configure,b.objectOrFunction),v=b.isFunction,w=(b.now,c.all),x=d.race,y=e.resolve,z=f.reject,A=g.asap;t.async=A;var B=void 0,C=0,D=1,E=2;i.prototype={constructor:i,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function...<truncated>"
     },
     {
-      "id": 57,
+      "id": 56,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
         "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
       },
       "contentType": "application/javascript; charset=utf-8",
-      "body": "!function(e,t){\"object\"==typeof exports&&\"undefined\"!=typeof module?module.exports=t(require(\"prop-types\"),require(\"preact\")):\"function\"==typeof define&&define.amd?define([\"prop-types\",\"preact\"],t):e.preactCompat=t(e.PropTypes,e.preact)}(this,function(e,t){function n(){return null}function r(e){var t=e.nodeName,n=e.attributes;e.attributes={},t.defaultProps&&C(e.attributes,t.defaultProps),n&&C(e.attributes,n)}function o(e,t){var n,r,o;if(t){for(o in t)if(n=q.test(o))break;if(n){r=e.attributes={};for(o in t)t.hasOwnProperty(o)&&(r[q.test(o)?o.replace(/([A-Z0-9])/,\"-$1\").toLowerCase():o]=t[o])}}}function i(e,n,r){var o=n&&n._preactCompatRendered&&n._preactCompatRendered.base;o&&o.parentNode!==n&&(o=null),!o&&n&&(o=n.firstElementChild);for(var i=n.childNodes.length;i--;)n.childNodes[i]!==o&&n.removeChild(n.childNodes[i]);var a=t.render(e,n,o);return n&&(n._preactCompatRendered=a&&(a._component||{base:a})),\"function\"==typeof r&&r(),a&&a._component||a}function a(e,n,r,o){var a=t.h(F,{context:e.context},n),p=i(a,r),c=p._component||p.base;return o&&o.call(c,p),c}function p(e){var r=e._preactCompatRendered&&e._preactCompatRendered.base;return!(!r||r.parentNode!==e)&&(t.render(t.h(n),e,r),!0)}function c(e){return f.bind(null,e)}function l(e,t){for(var n=t||0;n<e.length;n++){var r=e[n];Array.isArray(r)?l(r):r&&\"object\"==typeof r&&!y(r)&&(r.props&&r.type||r.attributes&&r.nodeName||r.children)&&(e[n]=f(r.type||r.nodeName,r.props||r.attributes,r.children))}}function s(e){return\"function\"==typeof e&&!(e.prototype&&e.prototype.render)}function u(e){return x({displayName:e.displayName||e.name,render:function(){return e(this.props,this.context)}})}function d(e){var t=e[V];return t?!0===t?e:t:(t=u(e),Object.defineProperty(t,V,{configurable:!0,value:!0}),t.displayName=e.displayName,t.propTypes=e.propTypes,t.defaultProps=e.defaultProps,Object.defineProperty(e,V,{configurable:!0,value:t}),t)}function f(){for(var e=[],n=arguments.length;n--;)e[n]=arguments[n];return l(e,2),h(t.h.apply(void 0,e))}function h(e){e.preactCompatNormalized=!0,g(e),s(e.nodeName)&&(e.nodeName=d(e.nodeName));var t=e.attributes.ref,n=t&&typeof t;return!B||\"string\"!==n&&\"number\"!==n||(e.attributes.ref=b(t,B)),v(e),e}function m(e,n){for(var r=[],o=arguments.length-2;o-- >0;)r[o]=arguments[o+2];if(!y(e))return e;var i=e.attributes||e.props,a=t.h(e.nodeName||e.type,i,e.children||i&&i.children),p=[a,n];return r&&r.length?p.push(r):n&&n.children&&p.push(n.children),h(t.cloneElement.apply(void 0,p))}function y(e){return e&&(e instanceof L||e.$$typeof===M)}function b(e,t){return t._refProxies[e]||(t._refProxies[e]=function(n){t&&t.refs&&(t.refs[e]=n,null===n&&(delete t._refProxies[e],t=null))})}function v(e){var t=e.nodeName,n=e.attributes;if(n&&\"string\"==typeof t){var r={};for(var o in n)r[o.toLowerCase()]=o;if(r.ondoubleclick&&(n.ondblclick=n[r.ondoubleclick],delete n[r.ondoubleclick]),r.onchange&&(\"textarea\"===t||\"input\"===t.toLowerCase()&&!/^fil|che|rad/i.test(n.type))){var i=r.oninput||\"oninput\";n[i]||(n[i]=R([n[i],n[r.onchange]]),delete n[r.onchange])}}}function g(e){var t=e.attributes||(e.attributes={});X.enumerable=\"className\"in t,t.className&&(t.class=t.className),Object.defineProperty(t,\"className\",X)}function C(e,t){for(var n=arguments,r=1,o=void 0;r<arguments.length;r++)if(o=n[r])for(var i in o)o.hasOwnProperty(i)&&(e[i]=o[i]);return e}function P(e,t){for(var n in e)if(!(n in t))return!0;for(var r in t)if(e[r]!==t[r])return!0;return!1}function N(e){return e&&e.base||e}function _(){}function x(e){function t(e,t){O(this),T.call(this,e,t,z),A.call(this,e,t)}return e=C({constructor:t},e),e.mixins&&k(e,w(e.mixins)),e.statics&&C(t,e.statics),e.propTypes&&(t.propTypes=e.propTypes),e.defaultProps&&(t.defaultProps=e.defaultProps),e.getDefaultProps&&(t.defaultProps=e.getDefaultProps()),_.prototype=T.prototype,t.prototype=C(new _,e),t.displayName=e.displayName||\"Component\",t}function w(e){for(var t={},n=0;n<e.length;n++){var r=e[n];for(var o in r)r.hasOwnProperty(o)&&\"...<truncated>"
+      "body": "!function(e,n){\"object\"==typeof exports&&\"undefined\"!=typeof module?n(exports):\"function\"==typeof define&&define.amd?define([\"exports\"],n):n(e.preact=e.preact||{})}(this,function(e){function n(e,n,t){this.nodeName=e,this.attributes=n,this.children=t,this.key=n&&n.key}function t(e,t){var o,r,i,l,a;for(a=arguments.length;a-- >2;)H.push(arguments[a]);t&&t.children&&(H.length||H.push(t.children),delete t.children);while(H.length)if((i=H.pop())instanceof Array)for(a=i.length;a--;)H.push(i[a]);else null!=i&&i!==!0&&i!==!1&&(\"number\"==typeof i&&(i+=\"\"),l=\"string\"==typeof i,l&&r?o[o.length-1]+=i:((o||(o=[])).push(i),r=l));var s=new n(e,t||void 0,o||V);return j.vnode&&j.vnode(s),s}function o(e,n){if(n)for(var t in n)e[t]=n[t];return e}function r(e){return o({},e)}function i(e,n){for(var t=n.split(\".\"),o=0;o<t.length&&e;o++)e=e[t[o]];return e}function l(e){return\"function\"==typeof e}function a(e){return\"string\"==typeof e}function s(e){var n=\"\";for(var t in e)e[t]&&(n&&(n+=\" \"),n+=t);return n}function c(e,n){return t(e.nodeName,o(r(e.attributes),n),arguments.length>2?[].slice.call(arguments,2):e.children)}function u(e,n,t){var o=n.split(\".\");return function(n){for(var r=n&&n.target||this,l={},s=l,c=a(t)?i(n,t):r.nodeName?r.type.match(/^che|rad/)?r.checked:r.value:n,u=0;u<o.length-1;u++)s=s[o[u]]||(s[o[u]]=!u&&e.state[o[u]]||{});s[o[u]]=c,e.setState(l)}}function p(e){!e._dirty&&(e._dirty=!0)&&1==Q.push(e)&&(j.debounceRendering||R)(f)}function f(){var e,n=Q;Q=[];while(e=n.pop())e._dirty&&E(e)}function d(e){var n=e&&e.nodeName;return n&&l(n)&&!(n.prototype&&n.prototype.render)}function m(e,n){return e.nodeName(_(e),n||F)}function h(e,n){return a(n)?e instanceof Text:a(n.nodeName)?!e._componentConstructor&&v(e,n.nodeName):l(n.nodeName)?!e._componentConstructor||e._componentConstructor===n.nodeName||d(n):void 0}function v(e,n){return e.normalizedNodeName===n||I(e.nodeName)===I(n)}function _(e){var n=r(e.attributes);n.children=e.children;var t=e.nodeName.defaultProps;if(t)for(var o in t)void 0===n[o]&&(n[o]=t[o]);return n}function y(e){var n=e.parentNode;n&&n.removeChild(e)}function b(e,n,t,o,r){if(\"className\"===n&&(n=\"class\"),\"class\"===n&&o&&\"object\"==typeof o&&(o=s(o)),\"key\"===n);else if(\"class\"!==n||r)if(\"style\"===n){if((!o||a(o)||a(t))&&(e.style.cssText=o||\"\"),o&&\"object\"==typeof o){if(!a(t))for(var i in t)i in o||(e.style[i]=\"\");for(var i in o)e.style[i]=\"number\"!=typeof o[i]||J[i]?o[i]:o[i]+\"px\"}}else if(\"dangerouslySetInnerHTML\"===n)o&&(e.innerHTML=o.__html||\"\");else if(\"o\"==n[0]&&\"n\"==n[1]){var c=e._listeners||(e._listeners={});n=I(n.substring(2)),o?c[n]||e.addEventListener(n,N,!!K[n]):c[n]&&e.removeEventListener(n,N,!!K[n]),c[n]=o}else if(\"list\"!==n&&\"type\"!==n&&!r&&n in e)x(e,n,null==o?\"\":o),null!=o&&o!==!1||e.removeAttribute(n);else{var u=r&&n.match(/^xlink\\:?(.+)/);null==o||o===!1?u?e.removeAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1])):e.removeAttribute(n):\"object\"==typeof o||l(o)||(u?e.setAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1]),o):e.setAttribute(n,o))}else e.className=o||\"\"}function x(e,n,t){try{e[n]=t}catch(e){}}function N(e){return this._listeners[e.type](j.event&&j.event(e)||e)}function C(e){if(y(e),e instanceof Element){e._component=e._componentConstructor=null;var n=e.normalizedNodeName||I(e.nodeName);(X[n]||(X[n]=[])).push(e)}}function g(e,n){var t=I(e),o=X[t]&&X[t].pop()||(n?document.createElementNS(\"http://www.w3.org/2000/svg\",e):document.createElement(e));return o.normalizedNodeName=t,o}function w(){var e;while(e=Y.pop())j.afterMount&&j.afterMount(e),e.componentDidMount&&e.componentDidMount()}function k(e,n,t,o,r,i){Z++||($=r&&void 0!==r.ownerSVGElement,ee=e&&!(q in e));var l=S(e,n,t,o);return r&&l.parentNode!==r&&r.appendChild(l),--Z||(ee=!1,i||w()),l}function S(e,n,t,o){var r=n&&n.attributes&&n.attributes.ref;while(d(n))n=m(n,t);if(null==n&&(n=\"\"),a(n))return e&&e instanceof Text&&e.parentNode?e.nodeValue!=n&&(e.nodeValue=n):(e&&T(e),e=document.createTextNode(n)),e;if(l(n.nodeName))return ...<truncated>"
     },
     {
-      "id": 58,
+      "id": 57,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
@@ -1131,8 +1109,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1140,6 +1118,28 @@
       },
       "contentType": "application/javascript; charset=utf-8",
       "body": "(function (global, factory) {\n  if (typeof define === 'function' && define.amd) {\n    define('PropTypes', ['exports', 'module'], factory);\n  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {\n    factory(exports, module);\n  } else {\n    var mod = {\n      exports: {}\n    };\n    factory(mod.exports, mod);\n    global.PropTypes = mod.exports;\n  }\n})(this, function (exports, module) {\n\n  'use strict';\n\n  var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol['for']('react.element') || 0xeac7;\n\n  var ReactElement = {};\n\n  ReactElement.isValidElement = function (object) {\n    return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;\n  };\n\n  var ReactPropTypeLocationNames = {\n    prop: 'prop',\n    context: 'context',\n    childContext: 'child context'\n  };\n\n  var emptyFunction = {\n    thatReturns: function thatReturns(what) {\n      return function () {\n        return what;\n      };\n    }\n  };\n\n  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;\n  var FAUX_ITERATOR_SYMBOL = '@@iterator';\n  function getIteratorFn(maybeIterable) {\n    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);\n    if (typeof iteratorFn === 'function') {\n      return iteratorFn;\n    }\n  }\n\n  var ANONYMOUS = '<<anonymous>>';\n\n  var ReactPropTypes = {\n    array: createPrimitiveTypeChecker('array'),\n    bool: createPrimitiveTypeChecker('boolean'),\n    func: createPrimitiveTypeChecker('function'),\n    number: createPrimitiveTypeChecker('number'),\n    object: createPrimitiveTypeChecker('object'),\n    string: createPrimitiveTypeChecker('string'),\n    symbol: createPrimitiveTypeChecker('symbol'),\n\n    any: createAnyTypeChecker(),\n    arrayOf: createArrayOfTypeChecker,\n    element: createElementTypeChecker(),\n    instanceOf: createInstanceTypeChecker,\n    node: createNodeChecker(),\n    objectOf: createObjectOfTypeChecker,\n    oneOf: createEnumTypeChecker,\n    oneOfType: createUnionTypeChecker,\n    shape: createShapeTypeChecker\n  };\n\n  function createChainableTypeChecker(validate) {\n    function checkType(isRequired, props, propName, componentName, location, propFullName) {\n      componentName = componentName || ANONYMOUS;\n      propFullName = propFullName || propName;\n      if (props[propName] == null) {\n        var locationName = ReactPropTypeLocationNames[location];\n        if (isRequired) {\n          return new Error('Required ' + locationName + ' `' + propFullName + '` was not specified in ' + ('`' + componentName + '`.'));\n        }\n        return null;\n      } else {\n        return validate(props, propName, componentName, location, propFullName);\n      }\n    }\n\n    var chainedCheckType = checkType.bind(null, false);\n    chainedCheckType.isRequired = checkType.bind(null, true);\n\n    return chainedCheckType;\n  }\n\n  function createPrimitiveTypeChecker(expectedType) {\n    function validate(props, propName, componentName, location, propFullName) {\n      var propValue = props[propName];\n      var propType = getPropType(propValue);\n      if (propType !== expectedType) {\n        var locationName = ReactPropTypeLocationNames[location];\n\n        var preciseType = getPreciseType(propValue);\n\n        return new Error('Invalid ' + locationName + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));\n      }\n      return null;\n    }\n    return createChainableTypeChecker(validate);\n  }\n\n  function createAnyTypeChecker() {\n    return createChainableTypeChecker(emptyFunction.thatReturns(null));\n  }\n\n  function createArrayOfTypeChecker(typeChecker) {\n    function validate(props, propName, componentName, location, propFullName) {\n      var propValue = props[propName];\n      if (!Array.isArray(propValue)) {\n        var locationName = ReactPropTypeLocationNames[location];\n        var propType = getPropTyp...<truncated>"
+    },
+    {
+      "id": 58,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "!function(e,t){\"object\"==typeof exports&&\"undefined\"!=typeof module?module.exports=t(require(\"prop-types\"),require(\"preact\")):\"function\"==typeof define&&define.amd?define([\"prop-types\",\"preact\"],t):e.preactCompat=t(e.PropTypes,e.preact)}(this,function(e,t){function n(){return null}function r(e){var t=e.nodeName,n=e.attributes;e.attributes={},t.defaultProps&&C(e.attributes,t.defaultProps),n&&C(e.attributes,n)}function o(e,t){var n,r,o;if(t){for(o in t)if(n=q.test(o))break;if(n){r=e.attributes={};for(o in t)t.hasOwnProperty(o)&&(r[q.test(o)?o.replace(/([A-Z0-9])/,\"-$1\").toLowerCase():o]=t[o])}}}function i(e,n,r){var o=n&&n._preactCompatRendered&&n._preactCompatRendered.base;o&&o.parentNode!==n&&(o=null),!o&&n&&(o=n.firstElementChild);for(var i=n.childNodes.length;i--;)n.childNodes[i]!==o&&n.removeChild(n.childNodes[i]);var a=t.render(e,n,o);return n&&(n._preactCompatRendered=a&&(a._component||{base:a})),\"function\"==typeof r&&r(),a&&a._component||a}function a(e,n,r,o){var a=t.h(F,{context:e.context},n),p=i(a,r),c=p._component||p.base;return o&&o.call(c,p),c}function p(e){var r=e._preactCompatRendered&&e._preactCompatRendered.base;return!(!r||r.parentNode!==e)&&(t.render(t.h(n),e,r),!0)}function c(e){return f.bind(null,e)}function l(e,t){for(var n=t||0;n<e.length;n++){var r=e[n];Array.isArray(r)?l(r):r&&\"object\"==typeof r&&!y(r)&&(r.props&&r.type||r.attributes&&r.nodeName||r.children)&&(e[n]=f(r.type||r.nodeName,r.props||r.attributes,r.children))}}function s(e){return\"function\"==typeof e&&!(e.prototype&&e.prototype.render)}function u(e){return x({displayName:e.displayName||e.name,render:function(){return e(this.props,this.context)}})}function d(e){var t=e[V];return t?!0===t?e:t:(t=u(e),Object.defineProperty(t,V,{configurable:!0,value:!0}),t.displayName=e.displayName,t.propTypes=e.propTypes,t.defaultProps=e.defaultProps,Object.defineProperty(e,V,{configurable:!0,value:t}),t)}function f(){for(var e=[],n=arguments.length;n--;)e[n]=arguments[n];return l(e,2),h(t.h.apply(void 0,e))}function h(e){e.preactCompatNormalized=!0,g(e),s(e.nodeName)&&(e.nodeName=d(e.nodeName));var t=e.attributes.ref,n=t&&typeof t;return!B||\"string\"!==n&&\"number\"!==n||(e.attributes.ref=b(t,B)),v(e),e}function m(e,n){for(var r=[],o=arguments.length-2;o-- >0;)r[o]=arguments[o+2];if(!y(e))return e;var i=e.attributes||e.props,a=t.h(e.nodeName||e.type,i,e.children||i&&i.children),p=[a,n];return r&&r.length?p.push(r):n&&n.children&&p.push(n.children),h(t.cloneElement.apply(void 0,p))}function y(e){return e&&(e instanceof L||e.$$typeof===M)}function b(e,t){return t._refProxies[e]||(t._refProxies[e]=function(n){t&&t.refs&&(t.refs[e]=n,null===n&&(delete t._refProxies[e],t=null))})}function v(e){var t=e.nodeName,n=e.attributes;if(n&&\"string\"==typeof t){var r={};for(var o in n)r[o.toLowerCase()]=o;if(r.ondoubleclick&&(n.ondblclick=n[r.ondoubleclick],delete n[r.ondoubleclick]),r.onchange&&(\"textarea\"===t||\"input\"===t.toLowerCase()&&!/^fil|che|rad/i.test(n.type))){var i=r.oninput||\"oninput\";n[i]||(n[i]=R([n[i],n[r.onchange]]),delete n[r.onchange])}}}function g(e){var t=e.attributes||(e.attributes={});X.enumerable=\"className\"in t,t.className&&(t.class=t.className),Object.defineProperty(t,\"className\",X)}function C(e,t){for(var n=arguments,r=1,o=void 0;r<arguments.length;r++)if(o=n[r])for(var i in o)o.hasOwnProperty(i)&&(e[i]=o[i]);return e}function P(e,t){for(var n in e)if(!(n in t))return!0;for(var r in t)if(e[r]!==t[r])return!0;return!1}function N(e){return e&&e.base||e}function _(){}function x(e){function t(e,t){O(this),T.call(this,e,t,z),A.call(this,e,t)}return e=C({constructor:t},e),e.mixins&&k(e,w(e.mixins)),e.statics&&C(t,e.statics),e.propTypes&&(t.propTypes=e.propTypes),e.defaultProps&&(t.defaultProps=e.defaultProps),e.getDefaultProps&&(t.defaultProps=e.getDefaultProps()),_.prototype=T.prototype,t.prototype=C(new _,e),t.displayName=e.displayName||\"Component\",t}function w(e){for(var t={},n=0;n<e.length;n++){var r=e[n];for(var o in r)r.hasOwnProperty(o)&&\"...<truncated>"
     },
     {
       "id": 59,
@@ -1153,8 +1153,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1165,28 +1165,6 @@
     },
     {
       "id": 60,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/tree/js/main.min.js?v=b274c2f44c0bf3be3f3dd463436ea516",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
-        "cache-control": "max-age=315360000",
-        "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
-        "content-type": "application/javascript; charset=utf-8",
-        "vary": "Accept-Encoding",
-        "server": "nginx",
-        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
-      },
-      "contentType": "application/javascript; charset=utf-8",
-      "body": "/*! jQuery v2.2.4 | (c) jQuery Foundation | jquery.org/license */\n!function(a,b){\"object\"==typeof module&&\"object\"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error(\"jQuery requires a window with a document\");return b(a)}:b(a)}(\"undefined\"!=typeof window?window:this,function(a,b){var c=[],d=a.document,e=c.slice,f=c.concat,g=c.push,h=c.indexOf,i={},j=i.toString,k=i.hasOwnProperty,l={},m=\"2.2.4\",n=function(a,b){return new n.fn.init(a,b)},o=/^[\\s\\uFEFF\\xA0]+|[\\s\\uFEFF\\xA0]+$/g,p=/^-ms-/,q=/-([\\da-z])/gi,r=function(a,b){return b.toUpperCase()};n.fn=n.prototype={jquery:m,constructor:n,selector:\"\",length:0,toArray:function(){return e.call(this)},get:function(a){return null!=a?0>a?this[a+this.length]:this[a]:e.call(this)},pushStack:function(a){var b=n.merge(this.constructor(),a);return b.prevObject=this,b.context=this.context,b},each:function(a){return n.each(this,a)},map:function(a){return this.pushStack(n.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(e.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(0>a?b:0);return this.pushStack(c>=0&&b>c?[this[c]]:[])},end:function(){return this.prevObject||this.constructor()},push:g,sort:c.sort,splice:c.splice},n.extend=n.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for(\"boolean\"==typeof g&&(j=g,g=arguments[h]||{},h++),\"object\"==typeof g||n.isFunction(g)||(g={}),h===i&&(g=this,h--);i>h;h++)if(null!=(a=arguments[h]))for(b in a)c=g[b],d=a[b],g!==d&&(j&&d&&(n.isPlainObject(d)||(e=n.isArray(d)))?(e?(e=!1,f=c&&n.isArray(c)?c:[]):f=c&&n.isPlainObject(c)?c:{},g[b]=n.extend(j,f,d)):void 0!==d&&(g[b]=d));return g},n.extend({expando:\"jQuery\"+(m+Math.random()).replace(/\\D/g,\"\"),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return\"function\"===n.type(a)},isArray:Array.isArray,isWindow:function(a){return null!=a&&a===a.window},isNumeric:function(a){var b=a&&a.toString();return!n.isArray(a)&&b-parseFloat(b)+1>=0},isPlainObject:function(a){var b;if(\"object\"!==n.type(a)||a.nodeType||n.isWindow(a))return!1;if(a.constructor&&!k.call(a,\"constructor\")&&!k.call(a.constructor.prototype||{},\"isPrototypeOf\"))return!1;for(b in a);return void 0===b||k.call(a,b)},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},type:function(a){return null==a?a+\"\":\"object\"==typeof a||\"function\"==typeof a?i[j.call(a)]||\"object\":typeof a},globalEval:function(a){var b,c=eval;a=n.trim(a),a&&(1===a.indexOf(\"use strict\")?(b=d.createElement(\"script\"),b.text=a,d.head.appendChild(b).parentNode.removeChild(b)):c(a))},camelCase:function(a){return a.replace(p,\"ms-\").replace(q,r)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b){var c,d=0;if(s(a)){for(c=a.length;c>d;d++)if(b.call(a[d],d,a[d])===!1)break}else for(d in a)if(b.call(a[d],d,a[d])===!1)break;return a},trim:function(a){return null==a?\"\":(a+\"\").replace(o,\"\")},makeArray:function(a,b){var c=b||[];return null!=a&&(s(Object(a))?n.merge(c,\"string\"==typeof a?[a]:a):g.call(c,a)),c},inArray:function(a,b,c){return null==b?-1:h.call(b,a,c)},merge:function(a,b){for(var c=+b.length,d=0,e=a.length;c>d;d++)a[e++]=b[d];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;g>f;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,e,g=0,h=[];if(s(a))for(d=a.length;d>g;g++)e=b(a[g],g,c),null!=e&&h.push(e);else for(g in a)e=b(a[g],g,c),null!=e&&h.push(e);return f.apply([],h)},guid:1,proxy:function(a,b){var c,d,f;return\"string\"==typeof b&&(c=a[b],b=a,a=c),n.isFunction(a)?(d=e.call(arguments,2),f=function(){return a.apply(b||this,d.concat(e.call(arguments)))},f.guid=a.guid=a.guid||n.guid++,f):void 0},now:Date.now,support:l}),\"function\"==typeof Symbol&&(n.fn[Symbol.iterator]=c[Symbol.iterator]),n.each(\"Boolean Number String Function Arr...<truncated>"
-    },
-    {
-      "id": 61,
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
@@ -1202,7 +1180,7 @@
       "postData": null
     },
     {
-      "id": 62,
+      "id": 61,
       "phase": "request",
       "resourceType": "xhr",
       "method": "POST",
@@ -1218,6 +1196,28 @@
         "accept": "*/*"
       },
       "postData": null
+    },
+    {
+      "id": 62,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/tree/js/main.min.js?v=b274c2f44c0bf3be3f3dd463436ea516",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "/*! jQuery v2.2.4 | (c) jQuery Foundation | jquery.org/license */\n!function(a,b){\"object\"==typeof module&&\"object\"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error(\"jQuery requires a window with a document\");return b(a)}:b(a)}(\"undefined\"!=typeof window?window:this,function(a,b){var c=[],d=a.document,e=c.slice,f=c.concat,g=c.push,h=c.indexOf,i={},j=i.toString,k=i.hasOwnProperty,l={},m=\"2.2.4\",n=function(a,b){return new n.fn.init(a,b)},o=/^[\\s\\uFEFF\\xA0]+|[\\s\\uFEFF\\xA0]+$/g,p=/^-ms-/,q=/-([\\da-z])/gi,r=function(a,b){return b.toUpperCase()};n.fn=n.prototype={jquery:m,constructor:n,selector:\"\",length:0,toArray:function(){return e.call(this)},get:function(a){return null!=a?0>a?this[a+this.length]:this[a]:e.call(this)},pushStack:function(a){var b=n.merge(this.constructor(),a);return b.prevObject=this,b.context=this.context,b},each:function(a){return n.each(this,a)},map:function(a){return this.pushStack(n.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(e.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(0>a?b:0);return this.pushStack(c>=0&&b>c?[this[c]]:[])},end:function(){return this.prevObject||this.constructor()},push:g,sort:c.sort,splice:c.splice},n.extend=n.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for(\"boolean\"==typeof g&&(j=g,g=arguments[h]||{},h++),\"object\"==typeof g||n.isFunction(g)||(g={}),h===i&&(g=this,h--);i>h;h++)if(null!=(a=arguments[h]))for(b in a)c=g[b],d=a[b],g!==d&&(j&&d&&(n.isPlainObject(d)||(e=n.isArray(d)))?(e?(e=!1,f=c&&n.isArray(c)?c:[]):f=c&&n.isPlainObject(c)?c:{},g[b]=n.extend(j,f,d)):void 0!==d&&(g[b]=d));return g},n.extend({expando:\"jQuery\"+(m+Math.random()).replace(/\\D/g,\"\"),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return\"function\"===n.type(a)},isArray:Array.isArray,isWindow:function(a){return null!=a&&a===a.window},isNumeric:function(a){var b=a&&a.toString();return!n.isArray(a)&&b-parseFloat(b)+1>=0},isPlainObject:function(a){var b;if(\"object\"!==n.type(a)||a.nodeType||n.isWindow(a))return!1;if(a.constructor&&!k.call(a,\"constructor\")&&!k.call(a.constructor.prototype||{},\"isPrototypeOf\"))return!1;for(b in a);return void 0===b||k.call(a,b)},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},type:function(a){return null==a?a+\"\":\"object\"==typeof a||\"function\"==typeof a?i[j.call(a)]||\"object\":typeof a},globalEval:function(a){var b,c=eval;a=n.trim(a),a&&(1===a.indexOf(\"use strict\")?(b=d.createElement(\"script\"),b.text=a,d.head.appendChild(b).parentNode.removeChild(b)):c(a))},camelCase:function(a){return a.replace(p,\"ms-\").replace(q,r)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b){var c,d=0;if(s(a)){for(c=a.length;c>d;d++)if(b.call(a[d],d,a[d])===!1)break}else for(d in a)if(b.call(a[d],d,a[d])===!1)break;return a},trim:function(a){return null==a?\"\":(a+\"\").replace(o,\"\")},makeArray:function(a,b){var c=b||[];return null!=a&&(s(Object(a))?n.merge(c,\"string\"==typeof a?[a]:a):g.call(c,a)),c},inArray:function(a,b,c){return null==b?-1:h.call(b,a,c)},merge:function(a,b){for(var c=+b.length,d=0,e=a.length;c>d;d++)a[e++]=b[d];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;g>f;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,e,g=0,h=[];if(s(a))for(d=a.length;d>g;g++)e=b(a[g],g,c),null!=e&&h.push(e);else for(g in a)e=b(a[g],g,c),null!=e&&h.push(e);return f.apply([],h)},guid:1,proxy:function(a,b){var c,d,f;return\"string\"==typeof b&&(c=a[b],b=a,a=c),n.isFunction(a)?(d=e.call(arguments,2),f=function(){return a.apply(b||this,d.concat(e.call(arguments)))},f.guid=a.guid=a.guid||n.guid++,f):void 0},now:Date.now,support:l}),\"function\"==typeof Symbol&&(n.fn[Symbol.iterator]=c[Symbol.iterator]),n.each(\"Boolean Number String Function Arr...<truncated>"
     },
     {
       "id": 63,
@@ -1237,29 +1237,26 @@
     },
     {
       "id": 64,
-      "phase": "request",
+      "phase": "response",
       "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775187626167",
+      "method": "POST",
+      "url": "https://www.ricequant.com/api/user/isLogin.do",
+      "status": 200,
       "headers": {
-        "sec-ch-ua-platform": "\"macOS\"",
-        "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
-        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
-        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-        "sec-ch-ua-mobile": "?0",
-        "x-requested-with": "XMLHttpRequest",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-        "accept": "application/json, text/javascript, */*; q=0.01",
-        "x-xsrftoken": "<redacted>"
+        "content-length": "318",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
       },
-      "postData": null
+      "contentType": "application/json",
+      "body": "{\"code\": 0, \"message\": \"OK\", \"username\": \"\", \"email\": null, \"phone\": \"+8613311390323\", \"fullname\": \"yuping322\", \"userId\": 497381, \"user_id\": \"497381\", \"wxname\": \"\", \"avatar\": \"https://qcdn.ricequant.com/img/avatar/default-avatar.png\", \"third_party\": null, \"init_password\": false, \"agreed_disclaimer\": false, \"rank\": 0}"
     },
     {
       "id": 65,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775187626168",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775187995824",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1278,6 +1275,25 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775187995825",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "x-xsrftoken": "<redacted>"
+      },
+      "postData": null
+    },
+    {
+      "id": 67,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
       "url": "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
@@ -1293,11 +1309,11 @@
       "postData": null
     },
     {
-      "id": 67,
+      "id": 68,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775187626169",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775187995826",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1312,7 +1328,7 @@
       "postData": null
     },
     {
-      "id": 68,
+      "id": 69,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
@@ -1323,8 +1339,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1334,7 +1350,7 @@
       "body": "// Copyright (c) Jupyter Development Team.\n// Distributed under the terms of the Modified BSD License.\n\ndefine(function(requirejs) {\n    \"use strict\";\n\n    var $ = requirejs('jquery');\n    var utils = requirejs('base/js/utils');\n\n    var Contents = function(options) {\n        /**\n         * Constructor\n         *\n         * Preliminary documentation for the REST API is at \n         * https://github.com/ipython/ipython/wiki/IPEP-27%3A-Contents-Service\n         *\n         * A contents handles passing file operations\n         * to the back-end.  This includes checkpointing\n         * with the normal file operations.\n         *\n         * Parameters:\n         *  options: dictionary\n         *      Dictionary of keyword arguments.\n         *          base_url: string\n         */\n        this.base_url = options.base_url;\n    };\n\n    /** Error type */\n    Contents.DIRECTORY_NOT_EMPTY_ERROR = 'DirectoryNotEmptyError';\n\n    Contents.DirectoryNotEmptyError = function() {\n        // Constructor\n        //\n        // An error representing the result of attempting to delete a non-empty\n        // directory.\n        this.message = 'A directory must be empty before being deleted.';\n    };\n    \n    Contents.DirectoryNotEmptyError.prototype = Object.create(Error.prototype);\n    Contents.DirectoryNotEmptyError.prototype.name =\n        Contents.DIRECTORY_NOT_EMPTY_ERROR;\n\n\n    Contents.prototype.api_url = function() {\n        var url_parts = [\n            this.base_url, 'api/contents',\n            utils.url_join_encode.apply(null, arguments),\n        ];\n        return utils.url_path_join.apply(null, url_parts);\n    };\n\n    /**\n     * Creates a basic error handler that wraps a jqXHR error as an Error.\n     *\n     * Takes a callback that accepts an Error, and returns a callback that can\n     * be passed directly to $.ajax, which will wrap the error from jQuery\n     * as an Error, and pass that to the original callback.\n     *\n     * @method create_basic_error_handler\n     * @param{Function} callback\n     * @return{Function}\n     */\n    Contents.prototype.create_basic_error_handler = function(callback) {\n        if (!callback) {\n            return utils.log_ajax_error;\n        }\n        return function(xhr, status, error) {\n            callback(utils.wrap_ajax_error(xhr, status, error));\n        };\n    };\n\n    /**\n     * File Functions (including notebook operations)\n     */\n\n    /**\n     * Get a file.\n     *\n     * @method get\n     * @param {String} path\n     * @param {Object} options\n     *    type : 'notebook', 'file', or 'directory'\n     *    format: 'text' or 'base64'; only relevant for type: 'file'\n     *    content: true or false; // whether to include the content\n     */\n    Contents.prototype.get = function (path, options) {\n        /**\n         * We do the call with settings so we can set cache to false.\n         */\n        var settings = {\n            processData : false,\n            cache : false,\n            type : \"GET\",\n            dataType : \"json\",\n        };\n        var url = this.api_url(path);\n        var params = {};\n        if (options.type) { params.type = options.type; }\n        if (options.format) { params.format = options.format; }\n        if (options.content === false) { params.content = '0'; }\n        return utils.promising_ajax(url + '?' + $.param(params), settings);\n    };\n\n\n    /**\n     * Creates a new untitled file or directory in the specified directory path.\n     *\n     * @method new\n     * @param {String} path: the directory in which to create the new file/directory\n     * @param {Object} options:\n     *      ext: file extension to use\n     *      type: model type to create ('notebook', 'file', or 'directory')\n     */\n    Contents.prototype.new_untitled = function(path, options) {\n        var data = JSON.stringify({\n          ext: options.ext,\n          type: options.type\n        });\n\n        var settings = {\n            processData : false,\n            type : \"POST\",\n            data: data,\n        ...<truncated>"
     },
     {
-      "id": 69,
+      "id": 70,
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
@@ -1350,22 +1366,6 @@
       "postData": null
     },
     {
-      "id": 70,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "POST",
-      "url": "https://www.ricequant.com/api/user/isLogin.do",
-      "status": 200,
-      "headers": {
-        "content-length": "318",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "{\"code\": 0, \"message\": \"OK\", \"username\": \"\", \"email\": null, \"phone\": \"+8613311390323\", \"fullname\": \"yuping322\", \"userId\": 497381, \"user_id\": \"497381\", \"wxname\": \"\", \"avatar\": \"https://qcdn.ricequant.com/img/avatar/default-avatar.png\", \"third_party\": null, \"init_password\": false, \"agreed_disclaimer\": false, \"rank\": 0}"
-    },
-    {
       "id": 71,
       "phase": "response",
       "resourceType": "script",
@@ -1376,28 +1376,28 @@
         "strict-transport-security": "max-age=172800",
         "cache-control": "max-age=0, must-revalidate",
         "content-encoding": "gzip",
-        "etag": "4ceecfcfdcb65e2bdcd65686d1b1c7b7",
+        "etag": "5a6585f0a561b20bbd58e30d1db67558",
         "content-length": "11339",
         "p3p": "CP=\"CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR\"",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript",
         "server": "apache"
       },
       "contentType": "application/javascript",
-      "body": "(function(){var h={},mt={},c={id:\"cb81fd54150b99e25d085d58bbaf4a07\",dm:[\"ricequant.com\"],js:\"tongji.baidu.com/hm-web/js/\",etrk:[],cetrk:[],cptrk:[],icon:'',ctrk:[\"%5b%22http%3a%5c%2f%5c%2fricequant.com%22%5d\"],vdur:1800000,age:31536000000,qiao:0,pt:0,spa:0,aet:'',hca:'0C70FD7F06A176EB',ab:'0',v:1};var s=void 0,t=!0,u=null,x=!1;mt.cookie={};mt.cookie.set=function(e,a,b){var k;b.C&&(k=new Date,k.setTime(k.getTime()+b.C));document.cookie=e+\"=\"+a+(b.domain?\"; domain=\"+b.domain:\"\")+(b.path?\"; path=\"+b.path:\"\")+(k?\"; expires=\"+k.toGMTString():\"\")+(b.ec?\"; secure\":\"\")};mt.cookie.get=function(e){return(e=RegExp(\"(^| )\"+e+\"=([^;]*)(;|$)\").exec(document.cookie))?e[2]:u};\nmt.cookie.rb=function(e,a){try{var b=\"Hm_ck_\"+ +new Date;mt.cookie.set(b,\"42\",{domain:e,path:a,C:s});var k=\"42\"===mt.cookie.get(b)?\"1\":\"0\";mt.cookie.set(b,\"\",{domain:e,path:a,C:-1});return k}catch(d){return\"0\"}};mt.event={};mt.event.c=function(e,a,b,k){e.addEventListener?e.addEventListener(a,b,k||x):e.attachEvent&&e.attachEvent(\"on\"+a,function(d){b.call(e,d)})};\n(function(){var e=mt.event;mt.lang={};mt.lang.i=function(a,b){return\"[object \"+b+\"]\"==={}.toString.call(a)};mt.lang.j=function(a){return mt.lang.i(a,\"Function\")};mt.lang.J=function(a){return mt.lang.i(a,\"Object\")};mt.lang.Xb=function(a){return mt.lang.i(a,\"Number\")&&isFinite(a)};mt.lang.Z=function(a){return mt.lang.i(a,\"String\")};mt.lang.isArray=function(a){return mt.lang.i(a,\"Array\")};mt.lang.n=function(a){return a.replace?a.replace(/'/g,\"'0\").replace(/\\*/g,\"'1\").replace(/!/g,\"'2\"):a};mt.lang.trim=\nfunction(a){return a.replace(/^\\s+|\\s+$/g,\"\")};mt.lang.find=function(a,b,k){if(mt.lang.isArray(a)&&mt.lang.j(b))for(var d=a.length,f=0;f<d;f++)if(f in a&&b.call(k||a,a[f],f))return a[f];return u};mt.lang.X=function(a,b){return mt.lang.find(a,function(k){return k===b})!=u};mt.lang.filter=function(a,b){var k=-1,d=0,f=a==u?0:a.length,g=[];if(mt.lang.j(b))for(;++k<f;){var l=a[k];b(l,k,a)&&(g[d++]=l)}return g};mt.lang.unique=function(a,b){var k=a.length,d=a.slice(0),f,g;for(mt.lang.j(b)||(b=function(b,\nd){return b===d});0<--k;){g=d[k];for(f=k;f--;)if(b(g,d[f])){d.splice(k,1);break}}return d};mt.lang.$b=function(a,b){function k(b){b=(d+d+Number(b).toString(2)).slice(-64);return[parseInt(b.slice(0,32),2),parseInt(b.slice(-32),2)]}var d=\"00000000000000000000000000000000\",f=k(a),g=k(b);return parseInt((d+((f[0]|g[0])>>>0).toString(2)).slice(-32)+(d+((f[1]|g[1])>>>0).toString(2)).slice(-32),2)};mt.lang.extend=function(a){for(var b=Array.prototype.slice.call(arguments,1),k=0;k<b.length;k++){var d=b[k],\nf;for(f in d)Object.prototype.hasOwnProperty.call(d,f)&&d[f]&&(a[f]=d[f])}return a};mt.lang.Pb=function(a){function b(b,d){var a=window.history,g=a[b];a[b]=function(){g.apply(a,arguments);mt.lang.j(d)&&d()}}b(\"pushState\",function(){a()});b(\"replaceState\",function(){a()});e.c(window,window.history.pushState?\"popstate\":\"hashchange\",function(){a()})};return mt.lang})();mt.url={};mt.url.f=function(e,a){var b=e.match(RegExp(\"(^|&|\\\\?|#)(\"+a+\")=([^&#]*)(&|$|#)\",\"\"));return b?b[3]:u};\nmt.url.Sa=function(e){return(e=e.match(/^(https?:\\/\\/)?([^\\/\\?#]*)/))?e[2].replace(/.*@/,\"\"):u};mt.url.V=function(e){return(e=mt.url.Sa(e))?e.replace(/:\\d+$/,\"\"):e};mt.url.pb=function(e){var a=document.location.href,a=a.replace(/^https?:\\/\\//,\"\");return 0===a.indexOf(e)};mt.url.qb=function(e,a){e=\".\"+e.replace(/:\\d+/,\"\");a=\".\"+a.replace(/:\\d+/,\"\");var b=e.indexOf(a);return-1<b&&b+a.length===e.length};\n(function(){var e=mt.lang,a=mt.url;mt.d={};mt.d.La=function(b){return document.getElementById(b)};mt.d.Wb=function(b){if(!b)return u;try{b=String(b);if(0===b.indexOf(\"!HMCQ!\"))return b;if(0===b.indexOf(\"!HMCC!\"))return document.querySelector(b.substring(6,b.length));for(var k=b.split(\">\"),d=document.body,a=k.length-1;0<=a;a--)if(-1<k[a].indexOf(\"#\")){var g=k[a].split(\"#\")[1];(d=document.getElementById(g))||(d=document.getElementById(decodeURIComponent(g)));k=k.splice(a+1,k.length-(a+1));break}for(b=\n0;d&&b<k.length;){var l=String(k[b]).toLowerCa...<truncated>"
+      "body": "(function(){var h={},mt={},c={id:\"cb81fd54150b99e25d085d58bbaf4a07\",dm:[\"ricequant.com\"],js:\"tongji.baidu.com/hm-web/js/\",etrk:[],cetrk:[],cptrk:[],icon:'',ctrk:[\"%5b%22http%3a%5c%2f%5c%2fricequant.com%22%5d\"],vdur:1800000,age:31536000000,qiao:0,pt:0,spa:0,aet:'',hca:'4883144FA748F4C9',ab:'0',v:1};var s=void 0,t=!0,u=null,x=!1;mt.cookie={};mt.cookie.set=function(e,a,b){var k;b.C&&(k=new Date,k.setTime(k.getTime()+b.C));document.cookie=e+\"=\"+a+(b.domain?\"; domain=\"+b.domain:\"\")+(b.path?\"; path=\"+b.path:\"\")+(k?\"; expires=\"+k.toGMTString():\"\")+(b.ec?\"; secure\":\"\")};mt.cookie.get=function(e){return(e=RegExp(\"(^| )\"+e+\"=([^;]*)(;|$)\").exec(document.cookie))?e[2]:u};\nmt.cookie.rb=function(e,a){try{var b=\"Hm_ck_\"+ +new Date;mt.cookie.set(b,\"42\",{domain:e,path:a,C:s});var k=\"42\"===mt.cookie.get(b)?\"1\":\"0\";mt.cookie.set(b,\"\",{domain:e,path:a,C:-1});return k}catch(d){return\"0\"}};mt.event={};mt.event.c=function(e,a,b,k){e.addEventListener?e.addEventListener(a,b,k||x):e.attachEvent&&e.attachEvent(\"on\"+a,function(d){b.call(e,d)})};\n(function(){var e=mt.event;mt.lang={};mt.lang.i=function(a,b){return\"[object \"+b+\"]\"==={}.toString.call(a)};mt.lang.j=function(a){return mt.lang.i(a,\"Function\")};mt.lang.J=function(a){return mt.lang.i(a,\"Object\")};mt.lang.Xb=function(a){return mt.lang.i(a,\"Number\")&&isFinite(a)};mt.lang.Z=function(a){return mt.lang.i(a,\"String\")};mt.lang.isArray=function(a){return mt.lang.i(a,\"Array\")};mt.lang.n=function(a){return a.replace?a.replace(/'/g,\"'0\").replace(/\\*/g,\"'1\").replace(/!/g,\"'2\"):a};mt.lang.trim=\nfunction(a){return a.replace(/^\\s+|\\s+$/g,\"\")};mt.lang.find=function(a,b,k){if(mt.lang.isArray(a)&&mt.lang.j(b))for(var d=a.length,f=0;f<d;f++)if(f in a&&b.call(k||a,a[f],f))return a[f];return u};mt.lang.X=function(a,b){return mt.lang.find(a,function(k){return k===b})!=u};mt.lang.filter=function(a,b){var k=-1,d=0,f=a==u?0:a.length,g=[];if(mt.lang.j(b))for(;++k<f;){var l=a[k];b(l,k,a)&&(g[d++]=l)}return g};mt.lang.unique=function(a,b){var k=a.length,d=a.slice(0),f,g;for(mt.lang.j(b)||(b=function(b,\nd){return b===d});0<--k;){g=d[k];for(f=k;f--;)if(b(g,d[f])){d.splice(k,1);break}}return d};mt.lang.$b=function(a,b){function k(b){b=(d+d+Number(b).toString(2)).slice(-64);return[parseInt(b.slice(0,32),2),parseInt(b.slice(-32),2)]}var d=\"00000000000000000000000000000000\",f=k(a),g=k(b);return parseInt((d+((f[0]|g[0])>>>0).toString(2)).slice(-32)+(d+((f[1]|g[1])>>>0).toString(2)).slice(-32),2)};mt.lang.extend=function(a){for(var b=Array.prototype.slice.call(arguments,1),k=0;k<b.length;k++){var d=b[k],\nf;for(f in d)Object.prototype.hasOwnProperty.call(d,f)&&d[f]&&(a[f]=d[f])}return a};mt.lang.Pb=function(a){function b(b,d){var a=window.history,g=a[b];a[b]=function(){g.apply(a,arguments);mt.lang.j(d)&&d()}}b(\"pushState\",function(){a()});b(\"replaceState\",function(){a()});e.c(window,window.history.pushState?\"popstate\":\"hashchange\",function(){a()})};return mt.lang})();mt.url={};mt.url.f=function(e,a){var b=e.match(RegExp(\"(^|&|\\\\?|#)(\"+a+\")=([^&#]*)(&|$|#)\",\"\"));return b?b[3]:u};\nmt.url.Sa=function(e){return(e=e.match(/^(https?:\\/\\/)?([^\\/\\?#]*)/))?e[2].replace(/.*@/,\"\"):u};mt.url.V=function(e){return(e=mt.url.Sa(e))?e.replace(/:\\d+$/,\"\"):e};mt.url.pb=function(e){var a=document.location.href,a=a.replace(/^https?:\\/\\//,\"\");return 0===a.indexOf(e)};mt.url.qb=function(e,a){e=\".\"+e.replace(/:\\d+/,\"\");a=\".\"+a.replace(/:\\d+/,\"\");var b=e.indexOf(a);return-1<b&&b+a.length===e.length};\n(function(){var e=mt.lang,a=mt.url;mt.d={};mt.d.La=function(b){return document.getElementById(b)};mt.d.Wb=function(b){if(!b)return u;try{b=String(b);if(0===b.indexOf(\"!HMCQ!\"))return b;if(0===b.indexOf(\"!HMCC!\"))return document.querySelector(b.substring(6,b.length));for(var k=b.split(\">\"),d=document.body,a=k.length-1;0<=a;a--)if(-1<k[a].indexOf(\"#\")){var g=k[a].split(\"#\")[1];(d=document.getElementById(g))||(d=document.getElementById(decodeURIComponent(g)));k=k.splice(a+1,k.length-(a+1));break}for(b=\n0;d&&b<k.length;){var l=String(k[b]).toLowerCa...<truncated>"
     },
     {
       "id": 72,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775187626167",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775187995824",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "71",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "etag": "\"ef882808c5c730758d0f9c5fd0291454cdd999e3\"",
         "content-type": "application/json",
         "server": "nginx"
@@ -1410,7 +1410,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775187626170",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775187995827",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1429,13 +1429,13 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775187626168",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775187995825",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "2",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\"",
         "content-type": "application/json",
         "server": "nginx"
@@ -1454,7 +1454,7 @@
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "883",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "etag": "\"9832bdb6ccc8f6ed9de9dcdc8838017eac909761\"",
         "content-type": "application/json",
         "server": "nginx"
@@ -1467,13 +1467,13 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775187626169",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775187995826",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "2",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\"",
         "content-type": "application/json",
         "server": "nginx"
@@ -1529,8 +1529,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "no-cache",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1544,43 +1544,24 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775187626170",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775187995827",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-encoding": "gzip",
-        "etag": "W/\"8f802064b66af31e5bb7ce7004d35e7fc8eb1992\"",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "etag": "W/\"cdf93483a51635a4b983435b60d935e33b152558\"",
+        "date": "Fri, 03 Apr 2026 03:46:36 GMT",
         "content-type": "application/json",
         "vary": "Accept-Encoding",
         "server": "nginx",
-        "last-modified": "Fri, 03 Apr 2026 03:35:52 GMT"
+        "last-modified": "Fri, 03 Apr 2026 03:41:31 GMT"
       },
       "contentType": "application/json",
-      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T03:35:52.912046Z\", \"created\": \"2026-04-03T03:35:52.912046Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
+      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T03:41:31.538331Z\", \"created\": \"2026-04-03T03:41:31.538331Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
     },
     {
       "id": 81,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/rqinfo/memory",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "41",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
-        "etag": "\"f5e7059dac5511230269bf37b0675064c17de0d5\"",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "{\"total\": 8589934592, \"memory\": 73752576}"
-    },
-    {
-      "id": 82,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
@@ -1590,13 +1571,32 @@
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "0",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:36 GMT",
         "etag": "\"da39a3ee5e6b4b0d3255bfef95601890afd80709\"",
         "content-type": "application/json",
         "server": "nginx"
       },
       "contentType": "application/json",
       "body": ""
+    },
+    {
+      "id": 82,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/rqinfo/memory",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "content-length": "41",
+        "date": "Fri, 03 Apr 2026 03:46:36 GMT",
+        "etag": "\"9c18c7fd23836b08b0106d8394d4eb05996a77ec\"",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{\"total\": 8589934592, \"memory\": 75403264}"
     },
     {
       "id": 83,
@@ -1738,7 +1738,7 @@
         "content-encoding": "gzip",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
         "etag": "W/\"b1e0b12a0ffa5d9e2fc5ca7c29b831eaac7f63ab\"",
         "server": "nginx",
         "vary": "Accept-Encoding",
@@ -1759,8 +1759,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1781,8 +1781,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1803,8 +1803,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1825,8 +1825,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1847,8 +1847,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1869,8 +1869,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1887,7 +1887,7 @@
       "url": "https://hm.baidu.com/hm.js?cb81fd54150b99e25d085d58bbaf4a07",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
-        "if-none-match": "4ceecfcfdcb65e2bdcd65686d1b1c7b7",
+        "if-none-match": "5a6585f0a561b20bbd58e30d1db67558",
         "referer": "https://www.ricequant.com/",
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
         "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
@@ -1935,7 +1935,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775187642027",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775188011724",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1954,7 +1954,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775187642028",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775188011725",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1992,7 +1992,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775187642029",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775188011726",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -2011,6 +2011,23 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
+      "url": "https://hm.baidu.com/hm.js?cb81fd54150b99e25d085d58bbaf4a07",
+      "status": 304,
+      "headers": {
+        "strict-transport-security": "max-age=172800",
+        "cache-control": "max-age=0, must-revalidate",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
+        "etag": "5a6585f0a561b20bbd58e30d1db67558",
+        "server": "apache"
+      },
+      "contentType": "",
+      "body": null
+    },
+    {
+      "id": 106,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
       "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403113434",
       "status": 200,
       "headers": {
@@ -2018,8 +2035,8 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 03:40:26 GMT",
-        "date": "Fri, 03 Apr 2026 03:40:26 GMT",
+        "expires": "Mon, 31 Mar 2036 03:46:35 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:35 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -2029,7 +2046,7 @@
       "body": "// Copyright (c) Jupyter Development Team.\n// Distributed under the terms of the Modified BSD License.\n\ndefine(function(requirejs) {\n    \"use strict\";\n\n    var $ = requirejs('jquery');\n    var utils = requirejs('base/js/utils');\n\n    var Contents = function(options) {\n        /**\n         * Constructor\n         *\n         * Preliminary documentation for the REST API is at \n         * https://github.com/ipython/ipython/wiki/IPEP-27%3A-Contents-Service\n         *\n         * A contents handles passing file operations\n         * to the back-end.  This includes checkpointing\n         * with the normal file operations.\n         *\n         * Parameters:\n         *  options: dictionary\n         *      Dictionary of keyword arguments.\n         *          base_url: string\n         */\n        this.base_url = options.base_url;\n    };\n\n    /** Error type */\n    Contents.DIRECTORY_NOT_EMPTY_ERROR = 'DirectoryNotEmptyError';\n\n    Contents.DirectoryNotEmptyError = function() {\n        // Constructor\n        //\n        // An error representing the result of attempting to delete a non-empty\n        // directory.\n        this.message = 'A directory must be empty before being deleted.';\n    };\n    \n    Contents.DirectoryNotEmptyError.prototype = Object.create(Error.prototype);\n    Contents.DirectoryNotEmptyError.prototype.name =\n        Contents.DIRECTORY_NOT_EMPTY_ERROR;\n\n\n    Contents.prototype.api_url = function() {\n        var url_parts = [\n            this.base_url, 'api/contents',\n            utils.url_join_encode.apply(null, arguments),\n        ];\n        return utils.url_path_join.apply(null, url_parts);\n    };\n\n    /**\n     * Creates a basic error handler that wraps a jqXHR error as an Error.\n     *\n     * Takes a callback that accepts an Error, and returns a callback that can\n     * be passed directly to $.ajax, which will wrap the error from jQuery\n     * as an Error, and pass that to the original callback.\n     *\n     * @method create_basic_error_handler\n     * @param{Function} callback\n     * @return{Function}\n     */\n    Contents.prototype.create_basic_error_handler = function(callback) {\n        if (!callback) {\n            return utils.log_ajax_error;\n        }\n        return function(xhr, status, error) {\n            callback(utils.wrap_ajax_error(xhr, status, error));\n        };\n    };\n\n    /**\n     * File Functions (including notebook operations)\n     */\n\n    /**\n     * Get a file.\n     *\n     * @method get\n     * @param {String} path\n     * @param {Object} options\n     *    type : 'notebook', 'file', or 'directory'\n     *    format: 'text' or 'base64'; only relevant for type: 'file'\n     *    content: true or false; // whether to include the content\n     */\n    Contents.prototype.get = function (path, options) {\n        /**\n         * We do the call with settings so we can set cache to false.\n         */\n        var settings = {\n            processData : false,\n            cache : false,\n            type : \"GET\",\n            dataType : \"json\",\n        };\n        var url = this.api_url(path);\n        var params = {};\n        if (options.type) { params.type = options.type; }\n        if (options.format) { params.format = options.format; }\n        if (options.content === false) { params.content = '0'; }\n        return utils.promising_ajax(url + '?' + $.param(params), settings);\n    };\n\n\n    /**\n     * Creates a new untitled file or directory in the specified directory path.\n     *\n     * @method new\n     * @param {String} path: the directory in which to create the new file/directory\n     * @param {Object} options:\n     *      ext: file extension to use\n     *      type: model type to create ('notebook', 'file', or 'directory')\n     */\n    Contents.prototype.new_untitled = function(path, options) {\n        var data = JSON.stringify({\n          ext: options.ext,\n          type: options.type\n        });\n\n        var settings = {\n            processData : false,\n            type : \"POST\",\n            data: data,\n        ...<truncated>"
     },
     {
-      "id": 106,
+      "id": 107,
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
@@ -2046,23 +2063,6 @@
       "postData": null
     },
     {
-      "id": 107,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
-      "url": "https://hm.baidu.com/hm.js?cb81fd54150b99e25d085d58bbaf4a07",
-      "status": 304,
-      "headers": {
-        "strict-transport-security": "max-age=172800",
-        "cache-control": "max-age=0, must-revalidate",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
-        "etag": "4ceecfcfdcb65e2bdcd65686d1b1c7b7",
-        "server": "apache"
-      },
-      "contentType": "",
-      "body": null
-    },
-    {
       "id": 108,
       "phase": "response",
       "resourceType": "xhr",
@@ -2071,7 +2071,7 @@
       "status": 200,
       "headers": {
         "content-length": "318",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
@@ -2083,13 +2083,13 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775187642027",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775188011724",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "71",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
         "etag": "\"ef882808c5c730758d0f9c5fd0291454cdd999e3\"",
         "content-type": "application/json",
         "server": "nginx"
@@ -2102,13 +2102,13 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775187642028",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775188011725",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "2",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
         "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\"",
         "content-type": "application/json",
         "server": "nginx"
@@ -2118,10 +2118,84 @@
     },
     {
       "id": 111,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "content-length": "883",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
+        "etag": "\"9832bdb6ccc8f6ed9de9dcdc8838017eac909761\"",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{\"default\": \"python3\", \"kernelspecs\": {\"python3\": {\"name\": \"python3\", \"spec\": {\"argv\": [\"/usr/local/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"Python 3\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3/logo-32x32.png\"}}, \"python3.9\": {\"name\": \"python3.9\", \"spec\": {\"argv\": [\"/usr/local/envs/Python3.9/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"python3.9\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3.9/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3.9/logo-32x32.png\"}}}}"
+    },
+    {
+      "id": 112,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403113434",
+      "status": 304,
+      "headers": {
+        "expires": "Mon, 31 Mar 2036 03:46:51 GMT",
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
+        "cache-control": "no-cache",
+        "accept-ranges": "bytes",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
+        "server": "nginx"
+      },
+      "contentType": "",
+      "body": null
+    },
+    {
+      "id": 113,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775187642030",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/rqinfo/memory",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "*/*"
+      },
+      "postData": null
+    },
+    {
+      "id": 114,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381//api/notebook/sid",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "accept": "*/*"
+      },
+      "postData": null
+    },
+    {
+      "id": 115,
+      "phase": "request",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775188011727",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -2136,17 +2210,17 @@
       "postData": null
     },
     {
-      "id": 112,
+      "id": 116,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775187642029",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775188011726",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "2",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
         "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\"",
         "content-type": "application/json",
         "server": "nginx"
@@ -2155,99 +2229,23 @@
       "body": "[]"
     },
     {
-      "id": 113,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "883",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
-        "etag": "\"9832bdb6ccc8f6ed9de9dcdc8838017eac909761\"",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "{\"default\": \"python3\", \"kernelspecs\": {\"python3\": {\"name\": \"python3\", \"spec\": {\"argv\": [\"/usr/local/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"Python 3\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3/logo-32x32.png\"}}, \"python3.9\": {\"name\": \"python3.9\", \"spec\": {\"argv\": [\"/usr/local/envs/Python3.9/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"python3.9\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3.9/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3.9/logo-32x32.png\"}}}}"
-    },
-    {
-      "id": 114,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403113434",
-      "status": 304,
-      "headers": {
-        "expires": "Mon, 31 Mar 2036 03:40:42 GMT",
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
-        "cache-control": "no-cache",
-        "accept-ranges": "bytes",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
-        "server": "nginx"
-      },
-      "contentType": "",
-      "body": null
-    },
-    {
-      "id": 115,
-      "phase": "request",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/rqinfo/memory",
-      "headers": {
-        "sec-ch-ua-platform": "\"macOS\"",
-        "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
-        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
-        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-        "sec-ch-ua-mobile": "?0",
-        "x-requested-with": "XMLHttpRequest",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-        "accept": "*/*"
-      },
-      "postData": null
-    },
-    {
-      "id": 116,
-      "phase": "request",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381//api/notebook/sid",
-      "headers": {
-        "sec-ch-ua-platform": "\"macOS\"",
-        "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
-        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
-        "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-        "sec-ch-ua-mobile": "?0",
-        "x-requested-with": "XMLHttpRequest",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-        "accept": "*/*"
-      },
-      "postData": null
-    },
-    {
       "id": 117,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775187642030",
+      "url": "https://www.ricequant.com/research/user/user_497381//api/notebook/sid",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-encoding": "gzip",
-        "etag": "W/\"8f802064b66af31e5bb7ce7004d35e7fc8eb1992\"",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
+        "content-length": "0",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
+        "etag": "\"da39a3ee5e6b4b0d3255bfef95601890afd80709\"",
         "content-type": "application/json",
-        "vary": "Accept-Encoding",
-        "server": "nginx",
-        "last-modified": "Fri, 03 Apr 2026 03:35:52 GMT"
+        "server": "nginx"
       },
       "contentType": "application/json",
-      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T03:35:52.912046Z\", \"created\": \"2026-04-03T03:35:52.912046Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
+      "body": ""
     },
     {
       "id": 118,
@@ -2260,32 +2258,34 @@
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-length": "41",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
-        "etag": "\"e10d7fb2e2bcc4ef6b78a3a55e57581acfbd810f\"",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
+        "etag": "\"2e93abc3f4165cd859065311169a16a31b8312ca\"",
         "content-type": "application/json",
         "server": "nginx"
       },
       "contentType": "application/json",
-      "body": "{\"total\": 8589934592, \"memory\": 73641984}"
+      "body": "{\"total\": 8589934592, \"memory\": 75661312}"
     },
     {
       "id": 119,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381//api/notebook/sid",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775188011727",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "0",
-        "date": "Fri, 03 Apr 2026 03:40:42 GMT",
-        "etag": "\"da39a3ee5e6b4b0d3255bfef95601890afd80709\"",
+        "content-encoding": "gzip",
+        "etag": "W/\"cdf93483a51635a4b983435b60d935e33b152558\"",
+        "date": "Fri, 03 Apr 2026 03:46:51 GMT",
         "content-type": "application/json",
-        "server": "nginx"
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Fri, 03 Apr 2026 03:41:31 GMT"
       },
       "contentType": "application/json",
-      "body": ""
+      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T03:41:31.538331Z\", \"created\": \"2026-04-03T03:41:31.538331Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
     },
     {
       "id": 120,

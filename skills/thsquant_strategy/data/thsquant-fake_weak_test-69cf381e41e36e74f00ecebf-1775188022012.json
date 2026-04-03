@@ -1,0 +1,486 @@
+{
+  "summary": {
+    "backtestId": "69cf381e41e36e74f00ecebf",
+    "algoId": "69cf381e04f2145508d45afc",
+    "strategyName": "fake_weak_test_20260403_20230601~20230630_7814",
+    "period": "2023-06-01 ~ 2023-06-30",
+    "capitalBase": 100000,
+    "frequency": "DAILY",
+    "benchmark": "000300.SH",
+    "runAt": "2026-04-03T03:47:02.012Z",
+    "totalReturn": 0,
+    "annualReturn": 0,
+    "benchmarkReturn": 0.0093,
+    "benchmarkAnnualReturn": 0.1302,
+    "excessReturn": -0.0093,
+    "maxDrawdown": 0,
+    "drawdownDate": "20230601",
+    "volatility": 0,
+    "downsideRisk": 0.1019,
+    "trackingError": 0.1379,
+    "sharpe": null,
+    "sortino": -0.187,
+    "alpha": -0.0191,
+    "beta": 0,
+    "informationRatio": -0.9567,
+    "winRate": 0,
+    "benchmarkWinRate": 0.5263,
+    "tradeWinRate": null,
+    "tradeCount": 0,
+    "logCount": 3
+  },
+  "detail": {
+    "performance": {
+      "sharpe_ratio": null,
+      "progress": 1,
+      "beta": 0,
+      "drawdown_most": "20230601",
+      "alpha": -0.0191,
+      "win_rate": 0,
+      "benchmark_yield": 0.0093,
+      "max_drawdown": 0,
+      "volatility": 0,
+      "information_ratio": -0.9567,
+      "yield": 0,
+      "drawdown_more": "20230601",
+      "annual_yield": 0,
+      "benchmark_win_rate": 0.5263,
+      "tracking_error": 0.1379,
+      "benchmark_annual_yield": 0.1302,
+      "sortino": -0.187,
+      "downside_risk": 0.1019,
+      "trade_winrate": null
+    },
+    "profit": {
+      "total": 20,
+      "list": {
+        "20230601": {
+          "max_drawdown": 0,
+          "log_benchmark_profit": 0,
+          "trade_record": [],
+          "benchmark_profit": 0,
+          "excess_income": 0,
+          "log_algo_profit": 0,
+          "log_excess_income": 0,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "algo_profit": 0
+        },
+        "20230602": {
+          "max_drawdown": 0,
+          "excess_income": -0.014233,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.014335,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.014439,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.014335
+        },
+        "20230605": {
+          "max_drawdown": 0,
+          "excess_income": -0.009724,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.009772,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.009819,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.009772
+        },
+        "20230606": {
+          "max_drawdown": 0,
+          "excess_income": -0.00034,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.00034,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.00034,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.00034
+        },
+        "20230607": {
+          "max_drawdown": 0,
+          "excess_income": 0.004625,
+          "log_algo_profit": 0,
+          "log_excess_income": 0.004614,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": -0.004604,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": -0.004614
+        },
+        "20230608": {
+          "max_drawdown": 0,
+          "excess_income": -0.003486,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.003493,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.003499,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.003493
+        },
+        "20230609": {
+          "max_drawdown": 0,
+          "excess_income": -0.007776,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.007807,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.007837,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.007807
+        },
+        "20230612": {
+          "max_drawdown": 0,
+          "excess_income": -0.009771,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.009819,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.009868,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.009819
+        },
+        "20230613": {
+          "max_drawdown": 0,
+          "excess_income": -0.015017,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.015131,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.015246,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.015131
+        },
+        "20230614": {
+          "max_drawdown": 0,
+          "excess_income": -0.014792,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.014903,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.015014,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.014903
+        },
+        "20230615": {
+          "max_drawdown": 0,
+          "excess_income": -0.030221,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.030687,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.031162,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.030687
+        },
+        "20230616": {
+          "max_drawdown": 0,
+          "excess_income": -0.039482,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.040283,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.041105,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.040283
+        },
+        "20230619": {
+          "max_drawdown": 0,
+          "excess_income": -0.031555,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.032064,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.032583,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.032064
+        },
+        "20230620": {
+          "max_drawdown": 0,
+          "excess_income": -0.029909,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.030365,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.030831,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.030365
+        },
+        "20230621": {
+          "max_drawdown": 0,
+          "excess_income": -0.014794,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.014904,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.015016,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.014904
+        },
+        "20230626": {
+          "max_drawdown": 0,
+          "excess_income": -0.000742,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.000743,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.000743,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.000743
+        },
+        "20230627": {
+          "max_drawdown": 0,
+          "excess_income": -0.010029,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.01008,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.010131,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.01008
+        },
+        "20230628": {
+          "max_drawdown": 0,
+          "excess_income": -0.008834,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.008874,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.008913,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.008874
+        },
+        "20230629": {
+          "max_drawdown": 0,
+          "excess_income": -0.003918,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.003926,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.003934,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.003926
+        },
+        "20230630": {
+          "max_drawdown": 0,
+          "excess_income": -0.009261,
+          "log_algo_profit": 0,
+          "log_excess_income": -0.009304,
+          "trade_record": [],
+          "algo_profit": 0,
+          "benchmark_profit": 0.009347,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0.009304
+        }
+      }
+    },
+    "is_collection": false
+  },
+  "performance": {
+    "sortino": -0.187,
+    "annual_yield": 0,
+    "progress": 1,
+    "sharpe_ratio": null,
+    "win_rate": 0,
+    "beta": 0,
+    "benchmark_win_rate": 0.5263,
+    "yield": 0,
+    "volatility": 0,
+    "alpha": -0.0191,
+    "tracking_error": 0.1379,
+    "information_ratio": -0.9567,
+    "downside_risk": 0.1019,
+    "drawdown_more": "20230601",
+    "benchmark_yield": 0.0093,
+    "trade_winrate": null,
+    "max_drawdown": 0,
+    "drawdown_most": "20230601",
+    "benchmark_annual_yield": 0.1302
+  },
+  "tradeLog": [],
+  "backtestLog": [
+    {
+      "time": "2026-04-03 11:46:38",
+      "value": "INFO :回测开始运行",
+      "type": "INFO",
+      "now": "2026-04-03 11:46:38.560583"
+    },
+    {
+      "time": "2026-04-03 11:46:41",
+      "value": "回测开始",
+      "type": "INFO",
+      "now": "2026-04-03 11:46:40.831703"
+    },
+    {
+      "time": "2026-04-03 11:46:42",
+      "value": "回测结束",
+      "type": "INFO",
+      "now": "2026-04-03 11:46:42.315292"
+    }
+  ],
+  "dailyGains": [
+    {
+      "position_date": "2023-06-30T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-29T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-28T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-27T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-26T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-21T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-20T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-19T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-16T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-15T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-14T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-13T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-12T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-09T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-08T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-07T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-06T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-05T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-02T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-01T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    }
+  ],
+  "specificInfo": null
+}

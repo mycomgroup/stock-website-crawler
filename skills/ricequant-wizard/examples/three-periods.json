@@ -28,7 +28,7 @@
     "filters": [
       {
         "operator": "greater_than",
-        "factor": { "type": "fundamental", "name": "turnover_rate" },
+        "factor": { "type": "pricing", "name": "turnover_rate" },
         "rhs": 2
       }
     ],

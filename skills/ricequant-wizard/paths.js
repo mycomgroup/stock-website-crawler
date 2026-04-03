@@ -21,6 +21,15 @@ export const RICEQUANT_STRATEGY_SESSION = path.join(
   'session.json'
 );
 
+// 如果跨 skill 的 session 文件不存在，提前给出明确提示
+if (!fs.existsSync(RICEQUANT_STRATEGY_SESSION)) {
+  const localSession = path.join(DATA_DIR, 'session.json');
+  if (!fs.existsSync(localSession)) {
+    // 仅在非 --help / --validate / --factors 场景下会真正用到，这里只记录路径供调试
+    process.env._RQ_SESSION_MISSING = '1';
+  }
+}
+
 export function ensureDir(filePath) {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {

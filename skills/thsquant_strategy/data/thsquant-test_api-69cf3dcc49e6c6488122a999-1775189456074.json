@@ -1,0 +1,190 @@
+{
+  "summary": {
+    "backtestId": "69cf3dcc49e6c6488122a999",
+    "algoId": "69cf3dcbdf74a568a377ef9e",
+    "strategyName": "test_api_20260403_20230601~20230605_1167",
+    "period": "2023-06-01 ~ 2023-06-05",
+    "capitalBase": 100000,
+    "frequency": "DAILY",
+    "benchmark": "000300.SH",
+    "runAt": "2026-04-03T04:10:56.074Z",
+    "totalReturn": 0,
+    "annualReturn": 0,
+    "benchmarkReturn": 0.0098,
+    "benchmarkAnnualReturn": 2.3921,
+    "excessReturn": -0.0098,
+    "maxDrawdown": 0,
+    "drawdownDate": "20230601",
+    "volatility": 0,
+    "downsideRisk": 0.1614,
+    "trackingError": 0.1501,
+    "sharpe": null,
+    "sortino": -0.1215,
+    "alpha": -0.0196,
+    "beta": 0,
+    "informationRatio": -8.2297,
+    "winRate": 0,
+    "benchmarkWinRate": 0.5,
+    "tradeWinRate": null,
+    "tradeCount": 0,
+    "logCount": 3
+  },
+  "detail": {
+    "performance": {
+      "win_rate": 0,
+      "benchmark_win_rate": 0.5,
+      "tracking_error": 0.1501,
+      "information_ratio": -8.2297,
+      "sharpe_ratio": null,
+      "yield": 0,
+      "benchmark_annual_yield": 2.3921,
+      "progress": 1,
+      "drawdown_more": "20230601",
+      "beta": 0,
+      "trade_winrate": null,
+      "alpha": -0.0196,
+      "volatility": 0,
+      "sortino": -0.1215,
+      "downside_risk": 0.1614,
+      "benchmark_yield": 0.0098,
+      "max_drawdown": 0,
+      "annual_yield": 0,
+      "drawdown_most": "20230601"
+    },
+    "profit": {
+      "total": 3,
+      "list": {
+        "20230601": {
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "excess_income": 0,
+          "log_benchmark_profit": 0,
+          "algo_profit": 0,
+          "log_excess_income": 0,
+          "log_algo_profit": 0,
+          "benchmark_profit": 0,
+          "max_drawdown": 0,
+          "trade_record": []
+        },
+        "20230602": {
+          "log_algo_profit": 0,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "excess_income": -0.014233,
+          "algo_profit": 0,
+          "max_drawdown": 0,
+          "log_benchmark_profit": 0.014335,
+          "benchmark_profit": 0.014439,
+          "trade_record": [],
+          "log_excess_income": -0.014335
+        },
+        "20230605": {
+          "log_algo_profit": 0,
+          "total_asset_value": 100000,
+          "profit_and_loss": 0,
+          "excess_income": -0.009724,
+          "algo_profit": 0,
+          "max_drawdown": 0,
+          "log_benchmark_profit": 0.009772,
+          "benchmark_profit": 0.009819,
+          "trade_record": [],
+          "log_excess_income": -0.009772
+        }
+      }
+    },
+    "is_collection": false
+  },
+  "performance": {
+    "benchmark_annual_yield": 2.3921,
+    "drawdown_more": "20230601",
+    "sharpe_ratio": null,
+    "annual_yield": 0,
+    "benchmark_win_rate": 0.5,
+    "sortino": -0.1215,
+    "win_rate": 0,
+    "alpha": -0.0196,
+    "benchmark_yield": 0.0098,
+    "trade_winrate": null,
+    "tracking_error": 0.1501,
+    "progress": 1,
+    "max_drawdown": 0,
+    "beta": 0,
+    "volatility": 0,
+    "downside_risk": 0.1614,
+    "yield": 0,
+    "drawdown_most": "20230601",
+    "information_ratio": -8.2297
+  },
+  "tradeLog": [],
+  "backtestLog": [
+    {
+      "now": "2026-04-03 12:10:52.060046",
+      "value": "INFO :回测开始运行",
+      "type": "INFO",
+      "time": "2026-04-03 12:10:52"
+    },
+    {
+      "now": "2026-04-03 12:10:52.086275",
+      "value": "回测开始",
+      "type": "INFO",
+      "time": "2026-04-03 12:10:52"
+    },
+    {
+      "now": "2026-04-03 12:10:52.120045",
+      "value": "回测结束",
+      "type": "INFO",
+      "time": "2026-04-03 12:10:52"
+    }
+  ],
+  "dailyGains": [
+    {
+      "position_date": "2023-06-05T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-02T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-01T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    }
+  ],
+  "specificInfo": {
+    "table": {
+      "2023-06": {
+        "1": {
+          "yield": 0,
+          "benchmark_yield": 0.0144
+        },
+        "3": {
+          "yield": null,
+          "benchmark_yield": null
+        },
+        "6": {
+          "yield": null,
+          "benchmark_yield": null
+        },
+        "12": {
+          "yield": null,
+          "benchmark_yield": null
+        }
+      }
+    },
+    "chart": {
+      "2023-06": {
+        "yield": 0,
+        "benchmark_yield": 0.0144
+      }
+    }
+  }
+}

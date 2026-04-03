@@ -164,5 +164,14 @@ export function normalizeConfig(config) {
     weight: s.weight || 1
   }));
 
+  // 归一化 sorting 权重，确保总和为 1
+  const totalWeight = normalized.sorting.reduce((sum, s) => sum + s.weight, 0);
+  if (totalWeight > 0 && Math.abs(totalWeight - 1) > 0.001) {
+    normalized.sorting = normalized.sorting.map(s => ({
+      ...s,
+      weight: s.weight / totalWeight
+    }));
+  }
+
   return normalized;
 }

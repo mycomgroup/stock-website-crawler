@@ -223,11 +223,43 @@ F-Score选股 + RSRS择时（推荐组合）：
 - 月度调仓，持仓5-10只
 ```
 
+## 2026-04-03 补充：A股应优先关注 FFScore 本土化版本
+
+来自 `QuantsPlaybook/A-量化基本面/华泰FFScore` 的补充结论是：原始 `Piotroski F-Score` 在 A 股未必显著跑赢低 `PB` 基准，更值得重视的是中国化 `Five_FScore` 路线。
+
+### 中国版 FFScore
+
+`Five_FScore = ROE + ΔROE + ΔCATURN + ΔTURN + ΔLEVER`
+
+含义：
+- 用 `ROE` 代替部分 `ROA` 视角，更贴近 A 股报表习惯
+- 强调资本周转、资产周转与杠杆改善
+- 更适合与 `PB`、红利、质量过滤组合
+
+### 使用建议
+
+- 海外/经典框架复现：保留 `F-Score`
+- A股中低频主仓：优先测试 `FFScore + PB + 状态路由`
+- 指数增强：把 `FFScore/质量分数` 作为目标权重生成层，而不是只做二元筛股
+
+## 与指数增强底座的结合方式
+
+`F-Score / FFScore` 更适合作为指数增强底座的 `alpha` 选股层：
+
+1. 基础股票池：`04_base_filters`
+2. 因子评分：`F-Score / FFScore / 高股息质量`
+3. 状态过滤：`03_state_router` / `08_rsrs_timing`
+4. 权重生成：目标权重表、`25_epo_portfolio`
+5. 月度执行：`31_index_enhancement_base`
+
+这比“单独拿 F-Score 全仓硬做”更接近低频高确定性的主仓架构。
+
 ## 适用策略
 
 - ✅ 中长线基本面选股（月度调仓）
 - ✅ 沪深300/中证500指数增强
 - ✅ 与RSRS择时结合（FFScore+RSRS）
+- ✅ 低频主仓的 alpha 选股层
 - ⚠️ 不适合小市值策略（财务数据质量差）
 - ⚠️ 不适合高频交易
 

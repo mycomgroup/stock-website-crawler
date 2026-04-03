@@ -91,6 +91,13 @@
           {"name": "turnover", "label": "成交额", "description": "成交金额"},
           {"name": "turnover_rate", "label": "换手率", "description": "成交量/流通股本"}
         ]
+      },
+      "performance": {
+        "label": "涨跌指标",
+        "factors": [
+          {"name": "change_rate", "label": "涨跌幅", "description": "今日涨跌幅"},
+          {"name": "n_day_gain_rate", "label": "N日涨幅", "description": "N日累计涨幅", "hasParameters": true}
+        ]
       }
     },
     "technical": {

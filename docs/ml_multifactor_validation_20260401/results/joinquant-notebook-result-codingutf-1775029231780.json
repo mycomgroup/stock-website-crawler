@@ -1,0 +1,96 @@
+{
+  "capturedAt": "2026-04-01T07:40:31.780Z",
+  "notebookUrl": "https://www.joinquant.com/user/21333940833/notebooks/codingutf_20260401_154024.ipynb",
+  "notebookPath": "codingutf_20260401_154024.ipynb",
+  "kernelId": "eb25cd39-954f-4750-900d-806bbed44f24",
+  "sessionId": "5dc1f27f-b26d-4c9a-ba78-4058198693fd",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "codingutf_20260401_154024.ipynb",
+    "path": "codingutf_20260401_154024.ipynb",
+    "last_modified": "2026-04-01T07:40:30.838925Z",
+    "created": "2026-04-01T07:40:30.838925Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# -*- coding: utf-8 -*-\n\"\"\"\nML多因子快速验证 - 极简版\n\"\"\"\n\nfrom jqdata import *\nimport pandas as pd\nimport numpy as np\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.preprocessing import StandardScaler\nimport warnings\n\nwarnings.filterwarnings(\"ignore\")\n\nprint(\"ML多因子快速验证\")\nprint(\"=\" * 50)\n\n# 只验证最近2年，每季度调仓\ndates = get_trade_days(\"2023-01-01\", \"2025-12-31\")\nquarter_dates = []\nlast_q = None\nfor d in dates:\n    q = (d.month - 1) // 3\n    if q != last_q:\n        quarter_dates.append(d)\n        last_q = q\n\nprint(f\"调仓日期: {len(quarter_dates)}个季度\")\n\nstocks = get_index_stocks(\"000905.XSHG\")[:100]  # 只用100只\nresults = {\"逻辑回归\": [], \"SVM\": [], \"随机森林\": []}\n\nfor i in range(2, len(quarter_dates) - 1):\n    train_dates = quarter_dates[i - 2 : i]\n    test_date = quarter_dates[i]\n    next_date = quarter_dates[i + 1] if i + 1 < len(quarter_dates) else None\n\n    if next_date is None:\n        break\n\n    print(f\"\\n训练: {[str(d)[:10] for d in train_dates]}\")\n    print(f\"测试: {str(test_date)[:10]} -> {str(next_date)[:10]}\")\n\n    # 收集训练数据\n    X_train_list, y_train_list = [], []\n\n    for td in train_dates:\n        try:\n            q = query(\n                valuation.code,\n                valuation.pe_ratio,\n                valuation.pb_ratio,\n                indicator.roe,\n                indicator.roa,\n            ).filter(valuation.code.in_(stocks))\n\n            feat = get_fundamentals(q, date=td).set_index(\"code\")\n            feat = feat.replace([np.inf, -np.inf], np.nan).dropna()\n\n            if len(feat) < 30:\n                continue\n\n            # 获取下期收益作为标签\n            idx = quarter_dates.index(td)\n            if idx + 1 >= len(quarter_dates):\n                continue\n            next_td = quarter_dates[idx + 1]\n\n            p0 = get_price(\n                feat.index.tolist(),\n                end_date=str(td),\n                count=1,\n                fields=[\"close\"],\n                panel=False,\n            )\n            p1 = get_price(\n                feat.index.tolist(),\n                end_date=str(next_td),\n                count=1,\n                fields=[\"close\"],\n                panel=False,\n            )\n\n            ret0 = p0.pivot(index=\"time\", columns=\"code\", values=\"close\").iloc[-1]\n            ret1 = p1.pivot(index=\"time\", columns=\"code\", values=\"close\").iloc[-1]\n            ret = ((ret1 / ret0) - 1).dropna()\n\n            common = feat.index.intersection(ret.index)\n            if len(common) < 30:\n                continue\n\n            label = (ret.loc[common] > ret.loc[common].median()).astype(int)\n            X_train_list.append(feat.loc[common])\n            y_train_list.append(label)\n        except:\n            continue\n\n    if not X_train_list:\n        print(\"  训练数据不足，跳过\")\n        continue\n\n    X_train = pd.concat(X_train_list).fillna(0)\n    y_train = pd.concat(y_train_list)\n\n    # 测试数据\n    try:\n        q = query(\n            valuation.code,\n            valuation.pe_ratio,\n            valuation.pb_ratio,\n            indicator.roe,\n            indicator.roa,\n        ).filter(valuation.code.in_(stocks))\n\n        X_test = get_fundamentals(q, date=test_date).set_index(\"code\")\n        X_test = X_test.replace([np.inf, -np.inf], np.nan).dropna()\n\n        p0 = get_price(\n            X_test.index.tolist(),\n            end_date=str(test_date),\n            count=1,\n            fields=[\"close\"],\n            panel=False,\n        )\n        p1 = get_price(\n            X_test.index.tolist(),\n            end_date=str(next_date),\n            count=1,\n            fields=[\"close\"],\n            panel=False,\n        )\n\n        ret0 = p0.pivot(index=\"time\", columns=\"code\", values=\"close\").iloc[-1]\n        ret1 = p1.pivot(index=\"time\", columns=\"code\", values=\"close\").iloc[-1]\n        ret = ((ret1 / ret0) - 1).dropna()\n\n        common = X_test.index.intersection(ret.index)\n        X_test = X_test.loc[common].fillna(0)\n        ret = ret.loc[common]\n    except:\n        print(\"  测试数据获取失败\")\n        continue\n\n    # 标准化\n    scaler = StandardScaler()\n    X_train_s = scaler.fit_transform(X_train)\n    X_test_s = scaler.transform(X_test)\n\n    # 模型\n    models = {\n        \"逻辑回归\": LogisticRegression(C=100, max_iter=200, random_state=42),\n        \"SVM\": SVC(kernel=\"rbf\", probability=True, C=1.0, random_state=42),\n        \"随机森林\": RandomForestClassifier(\n            n_estimators=50, max_depth=3, random_state=42\n        ),\n    }\n\n    for name, model in models.items():\n        try:\n            model.fit(X_train_s, y_train)\n            proba = model.predict_proba(X_test_s)[:, 1]\n            selected = pd.Series(proba, index=X_test.index).nlargest(10).index\n            available = [s for s in selected if s in ret.index]\n\n            if available:\n                gross = ret.loc[available].mean()\n                net = gross - 0.002  # 双边成本\n                results[name].append(net)\n                print(f\"  {name}: 选股{len(available)}只, 收益={net:.2%}\")\n            else:\n                results[name].append(0.0)\n                print(f\"  {name}: 无有效选股\")\n        except Exception as e:\n            results[name].append(0.0)\n            print(f\"  {name}: 错误 - {e}\")\n\n# 汇总\nprint(\"\\n\" + \"=\" * 50)\nprint(\"【汇总结果】\")\nprint(\"=\" * 50)\n\nfor name, rets in results.items():\n    if not rets:\n        continue\n    s = pd.Series(rets)\n    total = (1 + s).cumprod().iloc[-1] - 1\n    win = (s > 0).mean()\n    avg = s.mean()\n    print(f\"{name}: 累计={total:.2%}, 胜率={win:.1%}, 季均={avg:.2%}\")\n\nprint(\"\\n验证完成!\")\n",
+      "msgId": "8efd10a926fa4c6daef6aec45aa43f32",
+      "websocketSessionId": "2f8d1caca5f54e69bf550024e4466f19",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "ML多因子快速验证\n==================================================\n调仓日期: 12个季度\n\n训练: ['2023-01-03', '2023-04-03']\n测试: 2023-07-03 -> 2023-10-09\n  逻辑回归: 选股10只, 收益=2.50%\n  SVM: 选股10只, 收益=-9.45%\n  随机森林: 选股10只, 收益=-0.32%\n\n训练: ['2023-04-03', '2023-07-03']\n测试: 2023-10-09 -> 2024-01-02\n  逻辑回归: 选股10只, 收益=-5.87%\n  SVM: 选股10只, 收益=-5.63%\n  随机森林: 选股10只, 收益=-6.29%\n\n训练: ['2023-07-03', '2023-10-09']\n测试: 2024-01-02 -> 2024-04-01\n  逻辑回归: 选股10只, 收益=2.89%\n  SVM: 选股10只, 收益=0.58%\n  随机森林: 选股10只, 收益=4.18%\n\n训练: ['2023-10-09', '2024-01-02']\n测试: 2024-04-01 -> 2024-07-01\n  逻辑回归: 选股10只, 收益=10.34%\n  SVM: 选股10只, 收益=7.44%\n  随机森林: 选股10只, 收益=6.91%\n\n训练: ['2024-01-02', '2024-04-01']\n测试: 2024-07-01 -> 2024-10-08\n  逻辑回归: 选股10只, 收益=4.94%\n  SVM: 选股10只, 收益=12.03%\n  随机森林: 选股10只, 收益=5.91%\n\n训练: ['2024-04-01', '2024-07-01']\n测试: 2024-10-08 -> 2025-01-02\n  逻辑回归: 选股10只, 收益=2.09%\n  SVM: 选股10只, 收益=-1.19%\n  随机森林: 选股10只, 收益=-10.13%\n\n训练: ['2024-07-01', '2024-10-08']\n测试: 2025-01-02 -> 2025-04-01\n  逻辑回归: 选股10只, 收益=14.55%\n  SVM: 选股10只, 收益=11.32%\n  随机森林: 选股10只, 收益=1.76%\n\n训练: ['2024-10-08', '2025-01-02']\n测试: 2025-04-01 -> 2025-07-01\n  逻辑回归: 选股10只, 收益=2.70%\n  SVM: 选股10只, 收益=2.07%\n  随机森林: 选股10只, 收益=4.10%\n\n训练: ['2025-01-02', '2025-04-01']\n测试: 2025-07-01 -> 2025-10-09\n  逻辑回归: 选股10只, 收益=13.97%\n  SVM: 选股10只, 收益=29.48%\n  随机森林: 选股10只, 收益=19.50%\n\n==================================================\n【汇总结果】\n==================================================\n逻辑回归: 累计=57.35%, 胜率=88.9%, 季均=5.35%\nSVM: 累计=50.38%, 胜率=66.7%, 季均=5.18%\n随机森林: 累计=25.35%, 胜率=66.7%, 季均=2.85%\n\n验证完成!\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "ML多因子快速验证\n==================================================\n调仓日期: 12个季度\n\n训练: ['2023-01-03', '2023-04-03']\n测试: 2023-07-03 -> 2023-10-09\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=2.50%\n  SVM: 选股10只, 收益=-9.45%\n  随机森林: 选股10只, 收益=-0.32%\n\n训练: ['2023-04-03', '2023-07-03']\n测试: 2023-10-09 -> 2024-01-02\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=-5.87%\n  SVM: 选股10只, 收益=-5.63%\n  随机森林: 选股10只, 收益=-6.29%\n\n训练: ['2023-07-03', '2023-10-09']\n测试: 2024-01-02 -> 2024-04-01\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=2.89%\n  SVM: 选股10只, 收益=0.58%\n  随机森林: 选股10只, 收益=4.18%\n\n训练: ['2023-10-09', '2024-01-02']\n测试: 2024-04-01 -> 2024-07-01\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=10.34%\n  SVM: 选股10只, 收益=7.44%\n  随机森林: 选股10只, 收益=6.91%\n\n训练: ['2024-01-02', '2024-04-01']\n测试: 2024-07-01 -> 2024-10-08\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=4.94%\n  SVM: 选股10只, 收益=12.03%\n  随机森林: 选股10只, 收益=5.91%\n\n训练: ['2024-04-01', '2024-07-01']\n测试: 2024-10-08 -> 2025-01-02\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=2.09%\n  SVM: 选股10只, 收益=-1.19%\n  随机森林: 选股10只, 收益=-10.13%\n\n训练: ['2024-07-01', '2024-10-08']\n测试: 2025-01-02 -> 2025-04-01\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=14.55%\n  SVM: 选股10只, 收益=11.32%\n  随机森林: 选股10只, 收益=1.76%\n\n训练: ['2024-10-08', '2025-01-02']\n测试: 2025-04-01 -> 2025-07-01\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=2.70%\n  SVM: 选股10只, 收益=2.07%\n  随机森林: 选股10只, 收益=4.10%\n\n训练: ['2025-01-02', '2025-04-01']\n测试: 2025-07-01 -> 2025-10-09\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  逻辑回归: 选股10只, 收益=13.97%\n  SVM: 选股10只, 收益=29.48%\n  随机森林: 选股10只, 收益=19.50%\n\n==================================================\n【汇总结果】\n==================================================\n逻辑回归: 累计=57.35%, 胜率=88.9%, 季均=5.35%\nSVM: 累计=50.38%, 胜率=66.7%, 季均=5.18%\n随机森林: 累计=25.35%, 胜率=66.7%, 季均=2.85%\n\n验证完成!\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "codingutf",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "5dc1f27f-b26d-4c9a-ba78-4058198693fd",
+    "error": "接口未返回 JSON https://www.joinquant.com/user/21333940833/api/sessions/5dc1f27f-b26d-4c9a-ba78-4058198693fd: "
+  },
+  "autoShutdown": true
+}

@@ -9,16 +9,11 @@ def initialize(context):
     g.wins = 0
     g.pnl_list = []
     g.signals = 0
-    run_daily(select_stocks, time_rule="after_open", hours=0, minutes=0)
-    run_daily(buy_stocks, time_rule="after_open", hours=0, minutes=5)
-    run_daily(sell_stocks, time_rule="before_close", hours=0, minutes=10)
-    run_daily(print_stats, time_rule="after_close", hours=0, minutes=0)
 
 
-def select_stocks(context):
+def select_stocks(context, prev_date_str):
     g.target = []
-    prev_date = context.previous_date.strftime("%Y-%m-%d")
-    all_stocks = get_all_securities(ty="stock", date=prev_date).index.tolist()
+    all_stocks = get_all_securities(ty="stock", date=prev_date_str).index.tolist()
     all_stocks = [s for s in all_stocks if s[0] not in "483" and s[:2] != "68"]
     all_stocks = [
         s
@@ -43,10 +38,9 @@ def select_stocks(context):
     g.target = list(df["code"])
 
 
-def buy_stocks(context):
+def buy_stocks(context, bar_dict):
     if not g.target:
         return
-    bar_dict = get_current(g.target)
     fake_weak = []
     for s in g.target:
         if s not in bar_dict:
@@ -85,12 +79,11 @@ def buy_stocks(context):
             g.trades += 1
 
 
-def sell_stocks(context):
+def sell_stocks(context, bar_dict):
     positions = list(context.portfolio.positions)
     for s in positions:
         pos = context.portfolio.positions[s]
         if pos.closeable_amount > 0:
-            bar_dict = get_current([s])
             if s in bar_dict:
                 pnl = (bar_dict[s].close - pos.avg_cost) / pos.avg_cost * 100
                 g.pnl_list.append(pnl)
@@ -99,15 +92,21 @@ def sell_stocks(context):
             order_target(s, 0)
 
 
-def after_trading(context):
-    pass
+def handle_bar(context, bar_dict):
+    current_date = context.current_dt.strftime("%Y-%m-%d")
+    prev_date_str = context.previous_date.strftime("%Y-%m-%d")
+    current_time = context.current_dt.strftime("%H:%M")
 
-
-def print_stats(context):
-    if context.current_dt.month == 12 and context.current_dt.day >= 28:
-        avg_pnl = sum(g.pnl_list) / len(g.pnl_list) if g.pnl_list else 0
-        win_rate = g.wins / len(g.pnl_list) * 100 if g.pnl_list else 0
-        log.info(
-            "信号数=%d, 交易数=%d, 胜率=%.1f%%, 平均收益=%.2f%%"
-            % (g.signals, g.trades, win_rate, avg_pnl)
-        )
+    if current_time == "09:30":
+        select_stocks(context, prev_date_str)
+        buy_stocks(context, bar_dict)
+    elif current_time == "14:50":
+        sell_stocks(context, bar_dict)
+    elif current_time == "15:00":
+        if context.current_dt.month == 12 and context.current_dt.day >= 28:
+            avg_pnl = sum(g.pnl_list) / len(g.pnl_list) if g.pnl_list else 0
+            win_rate = g.wins / len(g.pnl_list) * 100 if g.pnl_list else 0
+            log.info(
+                "信号数=%d, 交易数=%d, 胜率=%.1f%%, 平均收益=%.2f%%"
+                % (g.signals, g.trades, win_rate, avg_pnl)
+            )
