@@ -82,7 +82,7 @@ zt_df = dai.query(
     GROUP BY date
 """.format(s=START_DATE, e=END_DATE)
 ).df()
-zt_map = dict(zip(zt_df["date"], zt_df["zt_count"]))
+zt_map = dict(zip([str(d)[:10] for d in zt_df["date"]], zt_df["zt_count"]))
 print("有涨停数据的天数:", len(zt_map))
 
 # ── 预取估值数据 ──────────────────────────────────────

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 
-const STRATEGY_ID = '2416771';
+const STRATEGY_ID = '2146474';
 const STRATEGIES = [
   {
     name: 'A_纯小市值',
