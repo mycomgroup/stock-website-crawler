@@ -15,23 +15,11 @@ def calc_rfscore_table(stocks, watch_date):
     q = query(
         valuation.symbol,
         profit.roa,
-        profit.roa_4,
         cashflow.net_operate_cash_flow,
-        cashflow.net_operate_cash_flow_1,
-        cashflow.net_operate_cash_flow_2,
-        cashflow.net_operate_cash_flow_3,
         balance.total_assets,
-        balance.total_assets_1,
-        balance.total_assets_2,
-        balance.total_assets_3,
-        balance.total_assets_4,
-        balance.total_assets_5,
         balance.total_non_current_liability,
-        balance.total_non_current_liability_1,
         profit.gross_profit_margin,
-        profit.gross_profit_margin_4,
         income.operating_revenue,
-        income.operating_revenue_4,
         valuation.pb_ratio,
         valuation.pe_ratio,
     ).filter(valuation.symbol.in_(stocks))
@@ -40,69 +28,31 @@ def calc_rfscore_table(stocks, watch_date):
     df = df.drop_duplicates("valuation_symbol").set_index("valuation_symbol")
 
     roa = df["profit_roa"]
-    delta_roa = roa / df["profit_roa_4"] - 1
-
-    cfo_sum = (
-        df["cashflow_net_operate_cash_flow"]
-        + df["cashflow_net_operate_cash_flow_1"]
-        + df["cashflow_net_operate_cash_flow_2"]
-        + df["cashflow_net_operate_cash_flow_3"]
+    ocfoa = df["cashflow_net_operate_cash_flow"] / df["balance_total_assets"].replace(
+        0, float("nan")
     )
-    ta_ttm = (
-        df["balance_total_assets"]
-        + df["balance_total_assets_1"]
-        + df["balance_total_assets_2"]
-        + df["balance_total_assets_3"]
-    ) / 4
-    ocfoa = cfo_sum / ta_ttm
     accrual = ocfoa - roa * 0.01
-
     leveler = df["balance_total_non_current_liability"] / df["balance_total_assets"]
-    leveler1 = (
-        df["balance_total_non_current_liability_1"] / df["balance_total_assets_1"]
-    )
-    delta_leveler = -(leveler / leveler1 - 1)
-
-    delta_margin = (
-        df["profit_gross_profit_margin"] / df["profit_gross_profit_margin_4"] - 1
-    )
-
-    turnover = (
-        df["income_operating_revenue"]
-        / (df["balance_total_assets"] + df["balance_total_assets_1"]).mean()
-    )
-    turnover_1 = (
-        df["income_operating_revenue_4"]
-        / (df["balance_total_assets_4"] + df["balance_total_assets_5"]).mean()
-    )
-    delta_turn = turnover / turnover_1 - 1
+    margin = df["profit_gross_profit_margin"]
 
     result = pd.DataFrame(
         {
             "ROA": roa,
-            "DELTA_ROA": delta_roa,
             "OCFOA": ocfoa,
             "ACCRUAL": accrual,
-            "DELTA_LEVELER": delta_leveler,
-            "DELTA_MARGIN": delta_margin,
-            "DELTA_TURN": delta_turn,
+            "MARGIN": margin,
             "pb_ratio": df["valuation_pb_ratio"],
             "pe_ratio": df["valuation_pe_ratio"],
         }
     )
 
     result = result.replace([-np.inf, np.inf], np.nan)
-    result["RFScore"] = result[
-        [
-            "ROA",
-            "DELTA_ROA",
-            "OCFOA",
-            "ACCRUAL",
-            "DELTA_LEVELER",
-            "DELTA_MARGIN",
-            "DELTA_TURN",
-        ]
-    ].apply(lambda x: sign(x).sum(axis=1), axis=1)
+    result["RFScore"] = (
+        (result["ROA"] > 0).astype(int)
+        + (result["OCFOA"] > 0).astype(int)
+        + (result["ACCRUAL"] > 0).astype(int)
+        + (result["MARGIN"] > 0).astype(int)
+    )
     result = result.dropna(subset=["RFScore", "pb_ratio"])
     result["pb_group"] = (
         pd.qcut(

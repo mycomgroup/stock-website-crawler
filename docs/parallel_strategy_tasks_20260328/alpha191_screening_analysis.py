@@ -3,8 +3,14 @@ Alpha191因子健康度诊断与筛选
 针对191个纯量化公式因子进行快速筛选和健康度评估
 """
 
-from jqdatasdk import *
-from jqdatasdk.alpha191 import get_all_alpha_191
+try:
+    from jqdatasdk import *
+    from jqdatasdk.alpha191 import get_all_alpha_191
+
+    JQDATA_AVAILABLE = True
+except ImportError:
+    JQDATA_AVAILABLE = False
+
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
@@ -17,6 +23,8 @@ class Alpha191Screening:
     """Alpha191因子筛选器"""
 
     def __init__(self, start_date="2023-01-01", end_date="2025-12-31"):
+        if not JQDATA_AVAILABLE:
+            raise ImportError("jqdatasdk is required for Alpha191Screening")
         self.start_date = start_date
         self.end_date = end_date
         self.trade_days = get_trade_days(start_date, end_date)

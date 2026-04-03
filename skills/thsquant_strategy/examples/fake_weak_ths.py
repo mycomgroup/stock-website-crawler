@@ -1,5 +1,4 @@
 # 假弱高开策略 - THSQuant SuperMind 格式
-# 适用于同花顺量化平台回测
 from mindgo_api import *
 
 
@@ -9,33 +8,49 @@ def init(context):
     g.wins = 0
     g.pnl_list = []
     g.signals = 0
-
-
-def select_stocks(context, prev_date_str):
     g.target = []
-    all_stocks = get_all_securities(ty="stock", date=prev_date_str).index.tolist()
-    all_stocks = [s for s in all_stocks if s[0] not in "483" and s[:2] != "68"]
-    all_stocks = [
-        s
-        for s in all_stocks
-        if (context.previous_date - get_security_info(s).listed_date).days > 250
-    ]
-    try:
-        bar_dict = get_current(all_stocks)
-        all_stocks = [s for s in all_stocks if s in bar_dict and not bar_dict[s].is_st]
-    except:
-        pass
-    df = history(
-        all_stocks,
-        ["close", "high_limit"],
-        1,
-        "1d",
-        is_panel=False,
-        fq="pre",
-    )
-    df = df.dropna()
-    df = df[df["close"] == df["high_limit"]]
-    g.target = list(df["code"])
+    g.selection_done = False
+
+
+def handle_bar(context, bar_dict):
+    current_time = context.current_dt.strftime("%H:%M")
+
+    if current_time == "09:30" and not g.selection_done:
+        prev_date_str = context.previous_date.strftime("%Y-%m-%d")
+        all_stocks = get_all_securities(ty="stock", date=prev_date_str).index.tolist()
+        all_stocks = [s for s in all_stocks if s[0] not in "483" and s[:2] != "68"]
+
+        zt_stocks = []
+        for s in all_stocks[:500]:
+            try:
+                info = get_security_info(s)
+                if info and (context.previous_date - info.listed_date).days > 250:
+                    bars = history(
+                        [s], ["close", "high_limit"], 1, "1d", is_panel=False, fq="pre"
+                    )
+                    if bars is not None and len(bars) > 0:
+                        if bars["close"].iloc[0] == bars["high_limit"].iloc[0]:
+                            zt_stocks.append(s)
+            except:
+                pass
+
+        g.target = zt_stocks
+        g.selection_done = True
+
+        if g.target:
+            buy_stocks(context, bar_dict)
+
+    elif current_time == "14:50":
+        sell_stocks(context, bar_dict)
+    elif current_time == "15:00":
+        g.selection_done = False
+        if context.current_dt.month == 12 and context.current_dt.day >= 28:
+            avg_pnl = sum(g.pnl_list) / len(g.pnl_list) if g.pnl_list else 0
+            win_rate = g.wins / len(g.pnl_list) * 100 if g.pnl_list else 0
+            log.info(
+                "信号数=%d, 交易数=%d, 胜率=%.1f%%, 平均收益=%.2f%%"
+                % (g.signals, g.trades, win_rate, avg_pnl)
+            )
 
 
 def buy_stocks(context, bar_dict):
@@ -55,27 +70,14 @@ def buy_stocks(context, bar_dict):
         limit_price = prev_close * 1.1
         open_pct = (day_open / limit_price - 1) * 100
         if 0.5 <= open_pct <= 1.5:
-            try:
-                date_str = context.previous_date.strftime("%Y-%m-%d")
-                val = get_fundamentals(
-                    query(valuation.symbol, valuation.circulating_market_cap).filter(
-                        valuation.symbol == s
-                    ),
-                    date=date_str,
-                )
-                if val is not None and len(val) > 0:
-                    cap = val["circulating_market_cap"].iloc[0]
-                    if 30 <= cap <= 200:
-                        fake_weak.append({"stock": s, "open_pct": open_pct, "cap": cap})
-            except:
-                pass
+            fake_weak.append({"stock": s, "open_pct": open_pct})
+
     g.signals += len(fake_weak)
     if fake_weak:
         fake_weak.sort(key=lambda x: abs(x["open_pct"] - 1.0))
         cash = context.portfolio.available_cash / min(len(fake_weak), 3)
         for item in fake_weak[:3]:
-            s = item["stock"]
-            order_value(s, cash)
+            order_value(item["stock"], cash)
             g.trades += 1
 
 
@@ -90,23 +92,3 @@ def sell_stocks(context, bar_dict):
                 if pnl > 0:
                     g.wins += 1
             order_target(s, 0)
-
-
-def handle_bar(context, bar_dict):
-    current_date = context.current_dt.strftime("%Y-%m-%d")
-    prev_date_str = context.previous_date.strftime("%Y-%m-%d")
-    current_time = context.current_dt.strftime("%H:%M")
-
-    if current_time == "09:30":
-        select_stocks(context, prev_date_str)
-        buy_stocks(context, bar_dict)
-    elif current_time == "14:50":
-        sell_stocks(context, bar_dict)
-    elif current_time == "15:00":
-        if context.current_dt.month == 12 and context.current_dt.day >= 28:
-            avg_pnl = sum(g.pnl_list) / len(g.pnl_list) if g.pnl_list else 0
-            win_rate = g.wins / len(g.pnl_list) * 100 if g.pnl_list else 0
-            log.info(
-                "信号数=%d, 交易数=%d, 胜率=%.1f%%, 平均收益=%.2f%%"
-                % (g.signals, g.trades, win_rate, avg_pnl)
-            )

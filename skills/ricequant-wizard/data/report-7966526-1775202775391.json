@@ -1,0 +1,48 @@
+{
+  "backtestId": "7966526",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-04-03T13:05:31.829000",
+    "start_at": "2026-04-03T13:05:35.234000",
+    "progress": 1,
+    "backtest_id": "7966526",
+    "description": "",
+    "strategy_id": 2417398,
+    "title": "测试向导策略-PE筛选",
+    "account_type": "stock",
+    "end_at": "2026-04-03T13:05:52.724000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1719559800000,
+    "trading_date": 20240628,
+    "alpha": -0.24528043153668652,
+    "beta": 1.4877945150104983,
+    "sharpe": -0.8796388578544229,
+    "sortino": -1.3205960874446723,
+    "information_ratio": -1.5493321862698384,
+    "annual_volatility": 0.26972625082494245,
+    "max_drawdown": 0.21963494620000001,
+    "annual_tracking_error": 0.17839547887791166,
+    "annual_downside_risk": 0.17966257318549586
+  },
+  "summary": {
+    "timestamp": 1719559800000,
+    "trading_date": 20240628,
+    "alpha": -0.24528043153668652,
+    "beta": 1.4877945150104983,
+    "sharpe": -0.8796388578544229,
+    "sortino": -1.3205960874446723,
+    "information_ratio": -1.5493321862698384,
+    "annual_volatility": 0.26972625082494245,
+    "max_drawdown": 0.21963494620000001,
+    "annual_tracking_error": 0.17839547887791166,
+    "annual_downside_risk": 0.17966257318549586
+  },
+  "logs": [],
+  "exception": null
+}

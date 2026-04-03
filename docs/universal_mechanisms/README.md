@@ -56,6 +56,7 @@ universal_mechanisms/
 ├── 36_data_benchmark_cost_spec.md         # 数据/基准/成本统一口径 ⭐对比基线 (新)
 ├── 37_signal_confirmation_interface.md    # SignalMaker投票/双确认/再进场 ⭐确认接口 (新)
 ├── 38_strategy_admission_oos.md           # 准入/淘汰/OOS接续标准 ⭐落地门槛 (新)
+├── 39_strategy_factory_execution_checklist.md # 策略工厂执行清单 ⭐从策略资产抽通用机制 (新)
 │
 ├── ── 组合优化 ──
 ├── 25_epo_portfolio.md                    # EPO增强型组合优化 (新)
@@ -91,6 +92,7 @@ universal_mechanisms/
 | P0 必用 | 01情绪开关、04基础过滤、08RSRS | 几乎所有策略 |
 | P1 强推 | 03状态路由、10波动率仓位、17移动止损、32主仓装配图、36统一口径 | 主仓统一流程 |
 | P2 推荐 | 30SignalMaker过滤器库、33验证框架、34权重映射、35增强回放、37确认接口、38准入/OOS | 主仓增强与复用 |
+| P2.5 组织层 | 39策略工厂执行清单 | 从最终策略资产抽取通用机制，形成 `strategy_kits` |
 | P3 增强 | 11一致性、15拥挤度、24F-Score/FFScore、28高股息、29MAC动量 | 分支alpha / 风控增强 |
 | P4 高级 | 25EPO、27ES风险平价、31指数增强底座 | 多资产组合 / 主仓工程化 |
 

@@ -104,6 +104,7 @@ def initialize(context):
     g.ipo_days = 180
     g.last_month = 0
     log.info("策略初始化完成")
+    run_monthly(rebalance, 1, time="9:35", reference_security="000300.XSHG")
 
 
 def get_universe(watch_date):
@@ -201,10 +202,6 @@ def filter_buyable(context, stocks):
 
 def rebalance(context):
     watch_date = context.previous_date
-    current_month = watch_date.month
-    if current_month == g.last_month:
-        return
-    g.last_month = current_month
 
     hs300 = get_index_stocks("000300.XSHG", date=watch_date)
     prices = get_price(
