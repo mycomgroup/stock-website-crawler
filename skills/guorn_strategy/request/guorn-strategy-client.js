@@ -33,12 +33,14 @@ export class GuornStrategyClient {
       'Cookie': this.cookieJar.map(c => `${c.name}=${c.value}`).join('; '),
       ...overrides
     };
-    // 自动注入 XSRF token（果仁网 Tornado 框架要求）
-    const xsrf = this.cookieJar.find(c => c.name === '_xsrf');
-    if (xsrf && !headers['X-XSRFToken']) {
-      headers['X-XSRFToken'] = xsrf.value;
-    }
     return headers;
+  }
+
+  // 果仁网 POST 请求：_xsrf 通过 URL 参数传递，body 是 JSON 字符串（无 contentType）
+  buildPostUrl(path) {
+    const xsrf = this.cookieJar.find(c => c.name === '_xsrf');
+    const sep = path.includes('?') ? '&' : '?';
+    return xsrf ? `${path}${sep}_xsrf=${encodeURIComponent(xsrf.value)}` : path;
   }
 
   async request(url, options = {}) {
