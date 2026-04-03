@@ -1,0 +1,7 @@
+def initialize(context):
+    g.stock = '600519.XSHG'
+    log.info('初始化简单测试策略')
+    run_daily(rebalance, time='open')
+
+def rebalance(context):
+    order_target_value(g.stock, context.portfolio.total_value * 0.95)

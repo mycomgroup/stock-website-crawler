@@ -21,7 +21,7 @@ sys.path.insert(
 )
 
 try:
-    jk2bt..core.runner as runner
+    import jk2bt.core.runner as runner
 
     load_jq_strategy = runner.load_jq_strategy
     run_jq_strategy = runner.run_jq_strategy
@@ -48,7 +48,7 @@ def handle_data(context, data):
             f.flush()
 
             try:
-        functions, source = load_jq_strategy(f.name)
+                functions, source = load_jq_strategy(f.name)
 
                 assert functions is not None, "load_jq_strategy应返回函数字典"
                 assert "initialize" in functions, "应包含initialize函数"
@@ -322,7 +322,7 @@ class TestDataAPIValidation:
     def test_get_index_stocks(self):
         """测试get_index_stocks"""
         try:
-            jk2bt..backtrader_base_strategy as base
+            import src.backtrader_base_strategy as base
 
             stocks = base.get_index_stocks("000300.XSHG")
 
@@ -336,7 +336,7 @@ class TestDataAPIValidation:
     def test_get_current_data(self):
         """测试get_current_data"""
         try:
-            jk2bt..backtrader_base_strategy as base
+            import src.backtrader_base_strategy as base
 
             data = base.get_current_data()
 

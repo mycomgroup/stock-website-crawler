@@ -76,7 +76,7 @@ def _classify_run_status(
     exception: Optional[Exception],
     has_data: bool,
     scan_result: Optional[Dict],
-    evidence: Optional[Dict],
+    evidence: Optional[Dict] = None,
 ) -> RunStatus:
     """
     根据回测结果和异常分类运行状态
@@ -100,7 +100,6 @@ def _classify_run_status(
     # 异常分类
     if exception is not None:
         error_str = str(exception).lower()
-        error_type = type(exception).__name__
 
         # 依赖缺失
         if any(kw in error_str for kw in ["module", "import", "no module named", "cannot import"]):
@@ -127,9 +126,25 @@ def _classify_run_status(
             return RunStatus.LOAD_FAILED
         return RunStatus.LOAD_FAILED
 
-    # 检查证据
+    # 检查证据；未提供时根据回测结果做兼容推断（兼容旧测试与历史调用）
     if evidence is None:
-        evidence = {}
+        strategy_obj = (
+            backtest_result.get("strategy") if isinstance(backtest_result, dict) else None
+        )
+        navs = getattr(strategy_obj, "navs", None)
+        nav_series_length = 0
+        if navs is not None:
+            try:
+                nav_series_length = len(navs)
+            except TypeError:
+                nav_series_length = 1
+
+        evidence = {
+            "loaded": True,
+            "entered_backtest_loop": strategy_obj is not None,
+            "has_nav_series": nav_series_length > 0,
+            "has_transactions": False,
+        }
 
     loaded = evidence.get("loaded", False)
     entered_backtest_loop = evidence.get("entered_backtest_loop", False)
@@ -529,6 +544,156 @@ def generate_summary_report(results, output_file=None):
     print(f"{'='*80}")
 
     return report
+
+
+def run_strategies_parallel(
+    strategy_files=None,
+    max_workers=4,
+    timeout_per_strategy=600,
+    start_date="2020-01-01",
+    end_date="2023-12-31",
+    initial_capital=1000000,
+    skip_scan=False,
+):
+    """
+    兼容入口：并行运行策略并返回结构化汇总。
+
+    返回结构示例:
+    {
+      "run_id": "...",
+      "results": [...],
+      "summary": {...},
+      "attribution_summary": {...},
+    }
+    """
+    if strategy_files is None:
+        strategy_files = get_all_strategy_files()
+
+    run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_log_dir = LOGS_DIR / run_id
+    run_log_dir.mkdir(parents=True, exist_ok=True)
+
+    scan_results = {}
+    runnable_files = list(strategy_files)
+    if not skip_scan:
+        try:
+            from strategy_scanner import StrategyScanner, StrategyStatus
+
+            scanner = StrategyScanner()
+            runnable_files = []
+            for file_path in strategy_files:
+                scan = scanner.scan_file(file_path)
+                scan_results[file_path] = scan.to_dict()
+                if scan.status in {
+                    StrategyStatus.VALID,
+                    StrategyStatus.VALID_WITH_HANDLE,
+                }:
+                    runnable_files.append(file_path)
+        except Exception:
+            # 扫描不可用时回退到直接运行，避免兼容入口不可用。
+            runnable_files = list(strategy_files)
+
+    results = []
+    workers = max(1, min(max_workers, max(len(runnable_files), 1)))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = {
+            executor.submit(
+                run_single_strategy,
+                strategy_file=file_path,
+                start_date=start_date,
+                end_date=end_date,
+                initial_capital=initial_capital,
+                timeout=timeout_per_strategy,
+                scan_result=scan_results.get(file_path),
+            ): file_path
+            for file_path in runnable_files
+        }
+
+        for future in concurrent.futures.as_completed(futures):
+            file_path = futures[future]
+            try:
+                run_result = future.result()
+            except Exception as exc:
+                run_result = StrategyRunResult(
+                    strategy=os.path.basename(file_path),
+                    strategy_file=file_path,
+                    success=False,
+                    run_status=RunStatus.RUN_EXCEPTION.value,
+                    error=str(exc),
+                    attribution={
+                        "failure_root_cause": "executor_exception",
+                        "error_category": type(exc).__name__,
+                        "recoverable": False,
+                        "recommendation": "检查策略与依赖并重试",
+                    },
+                )
+            if isinstance(run_result, StrategyRunResult):
+                results.append(run_result)
+            else:
+                # 兜底：确保结构一致
+                obj = StrategyRunResult(strategy_file=file_path)
+                obj.__dict__.update(run_result)
+                results.append(obj)
+
+    result_dicts = [r.__dict__ for r in results]
+    status_counts = {}
+    for item in result_dicts:
+        status = item.get("run_status", "")
+        status_counts[status] = status_counts.get(status, 0) + 1
+
+    recoverable_statuses = {
+        RunStatus.DATA_MISSING.value,
+        RunStatus.MISSING_DEPENDENCY.value,
+        RunStatus.MISSING_API.value,
+        RunStatus.MISSING_RESOURCE.value,
+        RunStatus.TIMEOUT.value,
+    }
+    recoverable_failures = sum(
+        1 for item in result_dicts if (not item.get("success")) and item.get("run_status") in recoverable_statuses
+    )
+    failed_total = sum(1 for item in result_dicts if not item.get("success"))
+
+    attribution_summary = {
+        "recoverable": {},
+        "unrecoverable": {},
+    }
+    for item in result_dicts:
+        attr = item.get("attribution") or {}
+        root_cause = attr.get("failure_root_cause") or item.get("run_status") or "unknown"
+        bucket = "recoverable" if root_cause in recoverable_statuses else "unrecoverable"
+        attribution_summary[bucket][root_cause] = attribution_summary[bucket].get(root_cause, 0) + 1
+
+    summary = {
+        "run_id": run_id,
+        "results": result_dicts,
+        "summary": {
+            "total": len(result_dicts),
+            "success_total": len(result_dicts) - failed_total,
+            "failed_total": failed_total,
+            "recoverable_failures": recoverable_failures,
+            "unrecoverable_failures": failed_total - recoverable_failures,
+            "status_counts": status_counts,
+        },
+        "attribution_summary": attribution_summary,
+        "scan_results": scan_results,
+    }
+
+    with open(run_log_dir / "summary.json", "w", encoding="utf-8") as f:
+        json.dump(summary, f, ensure_ascii=False, indent=2)
+
+    with open(run_log_dir / "report.txt", "w", encoding="utf-8") as f:
+        f.write(f"run_id={run_id}\n")
+        f.write(f"total={summary['summary']['total']}\n")
+        f.write(f"success={summary['summary']['success_total']}\n")
+        f.write(f"failed={summary['summary']['failed_total']}\n")
+
+    with open(run_log_dir / "scan_results.json", "w", encoding="utf-8") as f:
+        json.dump(scan_results, f, ensure_ascii=False, indent=2)
+
+    with open(run_log_dir / "main.log", "w", encoding="utf-8") as f:
+        f.write("run_strategies_parallel completed\n")
+
+    return summary
 
 
 def main():

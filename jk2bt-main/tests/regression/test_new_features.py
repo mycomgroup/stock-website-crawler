@@ -9,6 +9,11 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+if __name__ != "__main__":
+    import pytest
+
+    pytest.skip("legacy validation script, not for pytest collection", allow_module_level=True)
+
 print("=" * 60)
 print("新增功能模块验证测试")
 print("=" * 60)

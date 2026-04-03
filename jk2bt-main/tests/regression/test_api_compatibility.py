@@ -83,14 +83,14 @@ class TestApiExportCompleteness:
 
     def test_internal_symbols_not_in_all(self):
         """_internal 符号不在 src.api.__all__ 中"""
-        jk2bt..api as api
+        import jk2bt.api as api
         if hasattr(api, "__all__"):
             for name in api.__all__:
                 assert not name.startswith("_"), f"私有符号 {name!r} 不应出现在 __all__ 中"
 
     def test_api_gap_analyzer_not_exported(self):
         """APIGapAnalyzer 不在 src.api 导出中"""
-        jk2bt..api as api
+        import jk2bt.api as api
         if hasattr(api, "__all__"):
             assert "APIGapAnalyzer" not in api.__all__
 

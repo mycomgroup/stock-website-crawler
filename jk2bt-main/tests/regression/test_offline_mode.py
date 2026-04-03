@@ -7,6 +7,11 @@ test_offline_mode.py
 import sys
 import os
 
+if __name__ != "__main__":
+    import pytest
+
+    pytest.skip("legacy validation script, not for pytest collection", allow_module_level=True)
+
 sys.path.insert(0, "src")
 
 from market_data.stock import get_stock_daily

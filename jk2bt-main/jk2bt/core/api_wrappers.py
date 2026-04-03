@@ -25,8 +25,12 @@ import logging
 import backtrader as bt
 import pandas as pd
 import numpy as np
-import statsmodels.api as sm
 from datetime import datetime, timedelta, date
+
+try:
+    import statsmodels.api as sm
+except ImportError:
+    sm = None
 
 # akshare 改为延迟导入，减少启动依赖
 
@@ -792,10 +796,16 @@ def analyze_performance(strategy_nav, benchmark_nav):
         else np.nan
     )
 
-    X = sm.add_constant(benchmark_ret)
-    model = sm.OLS(strategy_ret, X).fit()
-    alpha = model.params.get("const", 0) * 252
-    beta = model.params.get(benchmark_ret.name, 0)
+    if sm is not None:
+        X = sm.add_constant(benchmark_ret)
+        model = sm.OLS(strategy_ret, X).fit()
+        alpha = model.params.get("const", 0) * 252
+        beta = model.params.get(benchmark_ret.name, 0)
+    else:
+        # statsmodels 不可用时回退到 numpy 线性回归，避免导入阻断。
+        slope, intercept = np.polyfit(benchmark_ret.values, strategy_ret.values, 1)
+        beta = float(slope)
+        alpha = float(intercept) * 252
 
     roll_max = strategy_nav.cummax()
     max_dd = ((strategy_nav - roll_max) / roll_max).min()
@@ -1821,13 +1831,17 @@ def get_all_trade_days_jq(cache_dir="meta_cache", force_update=False, use_duckdb
         force_update: 是否强制更新
         use_duckdb: 是否优先使用 DuckDB 缓存
     """
+    def _fallback_trade_days():
+        # 离线/网络受限场景的兜底：使用工作日近似交易日，保证 API 稳定可用。
+        return pd.bdate_range(start="2000-01-01", end=pd.Timestamp.today()).tolist()
+
     if use_duckdb:
         try:
             from ..db.meta_cache_api import get_trade_days_from_cache
 
             days = get_trade_days_from_cache(force_update=force_update, use_duckdb=True)
-            if days:
-                return days
+            if days is not None and len(days) > 0:
+                return list(pd.to_datetime(days))
         except Exception as e:
             logger.warning(f"DuckDB 缓存获取失败，fallback 到 pickle: {e}")
 
@@ -1838,18 +1852,43 @@ def get_all_trade_days_jq(cache_dir="meta_cache", force_update=False, use_duckdb
     need_dl = force_update or not os.path.exists(cache_file)
     if not need_dl:
         try:
-            df = pd.read_pickle(cache_file)
-            return pd.to_datetime(df["trade_date"]).tolist()
+            cached = pd.read_pickle(cache_file)
+            if isinstance(cached, pd.DataFrame):
+                date_col = _find_date_column(cached, category="market") or "trade_date"
+                if date_col in cached.columns:
+                    days = pd.to_datetime(cached[date_col]).tolist()
+                else:
+                    days = pd.to_datetime(cached.index).tolist()
+            else:
+                days = pd.to_datetime(cached).tolist()
+
+            if days:
+                return list(days)
         except Exception:
             need_dl = True
 
     try:
         import akshare as ak
-        df = ak.tool_trade_date_hist_sina()
+        raw = ak.tool_trade_date_hist_sina()
+        if isinstance(raw, pd.DataFrame):
+            date_col = _find_date_column(raw, category="market") or "trade_date"
+            if date_col in raw.columns:
+                days = pd.to_datetime(raw[date_col]).tolist()
+            else:
+                days = pd.to_datetime(raw.index).tolist()
+            raw.to_pickle(cache_file)
+        else:
+            days = pd.to_datetime(raw).tolist()
+            pd.Series(days, name="trade_date").to_pickle(cache_file)
+
+        if days:
+            return list(days)
     except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
-    df.to_pickle(cache_file)
-    return pd.to_datetime(df["trade_date"]).tolist()
+        warnings.warn("未安装 akshare，使用本地工作日作为交易日历近似值。")
+    except Exception as e:
+        warnings.warn(f"获取线上交易日历失败，使用本地工作日近似值: {e}")
+
+    return _fallback_trade_days()
 
 
 get_all_trade_days = get_all_trade_days_jq

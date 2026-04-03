@@ -83,7 +83,9 @@ function readSubmittedMap() {
   for (const line of lines) {
     try {
       const item = JSON.parse(line);
-      submitted.set(item.file, item);
+      if (item.status === 'submitted') {
+        submitted.set(item.file, item);
+      }
     } catch {
       // Ignore malformed lines and continue.
     }
@@ -119,6 +121,10 @@ function writeState(extra = {}) {
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isRateLimitError(error) {
+  return String(error?.message || '').includes('当前并行编译或回测数量最多10个');
 }
 
 function makeStrategyName(relativePath, index) {
@@ -221,6 +227,51 @@ async function createNewStrategy(page, browserContext, debugPrefix) {
   };
 }
 
+async function getContextCached(client, algorithmId, contextCache) {
+  if (!contextCache.has(algorithmId)) {
+    const context = await client.getStrategyContext(algorithmId);
+    contextCache.set(algorithmId, context);
+  }
+  return contextCache.get(algorithmId);
+}
+
+async function refreshActiveBacktests(activeBacktests, client, contextCache) {
+  const stillActive = [];
+  for (const record of activeBacktests) {
+    try {
+      const context = await getContextCached(client, record.algorithmId, contextCache);
+      const result = await client.getBacktestResult(record.backtestId, context);
+      const state = String(
+        result?.data?.state ||
+        result?.data?.result?.backtest?.status ||
+        result?.data?.backtest?.status ||
+        result?.status ||
+        ''
+      ).toLowerCase();
+      const summary = result?.data?.result?.summary || {};
+      const hasSummary = summary.total_returns !== undefined || summary.annualized_returns !== undefined;
+      const failed = state.includes('fail') || state.includes('error');
+      if (!hasSummary && !failed) {
+        stillActive.push(record);
+      }
+    } catch {
+      stillActive.push(record);
+    }
+  }
+  return stillActive;
+}
+
+async function waitForSlotIfNeeded(activeBacktests, client, contextCache, maxConcurrent) {
+  let active = activeBacktests;
+  while (active.length >= maxConcurrent) {
+    console.log(`  并行回测已满(${active.length}/${maxConcurrent})，等待空位...`);
+    await sleep(30000);
+    active = await refreshActiveBacktests(active, client, contextCache);
+    console.log(`  空位检查完成，当前活跃回测: ${active.length}`);
+  }
+  return active;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const startDate = args.start || '2025-04-03';
@@ -231,6 +282,8 @@ async function main() {
   const limit = args.limit ? Number(args.limit) : null;
   const headed = Boolean(args.headed);
   const resume = !args.noResume;
+  const reuseAlgorithmId = args['reuse-algorithm-id'] || null;
+  const maxConcurrent = Number(args.maxConcurrent || 10);
 
   ensureRunFiles();
 
@@ -250,7 +303,9 @@ async function main() {
     endDate,
     capital,
     frequency,
-    sleepMs
+    sleepMs,
+    reuseAlgorithmId,
+    maxConcurrent
   });
 
   console.log('='.repeat(80));
@@ -263,12 +318,17 @@ async function main() {
   console.log(`初始资金: ${capital}`);
   console.log(`频率: ${frequency}`);
   console.log(`每次间隔: ${sleepMs}ms`);
+  console.log(`最大并行回测: ${maxConcurrent}`);
+  console.log(`提交模式: ${reuseAlgorithmId ? `复用单策略 ${reuseAlgorithmId}` : '每个文件新建策略'}`);
   console.log(`日志目录: ${RUN_DIR}`);
   console.log('='.repeat(80));
 
   await ensureJoinQuantSession({ headed: false, headless: true });
   const client = new JoinQuantStrategyClient();
   const { browser, context, page } = await launchBrowserWithSession(headed);
+  const contextCache = new Map();
+  let activeBacktests = Array.from(submittedMap.values());
+  activeBacktests = await refreshActiveBacktests(activeBacktests, client, contextCache);
 
   let successCount = 0;
   let failCount = 0;
@@ -298,32 +358,57 @@ async function main() {
       };
 
       try {
-        const created = await createNewStrategy(page, context, debugPrefix);
-        record.algorithmId = created.algorithmId;
-        record.createSelector = created.clickedSelector;
-        console.log(`  新建成功: algorithmId=${created.algorithmId}`);
+        activeBacktests = await waitForSlotIfNeeded(activeBacktests, client, contextCache, maxConcurrent);
 
-        const strategyContext = await client.getStrategyContext(created.algorithmId);
-        await client.saveStrategy(created.algorithmId, strategyName, code, strategyContext);
+        let created = null;
+        if (reuseAlgorithmId) {
+          record.algorithmId = reuseAlgorithmId;
+          record.createSelector = 'reuse-existing-algorithm';
+          console.log(`  复用策略: algorithmId=${reuseAlgorithmId}`);
+        } else {
+          created = await createNewStrategy(page, context, debugPrefix);
+          record.algorithmId = created.algorithmId;
+          record.createSelector = created.clickedSelector;
+          console.log(`  新建成功: algorithmId=${created.algorithmId}`);
+        }
+
+        const strategyContext = await getContextCached(client, record.algorithmId, contextCache);
+        await client.saveStrategy(record.algorithmId, strategyName, code, strategyContext);
         console.log(`  已保存代码: ${strategyName}`);
 
-        const buildResult = await client.runBacktest(created.algorithmId, code, {
-          startTime: startDate,
-          endTime: endDate,
-          baseCapital: capital,
-          frequency
-        }, {
-          ...strategyContext,
-          name: strategyName
-        });
+        let buildResult;
+        while (true) {
+          try {
+            buildResult = await client.runBacktest(record.algorithmId, code, {
+              startTime: startDate,
+              endTime: endDate,
+              baseCapital: capital,
+              frequency
+            }, {
+              ...strategyContext,
+              name: strategyName
+            });
+            break;
+          } catch (error) {
+            if (!isRateLimitError(error)) throw error;
+            console.log('  平台并发回测已满，等待后重试当前策略...');
+            activeBacktests = await refreshActiveBacktests(activeBacktests, client, contextCache);
+            activeBacktests = await waitForSlotIfNeeded(activeBacktests, client, contextCache, maxConcurrent);
+          }
+        }
 
         record.backtestId = buildResult.backtestId;
         record.status = 'submitted';
         record.backtestUrl = `https://www.joinquant.com/algorithm/backtest?backtestId=${buildResult.backtestId}`;
+        activeBacktests.push({
+          algorithmId: record.algorithmId,
+          backtestId: record.backtestId,
+          relativePath: record.relativePath
+        });
         successCount += 1;
         console.log(`  回测已提交: backtestId=${buildResult.backtestId}`);
 
-        if (created.targetPage !== page) {
+        if (created && created.targetPage !== page) {
           await created.targetPage.close().catch(() => {});
         }
       } catch (error) {
@@ -342,6 +427,7 @@ async function main() {
         completedThisRun: successCount + failCount,
         successCount,
         failCount,
+        activeBacktests: activeBacktests.length,
         lastFile: relativePath
       });
 

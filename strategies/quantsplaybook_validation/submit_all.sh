@@ -23,15 +23,48 @@ STRATEGIES=(
   "2417203|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/17_point_efficiency.py"
   "2417204|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/18_investor_sentiment.py"
   "2417205|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/19_new_high_low.py"
-  "2417206|/Users/fengzhi/Downloads/git/testlixingren/strategies/20_wavelet_analysis.py"
+  "2417206|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/20_wavelet_analysis.py"
   "2417207|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/21_cvix.py"
   "2417208|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/22_distribution_model.py"
   "2417219|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/23_trader_company.py"
   "2417212|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/24_pattern_recognition.py"
   "2417215|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/25_hht_model.py"
+  "2417633|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/26_etf_intraday_momentum.py"
+  "2417634|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/27_industry_top_bottom.py"
+  "2417635|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/28_rounding_bottom_pattern.py"
+  "2417636|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/29_high_quality_momentum.py"
+  "2417637|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/30_smart_money_v2.py"
+  "2417638|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/31_momentum_a_share.py"
+  "2417639|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/32_chip_distribution_factor.py"
+  "2417640|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/33_disposal_effect_factor.py"
+  "2417641|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/34_cpv_factor.py"
+  "2417642|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/35_industry_rotation_pv.py"
+  "2417643|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/36_gold_stock_enhanced.py"
+  "2417644|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/37_buy_sell_pressure.py"
+  "2417645|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/38_overnight_intraday_network.py"
+  "2417646|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/39_fund_overweight_factor.py"
+  "2417647|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/40_stock_network_centrality.py"
+  "2417648|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/41_fund_manager_alpha.py"
+  "2417649|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/42_enterprise_lifecycle.py"
+  "2417650|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/43_upper_lower_shadow.py"
+  "2417651|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/44_pure_volatility_factor.py"
+  "2417652|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/45_salience_str_factor.py"
+  "2417653|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/46_factor_timing.py"
+  "2417654|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/47_revisit_momentum.py"
+  "2417655|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/48_amplitude_hidden_structure.py"
+  "2417656|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/49_apm_factor.py"
+  "2417657|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/50_team_coin_momentum.py"
+  "2417658|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/51_microstructure_reversal.py"
+  "2417659|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/52_multifactor_index_enhance.py"
+  "2417660|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/53_ffscore_selection.py"
+  "2417661|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/54_sw_cashflow_selection.py"
+  "2417662|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/55_de_portfolio_optimization.py"
+  "2417663|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/56_mlt_tsmom.py"
+  "2417664|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/notebook_rsrs_dampened.py"
+  "2417665|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/notebook_rsrs_volume_weighted_dampened.py"
 )
 
-START_DATE="2025-01-01"
+START_DATE="2026-01-01"
 END_DATE="2026-04-01"
 LOG_FILE="/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/SUBMITTED_BACKTESTS.md"
 
@@ -69,7 +102,7 @@ for item in "${STRATEGIES[@]}"; do
   fi
 
   # 稍微等待一下让系统状态更新，然后再由于 wait-if-full 逻辑控制并发
-  sleep 3
+  sleep 5
 done
 
 echo ""

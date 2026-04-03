@@ -3,23 +3,27 @@
 ## 1. 安装依赖
 
 ```bash
-pip install backtrader akshare pandas numpy duckdb
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e .
 ```
 
 ## 2. 验证环境
 
 ```bash
-cd jqdata_akshare_backtrader_utility
-python3 -c "from src.core.strategy_base import *; print('OK')"
+python3 -c "import jk2bt; print(jk2bt.__version__)"
+pytest -q tests/test_package_import.py tests/integration/test_jq_runner.py
+pytest --collect-only -q
 ```
 
 ## 3. 运行策略
 
 ```python
-from jq_strategy_runner import run_jq_strategy
+from jk2bt import run_jq_strategy
 
 run_jq_strategy(
-    strategy_file='../jkcode/jkcode/策略.txt',
+    strategy_file='strategies/03 一个简单而持续稳定的懒人超额收益策略.txt',
     start_date='2020-01-01',
     end_date='2023-12-31',
     stock_pool=['600519.XSHG', '000858.XSHE'],
@@ -74,7 +78,7 @@ stocks = get_index_stocks('000300.XSHG')
 ## 策略模板
 
 ```python
-from src.core.strategy_base import JQ2BTBaseStrategy
+from jk2bt.core.strategy_base import JQ2BTBaseStrategy
 
 class MyStrategy(JQ2BTBaseStrategy):
     def __init__(self):

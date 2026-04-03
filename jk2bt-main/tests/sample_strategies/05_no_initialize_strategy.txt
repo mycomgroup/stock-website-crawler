@@ -1,0 +1,7 @@
+def some_helper_function(x):
+    return x * 2
+
+def process_data(data):
+    return [some_helper_function(i) for i in data]
+
+print('没有initialize函数的文件')

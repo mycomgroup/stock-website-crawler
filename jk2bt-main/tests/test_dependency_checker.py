@@ -603,7 +603,7 @@ class TestAllExportedFunctions:
             assert export in __all__
 
     def test_all_exports_callable(self):
-        jk2bt..dependency_checker as dc
+        import jk2bt.dependency_checker as dc
 
         for name in dc.__all__:
             obj = getattr(dc, name)

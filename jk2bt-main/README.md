@@ -1,6 +1,6 @@
 # jk2bt - 聚宽策略本地运行框架
 
-[![测试通过](https://img.shields.io/badge/测试-158_passed-brightgreen)](https://github.com)
+[![测试收集](https://img.shields.io/badge/pytest-4298_collected-brightgreen)](https://github.com)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue)](https://www.python.org)
 
 **让聚宽策略代码无需修改，直接在本地运行！**
@@ -10,7 +10,7 @@
 ## 快速开始
 
 ```python
-from jq_strategy_runner import run_jq_strategy
+from jk2bt import run_jq_strategy
 
 # 直接运行聚宽策略文件
 run_jq_strategy(
@@ -26,7 +26,23 @@ run_jq_strategy(
 ## 安装
 
 ```bash
-pip install backtrader akshare pandas numpy duckdb
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e .
+```
+
+## 安装后验收（推荐）
+
+```bash
+# 1) 包导入与版本
+python3 -c "import jk2bt; print(jk2bt.__version__)"
+
+# 2) 核心链路 smoke
+pytest -q tests/test_package_import.py tests/integration/test_jq_runner.py
+
+# 3) 扫描全部测试用例是否可收集
+pytest --collect-only -q
 ```
 
 ---
@@ -36,10 +52,10 @@ pip install backtrader akshare pandas numpy duckdb
 ### 方式1：Python调用（推荐）
 
 ```python
-from jq_strategy_runner import run_jq_strategy
+from jk2bt import run_jq_strategy
 
 run_jq_strategy(
-    strategy_file='../jkcode/jkcode/策略.txt',
+    strategy_file='strategies/03 一个简单而持续稳定的懒人超额收益策略.txt',
     start_date='2020-01-01',
     end_date='2023-12-31',
     initial_capital=1000000,
@@ -50,15 +66,13 @@ run_jq_strategy(
 ### 方式2：命令行
 
 ```bash
-cd jqdata_akshare_backtrader_utility
-
-python3 jq_strategy_runner.py 策略.txt --start 2020-01-01 --end 2023-12-31 --capital 1000000
+python3 run_daily_strategy_batch.py --strategies_dir strategies --limit 1
 ```
 
 ### 方式3：继承基类
 
 ```python
-from src.core.strategy_base import JQ2BTBaseStrategy
+from jk2bt.core.strategy_base import JQ2BTBaseStrategy
 
 class MyStrategy(JQ2BTBaseStrategy):
     def __init__(self):
@@ -149,19 +163,14 @@ def select_stocks(context):
 ## 项目结构
 
 ```
-jk2bt/
-├── jqdata_akshare_backtrader_utility/
-│   ├── backtrader_base_strategy.py    # 核心兼容层
-│   ├── jq_strategy_runner.py          # 策略运行器
-│   ├── factors/                       # 因子计算模块
-│   ├── market_data/                   # 行情数据模块
-│   ├── finance_data/                  # 财务数据模块
-│   └── utils/                         # 工具函数
-├── tests/                             # 测试文件（22个）
-├── jkcode/jkcode/                     # 聚宽策略文件（449个）
-├── data/market.db                     # 数据缓存
-├── README.md                          # 本文件
-└── QUICK_START.md                     # 快速开始
+jk2bt-main/
+├── jk2bt/                             # 主包（core/api/market_data/factors/...）
+├── strategies/                        # 策略样本
+├── tests/                             # 自动化测试
+├── docs/                              # 指南与设计文档
+├── run_daily_strategy_batch.py        # 批量策略运行入口
+├── run_strategies_parallel.py         # 并行运行入口
+└── pyproject.toml                     # 打包与依赖配置
 ```
 
 ---

@@ -133,7 +133,18 @@ class DuckDBManager:
                 conn = duckdb.connect(self.db_path, read_only=read_only)
                 return conn
             except Exception as e:
-                if "lock" in str(e).lower() or "conflict" in str(e).lower():
+                error_lower = str(e).lower()
+
+                # DuckDB 在同一进程内可能拒绝“同库不同配置”的连接（如先写后只读）。
+                # 此时降级为读写连接，保证并发读线程可继续工作。
+                if read_only and "different configuration" in error_lower:
+                    logger.warning(
+                        "只读连接配置冲突，降级为读写连接: %s",
+                        e,
+                    )
+                    return duckdb.connect(self.db_path, read_only=False)
+
+                if "lock" in error_lower or "conflict" in error_lower:
                     logger.warning(
                         f"连接冲突，重试 {attempt + 1}/{self._MAX_CONNECTION_RETRY}: {e}"
                     )

@@ -20,6 +20,7 @@ dependencies = [
     "backtrader>=1.9.76",
     "akshare>=1.10.0",
     "duckdb>=0.8.0",
+    "statsmodels>=0.14.0",
     "pyyaml>=6.0",
     "requests>=2.28.0",
     "tqdm>=4.64.0",
@@ -40,7 +41,7 @@ full = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["jk2bt*"]
+include = ["jk2bt*", "src*", "market_data*", "finance_data*", "factors*", "indicators*", "utils*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

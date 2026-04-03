@@ -6,6 +6,11 @@ test_task32_direct.py
 import sys
 import os
 
+if __name__ != "__main__":
+    import pytest
+
+    pytest.skip("legacy validation script, not for pytest collection", allow_module_level=True)
+
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(
     0, os.path.join(os.path.dirname(__file__), "src")

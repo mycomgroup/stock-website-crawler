@@ -1,0 +1,17 @@
+{
+  "run_id": "20260404_002555",
+  "results": [],
+  "summary": {
+    "total": 0,
+    "success_total": 0,
+    "failed_total": 0,
+    "recoverable_failures": 0,
+    "unrecoverable_failures": 0,
+    "status_counts": {}
+  },
+  "attribution_summary": {
+    "recoverable": {},
+    "unrecoverable": {}
+  },
+  "scan_results": {}
+}

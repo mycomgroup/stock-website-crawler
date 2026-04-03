@@ -21,11 +21,15 @@ import re
 import ast
 import tempfile
 import hashlib
-import chardet
 import logging
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Any
 from enum import Enum
+
+try:
+    import chardet
+except ImportError:  # pragma: no cover - optional dependency
+    chardet = None
 
 # 获取logger
 logger = logging.getLogger(__name__)
@@ -102,19 +106,46 @@ class TxtStrategyNormalizer:
         self.auto_fix_safe = auto_fix_safe
         os.makedirs(self.cache_dir, exist_ok=True)
 
+    @staticmethod
+    def _normalize_encoding_name(encoding: Optional[str]) -> str:
+        if not encoding:
+            return "utf-8"
+        lowered = encoding.lower()
+        if lowered in ("gb2312", "gb18030"):
+            return "gbk"
+        return encoding
+
+    @staticmethod
+    def _detect_encoding_without_chardet(raw_data: bytes) -> Tuple[str, float]:
+        if raw_data.startswith(b"\xef\xbb\xbf"):
+            return "utf-8-sig", 0.99
+        if raw_data.startswith(b"\xff\xfe"):
+            return "utf-16-le", 0.95
+        if raw_data.startswith(b"\xfe\xff"):
+            return "utf-16-be", 0.95
+
+        for encoding in ("utf-8", "gbk", "gb2312", "big5", "cp1252", "latin-1"):
+            try:
+                raw_data.decode(encoding)
+                confidence = 0.85 if encoding == "utf-8" else 0.6
+                return encoding, confidence
+            except UnicodeDecodeError:
+                continue
+
+        return "latin-1", 0.0
+
     def detect_encoding(self, file_path: str) -> Tuple[str, float]:
         """检测文件编码"""
         with open(file_path, "rb") as f:
             raw_data = f.read()
 
-        result = chardet.detect(raw_data)
-        encoding = result.get("encoding", "utf-8")
-        confidence = result.get("confidence", 0.0)
+        if chardet is not None:
+            result = chardet.detect(raw_data)
+            encoding = self._normalize_encoding_name(result.get("encoding"))
+            confidence = float(result.get("confidence", 0.0) or 0.0)
+            return encoding, confidence
 
-        if encoding and encoding.lower() in ("gb2312", "gb18030"):
-            encoding = "gbk"
-
-        return encoding or "utf-8", confidence
+        return self._detect_encoding_without_chardet(raw_data)
 
     def read_with_encoding_fallback(self, file_path: str) -> Tuple[str, str]:
         """多编码读取，返回内容和使用的编码"""

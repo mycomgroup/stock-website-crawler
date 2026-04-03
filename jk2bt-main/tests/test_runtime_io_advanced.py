@@ -590,7 +590,7 @@ class TestRuntimeDirManagement:
     def test_runtime_dir_auto_created(self):
         """测试运行时目录自动创建"""
         # 清除全局运行时目录，测试自动创建功能
-        jk2bt..core.io as runtime_io_module
+        import jk2bt.core.io as runtime_io_module
 
         runtime_io_module._RUNTIME_DIR = None
 

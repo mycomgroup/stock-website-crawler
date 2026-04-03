@@ -149,7 +149,7 @@ class TestPytestImportMode:
 
     def test_pytest_can_import_package(self):
         """pytest 可以正常导入包"""
-        jk2bt.
+        import jk2bt as src
 
         assert src is not None
 
@@ -165,7 +165,8 @@ class TestPytestImportMode:
 
     def test_pytest_no_sys_path_needed(self):
         """pytest 不需要手动设置 sys.path"""
-        jk2bt.
+        import jk2bt as src
+        assert src is not None
 
         test_file_path = Path(__file__)
         content = test_file_path.read_text()

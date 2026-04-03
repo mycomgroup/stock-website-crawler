@@ -294,8 +294,25 @@ def count_trade_days_between(start_date, end_date):
     return len(days)
 
 
-# 兼容别名
-get_all_trade_days_jq = get_all_trade_days
+# 兼容别名：聚宽风格接口返回 list
+def get_all_trade_days_jq(cache_dir="meta_cache", force_update=False, use_duckdb=True):
+    days = get_all_trade_days(
+        cache_dir=cache_dir,
+        force_update=force_update,
+        use_duckdb=use_duckdb,
+    )
+    if days is None:
+        return []
+    if isinstance(days, list):
+        return days
+    if isinstance(days, pd.DatetimeIndex):
+        return days.tolist()
+    try:
+        return list(days)
+    except TypeError:
+        return [days]
+
+
 get_trading_days = get_all_trade_days  # 常用别名
 
 

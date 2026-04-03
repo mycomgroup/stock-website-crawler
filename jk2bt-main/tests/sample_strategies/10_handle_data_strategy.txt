@@ -1,0 +1,8 @@
+def initialize(context):
+    set_benchmark('000300.XSHG')
+    g.stock = '600519.XSHG'
+    log.info('初始化handle_data策略')
+
+def handle_data(context, data):
+    # 使用handle_data而不是run_daily
+    order_target_value(g.stock, context.portfolio.total_value * 0.95)

@@ -105,7 +105,6 @@ import pandas as pd
 import numpy as np
 import os
 import re
-import statsmodels.api as sm
 from datetime import datetime, timedelta, date, time
 import logging
 
@@ -221,6 +220,7 @@ from .api_wrappers import (
     get_current_tick,
     analyze_performance,
     query,
+    _apply_filter,
 )
 
 # 资产路由
@@ -535,6 +535,30 @@ def run_bt_framework(
 # =====================================================================
 # 6. 模块导出
 # =====================================================================
+
+# 统一交易日 API 返回类型：对外固定返回 list，避免不同实现返回 DatetimeIndex 导致兼容性问题。
+_get_all_trade_days_jq_impl = get_all_trade_days_jq
+
+
+def _normalize_trade_days(days):
+    if days is None:
+        return []
+    if isinstance(days, list):
+        return days
+    if isinstance(days, pd.DatetimeIndex):
+        return days.tolist()
+    try:
+        return list(days)
+    except TypeError:
+        return [days]
+
+
+def get_all_trade_days_jq(*args, **kwargs):
+    return _normalize_trade_days(_get_all_trade_days_jq_impl(*args, **kwargs))
+
+
+def get_all_trade_days(*args, **kwargs):
+    return get_all_trade_days_jq(*args, **kwargs)
 
 __all__ = [
     # 证券工具函数
