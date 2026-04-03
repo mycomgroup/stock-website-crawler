@@ -1,0 +1,4362 @@
+{
+  "summary": {
+    "backtestId": "69cf27eface95e7c2472cdaa",
+    "algoId": "69cf27ef04f2145508d45ac7",
+    "strategyName": "simple_ma_test_20260403_20240101~20240630_4706",
+    "period": "2024-01-01 ~ 2024-06-30",
+    "capitalBase": 100000,
+    "frequency": "DAILY",
+    "benchmark": "000300.SH",
+    "runAt": "2026-04-03T02:38:03.497Z",
+    "totalReturn": 0.1801,
+    "annualReturn": 0.4246,
+    "benchmarkReturn": 0.0089,
+    "benchmarkAnnualReturn": 0.0191,
+    "excessReturn": 0.17120000000000002,
+    "maxDrawdown": 0.0767,
+    "drawdownDate": "20231229",
+    "volatility": 0.2368,
+    "downsideRisk": 0.0932,
+    "trackingError": 0.1948,
+    "sharpe": 1.7183,
+    "sortino": 4.3672,
+    "alpha": 0.4056,
+    "beta": 0.9324,
+    "informationRatio": 1.8077,
+    "winRate": 0.4615,
+    "benchmarkWinRate": 0.4786,
+    "tradeWinRate": null,
+    "tradeCount": 1,
+    "logCount": 10
+  },
+  "detail": {
+    "performance": {
+      "sharpe_ratio": 1.7183,
+      "progress": 1,
+      "beta": 0.9324,
+      "drawdown_most": "20231229",
+      "alpha": 0.4056,
+      "win_rate": 0.4615,
+      "benchmark_yield": 0.0089,
+      "max_drawdown": 0.0767,
+      "volatility": 0.2368,
+      "information_ratio": 1.8077,
+      "yield": 0.1801,
+      "drawdown_more": "20231229",
+      "annual_yield": 0.4246,
+      "benchmark_win_rate": 0.4786,
+      "tracking_error": 0.1948,
+      "benchmark_annual_yield": 0.0191,
+      "sortino": 4.3672,
+      "downside_risk": 0.0932,
+      "trade_winrate": null
+    },
+    "profit": {
+      "total": 118,
+      "list": {
+        "20231229": {
+          "algo_profit": 0,
+          "excess_income": 0,
+          "total_asset_value": 100000,
+          "max_drawdown": 0,
+          "log_excess_income": 0,
+          "trade_record": [],
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0,
+          "benchmark_profit": 0,
+          "log_algo_profit": 0
+        },
+        "20240102": {
+          "algo_profit": 0,
+          "profit_and_loss": 0,
+          "total_asset_value": 100000,
+          "benchmark_profit": -0.013045,
+          "max_drawdown": 0,
+          "log_excess_income": 0.013131,
+          "trade_record": [],
+          "excess_income": 0.013217,
+          "log_benchmark_profit": -0.013131,
+          "log_algo_profit": 0
+        },
+        "20240103": {
+          "algo_profit": 0,
+          "profit_and_loss": 0,
+          "total_asset_value": 100000,
+          "benchmark_profit": -0.015392,
+          "max_drawdown": 0,
+          "log_excess_income": 0.015512,
+          "trade_record": [],
+          "excess_income": 0.015633,
+          "log_benchmark_profit": -0.015512,
+          "log_algo_profit": 0
+        },
+        "20240104": {
+          "algo_profit": -0.009831,
+          "profit_and_loss": -0.009831,
+          "total_asset_value": 99016.87775,
+          "benchmark_profit": -0.024499,
+          "max_drawdown": -0.009831,
+          "log_excess_income": 0.014924,
+          "trade_record": {
+            "BUY": 99351.252
+          },
+          "excess_income": 0.015036,
+          "log_benchmark_profit": -0.024804,
+          "log_algo_profit": -0.00988
+        },
+        "20240105": {
+          "algo_profit": 0.007449,
+          "profit_and_loss": 0.017452,
+          "total_asset_value": 100744.87775,
+          "benchmark_profit": -0.029728,
+          "max_drawdown": 0,
+          "log_excess_income": 0.0376,
+          "trade_record": [],
+          "excess_income": 0.038315,
+          "log_benchmark_profit": -0.030178,
+          "log_algo_profit": 0.007421
+        },
+        "20240108": {
+          "algo_profit": -0.005511,
+          "profit_and_loss": -0.012864,
+          "total_asset_value": 99448.87775,
+          "benchmark_profit": -0.042276,
+          "max_drawdown": -0.012864,
+          "log_excess_income": 0.037669,
+          "trade_record": [],
+          "excess_income": 0.038388,
+          "log_benchmark_profit": -0.043196,
+          "log_algo_profit": -0.005526
+        },
+        "20240109": {
+          "algo_profit": -0.002271,
+          "profit_and_loss": 0.003258,
+          "total_asset_value": 99772.87775,
+          "benchmark_profit": -0.040398,
+          "max_drawdown": -0.009648,
+          "log_excess_income": 0.038963,
+          "trade_record": [],
+          "excess_income": 0.039732,
+          "log_benchmark_profit": -0.041237,
+          "log_algo_profit": -0.002274
+        },
+        "20240110": {
+          "algo_profit": -0.011991,
+          "profit_and_loss": -0.009742,
+          "total_asset_value": 98800.87775,
+          "benchmark_profit": -0.044878,
+          "max_drawdown": -0.019296,
+          "log_excess_income": 0.033852,
+          "trade_record": [],
+          "excess_income": 0.034432,
+          "log_benchmark_profit": -0.045916,
+          "log_algo_profit": -0.012064
+        },
+        "20240111": {
+          "algo_profit": -0.003351,
+          "profit_and_loss": 0.008745,
+          "total_asset_value": 99664.87775,
+          "benchmark_profit": -0.039474,
+          "max_drawdown": -0.01072,
+          "log_excess_income": 0.036917,
+          "trade_record": [],
+          "excess_income": 0.037607,
+          "log_benchmark_profit": -0.040274,
+          "log_algo_profit": -0.003357
+        },
+        "20240112": {
+          "algo_profit": -0.001191,
+          "profit_and_loss": 0.002167,
+          "total_asset_value": 99880.87775,
+          "benchmark_profit": -0.042827,
+          "max_drawdown": -0.008576,
+          "log_excess_income": 0.042579,
+          "trade_record": [],
+          "excess_income": 0.043498,
+          "log_benchmark_profit": -0.043771,
+          "log_algo_profit": -0.001192
+        },
+        "20240115": {
+          "algo_profit": 0.000969,
+          "profit_and_loss": 0.002163,
+          "total_asset_value": 100096.87775,
+          "benchmark_profit": -0.043773,
+          "max_drawdown": -0.006432,
+          "log_excess_income": 0.045728,
+          "trade_record": [],
+          "excess_income": 0.04679,
+          "log_benchmark_profit": -0.04476,
+          "log_algo_profit": 0.000968
+        },
+        "20240116": {
+          "algo_profit": 0.015009,
+          "profit_and_loss": 0.014026,
+          "total_asset_value": 101500.87775,
+          "benchmark_profit": -0.037957,
+          "max_drawdown": 0,
+          "log_excess_income": 0.053593,
+          "trade_record": [],
+          "excess_income": 0.055055,
+          "log_benchmark_profit": -0.038696,
+          "log_algo_profit": 0.014897
+        },
+        "20240117": {
+          "algo_profit": 0.003129,
+          "profit_and_loss": -0.011704,
+          "total_asset_value": 100312.87775,
+          "benchmark_profit": -0.058881,
+          "max_drawdown": -0.011704,
+          "log_excess_income": 0.06381,
+          "trade_record": [],
+          "excess_income": 0.06589,
+          "log_benchmark_profit": -0.060686,
+          "log_algo_profit": 0.003124
+        },
+        "20240118": {
+          "algo_profit": -0.000111,
+          "profit_and_loss": -0.00323,
+          "total_asset_value": 99988.87775,
+          "benchmark_profit": -0.045577,
+          "max_drawdown": -0.014896,
+          "log_excess_income": 0.046538,
+          "trade_record": [],
+          "excess_income": 0.047637,
+          "log_benchmark_profit": -0.046649,
+          "log_algo_profit": -0.000111
+        },
+        "20240119": {
+          "algo_profit": -0.003351,
+          "profit_and_loss": -0.00324,
+          "total_asset_value": 99664.87775,
+          "benchmark_profit": -0.047021,
+          "max_drawdown": -0.018089,
+          "log_excess_income": 0.044805,
+          "trade_record": [],
+          "excess_income": 0.045824,
+          "log_benchmark_profit": -0.048162,
+          "log_algo_profit": -0.003357
+        },
+        "20240122": {
+          "algo_profit": -0.010911,
+          "profit_and_loss": -0.007585,
+          "total_asset_value": 98908.87775,
+          "benchmark_profit": -0.061848,
+          "max_drawdown": -0.025537,
+          "log_excess_income": 0.052872,
+          "trade_record": [],
+          "excess_income": 0.054295,
+          "log_benchmark_profit": -0.063844,
+          "log_algo_profit": -0.010971
+        },
+        "20240123": {
+          "algo_profit": -0.004431,
+          "profit_and_loss": 0.006551,
+          "total_asset_value": 99556.87775,
+          "benchmark_profit": -0.05805,
+          "max_drawdown": -0.019153,
+          "log_excess_income": 0.055362,
+          "trade_record": [],
+          "excess_income": 0.056924,
+          "log_benchmark_profit": -0.059803,
+          "log_algo_profit": -0.004441
+        },
+        "20240124": {
+          "algo_profit": 0.013929,
+          "profit_and_loss": 0.018442,
+          "total_asset_value": 101392.87775,
+          "benchmark_profit": -0.044884,
+          "max_drawdown": -0.001064,
+          "log_excess_income": 0.059755,
+          "trade_record": [],
+          "excess_income": 0.061576,
+          "log_benchmark_profit": -0.045922,
+          "log_algo_profit": 0.013833
+        },
+        "20240125": {
+          "algo_profit": 0.032289,
+          "profit_and_loss": 0.018108,
+          "total_asset_value": 103228.87775,
+          "benchmark_profit": -0.025703,
+          "max_drawdown": 0,
+          "log_excess_income": 0.057818,
+          "trade_record": [],
+          "excess_income": 0.059522,
+          "log_benchmark_profit": -0.026039,
+          "log_algo_profit": 0.031778
+        },
+        "20240126": {
+          "algo_profit": 0.045249,
+          "profit_and_loss": 0.012555,
+          "total_asset_value": 104524.87775,
+          "benchmark_profit": -0.028355,
+          "max_drawdown": 0,
+          "log_excess_income": 0.07302,
+          "trade_record": [],
+          "excess_income": 0.075752,
+          "log_benchmark_profit": -0.028765,
+          "log_algo_profit": 0.044255
+        },
+        "20240129": {
+          "algo_profit": 0.053889,
+          "profit_and_loss": 0.008266,
+          "total_asset_value": 105388.87775,
+          "benchmark_profit": -0.037058,
+          "max_drawdown": 0,
+          "log_excess_income": 0.090249,
+          "trade_record": [],
+          "excess_income": 0.094447,
+          "log_benchmark_profit": -0.037762,
+          "log_algo_profit": 0.052487
+        },
+        "20240130": {
+          "algo_profit": 0.032289,
+          "profit_and_loss": -0.020496,
+          "total_asset_value": 103228.87775,
+          "benchmark_profit": -0.054231,
+          "max_drawdown": -0.020496,
+          "log_excess_income": 0.087535,
+          "trade_record": [],
+          "excess_income": 0.09148,
+          "log_benchmark_profit": -0.055757,
+          "log_algo_profit": 0.031778
+        },
+        "20240131": {
+          "algo_profit": 0.027969,
+          "profit_and_loss": -0.004185,
+          "total_asset_value": 102796.87775,
+          "benchmark_profit": -0.062883,
+          "max_drawdown": -0.024595,
+          "log_excess_income": 0.092532,
+          "trade_record": [],
+          "excess_income": 0.096948,
+          "log_benchmark_profit": -0.064947,
+          "log_algo_profit": 0.027585
+        },
+        "20240201": {
+          "algo_profit": 0.022569,
+          "profit_and_loss": -0.005253,
+          "total_asset_value": 102256.87775,
+          "benchmark_profit": -0.062195,
+          "max_drawdown": -0.029719,
+          "log_excess_income": 0.086531,
+          "trade_record": [],
+          "excess_income": 0.090386,
+          "log_benchmark_profit": -0.064214,
+          "log_algo_profit": 0.022318
+        },
+        "20240202": {
+          "algo_profit": 0.007449,
+          "profit_and_loss": -0.014786,
+          "total_asset_value": 100744.87775,
+          "benchmark_profit": -0.073295,
+          "max_drawdown": -0.044065,
+          "log_excess_income": 0.083541,
+          "trade_record": [],
+          "excess_income": 0.08713,
+          "log_benchmark_profit": -0.07612,
+          "log_algo_profit": 0.007421
+        },
+        "20240205": {
+          "algo_profit": 0.019329,
+          "profit_and_loss": 0.011792,
+          "total_asset_value": 101932.87775,
+          "benchmark_profit": -0.067234,
+          "max_drawdown": -0.032793,
+          "log_excess_income": 0.088746,
+          "trade_record": [],
+          "excess_income": 0.092803,
+          "log_benchmark_profit": -0.069601,
+          "log_algo_profit": 0.019144
+        },
+        "20240206": {
+          "algo_profit": 0.051729,
+          "profit_and_loss": 0.031786,
+          "total_asset_value": 105172.87775,
+          "benchmark_profit": -0.034804,
+          "max_drawdown": -0.00205,
+          "log_excess_income": 0.08586,
+          "trade_record": [],
+          "excess_income": 0.089654,
+          "log_benchmark_profit": -0.035424,
+          "log_algo_profit": 0.050435
+        },
+        "20240207": {
+          "algo_profit": 0.044169,
+          "profit_and_loss": -0.007188,
+          "total_asset_value": 104416.87775,
+          "benchmark_profit": -0.025496,
+          "max_drawdown": -0.009223,
+          "log_excess_income": 0.069048,
+          "trade_record": [],
+          "excess_income": 0.071487,
+          "log_benchmark_profit": -0.025827,
+          "log_algo_profit": 0.043221
+        },
+        "20240208": {
+          "algo_profit": 0.050649,
+          "profit_and_loss": 0.006206,
+          "total_asset_value": 105064.87775,
+          "benchmark_profit": -0.019288,
+          "max_drawdown": -0.003074,
+          "log_excess_income": 0.068885,
+          "trade_record": [],
+          "excess_income": 0.071313,
+          "log_benchmark_profit": -0.019477,
+          "log_algo_profit": 0.049408
+        },
+        "20240219": {
+          "algo_profit": 0.065769,
+          "profit_and_loss": 0.014391,
+          "total_asset_value": 106576.87775,
+          "benchmark_profit": -0.007957,
+          "max_drawdown": 0,
+          "log_excess_income": 0.071685,
+          "trade_record": [],
+          "excess_income": 0.074317,
+          "log_benchmark_profit": -0.007989,
+          "log_algo_profit": 0.063696
+        },
+        "20240220": {
+          "algo_profit": 0.066849,
+          "profit_and_loss": 0.001013,
+          "total_asset_value": 106684.87775,
+          "benchmark_profit": -0.005904,
+          "max_drawdown": 0,
+          "log_excess_income": 0.07063,
+          "trade_record": [],
+          "excess_income": 0.073184,
+          "log_benchmark_profit": -0.005921,
+          "log_algo_profit": 0.064709
+        },
+        "20240221": {
+          "algo_profit": 0.172689,
+          "profit_and_loss": 0.099208,
+          "total_asset_value": 117268.87775,
+          "benchmark_profit": 0.007508,
+          "max_drawdown": 0,
+          "log_excess_income": 0.151819,
+          "trade_record": [],
+          "excess_income": 0.16395,
+          "log_benchmark_profit": 0.00748,
+          "log_algo_profit": 0.159299
+        },
+        "20240222": {
+          "algo_profit": 0.183489,
+          "profit_and_loss": 0.00921,
+          "total_asset_value": 118348.87775,
+          "benchmark_profit": 0.016194,
+          "max_drawdown": 0,
+          "log_excess_income": 0.152402,
+          "trade_record": [],
+          "excess_income": 0.164628,
+          "log_benchmark_profit": 0.016065,
+          "log_algo_profit": 0.168467
+        },
+        "20240223": {
+          "algo_profit": 0.178089,
+          "profit_and_loss": -0.004563,
+          "total_asset_value": 117808.87775,
+          "benchmark_profit": 0.017088,
+          "max_drawdown": -0.004563,
+          "log_excess_income": 0.14695,
+          "trade_record": [],
+          "excess_income": 0.158296,
+          "log_benchmark_profit": 0.016944,
+          "log_algo_profit": 0.163893
+        },
+        "20240226": {
+          "algo_profit": 0.143529,
+          "profit_and_loss": -0.029336,
+          "total_asset_value": 114352.87775,
+          "benchmark_profit": 0.006484,
+          "max_drawdown": -0.033765,
+          "log_excess_income": 0.127655,
+          "trade_record": [],
+          "excess_income": 0.136161,
+          "log_benchmark_profit": 0.006463,
+          "log_algo_profit": 0.134119
+        },
+        "20240227": {
+          "algo_profit": 0.140289,
+          "profit_and_loss": -0.002833,
+          "total_asset_value": 114028.87775,
+          "benchmark_profit": 0.018559,
+          "max_drawdown": -0.036502,
+          "log_excess_income": 0.112893,
+          "trade_record": [],
+          "excess_income": 0.119512,
+          "log_benchmark_profit": 0.018389,
+          "log_algo_profit": 0.131282
+        },
+        "20240228": {
+          "algo_profit": 0.139209,
+          "profit_and_loss": -0.000947,
+          "total_asset_value": 113920.87775,
+          "benchmark_profit": 0.005581,
+          "max_drawdown": -0.037415,
+          "log_excess_income": 0.124768,
+          "trade_record": [],
+          "excess_income": 0.132886,
+          "log_benchmark_profit": 0.005566,
+          "log_algo_profit": 0.130334
+        },
+        "20240229": {
+          "algo_profit": 0.150009,
+          "profit_and_loss": 0.00948,
+          "total_asset_value": 115000.87775,
+          "benchmark_profit": 0.024765,
+          "max_drawdown": -0.028289,
+          "log_excess_income": 0.115306,
+          "trade_record": [],
+          "excess_income": 0.122217,
+          "log_benchmark_profit": 0.024464,
+          "log_algo_profit": 0.13977
+        },
+        "20240301": {
+          "algo_profit": 0.139209,
+          "profit_and_loss": -0.009391,
+          "total_asset_value": 113920.87775,
+          "benchmark_profit": 0.031096,
+          "max_drawdown": -0.037415,
+          "log_excess_income": 0.099712,
+          "trade_record": [],
+          "excess_income": 0.104852,
+          "log_benchmark_profit": 0.030622,
+          "log_algo_profit": 0.130334
+        },
+        "20240304": {
+          "algo_profit": 0.121929,
+          "profit_and_loss": -0.015168,
+          "total_asset_value": 112192.87775,
+          "benchmark_profit": 0.031989,
+          "max_drawdown": -0.052016,
+          "log_excess_income": 0.083561,
+          "trade_record": [],
+          "excess_income": 0.087152,
+          "log_benchmark_profit": 0.031488,
+          "log_algo_profit": 0.115049
+        },
+        "20240305": {
+          "algo_profit": 0.132729,
+          "profit_and_loss": 0.009626,
+          "total_asset_value": 113272.87775,
+          "benchmark_profit": 0.039172,
+          "max_drawdown": -0.04289,
+          "log_excess_income": 0.086205,
+          "trade_record": [],
+          "excess_income": 0.09003,
+          "log_benchmark_profit": 0.038425,
+          "log_algo_profit": 0.12463
+        },
+        "20240306": {
+          "algo_profit": 0.121929,
+          "profit_and_loss": -0.009534,
+          "total_asset_value": 112192.87775,
+          "benchmark_profit": 0.034956,
+          "max_drawdown": -0.052016,
+          "log_excess_income": 0.08069,
+          "trade_record": [],
+          "excess_income": 0.084035,
+          "log_benchmark_profit": 0.034359,
+          "log_algo_profit": 0.115049
+        },
+        "20240307": {
+          "algo_profit": 0.127329,
+          "profit_and_loss": 0.004813,
+          "total_asset_value": 112732.87775,
+          "benchmark_profit": 0.02874,
+          "max_drawdown": -0.047453,
+          "log_excess_income": 0.091516,
+          "trade_record": [],
+          "excess_income": 0.095835,
+          "log_benchmark_profit": 0.028335,
+          "log_algo_profit": 0.119851
+        },
+        "20240308": {
+          "algo_profit": 0.127329,
+          "profit_and_loss": 0,
+          "total_asset_value": 112732.87775,
+          "benchmark_profit": 0.033167,
+          "max_drawdown": -0.047453,
+          "log_excess_income": 0.087222,
+          "trade_record": [],
+          "excess_income": 0.091139,
+          "log_benchmark_profit": 0.032629,
+          "log_algo_profit": 0.119851
+        },
+        "20240311": {
+          "algo_profit": 0.137049,
+          "profit_and_loss": 0.008622,
+          "total_asset_value": 113704.87775,
+          "benchmark_profit": 0.046094,
+          "max_drawdown": -0.03924,
+          "log_excess_income": 0.083373,
+          "trade_record": [],
+          "excess_income": 0.086947,
+          "log_benchmark_profit": 0.045063,
+          "log_algo_profit": 0.128436
+        },
+        "20240312": {
+          "algo_profit": 0.146769,
+          "profit_and_loss": 0.008548,
+          "total_asset_value": 114676.87775,
+          "benchmark_profit": 0.048493,
+          "max_drawdown": -0.031027,
+          "log_excess_income": 0.089595,
+          "trade_record": [],
+          "excess_income": 0.093731,
+          "log_benchmark_profit": 0.047354,
+          "log_algo_profit": 0.136948
+        },
+        "20240313": {
+          "algo_profit": 0.121929,
+          "profit_and_loss": -0.021661,
+          "total_asset_value": 112192.87775,
+          "benchmark_profit": 0.041168,
+          "max_drawdown": -0.052016,
+          "log_excess_income": 0.074706,
+          "trade_record": [],
+          "excess_income": 0.077568,
+          "log_benchmark_profit": 0.040343,
+          "log_algo_profit": 0.115049
+        },
+        "20240314": {
+          "algo_profit": 0.111129,
+          "profit_and_loss": -0.009626,
+          "total_asset_value": 111112.87775,
+          "benchmark_profit": 0.038213,
+          "max_drawdown": -0.061141,
+          "log_excess_income": 0.067875,
+          "trade_record": [],
+          "excess_income": 0.070232,
+          "log_benchmark_profit": 0.037501,
+          "log_algo_profit": 0.105376
+        },
+        "20240315": {
+          "algo_profit": 0.151089,
+          "profit_and_loss": 0.035963,
+          "total_asset_value": 115108.87775,
+          "benchmark_profit": 0.040478,
+          "max_drawdown": -0.027377,
+          "log_excess_income": 0.101028,
+          "trade_record": [],
+          "excess_income": 0.106308,
+          "log_benchmark_profit": 0.03968,
+          "log_algo_profit": 0.140708
+        },
+        "20240318": {
+          "algo_profit": 0.144609,
+          "profit_and_loss": -0.005629,
+          "total_asset_value": 114460.87775,
+          "benchmark_profit": 0.050251,
+          "max_drawdown": -0.032852,
+          "log_excess_income": 0.086033,
+          "trade_record": [],
+          "excess_income": 0.089843,
+          "log_benchmark_profit": 0.04903,
+          "log_algo_profit": 0.135063
+        },
+        "20240319": {
+          "algo_profit": 0.129489,
+          "profit_and_loss": -0.01321,
+          "total_asset_value": 112948.87775,
+          "benchmark_profit": 0.042703,
+          "max_drawdown": -0.045628,
+          "log_excess_income": 0.079948,
+          "trade_record": [],
+          "excess_income": 0.083231,
+          "log_benchmark_profit": 0.041817,
+          "log_algo_profit": 0.121765
+        },
+        "20240320": {
+          "algo_profit": 0.134889,
+          "profit_and_loss": 0.004781,
+          "total_asset_value": 113488.87775,
+          "benchmark_profit": 0.044963,
+          "max_drawdown": -0.041065,
+          "log_excess_income": 0.082553,
+          "trade_record": [],
+          "excess_income": 0.086056,
+          "log_benchmark_profit": 0.043982,
+          "log_algo_profit": 0.126535
+        },
+        "20240321": {
+          "algo_profit": 0.137049,
+          "profit_and_loss": 0.001903,
+          "total_asset_value": 113704.87775,
+          "benchmark_profit": 0.043712,
+          "max_drawdown": -0.03924,
+          "log_excess_income": 0.085653,
+          "trade_record": [],
+          "excess_income": 0.089428,
+          "log_benchmark_profit": 0.042783,
+          "log_algo_profit": 0.128436
+        },
+        "20240322": {
+          "algo_profit": 0.125169,
+          "profit_and_loss": -0.010448,
+          "total_asset_value": 112516.87775,
+          "benchmark_profit": 0.033194,
+          "max_drawdown": -0.049278,
+          "log_excess_income": 0.085278,
+          "trade_record": [],
+          "excess_income": 0.08902,
+          "log_benchmark_profit": 0.032655,
+          "log_algo_profit": 0.117933
+        },
+        "20240325": {
+          "algo_profit": 0.129489,
+          "profit_and_loss": 0.003839,
+          "total_asset_value": 112948.87775,
+          "benchmark_profit": 0.027587,
+          "max_drawdown": -0.045628,
+          "log_excess_income": 0.094552,
+          "trade_record": [],
+          "excess_income": 0.099166,
+          "log_benchmark_profit": 0.027213,
+          "log_algo_profit": 0.121765
+        },
+        "20240326": {
+          "algo_profit": 0.151089,
+          "profit_and_loss": 0.019124,
+          "total_asset_value": 115108.87775,
+          "benchmark_profit": 0.032828,
+          "max_drawdown": -0.027377,
+          "log_excess_income": 0.108407,
+          "trade_record": [],
+          "excess_income": 0.114502,
+          "log_benchmark_profit": 0.032301,
+          "log_algo_profit": 0.140708
+        },
+        "20240327": {
+          "algo_profit": 0.143529,
+          "profit_and_loss": -0.006568,
+          "total_asset_value": 114352.87775,
+          "benchmark_profit": 0.02089,
+          "max_drawdown": -0.033765,
+          "log_excess_income": 0.113444,
+          "trade_record": [],
+          "excess_income": 0.120129,
+          "log_benchmark_profit": 0.020675,
+          "log_algo_profit": 0.134119
+        },
+        "20240328": {
+          "algo_profit": 0.139209,
+          "profit_and_loss": -0.003778,
+          "total_asset_value": 113920.87775,
+          "benchmark_profit": 0.026188,
+          "max_drawdown": -0.037415,
+          "log_excess_income": 0.104483,
+          "trade_record": [],
+          "excess_income": 0.110136,
+          "log_benchmark_profit": 0.025851,
+          "log_algo_profit": 0.130334
+        },
+        "20240329": {
+          "algo_profit": 0.142449,
+          "profit_and_loss": 0.002844,
+          "total_asset_value": 114244.87775,
+          "benchmark_profit": 0.031003,
+          "max_drawdown": -0.034677,
+          "log_excess_income": 0.102642,
+          "trade_record": [],
+          "excess_income": 0.108095,
+          "log_benchmark_profit": 0.030532,
+          "log_algo_profit": 0.133174
+        },
+        "20240401": {
+          "algo_profit": 0.155409,
+          "profit_and_loss": 0.011344,
+          "total_asset_value": 115540.87775,
+          "benchmark_profit": 0.047954,
+          "max_drawdown": -0.023726,
+          "log_excess_income": 0.097614,
+          "trade_record": [],
+          "excess_income": 0.102537,
+          "log_benchmark_profit": 0.04684,
+          "log_algo_profit": 0.144454
+        },
+        "20240402": {
+          "algo_profit": 0.145689,
+          "profit_and_loss": -0.008413,
+          "total_asset_value": 114568.87775,
+          "benchmark_profit": 0.043591,
+          "max_drawdown": -0.031939,
+          "log_excess_income": 0.093338,
+          "trade_record": [],
+          "excess_income": 0.097833,
+          "log_benchmark_profit": 0.042668,
+          "log_algo_profit": 0.136006
+        },
+        "20240403": {
+          "algo_profit": 0.135969,
+          "profit_and_loss": -0.008484,
+          "total_asset_value": 113596.87775,
+          "benchmark_profit": 0.039839,
+          "max_drawdown": -0.040152,
+          "log_excess_income": 0.08842,
+          "trade_record": [],
+          "excess_income": 0.092446,
+          "log_benchmark_profit": 0.039066,
+          "log_algo_profit": 0.127486
+        },
+        "20240408": {
+          "algo_profit": 0.132729,
+          "profit_and_loss": -0.002852,
+          "total_asset_value": 113272.87775,
+          "benchmark_profit": 0.030689,
+          "max_drawdown": -0.04289,
+          "log_excess_income": 0.094402,
+          "trade_record": [],
+          "excess_income": 0.099001,
+          "log_benchmark_profit": 0.030228,
+          "log_algo_profit": 0.12463
+        },
+        "20240409": {
+          "algo_profit": 0.129489,
+          "profit_and_loss": -0.00286,
+          "total_asset_value": 112948.87775,
+          "benchmark_profit": 0.029838,
+          "max_drawdown": -0.045628,
+          "log_excess_income": 0.092364,
+          "trade_record": [],
+          "excess_income": 0.096764,
+          "log_benchmark_profit": 0.029401,
+          "log_algo_profit": 0.121765
+        },
+        "20240410": {
+          "algo_profit": 0.116529,
+          "profit_and_loss": -0.011474,
+          "total_asset_value": 111652.87775,
+          "benchmark_profit": 0.02145,
+          "max_drawdown": -0.056578,
+          "log_excess_income": 0.089001,
+          "trade_record": [],
+          "excess_income": 0.093082,
+          "log_benchmark_profit": 0.021224,
+          "log_algo_profit": 0.110225
+        },
+        "20240411": {
+          "algo_profit": 0.113289,
+          "profit_and_loss": -0.002902,
+          "total_asset_value": 111328.87775,
+          "benchmark_profit": 0.021315,
+          "max_drawdown": -0.059316,
+          "log_excess_income": 0.086227,
+          "trade_record": [],
+          "excess_income": 0.090054,
+          "log_benchmark_profit": 0.021091,
+          "log_algo_profit": 0.107318
+        },
+        "20240412": {
+          "algo_profit": 0.092769,
+          "profit_and_loss": -0.018432,
+          "total_asset_value": 109276.87775,
+          "benchmark_profit": 0.013036,
+          "max_drawdown": -0.076655,
+          "log_excess_income": 0.075763,
+          "trade_record": [],
+          "excess_income": 0.078706,
+          "log_benchmark_profit": 0.012952,
+          "log_algo_profit": 0.088715
+        },
+        "20240415": {
+          "algo_profit": 0.117609,
+          "profit_and_loss": 0.022731,
+          "total_asset_value": 111760.87775,
+          "benchmark_profit": 0.034381,
+          "max_drawdown": -0.055666,
+          "log_excess_income": 0.077388,
+          "trade_record": [],
+          "excess_income": 0.080461,
+          "log_benchmark_profit": 0.033803,
+          "log_algo_profit": 0.111191
+        },
+        "20240416": {
+          "algo_profit": 0.116529,
+          "profit_and_loss": -0.000966,
+          "total_asset_value": 111652.87775,
+          "benchmark_profit": 0.023317,
+          "max_drawdown": -0.056578,
+          "log_excess_income": 0.087175,
+          "trade_record": [],
+          "excess_income": 0.091087,
+          "log_benchmark_profit": 0.02305,
+          "log_algo_profit": 0.110225
+        },
+        "20240417": {
+          "algo_profit": 0.153249,
+          "profit_and_loss": 0.032888,
+          "total_asset_value": 115324.87775,
+          "benchmark_profit": 0.03914,
+          "max_drawdown": -0.025552,
+          "log_excess_income": 0.10419,
+          "trade_record": [],
+          "excess_income": 0.109811,
+          "log_benchmark_profit": 0.038393,
+          "log_algo_profit": 0.142583
+        },
+        "20240418": {
+          "algo_profit": 0.172689,
+          "profit_and_loss": 0.016857,
+          "total_asset_value": 117268.87775,
+          "benchmark_profit": 0.040422,
+          "max_drawdown": -0.009126,
+          "log_excess_income": 0.119673,
+          "trade_record": [],
+          "excess_income": 0.127128,
+          "log_benchmark_profit": 0.039626,
+          "log_algo_profit": 0.159299
+        },
+        "20240419": {
+          "algo_profit": 0.160809,
+          "profit_and_loss": -0.010131,
+          "total_asset_value": 116080.87775,
+          "benchmark_profit": 0.03222,
+          "max_drawdown": -0.019164,
+          "log_excess_income": 0.117405,
+          "trade_record": [],
+          "excess_income": 0.124574,
+          "log_benchmark_profit": 0.031712,
+          "log_algo_profit": 0.149117
+        },
+        "20240422": {
+          "algo_profit": 0.140289,
+          "profit_and_loss": -0.017677,
+          "total_asset_value": 114028.87775,
+          "benchmark_profit": 0.029085,
+          "max_drawdown": -0.036502,
+          "log_excess_income": 0.102611,
+          "trade_record": [],
+          "excess_income": 0.108061,
+          "log_benchmark_profit": 0.02867,
+          "log_algo_profit": 0.131282
+        },
+        "20240423": {
+          "algo_profit": 0.144609,
+          "profit_and_loss": 0.003789,
+          "total_asset_value": 114460.87775,
+          "benchmark_profit": 0.021892,
+          "max_drawdown": -0.032852,
+          "log_excess_income": 0.113407,
+          "trade_record": [],
+          "excess_income": 0.120087,
+          "log_benchmark_profit": 0.021656,
+          "log_algo_profit": 0.135063
+        },
+        "20240424": {
+          "algo_profit": 0.143529,
+          "profit_and_loss": -0.000944,
+          "total_asset_value": 114352.87775,
+          "benchmark_profit": 0.02638,
+          "max_drawdown": -0.033765,
+          "log_excess_income": 0.108081,
+          "trade_record": [],
+          "excess_income": 0.114138,
+          "log_benchmark_profit": 0.026038,
+          "log_algo_profit": 0.134119
+        },
+        "20240425": {
+          "algo_profit": 0.152169,
+          "profit_and_loss": 0.007556,
+          "total_asset_value": 115216.87775,
+          "benchmark_profit": 0.028904,
+          "max_drawdown": -0.026464,
+          "log_excess_income": 0.113152,
+          "trade_record": [],
+          "excess_income": 0.119802,
+          "log_benchmark_profit": 0.028494,
+          "log_algo_profit": 0.141646
+        },
+        "20240426": {
+          "algo_profit": 0.151089,
+          "profit_and_loss": -0.000937,
+          "total_asset_value": 115108.87775,
+          "benchmark_profit": 0.044638,
+          "max_drawdown": -0.027377,
+          "log_excess_income": 0.097038,
+          "trade_record": [],
+          "excess_income": 0.101902,
+          "log_benchmark_profit": 0.043671,
+          "log_algo_profit": 0.140708
+        },
+        "20240429": {
+          "algo_profit": 0.173769,
+          "profit_and_loss": 0.019703,
+          "total_asset_value": 117376.87775,
+          "benchmark_profit": 0.056192,
+          "max_drawdown": -0.008213,
+          "log_excess_income": 0.105549,
+          "trade_record": [],
+          "excess_income": 0.111321,
+          "log_benchmark_profit": 0.05467,
+          "log_algo_profit": 0.16022
+        },
+        "20240430": {
+          "algo_profit": 0.171609,
+          "profit_and_loss": -0.00184,
+          "total_asset_value": 117160.87775,
+          "benchmark_profit": 0.050504,
+          "max_drawdown": -0.010038,
+          "log_excess_income": 0.109108,
+          "trade_record": [],
+          "excess_income": 0.115283,
+          "log_benchmark_profit": 0.04927,
+          "log_algo_profit": 0.158378
+        },
+        "20240506": {
+          "algo_profit": 0.182409,
+          "profit_and_loss": 0.009218,
+          "total_asset_value": 118240.87775,
+          "benchmark_profit": 0.066091,
+          "max_drawdown": -0.000913,
+          "log_excess_income": 0.103555,
+          "trade_record": [],
+          "excess_income": 0.109106,
+          "log_benchmark_profit": 0.063999,
+          "log_algo_profit": 0.167554
+        },
+        "20240507": {
+          "algo_profit": 0.181329,
+          "profit_and_loss": -0.000913,
+          "total_asset_value": 118132.87775,
+          "benchmark_profit": 0.066421,
+          "max_drawdown": -0.001825,
+          "log_excess_income": 0.102332,
+          "trade_record": [],
+          "excess_income": 0.107751,
+          "log_benchmark_profit": 0.064308,
+          "log_algo_profit": 0.16664
+        },
+        "20240508": {
+          "algo_profit": 0.165129,
+          "profit_and_loss": -0.013713,
+          "total_asset_value": 116512.87775,
+          "benchmark_profit": 0.058032,
+          "max_drawdown": -0.015513,
+          "log_excess_income": 0.096421,
+          "trade_record": [],
+          "excess_income": 0.101223,
+          "log_benchmark_profit": 0.05641,
+          "log_algo_profit": 0.152832
+        },
+        "20240509": {
+          "algo_profit": 0.168369,
+          "profit_and_loss": 0.002781,
+          "total_asset_value": 116836.87775,
+          "benchmark_profit": 0.06804,
+          "max_drawdown": -0.012776,
+          "log_excess_income": 0.089784,
+          "trade_record": [],
+          "excess_income": 0.093938,
+          "log_benchmark_profit": 0.065825,
+          "log_algo_profit": 0.155609
+        },
+        "20240510": {
+          "algo_profit": 0.187809,
+          "profit_and_loss": 0.016639,
+          "total_asset_value": 118780.87775,
+          "benchmark_profit": 0.06854,
+          "max_drawdown": 0,
+          "log_excess_income": 0.105817,
+          "trade_record": [],
+          "excess_income": 0.111619,
+          "log_benchmark_profit": 0.066293,
+          "log_algo_profit": 0.17211
+        },
+        "20240513": {
+          "algo_profit": 0.191049,
+          "profit_and_loss": 0.002728,
+          "total_asset_value": 119104.87775,
+          "benchmark_profit": 0.068077,
+          "max_drawdown": 0,
+          "log_excess_income": 0.108974,
+          "trade_record": [],
+          "excess_income": 0.115133,
+          "log_benchmark_profit": 0.06586,
+          "log_algo_profit": 0.174834
+        },
+        "20240514": {
+          "algo_profit": 0.184569,
+          "profit_and_loss": -0.005441,
+          "total_asset_value": 118456.87775,
+          "benchmark_profit": 0.065849,
+          "max_drawdown": -0.005441,
+          "log_excess_income": 0.105607,
+          "trade_record": [],
+          "excess_income": 0.111385,
+          "log_benchmark_profit": 0.063772,
+          "log_algo_profit": 0.169379
+        },
+        "20240515": {
+          "algo_profit": 0.175929,
+          "profit_and_loss": -0.007294,
+          "total_asset_value": 117592.87775,
+          "benchmark_profit": 0.056817,
+          "max_drawdown": -0.012695,
+          "log_excess_income": 0.106797,
+          "trade_record": [],
+          "excess_income": 0.112708,
+          "log_benchmark_profit": 0.055262,
+          "log_algo_profit": 0.162058
+        },
+        "20240516": {
+          "algo_profit": 0.212649,
+          "profit_and_loss": 0.031226,
+          "total_asset_value": 121264.87775,
+          "benchmark_profit": 0.060986,
+          "max_drawdown": 0,
+          "log_excess_income": 0.133608,
+          "trade_record": [],
+          "excess_income": 0.142945,
+          "log_benchmark_profit": 0.059199,
+          "log_algo_profit": 0.192807
+        },
+        "20240517": {
+          "algo_profit": 0.239649,
+          "profit_and_loss": 0.022265,
+          "total_asset_value": 123964.87775,
+          "benchmark_profit": 0.071947,
+          "max_drawdown": 0,
+          "log_excess_income": 0.145351,
+          "trade_record": [],
+          "excess_income": 0.156445,
+          "log_benchmark_profit": 0.069477,
+          "log_algo_profit": 0.214828
+        },
+        "20240520": {
+          "algo_profit": 0.235329,
+          "profit_and_loss": -0.003485,
+          "total_asset_value": 123532.87775,
+          "benchmark_profit": 0.075734,
+          "max_drawdown": -0.003485,
+          "log_excess_income": 0.138334,
+          "trade_record": [],
+          "excess_income": 0.148359,
+          "log_benchmark_profit": 0.073003,
+          "log_algo_profit": 0.211337
+        },
+        "20240521": {
+          "algo_profit": 0.253689,
+          "profit_and_loss": 0.014862,
+          "total_asset_value": 125368.87775,
+          "benchmark_profit": 0.07142,
+          "max_drawdown": 0,
+          "log_excess_income": 0.157105,
+          "trade_record": [],
+          "excess_income": 0.170118,
+          "log_benchmark_profit": 0.068985,
+          "log_algo_profit": 0.22609
+        },
+        "20240522": {
+          "algo_profit": 0.254769,
+          "profit_and_loss": 0.000861,
+          "total_asset_value": 125476.87775,
+          "benchmark_profit": 0.073836,
+          "max_drawdown": 0,
+          "log_excess_income": 0.155714,
+          "trade_record": [],
+          "excess_income": 0.168491,
+          "log_benchmark_profit": 0.071238,
+          "log_algo_profit": 0.226951
+        },
+        "20240523": {
+          "algo_profit": 0.237489,
+          "profit_and_loss": -0.013771,
+          "total_asset_value": 123748.87775,
+          "benchmark_profit": 0.061403,
+          "max_drawdown": -0.013771,
+          "log_excess_income": 0.153492,
+          "trade_record": [],
+          "excess_income": 0.165899,
+          "log_benchmark_profit": 0.059592,
+          "log_algo_profit": 0.213084
+        },
+        "20240524": {
+          "algo_profit": 0.227769,
+          "profit_and_loss": -0.007855,
+          "total_asset_value": 122776.87775,
+          "benchmark_profit": 0.049653,
+          "max_drawdown": -0.021518,
+          "log_excess_income": 0.156739,
+          "trade_record": [],
+          "excess_income": 0.16969,
+          "log_benchmark_profit": 0.04846,
+          "log_algo_profit": 0.205199
+        },
+        "20240527": {
+          "algo_profit": 0.249369,
+          "profit_and_loss": 0.017593,
+          "total_asset_value": 124936.87775,
+          "benchmark_profit": 0.05963,
+          "max_drawdown": -0.004304,
+          "log_excess_income": 0.164718,
+          "trade_record": [],
+          "excess_income": 0.179061,
+          "log_benchmark_profit": 0.05792,
+          "log_algo_profit": 0.222638
+        },
+        "20240528": {
+          "algo_profit": 0.237489,
+          "profit_and_loss": -0.009509,
+          "total_asset_value": 123748.87775,
+          "benchmark_profit": 0.051896,
+          "max_drawdown": -0.013771,
+          "log_excess_income": 0.162489,
+          "trade_record": [],
+          "excess_income": 0.176436,
+          "log_benchmark_profit": 0.050595,
+          "log_algo_profit": 0.213084
+        },
+        "20240529": {
+          "algo_profit": 0.222369,
+          "profit_and_loss": -0.012218,
+          "total_asset_value": 122236.87775,
+          "benchmark_profit": 0.053164,
+          "max_drawdown": -0.025821,
+          "log_excess_income": 0.148991,
+          "trade_record": [],
+          "excess_income": 0.160663,
+          "log_benchmark_profit": 0.051799,
+          "log_algo_profit": 0.200791
+        },
+        "20240530": {
+          "algo_profit": 0.207249,
+          "profit_and_loss": -0.012369,
+          "total_asset_value": 120724.87775,
+          "benchmark_profit": 0.047565,
+          "max_drawdown": -0.037872,
+          "log_excess_income": 0.141875,
+          "trade_record": [],
+          "excess_income": 0.152433,
+          "log_benchmark_profit": 0.046469,
+          "log_algo_profit": 0.188344
+        },
+        "20240531": {
+          "algo_profit": 0.206169,
+          "profit_and_loss": -0.000895,
+          "total_asset_value": 120616.87775,
+          "benchmark_profit": 0.043372,
+          "max_drawdown": -0.038732,
+          "log_excess_income": 0.144991,
+          "trade_record": [],
+          "excess_income": 0.156029,
+          "log_benchmark_profit": 0.042458,
+          "log_algo_profit": 0.187449
+        },
+        "20240603": {
+          "algo_profit": 0.192129,
+          "profit_and_loss": -0.01164,
+          "total_asset_value": 119212.87775,
+          "benchmark_profit": 0.045944,
+          "max_drawdown": -0.049922,
+          "log_excess_income": 0.130821,
+          "trade_record": [],
+          "excess_income": 0.139764,
+          "log_benchmark_profit": 0.04492,
+          "log_algo_profit": 0.175741
+        },
+        "20240604": {
+          "algo_profit": 0.196449,
+          "profit_and_loss": 0.003624,
+          "total_asset_value": 119644.87775,
+          "benchmark_profit": 0.053791,
+          "max_drawdown": -0.046479,
+          "log_excess_income": 0.126964,
+          "trade_record": [],
+          "excess_income": 0.135376,
+          "log_benchmark_profit": 0.052394,
+          "log_algo_profit": 0.179358
+        },
+        "20240605": {
+          "algo_profit": 0.180249,
+          "profit_and_loss": -0.01354,
+          "total_asset_value": 118024.87775,
+          "benchmark_profit": 0.047706,
+          "max_drawdown": -0.059389,
+          "log_excess_income": 0.119122,
+          "trade_record": [],
+          "excess_income": 0.126508,
+          "log_benchmark_profit": 0.046603,
+          "log_algo_profit": 0.165725
+        },
+        "20240606": {
+          "algo_profit": 0.183489,
+          "profit_and_loss": 0.002745,
+          "total_asset_value": 118348.87775,
+          "benchmark_profit": 0.046963,
+          "max_drawdown": -0.056807,
+          "log_excess_income": 0.122573,
+          "trade_record": [],
+          "excess_income": 0.130402,
+          "log_benchmark_profit": 0.045894,
+          "log_algo_profit": 0.168467
+        },
+        "20240607": {
+          "algo_profit": 0.193209,
+          "profit_and_loss": 0.008213,
+          "total_asset_value": 119320.87775,
+          "benchmark_profit": 0.041679,
+          "max_drawdown": -0.049061,
+          "log_excess_income": 0.135813,
+          "trade_record": [],
+          "excess_income": 0.145467,
+          "log_benchmark_profit": 0.040834,
+          "log_algo_profit": 0.176646
+        },
+        "20240611": {
+          "algo_profit": 0.180249,
+          "profit_and_loss": -0.010861,
+          "total_asset_value": 118024.87775,
+          "benchmark_profit": 0.032575,
+          "max_drawdown": -0.059389,
+          "log_excess_income": 0.13367,
+          "trade_record": [],
+          "excess_income": 0.143015,
+          "log_benchmark_profit": 0.032055,
+          "log_algo_profit": 0.165725
+        },
+        "20240612": {
+          "algo_profit": 0.181329,
+          "profit_and_loss": 0.000915,
+          "total_asset_value": 118132.87775,
+          "benchmark_profit": 0.032938,
+          "max_drawdown": -0.058529,
+          "log_excess_income": 0.134233,
+          "trade_record": [],
+          "excess_income": 0.143659,
+          "log_benchmark_profit": 0.032407,
+          "log_algo_profit": 0.16664
+        },
+        "20240613": {
+          "algo_profit": 0.172689,
+          "profit_and_loss": -0.007314,
+          "total_asset_value": 117268.87775,
+          "benchmark_profit": 0.027694,
+          "max_drawdown": -0.065414,
+          "log_excess_income": 0.131982,
+          "trade_record": [],
+          "excess_income": 0.141088,
+          "log_benchmark_profit": 0.027317,
+          "log_algo_profit": 0.159299
+        },
+        "20240614": {
+          "algo_profit": 0.183381,
+          "profit_and_loss": 0.009118,
+          "total_asset_value": 118338.07775,
+          "benchmark_profit": 0.032183,
+          "max_drawdown": -0.056893,
+          "log_excess_income": 0.136699,
+          "trade_record": [],
+          "excess_income": 0.146484,
+          "log_benchmark_profit": 0.031676,
+          "log_algo_profit": 0.168375
+        },
+        "20240617": {
+          "algo_profit": 0.174741,
+          "profit_and_loss": -0.007301,
+          "total_asset_value": 117474.07775,
+          "benchmark_profit": 0.030628,
+          "max_drawdown": -0.063779,
+          "log_excess_income": 0.130879,
+          "trade_record": [],
+          "excess_income": 0.13983,
+          "log_benchmark_profit": 0.030169,
+          "log_algo_profit": 0.161048
+        },
+        "20240618": {
+          "algo_profit": 0.172581,
+          "profit_and_loss": -0.001839,
+          "total_asset_value": 117258.07775,
+          "benchmark_profit": 0.033365,
+          "max_drawdown": -0.065501,
+          "log_excess_income": 0.126386,
+          "trade_record": [],
+          "excess_income": 0.13472,
+          "log_benchmark_profit": 0.032821,
+          "log_algo_profit": 0.159207
+        },
+        "20240619": {
+          "algo_profit": 0.180141,
+          "profit_and_loss": 0.006447,
+          "total_asset_value": 118014.07775,
+          "benchmark_profit": 0.028457,
+          "max_drawdown": -0.059475,
+          "log_excess_income": 0.137574,
+          "trade_record": [],
+          "excess_income": 0.147487,
+          "log_benchmark_profit": 0.02806,
+          "log_algo_profit": 0.165634
+        },
+        "20240620": {
+          "algo_profit": 0.169341,
+          "profit_and_loss": -0.009151,
+          "total_asset_value": 116934.07775,
+          "benchmark_profit": 0.021035,
+          "max_drawdown": -0.068083,
+          "log_excess_income": 0.135624,
+          "trade_record": [],
+          "excess_income": 0.145251,
+          "log_benchmark_profit": 0.020816,
+          "log_algo_profit": 0.15644
+        },
+        "20240621": {
+          "algo_profit": 0.163941,
+          "profit_and_loss": -0.004618,
+          "total_asset_value": 116394.07775,
+          "benchmark_profit": 0.018801,
+          "max_drawdown": -0.072386,
+          "log_excess_income": 0.133185,
+          "trade_record": [],
+          "excess_income": 0.142461,
+          "log_benchmark_profit": 0.018627,
+          "log_algo_profit": 0.151811
+        },
+        "20240624": {
+          "algo_profit": 0.161781,
+          "profit_and_loss": -0.001856,
+          "total_asset_value": 116178.07775,
+          "benchmark_profit": 0.013319,
+          "max_drawdown": -0.074108,
+          "log_excess_income": 0.136723,
+          "trade_record": [],
+          "excess_income": 0.14651,
+          "log_benchmark_profit": 0.013231,
+          "log_algo_profit": 0.149954
+        },
+        "20240625": {
+          "algo_profit": 0.172581,
+          "profit_and_loss": 0.009296,
+          "total_asset_value": 117258.07775,
+          "benchmark_profit": 0.007809,
+          "max_drawdown": -0.065501,
+          "log_excess_income": 0.151429,
+          "trade_record": [],
+          "excess_income": 0.163495,
+          "log_benchmark_profit": 0.007778,
+          "log_algo_profit": 0.159207
+        },
+        "20240626": {
+          "algo_profit": 0.172581,
+          "profit_and_loss": 0,
+          "total_asset_value": 117258.07775,
+          "benchmark_profit": 0.014326,
+          "max_drawdown": -0.065501,
+          "log_excess_income": 0.144983,
+          "trade_record": [],
+          "excess_income": 0.156019,
+          "log_benchmark_profit": 0.014225,
+          "log_algo_profit": 0.159207
+        },
+        "20240627": {
+          "algo_profit": 0.177981,
+          "profit_and_loss": 0.004605,
+          "total_asset_value": 117798.07775,
+          "benchmark_profit": 0.006706,
+          "max_drawdown": -0.061197,
+          "log_excess_income": 0.157119,
+          "trade_record": [],
+          "excess_income": 0.170134,
+          "log_benchmark_profit": 0.006683,
+          "log_algo_profit": 0.163802
+        },
+        "20240628": {
+          "algo_profit": 0.180141,
+          "profit_and_loss": 0.001834,
+          "total_asset_value": 118014.07775,
+          "benchmark_profit": 0.008903,
+          "max_drawdown": -0.059475,
+          "log_excess_income": 0.15677,
+          "trade_record": [],
+          "excess_income": 0.169727,
+          "log_benchmark_profit": 0.008864,
+          "log_algo_profit": 0.165634
+        }
+      }
+    },
+    "is_collection": false
+  },
+  "performance": {
+    "sharpe_ratio": 1.7183,
+    "alpha": 0.4056,
+    "drawdown_more": "20231229",
+    "benchmark_win_rate": 0.4786,
+    "drawdown_most": "20231229",
+    "progress": 1,
+    "trade_winrate": null,
+    "downside_risk": 0.0932,
+    "benchmark_annual_yield": 0.0191,
+    "annual_yield": 0.4246,
+    "win_rate": 0.4615,
+    "max_drawdown": 0.0767,
+    "beta": 0.9324,
+    "tracking_error": 0.1948,
+    "information_ratio": 1.8077,
+    "benchmark_yield": 0.0089,
+    "yield": 0.1801,
+    "sortino": 4.3672,
+    "volatility": 0.2368
+  },
+  "tradeLog": [
+    {
+      "trade_date": "2024-01-04 09:31:00",
+      "asset_code": "000001.SZ",
+      "stock_name": "平安银行",
+      "operation_type": "BUY",
+      "trade_price": 9.19919,
+      "trade_amount": 10800,
+      "trade_value": 99351.252,
+      "commissions": 19.8702504,
+      "pnl": null,
+      "source_algo_name": null,
+      "cost": null,
+      "margin": null
+    }
+  ],
+  "backtestLog": [
+    {
+      "value": "INFO :回测开始运行",
+      "now": "2026-04-03 10:37:35.983273",
+      "type": "INFO",
+      "time": "2026-04-03 10:37:35"
+    },
+    {
+      "value": "回测开始",
+      "now": "2026-04-03 10:37:36.298999",
+      "type": "INFO",
+      "time": "2026-04-03 10:37:36"
+    },
+    {
+      "value": "买入 000001.SZ",
+      "now": "2026-04-03 10:37:36.618258",
+      "type": "INFO",
+      "time": "2024-01-04 09:31:00"
+    },
+    {
+      "value": "000001.SZ 下单股数为0,订单无效.",
+      "now": "2026-04-03 10:37:43.787754",
+      "type": "WARN",
+      "time": "2024-01-05 09:31:00"
+    },
+    {
+      "value": "买入 000001.SZ",
+      "now": "2026-04-03 10:37:43.788042",
+      "type": "INFO",
+      "time": "2024-01-05 09:31:00"
+    },
+    {
+      "value": "000001.SZ 下单股数为0,订单无效.",
+      "now": "2026-04-03 10:37:43.796746",
+      "type": "WARN",
+      "time": "2024-01-08 09:31:00"
+    },
+    {
+      "value": "买入 000001.SZ",
+      "now": "2026-04-03 10:37:43.797086",
+      "type": "INFO",
+      "time": "2024-01-08 09:31:00"
+    },
+    {
+      "value": "000001.SZ 下单股数为0,订单无效.",
+      "now": "2026-04-03 10:37:43.849368",
+      "type": "WARN",
+      "time": "2024-01-17 09:31:00"
+    },
+    {
+      "value": "买入 000001.SZ",
+      "now": "2026-04-03 10:37:43.849878",
+      "type": "INFO",
+      "time": "2024-01-17 09:31:00"
+    },
+    {
+      "value": "000001.SZ 下单股数为0,订单无效.",
+      "now": "2026-04-03 10:37:43.861008",
+      "type": "WARN",
+      "time": "2024-01-18 09:31:00"
+    }
+  ],
+  "dailyGains": [
+    {
+      "position_date": "2024-06-28T15:15:00",
+      "total_asset_value": 118014.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 18014.0777496,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 109620,
+          "pos_create_date": 0,
+          "profit_and_loss": 18014.077749600016,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.15,
+          "cost_price": null,
+          "markup": 0.0019743336623889015,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-27T15:15:00",
+      "total_asset_value": 117798.07774960002,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 17798.077749600026,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 109404.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 17798.07774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.13,
+          "cost_price": null,
+          "markup": 0.004960317460317531,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-26T15:15:00",
+      "total_asset_value": 117258.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 17258.077749599997,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 108864,
+          "pos_create_date": 0,
+          "profit_and_loss": 17258.077749600012,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.08,
+          "cost_price": null,
+          "markup": 0,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-25T15:15:00",
+      "total_asset_value": 117258.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 17258.077749599997,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 108864,
+          "pos_create_date": 0,
+          "profit_and_loss": 17258.077749600012,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.08,
+          "cost_price": null,
+          "markup": 0.010020040080160284,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-24T15:15:00",
+      "total_asset_value": 116178.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 16178.077749600006,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 107784,
+          "pos_create_date": 0,
+          "profit_and_loss": 16178.077749600016,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.98,
+          "cost_price": null,
+          "markup": -0.0019999999999999575,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-21T15:15:00",
+      "total_asset_value": 116394.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 16394.0777496,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 108000,
+          "pos_create_date": 0,
+          "profit_and_loss": 16394.077749600012,
+          "profit_and_loss_rate": 0,
+          "close_price": 10,
+          "cost_price": null,
+          "markup": -0.004975124378109523,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-20T15:15:00",
+      "total_asset_value": 116934.07774960002,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 16934.07774960003,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 108540.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 16934.07774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.05,
+          "cost_price": null,
+          "markup": -0.009852216748768438,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-19T15:15:00",
+      "total_asset_value": 118014.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 18014.0777496,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 109620,
+          "pos_create_date": 0,
+          "profit_and_loss": 18014.077749600016,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.15,
+          "cost_price": null,
+          "markup": 0.006944444444444473,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-18T15:15:00",
+      "total_asset_value": 117258.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 17258.077749599997,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 108864,
+          "pos_create_date": 0,
+          "profit_and_loss": 17258.077749600012,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.08,
+          "cost_price": null,
+          "markup": -0.001980198019801938,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-17T15:15:00",
+      "total_asset_value": 117474.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 17474.077749600016,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 109080,
+          "pos_create_date": 0,
+          "profit_and_loss": 17474.07774960001,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.1,
+          "cost_price": null,
+          "markup": -0.007858546168958749,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-14T15:15:00",
+      "total_asset_value": 118338.07774960001,
+      "ending_cash": 8394.077749600012,
+      "profit_and_loss": 18338.077749600012,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 109944,
+          "pos_create_date": 0,
+          "profit_and_loss": 18338.07774960001,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.18,
+          "cost_price": null,
+          "markup": 0.009820454320007778,
+          "avg_price": 8.482029837999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-13T15:15:00",
+      "total_asset_value": 117268.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 17268.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 116640.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 17268.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.8,
+          "cost_price": null,
+          "markup": -0.007352941176470594,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-12T15:15:00",
+      "total_asset_value": 118132.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18132.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117504.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 18132.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.88,
+          "cost_price": null,
+          "markup": 0.000919963201472085,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-11T15:15:00",
+      "total_asset_value": 118024.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18024.8777496,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117395.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 18024.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.87,
+          "cost_price": null,
+          "markup": -0.010919017288444131,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-07T15:15:00",
+      "total_asset_value": 119320.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 19320.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 118692,
+          "pos_create_date": 0,
+          "profit_and_loss": 19320.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.99,
+          "cost_price": null,
+          "markup": 0.00825688073394494,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-06T15:15:00",
+      "total_asset_value": 118348.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18348.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117720,
+          "pos_create_date": 0,
+          "profit_and_loss": 18348.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.9,
+          "cost_price": null,
+          "markup": 0.002759889604415928,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-05T15:15:00",
+      "total_asset_value": 118024.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18024.8777496,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117395.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 18024.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.87,
+          "cost_price": null,
+          "markup": -0.013611615245009107,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-04T15:15:00",
+      "total_asset_value": 119644.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 19644.877749600022,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 119016,
+          "pos_create_date": 0,
+          "profit_and_loss": 19644.87774960001,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.02,
+          "cost_price": null,
+          "markup": 0.003642987249544549,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-06-03T15:15:00",
+      "total_asset_value": 119212.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 19212.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 118584,
+          "pos_create_date": 0,
+          "profit_and_loss": 19212.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.98,
+          "cost_price": null,
+          "markup": -0.011701170117011613,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-31T15:15:00",
+      "total_asset_value": 120616.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 20616.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 119988,
+          "pos_create_date": 0,
+          "profit_and_loss": 20616.87774960001,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.11,
+          "cost_price": null,
+          "markup": -0.0008992805755395492,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-30T15:15:00",
+      "total_asset_value": 120724.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 20724.87774959999,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 120095.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 20724.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.12,
+          "cost_price": null,
+          "markup": -0.012433392539964526,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-29T15:15:00",
+      "total_asset_value": 122236.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 22236.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 121608,
+          "pos_create_date": 0,
+          "profit_and_loss": 22236.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.26,
+          "cost_price": null,
+          "markup": -0.012280701754386015,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-28T15:15:00",
+      "total_asset_value": 123748.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 23748.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 123120,
+          "pos_create_date": 0,
+          "profit_and_loss": 23748.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.4,
+          "cost_price": null,
+          "markup": -0.009556907037358769,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-27T15:15:00",
+      "total_asset_value": 124936.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 24936.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 124308,
+          "pos_create_date": 0,
+          "profit_and_loss": 24936.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.51,
+          "cost_price": null,
+          "markup": 0.017683465959327963,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-24T15:15:00",
+      "total_asset_value": 122776.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 22776.877749600022,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 122148,
+          "pos_create_date": 0,
+          "profit_and_loss": 22776.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.31,
+          "cost_price": null,
+          "markup": -0.007894736842105251,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-23T15:15:00",
+      "total_asset_value": 123748.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 23748.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 123120,
+          "pos_create_date": 0,
+          "profit_and_loss": 23748.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.4,
+          "cost_price": null,
+          "markup": -0.013840830449827002,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-22T15:15:00",
+      "total_asset_value": 125476.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 25476.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 124848,
+          "pos_create_date": 0,
+          "profit_and_loss": 25476.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.56,
+          "cost_price": null,
+          "markup": 0.0008658008658008473,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-21T15:15:00",
+      "total_asset_value": 125368.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 25368.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 124740.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 25368.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.55,
+          "cost_price": null,
+          "markup": 0.014938488576449905,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-20T15:15:00",
+      "total_asset_value": 123532.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 23532.877749600022,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 122904.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 23532.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.38,
+          "cost_price": null,
+          "markup": -0.003502626970227596,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-17T15:15:00",
+      "total_asset_value": 123964.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 23964.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 123336,
+          "pos_create_date": 0,
+          "profit_and_loss": 23964.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.42,
+          "cost_price": null,
+          "markup": 0.022381378692927483,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-16T15:15:00",
+      "total_asset_value": 121264.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 21264.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 120636,
+          "pos_create_date": 0,
+          "profit_and_loss": 21264.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.17,
+          "cost_price": null,
+          "markup": 0.031394275161588166,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-15T15:15:00",
+      "total_asset_value": 117592.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 17592.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 116964,
+          "pos_create_date": 0,
+          "profit_and_loss": 17592.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.83,
+          "cost_price": null,
+          "markup": -0.007332722273143911,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-14T15:15:00",
+      "total_asset_value": 118456.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18456.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117828,
+          "pos_create_date": 0,
+          "profit_and_loss": 18456.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.91,
+          "cost_price": null,
+          "markup": -0.005469462169553373,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-13T15:15:00",
+      "total_asset_value": 119104.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 19104.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 118476,
+          "pos_create_date": 0,
+          "profit_and_loss": 19104.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.97,
+          "cost_price": null,
+          "markup": 0.0027422303473492813,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-10T15:15:00",
+      "total_asset_value": 118780.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18780.8777496,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 118152,
+          "pos_create_date": 0,
+          "profit_and_loss": 18780.87774960001,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.94,
+          "cost_price": null,
+          "markup": 0.01672862453531596,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-09T15:15:00",
+      "total_asset_value": 116836.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 16836.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 116208,
+          "pos_create_date": 0,
+          "profit_and_loss": 16836.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.76,
+          "cost_price": null,
+          "markup": 0.002795899347623426,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-08T15:15:00",
+      "total_asset_value": 116512.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 16512.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 115884,
+          "pos_create_date": 0,
+          "profit_and_loss": 16512.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.73,
+          "cost_price": null,
+          "markup": -0.013786764705882384,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-07T15:15:00",
+      "total_asset_value": 118132.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18132.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117504.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 18132.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.88,
+          "cost_price": null,
+          "markup": -0.0009182736455463532,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-05-06T15:15:00",
+      "total_asset_value": 118240.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18240.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117612,
+          "pos_create_date": 0,
+          "profit_and_loss": 18240.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.89,
+          "cost_price": null,
+          "markup": 0.00926784059314193,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-30T15:15:00",
+      "total_asset_value": 117160.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 17160.8777496,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 116531.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 17160.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.79,
+          "cost_price": null,
+          "markup": -0.0018501387604071553,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-29T15:15:00",
+      "total_asset_value": 117376.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 17376.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 116748,
+          "pos_create_date": 0,
+          "profit_and_loss": 17376.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.81,
+          "cost_price": null,
+          "markup": 0.019811320754717063,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-26T15:15:00",
+      "total_asset_value": 115108.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 15108.877749600013,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114480,
+          "pos_create_date": 0,
+          "profit_and_loss": 15108.877749600013,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.6,
+          "cost_price": null,
+          "markup": -0.0009425070688029959,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-25T15:15:00",
+      "total_asset_value": 115216.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 15216.877749600011,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114588,
+          "pos_create_date": 0,
+          "profit_and_loss": 15216.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.61,
+          "cost_price": null,
+          "markup": 0.007597340930674271,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-24T15:15:00",
+      "total_asset_value": 114352.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14352.877749600013,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113724,
+          "pos_create_date": 0,
+          "profit_and_loss": 14352.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.53,
+          "cost_price": null,
+          "markup": -0.0009487666034155396,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-23T15:15:00",
+      "total_asset_value": 114460.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14460.877749599988,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113831.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 14460.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.54,
+          "cost_price": null,
+          "markup": 0.0038095238095237284,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-22T15:15:00",
+      "total_asset_value": 114028.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14028.877749600022,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113400,
+          "pos_create_date": 0,
+          "profit_and_loss": 14028.877749600017,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.5,
+          "cost_price": null,
+          "markup": -0.017773620205799767,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-19T15:15:00",
+      "total_asset_value": 116080.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 16080.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 115452,
+          "pos_create_date": 0,
+          "profit_and_loss": 16080.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.69,
+          "cost_price": null,
+          "markup": -0.010185185185185297,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-18T15:15:00",
+      "total_asset_value": 117268.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 17268.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 116640.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 17268.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.8,
+          "cost_price": null,
+          "markup": 0.016949152542373024,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-17T15:15:00",
+      "total_asset_value": 115324.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 15324.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114695.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 15324.87774960001,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.62,
+          "cost_price": null,
+          "markup": 0.03307392996108948,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-16T15:15:00",
+      "total_asset_value": 111652.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 11652.877749600022,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 111024,
+          "pos_create_date": 0,
+          "profit_and_loss": 11652.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.28,
+          "cost_price": null,
+          "markup": -0.0009718172983478899,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-15T15:15:00",
+      "total_asset_value": 111760.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 11760.877749599997,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 111131.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 11760.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.29,
+          "cost_price": null,
+          "markup": 0.022862823061630084,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-12T15:15:00",
+      "total_asset_value": 109276.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 9276.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 108648,
+          "pos_create_date": 0,
+          "profit_and_loss": 9276.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.06,
+          "cost_price": null,
+          "markup": -0.01853658536585361,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-11T15:15:00",
+      "total_asset_value": 111328.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 11328.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 110700,
+          "pos_create_date": 0,
+          "profit_and_loss": 11328.877749600017,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.25,
+          "cost_price": null,
+          "markup": -0.0029182879377431287,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-10T15:15:00",
+      "total_asset_value": 111652.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 11652.877749600022,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 111024,
+          "pos_create_date": 0,
+          "profit_and_loss": 11652.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.28,
+          "cost_price": null,
+          "markup": -0.011538461538461635,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-09T15:15:00",
+      "total_asset_value": 112948.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12948.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112320,
+          "pos_create_date": 0,
+          "profit_and_loss": 12948.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.4,
+          "cost_price": null,
+          "markup": -0.002876318312559862,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-08T15:15:00",
+      "total_asset_value": 113272.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13272.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112644,
+          "pos_create_date": 0,
+          "profit_and_loss": 13272.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.43,
+          "cost_price": null,
+          "markup": -0.002868068833652116,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-03T15:15:00",
+      "total_asset_value": 113596.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13596.877749600033,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112968.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 13596.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.46,
+          "cost_price": null,
+          "markup": -0.008530805687203777,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-02T15:15:00",
+      "total_asset_value": 114568.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14568.87774960003,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113940.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 14568.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.55,
+          "cost_price": null,
+          "markup": -0.008458646616541339,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-04-01T15:15:00",
+      "total_asset_value": 115540.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 15540.877749600002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114912,
+          "pos_create_date": 0,
+          "profit_and_loss": 15540.877749600024,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.64,
+          "cost_price": null,
+          "markup": 0.011406844106463974,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-29T15:15:00",
+      "total_asset_value": 114244.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14244.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113616,
+          "pos_create_date": 0,
+          "profit_and_loss": 14244.877749600013,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.52,
+          "cost_price": null,
+          "markup": 0.0028598665395614263,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-28T15:15:00",
+      "total_asset_value": 113920.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13920.877749600002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113292,
+          "pos_create_date": 0,
+          "profit_and_loss": 13920.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.49,
+          "cost_price": null,
+          "markup": -0.003798670465337051,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-27T15:15:00",
+      "total_asset_value": 114352.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14352.877749600013,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113724,
+          "pos_create_date": 0,
+          "profit_and_loss": 14352.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.53,
+          "cost_price": null,
+          "markup": -0.0066037735849056875,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-26T15:15:00",
+      "total_asset_value": 115108.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 15108.877749600013,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114480,
+          "pos_create_date": 0,
+          "profit_and_loss": 15108.877749600013,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.6,
+          "cost_price": null,
+          "markup": 0.019230769230769162,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-25T15:15:00",
+      "total_asset_value": 112948.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12948.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112320,
+          "pos_create_date": 0,
+          "profit_and_loss": 12948.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.4,
+          "cost_price": null,
+          "markup": 0.0038610038610039504,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-22T15:15:00",
+      "total_asset_value": 112516.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12516.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 111888,
+          "pos_create_date": 0,
+          "profit_and_loss": 12516.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.36,
+          "cost_price": null,
+          "markup": -0.010506208213944719,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-21T15:15:00",
+      "total_asset_value": 113704.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13704.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113076,
+          "pos_create_date": 0,
+          "profit_and_loss": 13704.877749600024,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.47,
+          "cost_price": null,
+          "markup": 0.0019138755980862537,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-20T15:15:00",
+      "total_asset_value": 113488.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13488.877749599993,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112859.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 13488.87774960001,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.45,
+          "cost_price": null,
+          "markup": 0.004807692307692205,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-19T15:15:00",
+      "total_asset_value": 112948.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12948.877749600008,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112320,
+          "pos_create_date": 0,
+          "profit_and_loss": 12948.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.4,
+          "cost_price": null,
+          "markup": -0.013282732447817724,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-18T15:15:00",
+      "total_asset_value": 114460.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14460.877749599988,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113831.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 14460.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.54,
+          "cost_price": null,
+          "markup": -0.005660377358490613,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-15T15:15:00",
+      "total_asset_value": 115108.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 15108.877749600013,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114480,
+          "pos_create_date": 0,
+          "profit_and_loss": 15108.877749600013,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.6,
+          "cost_price": null,
+          "markup": 0.03616813294232641,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-14T15:15:00",
+      "total_asset_value": 111112.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 11112.877749600015,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 110484,
+          "pos_create_date": 0,
+          "profit_and_loss": 11112.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.23,
+          "cost_price": null,
+          "markup": -0.009680542110358145,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-13T15:15:00",
+      "total_asset_value": 112192.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12192.877749600006,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 111564,
+          "pos_create_date": 0,
+          "profit_and_loss": 12192.877749600018,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.33,
+          "cost_price": null,
+          "markup": -0.02178030303030307,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-12T15:15:00",
+      "total_asset_value": 114676.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14676.877749600004,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114048,
+          "pos_create_date": 0,
+          "profit_and_loss": 14676.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.56,
+          "cost_price": null,
+          "markup": 0.008595988538681935,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-11T15:15:00",
+      "total_asset_value": 113704.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13704.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113076,
+          "pos_create_date": 0,
+          "profit_and_loss": 13704.877749600024,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.47,
+          "cost_price": null,
+          "markup": 0.008670520231213858,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-08T15:15:00",
+      "total_asset_value": 112732.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12732.877749600035,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112104.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 12732.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.38,
+          "cost_price": null,
+          "markup": 0,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-07T15:15:00",
+      "total_asset_value": 112732.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12732.877749600035,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112104.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 12732.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.38,
+          "cost_price": null,
+          "markup": 0.004840271055179159,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-06T15:15:00",
+      "total_asset_value": 112192.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12192.877749600006,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 111564,
+          "pos_create_date": 0,
+          "profit_and_loss": 12192.877749600018,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.33,
+          "cost_price": null,
+          "markup": -0.009587727708533044,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-05T15:15:00",
+      "total_asset_value": 113272.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13272.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 112644,
+          "pos_create_date": 0,
+          "profit_and_loss": 13272.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.43,
+          "cost_price": null,
+          "markup": 0.009680542110358145,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-04T15:15:00",
+      "total_asset_value": 112192.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 12192.877749600006,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 111564,
+          "pos_create_date": 0,
+          "profit_and_loss": 12192.877749600018,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.33,
+          "cost_price": null,
+          "markup": -0.015252621544327945,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-03-01T15:15:00",
+      "total_asset_value": 113920.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13920.877749600002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113292,
+          "pos_create_date": 0,
+          "profit_and_loss": 13920.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.49,
+          "cost_price": null,
+          "markup": -0.009442870632672299,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-29T15:15:00",
+      "total_asset_value": 115000.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 15000.877749600017,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 114372,
+          "pos_create_date": 0,
+          "profit_and_loss": 15000.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.59,
+          "cost_price": null,
+          "markup": 0.009532888465204923,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-28T15:15:00",
+      "total_asset_value": 113920.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 13920.877749600002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113292,
+          "pos_create_date": 0,
+          "profit_and_loss": 13920.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.49,
+          "cost_price": null,
+          "markup": -0.0009523809523809321,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-27T15:15:00",
+      "total_asset_value": 114028.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14028.877749600022,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113400,
+          "pos_create_date": 0,
+          "profit_and_loss": 14028.877749600017,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.5,
+          "cost_price": null,
+          "markup": -0.0028490028490027884,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-26T15:15:00",
+      "total_asset_value": 114352.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 14352.877749600013,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 113724,
+          "pos_create_date": 0,
+          "profit_and_loss": 14352.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.53,
+          "cost_price": null,
+          "markup": -0.029493087557603714,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-23T15:15:00",
+      "total_asset_value": 117808.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 17808.877749600004,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117180,
+          "pos_create_date": 0,
+          "profit_and_loss": 17808.877749600015,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.85,
+          "cost_price": null,
+          "markup": -0.004587155963302818,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-22T15:15:00",
+      "total_asset_value": 118348.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 18348.87774960001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 117720,
+          "pos_create_date": 0,
+          "profit_and_loss": 18348.877749600022,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.9,
+          "cost_price": null,
+          "markup": 0.009259259259259226,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-21T15:15:00",
+      "total_asset_value": 117268.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 17268.87774960002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 116640.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 17268.877749600026,
+          "profit_and_loss_rate": 0,
+          "close_price": 10.8,
+          "cost_price": null,
+          "markup": 0.09979633401222,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-20T15:15:00",
+      "total_asset_value": 106684.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 6684.877749600005,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 106056,
+          "pos_create_date": 0,
+          "profit_and_loss": 6684.87774960002,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.82,
+          "cost_price": null,
+          "markup": 0.0010193679918450342,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-19T15:15:00",
+      "total_asset_value": 106576.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 6576.8777496000075,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 105948,
+          "pos_create_date": 0,
+          "profit_and_loss": 6576.877749600023,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.81,
+          "cost_price": null,
+          "markup": 0.014477766287487133,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-08T15:15:00",
+      "total_asset_value": 105064.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 5064.877749600006,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 104436,
+          "pos_create_date": 0,
+          "profit_and_loss": 5064.877749600017,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.67,
+          "cost_price": null,
+          "markup": 0.00624349635796051,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-07T15:15:00",
+      "total_asset_value": 104416.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 4416.877749600001,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 103788,
+          "pos_create_date": 0,
+          "profit_and_loss": 4416.877749600011,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.61,
+          "cost_price": null,
+          "markup": -0.007231404958677716,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-06T15:15:00",
+      "total_asset_value": 105172.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 5172.877749600002,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 104544,
+          "pos_create_date": 0,
+          "profit_and_loss": 5172.877749600014,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.68,
+          "cost_price": null,
+          "markup": 0.03198294243070351,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-05T15:15:00",
+      "total_asset_value": 101932.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 1932.877749600026,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 101304.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 1932.8777496000257,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.38,
+          "cost_price": null,
+          "markup": 0.011866235167206172,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-02T15:15:00",
+      "total_asset_value": 100744.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 744.8777496000148,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 100116,
+          "pos_create_date": 0,
+          "profit_and_loss": 744.8777496000126,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.27,
+          "cost_price": null,
+          "markup": -0.01487778958554735,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-02-01T15:15:00",
+      "total_asset_value": 102256.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 2256.877749600017,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 101628,
+          "pos_create_date": 0,
+          "profit_and_loss": 2256.877749600019,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.41,
+          "cost_price": null,
+          "markup": -0.005285412262156523,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-31T15:15:00",
+      "total_asset_value": 102796.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 2796.877749600024,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 102168.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 2796.8777496000266,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.46,
+          "cost_price": null,
+          "markup": -0.004210526315789384,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-30T15:15:00",
+      "total_asset_value": 103228.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 3228.877749600012,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 102600,
+          "pos_create_date": 0,
+          "profit_and_loss": 3228.877749600017,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.5,
+          "cost_price": null,
+          "markup": -0.020618556701030855,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-29T15:15:00",
+      "total_asset_value": 105388.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 5388.877749599997,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 104759.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 5388.877749600009,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.7,
+          "cost_price": null,
+          "markup": 0.008316008316008323,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-26T15:15:00",
+      "total_asset_value": 104524.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 4524.877749599998,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 103895.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": 4524.877749600008,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.62,
+          "cost_price": null,
+          "markup": 0.01263157894736834,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-25T15:15:00",
+      "total_asset_value": 103228.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 3228.877749600012,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 102600,
+          "pos_create_date": 0,
+          "profit_and_loss": 3228.877749600017,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.5,
+          "cost_price": null,
+          "markup": 0.018220793140407282,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-24T15:15:00",
+      "total_asset_value": 101392.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 1392.877749600019,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 100764,
+          "pos_create_date": 0,
+          "profit_and_loss": 1392.877749600018,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.33,
+          "cost_price": null,
+          "markup": 0.018558951965065493,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-23T15:15:00",
+      "total_asset_value": 99556.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -443.12225039998543,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 98928,
+          "pos_create_date": 0,
+          "profit_and_loss": -443.1222503999812,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.16,
+          "cost_price": null,
+          "markup": 0.006593406593406648,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-22T15:15:00",
+      "total_asset_value": 98908.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -1091.1222503999895,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 98280,
+          "pos_create_date": 0,
+          "profit_and_loss": -1091.1222503999866,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.1,
+          "cost_price": null,
+          "markup": -0.007633587786259573,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-19T15:15:00",
+      "total_asset_value": 99664.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -335.12225039998845,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 99036,
+          "pos_create_date": 0,
+          "profit_and_loss": -335.12225039998356,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.17,
+          "cost_price": null,
+          "markup": -0.003260869565217322,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-18T15:15:00",
+      "total_asset_value": 99988.8777496,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -11.122250400008582,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 99359.99999999999,
+          "pos_create_date": 0,
+          "profit_and_loss": -11.122250399990463,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.2,
+          "cost_price": null,
+          "markup": -0.003250270855904782,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-17T15:15:00",
+      "total_asset_value": 100312.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 312.87774960000456,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 99684,
+          "pos_create_date": 0,
+          "profit_and_loss": 312.87774960002184,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.23,
+          "cost_price": null,
+          "markup": -0.0117773019271948,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-16T15:15:00",
+      "total_asset_value": 101500.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 1500.877749600016,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 100872,
+          "pos_create_date": 0,
+          "profit_and_loss": 1500.8777496000157,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.34,
+          "cost_price": null,
+          "markup": 0.014115092290987947,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-15T15:15:00",
+      "total_asset_value": 100096.87774960003,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 96.87774960003281,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 99468.00000000001,
+          "pos_create_date": 0,
+          "profit_and_loss": 96.87774960002642,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.21,
+          "cost_price": null,
+          "markup": 0.002176278563656295,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-12T15:15:00",
+      "total_asset_value": 99880.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -119.12225039998336,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 99252,
+          "pos_create_date": 0,
+          "profit_and_loss": -119.12225039998816,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.19,
+          "cost_price": null,
+          "markup": 0.0021810250817883943,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-11T15:15:00",
+      "total_asset_value": 99664.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -335.12225039998845,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 99036,
+          "pos_create_date": 0,
+          "profit_and_loss": -335.12225039998356,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.17,
+          "cost_price": null,
+          "markup": 0.008800880088008809,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-10T15:15:00",
+      "total_asset_value": 98800.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -1199.1222503999866,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 98172,
+          "pos_create_date": 0,
+          "profit_and_loss": -1199.1222503999843,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.09,
+          "cost_price": null,
+          "markup": -0.009803921568627435,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-09T15:15:00",
+      "total_asset_value": 99772.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -227.12225039999146,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 99144,
+          "pos_create_date": 0,
+          "profit_and_loss": -227.12225039998586,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.18,
+          "cost_price": null,
+          "markup": 0.003278688524590094,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-08T15:15:00",
+      "total_asset_value": 99448.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -551.1222503999935,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 98820,
+          "pos_create_date": 0,
+          "profit_and_loss": -551.122250399979,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.15,
+          "cost_price": null,
+          "markup": -0.012944983818770142,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-05T15:15:00",
+      "total_asset_value": 100744.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": 744.8777496000148,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 100116,
+          "pos_create_date": 0,
+          "profit_and_loss": 744.8777496000126,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.27,
+          "cost_price": null,
+          "markup": 0.017563117453347987,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-04T15:15:00",
+      "total_asset_value": 99016.87774960001,
+      "ending_cash": 628.8777496000112,
+      "profit_and_loss": -983.1222503999926,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 10800,
+          "pos_value": 98388,
+          "pos_create_date": 0,
+          "profit_and_loss": -983.122250399989,
+          "profit_and_loss_rate": 0,
+          "close_price": 9.11,
+          "cost_price": null,
+          "markup": -0.009782608695652159,
+          "avg_price": 9.201029837999998,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2024-01-03T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2024-01-02T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-12-29T15:30:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    }
+  ],
+  "specificInfo": null
+}

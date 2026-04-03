@@ -1,28 +1,24 @@
-# 简单策略测试示例
-# 同花顺量化平台策略模板
+# 简单双均线策略 - THSQuant SuperMind 格式
+# 适用于同花顺量化平台回测
+from mindgo_api import *
 
+def init(context):
+    context.stock = '000001.SZ'  # 平安银行
+    set_benchmark('000300.SH')
+    set_commission(PerShare(type='stock', cost=0.0002, min_trade_cost=0.0))
+    set_slippage(PriceSlippage(0.002))
 
-def initialize(context):
-    """初始化函数"""
-    g.stock = "000001.XSHE"  # 平安银行
-    g.buy_price = 0
-    g.sell_price = 0
-
-
-def handle_data(context, data):
-    """每日运行函数"""
-    stock = g.stock
-
-    # 获取当前价格
-    current_price = data[stock].close
-
-    # 简单的买入卖出逻辑
-    if context.portfolio.positions.get(stock, 0) == 0:
-        # 没有持仓，买入
+def handle_bar(context, bar_dict):
+    stock = context.stock
+    prices = history(stock, ['close'], 20, '1d', False, 'pre')
+    if prices.empty or len(prices) < 20:
+        return
+    ma5 = prices['close'].iloc[-5:].mean()
+    ma20 = prices['close'].mean()
+    pos = context.portfolio.positions.get(stock)
+    if ma5 > ma20 and not pos:
         order_target_percent(stock, 1.0)
-        log.info(f"买入 {stock}, 价格: {current_price}")
-    else:
-        # 有持仓，检查是否需要卖出
-        if current_price > context.portfolio.starting_cash * 1.1:
-            order_target_percent(stock, 0)
-            log.info(f"卖出 {stock}, 价格: {current_price}")
+        log.info('买入 ' + stock)
+    elif ma5 < ma20 and pos:
+        order_target_percent(stock, 0)
+        log.info('卖出 ' + stock)

@@ -1,0 +1,51 @@
+{
+  "capturedAt": "2026-04-03T01:56:27.161Z",
+  "taskId": "659e2dfe-d284-408a-b0b4-6953f3711f8b",
+  "runId": "d205c95c-12e0-4772-a97f-6184fec74063",
+  "taskName": "probe_dai_tables",
+  "startDate": "2023-01-01",
+  "endDate": "2023-12-31",
+  "capital": 100000,
+  "success": true,
+  "state": "completed",
+  "executions": [
+    {
+      "taskId": "659e2dfe-d284-408a-b0b4-6953f3711f8b",
+      "runId": "d205c95c-12e0-4772-a97f-6184fec74063",
+      "source": "\"\"\"\n探测 BigQuant DAI 数据库的所有可用表\n\"\"\"\nimport dai\n\nprint(\"=== DAI 可用数据表 ===\\n\")\n\n# 列出所有表\ntry:\n    tables = dai.query(\"SHOW TABLES\").df()\n    print(f\"总表数: {len(tables)}\")\n    for _, row in tables.iterrows()",
+      "status": "ok",
+      "textOutput": "=== DAI 可用数据表 ===\n\n总表数: 0\n\n=== 测试常见表 ===\n✓ cn_stock_bar1d: 3 rows, cols=['date', 'instrument', 'open', 'high', 'low', 'close', 'volume', 'amount']\n✗ cn_stock_bar1m: 没有访问<a href='https://bigquant.com/data/datasources/cn_stock_bar1m' target=\"\n✗ cn_index_bar1d: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que\n✗ index_bar1d: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que\n✓ cn_stock_valuation: 3 rows, cols=['date', 'instrument', 'pe_ttm', 'pb']\n✗ cn_stock_valuation_factor: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que\n✗ cn_stock_financial_indicator: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que\n✓ cn_stock_balance_sheet: 0 rows, cols=['date', 'instrument', 'fs_quarter_index', 'report_date', 'change_type', 'currency_fund', 'settle_reserves', 'lending_fund']\n✗ cn_stock_prefactored_bar1d: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que\n✗ cn_stock_limit: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que\n✓ cn_stock_industry: 3 rows, cols=['industry', 'industry_level1_name', 'industry_level1_code', 'industry_level2_name', 'industry_level2_code', 'industry_level3_name', 'industry_level3_code', 'industry_level4_code']\n✗ cn_stock_instruments: Permission Error: 请在查询表 cn_stock_instruments 时使用 filters 参数指定分区范围（一般为 date 或 ins\n✗ instruments: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que\n\n=== 完成 ===",
+      "outputs": [],
+      "logs": [
+        "2026-04-03 09:56:17 任务运行开始调度 state=trigger event= 659e2dfe-d284-408a-b0b4-6953f3711f8b ..",
+        "2026-04-03 09:56:19 任务运行状态更新 state=scheduled event=20260402 659e2dfe-d284-408a-b0b4-6953f3711f8b",
+        "2026-04-03 09:56:22 任务运行状态更新 state=running event=20260402 659e2dfe-d284-408a-b0b4-6953f3711f8b",
+        "2026-04-03 09:56:22 [info     ] run task_id='659e2dfe-d284-408a-b0b4-6953f3711f8b' ..",
+        "2026-04-03 09:56:22 [info     ] fetch task 659e2dfe-d284-408a-b0b4-6953f3711f8b ..",
+        "2026-04-03 09:56:22 [info     ] start 659e2dfe-d284-408a-b0b4-6953f3711f8b ..",
+        "=== DAI 可用数据表 ===",
+        "",
+        "总表数: 0",
+        "",
+        "=== 测试常见表 ===",
+        "✓ cn_stock_bar1d: 3 rows, cols=['date', 'instrument', 'open', 'high', 'low', 'close', 'volume', 'amount']",
+        "✗ cn_stock_bar1m: 没有访问<a href='https://bigquant.com/data/datasources/cn_stock_bar1m' target=\"",
+        "✗ cn_index_bar1d: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que",
+        "✗ index_bar1d: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que",
+        "✓ cn_stock_valuation: 3 rows, cols=['date', 'instrument', 'pe_ttm', 'pb']",
+        "✗ cn_stock_valuation_factor: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que",
+        "✗ cn_stock_financial_indicator: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que",
+        "✓ cn_stock_balance_sheet: 0 rows, cols=['date', 'instrument', 'fs_quarter_index', 'report_date', 'change_type', 'currency_fund', 'settle_reserves', 'lending_fund']",
+        "✗ cn_stock_prefactored_bar1d: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que",
+        "✗ cn_stock_limit: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que",
+        "✓ cn_stock_industry: 3 rows, cols=['industry', 'industry_level1_name', 'industry_level1_code', 'industry_level2_name', 'industry_level2_code', 'industry_level3_name', 'industry_level3_code', 'industry_level4_code']",
+        "✗ cn_stock_instruments: Permission Error: 请在查询表 cn_stock_instruments 时使用 filters 参数指定分区范围（一般为 date 或 ins",
+        "✗ instruments: Invalid Input Error: Attempting to execute an unsuccessful or closed pending que",
+        "",
+        "=== 完成 ===",
+        "2026-04-03 09:56:25 [info     ] done.",
+        "2026-04-03 09:56:25 任务运行状态更新 state=completed event=20260402 659e2dfe-d284-408a-b0b4-6953f3711f8b"
+      ]
+    }
+  ]
+}

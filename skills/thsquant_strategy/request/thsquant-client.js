@@ -81,8 +81,12 @@ export class THSQuantClient {
 
     // 解析 JSONP 或 JSON
     try {
-      const m = text.match(/\((\{.+\})\)/s);
-      return m ? JSON.parse(m[1]) : JSON.parse(text);
+      const trimmed = text.trim();
+      if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+        const m = trimmed.match(/\(\{.+\}\)/s);
+        if (m) return JSON.parse(m[1]);
+      }
+      return JSON.parse(trimmed);
     } catch (e) {
       return { raw: text.slice(0, 500), parseError: e.message };
     }
@@ -161,7 +165,7 @@ export class THSQuantClient {
     const data = await this.request('/platform/algorithms/add/', body);
     return {
       success: data.errorcode === 0,
-      algoId: data.result?.algo_id,
+      algoId: data.result?._id || data.result?.algo_id,
       message: data.errormsg,
       data
     };
@@ -193,9 +197,15 @@ export class THSQuantClient {
     const data = await this.request('/platform/backtest/run/', body);
     if (data.errorcode !== 0) throw new Error(data.errormsg || '启动回测失败');
 
+    // result 可能是 {backtest_id, progress} 或 {type:"ERROR", value:"..."}
+    const result = data.result || {};
+    if (result.type === 'ERROR') {
+      throw new Error(`回测启动失败: ${result.value || '策略代码错误'}`);
+    }
+
     return {
-      backtestId: data.result?.backtest_id,
-      progress: data.result?.progress || 0,
+      backtestId: result.backtest_id,
+      progress: result.progress || 0,
       data
     };
   }

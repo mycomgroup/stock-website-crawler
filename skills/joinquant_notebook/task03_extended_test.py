@@ -1,0 +1,162 @@
+#!/usr/bin/env python3
+"""
+任务03：扩展测试 - 2021-2024年完整验证
+重点验证：止损规则和熔断规则
+"""
+
+print("=" * 70)
+print("任务03：扩展测试（2021-2024年）")
+print("=" * 70)
+
+try:
+    import numpy as np
+    from jqdata import *
+
+    # 扩展测试期间
+    test_dates = get_trade_days("2021-01-01", "2024-12-31")
+    print(f"测试期间: 2021-2024年, 共{len(test_dates)}个交易日")
+
+    def get_zt_stocks(date_str):
+        """获取涨停股票"""
+        all_stocks = get_all_securities("stock", date_str).index.tolist()
+        all_stocks = [
+            s
+            for s in all_stocks
+            if not (s.startswith("68") or s.startswith("4") or s.startswith("8"))
+        ][:500]
+        zt_stocks = []
+        for stock in all_stocks[:200]:
+            try:
+                df = get_price(
+                    stock, end_date=date_str, count=1, fields=["close", "high_limit"]
+                )
+                if (
+                    len(df) > 0
+                    and df["close"].iloc[0] >= df["high_limit"].iloc[0] * 0.99
+                ):
+                    zt_stocks.append(stock)
+            except:
+                pass
+        return zt_stocks
+
+    def filter_yzb(stock_list, date_str):
+        """过滤一字板"""
+        result = []
+        for s in stock_list[:50]:
+            try:
+                df = get_price(s, end_date=date_str, count=1, fields=["low", "high"])
+                if len(df) > 0 and df["low"].iloc[0] != df["high"].iloc[0]:
+                    result.append(s)
+            except:
+                pass
+        return result
+
+    def get_market_cap(stocks, date_str):
+        """获取市值"""
+        result = []
+        for s in stocks[:30]:
+            try:
+                q = query(valuation.circulating_market_cap).filter(valuation.code == s)
+                df = get_fundamentals(q, date=date_str)
+                if len(df) > 0:
+                    cap = df["circulating_market_cap"].iloc[0]
+                    if 5 <= cap <= 15:
+                        result.append(s)
+            except:
+                pass
+        return result
+
+    print("\n=== 测试1：止损规则对比（2021-2024年）===")
+
+    results_stop = {
+        "无止损": {"trades": 0, "wins": 0, "profits": []},
+        "-5%止损": {"trades": 0, "wins": 0, "profits": []},
+    }
+
+    for i in range(2, min(len(test_dates) - 1, 300)):
+        if i % 50 == 0:
+            print(f"进度: {i}/{min(len(test_dates), 300)}")
+
+        try:
+            curr_date = test_dates[i]
+            prev_date = test_dates[i - 1]
+
+            zt_prev = get_zt_stocks(prev_date.strftime("%Y-%m-%d"))
+            zt_prev2 = get_zt_stocks(test_dates[i - 2].strftime("%Y-%m-%d"))
+
+            two_board = list(set(zt_prev) & set(zt_prev2))
+            non_yzb = filter_yzb(two_board, prev_date.strftime("%Y-%m-%d"))
+            cap_filtered = get_market_cap(non_yzb, prev_date.strftime("%Y-%m-%d"))
+
+            if len(cap_filtered) == 0:
+                continue
+
+            test_stock = cap_filtered[0]
+
+            buy_df = get_price(
+                test_stock,
+                end_date=curr_date.strftime("%Y-%m-%d"),
+                count=1,
+                fields=["open", "high_limit"],
+            )
+            if (
+                len(buy_df) == 0
+                or buy_df["open"].iloc[0] >= buy_df["high_limit"].iloc[0] * 0.99
+            ):
+                continue
+
+            buy_price = buy_df["open"].iloc[0]
+
+            next_date = test_dates[i + 1]
+            sell_df = get_price(
+                test_stock,
+                end_date=next_date.strftime("%Y-%m-%d"),
+                count=1,
+                fields=["close", "low"],
+            )
+            if len(sell_df) == 0:
+                continue
+
+            close_price = sell_df["close"].iloc[0]
+            low_price = sell_df["low"].iloc[0]
+
+            for rule in ["无止损", "-5%止损"]:
+                sell_price = close_price
+                profit_pct = (sell_price - buy_price) / buy_price * 100
+
+                if rule == "-5%止损" and low_price <= buy_price * 0.95:
+                    sell_price = buy_price * 0.95
+                    profit_pct = -5.0
+
+                results_stop[rule]["trades"] += 1
+                results_stop[rule]["profits"].append(profit_pct)
+                if profit_pct > 0:
+                    results_stop[rule]["wins"] += 1
+
+        except:
+            continue
+
+    print("\n止损规则结果（2021-2024年）:")
+    print("| 规则 | 交易数 | 胜率 | 平均收益 | 最大亏损 |")
+    print("|------|--------|------|---------|---------|")
+
+    for rule, data in results_stop.items():
+        if data["trades"] > 0:
+            win_rate = data["wins"] / data["trades"] * 100
+            avg_profit = np.mean(data["profits"])
+            max_loss = min(data["profits"])
+
+            print(
+                f"| {rule} | {data['trades']} | {win_rate:.1f}% | "
+                f"{avg_profit:.2f}% | {max_loss:.2f}% |"
+            )
+
+    print("\n=== 测试完成 ===")
+
+except Exception as e:
+    print(f"错误: {e}")
+    import traceback
+
+    traceback.print_exc()
+
+print("\n扩展测试完成")

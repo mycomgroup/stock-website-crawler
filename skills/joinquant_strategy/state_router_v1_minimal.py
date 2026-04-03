@@ -9,6 +9,7 @@ def initialize(context):
 
     g.target_position = 70
     set_benchmark("000300.XSHG")
+    g.stock = "510300.XSHG"
 
 
 def before_trading_start(context):
@@ -57,10 +58,10 @@ def before_trading_start(context):
 def handle_data(context, data):
     target_value = context.portfolio.total_value * g.target_position / 100
 
-    if "000300.XSHG" in context.portfolio.positions:
-        current_value = context.portfolio.positions["000300.XSHG"].value
+    if g.stock in context.portfolio.positions:
+        current_value = context.portfolio.positions[g.stock].value
     else:
         current_value = 0
 
     if abs(target_value - current_value) > context.portfolio.total_value * 0.05:
-        order_value("000300.XSHG", target_value)
+        order_value(g.stock, target_value)

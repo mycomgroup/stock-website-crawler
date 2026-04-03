@@ -1,0 +1,55 @@
+{
+  "capturedAt": "2026-04-03T03:41:32.082Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260403_114128.ipynb",
+  "notebookPath": "策略测试_20260403_114128.ipynb",
+  "kernelId": "10262614-d793-487f-b2b9-6bdebd817d47",
+  "sessionId": "111e8c33-b89a-4665-a4db-b1cbb66560eb",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260403_114128.ipynb",
+    "path": "策略测试_20260403_114128.ipynb",
+    "last_modified": "2026-04-03T03:41:31.523331Z",
+    "created": "2026-04-03T03:41:31.524331Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 8065,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\n任务02优化：情绪开关双阈值版本 V2\n RiceQuant 策略编辑器格式\n 测试期间：2024-01-01 至 2025-03-28\n \"\"\"\n \n def init(context):\n     \"\"\"初始化\"\"\"\n     # 策略参数\n     context.low_threshold = 50    # 低阈值：过滤弱市\n     context.high_threshold = 150  # 高阈值：过滤过热\n     context.max_positions = 5     # 最大持仓\n     context.position_size = 0.2   # 单票仓位\n     \n     # 每月第一个交易日调仓\n     scheduler.run_monthly(rebalance, monthday=1)\n     \n     print(f\"策略初始化完成\")\n     print(f\"双阈值：{context.low_threshold} - {context.high_threshold}\")\n \n def rebalance(context, bar_dict):\n     \"\"\"月度调仓\"\"\"\n     current_date = context.now.strftime('%Y-%m-%d')\n     \n     # 获取情绪指标（涨停家数）\n     zt_count = get_zt_count(context)\n     \n     print(f\"\\n{'='*60}\")\n     print(f\"日期：{current_date}\")\n     print(f\"涨停家数：{zt_count}\")\n     \n     # 情绪开关判断\n     if zt_count < context.low_threshold:\n         print(f\"情绪过低（{zt_count} < {context.low_threshold}），清仓观望\")\n         clear_positions(context)\n         return\n     elif zt_count > context.high_threshold:\n         print(f\"情绪过热（{zt_count} > {context.high_threshold}），清仓观望\")\n         clear_positions(context)\n         return\n     else:\n         print(f\"情绪正常（{context.low_threshold} <= {zt_count} <= {context.high_threshold}），正常开仓\")\n     \n     # 选股\n     selected = select_stocks(context, bar_dict)\n     \n     if len(selected) == 0:\n         print(\"无选中股票\")\n         return\n     \n     # 调仓\n     adjust_positions(context, selected)\n \n def get_zt_count(context):\n     \"\"\"获取涨停家数\"\"\"\n     try:\n         all_stocks = all_instruments('CS')\n         # 过滤科创板、北交所\n         stocks = [s for s in all_stocks if not (s.startswith('68') or s.startswith('4') or s.startswith('8'))]\n         \n         zt_count = 0\n         # 采样前500只加速计算\n         for stock in stocks[:500]:\n             try:\n                 bars = history_bars(stock, 1, '1d', ['close', 'limit_up'])\n                 if bars is not None and len(bars) > 0:\n                     if bars[0]['close'] >= bars[0]['limit_up'] * 0.99:\n                         zt_count += 1\n             except:\n                 continue\n         \n         # 估算全市场涨停数\n         estimated_zt = int(zt_count * (len(stocks) / 500))\n         return estimated_zt\n     except Exception as e:\n         print(f\"获取涨停数错误：{e}\")\n         return 100  # 默认返回中等情绪\n \n def select_stocks(context, bar_dict):\n     \"\"\"首板低开选股\"\"\"\n     try:\n         all_stocks = all_instruments('CS')\n         stocks = [s for s in all_stocks if not (s.startswith('68') or s.startswith('4') or s.startswith('8'))]\n         \n         # 获取昨日涨停股票\n         prev_zt = []\n         for stock in stocks[:300]:\n             try:\n                 bars = history_bars(stock, 1, '1d', ['close', 'limit_up'])\n                 if bars and len(bars) > 0:\n                     if bars[0]['close'] >= bars[0]['limit_up'] * 0.99:\n                         prev_zt.append(stock)\n             except:\n                 continue\n         \n         if len(prev_zt) == 0:\n             return []\n         \n         # 筛选假弱高开\n         selected = []\n         for stock in prev_zt[:20]:\n             try:\n                 # 获取昨日收盘价和今日开盘价\n                 prev_close = history_bars(stock, 2, '1d', 'close')\n                 curr_open = history_bars(stock, 1, '1d', 'open')\n                 curr_limit = history_bars(stock, 1, '1d', 'limit_up')\n                 \n                 if prev_close is None or curr_open is None or len(prev_close) < 2:\n                     continue\n                 \n                 prev_c = prev_close[-2]  # 昨日收盘\n                 curr_o = curr_open[-1]   # 今日开盘\n                 limit_u = curr_limit[-1] if curr_limit is not None else curr_o * 1.1\n                 \n                 # 假弱高开：开盘涨幅0.5%-1.5%，且未涨停\n                 open_pct = (curr_o / prev_c - 1) * 100\n                 if 0.5 <= open_pct <= 1.5 and curr_o < limit_u * 0.99:\n                     selected.append(stock)\n             except:\n                 continue\n         \n         return selected[:context.max_positions]\n     except Exception as e:\n         print(f\"选股错误：{e}\")\n         return []\n \n def adjust_positions(context, selected):\n     \"\"\"调整仓位\"\"\"\n     # 清仓不在选中列表的股票\n     for stock in list(context.portfolio.positions.keys()):\n         if stock not in selected:\n             order_target(stock, 0)\n             print(f\"卖出：{stock}\")\n     \n     # 买入选中的股票\n     for stock in selected:\n         if stock not in context.portfolio.positions:\n             order_target_percent(stock, context.position_size)\n             print(f\"买入：{stock}，仓位{context.position_size*100:.0f}%\")\n \n def clear_positions(context):\n     \"\"\"清仓\"\"\"\n     for stock in list(context.portfolio.positions.keys()):\n         order_target(stock, 0)\n         print(f\"清仓：{stock}\")\n \n # 策略配置\n __config__ = {\n     \"base\": {\n         \"start_date\": \"2024-01-01\",\n         \"end_date\": \"2025-03-28\",\n         \"benchmark\": \"000300.XSHG\",\n         \"accounts\": {\n             \"stock\": 1000000\n         }\n     },\n     \"extra\": {\n         \"log_level\": \"verbose\"\n     }\n }",
+      "msgId": "61570d0416bd423d9d57e6f4e55adfad",
+      "websocketSessionId": "440e0eeb3c204d959fc206d66846d2a8",
+      "executionCount": 1,
+      "status": "error",
+      "textOutput": "IndentationError: unexpected indent (<ipython-input-1-f43413947038>, line 7)",
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "IndentationError",
+          "evalue": "unexpected indent (<ipython-input-1-f43413947038>, line 7)",
+          "traceback": [
+            "\u001b[0;36m  File \u001b[0;32m\"<ipython-input-1-f43413947038>\"\u001b[0;36m, line \u001b[0;32m7\u001b[0m\n\u001b[0;31m    def init(context):\u001b[0m\n\u001b[0m    ^\u001b[0m\n\u001b[0;31mIndentationError\u001b[0m\u001b[0;31m:\u001b[0m unexpected indent\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "111e8c33-b89a-4665-a4db-b1cbb66560eb",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/111e8c33-b89a-4665-a4db-b1cbb66560eb: "
+  },
+  "autoShutdown": true
+}

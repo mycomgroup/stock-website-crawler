@@ -34,8 +34,9 @@ export async function runStrategyWorkflow(options = {}) {
 
   // 生成带业务含义的策略名
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const ts = Date.now().toString().slice(-4); // 4位时间戳后缀避免重名
   const baseName = strategyName || path.basename(codeFilePath, path.extname(codeFilePath));
-  const fullName = `${baseName}_${today}_${beginDate.replace(/-/g, '')}~${endDate.replace(/-/g, '')}`;
+  const fullName = `${baseName}_${today}_${beginDate.replace(/-/g, '')}~${endDate.replace(/-/g, '')}_${ts}`;
 
   // 1. 确保 session 有效
   console.log('1. Ensuring session...');

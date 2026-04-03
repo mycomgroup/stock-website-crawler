@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-/**
- * 收集RFScore策略回测结果
- */
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const fs = require('fs');
-const path = require('path');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 回测ID映射
 const backtestIds = {
@@ -35,7 +35,6 @@ async function collectResults() {
     const backtestId = backtestIds[strategy.id];
     console.log(`检查策略: ${strategy.name} (ID: ${backtestId})`);
     
-    // 尝试从JoinQuant API获取结果
     try {
       const result = await fetchBacktestResult(backtestId);
       if (result) {
@@ -98,9 +97,36 @@ async function collectResults() {
 }
 
 async function fetchBacktestResult(backtestId) {
-  // 这里应该调用JoinQuant API获取回测结果
-  // 由于回测可能仍在运行，我们暂时返回空
-  return null;
+  try {
+    const outputDir = '/Users/fengzhi/Downloads/git/testlixingren/output';
+    const files = fs.readdirSync(outputDir)
+      .filter(f => f.includes(backtestId) && f.endsWith('.json'))
+      .map(f => ({
+        path: path.join(outputDir, f),
+        mtime: fs.statSync(path.join(outputDir, f)).mtime
+      }))
+      .sort((a, b) => b.mtime - a.mtime);
+    
+    if (files.length > 0) {
+      const data = JSON.parse(fs.readFileSync(files[0].path, 'utf8'));
+      const summary = data.summary || {};
+      
+      return {
+        status: 'completed',
+        annualized_return: summary.annual_algo_return ? (summary.annual_algo_return * 100).toFixed(2) : 'N/A',
+        total_return: summary.algorithm_return ? (summary.algorithm_return * 100).toFixed(2) : 'N/A',
+        max_drawdown: summary.max_drawdown ? (summary.max_drawdown * 100).toFixed(2) : 'N/A',
+        sharpe_ratio: summary.sharpe ? summary.sharpe.toFixed(2) : 'N/A',
+        win_rate: summary.win_ratio ? (summary.win_ratio * 100).toFixed(2) : 'N/A',
+        benchmark_return: summary.benchmark_return ? (summary.benchmark_return * 100).toFixed(2) : 'N/A',
+        beta: summary.beta ? summary.beta.toFixed(2) : 'N/A',
+        alpha: summary.alpha ? (summary.alpha * 100).toFixed(2) : 'N/A'
+      };
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
 }
 
 collectResults().catch(console.error);

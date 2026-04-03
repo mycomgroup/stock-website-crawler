@@ -197,6 +197,7 @@
 docs/backtest_guide/
 ├── README.md                                    # Notebook 回测指南（必读）
 ├── STRATEGY_EDITOR_GUIDE.md                     # 策略编辑器回测指南（必读）⭐
+├── bigquant_migration_guide.md                  # BigQuant 迁移指南 ⭐ NEW
 ├── joinquant_to_ricequant_migration_guide.md    # 完整迁移指南（重要）
 ├── ricequant_factor_list.md                     # 因子列表速查（重要）
 ├── ricequant_factors_guide.md                   # 平台因子使用指南 ⭐ NEW
@@ -252,6 +253,12 @@ docs/backtest_guide/
 
 ## 文档更新
 
+- 2026-04-03：
+  - 新增 `bigquant_api_reference.md` - BigQuant DAI 完整 API 参考（实测所有数据表）
+  - 新增 `bigquant_migration_guide.md` - BigQuant 平台迁移指南
+  - 新增 `bigquant_tasks.md` - BigQuant 迁移任务提示词（3个任务）
+  - 更新 `skills/bigquant_strategy/run-skill.js` — 加 `--name` 参数，支持业务名称
+  - 更新 `skills/bigquant_strategy/request/strategy-runner.js` — 结果数据结构化，自动解析指标
 - 2026-03-31：
   - 创建整合文档
   - 新增 `ricequant_factors_guide.md` - 平台因子使用指南

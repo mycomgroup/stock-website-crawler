@@ -1,0 +1,57 @@
+{
+  "capturedAt": "2026-04-03T03:35:54.660Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AE%80%E5%8D%95%E6%B5%8B%E8%AF%95RiceQuan_20260403_113546.ipynb",
+  "notebookPath": "简单测试RiceQuan_20260403_113546.ipynb",
+  "kernelId": "5b973019-40a4-43fa-95ee-e3aac307f146",
+  "sessionId": "07e763cd-3539-4d4f-bcc9-f22ef8dfba10",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "简单测试RiceQuan_20260403_113546.ipynb",
+    "path": "简单测试RiceQuan_20260403_113546.ipynb",
+    "last_modified": "2026-04-03T03:35:52.900381Z",
+    "created": "2026-04-03T03:35:52.900381Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 4334,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 简单测试 - RiceQuant API 验证\n\nprint(\"=== RiceQuant API 数据测试 ===\")\nprint(\"\")\n\n# 测试 1: 获取交易日历\nprint(\"1. 测试交易日历\")\ntry:\n    dates = get_trading_dates(\"2024-01-01\", \"2024-01-31\")\n    print(f\"   2024年1月交易日: {len(dates)} 天\")\n    print(f\"   前5个交易日: {dates[:5]}\")\nexcept Exception as e:\n    print(f\"   错误: {e}\")\n\nprint(\"\")\n\n# 测试 2: 获取指数成分股\nprint(\"2. 测试指数成分股\")\ntry:\n    hs300 = index_components(\"000300.XSHG\")\n    print(f\"   沪深300成分股: {len(hs300)} 只\")\n    print(f\"   前5只: {hs300[:5]}\")\nexcept Exception as e:\n    print(f\"   错误: {e}\")\n\nprint(\"\")\n\n# 测试 3: 获取历史数据\nprint(\"3. 测试历史数据\")\ntest_stocks = [\"000001.XSHE\", \"600000.XSHG\"]\nfor stock in test_stocks:\n    try:\n        bars = history_bars(stock, 10, \"1d\", [\"open\", \"high\", \"low\", \"close\", \"volume\"])\n        if bars is not None and len(bars) > 0:\n            print(f\"   {stock}:\")\n            print(f\"     获取到 {len(bars)} 天数据\")\n            print(f\"     最新收盘价: {bars['close'][-1]:.2f}\")\n            print(f\"     成交量: {bars['volume'][-1]:.0f}\")\n        else:\n            print(f\"   {stock}: 无数据\")\n    except Exception as e:\n        print(f\"   {stock}: 错误 - {e}\")\n\nprint(\"\")\n\n# 测试 4: 获取财务数据\nprint(\"4. 测试财务数据\")\ntry:\n    from rqalpha.apis import query, fundamentals\n\n    q = query(\n        fundamentals.eod_derivative_indicator.market_cap,\n        fundamentals.eod_derivative_indicator.pe_ratio,\n    ).filter(\n        fundamentals.eod_derivative_indicator.order_book_id.in_(\n            [\"000001.XSHE\", \"600000.XSHG\"]\n        )\n    )\n\n    df = get_fundamentals(q, entry_date=\"2024-01-01\")\n\n    if df is not None and not df.empty:\n        print(f\"   获取到 {len(df)} 条财务数据\")\n        print(f\"   数据列: {df.columns.tolist()}\")\n        print(df)\n    else:\n        print(\"   无财务数据\")\nexcept Exception as e:\n    print(f\"   错误: {e}\")\n\nprint(\"\")\nprint(\"=== 测试完成 ===\")\n",
+      "msgId": "a8e557b24f0e4946b93b44f8ab4c1922",
+      "websocketSessionId": "f4db0c132dcc46f28bff5cdce78658e4",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== RiceQuant API 数据测试 ===\n\n1. 测试交易日历\n   2024年1月交易日: 22 天\n   前5个交易日: [datetime.date(2024, 1, 2), datetime.date(2024, 1, 3), datetime.date(2024, 1, 4), datetime.date(2024, 1, 5), datetime.date(2024, 1, 8)]\n\n2. 测试指数成分股\n   沪深300成分股: 300 只\n   前5只: ['002001.XSHE', '601058.XSHG', '688472.XSHG', '600584.XSHG', '600845.XSHG']\n\n3. 测试历史数据\n   000001.XSHE: 错误 - name 'history_bars' is not defined\n   600000.XSHG: 错误 - name 'history_bars' is not defined\n\n4. 测试财务数据\n   错误: cannot import name 'fundamentals'\n\n=== 测试完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== RiceQuant API 数据测试 ===\n\n1. 测试交易日历\n   2024年1月交易日: 22 天\n   前5个交易日: [datetime.date(2024, 1, 2), datetime.date(2024, 1, 3), datetime.date(2024, 1, 4), datetime.date(2024, 1, 5), datetime.date(2024, 1, 8)]\n\n2. 测试指数成分股\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "   沪深300成分股: 300 只\n   前5只: ['002001.XSHE', '601058.XSHG', '688472.XSHG', '600584.XSHG', '600845.XSHG']\n\n3. 测试历史数据\n   000001.XSHE: 错误 - name 'history_bars' is not defined\n   600000.XSHG: 错误 - name 'history_bars' is not defined\n\n4. 测试财务数据\n   错误: cannot import name 'fundamentals'\n\n=== 测试完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "简单测试RiceQuan",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "07e763cd-3539-4d4f-bcc9-f22ef8dfba10",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/07e763cd-3539-4d4f-bcc9-f22ef8dfba10: "
+  },
+  "autoShutdown": true
+}

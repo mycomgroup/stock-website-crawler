@@ -1,0 +1,31 @@
+{
+  "capturedAt": "2026-04-03T01:57:48.759Z",
+  "taskId": "a769071b-72fe-4fe8-9687-ca63bb727a78",
+  "runId": "89f50a3a-ae1f-4fff-9b57-7238581487f7",
+  "taskName": "probe_dai_more",
+  "startDate": "2023-01-01",
+  "endDate": "2023-12-31",
+  "capital": 100000,
+  "success": false,
+  "state": "failed",
+  "executions": [
+    {
+      "taskId": "a769071b-72fe-4fe8-9687-ca63bb727a78",
+      "runId": "89f50a3a-ae1f-4fff-9b57-7238581487f7",
+      "source": "\"\"\"探测更多 DAI 表\"\"\"\nimport dai\n\ndef q(sql):\n    try:\n        df = dai.query(sql).df()\n        return f\"✓ {len(df)}行 cols={list(df.columns)[:6]}\"\n    except Exception as e:\n        return f\"✗ {str(e).spli",
+      "status": "error",
+      "textOutput": "",
+      "outputs": [],
+      "logs": [
+        "2026-04-03 09:57:36 任务运行开始调度 state=trigger event= a769071b-72fe-4fe8-9687-ca63bb727a78 ..",
+        "2026-04-03 09:57:39 任务运行状态更新 state=scheduled event=20260402 a769071b-72fe-4fe8-9687-ca63bb727a78",
+        "2026-04-03 09:57:42 [error    ] httpx_request error taskruns 401",
+        "2026-04-03 09:57:45 任务运行状态更新 state=running event=20260402 a769071b-72fe-4fe8-9687-ca63bb727a78",
+        "2026-04-03 09:57:45 [info     ] run task_id='a769071b-72fe-4fe8-9687-ca63bb727a78' ..",
+        "2026-04-03 09:57:45 [info     ] fetch task a769071b-72fe-4fe8-9687-ca63bb727a78 ..",
+        "2026-04-03 09:57:45 [info     ] start a769071b-72fe-4fe8-9687-ca63bb727a78 ..",
+        "2026-04-03 09:57:46 任务运行状态更新 state=failed event=20260402 a769071b-72fe-4fe8-9687-ca63bb727a78\nSyntaxError: f-string expression part cannot include a backslash (3725188568.py, line 14)"
+      ]
+    }
+  ]
+}

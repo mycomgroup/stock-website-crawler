@@ -1,0 +1,52 @@
+{
+  "capturedAt": "2026-04-03T02:55:36.481Z",
+  "platform": "bigquant",
+  "taskId": "2357bfbf-94ce-4d5f-bba3-438b9314ec06",
+  "runId": "2556eb71-72d7-492b-bf37-1f0dfb4d9cb1",
+  "taskName": "first_board_bq_20260403_0255",
+  "config": {
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "capital": 100000,
+    "benchmark": "000300.XSHG",
+    "frequency": "day"
+  },
+  "success": true,
+  "state": "completed",
+  "metrics": {},
+  "executions": [
+    {
+      "taskId": "2357bfbf-94ce-4d5f-bba3-438b9314ec06",
+      "runId": "2556eb71-72d7-492b-bf37-1f0dfb4d9cb1",
+      "strategyFile": "examples/first_board_bq.py",
+      "source": "\"\"\"\n首板低开选股 - BigQuant 版本\n对应 JoinQuant: simple_first_board.py\n数据来源：cn_stock_bar1d（含 upper_limit、lower_limit）\n\"\"\"\n\nimport dai\nimport pandas as pd\n\nPREV_DATE = \"2023-07-31\"  # 前一天（涨停日）\nTODAY = \"2023-08-01\"  # 今天（开盘观察日）\nCAP_MIN = 50e8  # 50亿（元）\nCAP_MAX = 150e8  # 150亿（元）\n\nprint(\"=== 首板低开选股 ===\")\nprint(\"涨停日:\", PREV_DATE, \"  观察日:\", TODAY)\n\n# 1. 找前一天涨停的股票\nprev_df = dai.query(\n    \"\"\"\n    SELECT instrument, close, upper_limit, lower_limit\n    FROM cn_stock_bar1d\n    WHERE date = '{date}'\n      AND close",
+      "status": "ok",
+      "textOutput": "=== 首板低开选股 ===\n涨停日: 2023-07-31   观察日: 2023-08-01\n前一天涨停股票数: 56\n符合条件股票数: 0\n当日无符合条件股票（正常，需要找有涨停的日期）\n\n前一天涨停股票样本（前5只）:\n  instrument       close  upper_limit  lower_limit\n0  000005.SZ   12.789292    12.789292    11.491828\n1  000010.SZ   33.939828    33.939828    27.690590\n2  000046.SZ   48.288055    48.288055    43.527261\n3  000416.SZ   22.893017    22.893017    20.740682\n4  000419.SZ  101.195165   101.195165    82.908750",
+      "metrics": {},
+      "outputs": [],
+      "logs": [
+        "2026-04-03 10:55:24 任务运行开始调度 state=trigger event= 2357bfbf-94ce-4d5f-bba3-438b9314ec06 ..",
+        "2026-04-03 10:55:29 任务运行状态更新 state=scheduled event=20260402 2357bfbf-94ce-4d5f-bba3-438b9314ec06",
+        "2026-04-03 10:55:32 任务运行状态更新 state=running event=20260402 2357bfbf-94ce-4d5f-bba3-438b9314ec06",
+        "2026-04-03 10:55:32 [info     ] run task_id='2357bfbf-94ce-4d5f-bba3-438b9314ec06' ..",
+        "2026-04-03 10:55:32 [info     ] fetch task 2357bfbf-94ce-4d5f-bba3-438b9314ec06 ..",
+        "2026-04-03 10:55:32 [info     ] start 2357bfbf-94ce-4d5f-bba3-438b9314ec06 ..",
+        "=== 首板低开选股 ===",
+        "涨停日: 2023-07-31   观察日: 2023-08-01",
+        "前一天涨停股票数: 56",
+        "符合条件股票数: 0",
+        "当日无符合条件股票（正常，需要找有涨停的日期）",
+        "",
+        "前一天涨停股票样本（前5只）:",
+        "  instrument       close  upper_limit  lower_limit",
+        "0  000005.SZ   12.789292    12.789292    11.491828",
+        "1  000010.SZ   33.939828    33.939828    27.690590",
+        "2  000046.SZ   48.288055    48.288055    43.527261",
+        "3  000416.SZ   22.893017    22.893017    20.740682",
+        "4  000419.SZ  101.195165   101.195165    82.908750",
+        "2026-04-03 10:55:34 [info     ] done.",
+        "2026-04-03 10:55:34 任务运行状态更新 state=completed event=20260402 2357bfbf-94ce-4d5f-bba3-438b9314ec06"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "capturedAt": "2026-04-03T02:44:14.276Z",
+  "platform": "bigquant",
+  "taskId": "94e7490d-77d2-491d-ae84-2aeda8352f5f",
+  "runId": "38ae452d-8263-4278-b627-a3b7aabd9ac5",
+  "taskName": "smallcap_select_bq_20260403_0244",
+  "config": {
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "capital": 100000,
+    "benchmark": "000300.XSHG",
+    "frequency": "day"
+  },
+  "success": true,
+  "state": "completed",
+  "metrics": {},
+  "executions": [
+    {
+      "taskId": "94e7490d-77d2-491d-ae84-2aeda8352f5f",
+      "runId": "38ae452d-8263-4278-b627-a3b7aabd9ac5",
+      "strategyFile": "examples/smallcap_select_bq.py",
+      "source": "\"\"\"\n小市值选股 - BigQuant 版本\n对应 JoinQuant: smallcap_state_baseline.py 的 select_and_buy 逻辑\n验证 cn_stock_valuation 数据可用性\n\"\"\"\n\nimport dai\nimport pandas as pd\n\nDATE = \"2024-01-02\"\nCAP_MIN = 5e8  # 5亿（注意：BigQuant 单位是元，JoinQuant 是亿元）\nCAP_MAX = 30e8  # 30亿\nTOP_N = 10\n\nprint(\"=== 小市值选股验证 ===\")\nprint(\"日期:\", DATE)\n\n# 获取估值数据\nval_df = dai.query(\n    \"\"\"\n    SELECT instrument, float_market_cap, total_market_cap, pe_ttm, pb\n    FROM cn_stock_valuation\n    WHERE date = '{date}'\n      AND float_market_cap >= {cap_min",
+      "status": "ok",
+      "textOutput": "=== 小市值选股验证 ===\n日期: 2024-01-02\n选出股票数: 10\n  instrument  float_market_cap  total_market_cap     pe_ttm        pb\n0  920475.BJ      5.011862e+08      1.133590e+09  22.924820  3.133309\n1  920639.BJ      5.157202e+08      1.177344e+09  22.142767  1.404765\n2  920478.BJ      5.159905e+08      1.078229e+09  20.645401  2.340688\n3  920779.BJ      5.222887e+08      2.087228e+09  21.505665  4.279881\n4  920014.BJ      5.244139e+08      1.528576e+09  25.444832  1.982768\n5  920694.BJ      5.248642e+08      2.137005e+09  17.950775  3.013586\n6  920866.BJ      5.316038e+08      1.470480e+09  30.473718  1.861668\n7  688638.SH      5.370205e+08      2.400800e+09  30.658768  2.181498\n8  920751.BJ      5.373186e+08      1.050038e+09  33.357281  2.939638\n9  688450.SH      5.417909e+08      2.416920e+09  43.113895  2.273846",
+      "metrics": {},
+      "outputs": [],
+      "logs": [
+        "2026-04-03 10:44:04 任务运行开始调度 state=trigger event= 94e7490d-77d2-491d-ae84-2aeda8352f5f ..",
+        "2026-04-03 10:44:09 任务运行状态更新 state=scheduled event=20260402 94e7490d-77d2-491d-ae84-2aeda8352f5f",
+        "2026-04-03 10:44:11 任务运行状态更新 state=running event=20260402 94e7490d-77d2-491d-ae84-2aeda8352f5f",
+        "2026-04-03 10:44:11 [info     ] run task_id='94e7490d-77d2-491d-ae84-2aeda8352f5f' ..",
+        "2026-04-03 10:44:11 [info     ] fetch task 94e7490d-77d2-491d-ae84-2aeda8352f5f ..",
+        "2026-04-03 10:44:11 [info     ] start 94e7490d-77d2-491d-ae84-2aeda8352f5f ..",
+        "=== 小市值选股验证 ===",
+        "日期: 2024-01-02",
+        "选出股票数: 10",
+        "  instrument  float_market_cap  total_market_cap     pe_ttm        pb",
+        "0  920475.BJ      5.011862e+08      1.133590e+09  22.924820  3.133309",
+        "1  920639.BJ      5.157202e+08      1.177344e+09  22.142767  1.404765",
+        "2  920478.BJ      5.159905e+08      1.078229e+09  20.645401  2.340688",
+        "3  920779.BJ      5.222887e+08      2.087228e+09  21.505665  4.279881",
+        "4  920014.BJ      5.244139e+08      1.528576e+09  25.444832  1.982768",
+        "5  920694.BJ      5.248642e+08      2.137005e+09  17.950775  3.013586",
+        "6  920866.BJ      5.316038e+08      1.470480e+09  30.473718  1.861668",
+        "7  688638.SH      5.370205e+08      2.400800e+09  30.658768  2.181498",
+        "8  920751.BJ      5.373186e+08      1.050038e+09  33.357281  2.939638",
+        "9  688450.SH      5.417909e+08      2.416920e+09  43.113895  2.273846",
+        "2026-04-03 10:44:13 任务运行状态更新 state=completed event=20260402 94e7490d-77d2-491d-ae84-2aeda8352f5f"
+      ]
+    }
+  ]
+}

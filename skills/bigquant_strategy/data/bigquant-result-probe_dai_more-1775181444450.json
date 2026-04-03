@@ -1,0 +1,30 @@
+{
+  "capturedAt": "2026-04-03T01:57:24.450Z",
+  "taskId": "57877f63-61fc-4db5-8820-03da473a4264",
+  "runId": "83af9685-e822-4e94-a3ed-b6d21fb815af",
+  "taskName": "probe_dai_more",
+  "startDate": "2023-01-01",
+  "endDate": "2023-12-31",
+  "capital": 100000,
+  "success": false,
+  "state": "failed",
+  "executions": [
+    {
+      "taskId": "57877f63-61fc-4db5-8820-03da473a4264",
+      "runId": "83af9685-e822-4e94-a3ed-b6d21fb815af",
+      "source": "\"\"\"探测更多 DAI 表\"\"\"\nimport dai\n\ndef q(sql):\n    try:\n        df = dai.query(sql).df()\n        return f\"✓ {len(df)}行 cols={list(df.columns)[:6]}\"\n    except Exception as e:\n        return f\"✗ {str(e).spli",
+      "status": "error",
+      "textOutput": "",
+      "outputs": [],
+      "logs": [
+        "2026-04-03 09:57:15 任务运行开始调度 state=trigger event= 57877f63-61fc-4db5-8820-03da473a4264 ..",
+        "2026-04-03 09:57:18 任务运行状态更新 state=scheduled event=20260402 57877f63-61fc-4db5-8820-03da473a4264",
+        "2026-04-03 09:57:20 任务运行状态更新 state=running event=20260402 57877f63-61fc-4db5-8820-03da473a4264",
+        "2026-04-03 09:57:20 [info     ] run task_id='57877f63-61fc-4db5-8820-03da473a4264' ..",
+        "2026-04-03 09:57:20 [info     ] fetch task 57877f63-61fc-4db5-8820-03da473a4264 ..",
+        "2026-04-03 09:57:20 [info     ] start 57877f63-61fc-4db5-8820-03da473a4264 ..",
+        "2026-04-03 09:57:21 任务运行状态更新 state=failed event=20260402 57877f63-61fc-4db5-8820-03da473a4264\nSyntaxError: f-string expression part cannot include a backslash (3725188568.py, line 14)"
+      ]
+    }
+  ]
+}
