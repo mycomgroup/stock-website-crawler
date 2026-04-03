@@ -243,19 +243,32 @@
 
 ### 6.3 实际回测状态
 
-**当前问题**：JoinQuant回测服务响应超时（5分钟超时）
+**当前问题**：JoinQuant Strategy API回测服务响应超时
 
 **已尝试方案**：
 1. ✅ 创建策略代码
 2. ✅ 创建测试脚本
-3. ⏳ 运行batch_smallcap_defense.js（超时失败）
-4. ⏳ 运行batch_defense_offense_combo.js（待执行）
+3. ❌ 运行batch_smallcap_defense.js（超时失败）
+4. ❌ 运行batch_defense_offense_simplified.js（缩短周期后仍超时）
 
-**建议解决方案**：
+**替代方案 - JoinQuant Notebook**（推荐）：
+- 📘 **文件**：`09_notebook_guide.md`
+- ✅ **状态**：已创建简化版Notebook代码
+- ⏱️ **运行时间**：约5-10分钟
+- 📊 **测试范围**：纯防守线 vs 静态组合（60/40）
+- 🎯 **优势**：直接在JoinQuant平台内运行，无需API调用
+
+**使用步骤**：
+1. 登录 [JoinQuant](https://www.joinquant.com/)
+2. 进入"我的策略" → "Notebook"
+3. 创建新Notebook
+4. 复制 `09_notebook_guide.md` 中的代码
+5. 点击"运行全部"
+
+**其他建议**：
 1. 检查JoinQuant服务状态和session有效性
-2. 尝试缩短回测区间（如仅测试2024-01-01至2025-03-30）
-3. 分批执行测试（先执行静态组合，后执行动态路由）
-4. 使用其他回测平台（如RiceQuant）
+2. 使用其他回测平台（如RiceQuant）
+3. 手动在JoinQuant回测界面创建策略并运行
 
 ---
 

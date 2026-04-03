@@ -197,12 +197,14 @@
 docs/backtest_guide/
 ├── README.md                                    # Notebook 回测指南（必读）
 ├── STRATEGY_EDITOR_GUIDE.md                     # 策略编辑器回测指南（必读）⭐
-├── bigquant_migration_guide.md                  # BigQuant 迁移指南 ⭐ NEW
+├── platform_data_coverage.md                    # 各平台数据覆盖对比 ⭐ NEW（数据维度核心文档）
+├── bigquant_api_reference.md                    # BigQuant DAI 数据表完整参考
+├── bigquant_migration_guide.md                  # BigQuant 迁移指南
 ├── joinquant_to_ricequant_migration_guide.md    # 完整迁移指南（重要）
 ├── ricequant_factor_list.md                     # 因子列表速查（重要）
-├── ricequant_factors_guide.md                   # 平台因子使用指南 ⭐ NEW
-├── ricequant_notebooks_list.md                  # Notebook 列表汇总 ⭐ NEW
-├── UPDATE_LOG.md                                # 文档更新日志 ⭐ NEW
+├── ricequant_factors_guide.md                   # 平台因子使用指南
+├── ricequant_notebooks_list.md                  # Notebook 列表汇总
+├── UPDATE_LOG.md                                # 文档更新日志
 ├── QUICK_START.md                               # 快速入门（常用）
 ├── API_DIFF.md                                  # API 差异（迁移参考）
 ├── MIGRATION.md                                 # Notebook 迁移指南
@@ -244,8 +246,11 @@ docs/backtest_guide/
 | 超时怎么办？ | README.md（常见问题） |
 | 无输出怎么办？ | README.md（常见问题） |
 | 策略没有交易？ | STRATEGY_EDITOR_GUIDE.md（常见问题 Q2） |
-| **哪些因子平台提供？** | **ricequant_factors_guide.md** ⭐ NEW |
-| **因子要不要自己算？** | **ricequant_factors_guide.md** ⭐ NEW |
+| **各平台提供哪些数据？** | **platform_data_coverage.md** ⭐ NEW |
+| **某类数据哪个平台有？** | **platform_data_coverage.md** ⭐ NEW |
+| **数据单位/格式差异？** | **platform_data_coverage.md** ⭐ NEW |
+| **哪些因子平台提供？** | **ricequant_factors_guide.md** |
+| **因子要不要自己算？** | **ricequant_factors_guide.md** |
 | 如何获取因子？ | ricequant_factor_list.md 或 STRATEGY_EDITOR_GUIDE.md（常见问题 Q3） |
 | **查看运行结果？** | **ricequant_notebooks_list.md** ⭐ NEW |
 | **访问在线 Notebook？** | **ricequant_notebooks_list.md** ⭐ NEW |
@@ -253,6 +258,8 @@ docs/backtest_guide/
 
 ## 文档更新
 
+- 2026-04-03（本次）：
+  - 新增 `platform_data_coverage.md` — 各平台数据覆盖横向对比（数据种类/范围/缺口/决策树）
 - 2026-04-03：
   - 新增 `bigquant_api_reference.md` - BigQuant DAI 完整 API 参考（实测所有数据表）
   - 新增 `bigquant_migration_guide.md` - BigQuant 平台迁移指南

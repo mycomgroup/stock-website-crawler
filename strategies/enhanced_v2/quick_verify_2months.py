@@ -267,7 +267,9 @@ def choose_stocks(watch_date, target_hold_num):
 
 
 # 测试 2 个月
-test_dates = ["2024-11-01", "2024-12-01"]
+import datetime
+
+test_dates = [datetime.date(2024, 11, 1), datetime.date(2024, 12, 1)]
 target_hold_num = 15
 
 for test_date in test_dates:

@@ -1,0 +1,271 @@
+{
+  "summary": {
+    "backtestId": "69cf452641e36e74f00ecee5",
+    "algoId": "69cf4526de4169928c08982d",
+    "strategyName": "test_bar2_20260403_20230601~20230602_4102",
+    "period": "2023-06-01 ~ 2023-06-02",
+    "capitalBase": 100000,
+    "frequency": "DAILY",
+    "benchmark": "000300.SH",
+    "runAt": "2026-04-03T04:42:22.283Z",
+    "totalReturn": 0.0025,
+    "annualReturn": 0.3658,
+    "benchmarkReturn": 0.0167,
+    "benchmarkAnnualReturn": 6.8897,
+    "excessReturn": -0.014199999999999999,
+    "maxDrawdown": 0.0002,
+    "drawdownDate": "20230531",
+    "volatility": 0.0329,
+    "downsideRisk": 0.1338,
+    "trackingError": 0.0736,
+    "sharpe": 10.5179,
+    "sortino": 2.5876,
+    "alpha": -1.305,
+    "beta": 0.2403,
+    "informationRatio": -24.0175,
+    "winRate": 0.4998,
+    "benchmarkWinRate": 0,
+    "tradeWinRate": null,
+    "tradeCount": 1,
+    "logCount": 8
+  },
+  "detail": {
+    "performance": {
+      "information_ratio": -24.0175,
+      "yield": 0.0025,
+      "sortino": 2.5876,
+      "tracking_error": 0.0736,
+      "annual_yield": 0.3658,
+      "trade_winrate": null,
+      "drawdown_most": "20230531",
+      "alpha": -1.305,
+      "win_rate": 0.4998,
+      "progress": 1,
+      "benchmark_annual_yield": 6.8897,
+      "sharpe_ratio": 10.5179,
+      "max_drawdown": 0.0002,
+      "downside_risk": 0.1338,
+      "benchmark_win_rate": 0,
+      "beta": 0.2403,
+      "volatility": 0.0329,
+      "benchmark_yield": 0.0167,
+      "drawdown_more": "20230531"
+    },
+    "profit": {
+      "total": 3,
+      "list": {
+        "20230531": {
+          "algo_profit": 0,
+          "excess_income": 0,
+          "total_asset_value": 100000,
+          "max_drawdown": 0,
+          "log_excess_income": 0,
+          "trade_record": [],
+          "profit_and_loss": 0,
+          "log_benchmark_profit": 0,
+          "benchmark_profit": 0,
+          "log_algo_profit": 0
+        },
+        "20230601": {
+          "algo_profit": -0.000223,
+          "profit_and_loss": -0.000223,
+          "total_asset_value": 99977.72,
+          "benchmark_profit": 0.002191,
+          "max_drawdown": -0.000223,
+          "log_excess_income": -0.002412,
+          "trade_record": {
+            "BUY": 9289.279999999999
+          },
+          "excess_income": -0.002409,
+          "log_benchmark_profit": 0.002189,
+          "log_algo_profit": -0.000223
+        },
+        "20230602": {
+          "algo_profit": 0.002497,
+          "profit_and_loss": 0.002721,
+          "total_asset_value": 100249.72,
+          "benchmark_profit": 0.016662,
+          "max_drawdown": 0,
+          "log_excess_income": -0.01403,
+          "trade_record": [],
+          "excess_income": -0.013932,
+          "log_benchmark_profit": 0.016524,
+          "log_algo_profit": 0.002494
+        }
+      }
+    },
+    "is_collection": false
+  },
+  "performance": {
+    "progress": 1,
+    "yield": 0.0025,
+    "tracking_error": 0.0736,
+    "sharpe_ratio": 10.5179,
+    "information_ratio": -24.0175,
+    "sortino": 2.5876,
+    "benchmark_annual_yield": 6.8897,
+    "downside_risk": 0.1338,
+    "volatility": 0.0329,
+    "trade_winrate": null,
+    "alpha": -1.305,
+    "drawdown_most": "20230531",
+    "drawdown_more": "20230531",
+    "benchmark_yield": 0.0167,
+    "max_drawdown": 0.0002,
+    "annual_yield": 0.3658,
+    "win_rate": 0.4998,
+    "beta": 0.2403,
+    "benchmark_win_rate": 0
+  },
+  "tradeLog": [
+    {
+      "trade_date": "2023-06-01 09:31:00",
+      "asset_code": "000001.SZ",
+      "stock_name": "平安银行",
+      "operation_type": "BUY",
+      "trade_price": 11.6116,
+      "trade_amount": 800,
+      "trade_value": 9289.279999999999,
+      "commissions": 5,
+      "pnl": null,
+      "source_algo_name": null,
+      "cost": null,
+      "margin": null
+    }
+  ],
+  "backtestLog": [
+    {
+      "value": "INFO :回测开始运行",
+      "now": "2026-04-03 12:42:14.890260",
+      "type": "INFO",
+      "time": "2026-04-03 12:42:14"
+    },
+    {
+      "value": "回测开始",
+      "now": "2026-04-03 12:42:14.924279",
+      "type": "INFO",
+      "time": "2026-04-03 12:42:14"
+    },
+    {
+      "value": "HANDLE_BAR CALLED",
+      "now": "2026-04-03 12:42:14.944021",
+      "type": "INFO",
+      "time": "2023-06-01 09:31:00"
+    },
+    {
+      "value": "ORDER SENT: 000001.SZ",
+      "now": "2026-04-03 12:42:14.949899",
+      "type": "INFO",
+      "time": "2023-06-01 09:31:00"
+    },
+    {
+      "value": "HANDLE_BAR CALLED",
+      "now": "2026-04-03 12:42:18.854399",
+      "type": "INFO",
+      "time": "2023-06-02 09:31:00"
+    },
+    {
+      "value": "000001.SZ 下单股数为0,订单无效.",
+      "now": "2026-04-03 12:42:18.855215",
+      "type": "WARN",
+      "time": "2023-06-02 09:31:00"
+    },
+    {
+      "value": "ORDER SENT: 000001.SZ",
+      "now": "2026-04-03 12:42:18.855641",
+      "type": "INFO",
+      "time": "2023-06-02 09:31:00"
+    },
+    {
+      "value": "回测结束",
+      "now": "2026-04-03 12:42:18.862183",
+      "type": "INFO",
+      "time": "2026-04-03 12:42:18"
+    }
+  ],
+  "dailyGains": [
+    {
+      "position_date": "2023-06-02T15:15:00",
+      "total_asset_value": 100249.72,
+      "ending_cash": 90705.72,
+      "profit_and_loss": 249.72000000000884,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 800,
+          "pos_value": 9544,
+          "pos_create_date": 0,
+          "profit_and_loss": 249.72000000000065,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.93,
+          "cost_price": null,
+          "markup": 0.029335634167385664,
+          "avg_price": 11.617849999999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2023-06-01T15:15:00",
+      "total_asset_value": 99977.72,
+      "ending_cash": 90705.72,
+      "profit_and_loss": -22.279999999996747,
+      "daily_position": [
+        {
+          "asset_code": "000001.SZ",
+          "stock_name": "平安银行",
+          "pos_amount": 800,
+          "pos_value": 9272,
+          "pos_create_date": 0,
+          "profit_and_loss": -22.279999999999234,
+          "profit_and_loss_rate": 0,
+          "close_price": 11.59,
+          "cost_price": null,
+          "markup": -0.000862068965517223,
+          "avg_price": 11.617849999999999,
+          "pos_type": "STOCK",
+          "pos_direction": null,
+          "margin": null
+        }
+      ]
+    },
+    {
+      "position_date": "2023-05-31T15:30:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    }
+  ],
+  "specificInfo": {
+    "table": {
+      "2023-06": {
+        "1": {
+          "yield": -0.0002,
+          "benchmark_yield": 0.0022
+        },
+        "3": {
+          "yield": null,
+          "benchmark_yield": null
+        },
+        "6": {
+          "yield": null,
+          "benchmark_yield": null
+        },
+        "12": {
+          "yield": null,
+          "benchmark_yield": null
+        }
+      }
+    },
+    "chart": {
+      "2023-06": {
+        "yield": -0.0002,
+        "benchmark_yield": 0.0022
+      }
+    }
+  }
+}

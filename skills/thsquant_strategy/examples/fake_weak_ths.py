@@ -3,7 +3,7 @@
 from mindgo_api import *
 
 
-def initialize(context):
+def init(context):
     set_benchmark("000300.SH")
     g.trades = 0
     g.wins = 0
