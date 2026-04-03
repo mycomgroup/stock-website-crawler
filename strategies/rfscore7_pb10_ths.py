@@ -129,7 +129,7 @@ def get_universe(watch_date):
     stocks = list(hs300 | zz500)
     stocks = [stock for stock in stocks if not stock.startswith("688")]
 
-    sec = get_all_securities(types=["stock"], date=date_str)
+    sec = get_all_securities(ty="stock", date=date_str)
     sec = sec.loc[sec.index.intersection(stocks)]
     sec = sec[sec["start_date"] <= watch_date - pd.Timedelta(days=g.ipo_days)]
     stocks = sec.index.tolist()
