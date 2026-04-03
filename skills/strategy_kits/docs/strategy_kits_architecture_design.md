@@ -234,6 +234,11 @@ target_weights = PortfolioBuilder(...).build(merged, score_col="final_score")
 4. 组合与调仓 contract 化：`weighting_strategies.py` 与 `rebalance_diff.py` 已接入 DataFrame 合同校验。
 5. 工程化底座：已提供统一错误码、统一日志事件格式、DataFrame 合同模块。
 6. 测试体系：已补齐 unit + smoke（覆盖“输入池 -> 打分 -> 配仓 -> 回测”端到端样例）。
+7. FactorHub 薄桥接层：`integrations/factorhub/` 已支持 `pool_panel/score_panel` 读取、校验、适配。
+8. 统一任务入口：`orchestration/task_schema.py` + `orchestration/task_runner.py` 已可用于 `skill.md` 自动编排调用。
+9. CI gate：已新增 `.github/workflows/strategy_kits_ci.yml`，默认执行 `strategy_kits` 测试。
+10. 任务产物标准化：`orchestration/artifacts.py` + `orchestration/cli.py` 已支持统一落盘与命令行触发。
+11. 产物 contract 冻结：`orchestration/artifact_contracts.py` 已定义 `artifact_schema_version=v1.0` 的 summary/manifest/report 规范。
 
 ---
 
@@ -241,10 +246,10 @@ target_weights = PortfolioBuilder(...).build(merged, score_col="final_score")
 
 ### P0（继续强化）
 
-1. 强化 `integrations/factorhub/`（当前已完成第一版桥接；下一步补 profile/meta 一致性校验与远端加载适配）。
-2. 补齐回测 symbol 规范化适配（如 `000001.XSHE` 与 `sz000001` 的映射容错）。
-3. 增加 CI gate：PR 默认跑 `unit + smoke`，失败阻断合并。
-4. 固化 contract 文档版本号（例如 `v1.0`），避免后续增强时字段漂移。
+1. 强化 `integrations/factorhub/`（补 profile/meta 一致性校验与远端加载适配）。
+2. 固化 contract 文档版本号（例如 `v1.0`），避免后续增强时字段漂移。
+3. 统一 task artifacts 产物规范（结果文件命名、落盘结构、元数据）。
+4. 将 CI gate 与主仓分支策略联动（要求 PR 必过后才可合并）。
 
 ### P1（能力扩展）
 

@@ -1,0 +1,38 @@
+"""
+假跑通策略样本 - 数据依赖导致无净值
+
+策略类型: 需要特定数据
+预期结果: 假跑通 ✗
+
+验证点:
+- 策略加载成功
+- 依赖get_index_stocks等接口
+- 数据返回None
+- 无净值变化
+"""
+
+def initialize(context):
+    """初始化函数"""
+    g.target_index = '000300.XSHG'
+    
+    run_monthly(rebalance, day=1)
+
+def rebalance(context):
+    """调仓函数"""
+    stocks = get_index_stocks(g.target_index)
+    
+    if stocks is None:
+        log.warn(f'无法获取 {g.target_index} 成分股')
+        return
+    
+    for stock in context.portfolio.positions:
+        if stock not in stocks:
+            order_target(stock, 0)
+    
+    for stock in stocks[:10]:
+        order_value(stock, context.portfolio.total_value / 10)
+    
+    log.info(f'调仓完成，持仓 {len(stocks[:10])} 只')
+
+def handle_data(context, data):
+    pass

@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-04-01T13:01:15.274668",
+  "duration_seconds": 44.390179,
+  "results": {
+    "company_info": {
+      "summary": {
+        "success": 10,
+        "failed": 0,
+        "skipped": 0,
+        "errors": []
+      }
+    },
+    "industry_sw": {
+      "summary": {
+        "success": 0,
+        "failed": 1,
+        "skipped": 1,
+        "errors": [
+          "600519.XSHG: [Errno 32] Broken pipe",
+          "[Errno 32] Broken pipe"
+        ]
+      }
+    },
+    "security_status": {
+      "summary": {
+        "success": 0,
+        "failed": 0,
+        "skipped": 0,
+        "errors": [
+          "[Errno 32] Broken pipe"
+        ]
+      }
+    }
+  }
+}

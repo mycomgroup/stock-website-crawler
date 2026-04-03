@@ -1,0 +1,88 @@
+{
+  "run_id": "20260330_132752",
+  "timestamp": "2026-03-30T13:27:56.507268",
+  "config": {
+    "max_workers": 5,
+    "timeout_per_strategy": 120,
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 1000000,
+    "stock_pool": [
+      "600519.XSHG",
+      "000858.XSHE",
+      "000333.XSHE",
+      "600036.XSHG",
+      "601318.XSHG"
+    ]
+  },
+  "summary": {
+    "total": 5,
+    "success": 5,
+    "failed": 0,
+    "success_rate": 100.0,
+    "total_duration_seconds": 3.97,
+    "total_duration_minutes": 0.07
+  },
+  "results": [
+    {
+      "strategy": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "success": true,
+      "status": "运行成功",
+      "start_time": "2026-03-30T13:27:54.771281",
+      "end_time": "2026-03-30T13:27:55.737546",
+      "duration": 0.97,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0
+    },
+    {
+      "strategy": "01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt",
+      "success": true,
+      "status": "运行成功",
+      "start_time": "2026-03-30T13:27:54.772845",
+      "end_time": "2026-03-30T13:27:55.757679",
+      "duration": 0.98,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0
+    },
+    {
+      "strategy": "01 龙回头3.0回测速度优化版.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 龙回头3.0回测速度优化版.txt",
+      "success": true,
+      "status": "运行成功",
+      "start_time": "2026-03-30T13:27:54.775773",
+      "end_time": "2026-03-30T13:27:55.765113",
+      "duration": 0.99,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0
+    },
+    {
+      "strategy": "01 首板低开策略.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 首板低开策略.txt",
+      "success": true,
+      "status": "运行成功",
+      "start_time": "2026-03-30T13:27:54.772502",
+      "end_time": "2026-03-30T13:27:55.780165",
+      "duration": 1.01,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0
+    },
+    {
+      "strategy": "01 7年40倍模拟超过两年年化高回撤低.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt",
+      "success": true,
+      "status": "运行成功",
+      "start_time": "2026-03-30T13:27:54.771271",
+      "end_time": "2026-03-30T13:27:56.140872",
+      "duration": 1.37,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0
+    }
+  ]
+}

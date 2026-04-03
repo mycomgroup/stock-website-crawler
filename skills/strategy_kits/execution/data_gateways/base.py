@@ -92,3 +92,40 @@ class BaseDataGateway(ABC):
     ) -> pd.DataFrame:
         """按 count 获取历史 K 线。"""
         ...
+
+    # ---- jk2bt / DataSource style compatibility helpers ----
+    def get_daily_data(
+        self,
+        symbol: str,
+        start_date: str,
+        end_date: str,
+        adjust: str = "qfq",
+        **kwargs,
+    ) -> pd.DataFrame:
+        """Compatibility alias mirroring jk2bt's DataSource contract."""
+        result = self.get_price(
+            symbols=symbol,
+            start_date=start_date,
+            end_date=end_date,
+            frequency="daily",
+            adjust=adjust,
+            **kwargs,
+        )
+        if isinstance(result, dict):
+            if symbol in result:
+                return result[symbol]
+            return next(iter(result.values()))
+        return result
+
+    def get_index_stocks(self, index_code: str, **kwargs) -> List[str]:
+        """Compatibility alias for index constituents."""
+        return self.get_index_members(index_code=index_code, date=kwargs.get("date"))
+
+    def get_securities_list(
+        self,
+        security_type: str = "stock",
+        date: Optional[str] = None,
+        **kwargs,
+    ) -> pd.DataFrame:
+        """Compatibility alias for full-security queries."""
+        return self.get_all_securities(types=[security_type], date=date)

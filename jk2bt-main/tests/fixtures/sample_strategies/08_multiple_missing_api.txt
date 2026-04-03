@@ -1,0 +1,11 @@
+def initialize(context):
+    g.stock = '600519.XSHG'
+    log.info('初始化多个缺失API测试策略')
+    run_daily(rebalance, time='open')
+
+def rebalance(context):
+    # 多个未实现的API
+    ticks = get_ticks(g.stock)
+    margin_info = get_margin_info(g.stock)
+    future_contracts = get_future_contracts()
+    order_target_value(g.stock, context.portfolio.total_value * 0.95)

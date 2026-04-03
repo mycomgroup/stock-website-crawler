@@ -1,0 +1,599 @@
+{
+  "run_id": "20260331_095022",
+  "timestamp": "2026-03-31T09:50:36.537205",
+  "config": {
+    "max_workers": 5,
+    "timeout_per_strategy": 120,
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 1000000,
+    "stock_pool": "auto_discover",
+    "skip_scan": false
+  },
+  "scan_summary": {
+    "total": 10,
+    "executable": 9,
+    "skipped": 1,
+    "details": {
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 首板低开策略.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 龙回头3.0回测速度优化版.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 ETF动量轮动RSRS择时-魔改3小优化.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 连板龙头策略.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 龙头底分型战法-两年23倍.txt": {
+        "status": "missing_api",
+        "is_executable": false,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [
+          "get_ticks",
+          "get_ticks"
+        ],
+        "error_message": "missing_api"
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/03 5年15倍的收益，年化79.93%，可实盘，拿走不谢！.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      }
+    }
+  },
+  "summary": {
+    "input_total": 10,
+    "run_total": 9,
+    "skipped_total": 1,
+    "success_with_return": 0,
+    "success_zero_return": 8,
+    "success_no_trade": 0,
+    "success_total": 8,
+    "load_failed": 0,
+    "run_exception": 0,
+    "timeout": 0,
+    "data_missing": 0,
+    "missing_dependency": 1,
+    "missing_api": 0,
+    "missing_resource": 0,
+    "skipped_not_strategy": 1,
+    "skipped_syntax_error": 0,
+    "skipped_no_initialize": 0,
+    "skipped_missing_api": 0,
+    "failed_total": 2,
+    "recoverable_failures": 1,
+    "unrecoverable_failures": 1,
+    "real_success_rate": 88.89,
+    "input_success_rate": 80.0,
+    "total_duration_seconds": 13.56,
+    "total_duration_minutes": 0.23,
+    "status_counts": {
+      "success_zero_return": 8,
+      "missing_dependency": 1,
+      "skipped_not_strategy": 1
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {
+      "data_missing": 0,
+      "missing_dependency": 1,
+      "missing_api": 0,
+      "missing_resource": 0
+    },
+    "unrecoverable": {
+      "load_failed": 0,
+      "run_exception": 0,
+      "timeout": 0,
+      "syntax_error": 0
+    }
+  },
+  "results": [
+    {
+      "strategy": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:25.088908",
+      "end_time": "2026-03-31T09:50:25.906392",
+      "duration": 0.82,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "01 龙回头3.0回测速度优化版.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 龙回头3.0回测速度优化版.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:25.237768",
+      "end_time": "2026-03-31T09:50:25.929593",
+      "duration": 0.69,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "01 首板低开策略.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 首板低开策略.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:25.197544",
+      "end_time": "2026-03-31T09:50:26.012466",
+      "duration": 0.81,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:25.137082",
+      "end_time": "2026-03-31T09:50:26.348856",
+      "duration": 1.21,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "03 5年15倍的收益，年化79.93%，可实盘，拿走不谢！.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/03 5年15倍的收益，年化79.93%，可实盘，拿走不谢！.txt",
+      "success": false,
+      "run_status": "missing_dependency",
+      "status": "依赖缺失",
+      "start_time": "2026-03-31T09:50:26.349206",
+      "end_time": "2026-03-31T09:50:26.410243",
+      "duration": 0.06,
+      "final_value": 0,
+      "pnl": 0,
+      "pnl_pct": 0,
+      "max_drawdown": 0,
+      "annual_return": 0,
+      "sharpe_ratio": 0,
+      "trading_days": 0,
+      "error": "策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/03 5年15倍的收益，年化79.93%，可实盘，拿走不谢！.txt): No module named 'redis'\n详细 traceback:\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 746, in load_jq_strategy\n    exec(code, global_namespace, local_namespace)\n  File \"<string>\", line 9, in <module>\nModuleNotFoundError: No module named 'redis'\n",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 746, in load_jq_strategy\n    exec(code, global_namespace, local_namespace)\n  File \"<string>\", line 9, in <module>\nModuleNotFoundError: No module named 'redis'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 260, in run_single_strategy\n    backtest_result = run_jq_strategy(\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 947, in run_jq_strategy\n    strategy_functions = load_jq_strategy(strategy_file)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 755, in load_jq_strategy\n    raise RuntimeError(\nRuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/03 5年15倍的收益，年化79.93%，可实盘，拿走不谢！.txt): No module named 'redis'\n详细 traceback:\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 746, in load_jq_strategy\n    exec(code, global_namespace, local_namespace)\n  File \"<string>\", line 9, in <module>\nModuleNotFoundError: No module named 'redis'\n\n",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "RuntimeError",
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "Python依赖包缺失",
+        "missing_dependency": "策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/03 5年15倍的收益，年化79.93%，可实盘，拿走不谢！.txt): No module named 'redis'\n详细 traceback:\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 746, in load_jq_strategy\n    exec(code, global_namespace, local_namespace)\n  File \"<string>\", line 9, in <module>\nModuleNotFoundError: No module named 'redis'\n",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "dependency_missing",
+        "recoverable": true,
+        "recommendation": "安装缺失的Python包: pip install <package>"
+      }
+    },
+    {
+      "strategy": "02 ETF动量轮动RSRS择时-魔改3小优化.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 ETF动量轮动RSRS择时-魔改3小优化.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:25.929952",
+      "end_time": "2026-03-31T09:50:26.586960",
+      "duration": 0.66,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "02 连板龙头策略.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 连板龙头策略.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:26.012773",
+      "end_time": "2026-03-31T09:50:26.776423",
+      "duration": 0.76,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:25.906737",
+      "end_time": "2026-03-31T09:50:26.791282",
+      "duration": 0.88,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "01 7年40倍模拟超过两年年化高回撤低.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T09:50:25.032989",
+      "end_time": "2026-03-31T09:50:36.113060",
+      "duration": 11.08,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "02 龙头底分型战法-两年23倍.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/02 龙头底分型战法-两年23倍.txt",
+      "success": false,
+      "run_status": "skipped_not_strategy",
+      "status": "missing_api",
+      "duration": 0,
+      "scan_result": {
+        "status": "missing_api",
+        "is_executable": false,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [
+          "get_ticks",
+          "get_ticks"
+        ],
+        "error_message": "missing_api"
+      },
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "missing_api",
+        "error_category": "scan_rejected",
+        "recoverable": false,
+        "recommendation": "检查策略文件是否符合策略格式要求"
+      }
+    }
+  ]
+}

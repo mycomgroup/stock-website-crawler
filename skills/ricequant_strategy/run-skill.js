@@ -93,8 +93,22 @@ async function runBacktest(options) {
     const saveResult = await client.saveStrategy(id, context.name || 'Strategy', code, context);
     console.log('   Save result:', saveResult?.message || JSON.stringify(saveResult).substring(0, 100) || 'OK');
     
-    // 5. 运行回测
-    console.log('\n5. Starting backtest...');
+    // 5. 准备运行回测
+    // 如果指定了 wait-if-full，检查运行中的回测数量
+    if (options.waitIfFull) {
+      const maxRunning = parseInt(options.maxRunning || '3', 10);
+      console.log(`\n5. Checking capacity (Max: ${maxRunning})...`);
+      let runningCount = await client.getRunningBacktestCount();
+      
+      while (runningCount >= maxRunning) {
+        process.stdout.write(`   Capacity full (${runningCount}/${maxRunning}). Waiting 10s...\r`);
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        runningCount = await client.getRunningBacktestCount();
+      }
+      console.log(`   Capacity available (${runningCount}/${maxRunning}). Proceeding.`);
+    }
+
+    console.log('\n6. Starting backtest...');
     const backtestResult = await client.runBacktest(id, code, {
       startTime: start || '2021-01-01',
       endTime: end || '2025-03-28',
@@ -112,7 +126,12 @@ async function runBacktest(options) {
     }
     
     if (backtestId) {
-      console.log('\n   ✓ Backtest started! ID:', backtestId);
+      console.log(`\n   ✓ Backtest started! ID: ${backtestId}`);
+      
+      if (options.noWait) {
+        console.log('   --no-wait specified, skipping result polling.');
+        return backtestId;
+      }
       
       // 6. 等待回测完成
       console.log('\n6. Waiting for backtest to complete...');
@@ -201,5 +220,8 @@ runBacktest({
   end: args.end,
   capital: args.capital,
   freq: args.freq,
-  benchmark: args.benchmark
+  benchmark: args.benchmark,
+  noWait: args['no-wait'] === true,
+  waitIfFull: args['wait-if-full'] === true,
+  maxRunning: args['max-running']
 });

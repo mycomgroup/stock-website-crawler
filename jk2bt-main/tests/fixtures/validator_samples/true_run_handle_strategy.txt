@@ -1,0 +1,46 @@
+"""
+真跑通策略样本 - 使用handle函数
+
+策略类型: 均线策略
+预期结果: 真跑通 ✓
+
+验证点:
+- 使用handle_data函数
+- 策略加载成功
+- 进入回测循环
+- 发生交易
+- 有净值序列
+"""
+
+def initialize(context):
+    """初始化函数"""
+    g.stocks = ['600519.XSHG', '000858.XSHE', '000333.XSHE']
+    g.ma_short = 5
+    g.ma_long = 20
+    g.position = {}
+    
+    set_benchmark('000300.XSHG')
+
+def handle_data(context, data):
+    """每日处理"""
+    for stock in g.stocks:
+        prices = history(g.ma_long, '1d', 'close', [stock])
+        if prices is None or len(prices) < g.ma_long:
+            continue
+        
+        ma_short = prices[stock].tail(g.ma_short).mean()
+        ma_long = prices[stock].tail(g.ma_long).mean()
+        
+        current_position = context.portfolio.positions.get(stock, 0)
+        
+        if ma_short > ma_long and current_position == 0:
+            order_value(stock, context.portfolio.total_value / len(g.stocks))
+            log.info(f'买入 {stock}')
+        
+        elif ma_short < ma_long and current_position > 0:
+            order_target(stock, 0)
+            log.info(f'卖出 {stock}')
+
+def on_end(context):
+    """回测结束"""
+    log.info('策略回测结束')

@@ -1,0 +1,56 @@
+{
+  "run_id": "20260330_134029",
+  "timestamp": "2026-03-30T13:40:32.120107",
+  "config": {
+    "max_workers": 5,
+    "timeout_per_strategy": 120,
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 1000000,
+    "stock_pool": [
+      "600519.XSHG",
+      "000858.XSHE",
+      "000333.XSHE",
+      "600036.XSHG",
+      "601318.XSHG"
+    ]
+  },
+  "summary": {
+    "total": 2,
+    "success": 2,
+    "failed": 0,
+    "success_rate": 100.0,
+    "total_duration_seconds": 2.85,
+    "total_duration_minutes": 0.05
+  },
+  "results": [
+    {
+      "strategy": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "success": true,
+      "status": "异常: AttributeError",
+      "start_time": "2026-03-30T13:40:30.945981",
+      "end_time": "2026-03-30T13:40:31.696861",
+      "duration": 0.75,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": "'NoneType' object has no attribute 'addindicator'",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 143, in run_single_strategy\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n"
+    },
+    {
+      "strategy": "01 7年40倍模拟超过两年年化高回撤低.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt",
+      "success": true,
+      "status": "异常: AttributeError",
+      "start_time": "2026-03-30T13:40:30.945849",
+      "end_time": "2026-03-30T13:40:31.805395",
+      "duration": 0.86,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": "'NoneType' object has no attribute 'addindicator'",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 143, in run_single_strategy\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n"
+    }
+  ]
+}

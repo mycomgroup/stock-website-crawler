@@ -14,6 +14,8 @@ class ErrorCode(str, Enum):
     CALENDAR_OUT_OF_RANGE = "SK_CAL_002"
     FILTER_DATA_UNAVAILABLE = "SK_FILTER_001"
     PREPROCESS_NOT_FITTED = "SK_PRE_001"
+    ARTIFACT_WRITE_FAILED = "SK_ARTIFACT_001"
+    ARTIFACT_CONTRACT_INVALID = "SK_ARTIFACT_002"
 
 
 class StrategyKitsError(RuntimeError):
@@ -36,4 +38,3 @@ class StrategyKitsError(RuntimeError):
             "message": self.message,
             "details": self.details,
         }
-

@@ -1,0 +1,19 @@
+{
+  "report_time": "2026-04-01 11:30:29",
+  "summary": {
+    "total": 1,
+    "success": 0,
+    "failed": 0,
+    "skipped": 1,
+    "error": 0
+  },
+  "white_list": [],
+  "failed_strategies": [
+    {
+      "strategy_file": "strategies/01 7年40倍模拟超过两年年化高回撤低.txt",
+      "strategy_name": "01 7年40倍模拟超过两年年化高回撤低.txt",
+      "status": "skipped",
+      "error_message": "策略类型不符合日线要求: minute=True, ml=False"
+    }
+  ]
+}

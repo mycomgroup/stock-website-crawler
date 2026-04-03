@@ -1,0 +1,138 @@
+{
+  "run_id": "20260401_103749",
+  "timestamp": "2026-04-01T10:37:52.402531",
+  "config": {
+    "max_workers": 2,
+    "timeout_per_strategy": 3600,
+    "start_date": "2021-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 1000000,
+    "stock_pool": "auto_discover",
+    "skip_scan": true
+  },
+  "scan_summary": {},
+  "summary": {
+    "input_total": 2,
+    "run_total": 2,
+    "skipped_total": 0,
+    "success_with_return": 0,
+    "success_zero_return": 0,
+    "success_no_trade": 0,
+    "success_total": 0,
+    "load_failed": 0,
+    "run_exception": 0,
+    "timeout": 0,
+    "data_missing": 0,
+    "missing_dependency": 0,
+    "missing_api": 2,
+    "missing_resource": 0,
+    "skipped_not_strategy": 0,
+    "skipped_syntax_error": 0,
+    "skipped_no_initialize": 0,
+    "skipped_missing_api": 0,
+    "failed_total": 2,
+    "recoverable_failures": 2,
+    "unrecoverable_failures": 0,
+    "real_success_rate": 0.0,
+    "input_success_rate": 0.0,
+    "total_duration_seconds": 3.19,
+    "total_duration_minutes": 0.05,
+    "status_counts": {
+      "missing_api": 2
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {
+      "data_missing": 0,
+      "missing_dependency": 0,
+      "missing_api": 2,
+      "missing_resource": 0
+    },
+    "unrecoverable": {
+      "load_failed": 0,
+      "run_exception": 0,
+      "timeout": 0,
+      "syntax_error": 0
+    }
+  },
+  "results": [
+    {
+      "strategy": "35 超稳+翻倍，贝塔值只有0.048的期指策略.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/35 超稳+翻倍，贝塔值只有0.048的期指策略.txt",
+      "success": false,
+      "run_status": "missing_api",
+      "status": "API/属性缺失: NameError",
+      "start_time": "2026-04-01T10:37:51.711286",
+      "end_time": "2026-04-01T10:37:51.726415",
+      "duration": 0.02,
+      "final_value": 0,
+      "pnl": 0,
+      "pnl_pct": 0,
+      "max_drawdown": 0,
+      "annual_return": 0,
+      "sharpe_ratio": 0,
+      "trading_days": 0,
+      "error": "name '_kuanke' is not defined",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 265, in run_single_strategy\n    backtest_result = run_jq_strategy(\n  File \"/Users/yuping/Downloads/git/jk2bt-main/src/core/runner.py\", line 1513, in run_jq_strategy\n    strategy_functions = load_jq_strategy(strategy_file)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/src/core/runner.py\", line 1111, in load_jq_strategy\n    \"kuanke\": _kuanke,\nNameError: name '_kuanke' is not defined\n",
+      "scan_result": {},
+      "exception_type": "NameError",
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "API或属性未实现/未定义",
+        "missing_dependency": "",
+        "missing_api": "name '_kuanke' is not defined",
+        "missing_resource_file": "",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      }
+    },
+    {
+      "strategy": "96 首版+2版龙虎榜挖掘V2.0，年化1400.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/96 首版+2版龙虎榜挖掘V2.0，年化1400.txt",
+      "success": false,
+      "run_status": "missing_api",
+      "status": "API/属性缺失: NameError",
+      "start_time": "2026-04-01T10:37:51.727004",
+      "end_time": "2026-04-01T10:37:51.729208",
+      "duration": 0.0,
+      "final_value": 0,
+      "pnl": 0,
+      "pnl_pct": 0,
+      "max_drawdown": 0,
+      "annual_return": 0,
+      "sharpe_ratio": 0,
+      "trading_days": 0,
+      "error": "name '_kuanke' is not defined",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 265, in run_single_strategy\n    backtest_result = run_jq_strategy(\n  File \"/Users/yuping/Downloads/git/jk2bt-main/src/core/runner.py\", line 1513, in run_jq_strategy\n    strategy_functions = load_jq_strategy(strategy_file)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/src/core/runner.py\", line 1111, in load_jq_strategy\n    \"kuanke\": _kuanke,\nNameError: name '_kuanke' is not defined\n",
+      "scan_result": {},
+      "exception_type": "NameError",
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "API或属性未实现/未定义",
+        "missing_dependency": "",
+        "missing_api": "name '_kuanke' is not defined",
+        "missing_resource_file": "",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      }
+    }
+  ]
+}

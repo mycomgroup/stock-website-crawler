@@ -41,6 +41,8 @@ result = run_backtest(config, MyStrategy)
 from .config import BacktraderConfig, CommissionConfig, SlippageConfig
 from .runtime import run_backtest, load_datafeeds, build_broker, build_analyzers
 from .analyzers import TradeRecordAnalyzer, PerformanceAnalyzer
+from .timer_manager import TimerManager
+from .timer_rules import TradingDayCalendar, parse_time_rule, should_execute_timer
 
 __version__ = "0.1.0"
 __all__ = [
@@ -56,4 +58,9 @@ __all__ = [
     # 分析器
     "TradeRecordAnalyzer",
     "PerformanceAnalyzer",
+    # 定时器
+    "TimerManager",
+    "TradingDayCalendar",
+    "parse_time_rule",
+    "should_execute_timer",
 ]

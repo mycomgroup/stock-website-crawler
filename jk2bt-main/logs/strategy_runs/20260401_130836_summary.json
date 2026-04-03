@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-04-01T13:08:36.599877",
+  "total_strategies": 5,
+  "successful": 1,
+  "failed": 4,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/47 高收益低回撤的小市值策略.txt",
+      "strategy_name": "47 高收益低回撤的小市值策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_125336_47 高收益低回撤的小市值策略",
+      "start_time": "2026-04-01T12:53:36.569589",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "    raise RuntimeError(\nRuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/47 高收益低回撤的小市值策略.txt): name 'Enum' is not defined\nNameError: name 'Enum' is not defined",
+      "end_time": "2026-04-01T12:53:39.397539"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/85 价值策略重开，再次向Jqz1226致敬.txt",
+      "strategy_name": "85 价值策略重开，再次向Jqz1226致敬",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_125336_85 价值策略重开，再次向Jqz1226致敬",
+      "start_time": "2026-04-01T12:53:36.568030",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "Traceback (most recent call last):\n    raise SyntaxError(\nSyntaxError: 策略文件语法错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/85 价值策略重开，再次向Jqz1226致敬.txt): inconsistent use of tabs and spaces in indentation (行 136)",
+      "end_time": "2026-04-01T12:53:39.417033"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/56 双人工智能AI配合，样本外夏普3.9.txt",
+      "strategy_name": "56 双人工智能AI配合，样本外夏普3.9",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_125336_56 双人工智能AI配合，样本外夏普3.9",
+      "start_time": "2026-04-01T12:53:36.568001",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "RuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/56 双人工智能AI配合，样本外夏普3.9.txt): File not found: ZCSZX_0.pt. Full path: /Users/yuping/Downloads/git/jk2bt-main/src/runtime_data/ZCSZX_0.pt\n    raise FileNotFoundError(f\"File not found: {filepath}. Full path: {target_path}\")\nFileNotFoundError: File not found: ZCSZX_0.pt. Full path: /Users/yuping/Downloads/git/jk2bt-main/src/runtime_data/ZCSZX_0.pt",
+      "end_time": "2026-04-01T12:53:40.648745"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/45 价值投资+期货对冲V4.0,无惧市场大跌.txt",
+      "strategy_name": "45 价值投资+期货对冲V4.0,无惧市场大跌",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_125336_45 价值投资+期货对冲V4.0,无惧市场大跌",
+      "start_time": "2026-04-01T12:53:36.567722",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T12:54:48.583829"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/41 再改进可实盘-默默赚钱系列-风险控制-增强版本-V5.0.txt",
+      "strategy_name": "41 再改进可实盘-默默赚钱系列-风险控制-增强版本-V5.0",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_125336_41 再改进可实盘-默默赚钱系列-风险控制-增强版本-V5.",
+      "start_time": "2026-04-01T12:53:36.573634",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 15分钟)",
+      "end_time": "2026-04-01T13:08:36.591292"
+    }
+  ],
+  "avg_pnl_pct": 0.0,
+  "max_pnl_pct": 0.0,
+  "min_pnl_pct": 0.0
+}

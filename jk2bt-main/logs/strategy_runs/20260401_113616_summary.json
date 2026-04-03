@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-04-01T11:36:16.226299",
+  "total_strategies": 5,
+  "successful": 2,
+  "failed": 3,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/33 回馈社区顺便搞积分《一个完整的机器学习pipeline》.txt",
+      "strategy_name": "33 回馈社区顺便搞积分《一个完整的机器学习pipeline》",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_112108_33 回馈社区顺便搞积分《一个完整的机器学习pipeline",
+      "start_time": "2026-04-01T11:21:08.863933",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T11:21:16.190306"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/65 搭建量化交易模型从零开始——择时，选股，仓位管理和因子分析.txt",
+      "strategy_name": "65 搭建量化交易模型从零开始——择时，选股，仓位管理和因子分析",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_112108_65 搭建量化交易模型从零开始——择时，选股，仓位管理和因子",
+      "start_time": "2026-04-01T11:21:08.849390",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 15分钟)",
+      "end_time": "2026-04-01T11:36:08.860809"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/79 国九条-新的红利因子，修正「审计意见」函数.txt",
+      "strategy_name": "79 国九条-新的红利因子，修正「审计意见」函数",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_112108_79 国九条-新的红利因子，修正「审计意见」函数",
+      "start_time": "2026-04-01T11:21:08.860789",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 15分钟)",
+      "end_time": "2026-04-01T11:36:08.870095"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/42 市值，研发支出，roe，三因子，跑赢大盘.txt",
+      "strategy_name": "42 市值，研发支出，roe，三因子，跑赢大盘",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_113608_42 市值，研发支出，roe，三因子，跑赢大盘",
+      "start_time": "2026-04-01T11:36:08.870704",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T11:36:11.488295"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/82 回报社区——基于Gyro老师策略的思考.txt",
+      "strategy_name": "82 回报社区——基于Gyro老师策略的思考",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_112116_82 回报社区——基于Gyro老师策略的思考",
+      "start_time": "2026-04-01T11:21:16.190529",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 15分钟)",
+      "end_time": "2026-04-01T11:36:16.197446"
+    }
+  ],
+  "avg_pnl_pct": 0.0,
+  "max_pnl_pct": 0.0,
+  "min_pnl_pct": 0.0
+}

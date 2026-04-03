@@ -1,0 +1,178 @@
+{
+  "run_id": "20260401_105207",
+  "timestamp": "2026-04-01T10:52:20.770998",
+  "config": {
+    "max_workers": 3,
+    "timeout_per_strategy": 3600,
+    "start_date": "2021-01-01",
+    "end_date": "2022-06-30",
+    "initial_capital": 1000000,
+    "stock_pool": "auto_discover",
+    "skip_scan": true
+  },
+  "scan_summary": {},
+  "summary": {
+    "input_total": 3,
+    "run_total": 3,
+    "skipped_total": 0,
+    "success_with_return": 0,
+    "success_zero_return": 2,
+    "success_no_trade": 0,
+    "success_total": 2,
+    "load_failed": 1,
+    "run_exception": 0,
+    "timeout": 0,
+    "data_missing": 0,
+    "missing_dependency": 0,
+    "missing_api": 0,
+    "missing_resource": 0,
+    "skipped_not_strategy": 0,
+    "skipped_syntax_error": 0,
+    "skipped_no_initialize": 0,
+    "skipped_missing_api": 0,
+    "failed_total": 1,
+    "recoverable_failures": 0,
+    "unrecoverable_failures": 1,
+    "real_success_rate": 66.67,
+    "input_success_rate": 66.67,
+    "total_duration_seconds": 13.31,
+    "total_duration_minutes": 0.22,
+    "status_counts": {
+      "load_failed": 1,
+      "success_zero_return": 2
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {
+      "data_missing": 0,
+      "missing_dependency": 0,
+      "missing_api": 0,
+      "missing_resource": 0
+    },
+    "unrecoverable": {
+      "load_failed": 1,
+      "run_exception": 0,
+      "timeout": 0,
+      "syntax_error": 0
+    }
+  },
+  "results": [
+    {
+      "strategy": "99 配套资料说明.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/99 配套资料说明.txt",
+      "success": false,
+      "run_status": "load_failed",
+      "status": "加载失败 - 无返回结果",
+      "start_time": "2026-04-01T10:52:09.078515",
+      "end_time": "2026-04-01T10:52:09.080409",
+      "duration": 0.0,
+      "final_value": 0,
+      "pnl": 0,
+      "pnl_pct": 0,
+      "max_drawdown": 0,
+      "annual_return": 0,
+      "sharpe_ratio": 0,
+      "trading_days": 0,
+      "error": "",
+      "traceback": "",
+      "scan_result": {},
+      "exception_type": "",
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "策略未返回backtest_result对象",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "load_failure",
+        "recoverable": false,
+        "recommendation": "检查策略文件是否有语法错误或运行时异常"
+      }
+    },
+    {
+      "strategy": "45 价值投资+期货对冲V4.0,无惧市场大跌.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/45 价值投资+期货对冲V4.0,无惧市场大跌.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-04-01T10:52:09.081308",
+      "end_time": "2026-04-01T10:52:20.277120",
+      "duration": 11.2,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 360,
+      "error": "",
+      "traceback": "",
+      "scan_result": {},
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 360,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "99 欧奈尔CANSLIM策略初探三.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/99 欧奈尔CANSLIM策略初探三.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-04-01T10:52:09.043870",
+      "end_time": "2026-04-01T10:52:20.419390",
+      "duration": 11.38,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 360,
+      "error": "",
+      "traceback": "",
+      "scan_result": {},
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 360,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    }
+  ]
+}

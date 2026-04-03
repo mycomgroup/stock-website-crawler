@@ -12,6 +12,7 @@ from .base import BaseDataGateway
 from .cache import FileCache
 from .retry import retry_on_failure
 from .symbol import canonicalize, to_ak, to_jq
+from ...universe.trade_calendar import find_date_column
 
 # AkShare 为可选依赖；实际运行时才 import
 try:
@@ -123,7 +124,7 @@ class JQDataGateway(BaseDataGateway):
         if ak is None:
             raise ImportError("akshare is required for JQDataGateway")
         ak_code = to_ak(canonicalize(security))
-        df = self._fetch_price_native(ak_code[2:], unit, adjust="qfq")
+        df = self._fetch_price_native(ak_code, unit, adjust="qfq")
         if end_dt:
             df = df[df["datetime"] <= pd.to_datetime(end_dt)]
         df = df.tail(count)
@@ -308,8 +309,7 @@ class JQDataGateway(BaseDataGateway):
 
     @staticmethod
     def _find_date_col(df: pd.DataFrame) -> str:
-        candidates = ["报告日", "报告日期", "报表日期", "STATEMENT_DATE", "date", "报告期"]
-        return next((c for c in candidates if c in df.columns), df.columns[0])
+        return find_date_column(df, category="financial") or df.columns[0]
 
     # --------------------- 指数成分 ---------------------
     @retry_on_failure(max_retry=3, sleep=1.0)

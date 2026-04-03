@@ -1,0 +1,43 @@
+{
+  "report_time": "2026-03-30 17:07:52",
+  "summary": {
+    "total": 5,
+    "success": 0,
+    "failed": 2,
+    "skipped": 3,
+    "error": 0
+  },
+  "white_list": [],
+  "failed_strategies": [
+    {
+      "strategy_file": "jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt",
+      "strategy_name": "01 7年40倍模拟超过两年年化高回撤低.txt",
+      "status": "skipped",
+      "error_message": "策略类型不符合日线要求: minute=True, ml=False"
+    },
+    {
+      "strategy_file": "jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "strategy_name": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "status": "skipped",
+      "error_message": "策略类型不符合日线要求: minute=True, ml=False"
+    },
+    {
+      "strategy_file": "jkcode/jkcode/01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt",
+      "strategy_name": "01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt",
+      "status": "failed",
+      "error_message": "策略运行返回None"
+    },
+    {
+      "strategy_file": "jkcode/jkcode/01 首板低开策略.txt",
+      "strategy_name": "01 首板低开策略.txt",
+      "status": "failed",
+      "error_message": "策略运行返回None"
+    },
+    {
+      "strategy_file": "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt",
+      "strategy_name": "01 龙回头3.0回测速度优化版.txt",
+      "status": "skipped",
+      "error_message": "策略类型不符合日线要求: minute=True, ml=False"
+    }
+  ]
+}

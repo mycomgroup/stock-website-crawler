@@ -12,6 +12,8 @@ from typing import List, Dict, Union, Optional
 from datetime import date, datetime
 import os
 
+from ..data_gateways.symbol import format_stock_symbol, to_ak
+
 
 def format_symbol_for_akshare(symbol: str) -> str:
     """
@@ -22,20 +24,15 @@ def format_symbol_for_akshare(symbol: str) -> str:
     - 600000.XSHG / 000001.XSHE
     - 600000 / 000001
     """
-    if symbol.startswith(('sh', 'sz')):
-        return symbol[2:]
-    if symbol.endswith('.XSHG') or symbol.endswith('.XSHE'):
-        return symbol[:6]
-    return symbol.zfill(6)
+    numeric = format_stock_symbol(symbol)
+    if numeric is None:
+        raise ValueError(f"无法识别股票代码: {symbol}")
+    return numeric
 
 
 def add_prefix_symbol(symbol: str) -> str:
     """为纯数字代码添加 sh/sz 前缀"""
-    symbol = format_symbol_for_akshare(symbol)
-    if symbol.startswith('6'):
-        return f'sh{symbol}'
-    else:
-        return f'sz{symbol}'
+    return to_ak(symbol)
 
 
 class AkshareDataFeed:

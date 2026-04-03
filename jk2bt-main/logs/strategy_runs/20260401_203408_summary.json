@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-04-01T20:34:08.395188",
+  "total_strategies": 2,
+  "successful": 2,
+  "failed": 0,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/83 回测“一创模拟盘2号”，最终改造优化，年化39%.txt",
+      "strategy_name": "83 回测“一创模拟盘2号”，最终改造优化，年化39%",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203306_83 回测“一创模拟盘2号”，最终改造优化，年化39%",
+      "start_time": "2026-04-01T20:33:06.339673",
+      "success": true,
+      "final_value": 34.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:34:07.475150"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/33 胜率88.9%之君正集团策略-大阳分歧反包.txt",
+      "strategy_name": "33 胜率88.9%之君正集团策略-大阳分歧反包",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203306_33 胜率88.9%之君正集团策略-大阳分歧反包",
+      "start_time": "2026-04-01T20:33:06.339461",
+      "success": true,
+      "final_value": 34.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:34:08.394598"
+    }
+  ]
+}

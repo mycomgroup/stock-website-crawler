@@ -1,0 +1,22 @@
+{
+    "cache": {
+        "enabled": true,
+        "ttl_hours": 24,
+        "cache_dir": "data/cache",
+        "duckdb_path": "data/jk2bt.duckdb"
+    },
+    "data_source": {
+        "provider": "akshare",
+        "timeout": 30,
+        "retry_count": 3
+    },
+    "logging": {
+        "level": "INFO",
+        "log_file": "logs/jk2bt.log"
+    },
+    "backtest": {
+        "initial_capital": 1000000.0,
+        "commission_rate": 0.0003,
+        "benchmark": "000300.XSHG"
+    }
+}

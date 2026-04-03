@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-04-01T13:01:11.580465",
+  "duration_seconds": 10.031768,
+  "results": {
+    "dividend": {
+      "summary": {
+        "success": 10,
+        "failed": 0,
+        "skipped": 0,
+        "errors": []
+      }
+    },
+    "shareholders": {
+      "summary": {
+        "success": 1,
+        "failed": 0,
+        "skipped": 9,
+        "errors": []
+      }
+    }
+  }
+}

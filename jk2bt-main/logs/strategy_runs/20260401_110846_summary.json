@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-04-01T11:08:46.682497",
+  "total_strategies": 5,
+  "successful": 0,
+  "failed": 5,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/19 复现FFScore财务模型.txt",
+      "strategy_name": "19 复现FFScore财务模型",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_110844_19 复现FFScore财务模型",
+      "start_time": "2026-04-01T11:08:44.239975",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "Traceback (most recent call last):\n    mod_name, mod_spec, code = _get_module_details(mod_name, _Error)\nNameError: name 'get_current_data_wrapper' is not defined",
+      "end_time": "2026-04-01T11:08:46.471127"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/65 多因子指数增强.txt",
+      "strategy_name": "65 多因子指数增强",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_110844_65 多因子指数增强",
+      "start_time": "2026-04-01T11:08:44.232872",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "Traceback (most recent call last):\n    mod_name, mod_spec, code = _get_module_details(mod_name, _Error)\nNameError: name 'get_current_data_wrapper' is not defined",
+      "end_time": "2026-04-01T11:08:46.471453"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/34 十年回测 年化103.32% 最大回撤23.89%.txt",
+      "strategy_name": "34 十年回测 年化103.32% 最大回撤23.89%",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_110844_34 十年回测 年化103.32% 最大回撤23.89%",
+      "start_time": "2026-04-01T11:08:44.237105",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "Traceback (most recent call last):\n    mod_name, mod_spec, code = _get_module_details(mod_name, _Error)\nNameError: name 'get_current_data_wrapper' is not defined",
+      "end_time": "2026-04-01T11:08:46.509790"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/06 国九小市值策略【年化100.5% 回撤25.6%】.txt",
+      "strategy_name": "06 国九小市值策略【年化100.5% 回撤25.6%】",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_110844_06 国九小市值策略【年化100.5% 回撤25.6%】",
+      "start_time": "2026-04-01T11:08:44.236996",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "Traceback (most recent call last):\n    mod_name, mod_spec, code = _get_module_details(mod_name, _Error)\nNameError: name 'get_current_data_wrapper' is not defined",
+      "end_time": "2026-04-01T11:08:46.592501"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/94 别人“拿的住”的股票最赚钱.txt",
+      "strategy_name": "94 别人“拿的住”的股票最赚钱",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_110844_94 别人“拿的住”的股票最赚钱",
+      "start_time": "2026-04-01T11:08:44.246600",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "Traceback (most recent call last):\n    mod_name, mod_spec, code = _get_module_details(mod_name, _Error)\nNameError: name 'get_current_data_wrapper' is not defined",
+      "end_time": "2026-04-01T11:08:46.668738"
+    }
+  ]
+}

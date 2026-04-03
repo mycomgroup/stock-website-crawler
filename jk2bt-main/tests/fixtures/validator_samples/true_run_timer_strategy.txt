@@ -1,0 +1,48 @@
+"""
+真跑通策略样本 - 使用定时器机制
+
+策略类型: 指数权重策略
+预期结果: 真跑通 ✓
+
+验证点:
+- 使用run_monthly定时器
+- 策略加载成功
+- 进入回测循环
+- 发生交易
+- 有净值序列
+"""
+
+def initialize(context):
+    """初始化函数"""
+    g.stock_pool = []
+    g.month_count = 0
+    
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    
+    run_monthly(adjust_portfolio, day=1, time='open')
+
+def adjust_portfolio(context):
+    """每月调仓"""
+    g.month_count += 1
+    
+    weights = get_index_weights('000300.XSHG')
+    if weights is None or len(weights) == 0:
+        log.info('无法获取指数权重')
+        return
+    
+    top_stocks = weights.head(10)
+    g.stock_pool = list(top_stocks.index)
+    
+    for stock in context.portfolio.positions:
+        if stock not in g.stock_pool:
+            order_target(stock, 0)
+    
+    for stock in g.stock_pool:
+        order_value(stock, context.portfolio.total_value / len(g.stock_pool))
+    
+    log.info(f'第{g.month_count}月调仓完成，持仓{len(g.stock_pool)}只股票')
+
+def handle_data(context, data):
+    """每日数据处理（可选）"""
+    pass

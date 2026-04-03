@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-04-01T18:04:05.147594",
+  "total_strategies": 3,
+  "successful": 0,
+  "failed": 3,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/12 致敬市场--5 定投ETF之躺平赢.txt",
+      "strategy_name": "12 致敬市场--5 定投ETF之躺平赢",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_180405_12 致敬市场--5 定投ETF之躺平赢",
+      "start_time": "2026-04-01T18:04:05.092364",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "/Library/Developer/CommandLineTools/usr/bin/python3: Error while finding module specification for 'src.core.runner' (ModuleNotFoundError: No module named 'src')",
+      "end_time": "2026-04-01T18:04:05.136556"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/49 根据北上资金买股票的最佳持股时间探讨.txt",
+      "strategy_name": "49 根据北上资金买股票的最佳持股时间探讨",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_180405_49 根据北上资金买股票的最佳持股时间探讨",
+      "start_time": "2026-04-01T18:04:05.099766",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "/Library/Developer/CommandLineTools/usr/bin/python3: Error while finding module specification for 'src.core.runner' (ModuleNotFoundError: No module named 'src')",
+      "end_time": "2026-04-01T18:04:05.141135"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/77 龙头弱转强战法.txt",
+      "strategy_name": "77 龙头弱转强战法",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_180405_77 龙头弱转强战法",
+      "start_time": "2026-04-01T18:04:05.099674",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "/Library/Developer/CommandLineTools/usr/bin/python3: Error while finding module specification for 'src.core.runner' (ModuleNotFoundError: No module named 'src')",
+      "end_time": "2026-04-01T18:04:05.147079"
+    }
+  ]
+}

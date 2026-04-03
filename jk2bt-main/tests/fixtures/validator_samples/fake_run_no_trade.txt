@@ -1,0 +1,27 @@
+"""
+假跑通策略样本 - 无交易
+
+策略类型: 空策略
+预期结果: 假跑通 ✗
+
+验证点:
+- 策略加载成功
+- 进入回测循环
+- 无交易发生
+- 最终资金 = 初始资金
+"""
+
+def initialize(context):
+    """初始化函数"""
+    g.counter = 0
+    
+    run_daily(dummy_func, time='open')
+
+def dummy_func(context):
+    """空函数"""
+    g.counter += 1
+    # 不执行任何交易操作
+
+def handle_data(context, data):
+    """每日处理 - 但不交易"""
+    pass

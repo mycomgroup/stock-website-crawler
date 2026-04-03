@@ -43,25 +43,44 @@ export class RiceQuantClient {
     return headers;
   }
 
-  async request(url, options = {}) {
+  async request(url, options = {}, retryCount = 0) {
     const fullUrl = url.startsWith('http') ? url : `${this.origin}${url}`;
+    const maxRetries = 3;
     
-    const response = await fetch(fullUrl, {
-      method: options.method || 'GET',
-      headers: this.buildHeaders(fullUrl, options.headers),
-      body: options.body
-    });
-
-    const text = await response.text();
-    
-    if (!response.ok) {
-      throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
-    }
-
     try {
-      return JSON.parse(text);
-    } catch (e) {
-      return text;
+      const response = await fetch(fullUrl, {
+        method: options.method || 'GET',
+        headers: this.buildHeaders(fullUrl, options.headers),
+        body: options.body
+      });
+
+      const text = await response.text();
+      
+      if (!response.ok) {
+        // 如果是 5xx 错误，尝试重试
+        if (response.status >= 500 && retryCount < maxRetries) {
+          const delay = Math.pow(2, retryCount) * 1000;
+          console.warn(`      [Retry ${retryCount+1}/${maxRetries}] Request failed ${response.status}, retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return this.request(url, options, retryCount + 1);
+        }
+        throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
+      }
+
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        return text;
+      }
+    } catch (error) {
+      // 捕获网络错误并在必要时重试
+      if (retryCount < maxRetries && (error.message.includes('timeout') || error.message.includes('network') || error.message.includes('ECONN'))) {
+        const delay = Math.pow(2, retryCount) * 1000;
+        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] Network error: ${error.message}, retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.request(url, options, retryCount + 1);
+      }
+      throw error;
     }
   }
 
@@ -171,9 +190,17 @@ export class RiceQuantClient {
 
   async getBacktestList(strategyId) {
     const workspaceId = await this.getWorkspaceId();
-    const url = `/api/backtest/v1/workspaces/${workspaceId}/backtests?strategy_id=${strategyId}`;
+    const url = strategyId 
+      ? `/api/backtest/v1/workspaces/${workspaceId}/backtests?strategy_id=${strategyId}`
+      : `/api/backtest/v1/workspaces/${workspaceId}/backtests`;
     const result = await this.request(url);
     return result.backtests || [];
+  }
+
+  async getRunningBacktestCount() {
+    const backtests = await this.getBacktestList();
+    const running = backtests.filter(b => b.status === 'running');
+    return running.length;
   }
 
   async getBacktestRisk(backtestId) {

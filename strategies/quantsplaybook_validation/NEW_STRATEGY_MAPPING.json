@@ -1,0 +1,167 @@
+[
+  {
+    "file": "26_etf_intraday_momentum.py",
+    "id": 2417633,
+    "title": "26 etf intraday momentum"
+  },
+  {
+    "file": "27_industry_top_bottom.py",
+    "id": 2417634,
+    "title": "27 industry top bottom"
+  },
+  {
+    "file": "28_rounding_bottom_pattern.py",
+    "id": 2417635,
+    "title": "28 rounding bottom pattern"
+  },
+  {
+    "file": "29_high_quality_momentum.py",
+    "id": 2417636,
+    "title": "29 high quality momentum"
+  },
+  {
+    "file": "30_smart_money_v2.py",
+    "id": 2417637,
+    "title": "30 smart money v2"
+  },
+  {
+    "file": "31_momentum_a_share.py",
+    "id": 2417638,
+    "title": "31 momentum a share"
+  },
+  {
+    "file": "32_chip_distribution_factor.py",
+    "id": 2417639,
+    "title": "32 chip distribution factor"
+  },
+  {
+    "file": "33_disposal_effect_factor.py",
+    "id": 2417640,
+    "title": "33 disposal effect factor"
+  },
+  {
+    "file": "34_cpv_factor.py",
+    "id": 2417641,
+    "title": "34 cpv factor"
+  },
+  {
+    "file": "35_industry_rotation_pv.py",
+    "id": 2417642,
+    "title": "35 industry rotation pv"
+  },
+  {
+    "file": "36_gold_stock_enhanced.py",
+    "id": 2417643,
+    "title": "36 gold stock enhanced"
+  },
+  {
+    "file": "37_buy_sell_pressure.py",
+    "id": 2417644,
+    "title": "37 buy sell pressure"
+  },
+  {
+    "file": "38_overnight_intraday_network.py",
+    "id": 2417645,
+    "title": "38 overnight intraday network"
+  },
+  {
+    "file": "39_fund_overweight_factor.py",
+    "id": 2417646,
+    "title": "39 fund overweight factor"
+  },
+  {
+    "file": "40_stock_network_centrality.py",
+    "id": 2417647,
+    "title": "40 stock network centrality"
+  },
+  {
+    "file": "41_fund_manager_alpha.py",
+    "id": 2417648,
+    "title": "41 fund manager alpha"
+  },
+  {
+    "file": "42_enterprise_lifecycle.py",
+    "id": 2417649,
+    "title": "42 enterprise lifecycle"
+  },
+  {
+    "file": "43_upper_lower_shadow.py",
+    "id": 2417650,
+    "title": "43 upper lower shadow"
+  },
+  {
+    "file": "44_pure_volatility_factor.py",
+    "id": 2417651,
+    "title": "44 pure volatility factor"
+  },
+  {
+    "file": "45_salience_str_factor.py",
+    "id": 2417652,
+    "title": "45 salience str factor"
+  },
+  {
+    "file": "46_factor_timing.py",
+    "id": 2417653,
+    "title": "46 factor timing"
+  },
+  {
+    "file": "47_revisit_momentum.py",
+    "id": 2417654,
+    "title": "47 revisit momentum"
+  },
+  {
+    "file": "48_amplitude_hidden_structure.py",
+    "id": 2417655,
+    "title": "48 amplitude hidden structure"
+  },
+  {
+    "file": "49_apm_factor.py",
+    "id": 2417656,
+    "title": "49 apm factor"
+  },
+  {
+    "file": "50_team_coin_momentum.py",
+    "id": 2417657,
+    "title": "50 team coin momentum"
+  },
+  {
+    "file": "51_microstructure_reversal.py",
+    "id": 2417658,
+    "title": "51 microstructure reversal"
+  },
+  {
+    "file": "52_multifactor_index_enhance.py",
+    "id": 2417659,
+    "title": "52 multifactor index enhance"
+  },
+  {
+    "file": "53_ffscore_selection.py",
+    "id": 2417660,
+    "title": "53 ffscore selection"
+  },
+  {
+    "file": "54_sw_cashflow_selection.py",
+    "id": 2417661,
+    "title": "54 sw cashflow selection"
+  },
+  {
+    "file": "55_de_portfolio_optimization.py",
+    "id": 2417662,
+    "title": "55 de portfolio optimization"
+  },
+  {
+    "file": "56_mlt_tsmom.py",
+    "id": 2417663,
+    "title": "56 mlt tsmom"
+  },
+  {
+    "file": "notebook_rsrs_dampened.py",
+    "id": 2417664,
+    "title": "notebook rsrs dampened"
+  },
+  {
+    "file": "notebook_rsrs_volume_weighted_dampened.py",
+    "id": 2417665,
+    "title": "notebook rsrs volume weighted dampened"
+  }
+]

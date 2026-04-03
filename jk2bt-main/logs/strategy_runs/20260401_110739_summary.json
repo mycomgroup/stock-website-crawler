@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-04-01T11:07:39.604430",
+  "total_strategies": 10,
+  "successful": 5,
+  "failed": 5,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/97 配套资料说明.txt",
+      "strategy_name": "97 配套资料说明",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_97 配套资料说明",
+      "start_time": "2026-04-01T10:57:39.515647",
+      "success": true,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T10:57:46.077731"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/48 研究 聚宽高手文章300篇列表.txt",
+      "strategy_name": "48 研究 聚宽高手文章300篇列表",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_48 研究 聚宽高手文章300篇列表",
+      "start_time": "2026-04-01T10:57:39.465359",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "/Users/yuping/Downloads/git/jk2bt-main/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020\n  warnings.warn(\n2026-04-01 10:57:45,056 WARNING 连接冲突，重试 1/5: IO Error: Could not set lock on file \"/Users/yuping/Downloads/git/jk2bt-main/data/industry_sw.db\": Conflicting lock is held in /Library/Developer/CommandLineTools/Libr",
+      "end_time": "2026-04-01T10:57:46.086674"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/64 基于XGBoost_6m滚动选股全A小市值开板止盈策略.txt",
+      "strategy_name": "64 基于XGBoost_6m滚动选股全A小市值开板止盈策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_64 基于XGBoost_6m滚动选股全A小市值开板止盈策略",
+      "start_time": "2026-04-01T10:57:39.473874",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "/Users/yuping/Downloads/git/jk2bt-main/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020\n  warnings.warn(\n2026-04-01 10:57:44,859 INFO 数据库表结构初始化完成\n2026-04-01 10:57:44,873 INFO 申万行业表结构初始化完成\n2026-04-01 10:57:44,885 INFO 数据库表结构初始化完成\n2026-04-01 10:57:44,899 INFO 指数成分股表结构初始化完成\n2026-04-01 10:57:44,992 INFO 数据库表结构初始化完成\n2026",
+      "end_time": "2026-04-01T10:57:46.371370"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/12 全市场选股？7年5倍不择时，回撤30%左右.txt",
+      "strategy_name": "12 全市场选股？7年5倍不择时，回撤30%左右",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_12 全市场选股？7年5倍不择时，回撤30%左右",
+      "start_time": "2026-04-01T10:57:39.472183",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T10:58:00.262773"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/10 龙头首阴战法改版二.txt",
+      "strategy_name": "10 龙头首阴战法改版二",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_10 龙头首阴战法改版二",
+      "start_time": "2026-04-01T10:57:39.435558",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T10:58:01.484217"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/19 简单到发指的股指策略(2013到现在收益10949%).txt",
+      "strategy_name": "19 简单到发指的股指策略(2013到现在收益10949%)",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_19 简单到发指的股指策略(2013到现在收益10949%)",
+      "start_time": "2026-04-01T10:57:39.470724",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T10:58:01.565028"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/04 集合竞价摸奖策略1.0-致敬2022.txt",
+      "strategy_name": "04 集合竞价摸奖策略1.0-致敬2022",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_04 集合竞价摸奖策略1.0-致敬2022",
+      "start_time": "2026-04-01T10:57:39.433832",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T10:58:02.102286"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/92 行业宽度轮动研究.txt",
+      "strategy_name": "92 行业宽度轮动研究",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_92 行业宽度轮动研究",
+      "start_time": "2026-04-01T10:57:39.450026",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (>10分钟)",
+      "end_time": "2026-04-01T11:07:39.470041"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/82 回报社区——基于Gyro老师策略的思考.txt",
+      "strategy_name": "82 回报社区——基于Gyro老师策略的思考",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_82 回报社区——基于Gyro老师策略的思考",
+      "start_time": "2026-04-01T10:57:39.449552",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (>10分钟)",
+      "end_time": "2026-04-01T11:07:39.469326"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/33 alpha191短周期价量特征因子选股，年化46.77.txt",
+      "strategy_name": "33 alpha191短周期价量特征因子选股，年化46.77",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105739_33 alpha191短周期价量特征因子选股，年化46.77",
+      "start_time": "2026-04-01T10:57:39.490379",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (>10分钟)",
+      "end_time": "2026-04-01T11:07:39.501668"
+    }
+  ],
+  "avg_pnl_pct": 0.0,
+  "max_pnl_pct": 0.0,
+  "min_pnl_pct": 0.0
+}

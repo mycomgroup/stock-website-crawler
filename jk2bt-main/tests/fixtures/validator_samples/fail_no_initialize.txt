@@ -1,0 +1,24 @@
+"""
+加载失败策略样本 - 缺少initialize函数
+
+预期结果: 加载成功但缺少必要函数 ✗
+
+验证点:
+- 策略文件无initialize函数
+- 验证器应识别缺少必要函数
+"""
+
+def my_setup(context):
+    """自定义初始化（非标准）"""
+    g.stocks = ['600519.XSHG']
+    
+    run_monthly(trade, day=1)
+
+def trade(context):
+    """交易函数"""
+    for stock in g.stocks:
+        order_value(stock, 10000)
+
+def handle_data(context, data):
+    """每日处理"""
+    pass

@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-04-01T11:20:35.225420",
+  "total_strategies": 10,
+  "successful": 2,
+  "failed": 8,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/69 人工智能早晨十字星模型（反转形态预测）.txt",
+      "strategy_name": "69 人工智能早晨十字星模型（反转形态预测）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111035_69 人工智能早晨十字星模型（反转形态预测）",
+      "start_time": "2026-04-01T11:10:35.189434",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "RuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/69 人工智能早晨十字星模型（反转形态预测）.txt): File not found: ZCSZX_0.pt. Full path: /Users/yuping/Downloads/git/jk2bt-main/src/runtime_data/ZCSZX_0.pt\n    raise FileNotFoundError(f\"File not found: {filepath}. Full path: {target_path}\")\nFileNotFoundError: File not found: ZCSZX_0.pt. Full path: /Users/yuping/Downloads/git/jk2bt-main/src/runtime_data/ZCSZX_0.pt",
+      "end_time": "2026-04-01T11:10:40.417388"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/90 国债固收+.txt",
+      "strategy_name": "90 国债固收+",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111035_90 国债固收+",
+      "start_time": "2026-04-01T11:10:35.207505",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T11:11:07.118627"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/47 随机森林量价多因子选股短线交易机器学习.txt",
+      "strategy_name": "47 随机森林量价多因子选股短线交易机器学习",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111035_47 随机森林量价多因子选股短线交易机器学习",
+      "start_time": "2026-04-01T11:10:35.189949",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T11:15:35.191584"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/30 挖掘特色估值体系因子，把握投资机会，年化150%+.txt",
+      "strategy_name": "30 挖掘特色估值体系因子，把握投资机会，年化150%+",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111035_30 挖掘特色估值体系因子，把握投资机会，年化150%+",
+      "start_time": "2026-04-01T11:10:35.194494",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T11:15:35.194656"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/37 PEG+EBIT对小市值因子的优化.txt",
+      "strategy_name": "37 PEG+EBIT对小市值因子的优化",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111035_37 PEG+EBIT对小市值因子的优化",
+      "start_time": "2026-04-01T11:10:35.200754",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T11:15:35.203386"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/41 SVR机器学习上证综指择时中小板财务选股策略.txt",
+      "strategy_name": "41 SVR机器学习上证综指择时中小板财务选股策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111040_41 SVR机器学习上证综指择时中小板财务选股策略",
+      "start_time": "2026-04-01T11:10:40.418090",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T11:15:40.418099"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/52 根据北上资金买A股策略Python3版（北向港资外资）.txt",
+      "strategy_name": "52 根据北上资金买A股策略Python3版（北向港资外资）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111535_52 根据北上资金买A股策略Python3版（北向港资外资）",
+      "start_time": "2026-04-01T11:15:35.192590",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T11:15:44.876142"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/40 高股息策略.txt",
+      "strategy_name": "40 高股息策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111107_40 高股息策略",
+      "start_time": "2026-04-01T11:11:07.119143",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T11:16:07.121242"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/31 跟着基金报团！！！174%  回撤  7.33%.txt",
+      "strategy_name": "31 跟着基金报团！！！174%  回撤  7.33%",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111535_31 跟着基金报团！！！174%  回撤  7.33%",
+      "start_time": "2026-04-01T11:15:35.196205",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T11:20:35.199775"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/13 5年15倍的收益，年化79.93%，可实盘策略，拿走不谢！.txt",
+      "strategy_name": "13 5年15倍的收益，年化79.93%，可实盘策略，拿走不谢！",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_111535_13 5年15倍的收益，年化79.93%，可实盘策略，拿走不",
+      "start_time": "2026-04-01T11:15:35.205815",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T11:20:35.209183"
+    }
+  ],
+  "avg_pnl_pct": 0.0,
+  "max_pnl_pct": 0.0,
+  "min_pnl_pct": 0.0
+}

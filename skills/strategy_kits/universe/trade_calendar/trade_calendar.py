@@ -21,6 +21,18 @@ from ...core import ErrorCode, StrategyKitsError, get_logger, log_kv
 # 全局日历缓存（后续接入DB/文件时替换为对应来源）
 _TRADE_CAL_CACHE: Optional[pd.DatetimeIndex] = None
 _logger = get_logger("trade_calendar.core")
+_DATE_COLUMN_CANDIDATES = {
+    "market": ["date", "trade_date", "trading_date", "日期", "时间"],
+    "financial": [
+        "report_date",
+        "date",
+        "STATEMENT_DATE",
+        "报告期",
+        "报告日期",
+        "报告日",
+        "报表日期",
+    ],
+}
 
 
 def _normalize_trade_days(trade_days: Union[list, pd.DatetimeIndex]) -> pd.DatetimeIndex:
@@ -31,6 +43,15 @@ def _normalize_trade_days(trade_days: Union[list, pd.DatetimeIndex]) -> pd.Datet
             "trade_days is empty",
         )
     return pd.DatetimeIndex(sorted(set(idx)))
+
+
+def find_date_column(df: pd.DataFrame, category: str = "market") -> Optional[str]:
+    """Find a likely date column using market/financial naming conventions."""
+    candidates = _DATE_COLUMN_CANDIDATES.get(category, _DATE_COLUMN_CANDIDATES["market"])
+    for col in candidates:
+        if col in df.columns:
+            return col
+    return None
 
 
 def set_trade_cal_source(trade_days: Union[list, pd.DatetimeIndex]):
@@ -130,14 +151,12 @@ def get_trade_days(
     all_days = get_all_trade_days(allow_business_day_fallback=False)
 
     if count is not None:
-        if end is None:
-            raise ValueError("使用 count 时必须指定 end")
-        end_dt = pd.to_datetime(end)
+        end_dt = pd.to_datetime(end) if end is not None else all_days[-1]
         end_idx = all_days.get_indexer([end_dt], method="ffill")[0]
         if end_idx < 0:
             raise StrategyKitsError(
                 ErrorCode.CALENDAR_OUT_OF_RANGE,
-                f"end={end} 不在日历范围内",
+                f"end={end_dt.date()} 不在日历范围内",
             )
         start_idx = max(0, end_idx - count + 1)
         return all_days[start_idx : end_idx + 1]
@@ -195,3 +214,31 @@ def next_trade_day(
 ) -> pd.Timestamp:
     """获取下一交易日。"""
     return shift_trade_day(date, 1, market=market)
+
+
+def is_trade_date(
+    date: Union[str, dt.date, dt.datetime, pd.Timestamp],
+    market: str = "SSE",
+) -> bool:
+    """Return whether the supplied date is a trading day in the loaded calendar."""
+    all_days = get_all_trade_days()
+    dt_value = pd.to_datetime(date)
+    return dt_value in all_days
+
+
+def get_previous_trade_date(
+    date: Union[str, dt.date, dt.datetime, pd.Timestamp],
+    n: int = 1,
+    market: str = "SSE",
+) -> pd.Timestamp:
+    """JoinQuant-style alias for shifting backward by trading days."""
+    return shift_trade_day(date, -abs(n), market=market)
+
+
+def get_next_trade_date(
+    date: Union[str, dt.date, dt.datetime, pd.Timestamp],
+    n: int = 1,
+    market: str = "SSE",
+) -> pd.Timestamp:
+    """JoinQuant-style alias for shifting forward by trading days."""
+    return shift_trade_day(date, abs(n), market=market)

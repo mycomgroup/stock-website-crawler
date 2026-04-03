@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-04-01T11:26:11.786525",
+  "total_strategies": 2,
+  "successful": 1,
+  "failed": 1,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/91 配套资料说明.txt",
+      "strategy_name": "91 配套资料说明",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_112604_91 配套资料说明",
+      "start_time": "2026-04-01T11:26:04.592816",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "Traceback (most recent call last):\n    raise SyntaxError(\nSyntaxError: 策略文件语法错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/91 配套资料说明.txt): invalid character '：' (U+FF1A) (行 7)",
+      "end_time": "2026-04-01T11:26:07.081699"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/53 筹码选股.txt",
+      "strategy_name": "53 筹码选股",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_112604_53 筹码选股",
+      "start_time": "2026-04-01T11:26:04.589856",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T11:26:11.775462"
+    }
+  ],
+  "avg_pnl_pct": 0.0,
+  "max_pnl_pct": 0.0,
+  "min_pnl_pct": 0.0
+}

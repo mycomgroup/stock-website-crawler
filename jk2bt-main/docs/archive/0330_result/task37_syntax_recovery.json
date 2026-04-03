@@ -1,0 +1,41 @@
+{
+  "total": 5,
+  "recovered": 4,
+  "rate": 80.0,
+  "details": [
+    {
+      "filename": "",
+      "recovered": true,
+      "fixes": [
+        "print_statement"
+      ]
+    },
+    {
+      "filename": "",
+      "recovered": true,
+      "fixes": [
+        "print_statement"
+      ]
+    },
+    {
+      "filename": "",
+      "recovered": true,
+      "fixes": [
+        "tab_indent"
+      ]
+    },
+    {
+      "filename": "",
+      "recovered": true,
+      "fixes": [
+        "print_statement"
+      ]
+    },
+    {
+      "filename": "",
+      "recovered": false,
+      "fixes": [],
+      "error": "'utf-8' codec can't decode byte 0xff in position 0: invalid start byte"
+    }
+  ]
+}

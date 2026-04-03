@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-04-01T21:07:41.275990",
+  "total_strategies": 10,
+  "successful": 8,
+  "failed": 2,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/54 价值投资策略-大盘择时.txt",
+      "strategy_name": "54 价值投资策略-大盘择时",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_54 价值投资策略-大盘择时",
+      "start_time": "2026-04-01T20:37:41.243048",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "    raise RuntimeError(\nRuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/54 价值投资策略-大盘择时.txt): name 'Enum' is not defined\nNameError: name 'Enum' is not defined",
+      "end_time": "2026-04-01T20:37:46.387061"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/02 连板龙头策略.txt",
+      "strategy_name": "02 连板龙头策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_02 连板龙头策略",
+      "start_time": "2026-04-01T20:37:41.219192",
+      "success": true,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:37:50.776116"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/04 苦咖啡-默默赚钱系列-改.txt",
+      "strategy_name": "04 苦咖啡-默默赚钱系列-改",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_04 苦咖啡-默默赚钱系列-改",
+      "start_time": "2026-04-01T20:37:41.228700",
+      "success": true,
+      "final_value": 46.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:46:02.300382"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/71 期货日内策略三价均线结合ATR指标.txt",
+      "strategy_name": "71 期货日内策略三价均线结合ATR指标",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_71 期货日内策略三价均线结合ATR指标",
+      "start_time": "2026-04-01T20:37:41.264619",
+      "success": true,
+      "final_value": 46.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:46:39.971521"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/97 趋势筛选后相关性最小etf轮动-加速10倍版.txt",
+      "strategy_name": "97 趋势筛选后相关性最小etf轮动-加速10倍版",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_97 趋势筛选后相关性最小etf轮动-加速10倍版",
+      "start_time": "2026-04-01T20:37:41.231141",
+      "success": true,
+      "final_value": 46.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:46:53.063833"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/89 2020年效果很好的策略-龙回头策略v3.0.txt",
+      "strategy_name": "89 2020年效果很好的策略-龙回头策略v3.0",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_89 2020年效果很好的策略-龙回头策略v3.0",
+      "start_time": "2026-04-01T20:37:41.224998",
+      "success": true,
+      "final_value": 46.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:46:57.733639"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/50 【7日趋势】短线交易策略.txt",
+      "strategy_name": "50 【7日趋势】短线交易策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_50 【7日趋势】短线交易策略",
+      "start_time": "2026-04-01T20:37:41.259266",
+      "success": true,
+      "final_value": 51.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:51:56.119274"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/30 错杀反弹，掌握人性规律，开启投资新纪元.txt",
+      "strategy_name": "30 错杀反弹，掌握人性规律，开启投资新纪元",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_30 错杀反弹，掌握人性规律，开启投资新纪元",
+      "start_time": "2026-04-01T20:37:41.221934",
+      "success": true,
+      "final_value": 57.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:57:42.219537"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/100 全市场选股？7年5倍不择时，回撤30%左右.txt",
+      "strategy_name": "100 全市场选股？7年5倍不择时，回撤30%左右",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_100 全市场选股？7年5倍不择时，回撤30%左右",
+      "start_time": "2026-04-01T20:37:41.252444",
+      "success": true,
+      "final_value": 2.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:02:33.616304"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/60 可能是最接近实盘的“基本面三角”.txt",
+      "strategy_name": "60 可能是最接近实盘的“基本面三角”",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_203741_60 可能是最接近实盘的“基本面三角”",
+      "start_time": "2026-04-01T20:37:41.230959",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 30分钟)",
+      "end_time": "2026-04-01T21:07:41.267380"
+    }
+  ]
+}

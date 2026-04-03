@@ -1,0 +1,49 @@
+"""
+使用 runtime IO API 的策略示例
+"""
+
+def initialize(context):
+    """初始化"""
+    log.info("策略初始化 - 测试 Runtime IO API")
+    
+    # 设置全局变量
+    g.record_count = 0
+    g.message_count = 0
+    
+    # 写入策略配置
+    config = '{"strategy": "runtime_io_test", "version": 1.0}'
+    write_file("strategy_config.json", config)
+    log.info("配置文件已写入")
+
+def handle_data(context, data):
+    """每日执行"""
+    current_date = context.current_dt
+    
+    # 1. 使用 record 记录每日数据
+    record(
+        name="daily_metrics",
+        date=current_date,
+        nav=context.portfolio.total_value,
+        positions=len(context.portfolio.positions),
+        returns=context.portfolio.returns,
+    )
+    g.record_count += 1
+    
+    # 2. 每 10 天发送一条消息
+    if g.record_count % 10 == 0:
+        send_message(
+            title="周期报告",
+            content=f"已运行 {g.record_count} 天，净值: {context.portfolio.total_value:.2f}",
+            channel="periodic"
+        )
+        g.message_count += 1
+    
+    # 3. 在特定日期写入日志
+    if current_date.day == 15:
+        log_entry = f"{current_date}: 月中检查，净值={context.portfolio.total_value:.2f}\n"
+        write_file("monthly_check.log", log_entry, mode="a")
+    
+    # 简单的买入逻辑
+    if g.record_count == 1:
+        order_value("600519.XSHG", context.portfolio.total_value * 0.5)
+        log.info("首次买入")

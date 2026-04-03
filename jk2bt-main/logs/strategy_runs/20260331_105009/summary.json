@@ -1,0 +1,174 @@
+{
+  "run_id": "20260331_105009",
+  "timestamp": "2026-03-31T10:50:28.230698",
+  "config": {
+    "max_workers": 5,
+    "timeout_per_strategy": 60,
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 1000000,
+    "stock_pool": "auto_discover",
+    "skip_scan": false
+  },
+  "scan_summary": {
+    "total": 2,
+    "executable": 2,
+    "skipped": 0,
+    "details": {
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      }
+    }
+  },
+  "summary": {
+    "input_total": 2,
+    "run_total": 2,
+    "skipped_total": 0,
+    "success_with_return": 0,
+    "success_zero_return": 2,
+    "success_no_trade": 0,
+    "success_total": 2,
+    "load_failed": 0,
+    "run_exception": 0,
+    "timeout": 0,
+    "data_missing": 0,
+    "missing_dependency": 0,
+    "missing_api": 0,
+    "missing_resource": 0,
+    "skipped_not_strategy": 0,
+    "skipped_syntax_error": 0,
+    "skipped_no_initialize": 0,
+    "skipped_missing_api": 0,
+    "failed_total": 0,
+    "recoverable_failures": 0,
+    "unrecoverable_failures": 0,
+    "real_success_rate": 100.0,
+    "input_success_rate": 100.0,
+    "total_duration_seconds": 19.19,
+    "total_duration_minutes": 0.32,
+    "status_counts": {
+      "success_zero_return": 2
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {
+      "data_missing": 0,
+      "missing_dependency": 0,
+      "missing_api": 0,
+      "missing_resource": 0
+    },
+    "unrecoverable": {
+      "load_failed": 0,
+      "run_exception": 0,
+      "timeout": 0,
+      "syntax_error": 0
+    }
+  },
+  "results": [
+    {
+      "strategy": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T10:50:11.292293",
+      "end_time": "2026-03-31T10:50:20.285311",
+      "duration": 8.99,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "01 7年40倍模拟超过两年年化高回撤低.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T10:50:11.180703",
+      "end_time": "2026-03-31T10:50:27.462282",
+      "duration": 16.28,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    }
+  ]
+}

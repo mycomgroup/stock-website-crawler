@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jk2bt"
+version = "1.0.0"
+description = "聚宽策略本地运行框架 - 让聚宽平台的策略代码无需修改就能在本地运行"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "JK2BT Team"}
+]
+keywords = ["quant", "backtrader", "joinquant", "trading"]
+
+dependencies = [
+    "pandas>=1.5.0",
+    "numpy>=1.21.0",
+    "backtrader>=1.9.76",
+    "akshare>=1.10.0",
+    "duckdb>=0.8.0",
+    "pyyaml>=6.0",
+    "requests>=2.28.0",
+    "tqdm>=4.64.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+full = [
+    "scikit-learn>=1.0.0",
+    "xgboost>=1.6.0",
+    "lightgbm>=3.3.0",
+    "statsmodels>=0.13.0",
+    "scipy>=1.8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["jk2bt*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["jk2bt"]
+omit = ["tests/*", "*/__pycache__/*"]

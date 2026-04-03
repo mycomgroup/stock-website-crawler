@@ -1,0 +1,120 @@
+{
+  "run_id": "20260331_094500",
+  "timestamp": "2026-03-31T09:45:13.667727",
+  "config": {
+    "max_workers": 5,
+    "timeout_per_strategy": 3600,
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 1000000,
+    "stock_pool": "auto_discover",
+    "skip_scan": false
+  },
+  "scan_summary": {
+    "total": 1,
+    "executable": 1,
+    "skipped": 0,
+    "details": {
+      "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      }
+    }
+  },
+  "summary": {
+    "input_total": 1,
+    "run_total": 1,
+    "skipped_total": 0,
+    "success_with_return": 0,
+    "success_zero_return": 0,
+    "success_no_trade": 0,
+    "success_total": 0,
+    "load_failed": 0,
+    "run_exception": 0,
+    "timeout": 0,
+    "data_missing": 0,
+    "missing_dependency": 0,
+    "missing_api": 1,
+    "missing_resource": 0,
+    "skipped_not_strategy": 0,
+    "skipped_syntax_error": 0,
+    "skipped_no_initialize": 0,
+    "skipped_missing_api": 0,
+    "failed_total": 1,
+    "recoverable_failures": 1,
+    "unrecoverable_failures": 0,
+    "real_success_rate": 0.0,
+    "input_success_rate": 0.0,
+    "total_duration_seconds": 12.95,
+    "total_duration_minutes": 0.22,
+    "status_counts": {
+      "missing_api": 1
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {
+      "data_missing": 0,
+      "missing_dependency": 0,
+      "missing_api": 1,
+      "missing_resource": 0
+    },
+    "unrecoverable": {
+      "load_failed": 0,
+      "run_exception": 0,
+      "timeout": 0,
+      "syntax_error": 0
+    }
+  },
+  "results": [
+    {
+      "strategy": "01 7年40倍模拟超过两年年化高回撤低.txt",
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt",
+      "success": false,
+      "run_status": "missing_api",
+      "status": "API/属性缺失: AttributeError",
+      "start_time": "2026-03-31T09:45:02.659369",
+      "end_time": "2026-03-31T09:45:13.270905",
+      "duration": 10.61,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0,
+      "annual_return": 0,
+      "sharpe_ratio": 0,
+      "trading_days": 0,
+      "error": "'NoneType' object has no attribute 'addindicator'",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 339, in run_single_strategy\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "AttributeError",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "API或属性未实现/未定义",
+        "missing_dependency": "",
+        "missing_api": "'NoneType' object has no attribute 'addindicator'",
+        "missing_resource_file": "",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      }
+    }
+  ]
+}

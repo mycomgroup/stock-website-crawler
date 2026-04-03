@@ -1,0 +1,19 @@
+{
+  "name": "equity-pledge-risk-monitor",
+  "version": "1.0.0",
+  "metadata": {
+    "description": "分析股权质押比例、质押分布、行业对比及结构特征，输出控制权与财务/流动性风险提示。当用户询问股权质押、质押比例、质押风险或需要质押风险扫描时使用。",
+    "created": "2026-02-25",
+    "language": "zh-CN"
+  },
+  "plugins": [
+    {
+      "name": "equity-pledge-risk-monitor-plugin",
+      "description": "分析股权质押比例、质押分布、行业对比及结构特征，输出控制权与财务/流动性风险提示。当用户询问股权质押、质押比例、质押风险或需要质押风险扫描时使用。",
+      "source": "./",
+      "skills": [
+        "./SKILL.md"
+      ]
+    }
+  ]
+}

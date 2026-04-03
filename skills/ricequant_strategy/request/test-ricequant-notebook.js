@@ -355,7 +355,7 @@ async function executeNotebookTest(options = {}) {
     }
   }
 
-  const notebookSnapshotPath = client.writeArtifact(`ricequant-notebook-${notebookBaseName}`, notebookContent, 'ipynb');
+  const notebookSnapshotPath = client.writeArtifact(`${notebookBaseName}`, notebookContent, 'ipynb');
   const resultPayload = {
     capturedAt: new Date().toISOString(),
     notebookUrl: client.directNotebookUrl,
@@ -374,7 +374,7 @@ async function executeNotebookTest(options = {}) {
     shutdownResult,
     autoShutdown: options.autoShutdown !== false
   };
-  const resultFile = client.writeArtifact(`ricequant-notebook-result-${notebookBaseName}`, resultPayload, 'json');
+  const resultFile = client.writeArtifact(`${notebookBaseName}-result`, resultPayload, 'json');
 
   return {
     resultFile,

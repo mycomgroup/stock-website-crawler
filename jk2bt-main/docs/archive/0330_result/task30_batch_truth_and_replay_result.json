@@ -1,0 +1,576 @@
+{
+  "summary": {
+    "run_id": "20260330_184133",
+    "timestamp": "2026-03-30T18:41:33.477032",
+    "scan_summary": {
+      "total": 8,
+      "executable": 6,
+      "skipped": 2,
+      "details": {
+        "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "jkcode/jkcode/04 红利搬砖，年化29%.txt": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "jkcode/jkcode/02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": false,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "jkcode/jkcode/100 配套资料说明.txt": {
+          "status": "not_strategy",
+          "is_executable": false,
+          "has_initialize": false,
+          "has_handle": false,
+          "missing_apis": [],
+          "error_message": "非策略文件（研究文档/配套资料）"
+        },
+        "jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": false,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "jkcode/jkcode/03 多策略融合-80倍.txt": {
+          "status": "missing_api",
+          "is_executable": false,
+          "has_initialize": true,
+          "has_handle": false,
+          "missing_apis": [
+            "get_ticks",
+            "get_ticks"
+          ],
+          "error_message": "missing_api"
+        }
+      }
+    },
+    "summary": {
+      "input_total": 8,
+      "run_total": 6,
+      "skipped_total": 2,
+      "success_with_return": 0,
+      "success_zero_return": 0,
+      "success_no_trade": 0,
+      "success_total": 0,
+      "load_failed": 0,
+      "run_exception": 0,
+      "timeout": 0,
+      "data_missing": 0,
+      "missing_dependency": 0,
+      "missing_api": 6,
+      "missing_resource": 0,
+      "skipped_not_strategy": 2,
+      "failed_total": 8,
+      "recoverable_failures": 6,
+      "unrecoverable_failures": 2,
+      "status_counts": {
+        "missing_api": 6,
+        "skipped_not_strategy": 2
+      }
+    },
+    "results": [
+      {
+        "strategy": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+        "strategy_file": "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt",
+        "success": false,
+        "run_status": "missing_api",
+        "status": "API/属性缺失: AttributeError",
+        "start_time": "2026-03-30T18:41:29.533870",
+        "end_time": "2026-03-30T18:41:30.874370",
+        "duration": 1.34,
+        "final_value": 98368.14992,
+        "pnl": -1631.8500800000038,
+        "pnl_pct": -1.631850080000008,
+        "max_drawdown": 0,
+        "annual_return": 0,
+        "sharpe_ratio": 0,
+        "trading_days": 0,
+        "error": "'NoneType' object has no attribute 'addindicator'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/test_task30_batch_truth_simple.py\", line 153, in run_single_strategy_simple\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n",
+        "scan_result": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "exception_type": "AttributeError",
+        "evidence": {
+          "loaded": true,
+          "entered_backtest_loop": true,
+          "has_transactions": false,
+          "has_nav_series": true,
+          "nav_series_length": 58,
+          "strategy_obj_valid": true,
+          "cerebro_valid": true
+        },
+        "attribution": {
+          "failure_root_cause": "API或属性未实现/未定义",
+          "missing_dependency": "",
+          "missing_api": "'NoneType' object has no attribute 'addindicator'",
+          "missing_resource_file": "",
+          "error_category": "api_missing",
+          "recoverable": true,
+          "recommendation": "检查策略使用的API是否在utility中已实现"
+        }
+      },
+      {
+        "strategy": "04 红利搬砖，年化29%.txt",
+        "strategy_file": "jkcode/jkcode/04 红利搬砖，年化29%.txt",
+        "success": false,
+        "run_status": "missing_api",
+        "status": "API/属性缺失: AttributeError",
+        "start_time": "2026-03-30T18:41:30.874391",
+        "end_time": "2026-03-30T18:41:31.314738",
+        "duration": 0.44,
+        "final_value": 100000.0,
+        "pnl": 0.0,
+        "pnl_pct": 0.0,
+        "max_drawdown": 0,
+        "annual_return": 0,
+        "sharpe_ratio": 0,
+        "trading_days": 0,
+        "error": "'NoneType' object has no attribute 'addindicator'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/test_task30_batch_truth_simple.py\", line 153, in run_single_strategy_simple\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n",
+        "scan_result": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "exception_type": "AttributeError",
+        "evidence": {
+          "loaded": true,
+          "entered_backtest_loop": true,
+          "has_transactions": false,
+          "has_nav_series": true,
+          "nav_series_length": 58,
+          "strategy_obj_valid": true,
+          "cerebro_valid": true
+        },
+        "attribution": {
+          "failure_root_cause": "API或属性未实现/未定义",
+          "missing_dependency": "",
+          "missing_api": "'NoneType' object has no attribute 'addindicator'",
+          "missing_resource_file": "",
+          "error_category": "api_missing",
+          "recoverable": true,
+          "recommendation": "检查策略使用的API是否在utility中已实现"
+        }
+      },
+      {
+        "strategy": "04 高股息低市盈率高增长的价投策略.txt",
+        "strategy_file": "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt",
+        "success": false,
+        "run_status": "missing_api",
+        "status": "API/属性缺失: AttributeError",
+        "start_time": "2026-03-30T18:41:31.314762",
+        "end_time": "2026-03-30T18:41:31.801585",
+        "duration": 0.49,
+        "final_value": 100000.0,
+        "pnl": 0.0,
+        "pnl_pct": 0.0,
+        "max_drawdown": 0,
+        "annual_return": 0,
+        "sharpe_ratio": 0,
+        "trading_days": 0,
+        "error": "'NoneType' object has no attribute 'addindicator'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/test_task30_batch_truth_simple.py\", line 153, in run_single_strategy_simple\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n",
+        "scan_result": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "exception_type": "AttributeError",
+        "evidence": {
+          "loaded": true,
+          "entered_backtest_loop": true,
+          "has_transactions": false,
+          "has_nav_series": true,
+          "nav_series_length": 58,
+          "strategy_obj_valid": true,
+          "cerebro_valid": true
+        },
+        "attribution": {
+          "failure_root_cause": "API或属性未实现/未定义",
+          "missing_dependency": "",
+          "missing_api": "'NoneType' object has no attribute 'addindicator'",
+          "missing_resource_file": "",
+          "error_category": "api_missing",
+          "recoverable": true,
+          "recommendation": "检查策略使用的API是否在utility中已实现"
+        }
+      },
+      {
+        "strategy": "01 龙回头3.0回测速度优化版.txt",
+        "strategy_file": "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt",
+        "success": false,
+        "run_status": "missing_api",
+        "status": "API/属性缺失: AttributeError",
+        "start_time": "2026-03-30T18:41:31.801612",
+        "end_time": "2026-03-30T18:41:32.526210",
+        "duration": 0.72,
+        "final_value": 100000.0,
+        "pnl": 0.0,
+        "pnl_pct": 0.0,
+        "max_drawdown": 0,
+        "annual_return": 0,
+        "sharpe_ratio": 0,
+        "trading_days": 0,
+        "error": "'NoneType' object has no attribute 'addindicator'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/test_task30_batch_truth_simple.py\", line 153, in run_single_strategy_simple\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n",
+        "scan_result": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": true,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "exception_type": "AttributeError",
+        "evidence": {
+          "loaded": true,
+          "entered_backtest_loop": true,
+          "has_transactions": false,
+          "has_nav_series": true,
+          "nav_series_length": 58,
+          "strategy_obj_valid": true,
+          "cerebro_valid": true
+        },
+        "attribution": {
+          "failure_root_cause": "API或属性未实现/未定义",
+          "missing_dependency": "",
+          "missing_api": "'NoneType' object has no attribute 'addindicator'",
+          "missing_resource_file": "",
+          "error_category": "api_missing",
+          "recoverable": true,
+          "recommendation": "检查策略使用的API是否在utility中已实现"
+        }
+      },
+      {
+        "strategy": "02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt",
+        "strategy_file": "jkcode/jkcode/02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt",
+        "success": false,
+        "run_status": "missing_api",
+        "status": "API/属性缺失: AttributeError",
+        "start_time": "2026-03-30T18:41:32.526235",
+        "end_time": "2026-03-30T18:41:33.046881",
+        "duration": 0.52,
+        "final_value": 100000.0,
+        "pnl": 0.0,
+        "pnl_pct": 0.0,
+        "max_drawdown": 0,
+        "annual_return": 0,
+        "sharpe_ratio": 0,
+        "trading_days": 0,
+        "error": "'NoneType' object has no attribute 'addindicator'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/test_task30_batch_truth_simple.py\", line 153, in run_single_strategy_simple\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n",
+        "scan_result": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": false,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "exception_type": "AttributeError",
+        "evidence": {
+          "loaded": true,
+          "entered_backtest_loop": true,
+          "has_transactions": false,
+          "has_nav_series": true,
+          "nav_series_length": 58,
+          "strategy_obj_valid": true,
+          "cerebro_valid": true
+        },
+        "attribution": {
+          "failure_root_cause": "API或属性未实现/未定义",
+          "missing_dependency": "",
+          "missing_api": "'NoneType' object has no attribute 'addindicator'",
+          "missing_resource_file": "",
+          "error_category": "api_missing",
+          "recoverable": true,
+          "recommendation": "检查策略使用的API是否在utility中已实现"
+        }
+      },
+      {
+        "strategy": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+        "strategy_file": "jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+        "success": false,
+        "run_status": "missing_api",
+        "status": "API/属性缺失: AttributeError",
+        "start_time": "2026-03-30T18:41:33.046906",
+        "end_time": "2026-03-30T18:41:33.476992",
+        "duration": 0.43,
+        "final_value": 100000.0,
+        "pnl": 0.0,
+        "pnl_pct": 0.0,
+        "max_drawdown": 0,
+        "annual_return": 0,
+        "sharpe_ratio": 0,
+        "trading_days": 0,
+        "error": "'NoneType' object has no attribute 'addindicator'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/test_task30_batch_truth_simple.py\", line 153, in run_single_strategy_simple\n    if strategy_obj and has_navs:\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 287, in __nonzero__\n    return self._operationown(bool)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 92, in _operationown\n    return self._operationown_stage1(operation)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 184, in _operationown_stage1\n    return self._makeoperationown(operation, _ownerskip=self)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/lineroot.py\", line 334, in _makeoperationown\n    return self.lines[0]._makeoperationown(operation, _ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 381, in _makeoperationown\n    return LineOwnOperation(self, operation, _ownerskip=_ownerskip)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 522, in __call__\n    return super(MetaLineActions, cls).__call__(*args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/metabase.py\", line 89, in __call__\n    _obj, args, kwargs = cls.dopostinit(_obj, *args, **kwargs)\n  File \"/Users/yuping/Library/Python/3.9/lib/python/site-packages/backtrader/linebuffer.py\", line 566, in dopostinit\n    _obj._owner.addindicator(_obj)\nAttributeError: 'NoneType' object has no attribute 'addindicator'\n",
+        "scan_result": {
+          "status": "valid",
+          "is_executable": true,
+          "has_initialize": true,
+          "has_handle": false,
+          "missing_apis": [],
+          "error_message": ""
+        },
+        "exception_type": "AttributeError",
+        "evidence": {
+          "loaded": true,
+          "entered_backtest_loop": true,
+          "has_transactions": false,
+          "has_nav_series": true,
+          "nav_series_length": 58,
+          "strategy_obj_valid": true,
+          "cerebro_valid": true
+        },
+        "attribution": {
+          "failure_root_cause": "API或属性未实现/未定义",
+          "missing_dependency": "",
+          "missing_api": "'NoneType' object has no attribute 'addindicator'",
+          "missing_resource_file": "",
+          "error_category": "api_missing",
+          "recoverable": true,
+          "recommendation": "检查策略使用的API是否在utility中已实现"
+        }
+      },
+      {
+        "strategy": "100 配套资料说明.txt",
+        "strategy_file": "jkcode/jkcode/100 配套资料说明.txt",
+        "success": false,
+        "run_status": "skipped_not_strategy",
+        "status": "非策略文件（研究文档/配套资料）",
+        "duration": 0,
+        "scan_result": {
+          "status": "not_strategy",
+          "is_executable": false,
+          "has_initialize": false,
+          "has_handle": false,
+          "missing_apis": [],
+          "error_message": "非策略文件（研究文档/配套资料）"
+        },
+        "evidence": {
+          "loaded": false,
+          "entered_backtest_loop": false,
+          "has_transactions": false,
+          "has_nav_series": false,
+          "nav_series_length": 0,
+          "strategy_obj_valid": false,
+          "cerebro_valid": false
+        },
+        "attribution": {
+          "failure_root_cause": "非策略文件（研究文档/配套资料）",
+          "error_category": "scan_rejected",
+          "recoverable": false,
+          "recommendation": "检查策略文件是否符合策略格式要求"
+        }
+      },
+      {
+        "strategy": "03 多策略融合-80倍.txt",
+        "strategy_file": "jkcode/jkcode/03 多策略融合-80倍.txt",
+        "success": false,
+        "run_status": "skipped_not_strategy",
+        "status": "missing_api",
+        "duration": 0,
+        "scan_result": {
+          "status": "missing_api",
+          "is_executable": false,
+          "has_initialize": true,
+          "has_handle": false,
+          "missing_apis": [
+            "get_ticks",
+            "get_ticks"
+          ],
+          "error_message": "missing_api"
+        },
+        "evidence": {
+          "loaded": false,
+          "entered_backtest_loop": false,
+          "has_transactions": false,
+          "has_nav_series": false,
+          "nav_series_length": 0,
+          "strategy_obj_valid": false,
+          "cerebro_valid": false
+        },
+        "attribution": {
+          "failure_root_cause": "missing_api",
+          "error_category": "scan_rejected",
+          "recoverable": false,
+          "recommendation": "检查策略文件是否符合策略格式要求"
+        }
+      }
+    ]
+  },
+  "analysis": {
+    "total": 8,
+    "categories": {
+      "likely_success": [
+        {
+          "strategy": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+          "run_status": "missing_api",
+          "success": false,
+          "pnl_pct": -1.631850080000008
+        }
+      ],
+      "likely_no_trade": [
+        {
+          "strategy": "04 红利搬砖，年化29%.txt",
+          "run_status": "missing_api",
+          "success": false,
+          "pnl_pct": 0.0
+        },
+        {
+          "strategy": "04 高股息低市盈率高增长的价投策略.txt",
+          "run_status": "missing_api",
+          "success": false,
+          "pnl_pct": 0.0
+        }
+      ],
+      "likely_missing_api": [
+        {
+          "strategy": "01 龙回头3.0回测速度优化版.txt",
+          "run_status": "missing_api",
+          "success": false,
+          "pnl_pct": 0.0
+        },
+        {
+          "strategy": "02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt",
+          "run_status": "missing_api",
+          "success": false,
+          "pnl_pct": 0.0
+        }
+      ],
+      "likely_complex_strategy": [
+        {
+          "strategy": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+          "run_status": "missing_api",
+          "success": false,
+          "pnl_pct": 0.0
+        },
+        {
+          "strategy": "03 多策略融合-80倍.txt",
+          "run_status": "skipped_not_strategy",
+          "success": false,
+          "pnl_pct": 0
+        }
+      ],
+      "likely_syntax_error": [
+        {
+          "strategy": "100 配套资料说明.txt",
+          "run_status": "skipped_not_strategy",
+          "success": false,
+          "pnl_pct": 0
+        }
+      ]
+    },
+    "semantic_checks": {},
+    "status_distribution": {
+      "missing_api": 6,
+      "skipped_not_strategy": 2
+    },
+    "attribution": {
+      "03 一个简单而持续稳定的懒人超额收益策略.txt": {
+        "root_cause": "API或属性未实现/未定义",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      },
+      "04 红利搬砖，年化29%.txt": {
+        "root_cause": "API或属性未实现/未定义",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      },
+      "04 高股息低市盈率高增长的价投策略.txt": {
+        "root_cause": "API或属性未实现/未定义",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      },
+      "01 龙回头3.0回测速度优化版.txt": {
+        "root_cause": "API或属性未实现/未定义",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      },
+      "02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt": {
+        "root_cause": "API或属性未实现/未定义",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      },
+      "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt": {
+        "root_cause": "API或属性未实现/未定义",
+        "error_category": "api_missing",
+        "recoverable": true,
+        "recommendation": "检查策略使用的API是否在utility中已实现"
+      },
+      "100 配套资料说明.txt": {
+        "root_cause": "非策略文件（研究文档/配套资料）",
+        "error_category": "scan_rejected",
+        "recoverable": false,
+        "recommendation": "检查策略文件是否符合策略格式要求"
+      },
+      "03 多策略融合-80倍.txt": {
+        "root_cause": "missing_api",
+        "error_category": "scan_rejected",
+        "recoverable": false,
+        "recommendation": "检查策略文件是否符合策略格式要求"
+      }
+    }
+  },
+  "categories": {
+    "03 一个简单而持续稳定的懒人超额收益策略.txt": "likely_success",
+    "04 红利搬砖，年化29%.txt": "likely_no_trade",
+    "04 高股息低市盈率高增长的价投策略.txt": "likely_no_trade",
+    "01 龙回头3.0回测速度优化版.txt": "likely_missing_api",
+    "02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt": "likely_missing_api",
+    "100 配套资料说明.txt": "likely_syntax_error",
+    "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt": "likely_complex_strategy",
+    "03 多策略融合-80倍.txt": "likely_complex_strategy"
+  },
+  "timestamp": "2026-03-30T18:41:33.477359"
+}

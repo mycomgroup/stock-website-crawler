@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-04-01T18:14:37.960225",
+  "total_strategies": 5,
+  "successful": 3,
+  "failed": 2,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/32 追高概率涨停策略, 2022年化350%.txt",
+      "strategy_name": "32 追高概率涨停策略, 2022年化350%",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_181137_32 追高概率涨停策略, 2022年化350%",
+      "start_time": "2026-04-01T18:11:37.961690",
+      "success": true,
+      "final_value": 14.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T18:14:23.125155"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/73 实现净利润跳空策略.txt",
+      "strategy_name": "73 实现净利润跳空策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_181137_73 实现净利润跳空策略",
+      "start_time": "2026-04-01T18:11:37.956333",
+      "success": true,
+      "final_value": 14.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T18:14:27.192560"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/36 最简强者恒强策略.txt",
+      "strategy_name": "36 最简强者恒强策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_181137_36 最简强者恒强策略",
+      "start_time": "2026-04-01T18:11:37.958111",
+      "success": true,
+      "final_value": 14.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T18:14:37.928081"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/67 大市值价投高股息爱国者策略（爱我中华）.txt",
+      "strategy_name": "67 大市值价投高股息爱国者策略（爱我中华）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_181137_67 大市值价投高股息爱国者策略（爱我中华）",
+      "start_time": "2026-04-01T18:11:37.954255",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 3分钟)",
+      "end_time": "2026-04-01T18:14:37.958364"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/93 因子看板多因子模型---由量化课堂多因子模型修改.txt",
+      "strategy_name": "93 因子看板多因子模型---由量化课堂多因子模型修改",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_181137_93 因子看板多因子模型---由量化课堂多因子模型修改",
+      "start_time": "2026-04-01T18:11:37.949638",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 3分钟)",
+      "end_time": "2026-04-01T18:14:37.959292"
+    }
+  ]
+}

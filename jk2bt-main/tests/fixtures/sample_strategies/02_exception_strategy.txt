@@ -1,0 +1,7 @@
+def initialize(context):
+    g.stock = '600519.XSHG'
+    log.info('初始化异常测试策略')
+    run_daily(rebalance, time='open')
+
+def rebalance(context):
+    raise RuntimeError('故意抛出的异常用于测试')

@@ -1,0 +1,373 @@
+{
+  "run_id": "20260330_183830",
+  "timestamp": "2026-03-30T18:38:36.289344",
+  "config": {
+    "max_workers": 3,
+    "timeout_per_strategy": 120,
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 100000,
+    "stock_pool": "auto_discover",
+    "skip_scan": false
+  },
+  "scan_summary": {
+    "total": 8,
+    "executable": 6,
+    "skipped": 2,
+    "details": {
+      "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/04 红利搬砖，年化29%.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/100 配套资料说明.txt": {
+        "status": "not_strategy",
+        "is_executable": false,
+        "has_initialize": false,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": "非策略文件（研究文档/配套资料）"
+      },
+      "jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/03 多策略融合-80倍.txt": {
+        "status": "missing_api",
+        "is_executable": false,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [
+          "get_ticks",
+          "get_ticks"
+        ],
+        "error_message": "missing_api"
+      }
+    }
+  },
+  "summary": {
+    "input_total": 8,
+    "run_total": 6,
+    "skipped_total": 2,
+    "success_with_return": 0,
+    "success_zero_return": 0,
+    "success_no_trade": 0,
+    "success_total": 0,
+    "load_failed": 0,
+    "run_exception": 0,
+    "timeout": 0,
+    "data_missing": 0,
+    "missing_dependency": 6,
+    "missing_api": 0,
+    "missing_resource": 0,
+    "skipped_not_strategy": 2,
+    "skipped_syntax_error": 0,
+    "skipped_no_initialize": 0,
+    "skipped_missing_api": 0,
+    "failed_total": 8,
+    "recoverable_failures": 6,
+    "unrecoverable_failures": 2,
+    "real_success_rate": 0.0,
+    "input_success_rate": 0.0,
+    "total_duration_seconds": 5.43,
+    "total_duration_minutes": 0.09,
+    "status_counts": {
+      "missing_dependency": 6,
+      "skipped_not_strategy": 2
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {
+      "data_missing": 0,
+      "missing_dependency": 6,
+      "missing_api": 0,
+      "missing_resource": 0
+    },
+    "unrecoverable": {
+      "load_failed": 0,
+      "run_exception": 0,
+      "timeout": 0,
+      "syntax_error": 0
+    }
+  },
+  "results": [
+    {
+      "strategy": "04 高股息低市盈率高增长的价投策略.txt",
+      "strategy_file": "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt",
+      "success": false,
+      "run_status": "missing_dependency",
+      "status": "依赖缺失",
+      "error": "attempted relative import with no known parent package",
+      "traceback": "concurrent.futures.process._RemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/process.py\", line 243, in _process_worker\n    r = call_item.fn(*call_item.args, **call_item.kwargs)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 181, in run_single_strategy\n    from jq_strategy_runner import run_jq_strategy\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 110, in <module>\n    from .market_data.industry import (\nImportError: attempted relative import with no known parent package\n\"\"\"\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 690, in run_strategies_parallel\n    result = future.result(timeout=timeout_per_strategy)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 438, in result\n    return self.__get_result()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 390, in __get_result\n    raise self._exception\nImportError: attempted relative import with no known parent package\n",
+      "exception_type": "ImportError",
+      "duration": 0,
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "Python依赖包缺失或导入错误",
+        "missing_dependency": "attempted relative import with no known parent package",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "dependency_missing",
+        "recoverable": true,
+        "recommendation": "安装缺失的Python包或修复导入路径"
+      }
+    },
+    {
+      "strategy": "01 龙回头3.0回测速度优化版.txt",
+      "strategy_file": "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt",
+      "success": false,
+      "run_status": "missing_dependency",
+      "status": "依赖缺失",
+      "error": "attempted relative import with no known parent package",
+      "traceback": "concurrent.futures.process._RemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/process.py\", line 243, in _process_worker\n    r = call_item.fn(*call_item.args, **call_item.kwargs)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 181, in run_single_strategy\n    from jq_strategy_runner import run_jq_strategy\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 110, in <module>\n    from .market_data.industry import (\nImportError: attempted relative import with no known parent package\n\"\"\"\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 690, in run_strategies_parallel\n    result = future.result(timeout=timeout_per_strategy)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 438, in result\n    return self.__get_result()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 390, in __get_result\n    raise self._exception\nImportError: attempted relative import with no known parent package\n",
+      "exception_type": "ImportError",
+      "duration": 0,
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "Python依赖包缺失或导入错误",
+        "missing_dependency": "attempted relative import with no known parent package",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "dependency_missing",
+        "recoverable": true,
+        "recommendation": "安装缺失的Python包或修复导入路径"
+      }
+    },
+    {
+      "strategy": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "strategy_file": "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "success": false,
+      "run_status": "missing_dependency",
+      "status": "依赖缺失",
+      "error": "attempted relative import with no known parent package",
+      "traceback": "concurrent.futures.process._RemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/process.py\", line 243, in _process_worker\n    r = call_item.fn(*call_item.args, **call_item.kwargs)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 181, in run_single_strategy\n    from jq_strategy_runner import run_jq_strategy\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 110, in <module>\n    from .market_data.industry import (\nImportError: attempted relative import with no known parent package\n\"\"\"\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 690, in run_strategies_parallel\n    result = future.result(timeout=timeout_per_strategy)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 438, in result\n    return self.__get_result()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 390, in __get_result\n    raise self._exception\nImportError: attempted relative import with no known parent package\n",
+      "exception_type": "ImportError",
+      "duration": 0,
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "Python依赖包缺失或导入错误",
+        "missing_dependency": "attempted relative import with no known parent package",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "dependency_missing",
+        "recoverable": true,
+        "recommendation": "安装缺失的Python包或修复导入路径"
+      }
+    },
+    {
+      "strategy": "02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt",
+      "strategy_file": "jkcode/jkcode/02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt",
+      "success": false,
+      "run_status": "missing_dependency",
+      "status": "依赖缺失",
+      "error": "attempted relative import with no known parent package",
+      "traceback": "concurrent.futures.process._RemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/process.py\", line 243, in _process_worker\n    r = call_item.fn(*call_item.args, **call_item.kwargs)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 181, in run_single_strategy\n    from jq_strategy_runner import run_jq_strategy\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 110, in <module>\n    from .market_data.industry import (\nImportError: attempted relative import with no known parent package\n\"\"\"\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 690, in run_strategies_parallel\n    result = future.result(timeout=timeout_per_strategy)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 438, in result\n    return self.__get_result()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 390, in __get_result\n    raise self._exception\nImportError: attempted relative import with no known parent package\n",
+      "exception_type": "ImportError",
+      "duration": 0,
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "Python依赖包缺失或导入错误",
+        "missing_dependency": "attempted relative import with no known parent package",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "dependency_missing",
+        "recoverable": true,
+        "recommendation": "安装缺失的Python包或修复导入路径"
+      }
+    },
+    {
+      "strategy": "04 红利搬砖，年化29%.txt",
+      "strategy_file": "jkcode/jkcode/04 红利搬砖，年化29%.txt",
+      "success": false,
+      "run_status": "missing_dependency",
+      "status": "依赖缺失",
+      "error": "attempted relative import with no known parent package",
+      "traceback": "concurrent.futures.process._RemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/process.py\", line 243, in _process_worker\n    r = call_item.fn(*call_item.args, **call_item.kwargs)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 181, in run_single_strategy\n    from jq_strategy_runner import run_jq_strategy\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 110, in <module>\n    from .market_data.industry import (\nImportError: attempted relative import with no known parent package\n\"\"\"\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 690, in run_strategies_parallel\n    result = future.result(timeout=timeout_per_strategy)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 438, in result\n    return self.__get_result()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 390, in __get_result\n    raise self._exception\nImportError: attempted relative import with no known parent package\n",
+      "exception_type": "ImportError",
+      "duration": 0,
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "Python依赖包缺失或导入错误",
+        "missing_dependency": "attempted relative import with no known parent package",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "dependency_missing",
+        "recoverable": true,
+        "recommendation": "安装缺失的Python包或修复导入路径"
+      }
+    },
+    {
+      "strategy": "01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "strategy_file": "jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt",
+      "success": false,
+      "run_status": "missing_dependency",
+      "status": "依赖缺失",
+      "error": "attempted relative import with no known parent package",
+      "traceback": "concurrent.futures.process._RemoteTraceback: \n\"\"\"\nTraceback (most recent call last):\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/process.py\", line 243, in _process_worker\n    r = call_item.fn(*call_item.args, **call_item.kwargs)\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 181, in run_single_strategy\n    from jq_strategy_runner import run_jq_strategy\n  File \"/Users/yuping/Downloads/git/jk2bt-main/jqdata_akshare_backtrader_utility/jq_strategy_runner.py\", line 110, in <module>\n    from .market_data.industry import (\nImportError: attempted relative import with no known parent package\n\"\"\"\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/run_strategies_parallel.py\", line 690, in run_strategies_parallel\n    result = future.result(timeout=timeout_per_strategy)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 438, in result\n    return self.__get_result()\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py\", line 390, in __get_result\n    raise self._exception\nImportError: attempted relative import with no known parent package\n",
+      "exception_type": "ImportError",
+      "duration": 0,
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "Python依赖包缺失或导入错误",
+        "missing_dependency": "attempted relative import with no known parent package",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "dependency_missing",
+        "recoverable": true,
+        "recommendation": "安装缺失的Python包或修复导入路径"
+      }
+    },
+    {
+      "strategy": "100 配套资料说明.txt",
+      "strategy_file": "jkcode/jkcode/100 配套资料说明.txt",
+      "success": false,
+      "run_status": "skipped_not_strategy",
+      "status": "非策略文件（研究文档/配套资料）",
+      "duration": 0,
+      "scan_result": {
+        "status": "not_strategy",
+        "is_executable": false,
+        "has_initialize": false,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": "非策略文件（研究文档/配套资料）"
+      },
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "非策略文件（研究文档/配套资料）",
+        "error_category": "scan_rejected",
+        "recoverable": false,
+        "recommendation": "检查策略文件是否符合策略格式要求"
+      }
+    },
+    {
+      "strategy": "03 多策略融合-80倍.txt",
+      "strategy_file": "jkcode/jkcode/03 多策略融合-80倍.txt",
+      "success": false,
+      "run_status": "skipped_not_strategy",
+      "status": "missing_api",
+      "duration": 0,
+      "scan_result": {
+        "status": "missing_api",
+        "is_executable": false,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [
+          "get_ticks",
+          "get_ticks"
+        ],
+        "error_message": "missing_api"
+      },
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "missing_api",
+        "error_category": "scan_rejected",
+        "recoverable": false,
+        "recommendation": "检查策略文件是否符合策略格式要求"
+      }
+    }
+  ]
+}

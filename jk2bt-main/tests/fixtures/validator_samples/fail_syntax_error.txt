@@ -1,0 +1,21 @@
+"""
+加载失败策略样本 - 语法错误
+
+预期结果: 加载失败 ✗
+
+验证点:
+- 策略语法错误
+- 无法加载
+"""
+
+def initialize(context):
+    """初始化函数"""
+    g.stocks = ['600519.XSHG', '000858.XSHE'
+    # 缺少闭合括号
+    
+    run_monthly(trade, day=1)
+
+def trade(context):
+    """交易函数"""
+    for stock in g.stocks:
+        order_value(stock, 10000)

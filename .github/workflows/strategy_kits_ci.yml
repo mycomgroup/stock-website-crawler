@@ -1,0 +1,36 @@
+name: strategy_kits_ci
+
+on:
+  pull_request:
+    paths:
+      - "skills/strategy_kits/**"
+      - ".github/workflows/strategy_kits_ci.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "skills/strategy_kits/**"
+      - ".github/workflows/strategy_kits_ci.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pandas numpy scipy backtrader
+
+      - name: Run strategy_kits tests
+        run: pytest skills/strategy_kits/tests -q
+

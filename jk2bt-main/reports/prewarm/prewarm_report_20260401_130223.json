@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-04-01T13:02:23.446204",
+  "duration_seconds": 54.671678,
+  "results": {
+    "company_info": {
+      "summary": {
+        "success": 10,
+        "failed": 0,
+        "skipped": 0,
+        "errors": []
+      }
+    },
+    "industry_sw": {
+      "summary": {
+        "success": 0,
+        "failed": 0,
+        "skipped": 10,
+        "errors": []
+      }
+    },
+    "security_status": {
+      "summary": {
+        "success": 10,
+        "failed": 0,
+        "skipped": 0,
+        "errors": []
+      }
+    }
+  }
+}

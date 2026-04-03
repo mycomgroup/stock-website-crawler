@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-04-01T10:57:05.383179",
+  "total_strategies": 2,
+  "successful": 1,
+  "failed": 1,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/31 RSRS择时+货币基金--6年8倍行业周期股策略.txt",
+      "strategy_name": "31 RSRS择时+货币基金--6年8倍行业周期股策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105611_31 RSRS择时+货币基金--6年8倍行业周期股策略",
+      "start_time": "2026-04-01T10:56:11.252931",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "/Users/yuping/Downloads/git/jk2bt-main/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020\n  warnings.warn(\n2026-04-01 10:56:14,433 INFO 数据库表结构初始化完成\n2026-04-01 10:56:14,478 INFO 申万行业表结构初始化完成\n2026-04-01 10:56:14,523 INFO 数据库表结构初始化完成\n2026-04-01 10:56:14,534 INFO 指数成分股表结构初始化完成\n2026-04-01 10:56:14,558 INFO 数据库表结构初始化完成\n2026",
+      "end_time": "2026-04-01T10:56:15.272301"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/03 高评分ETF策略之核心资产轮动.txt",
+      "strategy_name": "03 高评分ETF策略之核心资产轮动",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_105611_03 高评分ETF策略之核心资产轮动",
+      "start_time": "2026-04-01T10:56:11.263276",
+      "success": true,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "error": null,
+      "end_time": "2026-04-01T10:57:05.370516"
+    }
+  ],
+  "avg_pnl_pct": 0.0,
+  "max_pnl_pct": 0.0,
+  "min_pnl_pct": 0.0
+}

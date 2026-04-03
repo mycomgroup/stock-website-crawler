@@ -30,6 +30,11 @@
 3. `core/errors.py`：统一错误码。
 4. `core/logging_utils.py`：统一日志事件格式。
 5. `contracts/dataframe_contracts.py`：统一 DataFrame 输入输出契约。
+6. `orchestration/task_schema.py`：统一任务输入 schema 校验。
+7. `orchestration/task_runner.py`：统一任务入口（schema 校验 -> panel 适配 -> 模板回测）。
+8. `.github/workflows/strategy_kits_ci.yml`：新增 CI gate（unit + smoke）。
+9. `orchestration/artifacts.py` + `orchestration/cli.py`：统一产物落盘与命令行入口。
+10. `orchestration/artifact_contracts.py`：冻结 artifacts/summary/report contract（`v1.0`）。
 
 ---
 
@@ -114,10 +119,23 @@ uv run pytest skills/strategy_kits/tests
 1. 单元测试默认全部可运行。  
 2. smoke 测试依赖 `backtrader`，环境缺失时会自动 skip。  
 
+CLI 示例：
+
+```bash
+python -m strategy_kits.orchestration.cli \
+  --spec /abs/path/task_spec.json \
+  --print-result-json
+```
+
+运行后会额外生成：
+
+1. `run_report.json`（机器可读）
+2. `run_report.md`（人类可读）
+
 ---
 
 ## 7. 下一步建议（衔接 skill.md 自动化）
 
-1. 新增一份 `skill.md` 的输入规范模板：把 `pool_panel`、`strategy intent`、`risk profile` 映射到统一任务参数。  
-2. 把 smoke 测试升级为 CI gating：PR 必须通过 unit + smoke 才允许合并。  
-3. 增加模板策略的参数 schema 校验（例如 `rebalance_threshold`、`hold_days`、`top_n` 的边界检查）。  
+1. 在 `task_runner` 增加 profile/meta 远端加载与版本校验（对接 FactorHub registry）。  
+2. 给任务入口增加 artifacts 导出规范（metrics/trades/nav/orders 统一落盘路径与文件名）。  
+3. 增加策略模板 registry 扩展点（便于 `skill.md` 动态扩展模板）。  

@@ -1,0 +1,6495 @@
+{
+  "summary": {
+    "test_time": "2026-03-30T21:59:09.223463",
+    "strategy_dir": "jkcode/jkcode",
+    "total_files": 30,
+    "normalization_success": 29,
+    "normalization_success_rate": 0.9666666666666667,
+    "can_load_after_normalization": 27,
+    "can_load_rate": 0.9,
+    "load_test_success": 22,
+    "load_test_failed": 8,
+    "load_test_success_rate": 0.7333333333333333,
+    "issue_type_counts": {
+      "indentation": 94,
+      "trailing_whitespace": 579,
+      "missing_newline": 12,
+      "encoding": 1,
+      "syntax_error": 4,
+      "tab_mixed_space": 1
+    },
+    "fixed_type_counts": {
+      "indentation": 94,
+      "trailing_whitespace": 579,
+      "missing_newline": 12,
+      "tab_mixed_space": 1
+    },
+    "load_errors": {
+      "SyntaxError": 3
+    }
+  },
+  "results": {
+    "jkcode/jkcode/14 胜率65%之缩量分歧反包战法.txt": {
+      "original_status": "missing_api",
+      "original_error": "missing_api",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 24,
+        "fixed_count": 24,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/1388a70ce31179536027015b52cb8dce_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 31,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 33,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 37,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 170,
+          "message": "空格缩进不是4的倍数 (3个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 171,
+          "message": "空格缩进不是4的倍数 (3个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 61,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 69,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 91,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 92,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 100,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 106,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 126,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 127,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 140,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 141,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 143,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 145,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 148,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 149,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 213,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 214,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 235,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 243,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 248,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "market_open",
+          "send_micromessage",
+          "before_market_open",
+          "pick_high_limit",
+          "filter_st",
+          "filter_stock_by_days",
+          "after_market_close"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/69 “稳定摸狗策略”学习笔记.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 5,
+        "fixed_count": 5,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/25d3c4fb6892fca8ba233e40a1ac0006_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 20,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 44,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 48,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 77,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 79,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "MOM",
+          "get_rank",
+          "trade"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/46 韶华研究之十二--还算可以的竞价研究.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 57,
+        "fixed_count": 57,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/3f747a8b0afb93d8f5d32820e6f2e51e_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 33,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 35,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 38,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 40,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 42,
+          "message": "空格缩进不是4的倍数 (10个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 37,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 53,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 62,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 78,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 90,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 101,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 112,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 113,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 128,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 137,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 146,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 150,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 152,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 163,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 172,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 176,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 187,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 193,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 194,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 218,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 219,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 224,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 239,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 247,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 260,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 271,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 274,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 279,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 283,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 290,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 302,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 309,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 311,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 314,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 326,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 336,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 340,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 343,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 345,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 358,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 372,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 376,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 378,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 391,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 396,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 401,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 405,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 408,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 410,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 421,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 429,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 434,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "set_params",
+          "set_variables",
+          "set_backtest",
+          "before_market_open",
+          "call_auction",
+          "market_open",
+          "market_close",
+          "after_market_close",
+          "get_rps_filter",
+          "get_pre_filter",
+          "get_auction_filter",
+          "get_score_filter",
+          "get_reds_filter",
+          "get_down_filter",
+          "get_up_filter",
+          "buy_stock",
+          "sell_stock"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/59 基于Gyro^.^大神的小市值策略的因子匹配研究.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 25,
+        "fixed_count": 25,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/3e5920e228c407483fde360c42c3749c_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 20,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 21,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 22,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 23,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 29,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 30,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 31,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 32,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 36,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 64,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 73,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 77,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 80,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 99,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 101,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 103,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 104,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 113,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 114,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 136,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 137,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 138,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 139,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 140,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "after_code_changed",
+          "get_previous_trade_day",
+          "drop_outlier",
+          "divide_list_into_10",
+          "iUpdate",
+          "iTrader",
+          "iReport"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/96 集合竞价量比策略V1.txt": {
+      "original_status": "missing_api",
+      "original_error": "missing_api",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 25,
+        "fixed_count": 25,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/eecf1d0597e03a2f157005fe288391c1_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 36,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 38,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 40,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 42,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 62,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 72,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 83,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 85,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 89,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 95,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 97,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 100,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 109,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 110,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 111,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 112,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 113,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 116,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 152,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 195,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 196,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 197,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 198,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 199,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 200,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "sell_norm",
+          "open_position",
+          "auction",
+          "filter_688",
+          "holded_filter",
+          "paused_filter",
+          "delisted_filter",
+          "st_filter",
+          "high_limit_filter",
+          "filter_new_stock",
+          "get_security_universe",
+          "industry_filter",
+          "concept_filter"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/99 韶华研究之二十，竞价异动.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 38,
+        "fixed_count": 38,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/866b1fdc53aa89c9d3517cfb3b2fb661_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 50,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 52,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 59,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 61,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 29,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 69,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 79,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 87,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 96,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 108,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 119,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 120,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 130,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 134,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 148,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 154,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 169,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 174,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 181,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 185,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 189,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 203,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 212,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 224,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 230,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 246,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 250,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 255,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 261,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 266,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 274,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 276,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 280,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 293,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 301,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 306,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 316,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "after_code_changed",
+          "set_params",
+          "set_variables",
+          "set_backtest",
+          "before_market_open",
+          "call_auction",
+          "market_open",
+          "market_run",
+          "market_close",
+          "after_market_close",
+          "get_up_filter_jiang",
+          "buy_stock",
+          "sell_stock"
+        ],
+        "has_initialize": false
+      }
+    },
+    "jkcode/jkcode/90 配套资料说明.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 0,
+        "fixed_count": 0,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/5ba3248db260347ade841a340a4a6d49_normalized.txt",
+        "load_error": null
+      },
+      "issues": [],
+      "load_test": {
+        "success": false,
+        "error": "无策略函数定义"
+      }
+    },
+    "jkcode/jkcode/09 iAlpha 基金投资策略.txt": {
+      "original_status": "no_initialize",
+      "original_error": "no_initialize",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 1,
+        "fixed_count": 1,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/220848127f487be45011c1ce43672731_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "after_code_changed",
+          "handle_trader"
+        ],
+        "has_initialize": false
+      }
+    },
+    "jkcode/jkcode/97 配套资料说明.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 0,
+        "fixed_count": 0,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/f1ffff318e632336934e90170d5fb4bd_normalized.txt",
+        "load_error": null
+      },
+      "issues": [],
+      "load_test": {
+        "success": false,
+        "error": "无策略函数定义"
+      }
+    },
+    "jkcode/jkcode/92 行业宽度轮动研究.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 10,
+        "fixed_count": 10,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/a27003c13bc3d5f51296d341fb11e226_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 28,
+          "message": "空格缩进不是4的倍数 (29个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 62,
+          "message": "空格缩进不是4的倍数 (23个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 185,
+          "message": "空格缩进不是4的倍数 (37个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 42,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 79,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 102,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 106,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 139,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 154,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 178,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "prepare_stock_list",
+          "industry",
+          "getStockIndustry",
+          "get_stock_list",
+          "weekly_adjustment",
+          "check_limit_up",
+          "order_target_value_",
+          "open_position",
+          "close_position",
+          "filter_paused_stock",
+          "filter_st_stock",
+          "filter_kcbj_stock",
+          "filter_limitup_stock",
+          "filter_limitdown_stock",
+          "filter_new_stock"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/27 中证500指增+CTA，胜率52%盈亏比1.9。不输顶尖私募.txt": {
+      "original_status": "missing_api",
+      "original_error": "missing_api",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 89,
+        "fixed_count": 89,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/8f0e6ed34bb8bc7615bf4cfb35204fd7_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 34,
+          "message": "空格缩进不是4的倍数 (23个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 186,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 187,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 188,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 189,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 190,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 191,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 192,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 193,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 194,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 211,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 212,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 213,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 214,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 215,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 216,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 217,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 218,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 219,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 220,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 363,
+          "message": "空格缩进不是4的倍数 (7个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 410,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 412,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 432,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 434,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 436,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 461,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 463,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 465,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 28,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 44,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 48,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 51,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 56,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 61,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 87,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 103,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 124,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 154,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 160,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 174,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 178,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 182,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 198,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 203,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 206,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 207,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 224,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 229,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 233,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 242,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 244,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 245,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 249,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 274,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 275,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 289,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 311,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 318,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 319,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 323,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 327,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 330,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 333,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 339,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 344,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 347,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 356,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 360,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 366,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 377,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 383,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 391,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 402,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 406,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 408,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 413,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 415,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 416,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 417,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 423,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 427,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 430,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 437,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 448,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 459,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 466,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 467,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "my_select",
+          "my_sell",
+          "my_buy",
+          "get_stock_list",
+          "adjust_position_sell",
+          "adjust_position_buy",
+          "rebalance",
+          "before_market_open_future",
+          "market_trade_future",
+          "volatility",
+          "loss_stop",
+          "update_niu_signal",
+          "get_CCFX_end_date"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/71 【股指策略】【研报复现】周内与日内结合CTA.txt": {
+      "original_status": "missing_api",
+      "original_error": "missing_api",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "gbk",
+        "issues_count": 18,
+        "fixed_count": 17,
+        "unfixed_count": 1,
+        "normalized_file": "docs/0330_result/d2af3e2ad85b31ced7a90130c751a46e_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 58,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 60,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 63,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 74,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 80,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 83,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 91,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 97,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 101,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 111,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 115,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 123,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 125,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 134,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 136,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 138,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 144,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "encoding",
+          "severity": "info",
+          "line": null,
+          "message": "原始编码: gbk",
+          "auto_fixable": true,
+          "fixed": false
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "before_market_open",
+          "close_position",
+          "reverse_position",
+          "on_close",
+          "on_open",
+          "after_market_close",
+          "get_CCFX_end_date"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/68 配套资料.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 1,
+        "fixed_count": 1,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/be5ea17c26e8827d7f084a0881dae306_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": false,
+        "error": "无策略函数定义"
+      }
+    },
+    "jkcode/jkcode/18 微盘股400多角度深入研究.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 13,
+        "fixed_count": 13,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/6a721c97d130350e5230d3c56f752060_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 12,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 13,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 14,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 15,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 20,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 21,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 22,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 50,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 51,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 52,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 53,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 54,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "after_code_changed",
+          "iUpdate",
+          "iTrader",
+          "iReport"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/32 北向资金A股择时策略（5年16倍）.txt": {
+      "original_status": "missing_api",
+      "original_error": "missing_api",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 2,
+        "fixed_count": 2,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/ee5067f1900258f9bc5d64f618b8876e_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 23,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 37,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "set_params",
+          "before_market_open",
+          "market_open",
+          "get_boll"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/87 【基本面三角3.0】看过之前策略的就略过吧.txt": {
+      "original_status": "no_initialize",
+      "original_error": "no_initialize",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 41,
+        "fixed_count": 41,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/77a92816afc01bad8d512ac4cacff1a8_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 38,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 40,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 42,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 44,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 53,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 55,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 66,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 82,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 94,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 108,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 117,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 132,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 134,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 135,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 141,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 147,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 170,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 184,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 205,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 212,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 225,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 229,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 239,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 243,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 249,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 251,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 257,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 265,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 268,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 295,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 301,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 302,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 307,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 316,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 331,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 336,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 360,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 366,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 383,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 400,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 405,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "after_code_changed",
+          "set_params",
+          "set_variables",
+          "set_backtest",
+          "before_market_open",
+          "market_open",
+          "market_last",
+          "after_market_close",
+          "get_delta_stocks",
+          "MACD_Direction",
+          "get_RSRS_signal",
+          "buy_stock",
+          "sell_stock",
+          "ttm_sum",
+          "ttm_avg",
+          "pre_ttm_sum",
+          "pre_ttm_avg",
+          "val_1",
+          "val_2"
+        ],
+        "has_initialize": false
+      }
+    },
+    "jkcode/jkcode/91 配套资料说明.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": false,
+        "can_load": false,
+        "original_encoding": "utf-8",
+        "issues_count": 1,
+        "fixed_count": 0,
+        "unfixed_count": 1,
+        "normalized_file": "docs/0330_result/8f979fa33d4f8b63900e1477f59d9661_normalized.txt",
+        "load_error": "语法错误: invalid character '：' (U+FF1A) (行 7)"
+      },
+      "issues": [
+        {
+          "type": "syntax_error",
+          "severity": "critical",
+          "line": 7,
+          "message": "语法错误: invalid character '：' (U+FF1A)",
+          "auto_fixable": false,
+          "fixed": false
+        }
+      ],
+      "load_test": {
+        "success": false,
+        "error": "语法错误: invalid character '：' (U+FF1A) (行 7)"
+      }
+    },
+    "jkcode/jkcode/84 配套资料说明.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": false,
+        "original_encoding": "utf-8",
+        "issues_count": 2,
+        "fixed_count": 1,
+        "unfixed_count": 1,
+        "normalized_file": "docs/0330_result/b8d8685bbcb3d43008ca797c3745f67b_normalized.txt",
+        "load_error": "语法错误: invalid character '：' (U+FF1A) (行 8)"
+      },
+      "issues": [
+        {
+          "type": "syntax_error",
+          "severity": "critical",
+          "line": 8,
+          "message": "语法错误: invalid character '：' (U+FF1A)",
+          "auto_fixable": false,
+          "fixed": false
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": false,
+        "error": "语法错误: invalid character '：' (U+FF1A) (行 8)"
+      }
+    },
+    "jkcode/jkcode/32 追高概率涨停策略, 2022年化350%.txt": {
+      "original_status": "missing_api",
+      "original_error": "missing_api",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 27,
+        "fixed_count": 27,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/3730217b065e0d1b34e6509bc1511e1b_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 39,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 41,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 45,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 205,
+          "message": "空格缩进不是4的倍数 (18个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 217,
+          "message": "空格缩进不是4的倍数 (18个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 233,
+          "message": "空格缩进不是4的倍数 (10个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 234,
+          "message": "空格缩进不是4的倍数 (10个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 263,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 264,
+          "message": "空格缩进不是4的倍数 (14个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 265,
+          "message": "空格缩进不是4的倍数 (18个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 279,
+          "message": "空格缩进不是4的倍数 (10个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 293,
+          "message": "空格缩进不是4的倍数 (18个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 43,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 62,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 81,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 101,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 127,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 129,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 139,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 146,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 152,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 166,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 212,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 224,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 237,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 249,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 282,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "prepare_stock_list",
+          "before_market_open",
+          "market_open",
+          "after_market_close",
+          "order_target_value_",
+          "open_position",
+          "close_position",
+          "adjust_position",
+          "filter_st_stock",
+          "filter_paused_stock",
+          "filter_kcb_stock",
+          "filter_cyb_stock",
+          "market_cap_filter",
+          "filter_limitup_stock",
+          "filter_limitdown_stock",
+          "get_recent_limit_up_stock",
+          "get_recent_limit_low_stock",
+          "get_available_price_stock",
+          "get_available_volume_stock",
+          "get_available_auction_stock",
+          "add_hold_stock",
+          "check_raise_up"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/60 可能是最接近实盘的“基本面三角”.txt": {
+      "original_status": "no_initialize",
+      "original_error": "no_initialize",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 37,
+        "fixed_count": 37,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/14632b9a301c914f5870d343a2a7b49b_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 44,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 46,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 48,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 58,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 98,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 112,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 117,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 122,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 137,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 139,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 140,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 146,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 152,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 177,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 190,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 191,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 193,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 203,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 205,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 220,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 225,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 230,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 246,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 254,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 264,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 272,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 275,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 302,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 308,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 309,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 314,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 323,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 338,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 356,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 359,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 374,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 379,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "after_code_changed",
+          "set_params",
+          "set_variables",
+          "set_backtest",
+          "before_market_open",
+          "market_open",
+          "open_position",
+          "month_bar",
+          "after_market_close",
+          "get_delta_stocks",
+          "buy_stock",
+          "sell_stock",
+          "ttm_sum",
+          "ttm_avg",
+          "pre_ttm_sum",
+          "pre_ttm_avg",
+          "val_1",
+          "val_2"
+        ],
+        "has_initialize": false
+      }
+    },
+    "jkcode/jkcode/73 优化了一下宽基etf追涨的策略，值得深入研究.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 49,
+        "fixed_count": 49,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/73fdca7b7a9b20047878f6342633cec6_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 35,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 64,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 20,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 33,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 38,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 52,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 53,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 66,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 71,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 86,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 90,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 99,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 104,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 106,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 109,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 112,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 113,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 117,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 120,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 122,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 126,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 131,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 135,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 139,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 140,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 141,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 142,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 143,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 144,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 145,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 147,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 151,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 154,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 156,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 158,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 164,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 167,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 171,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 172,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 173,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 176,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 199,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 204,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 229,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 230,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 233,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 234,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 235,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 238,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "market_buy",
+          "get_before_after_trade_days",
+          "make_sure_etf_ipo",
+          "update_niu_signal"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/62 研究一种K线小碎步后突破的分钟级策略.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 14,
+        "fixed_count": 14,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/74c028d652d539f8014de414adeca06a_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 81,
+          "message": "空格缩进不是4的倍数 (19个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 540,
+          "message": "空格缩进不是4的倍数 (11个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 545,
+          "message": "空格缩进不是4的倍数 (15个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 19,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 168,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 206,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 245,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 257,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 380,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 423,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 459,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 507,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 511,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "do_sell2",
+          "is_limitup",
+          "check_hold_days",
+          "check_earn",
+          "check_lose",
+          "scream_sell",
+          "check_hold_days",
+          "do_sell",
+          "prepare_stocks",
+          "market_open",
+          "sell",
+          "del_holds",
+          "daily_adjustment",
+          "do_buy",
+          "open_position",
+          "order_target_value_",
+          "transform_date",
+          "get_hl_stock",
+          "get_no_hl_stock",
+          "prepare_stock_list",
+          "filter_new_stock",
+          "filter_st_stock",
+          "filter_kcbj_stock",
+          "filter_paused_stock",
+          "get_shifted_date",
+          "get_factor_filter_df",
+          "get_day_relative_position_df",
+          "get_month_relative_position_df",
+          "get_week_relative_position_df",
+          "filter_amp",
+          "upward",
+          "approaching_max",
+          "close_position",
+          "big_volume_sell",
+          "add_hold_info",
+          "del_hold_info",
+          "change_hold_info"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/95 配套资料说明.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 0,
+        "fixed_count": 0,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/cf924f16ef17b1fcf5a01bd40a8d140d_normalized.txt",
+        "load_error": null
+      },
+      "issues": [],
+      "load_test": {
+        "success": false,
+        "error": "无策略函数定义"
+      }
+    },
+    "jkcode/jkcode/20 人人可躺平16年3400%.txt": {
+      "original_status": "no_initialize",
+      "original_error": "no_initialize",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 7,
+        "fixed_count": 7,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/15b2d63e57237323e6d61a39eda16363_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 27,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 47,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 48,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 54,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 65,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 66,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "Bolling",
+          "handle_data"
+        ],
+        "has_initialize": false
+      }
+    },
+    "jkcode/jkcode/85 价值策略重开，再次向Jqz1226致敬.txt": {
+      "original_status": "syntax_error",
+      "original_error": "语法错误: inconsistent use of tabs and spaces in indentation (行 137)",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 97,
+        "fixed_count": 96,
+        "unfixed_count": 1,
+        "normalized_file": "docs/0330_result/c3cb9efdfe3533a3d0b7d6b890ae56a2_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 849,
+          "message": "空格缩进不是4的倍数 (5个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "tab_mixed_space",
+          "severity": "warning",
+          "line": null,
+          "message": "文件混用TAB和空格缩进 (混用行: 0行)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "syntax_error",
+          "severity": "critical",
+          "line": 137,
+          "message": "语法错误: inconsistent use of tabs and spaces in indentation",
+          "auto_fixable": false,
+          "fixed": false
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 24,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 29,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 30,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 33,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 34,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 40,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 43,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 51,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 52,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 55,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 56,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 64,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 65,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 67,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 75,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 95,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 98,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 101,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 104,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 106,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 108,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 110,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 111,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 138,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 147,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 150,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 154,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 155,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 164,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 241,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 242,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 245,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 247,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 259,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 264,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 265,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 285,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 288,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 302,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 316,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 319,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 323,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 336,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 337,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 338,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 339,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 341,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 344,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 349,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 355,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 374,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 394,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 399,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 404,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 405,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 406,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 407,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 408,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 422,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 436,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 437,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 459,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 461,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 477,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 519,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 528,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 626,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 628,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 680,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 687,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 704,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 707,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 713,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 717,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 740,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 779,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 785,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 809,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 824,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 834,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 835,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 837,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 848,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 853,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 854,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 857,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 858,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 864,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 867,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 875,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 876,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 879,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 880,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 889,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "set_param",
+          "set_base_param",
+          "set_mode1_param",
+          "set_mode2_param",
+          "before_markt_open",
+          "mode1_check_rsrs",
+          "before_markt_open_trade_sell",
+          "before_markt_open_trade_buy",
+          "markt_open_trade",
+          "during_markt_open_trade",
+          "before_markt_close_trade",
+          "after_market_close",
+          "mode1_check_stock",
+          "mode1_controlBasic",
+          "mode1_controlReport",
+          "mode1_stocks_rank",
+          "mode1_get_past_quarters",
+          "calc_rsrs",
+          "mode2_pe_check_month",
+          "mode2_pe_check_week",
+          "mode2_check_stock",
+          "mode2_stop_loss",
+          "mode2_stop_holds",
+          "avg_calc",
+          "after_code_changed"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/75 配套资料说明.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 2,
+        "fixed_count": 2,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/5d2c2bc7cc317eb3e9a3acbb94ea4c6a_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 5,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": false,
+        "error": "无策略函数定义"
+      }
+    },
+    "jkcode/jkcode/57 配套资料.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": false,
+        "original_encoding": "utf-8",
+        "issues_count": 2,
+        "fixed_count": 1,
+        "unfixed_count": 1,
+        "normalized_file": "docs/0330_result/f8250ed675c30374ef9fbd6800376774_normalized.txt",
+        "load_error": "语法错误: invalid character '：' (U+FF1A) (行 1)"
+      },
+      "issues": [
+        {
+          "type": "syntax_error",
+          "severity": "critical",
+          "line": 1,
+          "message": "语法错误: invalid character '：' (U+FF1A)",
+          "auto_fixable": false,
+          "fixed": false
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": false,
+        "error": "语法错误: invalid character '：' (U+FF1A) (行 1)"
+      }
+    },
+    "jkcode/jkcode/88 韶华研究之十六，指数增强.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 57,
+        "fixed_count": 57,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/18130d267383e9b95ed62b5289ffc1ec_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 36,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 38,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 40,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 42,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 44,
+          "message": "空格缩进不是4的倍数 (10个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 17,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 39,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 51,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 58,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 63,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 67,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 74,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 83,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 99,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 112,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 119,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 126,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 137,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 140,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 149,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 150,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 159,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 164,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 168,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 177,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 182,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 187,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 190,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 193,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 196,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 199,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 203,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 209,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 252,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 255,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 259,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 264,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 272,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 287,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 290,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 292,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 298,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 314,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 323,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 376,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 377,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 378,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 379,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 390,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 399,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 413,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 421,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 431,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 439,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 444,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 459,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "missing_newline",
+          "severity": "info",
+          "line": null,
+          "message": "文件末尾缺少换行符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "after_code_changed",
+          "set_params",
+          "set_variables",
+          "set_backtest",
+          "before_market_open",
+          "market_open",
+          "market_close",
+          "after_market_close",
+          "get_trend_filter",
+          "fit_linear_nor",
+          "lost_control",
+          "get_rise_filter",
+          "get_drop_filter",
+          "buy_stock",
+          "sell_stock"
+        ],
+        "has_initialize": false
+      }
+    },
+    "jkcode/jkcode/51 “四大搅屎棍策略”学习笔记-有魔改.txt": {
+      "original_status": "not_strategy",
+      "original_error": "非策略文件（研究文档/配套资料）",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 26,
+        "fixed_count": 26,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/e39a7966312a178991492f2017b2a2aa_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 32,
+          "message": "空格缩进不是4的倍数 (29个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 98,
+          "message": "空格缩进不是4的倍数 (23个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 106,
+          "message": "空格缩进不是4的倍数 (19个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 262,
+          "message": "空格缩进不是4的倍数 (37个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 207,
+          "message": "同一行混用TAB和空格",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 208,
+          "message": "同一行混用TAB和空格",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 209,
+          "message": "同一行混用TAB和空格",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 211,
+          "message": "同一行混用TAB和空格",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 118,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 140,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 144,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 188,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 193,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 194,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 195,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 196,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 197,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 213,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 216,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 219,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 246,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 247,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 252,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 253,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 254,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 255,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "prepare_stock_list",
+          "industry",
+          "getStockIndustry",
+          "get_stock_list",
+          "prepare_stock_list_2",
+          "weekly_adjustment",
+          "check_limit_up",
+          "order_target_value_",
+          "open_position",
+          "close_position",
+          "filter_paused_stock",
+          "filter_st_stock",
+          "filter_kcbj_stock",
+          "filter_limitup_stock",
+          "filter_limitdown_stock",
+          "filter_new_stock"
+        ],
+        "has_initialize": true
+      }
+    },
+    "jkcode/jkcode/90 超稳+翻倍，贝塔值只有0.048的期指策略.txt": {
+      "original_status": "missing_api",
+      "original_error": "missing_api",
+      "normalization": {
+        "success": true,
+        "can_load": true,
+        "original_encoding": "utf-8",
+        "issues_count": 21,
+        "fixed_count": 21,
+        "unfixed_count": 0,
+        "normalized_file": "docs/0330_result/b29151118b1a7c99855818b529b32c7e_normalized.txt",
+        "load_error": null
+      },
+      "issues": [
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 56,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 58,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 63,
+          "message": "空格缩进不是4的倍数 (6个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 300,
+          "message": "空格缩进不是4的倍数 (43个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 315,
+          "message": "空格缩进不是4的倍数 (23个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "indentation",
+          "severity": "warning",
+          "line": 316,
+          "message": "空格缩进不是4的倍数 (23个空格)",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 6,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 62,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 106,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 132,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 205,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 210,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 211,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 217,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 221,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 240,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 279,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 289,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 295,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 322,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        },
+        {
+          "type": "trailing_whitespace",
+          "severity": "info",
+          "line": 323,
+          "message": "行尾空白字符",
+          "auto_fixable": true,
+          "fixed": true
+        }
+      ],
+      "load_test": {
+        "success": true,
+        "functions": [
+          "initialize",
+          "before_market_open",
+          "market_open",
+          "discount",
+          "discount_close",
+          "after_market_close",
+          "calc_hands",
+          "lostControl",
+          "closePosition",
+          "cancelOrder",
+          "get_CCFX_end_date",
+          "MACD",
+          "get_macd",
+          "get_macd_direct",
+          "position_auto_switch"
+        ],
+        "has_initialize": true
+      }
+    }
+  }
+}

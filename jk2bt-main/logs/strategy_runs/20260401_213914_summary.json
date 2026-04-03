@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-04-01T21:39:14.795067",
+  "total_strategies": 10,
+  "successful": 8,
+  "failed": 2,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/65 搭建量化交易模型从零开始——择时，选股，仓位管理和因子分析.txt",
+      "strategy_name": "65 搭建量化交易模型从零开始——择时，选股，仓位管理和因子分析",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_65 搭建量化交易模型从零开始——择时，选股，仓位管理和因子",
+      "start_time": "2026-04-01T21:26:36.964946",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "    raise RuntimeError(\nRuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/65 搭建量化交易模型从零开始——择时，选股，仓位管理和因子分析.txt): No module named 'sqlalchemy'\nModuleNotFoundError: No module named 'sqlalchemy'",
+      "end_time": "2026-04-01T21:26:41.086944"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/41 人工智能强化学习DQN交易智能体策略.txt",
+      "strategy_name": "41 人工智能强化学习DQN交易智能体策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_41 人工智能强化学习DQN交易智能体策略",
+      "start_time": "2026-04-01T21:26:36.983631",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "    raise RuntimeError(\nRuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/41 人工智能强化学习DQN交易智能体策略.txt): No module named 'torch'\nModuleNotFoundError: No module named 'torch'",
+      "end_time": "2026-04-01T21:26:41.385189"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/52 龙头战法之单阳不破.txt",
+      "strategy_name": "52 龙头战法之单阳不破",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_52 龙头战法之单阳不破",
+      "start_time": "2026-04-01T21:26:36.985923",
+      "success": true,
+      "final_value": 31.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:31:57.443388"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/76 ETF基金溢价高收益低回测策略 改进版.txt",
+      "strategy_name": "76 ETF基金溢价高收益低回测策略 改进版",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_76 ETF基金溢价高收益低回测策略 改进版",
+      "start_time": "2026-04-01T21:26:36.987072",
+      "success": true,
+      "final_value": 31.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:32:00.486559"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/38 ETF策略之核心资产轮动（线性增加权重）.txt",
+      "strategy_name": "38 ETF策略之核心资产轮动（线性增加权重）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_38 ETF策略之核心资产轮动（线性增加权重）",
+      "start_time": "2026-04-01T21:26:36.974389",
+      "success": true,
+      "final_value": 32.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:32:04.572327"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/05 价值低波（下）--十年十倍（2020拜年）.txt",
+      "strategy_name": "05 价值低波（下）--十年十倍（2020拜年）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_05 价值低波（下）--十年十倍（2020拜年）",
+      "start_time": "2026-04-01T21:26:36.965152",
+      "success": true,
+      "final_value": 32.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:32:13.569458"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/35 精选价值策略.txt",
+      "strategy_name": "35 精选价值策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_35 精选价值策略",
+      "start_time": "2026-04-01T21:26:36.976614",
+      "success": true,
+      "final_value": 32.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:32:16.513893"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/46 【深度解析 四】聚宽三因子基本面周线模型策略.txt",
+      "strategy_name": "46 【深度解析 四】聚宽三因子基本面周线模型策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_46 【深度解析 四】聚宽三因子基本面周线模型策略",
+      "start_time": "2026-04-01T21:26:36.965517",
+      "success": true,
+      "final_value": 35.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:35:24.951857"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/39 绩优小市值量化君也-模拟交易年化333.75%.txt",
+      "strategy_name": "39 绩优小市值量化君也-模拟交易年化333.75%",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_39 绩优小市值量化君也-模拟交易年化333.75%",
+      "start_time": "2026-04-01T21:26:36.972567",
+      "success": true,
+      "final_value": 38.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:38:41.825533"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/53 筹码选股.txt",
+      "strategy_name": "53 筹码选股",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_212636_53 筹码选股",
+      "start_time": "2026-04-01T21:26:36.966816",
+      "success": true,
+      "final_value": 39.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T21:39:14.792513"
+    }
+  ]
+}

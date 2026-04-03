@@ -1,0 +1,21 @@
+"""
+加载失败策略样本 - 缺少模块
+
+预期结果: 加载失败 ✗
+
+验证点:
+- 依赖不存在的模块
+- 无法加载
+"""
+
+from nonexistent_module import some_function
+
+def initialize(context):
+    """初始化函数"""
+    g.value = some_function()
+    
+    run_monthly(trade, day=1)
+
+def trade(context):
+    """交易函数"""
+    log.info(f'Value: {g.value}')

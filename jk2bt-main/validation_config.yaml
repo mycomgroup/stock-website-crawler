@@ -1,0 +1,46 @@
+# jk2bt 数据验证配置文件示例
+
+# 股票池
+stocks:
+  - "600519.XSHG"  # 贵州茅台
+  - "000858.XSHE"  # 五粮液
+  - "000333.XSHE"  # 美的集团
+  - "600036.XSHG"  # 招商银行
+  - "601318.XSHG"  # 中国平安
+  - "000001.XSHE"  # 平安银行
+  - "600000.XSHG"  # 浦发银行
+
+# 日期范围
+start_date: "2024-01-01"
+end_date: "2024-03-31"
+
+# 数据类型
+data_types:
+  - "valuation"      # 估值数据
+  - "trade_status"   # 交易状态
+  # - "factors"      # 因子数据（可选）
+
+# 容差配置
+tolerance:
+  pe_ratio: 0.01           # PE 容差 1%
+  pb_ratio: 0.01           # PB 容差 1%
+  market_cap: 0.01         # 市值容差 1%
+  circulating_market_cap: 0.01
+  high_limit: 0.01         # 涨停价容差 0.01元
+  low_limit: 0.01          # 跌停价容差 0.01元
+  is_st: 0.0               # ST状态精确匹配
+  paused: 0.0              # 停牌状态精确匹配
+  factor: 0.05             # 因子容差 5%
+
+# 输出配置
+output_dir: "validation_results"
+output_json: true
+output_markdown: true
+output_log: true
+
+# 并发配置
+batch_size: 50
+concurrency: 3
+
+# JoinQuant Notebook 配置
+jq_notebook_timeout: 300000  # 5分钟超时

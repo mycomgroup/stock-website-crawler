@@ -1,0 +1,22 @@
+
+import inspect
+
+def test_get_price_signature():
+    # 在策略内部检查 get_price 的签名
+    sig = inspect.signature(get_price)
+    params = list(sig.parameters.keys())
+    log.info(f"get_price 参数: {params}")
+    log.info(f"有 count: {'count' in params}")
+    log.info(f"有 panel: {'panel' in params}")
+    log.info(f"有 frequency: {'frequency' in params}")
+    return True
+
+def test_all_apis():
+    # 检查所有关键API的签名
+    apis = ['get_price', 'get_current_data', 'get_all_trade_days', 'get_extras', 'get_billboard_list']
+    for api_name in apis:
+        if api_name in globals():
+            api_func = globals()[api_name]
+            sig = inspect.signature(api_func)
+            params = list(sig.parameters.keys())
+            log.info(f"{api_name}: {api_func.__name__} -> {params}")

@@ -1,0 +1,323 @@
+{
+  "run_id": "20260331_124609",
+  "timestamp": "2026-03-31T12:46:38.412088",
+  "config": {
+    "max_workers": 2,
+    "timeout_per_strategy": 60,
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "initial_capital": 100000,
+    "stock_pool": "auto_discover",
+    "skip_scan": false
+  },
+  "scan_summary": {
+    "total": 5,
+    "executable": 4,
+    "skipped": 1,
+    "details": {
+      "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/08 国九条后中小板微盘小改，年化135.40%.txt": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "jkcode/jkcode/100 配套资料说明.txt": {
+        "status": "not_strategy",
+        "is_executable": false,
+        "has_initialize": false,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": "非策略文件（研究文档/配套资料）"
+      }
+    }
+  },
+  "summary": {
+    "input_total": 5,
+    "run_total": 4,
+    "skipped_total": 1,
+    "success_with_return": 1,
+    "success_zero_return": 3,
+    "success_no_trade": 0,
+    "success_total": 4,
+    "load_failed": 0,
+    "run_exception": 0,
+    "timeout": 0,
+    "data_missing": 0,
+    "missing_dependency": 0,
+    "missing_api": 0,
+    "missing_resource": 0,
+    "skipped_not_strategy": 1,
+    "skipped_syntax_error": 0,
+    "skipped_no_initialize": 0,
+    "skipped_missing_api": 0,
+    "failed_total": 1,
+    "recoverable_failures": 0,
+    "unrecoverable_failures": 1,
+    "real_success_rate": 100.0,
+    "input_success_rate": 80.0,
+    "total_duration_seconds": 29.37,
+    "total_duration_minutes": 0.49,
+    "status_counts": {
+      "success_zero_return": 3,
+      "success_with_return": 1,
+      "skipped_not_strategy": 1
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {
+      "data_missing": 0,
+      "missing_dependency": 0,
+      "missing_api": 0,
+      "missing_resource": 0
+    },
+    "unrecoverable": {
+      "load_failed": 0,
+      "run_exception": 0,
+      "timeout": 0,
+      "syntax_error": 0
+    }
+  },
+  "results": [
+    {
+      "strategy": "01 龙回头3.0回测速度优化版.txt",
+      "strategy_file": "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T12:46:11.215968",
+      "end_time": "2026-03-31T12:46:20.227468",
+      "duration": 9.01,
+      "final_value": 100000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "04 高股息低市盈率高增长的价投策略.txt",
+      "strategy_file": "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T12:46:20.227920",
+      "end_time": "2026-03-31T12:46:29.027084",
+      "duration": 8.8,
+      "final_value": 100000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "strategy_file": "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "success": true,
+      "run_status": "success_with_return",
+      "status": "运行成功有收益",
+      "start_time": "2026-03-31T12:46:11.325886",
+      "end_time": "2026-03-31T12:46:35.792368",
+      "duration": 24.47,
+      "final_value": 91696.61224599998,
+      "pnl": -8303.387754000025,
+      "pnl_pct": -8.303387754000024,
+      "max_drawdown": -0.19522339799638014,
+      "annual_return": -0.3138302951655031,
+      "sharpe_ratio": -1.1802306052403306,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "08 国九条后中小板微盘小改，年化135.40%.txt",
+      "strategy_file": "jkcode/jkcode/08 国九条后中小板微盘小改，年化135.40%.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "运行成功零收益",
+      "start_time": "2026-03-31T12:46:29.028995",
+      "end_time": "2026-03-31T12:46:37.893096",
+      "duration": 8.86,
+      "final_value": 100000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 58,
+      "error": "",
+      "traceback": "",
+      "scan_result": {
+        "status": "valid",
+        "is_executable": true,
+        "has_initialize": true,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": ""
+      },
+      "exception_type": "",
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 58,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "100 配套资料说明.txt",
+      "strategy_file": "jkcode/jkcode/100 配套资料说明.txt",
+      "success": false,
+      "run_status": "skipped_not_strategy",
+      "status": "非策略文件（研究文档/配套资料）",
+      "duration": 0,
+      "scan_result": {
+        "status": "not_strategy",
+        "is_executable": false,
+        "has_initialize": false,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": "非策略文件（研究文档/配套资料）"
+      },
+      "evidence": {
+        "loaded": false,
+        "entered_backtest_loop": false,
+        "has_transactions": false,
+        "has_nav_series": false,
+        "nav_series_length": 0,
+        "strategy_obj_valid": false,
+        "cerebro_valid": false
+      },
+      "attribution": {
+        "failure_root_cause": "非策略文件（研究文档/配套资料）",
+        "error_category": "scan_rejected",
+        "recoverable": false,
+        "recommendation": "检查策略文件是否符合策略格式要求"
+      }
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+================================================================================
+策略资源依赖扫描报告
+================================================================================
+
+扫描文件总数: 4 个区域
+资源依赖总数: 161 个
+
+================================================================================
+一、输入资源依赖 (需要提供)
+================================================================================
+
+jkcode/jkcode/49 干货贴《机器学习5折保形回归》.py:
+  - [read_file] train_conformal_base.csv (行 37)
+  - [read_file] test_conformal_base.csv (行 38)
+  - [relative_csv] train_conformal_base.csv (行 37)
+  - [relative_csv] test_conformal_base.csv (行 38)
+
+jkcode/jkcode/49 干货贴《机器学习5折保形回归挂模拟回测.py:
+  - [read_file] train_conformal_base.csv (行 31)
+  - [read_file] test_conformal_base.csv (行 32)
+  - [relative_csv] train_conformal_base.csv (行 31)
+  - [relative_csv] test_conformal_base.csv (行 32)
+
+jqdata_akshare_backtrader_utility/runtime_io.py:
+  - [read_file] config.json (行 244)
+  - [read_file] data.bin (行 245)
+  - [write_file] data.bin (行 372)
+  - [relative_json] config.json (行 244)
+
+jqdata_akshare_backtrader_utility/runtime_resource_pack.py:
+  - [relative_json] config/params.json (行 35)
+  - [relative_pkl] models/trained_model.pkl (行 32)
+
+tests/test_runtime_io.py:
+  - [read_file] test_binary.bin (行 132)
+  - [write_file] test_binary.bin (行 131)
+  - [write_file] test.bin (行 218)
+  - [write_file] config.json (行 251)
+  - [relative_json] config.json (行 251)
+
+tests/test_runtime_resource_pack.py:
+  - [read_file] model_data.pkl (行 213)
+  - [read_file] train_conformal_base.csv (行 244)
+  - [read_file] test_conformal_base.csv (行 245)
+  - [read_file] xgb_model.pkl (行 267)
+  - [write_file] model_data.pkl (行 208)
+  - [write_file] train_conformal_base.csv (行 241)
+  - [write_file] test_conformal_base.csv (行 242)
+  - [write_file] xgb_model.pkl (行 265)
+  - [relative_csv] train_conformal_base.csv (行 241)
+  - [relative_csv] test_conformal_base.csv (行 242)
+  - [relative_csv] train_conformal_base.csv (行 244)
+  - [relative_csv] test_conformal_base.csv (行 245)
+  - [relative_csv] data.csv (行 306)
+  - [relative_json] strategy_config.json (行 81)
+  - [relative_json] strategy_config.json (行 86)
+  - [relative_json] config.json (行 112)
+  - [relative_json] config.json (行 187)
+  - [relative_json] config.json (行 193)
+  - [relative_json] config.json (行 195)
+  - [relative_json] config.json (行 196)
+  - [relative_json] config.json (行 305)
+  - [relative_pkl] my_model.pkl (行 66)
+  - [relative_pkl] my_model.pkl (行 71)
+  - [relative_pkl] model1.pkl (行 110)
+  - [relative_pkl] model.pkl (行 131)
+  - [relative_pkl] model_data.pkl (行 208)
+  - [relative_pkl] model_data.pkl (行 213)
+  - [relative_pkl] xgb_model.pkl (行 265)
+  - [relative_pkl] xgb_model.pkl (行 267)
+  - [relative_pkl] model.pkl (行 304)
+
+scripts/validate_resource_dependencies.py:
+  - [read_file] test_data.csv (行 76)
+  - [read_file] test_model.pkl (行 89)
+  - [read_file] config/strategy_config.json (行 102)
+  - [read_file] train_conformal_base.csv (行 232)
+  - [read_file] test_conformal_base.csv (行 233)
+  - [read_file] config/strategy_config.json (行 323)
+  - [read_file] params/model_params.json (行 324)
+  - [read_file] models/trained_xgb.pkl (行 391)
+  - [read_file] models/preprocessor.pkl (行 392)
+  - [write_file] test_data.csv (行 75)
+  - [write_file] test_model.pkl (行 88)
+  - [write_file] config/strategy_config.json (行 101)
+  - [write_file] train_conformal_base.csv (行 220)
+  - [write_file] test_conformal_base.csv (行 221)
+  - [write_file] config/strategy_config.json (行 311)
+  - [write_file] params/model_params.json (行 312)
+  - [write_file] models/trained_xgb.pkl (行 375)
+  - [write_file] models/preprocessor.pkl (行 378)
+  - [relative_csv] test_data.csv (行 75)
+  - [relative_csv] test_data.csv (行 76)
+  - [relative_csv] train_conformal_base.csv (行 159)
+  - [relative_csv] test_conformal_base.csv (行 159)
+  - [relative_csv] train_conformal_base.csv (行 220)
+  - [relative_csv] test_conformal_base.csv (行 221)
+  - [relative_csv] train_conformal_base.csv (行 232)
+  - [relative_csv] test_conformal_base.csv (行 233)
+  - [relative_json] config/strategy_config.json (行 101)
+  - [relative_json] config/strategy_config.json (行 102)
+  - [relative_json] config/strategy_config.json (行 290)
+  - [relative_json] params/model_params.json (行 290)
+  - [relative_json] config/strategy_config.json (行 311)
+  - [relative_json] params/model_params.json (行 312)
+  - [relative_json] config/strategy_config.json (行 323)
+  - [relative_json] params/model_params.json (行 324)
+  - [relative_pkl] test_model.pkl (行 88)
+  - [relative_pkl] test_model.pkl (行 89)
+  - [relative_pkl] models/trained_xgb.pkl (行 355)
+  - [relative_pkl] models/preprocessor.pkl (行 355)
+  - [relative_pkl] models/trained_xgb.pkl (行 376)
+  - [relative_pkl] models/preprocessor.pkl (行 379)
+  - [relative_pkl] models/trained_xgb.pkl (行 391)
+  - [relative_pkl] models/preprocessor.pkl (行 392)
+
+================================================================================
+二、输出资源依赖 (策略产出)
+================================================================================
+
+jqdata_akshare_backtrader_utility/runtime_resource_pack.py:
+  - [relative_csv] trades/trade_log.csv (行 38)
+
+jqdata_akshare_backtrader_utility/backtrader_base_strategy.py:
+  - [relative_csv] strategy_nav.csv (行 3532)
+  - [relative_pkl] trade_days.pkl (行 2052)
+
+jqdata_akshare_backtrader_utility/strategy_validator.py:
+  - [relative_json] validation_result.json (行 597)
+
+jqdata_akshare_backtrader_utility/db/cache_manager.py:
+  - [relative_pkl] trade_days.pkl (行 235)
+
+tests/test_runtime_io_strategy.py:
+  - [relative_csv] record_signals.csv (行 42)
+
+tests/test_runtime_io.py:
+  - [relative_csv] record_test.csv (行 58)
+  - [relative_csv] record_signals.csv (行 259)
+
+tests/test_runtime_resource_pack.py:
+  - [relative_csv] trade_log.csv (行 96)
+  - [relative_csv] trade_log.csv (行 101)
+  - [relative_csv] trades.csv (行 113)
+  - [relative_csv] trades.csv (行 132)
+
+scripts/validate_resource_dependencies.py:
+  - [read_file] trades/trade_log.csv (行 448)
+  - [read_file] signals/signal_record.json (行 449)
+  - [write_file] trades/trade_log.csv (行 433)
+  - [write_file] signals/signal_record.json (行 436)
+  - [relative_csv] trades/trade_log.csv (行 426)
+  - [relative_csv] trades/trade_log.csv (行 433)
+  - [relative_csv] trades/trade_log.csv (行 448)
+  - [relative_json] signals/signal_record.json (行 426)
+  - [relative_json] signals/signal_record.json (行 436)
+  - [relative_json] signals/signal_record.json (行 449)
+
+================================================================================
+三、模糊资源依赖 (需人工确认)
+================================================================================
+
+jqdata_akshare_backtrader_utility/strategy_inventory.py:
+  - [relative_csv] task11_strategy_inventory.csv (行 365)
+  - [relative_json] task11_strategy_inventory.json (行 364)
+
+jqdata_akshare_backtrader_utility/api_gap_analyzer.py:
+  - [relative_csv] api_matrix.csv (行 571)
+  - [relative_json] api_matrix.json (行 568)
+
+jqdata_akshare_backtrader_utility/runtime_resource_pack.py:
+  - [relative_json] manifest.json (行 380)
+
+jqdata_akshare_backtrader_utility/db/cache_manager.py:
+  - [relative_pkl] _weights.pkl (行 258)
+  - [relative_pkl] _weights.pkl (行 259)
+
+tests/test_runtime_io.py:
+  - [write_file] binary.bin (行 186)
+
+================================================================================
+四、按依赖类型统计
+================================================================================
+  write_file: 42 次
+  read_file: 40 次
+  relative_csv: 31 次
+  relative_json: 26 次
+  relative_pkl: 22 次

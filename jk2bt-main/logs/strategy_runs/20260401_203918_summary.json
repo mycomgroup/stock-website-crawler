@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-04-01T20:39:18.265115",
+  "total_strategies": 3,
+  "successful": 3,
+  "failed": 0,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/52 龙头战法之单阳不破.txt",
+      "strategy_name": "52 龙头战法之单阳不破",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_202458_52 龙头战法之单阳不破",
+      "start_time": "2026-04-01T20:24:58.958530",
+      "success": true,
+      "final_value": 30.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:30:21.832050"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/45 真真正正的诚意之作-2021超十倍.txt",
+      "strategy_name": "45 真真正正的诚意之作-2021超十倍",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_202458_45 真真正正的诚意之作-2021超十倍",
+      "start_time": "2026-04-01T20:24:58.960541",
+      "success": true,
+      "final_value": 30.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:30:34.870172"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/24 宽基ETF动量轮动钝化RSRS择时-回撤小.txt",
+      "strategy_name": "24 宽基ETF动量轮动钝化RSRS择时-回撤小",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_202458_24 宽基ETF动量轮动钝化RSRS择时-回撤小",
+      "start_time": "2026-04-01T20:24:58.959712",
+      "success": true,
+      "final_value": 39.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T20:39:18.259560"
+    }
+  ]
+}

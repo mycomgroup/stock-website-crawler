@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-04-01T18:09:30.122022",
+  "total_strategies": 3,
+  "successful": 2,
+  "failed": 1,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/05 随机森林策略，低换手率，年化近50%.txt",
+      "strategy_name": "05 随机森林策略，低换手率，年化近50%",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_180430_05 随机森林策略，低换手率，年化近50%",
+      "start_time": "2026-04-01T18:04:30.108238",
+      "success": true,
+      "final_value": 6.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T18:06:47.359258"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/42 市值，研发支出，roe，三因子，跑赢大盘.txt",
+      "strategy_name": "42 市值，研发支出，roe，三因子，跑赢大盘",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_180430_42 市值，研发支出，roe，三因子，跑赢大盘",
+      "start_time": "2026-04-01T18:04:30.110853",
+      "success": true,
+      "final_value": 6.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T18:06:59.757571"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/54 发一个学习策略5年70倍，思路可以学习.txt",
+      "strategy_name": "54 发一个学习策略5年70倍，思路可以学习",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_180430_54 发一个学习策略5年70倍，思路可以学习",
+      "start_time": "2026-04-01T18:04:30.108432",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T18:09:30.121081"
+    }
+  ]
+}

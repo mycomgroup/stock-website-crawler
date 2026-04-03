@@ -1,0 +1,30 @@
+{
+  "scan_time": "2026-03-30 17:13:19",
+  "total_strategies": 478,
+  "daily_strategies": 20,
+  "strategy_stats": {
+    "daily": 20,
+    "minute": 191,
+    "futures": 455,
+    "ml": 57
+  },
+  "daily_strategy_samples": [],
+  "common_apis": {
+    "get_price": 232,
+    "get_fundamentals": 238,
+    "get_current_data": 341,
+    "run_daily": 379,
+    "run_weekly": 135,
+    "order_target": 442,
+    "order": 450,
+    "get_all_securities": 245,
+    "history": 307,
+    "attribute_history": 164,
+    "get_index_stocks": 121,
+    "run_monthly": 104,
+    "finance.run_query": 74,
+    "order_value": 136,
+    "get_security_info": 235,
+    "get_index_weights": 3
+  }
+}

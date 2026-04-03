@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-04-01T18:45:53.131652",
+  "total_strategies": 2,
+  "successful": 1,
+  "failed": 1,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/93 因子看板多因子模型---由量化课堂多因子模型修改.txt",
+      "strategy_name": "93 因子看板多因子模型---由量化课堂多因子模型修改",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_183553_93 因子看板多因子模型---由量化课堂多因子模型修改",
+      "start_time": "2026-04-01T18:35:53.130419",
+      "success": true,
+      "final_value": 38.0,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": null,
+      "end_time": "2026-04-01T18:38:13.304925"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/67 大市值价投高股息爱国者策略（爱我中华）.txt",
+      "strategy_name": "67 大市值价投高股息爱国者策略（爱我中华）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_183553_67 大市值价投高股息爱国者策略（爱我中华）",
+      "start_time": "2026-04-01T18:35:53.127880",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 10分钟)",
+      "end_time": "2026-04-01T18:45:53.130806"
+    }
+  ]
+}

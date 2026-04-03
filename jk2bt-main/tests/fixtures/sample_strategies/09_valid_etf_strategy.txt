@@ -1,0 +1,11 @@
+def initialize(context):
+    g.etf_pool = ['510300.XSHG', '510500.XSHG', '159915.XSHE']
+    log.info('初始化ETF轮动策略')
+    run_monthly(rebalance, 1, time='open')
+
+def rebalance(context):
+    # ETF动量策略
+    for etf in g.etf_pool:
+        current = get_current_data(etf)
+        if not current.paused:
+            order_target_value(etf, context.portfolio.total_value / len(g.etf_pool))

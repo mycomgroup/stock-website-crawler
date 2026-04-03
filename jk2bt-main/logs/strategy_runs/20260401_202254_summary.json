@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-04-01T20:22:54.423279",
+  "total_strategies": 10,
+  "successful": 0,
+  "failed": 10,
+  "results": [
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/69 人工智能早晨十字星模型（反转形态预测）.txt",
+      "strategy_name": "69 人工智能早晨十字星模型（反转形态预测）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_69 人工智能早晨十字星模型（反转形态预测）",
+      "start_time": "2026-04-01T20:17:54.180924",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "    raise RuntimeError(\nRuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/69 人工智能早晨十字星模型（反转形态预测）.txt): No module named 'torch'\nModuleNotFoundError: No module named 'torch'",
+      "end_time": "2026-04-01T20:18:39.352283"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/51 缠论交易策略.txt",
+      "strategy_name": "51 缠论交易策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_51 缠论交易策略",
+      "start_time": "2026-04-01T20:17:54.204723",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "    raise RuntimeError(\nRuntimeError: 策略代码执行错误 (/Users/yuping/Downloads/git/jk2bt-main/strategies/51 缠论交易策略.txt): name 'BarData' is not defined\nNameError: name 'BarData' is not defined",
+      "end_time": "2026-04-01T20:18:40.586931"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/54 发一个学习策略5年70倍，思路可以学习.txt",
+      "strategy_name": "54 发一个学习策略5年70倍，思路可以学习",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_54 发一个学习策略5年70倍，思路可以学习",
+      "start_time": "2026-04-01T20:17:54.190179",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.226179"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/79 EPS+MS因子的大盘蓝筹策略.txt",
+      "strategy_name": "79 EPS+MS因子的大盘蓝筹策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_79 EPS+MS因子的大盘蓝筹策略",
+      "start_time": "2026-04-01T20:17:54.224283",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.263861"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/41 均线黏合，突破前三十个交易日最高点选股法.txt",
+      "strategy_name": "41 均线黏合，突破前三十个交易日最高点选股法",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_41 均线黏合，突破前三十个交易日最高点选股法",
+      "start_time": "2026-04-01T20:17:54.213154",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.270965"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/92 敢于直接实盘的—八仙过海V2.txt",
+      "strategy_name": "92 敢于直接实盘的—八仙过海V2",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_92 敢于直接实盘的—八仙过海V2",
+      "start_time": "2026-04-01T20:17:54.277102",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.328036"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/32 北向资金A股择时策略（5年16倍）.txt",
+      "strategy_name": "32 北向资金A股择时策略（5年16倍）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_32 北向资金A股择时策略（5年16倍）",
+      "start_time": "2026-04-01T20:17:54.311884",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.330642"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/29 高增长业绩股池小市值成长型策略.txt",
+      "strategy_name": "29 高增长业绩股池小市值成长型策略",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_29 高增长业绩股池小市值成长型策略",
+      "start_time": "2026-04-01T20:17:54.334836",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.362869"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/13 首板高开-低开-弱转强混合策略（今年收益1138.61%）.txt",
+      "strategy_name": "13 首板高开-低开-弱转强混合策略（今年收益1138.61%）",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_13 首板高开-低开-弱转强混合策略（今年收益1138.61",
+      "start_time": "2026-04-01T20:17:54.392441",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.401162"
+    },
+    {
+      "strategy_file": "/Users/yuping/Downloads/git/jk2bt-main/strategies/71 期货日内策略三价均线结合ATR指标.txt",
+      "strategy_name": "71 期货日内策略三价均线结合ATR指标",
+      "log_dir": "/Users/yuping/Downloads/git/jk2bt-main/logs/strategy_runs/20260401_201754_71 期货日内策略三价均线结合ATR指标",
+      "start_time": "2026-04-01T20:17:54.385983",
+      "success": false,
+      "final_value": null,
+      "pnl": null,
+      "pnl_pct": null,
+      "error": "超时 (> 5分钟)",
+      "end_time": "2026-04-01T20:22:54.407175"
+    }
+  ]
+}

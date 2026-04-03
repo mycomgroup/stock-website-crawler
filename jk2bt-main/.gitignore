@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.pkl
+
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# DuckDB Database
+data/*.db
+data/*.db.wal
+
+# Cache directories (keep .gitkeep files)
+stock_cache/
+etf_cache/
+index_cache/
+finance_cache/
+factors_cache/
+billboard_cache/
+extras_cache/
+test_cache/
+jqdata_akshare_backtrader_utility/
+data/cache/*/
+runtime_data/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak

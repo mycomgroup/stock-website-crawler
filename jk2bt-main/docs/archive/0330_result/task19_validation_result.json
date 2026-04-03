@@ -1,0 +1,38 @@
+{
+  "validation_time": "2026-03-31T14:32:52.696348",
+  "results": [
+    {
+      "strategy_file": "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "strategy_name": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "timestamp": "2026-03-31T14:32:21.495755",
+      "load_success": true,
+      "functions": [
+        "initialize",
+        "after_code_changed",
+        "handle_prepare",
+        "handle_trader",
+        "report_portoflio"
+      ],
+      "run_success": true,
+      "final_value": 91696.612246,
+      "pnl": -8303.387753999996,
+      "pnl_pct": -8.303387753999992,
+      "is_really_running": true
+    },
+    {
+      "strategy_file": "jkcode/jkcode/04 红利搬砖_简化测试版.txt",
+      "strategy_name": "04 红利搬砖_简化测试版.txt",
+      "timestamp": "2026-03-31T14:32:43.940972",
+      "load_success": true,
+      "functions": [
+        "initialize",
+        "daily_check"
+      ],
+      "run_success": true,
+      "final_value": 100000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "is_really_running": false
+    }
+  ]
+}

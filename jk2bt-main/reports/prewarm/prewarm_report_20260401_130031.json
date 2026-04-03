@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-04-01T13:00:31.358514",
+  "duration_seconds": 6.643858,
+  "results": {
+    "index_components": {
+      "summary": {
+        "success": 5,
+        "failed": 0,
+        "skipped": 0,
+        "errors": []
+      }
+    },
+    "macro": {
+      "summary": {
+        "success": 0,
+        "failed": 0,
+        "skipped": 3,
+        "errors": []
+      }
+    }
+  }
+}

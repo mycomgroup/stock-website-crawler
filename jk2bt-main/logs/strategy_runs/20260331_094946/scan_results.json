@@ -1,0 +1,15 @@
+{
+  "total": 1,
+  "executable": 1,
+  "skipped": 0,
+  "details": {
+    "/Users/yuping/Downloads/git/jk2bt-main/jkcode/jkcode/01 7年40倍模拟超过两年年化高回撤低.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    }
+  }
+}

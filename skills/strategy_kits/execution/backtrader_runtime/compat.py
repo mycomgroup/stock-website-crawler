@@ -14,11 +14,12 @@
 
 import backtrader as bt
 from types import SimpleNamespace
-from typing import Dict, List, Tuple, Callable, Optional, Any, Union
+from typing import Dict, List, Callable, Optional, Any, Union
 import pandas as pd
 import math
 
 from ..data_gateways.symbol import to_ak, to_jq, to_qlib, to_ts
+from .timer_manager import TimerManager
 
 
 def _symbol_aliases(code: Any) -> set[str]:
@@ -160,8 +161,8 @@ class JQ2BTBaseStrategy(bt.Strategy):
         # 聚宽风格全局变量 g
         self.g = SimpleNamespace()
 
-        # 定时任务注册表: [(func, time_str), ...]
-        self._scheduled_tasks: List[Tuple[Callable, Optional[str]]] = []
+        # 聚宽风格定时器
+        self.timer_manager = TimerManager(self)
 
         # 状态跟踪
         self._bar_count = 0
@@ -245,26 +246,28 @@ class JQ2BTBaseStrategy(bt.Strategy):
             func: 要执行的函数，接收 context 参数
             time: 执行时间标识
         """
-        self._scheduled_tasks.append((func, time))
+        if time in (None, "every_bar"):
+            self.timer_manager.register(func, frequency="every_bar", time_rule="every_bar")
+        else:
+            self.timer_manager.register(func, frequency="daily", time_rule=time)
 
-    def _should_run_task(self, time_str: Optional[str], bar_idx: int, bars_in_day: int) -> bool:
-        """判断当前是否应该执行定时任务"""
-        if time_str is None or time_str == 'every_bar':
-            return True
-        if time_str == 'before_open':
-            return bar_idx == 0
-        if time_str == 'after_close':
-            return bar_idx == bars_in_day - 1
+    def run_weekly(self, func: Callable, weekday: int = 1, time: str = "open"):
+        """Register a weekly callback using JoinQuant-style weekday semantics."""
+        self.timer_manager.register(
+            func,
+            frequency="weekly",
+            time_rule=time,
+            weekday=weekday,
+        )
 
-        # 具体时间如 '14:50'
-        if isinstance(time_str, str) and ':' in time_str:
-            dt = self.datas[0].datetime.datetime(0)
-            if isinstance(dt, float):
-                dt = bt.num2date(dt)
-            h, m = map(int, time_str.split(':'))
-            return dt.hour == h and dt.minute == m
-
-        return False
+    def run_monthly(self, func: Callable, day: int = 1, time: str = "before_open"):
+        """Register a monthly callback using the Nth trading day of month."""
+        self.timer_manager.register(
+            func,
+            frequency="monthly",
+            time_rule=time,
+            day=day,
+        )
 
     def next(self):
         """主循环（每个 bar 调用）"""
@@ -285,17 +288,12 @@ class JQ2BTBaseStrategy(bt.Strategy):
             self._last_date = dt
         self._bars_today.append(self._bar_count)
 
-        bars_in_day = len(self._bars_today)
-        bar_idx = bars_in_day - 1
-
         # 首次初始化
         if self._bar_count == 1:
             self.initialize(self.context)
 
         # 执行定时任务
-        for func, time_str in self._scheduled_tasks:
-            if self._should_run_task(time_str, bar_idx, bars_in_day):
-                func(self.context)
+        self.timer_manager.check_and_execute()
 
     def stop(self):
         """策略结束回调"""

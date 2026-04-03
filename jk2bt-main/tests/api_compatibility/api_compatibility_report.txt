@@ -1,0 +1,77 @@
+============================================================
+API Compatibility Report
+Generated: 2026-04-01 11:31:56
+============================================================
+
+SUMMARY
+----------------------------------------
+  Total APIs: 37
+  Implemented: 37 (100.0%)
+  Partial: 0 (0.0%)
+  Missing: 0 (0.0%)
+
+DETAILED STATUS
+----------------------------------------
+
+[Market API]
+  OK * get_price: Implemented
+  OK * history: Implemented
+  OK * attribute_history: Implemented
+  OK * get_bars: Implemented
+  OK   get_price_jq: Implemented
+  OK   get_bars_jq: Implemented
+
+[Enhancements API]
+  OK * order_shares: Implemented
+  OK * order_target_percent: Implemented
+  OK * filter_st: Implemented
+  OK * filter_paused: Implemented
+  OK   filter_limit_up: Implemented
+  OK   filter_limit_down: Implemented
+  OK * filter_new_stocks: Implemented
+  OK   get_open_price: Implemented
+  OK   get_close_price: Implemented
+  OK   get_high_limit: Implemented
+  OK   get_low_limit: Implemented
+  OK   LimitOrderStyle: Implemented
+  OK   MarketOrderStyle: Implemented
+
+[Technical Indicators]
+  OK * MA: Implemented
+  OK * EMA: Implemented
+  OK * MACD: Implemented
+  OK * KDJ: Implemented
+  OK * RSI: Implemented
+  OK * BOLL: Implemented
+  OK   ATR: Implemented
+
+[Missing APIs]
+  OK   get_locked_shares: Implemented
+  OK   get_fund_info: Implemented
+  OK   get_fundamentals_continuously: Implemented
+  OK   get_beta: Implemented
+
+[Factor API]
+  OK   get_north_factor: Implemented
+  OK   get_comb_factor: Implemented
+  OK   get_factor_momentum: Implemented
+
+[Optimizations]
+  OK   get_current_data_cached: Implemented
+  OK   cached_get_security_info: Implemented
+  OK   cached_get_index_stocks: Implemented
+  OK   batch_get_fundamentals: Implemented
+
+LEGEND
+----------------------------------------
+  OK = Fully implemented
+  !   = Partially implemented (missing params or not callable)
+  X   = Not implemented
+  *   = Critical API (essential for strategy execution)
+
+All critical APIs are implemented!
+----------------------------------------
+
+============================================================
+END OF REPORT
+============================================================

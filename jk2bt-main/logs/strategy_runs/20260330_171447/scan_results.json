@@ -1,0 +1,47 @@
+{
+  "total": 5,
+  "executable": 4,
+  "skipped": 1,
+  "details": {
+    "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/08 国九条后中小板微盘小改，年化135.40%.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": false,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/100 配套资料说明.txt": {
+      "status": "not_strategy",
+      "is_executable": false,
+      "has_initialize": false,
+      "has_handle": false,
+      "missing_apis": [],
+      "error_message": "非策略文件（研究文档/配套资料）"
+    }
+  }
+}

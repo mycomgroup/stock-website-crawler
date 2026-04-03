@@ -1,0 +1,48 @@
+"""
+真跑通策略样本 - ETF轮动策略
+
+策略类型: ETF动量轮动
+预期结果: 真跑通 ✓
+
+验证点:
+- 使用run_weekly定时器
+- 多个ETF轮动
+- 发生交易
+"""
+
+def initialize(context):
+    """初始化"""
+    g.etf_pool = [
+        '510300.XSHG',  # 沪深300ETF
+        '510500.XSHG',  # 中证500ETF
+        '159915.XSHE',  # 创业板ETF
+    ]
+    g.lookback = 20
+    
+    run_weekly(rotate, weekday=1, time='open')
+
+def rotate(context):
+    """轮动"""
+    returns = {}
+    
+    for etf in g.etf_pool:
+        prices = history(g.lookback, '1d', 'close', [etf])
+        if prices is not None and len(prices) > 0:
+            returns[etf] = (prices[etf].iloc[-1] / prices[etf].iloc[0] - 1)
+    
+    if not returns:
+        log.info('无数据')
+        return
+    
+    best_etf = max(returns, key=returns.get)
+    log.info(f'最佳ETF: {best_etf}, 收益率: {returns[best_etf]:.2%}')
+    
+    for etf in context.portfolio.positions:
+        if etf != best_etf:
+            order_target(etf, 0)
+    
+    if best_etf not in context.portfolio.positions:
+        order_value(best_etf, context.portfolio.total_value)
+
+def handle_data(context, data):
+    pass

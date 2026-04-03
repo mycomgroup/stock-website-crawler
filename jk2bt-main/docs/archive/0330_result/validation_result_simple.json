@@ -1,0 +1,39 @@
+{
+  "validation_time": "2026-03-30T18:44:50.653970",
+  "results": [
+    {
+      "strategy_file": "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "strategy_name": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "timestamp": "2026-03-30T18:44:46.512940",
+      "load_success": true,
+      "functions": [
+        "initialize",
+        "after_code_changed",
+        "handle_prepare",
+        "handle_trader",
+        "report_portoflio"
+      ],
+      "run_success": false,
+      "final_value": 98368.14992,
+      "pnl": -1631.8500800000038,
+      "pnl_pct": -1.631850080000008,
+      "run_error": "'NoneType' object has no attribute 'addindicator'\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/validate_strategies.py\", line 82, in validate_strategy_simple\n    if strategy:\n  File \"/Users/yuping/Library/Python/3."
+    },
+    {
+      "strategy_file": "jkcode/jkcode/04 红利搬砖，年化29%.txt",
+      "strategy_name": "04 红利搬砖，年化29%.txt",
+      "timestamp": "2026-03-30T18:44:49.564714",
+      "load_success": true,
+      "functions": [
+        "initialize",
+        "handle_trader",
+        "choice_stocks"
+      ],
+      "run_success": false,
+      "final_value": 100000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "run_error": "'NoneType' object has no attribute 'addindicator'\nTraceback (most recent call last):\n  File \"/Users/yuping/Downloads/git/jk2bt-main/validate_strategies.py\", line 82, in validate_strategy_simple\n    if strategy:\n  File \"/Users/yuping/Library/Python/3."
+    }
+  ]
+}

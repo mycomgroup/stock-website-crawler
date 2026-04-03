@@ -1,0 +1,74 @@
+{
+  "total": 8,
+  "executable": 6,
+  "skipped": 2,
+  "details": {
+    "jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/04 红利搬砖，年化29%.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/04 高股息低市盈率高增长的价投策略.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/01 龙回头3.0回测速度优化版.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/02 7年40倍绩优低价超跌缩量小盘 扩容到50只.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": false,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/100 配套资料说明.txt": {
+      "status": "not_strategy",
+      "is_executable": false,
+      "has_initialize": false,
+      "has_handle": false,
+      "missing_apis": [],
+      "error_message": "非策略文件（研究文档/配套资料）"
+    },
+    "jkcode/jkcode/01 wywy1995大侠的小市值AI因子选股 5组参数50股.txt": {
+      "status": "valid",
+      "is_executable": true,
+      "has_initialize": true,
+      "has_handle": false,
+      "missing_apis": [],
+      "error_message": ""
+    },
+    "jkcode/jkcode/03 多策略融合-80倍.txt": {
+      "status": "missing_api",
+      "is_executable": false,
+      "has_initialize": true,
+      "has_handle": false,
+      "missing_apis": [
+        "get_ticks",
+        "get_ticks"
+      ],
+      "error_message": "missing_api"
+    }
+  }
+}
