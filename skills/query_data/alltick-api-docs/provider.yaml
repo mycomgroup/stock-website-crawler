@@ -1,0 +1,20 @@
+provider_key: alltick
+display_name: AllTick
+kind: market_data
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - ALLTICK_API_KEY
+capabilities:
+  - global_equity_market_data
+  - us_equity_market_data
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source alltick"
+docs:
+  primary_index: alltick-api-docs/SKILL.md
+limits:
+  rate_limit_notes: websocket_realtime
+provenance:
+  api_base_url: https://quote.alltick.io/

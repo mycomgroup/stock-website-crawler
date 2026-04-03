@@ -1,0 +1,20 @@
+provider_key: eodhd
+display_name: EODHD
+kind: market_data
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - EODHD_API_KEY
+capabilities:
+  - global_equity_market_data
+  - us_equity_market_data
+  - us_equity_fundamental
+  - us_equity_financials
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source eodhd"
+docs:
+  primary_index: eodhd-api-docs/SKILL.md
+provenance:
+  api_base_url: https://eodhd.com/api/

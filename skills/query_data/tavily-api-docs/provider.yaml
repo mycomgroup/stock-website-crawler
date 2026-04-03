@@ -1,0 +1,22 @@
+provider_key: tavily
+display_name: Tavily
+kind: search
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - TAVILY_API_KEY
+capabilities:
+  - web_search
+  - ai_search
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source tavily"
+  query:
+    command: "python3 test_datasource.py --source tavily"
+docs:
+  primary_index: tavily-api-docs/SKILL.md
+limits:
+  rate_limit_notes: "Credit-based: basic search 1 credit, advanced 2 credits"
+provenance:
+  api_base_url: https://api.tavily.com/

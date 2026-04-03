@@ -1,0 +1,22 @@
+provider_key: akshare
+display_name: AkShare
+kind: market_data
+status: active
+auth:
+  type: none
+  env_vars: []
+capabilities:
+  - cn_equity_market_data
+  - cn_equity_fundamental
+  - hk_equity_market_data
+  - cn_macro
+  - alternative_data
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source akshare"
+docs:
+  primary_index: akshare/SKILL.md
+limits:
+  rate_limit_notes: no_api_key_required
+provenance:
+  api_base_url: https://akshare.akfamily.xyz/

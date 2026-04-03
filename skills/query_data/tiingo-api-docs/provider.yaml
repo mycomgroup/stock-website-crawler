@@ -1,0 +1,21 @@
+provider_key: tiingo
+display_name: Tiingo
+kind: market_data
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - TIINGO_API_KEY
+capabilities:
+  - us_equity_market_data
+  - us_equity_fundamental
+  - global_equity_market_data
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source tiingo"
+docs:
+  primary_index: tiingo-api-docs/SKILL.md
+limits:
+  rate_limit_notes: "Plan-based: hourly, daily, and monthly limits"
+provenance:
+  api_base_url: https://api.tiingo.com/

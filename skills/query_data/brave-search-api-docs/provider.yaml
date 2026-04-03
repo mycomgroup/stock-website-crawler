@@ -1,0 +1,19 @@
+provider_key: brave-search
+display_name: Brave Search
+kind: search
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - BRAVE_SEARCH_API_KEY
+capabilities:
+  - web_search
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source brave_search"
+  query:
+    command: "python3 test_datasource.py --source brave_search"
+docs:
+  primary_index: brave-search-api-docs/SKILL.md
+provenance:
+  api_base_url: https://api.search.brave.com/res/v1/

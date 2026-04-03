@@ -1,0 +1,22 @@
+provider_key: alphavantage
+display_name: Alpha Vantage
+kind: market_data
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - ALPHAVANTAGE_API_KEY
+capabilities:
+  - us_equity_market_data
+  - us_equity_fundamental
+  - us_macro
+  - global_equity_market_data
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source alphavantage"
+docs:
+  primary_index: alphavantage-api-docs/SKILL.md
+limits:
+  rate_limit_notes: "Free tier: 5 calls/minute, 500 calls/day"
+provenance:
+  api_base_url: https://www.alphavantage.co/query

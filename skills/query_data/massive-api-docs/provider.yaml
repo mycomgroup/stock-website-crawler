@@ -1,0 +1,18 @@
+provider_key: massive
+display_name: Massive
+kind: market_data
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - MASSIVE_API_KEY
+capabilities:
+  - global_equity_market_data
+  - alternative_data
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source massive"
+docs:
+  primary_index: massive-api-docs/SKILL.md
+provenance:
+  api_base_url: https://api.massive.io/

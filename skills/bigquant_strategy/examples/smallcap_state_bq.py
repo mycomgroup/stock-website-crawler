@@ -35,6 +35,8 @@ dates_df = dai.query(
 """.format(s=START_DATE, e=END_DATE)
 ).df()
 trade_dates = dates_df["date"].tolist()
+# 统一日期格式为 YYYY-MM-DD 字符串
+trade_dates = [str(d)[:10] for d in trade_dates]
 print("交易日数:", len(trade_dates))
 
 # ── 获取 HS300 近似成分股 ─────────────────────────────

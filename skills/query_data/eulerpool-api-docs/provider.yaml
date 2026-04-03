@@ -1,0 +1,19 @@
+provider_key: eulerpool
+display_name: Eulerpool
+kind: market_data
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - EULERPOOL_API_KEY
+capabilities:
+  - global_equity_market_data
+  - us_equity_fundamental
+  - alternative_data
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source eulerpool"
+docs:
+  primary_index: eulerpool-api-docs/SKILL.md
+provenance:
+  api_base_url: https://api.eulerpool.com/

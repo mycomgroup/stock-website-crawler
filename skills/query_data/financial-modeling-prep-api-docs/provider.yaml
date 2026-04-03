@@ -1,0 +1,20 @@
+provider_key: financial-modeling-prep
+display_name: Financial Modeling Prep
+kind: market_data
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - FMP_API_KEY
+capabilities:
+  - us_equity_financials
+  - us_equity_fundamental
+  - us_equity_market_data
+  - global_equity_market_data
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source financialmodelingprep"
+docs:
+  primary_index: financial-modeling-prep-api-docs/SKILL.md
+provenance:
+  api_base_url: https://financialmodelingprep.com/api/v3/

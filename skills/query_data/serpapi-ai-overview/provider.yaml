@@ -1,0 +1,20 @@
+provider_key: serpapi
+display_name: SerpAPI
+kind: search
+status: active
+auth:
+  type: env_only
+  env_vars:
+    - SERP_API_KEY
+capabilities:
+  - web_search
+  - ai_search
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source serpapi"
+docs:
+  primary_index: serpapi-ai-overview/SKILL.md
+limits:
+  rate_limit_notes: "Plan-based rate limits, free tier has monthly quota"
+provenance:
+  api_base_url: https://serpapi.com/

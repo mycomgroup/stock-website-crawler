@@ -1,0 +1,30 @@
+provider_key: lixinger
+display_name: Lixinger OpenAPI
+kind: market_data
+status: active
+auth:
+  type: env_or_file
+  env_vars:
+    - LIXINGER_TOKEN
+  file_hints:
+    - token.cfg
+capabilities:
+  - cn_equity_fundamental
+  - cn_equity_financials
+  - cn_equity_market_data
+  - hk_equity_market_data
+  - us_equity_market_data
+  - cn_macro
+entrypoints:
+  smoke_test:
+    command: "python3 test_datasource.py --source lixinger"
+  query:
+    command: "python3 lixinger-api-docs/scripts/query_tool.py --suffix \"cn/company\" --params '{\"stockCodes\":[\"600519\"]}' --columns \"stockCode,name\""
+docs:
+  primary_index: lixinger-api-docs/README.md
+limits:
+  rate_limit_notes: account-tier-based
+  known_gaps:
+    - no_unified_schema
+provenance:
+  api_base_url: https://open.lixinger.com/api/
