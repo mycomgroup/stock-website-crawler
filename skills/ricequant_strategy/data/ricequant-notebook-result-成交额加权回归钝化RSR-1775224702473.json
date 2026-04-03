@@ -1,0 +1,62 @@
+{
+  "capturedAt": "2026-04-03T13:58:22.473Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E6%88%90%E4%BA%A4%E9%A2%9D%E5%8A%A0%E6%9D%83%E5%9B%9E%E5%BD%92%E9%92%9D%E5%8C%96RSR_20260403_215742.ipynb",
+  "notebookPath": "成交额加权回归钝化RSR_20260403_215742.ipynb",
+  "kernelId": "95a8ce31-2c7e-4814-ab49-7326fd282a88",
+  "sessionId": "d5ccc507-50db-4377-b2f1-64080bddcfda",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "成交额加权回归钝化RSR_20260403_215742.ipynb",
+    "path": "成交额加权回归钝化RSR_20260403_215742.ipynb",
+    "last_modified": "2026-04-03T13:58:20.927959Z",
+    "created": "2026-04-03T13:58:20.928959Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 9454,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# 成交额加权回归钝化 RSRS 择时策略 - RiceQuant Notebook 验证脚本\n# 候选3: 成交额加权回归 + 钝化 RSRS (V11)\n# 构造: 成交额加权回归计算 beta + 钝化公式\n# 参数: N=19, M=500, 阈值=0.8\n# 回测区间: 2015-01-01 至 2024-12-31\n# 标的: 沪深300 (000300.XSHG)\n\nimport numpy as np\nimport statsmodels.api as sm\nfrom rqdatac import get_price\n\nprint(\"=== 成交额加权+钝化 RSRS 择时策略验证开始 ===\")\n\n# 参数设置\nSECURITY = \"000300.XSHG\"\nN = 19  # 回归窗口\nM = 500  # 标准分窗口\nBUY_THRESHOLD = 0.8\nSELL_THRESHOLD = -0.8\n\n# 获取历史数据\nprices = get_price(\n    SECURITY,\n    start_date=\"2013-01-01\",\n    end_date=\"2024-12-31\",\n    frequency=\"1d\",\n    fields=[\"high\", \"low\", \"close\", \"volume\"],\n)\n\nif prices is None or len(prices) < M:\n    print(f\"ERROR: 数据不足, 仅 {len(prices) if prices is not None else 0} 条\")\nelse:\n    print(f\"获取到 {len(prices)} 条日线数据\")\n\n    highs = prices[\"high\"].values\n    lows = prices[\"low\"].values\n    closes = prices[\"close\"].values\n    volumes = prices[\"volume\"].values\n\n    # 计算 beta 序列（成交额加权回归）和 R2 序列\n    beta_history = []\n    r2_history = []\n\n    for i in range(N, len(prices)):\n        h = highs[i - N : i]\n        l = lows[i - N : i]\n        vol = volumes[i - N : i]\n\n        # 成交额 = volume * close（近似）\n        close_segment = closes[i - N : i]\n        turnover = vol * close_segment\n\n        # 归一化权重\n        total_turnover = np.sum(turnover)\n        if total_turnover > 0:\n            weights = turnover / total_turnover\n        else:\n            weights = np.ones(N) / N\n\n        X = sm.add_constant(l)\n        try:\n            model = sm.WLS(h, X, weights=weights).fit()\n            beta_history.append(model.params[1])\n            r2_history.append(model.rsquared)\n        except:\n            beta_history.append(np.nan)\n            r2_history.append(np.nan)\n\n    beta_arr = np.array(beta_history)\n    r2_arr = np.array(r2_history)\n\n    # 计算收益率序列\n    returns = np.diff(closes) / closes[:-1]\n\n    # 模拟逐日信号\n    signals = []\n    positions = []\n    pos = False\n    entry_idx = None\n\n    valid_count = 0\n    trade_count = 0\n    wins = 0\n    losses = 0\n\n    for i in range(M, len(beta_arr)):\n        if np.isnan(beta_arr[i]) or np.isnan(r2_arr[i]):\n            continue\n\n        # 计算标准分\n        beta_window = beta_arr[max(0, i - M + 1) : i + 1]\n        beta_window = beta_window[~np.isnan(beta_window)]\n\n        if len(beta_window) < M * 0.5:\n            continue\n\n        mu = np.mean(beta_window)\n        sigma = np.std(beta_window)\n        if sigma == 0:\n            continue\n\n        z = (beta_arr[i] - mu) / sigma\n        r2 = r2_arr[i]\n\n        # 计算收益率波动率分位数\n        ret_std_window = []\n        for j in range(max(0, i - M + 1), min(i + 1, len(returns) - N + 1)):\n            if j + N <= len(returns):\n                ret_std = np.std(returns[j : j + N])\n                ret_std_window.append(ret_std)\n\n        if len(ret_std_window) > 0:\n            current_std = (\n                np.std(returns[max(0, i - N + 1) : i + 1])\n                if i - N + 1 >= 0\n                else np.std(returns[: i + 1])\n            )\n            quantile = np.sum(np.array(ret_std_window) <= current_std) / len(\n                ret_std_window\n            )\n        else:\n            quantile = 0.5\n\n        # 钝化 RSRS 指标\n        rsrs_dampened = z * r2 * quantile\n\n        # 交易逻辑\n        if rsrs_dampened > BUY_THRESHOLD and not pos:\n            pos = True\n            entry_idx = i\n            signals.append((\"BUY\", i, round(rsrs_dampened, 4)))\n        elif rsrs_dampened < SELL_THRESHOLD and pos:\n            pos = False\n            trade_count += 1\n            if entry_idx is not None:\n                ret_trade = (closes[i] - closes[entry_idx]) / closes[entry_idx]\n                if ret_trade > 0:\n                    wins += 1\n                else:\n                    losses += 1\n            signals.append((\"SELL\", i, round(rsrs_dampened, 4)))\n\n        positions.append(1 if pos else 0)\n        valid_count += 1\n\n    # 统计\n    positions_arr = np.array(positions)\n    total_days = len(positions_arr)\n    holding_days = int(np.sum(positions_arr))\n\n    # 计算策略收益 vs 基准\n    strategy_returns = []\n    benchmark_returns = []\n    for i in range(len(positions_arr)):\n        idx = i + N\n        if idx < len(closes) - 1:\n            bench_ret = (closes[idx + 1] - closes[idx]) / closes[idx]\n            strat_ret = bench_ret * positions_arr[i]\n            strategy_returns.append(strat_ret)\n            benchmark_returns.append(bench_ret)\n\n    strategy_returns = np.array(strategy_returns)\n    benchmark_returns = np.array(benchmark_returns)\n\n    # 计算指标\n    ann_return = float(np.mean(strategy_returns) * 252)\n    ann_bench_return = float(np.mean(benchmark_returns) * 252)\n    ann_vol = float(np.std(strategy_returns) * np.sqrt(252))\n    sharpe = ann_return / ann_vol if ann_vol > 0 else 0\n\n    cum_strategy = np.cumprod(1 + strategy_returns)\n    cum_benchmark = np.cumprod(1 + benchmark_returns)\n\n    peak = np.maximum.accumulate(cum_strategy)\n    drawdown = (cum_strategy - peak) / peak\n    max_dd = float(np.min(drawdown))\n\n    alpha = (ann_return - ann_bench_return) * 100\n\n    print(f\"\\n=== 成交额加权+钝化 RSRS 择时策略结果 ===\")\n    print(f\"参数: N={N}, M={M}, 阈值=±{BUY_THRESHOLD}\")\n    print(f\"有效交易日: {valid_count}\")\n    print(f\"信号次数: {len(signals)}\")\n    print(f\"交易次数: {trade_count}\")\n    if trade_count > 0:\n        print(f\"胜率: {wins / trade_count * 100:.1f}%\")\n    else:\n        print(\"胜率: N/A\")\n    print(\n        f\"持仓天数: {holding_days}/{total_days} ({holding_days / total_days * 100:.1f}%)\"\n    )\n    print(f\"年化收益: {ann_return * 100:.2f}%\")\n    print(f\"基准年化: {ann_bench_return * 100:.2f}%\")\n    print(f\"年化波动: {ann_vol * 100:.2f}%\")\n    print(f\"夏普比率: {sharpe:.3f}\")\n    print(f\"最大回撤: {max_dd * 100:.2f}%\")\n    print(f\"Alpha: {alpha:.2f}%\")\n    print(f\"\\n=== 验证完成 ===\")\n",
+      "msgId": "3f235813bee249218da7e7377a291f00",
+      "websocketSessionId": "8a7596479ade47a4b0a23df28e423e36",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "=== 成交额加权+钝化 RSRS 择时策略验证开始 ===\n获取到 2914 条日线数据\n\n=== 成交额加权+钝化 RSRS 择时策略结果 ===\n参数: N=19, M=500, 阈值=±0.8\n有效交易日: 2395\n信号次数: 25\n交易次数: 12\n胜率: 58.3%\n持仓天数: 1054/2395 (44.0%)\n年化收益: 2.96%\n基准年化: 6.79%\n年化波动: 13.32%\n夏普比率: 0.222\n最大回撤: -27.01%\nAlpha: -3.83%\n\n=== 验证完成 ===\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "=== 成交额加权+钝化 RSRS 择时策略验证开始 ===\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "获取到 2914 条日线数据\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "\n=== 成交额加权+钝化 RSRS 择时策略结果 ===\n参数: N=19, M=500, 阈值=±0.8\n有效交易日: 2395\n信号次数: 25\n交易次数: 12\n胜率: 58.3%\n持仓天数: 1054/2395 (44.0%)\n年化收益: 2.96%\n基准年化: 6.79%\n年化波动: 13.32%\n夏普比率: 0.222\n最大回撤: -27.01%\nAlpha: -3.83%\n\n=== 验证完成 ===\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "成交额加权回归钝化RSR",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "d5ccc507-50db-4377-b2f1-64080bddcfda",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/d5ccc507-50db-4377-b2f1-64080bddcfda: "
+  },
+  "autoShutdown": true
+}

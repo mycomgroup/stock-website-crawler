@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-04-03T07:53:44.681Z",
+  "capturedAt": "2026-04-03T13:55:22.297Z",
   "notebookUrl": "https://www.ricequant.com/research",
   "directNotebookUrl": "https://www.ricequant.com/research",
   "pageState": {
@@ -24,8 +24,8 @@
       "https://www.ricequant.com/research/user/user_497381/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604",
       "https://www.ricequant.com/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1",
       "https://www.ricequant.com/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce",
-      "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403155233",
-      "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403155233",
+      "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403215411",
+      "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403215411",
       "https://www.ricequant.com/research/user/user_497381/static/tree/js/main.min.js?v=b274c2f44c0bf3be3f3dd463436ea516",
       "https://hm.baidu.com/hm.js?cb81fd54150b99e25d085d58bbaf4a07",
       "https://dn-growing.qbox.me/vds.js"
@@ -44,12 +44,12 @@
     "https://assets.ricequant.com/vendor/browser-upgrade/check.v0.js",
     "https://cdn-go.cn/aegis/aegis-sdk/latest/aegis.min.js",
     "https://plausible.ricequant.com/js/script.js",
-    "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=06a2a3d8-b76a-4541-89a2-a4af5279e295&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-ec5391ea4a8a4d1183dc700b1bdc844e&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+    "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=d5d8f1e4-ec72-4bbb-adc0-0870c1bdfc8a&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-4cbfbf908bbb44e2a28c22c26d59b1bc&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
     "https://www.ricequant.com/api/user/isLogin.do",
     "https://assets.ricequant.com/welcome/Home.190b4796.js",
     "https://assets.ricequant.com/welcome/Home.808e8a00.js",
-    "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=06a2a3d8-b76a-4541-89a2-a4af5279e295&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-ec5391ea4a8a4d1183dc700b1bdc844e&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
-    "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=06a2a3d8-b76a-4541-89a2-a4af5279e295&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-ec5391ea4a8a4d1183dc700b1bdc844e&referer=",
+    "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=d5d8f1e4-ec72-4bbb-adc0-0870c1bdfc8a&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-4cbfbf908bbb44e2a28c22c26d59b1bc&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+    "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=d5d8f1e4-ec72-4bbb-adc0-0870c1bdfc8a&env=production&platform=4&netType=3&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-4cbfbf908bbb44e2a28c22c26d59b1bc&referer=",
     "https://www.ricequant.com/research",
     "https://www.ricequant.com/research/hub/",
     "https://www.ricequant.com/research/hub/login",
@@ -59,8 +59,8 @@
     "https://www.ricequant.com/research/hub/load_session?next=",
     "https://www.ricequant.com/research/user/user_497381/",
     "https://www.ricequant.com/research/user/user_497381/tree?",
-    "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
-    "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=YDRrKmOf8fTOMaKERd8ol74lv1H3vC&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+    "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+    "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=a8zKDLr0m8S5oAMIMnym4fNt2ghd85&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
     "https://www.ricequant.com/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe",
     "https://www.ricequant.com/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542",
     "https://www.ricequant.com/research/user/user_497381/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604",
@@ -68,28 +68,28 @@
     "https://www.ricequant.com/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce",
     "https://www.ricequant.com/research/user/user_497381/static/tree/js/main.min.js?v=b274c2f44c0bf3be3f3dd463436ea516",
     "https://hm.baidu.com/hm.js?cb81fd54150b99e25d085d58bbaf4a07",
-    "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403155233",
-    "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775202755762",
-    "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775202755763",
+    "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403215411",
+    "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775224453249",
+    "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775224453250",
     "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
-    "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775202755764",
-    "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403155233",
-    "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775202755765",
+    "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775224453251",
+    "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403215411",
+    "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775224453252",
     "https://www.ricequant.com/research/user/user_497381/api/rqinfo/memory",
     "https://www.ricequant.com/research/user/user_497381//api/notebook/sid",
     "https://dn-growing.qbox.me/vds.js",
-    "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775202771638",
-    "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775202771639",
-    "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775202771640",
-    "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775202771641"
+    "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775224469188",
+    "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775224469189",
+    "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775224469190",
+    "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775224469191"
   ],
   "likelyNotebookRequests": [
     {
-      "id": 12,
+      "id": 13,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=06a2a3d8-b76a-4541-89a2-a4af5279e295&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-ec5391ea4a8a4d1183dc700b1bdc844e&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+      "url": "https://rumt-zh.com/collect/pv?originFrom=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=d5d8f1e4-ec72-4bbb-adc0-0870c1bdfc8a&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-4cbfbf908bbb44e2a28c22c26d59b1bc&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
       "headers": {
         "referer": "https://www.ricequant.com/"
       },
@@ -114,15 +114,16 @@
       "postData": null
     },
     {
-      "id": 20,
+      "id": 19,
       "phase": "response",
       "resourceType": "xhr",
       "method": "POST",
       "url": "https://www.ricequant.com/api/user/isLogin.do",
       "status": 200,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "318",
-        "date": "Fri, 03 Apr 2026 07:52:28 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:05 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
@@ -134,7 +135,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=06a2a3d8-b76a-4541-89a2-a4af5279e295&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-ec5391ea4a8a4d1183dc700b1bdc844e&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
+      "url": "https://rumt-zh.com/collect/whitelist?id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=d5d8f1e4-ec72-4bbb-adc0-0870c1bdfc8a&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-4cbfbf908bbb44e2a28c22c26d59b1bc&from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&referer=",
       "headers": {
         "referer": "https://www.ricequant.com/"
       },
@@ -145,12 +146,12 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "POST",
-      "url": "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=06a2a3d8-b76a-4541-89a2-a4af5279e295&env=production&platform=4&netType=4&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-ec5391ea4a8a4d1183dc700b1bdc844e&referer=",
+      "url": "https://rumt-zh.com/speed?from=https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F&id=4eQndT5o5vyER3r91k&uin=&version=1.43.51&aid=d5d8f1e4-ec72-4bbb-adc0-0870c1bdfc8a&env=production&platform=4&netType=3&vp=1600%20*%201200&sr=1600%20*%201200&sessionId=session-4cbfbf908bbb44e2a28c22c26d59b1bc&referer=",
       "headers": {
-        "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryAYUtTBxjrvEBOtEk",
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundarybbnfIFW9hj9mUEAs",
         "referer": "https://www.ricequant.com/"
       },
-      "postData": "------WebKitFormBoundaryAYUtTBxjrvEBOtEk\r\nContent-Disposition: form-data; name=\"payload\"\r\n\r\n{\"duration\":{\"fetch\":[{\"url\":\"https://www.ricequant.com/api/user/isLogin.do\",\"isHttps\":true,\"method\":\"POST\",\"type\":\"fetch\",\"status\":200,\"duration\":44,\"nextHopProtocol\":\"\",\"domainLookup\":-1,\"connectTime\":-1,\"ret\":\"0\",\"isErr\":0}],\"static\":[],\"bridge\":[]},\"id\":\"4eQndT5o5vyER3r91k\",\"uin\":\"\",\"version\":\"1.43.51\",\"aid\":\"06a2a3d8-b76a-4541-89a2-a4af5279e295\",\"env\":\"production\",\"platform\":4,\"netType\":4,\"vp\":\"1600 * 1200\",\"sr\":\"1600 * 1200\",\"sessionId\":\"session-ec5391ea4a8a4d1183dc700b1bdc844e\",\"from\":\"https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F\",\"referer\":\"\"}\r\n------WebKitFormBoundaryAYUtTBxjrvEBOtEk--\r\n"
+      "postData": "------WebKitFormBoundarybbnfIFW9hj9mUEAs\r\nContent-Disposition: form-data; name=\"payload\"\r\n\r\n{\"duration\":{\"fetch\":[{\"url\":\"https://www.ricequant.com/api/user/isLogin.do\",\"isHttps\":true,\"method\":\"POST\",\"type\":\"fetch\",\"status\":200,\"duration\":47,\"nextHopProtocol\":\"\",\"domainLookup\":-1,\"connectTime\":-1,\"ret\":\"0\",\"isErr\":0}],\"static\":[],\"bridge\":[]},\"id\":\"4eQndT5o5vyER3r91k\",\"uin\":\"\",\"version\":\"1.43.51\",\"aid\":\"d5d8f1e4-ec72-4bbb-adc0-0870c1bdfc8a\",\"env\":\"production\",\"platform\":4,\"netType\":3,\"vp\":\"1600 * 1200\",\"sr\":\"1600 * 1200\",\"sessionId\":\"session-4cbfbf908bbb44e2a28c22c26d59b1bc\",\"from\":\"https%3A%2F%2Fwww.ricequant.com%2Fwelcome%2F\",\"referer\":\"\"}\r\n------WebKitFormBoundarybbnfIFW9hj9mUEAs--\r\n"
     },
     {
       "id": 24,
@@ -193,10 +194,11 @@
       "status": 302,
       "headers": {
         "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 07:52:30 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:07 GMT",
         "location": "/research/hub/",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -229,10 +231,11 @@
       "status": 302,
       "headers": {
         "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 07:52:30 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:07 GMT",
         "location": "/research/hub/login",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -297,10 +300,11 @@
       "status": 200,
       "headers": {
         "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-encoding": "gzip",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=utf-8",
-        "date": "Fri, 03 Apr 2026 07:52:30 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:08 GMT",
         "etag": "W/\"cc20525204882b93659923f5c29f3d479b632af4\"",
         "server": "nginx",
         "vary": "Accept-Encoding",
@@ -319,8 +323,9 @@
       "headers": {
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:30 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:30 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:08 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:08 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -331,26 +336,6 @@
     },
     {
       "id": 34,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa",
-      "status": 200,
-      "headers": {
-        "cache-control": "max-age=315360000",
-        "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:30 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:30 GMT",
-        "content-type": "application/javascript; charset=utf-8",
-        "vary": "Accept-Encoding",
-        "server": "nginx",
-        "last-modified": "Wed, 09 Sep 2020 10:06:51 GMT"
-      },
-      "contentType": "application/javascript; charset=utf-8",
-      "body": "/** vim: et:ts=4:sw=4:sts=4\n * @license RequireJS 2.3.6 Copyright jQuery Foundation and other contributors.\n * Released under MIT license, https://github.com/requirejs/requirejs/blob/master/LICENSE\n */\n//Not using strict: uneven strict support in browsers, #392, and causes\n//problems with requirejs.exec()/transpiler plugins that may not be strict.\n/*jslint regexp: true, nomen: true, sloppy: true */\n/*global window, navigator, document, importScripts, setTimeout, opera */\n\nvar requirejs, require, define;\n(function (global, setTimeout) {\n    var req, s, head, baseElement, dataMain, src,\n        interactiveScript, currentlyAddingScript, mainScript, subPath,\n        version = '2.3.6',\n        commentRegExp = /\\/\\*[\\s\\S]*?\\*\\/|([^:\"'=]|^)\\/\\/.*$/mg,\n        cjsRequireRegExp = /[^.]\\s*require\\s*\\(\\s*[\"']([^'\"\\s]+)[\"']\\s*\\)/g,\n        jsSuffixRegExp = /\\.js$/,\n        currDirRegExp = /^\\.\\//,\n        op = Object.prototype,\n        ostring = op.toString,\n        hasOwn = op.hasOwnProperty,\n        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),\n        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',\n        //PS3 indicates loaded and complete, but need to wait for complete\n        //specifically. Sequence is 'loading', 'loaded', execution,\n        // then 'complete'. The UA check is unfortunate, but not sure how\n        //to feature test w/o causing perf issues.\n        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?\n                      /^complete$/ : /^(complete|loaded)$/,\n        defContextName = '_',\n        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.\n        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',\n        contexts = {},\n        cfg = {},\n        globalDefQueue = [],\n        useInteractive = false;\n\n    //Could match something like ')//comment', do not lose the prefix to comment.\n    function commentReplace(match, singlePrefix) {\n        return singlePrefix || '';\n    }\n\n    function isFunction(it) {\n        return ostring.call(it) === '[object Function]';\n    }\n\n    function isArray(it) {\n        return ostring.call(it) === '[object Array]';\n    }\n\n    /**\n     * Helper function for iterating over an array. If the func returns\n     * a true value, it will break out of the loop.\n     */\n    function each(ary, func) {\n        if (ary) {\n            var i;\n            for (i = 0; i < ary.length; i += 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Helper function for iterating over an array backwards. If the func\n     * returns a true value, it will break out of the loop.\n     */\n    function eachReverse(ary, func) {\n        if (ary) {\n            var i;\n            for (i = ary.length - 1; i > -1; i -= 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    function hasProp(obj, prop) {\n        return hasOwn.call(obj, prop);\n    }\n\n    function getOwn(obj, prop) {\n        return hasProp(obj, prop) && obj[prop];\n    }\n\n    /**\n     * Cycles over properties in an object and calls a function for each\n     * property value. If the function returns a truthy value, then the\n     * iteration is stopped.\n     */\n    function eachProp(obj, func) {\n        var prop;\n        for (prop in obj) {\n            if (hasProp(obj, prop)) {\n                if (func(obj[prop], prop)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Simple function to mix in properties from source into target,\n     * but only if target does not already have a property of the same name.\n     */\n    function mixin(target, source, force, deepStringMixin) {\n        if (source) {\n            eachProp(source, function (value, prop) {\n                if (force || !hasProp(target,...<truncated>"
-    },
-    {
-      "id": 35,
       "phase": "request",
       "resourceType": "document",
       "method": "GET",
@@ -367,7 +352,7 @@
       "postData": null
     },
     {
-      "id": 36,
+      "id": 35,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
@@ -376,8 +361,9 @@
       "headers": {
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:30 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:30 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:08 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:08 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -385,6 +371,27 @@
       },
       "contentType": "application/javascript; charset=utf-8",
       "body": "/*! jQuery v3.2.1 | (c) JS Foundation and other contributors | jquery.org/license */\n!function(a,b){\"use strict\";\"object\"==typeof module&&\"object\"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error(\"jQuery requires a window with a document\");return b(a)}:b(a)}(\"undefined\"!=typeof window?window:this,function(a,b){\"use strict\";var c=[],d=a.document,e=Object.getPrototypeOf,f=c.slice,g=c.concat,h=c.push,i=c.indexOf,j={},k=j.toString,l=j.hasOwnProperty,m=l.toString,n=m.call(Object),o={};function p(a,b){b=b||d;var c=b.createElement(\"script\");c.text=a,b.head.appendChild(c).parentNode.removeChild(c)}var q=\"3.2.1\",r=function(a,b){return new r.fn.init(a,b)},s=/^[\\s\\uFEFF\\xA0]+|[\\s\\uFEFF\\xA0]+$/g,t=/^-ms-/,u=/-([a-z])/g,v=function(a,b){return b.toUpperCase()};r.fn=r.prototype={jquery:q,constructor:r,length:0,toArray:function(){return f.call(this)},get:function(a){return null==a?f.call(this):a<0?this[a+this.length]:this[a]},pushStack:function(a){var b=r.merge(this.constructor(),a);return b.prevObject=this,b},each:function(a){return r.each(this,a)},map:function(a){return this.pushStack(r.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(f.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(a<0?b:0);return this.pushStack(c>=0&&c<b?[this[c]]:[])},end:function(){return this.prevObject||this.constructor()},push:h,sort:c.sort,splice:c.splice},r.extend=r.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for(\"boolean\"==typeof g&&(j=g,g=arguments[h]||{},h++),\"object\"==typeof g||r.isFunction(g)||(g={}),h===i&&(g=this,h--);h<i;h++)if(null!=(a=arguments[h]))for(b in a)c=g[b],d=a[b],g!==d&&(j&&d&&(r.isPlainObject(d)||(e=Array.isArray(d)))?(e?(e=!1,f=c&&Array.isArray(c)?c:[]):f=c&&r.isPlainObject(c)?c:{},g[b]=r.extend(j,f,d)):void 0!==d&&(g[b]=d));return g},r.extend({expando:\"jQuery\"+(q+Math.random()).replace(/\\D/g,\"\"),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return\"function\"===r.type(a)},isWindow:function(a){return null!=a&&a===a.window},isNumeric:function(a){var b=r.type(a);return(\"number\"===b||\"string\"===b)&&!isNaN(a-parseFloat(a))},isPlainObject:function(a){var b,c;return!(!a||\"[object Object]\"!==k.call(a))&&(!(b=e(a))||(c=l.call(b,\"constructor\")&&b.constructor,\"function\"==typeof c&&m.call(c)===n))},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},type:function(a){return null==a?a+\"\":\"object\"==typeof a||\"function\"==typeof a?j[k.call(a)]||\"object\":typeof a},globalEval:function(a){p(a)},camelCase:function(a){return a.replace(t,\"ms-\").replace(u,v)},each:function(a,b){var c,d=0;if(w(a)){for(c=a.length;d<c;d++)if(b.call(a[d],d,a[d])===!1)break}else for(d in a)if(b.call(a[d],d,a[d])===!1)break;return a},trim:function(a){return null==a?\"\":(a+\"\").replace(s,\"\")},makeArray:function(a,b){var c=b||[];return null!=a&&(w(Object(a))?r.merge(c,\"string\"==typeof a?[a]:a):h.call(c,a)),c},inArray:function(a,b,c){return null==b?-1:i.call(b,a,c)},merge:function(a,b){for(var c=+b.length,d=0,e=a.length;d<c;d++)a[e++]=b[d];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;f<g;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,e,f=0,h=[];if(w(a))for(d=a.length;f<d;f++)e=b(a[f],f,c),null!=e&&h.push(e);else for(f in a)e=b(a[f],f,c),null!=e&&h.push(e);return g.apply([],h)},guid:1,proxy:function(a,b){var c,d,e;if(\"string\"==typeof b&&(c=a[b],b=a,a=c),r.isFunction(a))return d=f.call(arguments,2),e=function(){return a.apply(b||this,d.concat(f.call(arguments)))},e.guid=a.guid=a.guid||r.guid++,e},now:Date.now,support:o}),\"function\"==typeof Symbol&&(r.fn[Symbol.iterator]=c[Symbol.iterator]),r.each(\"Boolean Number String Function Array Date RegExp Object Error Symbol\".split(\" \"),function(a,b){j[\"[object \"+b+\"]\"]=b.toLowerCase()});function w(a){var b=!!a&&\"length\"...<truncated>"
+    },
+    {
+      "id": 36,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/hub/static/components/requirejs/require.js?v=f0cc8bbb2fcef87fc194fecbb632fcfa",
+      "status": 200,
+      "headers": {
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Mon, 31 Mar 2036 13:54:08 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:08 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Wed, 09 Sep 2020 10:06:51 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "/** vim: et:ts=4:sw=4:sts=4\n * @license RequireJS 2.3.6 Copyright jQuery Foundation and other contributors.\n * Released under MIT license, https://github.com/requirejs/requirejs/blob/master/LICENSE\n */\n//Not using strict: uneven strict support in browsers, #392, and causes\n//problems with requirejs.exec()/transpiler plugins that may not be strict.\n/*jslint regexp: true, nomen: true, sloppy: true */\n/*global window, navigator, document, importScripts, setTimeout, opera */\n\nvar requirejs, require, define;\n(function (global, setTimeout) {\n    var req, s, head, baseElement, dataMain, src,\n        interactiveScript, currentlyAddingScript, mainScript, subPath,\n        version = '2.3.6',\n        commentRegExp = /\\/\\*[\\s\\S]*?\\*\\/|([^:\"'=]|^)\\/\\/.*$/mg,\n        cjsRequireRegExp = /[^.]\\s*require\\s*\\(\\s*[\"']([^'\"\\s]+)[\"']\\s*\\)/g,\n        jsSuffixRegExp = /\\.js$/,\n        currDirRegExp = /^\\.\\//,\n        op = Object.prototype,\n        ostring = op.toString,\n        hasOwn = op.hasOwnProperty,\n        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),\n        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',\n        //PS3 indicates loaded and complete, but need to wait for complete\n        //specifically. Sequence is 'loading', 'loaded', execution,\n        // then 'complete'. The UA check is unfortunate, but not sure how\n        //to feature test w/o causing perf issues.\n        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?\n                      /^complete$/ : /^(complete|loaded)$/,\n        defContextName = '_',\n        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.\n        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',\n        contexts = {},\n        cfg = {},\n        globalDefQueue = [],\n        useInteractive = false;\n\n    //Could match something like ')//comment', do not lose the prefix to comment.\n    function commentReplace(match, singlePrefix) {\n        return singlePrefix || '';\n    }\n\n    function isFunction(it) {\n        return ostring.call(it) === '[object Function]';\n    }\n\n    function isArray(it) {\n        return ostring.call(it) === '[object Array]';\n    }\n\n    /**\n     * Helper function for iterating over an array. If the func returns\n     * a true value, it will break out of the loop.\n     */\n    function each(ary, func) {\n        if (ary) {\n            var i;\n            for (i = 0; i < ary.length; i += 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Helper function for iterating over an array backwards. If the func\n     * returns a true value, it will break out of the loop.\n     */\n    function eachReverse(ary, func) {\n        if (ary) {\n            var i;\n            for (i = ary.length - 1; i > -1; i -= 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    function hasProp(obj, prop) {\n        return hasOwn.call(obj, prop);\n    }\n\n    function getOwn(obj, prop) {\n        return hasProp(obj, prop) && obj[prop];\n    }\n\n    /**\n     * Cycles over properties in an object and calls a function for each\n     * property value. If the function returns a truthy value, then the\n     * iteration is stopped.\n     */\n    function eachProp(obj, func) {\n        var prop;\n        for (prop in obj) {\n            if (hasProp(obj, prop)) {\n                if (func(obj[prop], prop)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Simple function to mix in properties from source into target,\n     * but only if target does not already have a property of the same name.\n     */\n    function mixin(target, source, force, deepStringMixin) {\n        if (source) {\n            eachProp(source, function (value, prop) {\n                if (force || !hasProp(target,...<truncated>"
     },
     {
       "id": 37,
@@ -412,10 +419,11 @@
       "status": 302,
       "headers": {
         "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:12 GMT",
         "location": "/research/hub/",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -449,10 +457,11 @@
       "status": 302,
       "headers": {
         "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:12 GMT",
         "location": "/research/user/user_497381/",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -485,9 +494,10 @@
       "url": "https://www.ricequant.com/research/user/user_497381/",
       "status": 302,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:12 GMT",
         "location": "/research/user/user_497381/tree?",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -500,7 +510,7 @@
       "phase": "request",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "headers": {
         "accept-language": "zh-CN",
         "referer": "https://www.ricequant.com/research/hub/login",
@@ -520,11 +530,12 @@
       "url": "https://www.ricequant.com/research/user/user_497381/tree?",
       "status": 302,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
-        "location": "/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+        "date": "Fri, 03 Apr 2026 13:54:12 GMT",
+        "location": "/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
       },
@@ -536,7 +547,7 @@
       "phase": "request",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=YDRrKmOf8fTOMaKERd8ol74lv1H3vC&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=a8zKDLr0m8S5oAMIMnym4fNt2ghd85&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "headers": {
         "accept-language": "zh-CN",
         "referer": "https://www.ricequant.com/research/hub/login",
@@ -553,15 +564,16 @@
       "phase": "response",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/hub/api/oauth2/authorize?client_id=jupyterhub-user-user_497381&redirect_uri=%2Fresearch%2Fuser%2Fuser_497381%2Foauth_callback&response_type=code&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "status": 302,
       "headers": {
         "access-control-allow-headers": "accept, content-type, authorization",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self'; report-uri /research/hub/security/csp-report",
         "content-type": "text/html",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
-        "location": "/research/user/user_497381/oauth_callback?code=YDRrKmOf8fTOMaKERd8ol74lv1H3vC&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+        "date": "Fri, 03 Apr 2026 13:54:12 GMT",
+        "location": "/research/user/user_497381/oauth_callback?code=a8zKDLr0m8S5oAMIMnym4fNt2ghd85&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
       },
@@ -590,13 +602,14 @@
       "phase": "response",
       "resourceType": "document",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=YDRrKmOf8fTOMaKERd8ol74lv1H3vC&state=eyJ1dWlkIjogImNlZmQzMWMyMWYyMzQ1NmNhYjJiYWQxYWQ0YmU3YzcyIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
+      "url": "https://www.ricequant.com/research/user/user_497381/oauth_callback?code=a8zKDLr0m8S5oAMIMnym4fNt2ghd85&state=eyJ1dWlkIjogIjJiMGQ4MWNiNzVhMDQ5ZjhiZjY2MzFiNTNhMTBjZmYxIiwgIm5leHRfdXJsIjogIi9yZXNlYXJjaC91c2VyL3VzZXJfNDk3MzgxL3RyZWU_In0",
       "status": 302,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:12 GMT",
         "location": "/research/user/user_497381/tree?",
         "server": "nginx",
         "x-jupyterhub-version": "1.1.0"
@@ -708,64 +721,21 @@
       "url": "https://www.ricequant.com/research/user/user_497381/tree?",
       "status": 200,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-encoding": "gzip",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
-        "etag": "W/\"929f2268c1878a777a67cd071797402309ced028\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
+        "etag": "W/\"9a856d88da4066a6fc62d80d2fc22839a0ec7736\"",
         "server": "nginx",
         "vary": "Accept-Encoding",
         "x-jupyterhub-version": "1.1.0"
       },
       "contentType": "text/html; charset=UTF-8",
-      "body": "<!DOCTYPE HTML>\n<html>\n\n<head>\n  <meta charset=\"utf-8\">\n\n  <title>策略研究 - RiceQuant米筐量化交易平台</title>\n  \n  <link id=\"favicon\" rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/research/user/user_497381/static/base/images/favicon.ico?v=b446914e32140bee34346177a8be9aba\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-ui/themes/smoothness/jquery-ui.min.css?v=9b2c8d3489227115310662a343fce11c\" type=\"text/css\"\n  />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-typeahead/dist/jquery.typeahead.min.css?v=7afb461de36accb1aa133a1710f5bc56\" type=\"text/css\"\n  />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/style.min.css?v=4e52139bcf73c6fa106fdc159205a39b\" type=\"text/css\" />\n   \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/custom/custom.css?_=20181101001\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/legacy.css?v=1596036a012cf3d9e66a44c646b5cb39\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/rqtheme.css?v=c9e502bbf6164805969ff8e4ae26dae1\" type=\"text/css\" />\n  <script src=\"/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <!-- Add by PoppinL for embedding in rqpro -->\n  <script>\n    if (window.requirejs) {\n      window.require = window.requirejs;\n    }\n  </script>\n\n  <script>\n    require.config({\n          \n    urlArgs: \"v=20260403155233\",\n      \n    baseUrl: '/research/user/user_497381/static/',\n      paths: {\n      'auth/js/main': 'auth/js/main.min',\n        custom : '/research/user/user_497381/custom',\n          nbextensions : '/research/user/user_497381/nbextensions',\n            kernelspecs : '/research/user/user_497381/kernelspecs',\n              underscore : 'components/underscore/underscore-min',\n                backbone : 'components/backbone/backbone-min',\n                  jed: 'components/jed/jed',\n                    jquery: 'components/jquery/jquery.min',\n                      json: 'components/requirejs-plugins/src/json',\n                        text: 'components/requirejs-text/text',\n                          bootstrap: 'components/bootstrap/js/bootstrap.min',\n                            bootstraptour: 'components/bootstrap-tour/build/js/bootstrap-tour.min',\n                              'jquery-ui': 'components/jquery-ui/ui/minified/jquery-ui.min',\n                                moment: 'components/moment/min/moment-with-locales',\n                                  codemirror: 'components/codemirror',\n                                    termjs: 'components/xterm.js/xterm',\n                                      typeahead: 'components/jquery-typeahead/dist/jquery.typeahead.min',\n      },\n    map: { // for backward compatibility\n      \"*\": {\n        \"jqueryui\": \"jquery-ui\",\n      }\n    },\n    shim: {\n      typeahead: {\n        deps: [\"jquery\"],\n          exports: \"typeahead\"\n      },\n      underscore: {\n        exports: '_'\n      },\n      backbone: {\n        deps: [\"underscore\", \"jquery\"],\n          exports: \"Backbone\"\n      },\n      bootstrap: {\n        deps: [\"jquery\"],\n          export...<truncated>"
+      "body": "<!DOCTYPE HTML>\n<html>\n\n<head>\n  <meta charset=\"utf-8\">\n\n  <title>策略研究 - RiceQuant米筐量化交易平台</title>\n  \n  <link id=\"favicon\" rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/research/user/user_497381/static/base/images/favicon.ico?v=b446914e32140bee34346177a8be9aba\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-ui/themes/smoothness/jquery-ui.min.css?v=9b2c8d3489227115310662a343fce11c\" type=\"text/css\"\n  />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-typeahead/dist/jquery.typeahead.min.css?v=7afb461de36accb1aa133a1710f5bc56\" type=\"text/css\"\n  />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/style.min.css?v=4e52139bcf73c6fa106fdc159205a39b\" type=\"text/css\" />\n   \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/custom/custom.css?_=20181101001\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/legacy.css?v=1596036a012cf3d9e66a44c646b5cb39\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/rqtheme.css?v=c9e502bbf6164805969ff8e4ae26dae1\" type=\"text/css\" />\n  <script src=\"/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <!-- Add by PoppinL for embedding in rqpro -->\n  <script>\n    if (window.requirejs) {\n      window.require = window.requirejs;\n    }\n  </script>\n\n  <script>\n    require.config({\n          \n    urlArgs: \"v=20260403215411\",\n      \n    baseUrl: '/research/user/user_497381/static/',\n      paths: {\n      'auth/js/main': 'auth/js/main.min',\n        custom : '/research/user/user_497381/custom',\n          nbextensions : '/research/user/user_497381/nbextensions',\n            kernelspecs : '/research/user/user_497381/kernelspecs',\n              underscore : 'components/underscore/underscore-min',\n                backbone : 'components/backbone/backbone-min',\n                  jed: 'components/jed/jed',\n                    jquery: 'components/jquery/jquery.min',\n                      json: 'components/requirejs-plugins/src/json',\n                        text: 'components/requirejs-text/text',\n                          bootstrap: 'components/bootstrap/js/bootstrap.min',\n                            bootstraptour: 'components/bootstrap-tour/build/js/bootstrap-tour.min',\n                              'jquery-ui': 'components/jquery-ui/ui/minified/jquery-ui.min',\n                                moment: 'components/moment/min/moment-with-locales',\n                                  codemirror: 'components/codemirror',\n                                    termjs: 'components/xterm.js/xterm',\n                                      typeahead: 'components/jquery-typeahead/dist/jquery.typeahead.min',\n      },\n    map: { // for backward compatibility\n      \"*\": {\n        \"jqueryui\": \"jquery-ui\",\n      }\n    },\n    shim: {\n      typeahead: {\n        deps: [\"jquery\"],\n          exports: \"typeahead\"\n      },\n      underscore: {\n        exports: '_'\n      },\n      backbone: {\n        deps: [\"underscore\", \"jquery\"],\n          exports: \"Backbone\"\n      },\n      bootstrap: {\n        deps: [\"jquery\"],\n          export...<truncated>"
     },
     {
       "id": 56,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
-        "cache-control": "max-age=315360000",
-        "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
-        "content-type": "application/javascript; charset=utf-8",
-        "vary": "Accept-Encoding",
-        "server": "nginx",
-        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
-      },
-      "contentType": "application/javascript; charset=utf-8",
-      "body": "!function(e,n){\"object\"==typeof exports&&\"undefined\"!=typeof module?n(exports):\"function\"==typeof define&&define.amd?define([\"exports\"],n):n(e.preact=e.preact||{})}(this,function(e){function n(e,n,t){this.nodeName=e,this.attributes=n,this.children=t,this.key=n&&n.key}function t(e,t){var o,r,i,l,a;for(a=arguments.length;a-- >2;)H.push(arguments[a]);t&&t.children&&(H.length||H.push(t.children),delete t.children);while(H.length)if((i=H.pop())instanceof Array)for(a=i.length;a--;)H.push(i[a]);else null!=i&&i!==!0&&i!==!1&&(\"number\"==typeof i&&(i+=\"\"),l=\"string\"==typeof i,l&&r?o[o.length-1]+=i:((o||(o=[])).push(i),r=l));var s=new n(e,t||void 0,o||V);return j.vnode&&j.vnode(s),s}function o(e,n){if(n)for(var t in n)e[t]=n[t];return e}function r(e){return o({},e)}function i(e,n){for(var t=n.split(\".\"),o=0;o<t.length&&e;o++)e=e[t[o]];return e}function l(e){return\"function\"==typeof e}function a(e){return\"string\"==typeof e}function s(e){var n=\"\";for(var t in e)e[t]&&(n&&(n+=\" \"),n+=t);return n}function c(e,n){return t(e.nodeName,o(r(e.attributes),n),arguments.length>2?[].slice.call(arguments,2):e.children)}function u(e,n,t){var o=n.split(\".\");return function(n){for(var r=n&&n.target||this,l={},s=l,c=a(t)?i(n,t):r.nodeName?r.type.match(/^che|rad/)?r.checked:r.value:n,u=0;u<o.length-1;u++)s=s[o[u]]||(s[o[u]]=!u&&e.state[o[u]]||{});s[o[u]]=c,e.setState(l)}}function p(e){!e._dirty&&(e._dirty=!0)&&1==Q.push(e)&&(j.debounceRendering||R)(f)}function f(){var e,n=Q;Q=[];while(e=n.pop())e._dirty&&E(e)}function d(e){var n=e&&e.nodeName;return n&&l(n)&&!(n.prototype&&n.prototype.render)}function m(e,n){return e.nodeName(_(e),n||F)}function h(e,n){return a(n)?e instanceof Text:a(n.nodeName)?!e._componentConstructor&&v(e,n.nodeName):l(n.nodeName)?!e._componentConstructor||e._componentConstructor===n.nodeName||d(n):void 0}function v(e,n){return e.normalizedNodeName===n||I(e.nodeName)===I(n)}function _(e){var n=r(e.attributes);n.children=e.children;var t=e.nodeName.defaultProps;if(t)for(var o in t)void 0===n[o]&&(n[o]=t[o]);return n}function y(e){var n=e.parentNode;n&&n.removeChild(e)}function b(e,n,t,o,r){if(\"className\"===n&&(n=\"class\"),\"class\"===n&&o&&\"object\"==typeof o&&(o=s(o)),\"key\"===n);else if(\"class\"!==n||r)if(\"style\"===n){if((!o||a(o)||a(t))&&(e.style.cssText=o||\"\"),o&&\"object\"==typeof o){if(!a(t))for(var i in t)i in o||(e.style[i]=\"\");for(var i in o)e.style[i]=\"number\"!=typeof o[i]||J[i]?o[i]:o[i]+\"px\"}}else if(\"dangerouslySetInnerHTML\"===n)o&&(e.innerHTML=o.__html||\"\");else if(\"o\"==n[0]&&\"n\"==n[1]){var c=e._listeners||(e._listeners={});n=I(n.substring(2)),o?c[n]||e.addEventListener(n,N,!!K[n]):c[n]&&e.removeEventListener(n,N,!!K[n]),c[n]=o}else if(\"list\"!==n&&\"type\"!==n&&!r&&n in e)x(e,n,null==o?\"\":o),null!=o&&o!==!1||e.removeAttribute(n);else{var u=r&&n.match(/^xlink\\:?(.+)/);null==o||o===!1?u?e.removeAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1])):e.removeAttribute(n):\"object\"==typeof o||l(o)||(u?e.setAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1]),o):e.setAttribute(n,o))}else e.className=o||\"\"}function x(e,n,t){try{e[n]=t}catch(e){}}function N(e){return this._listeners[e.type](j.event&&j.event(e)||e)}function C(e){if(y(e),e instanceof Element){e._component=e._componentConstructor=null;var n=e.normalizedNodeName||I(e.nodeName);(X[n]||(X[n]=[])).push(e)}}function g(e,n){var t=I(e),o=X[t]&&X[t].pop()||(n?document.createElementNS(\"http://www.w3.org/2000/svg\",e):document.createElement(e));return o.normalizedNodeName=t,o}function w(){var e;while(e=Y.pop())j.afterMount&&j.afterMount(e),e.componentDidMount&&e.componentDidMount()}function k(e,n,t,o,r,i){Z++||($=r&&void 0!==r.ownerSVGElement,ee=e&&!(q in e));var l=S(e,n,t,o);return r&&l.parentNode!==r&&r.appendChild(l),--Z||(ee=!1,i||w()),l}function S(e,n,t,o){var r=n&&n.attributes&&n.attributes.ref;while(d(n))n=m(n,t);if(null==n&&(n=\"\"),a(n))return e&&e instanceof Text&&e.parentNode?e.nodeValue!=n&&(e.nodeValue=n):(e&&T(e),e=document.createTextNode(n)),e;if(l(n.nodeName))return ...<truncated>"
-    },
-    {
-      "id": 57,
-      "phase": "response",
-      "resourceType": "script",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
-        "cache-control": "max-age=315360000",
-        "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
-        "content-type": "application/javascript; charset=utf-8",
-        "vary": "Accept-Encoding",
-        "server": "nginx",
-        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
-      },
-      "contentType": "application/javascript; charset=utf-8",
-      "body": "/** vim: et:ts=4:sw=4:sts=4\n * @license RequireJS 2.1.22 Copyright (c) 2010-2015, The Dojo Foundation All Rights Reserved.\n * Available via the MIT or new BSD license.\n * see: http://github.com/jrburke/requirejs for details\n */\n//Not using strict: uneven strict support in browsers, #392, and causes\n//problems with requirejs.exec()/transpiler plugins that may not be strict.\n/*jslint regexp: true, nomen: true, sloppy: true */\n/*global window, navigator, document, importScripts, setTimeout, opera */\n\nvar requirejs, require, define;\n(function (global) {\n    var req, s, head, baseElement, dataMain, src,\n        interactiveScript, currentlyAddingScript, mainScript, subPath,\n        version = '2.1.22',\n        commentRegExp = /(\\/\\*([\\s\\S]*?)\\*\\/|([^:]|^)\\/\\/(.*)$)/mg,\n        cjsRequireRegExp = /[^.]\\s*require\\s*\\(\\s*[\"']([^'\"\\s]+)[\"']\\s*\\)/g,\n        jsSuffixRegExp = /\\.js$/,\n        currDirRegExp = /^\\.\\//,\n        op = Object.prototype,\n        ostring = op.toString,\n        hasOwn = op.hasOwnProperty,\n        ap = Array.prototype,\n        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),\n        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',\n        //PS3 indicates loaded and complete, but need to wait for complete\n        //specifically. Sequence is 'loading', 'loaded', execution,\n        // then 'complete'. The UA check is unfortunate, but not sure how\n        //to feature test w/o causing perf issues.\n        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?\n                      /^complete$/ : /^(complete|loaded)$/,\n        defContextName = '_',\n        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.\n        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',\n        contexts = {},\n        cfg = {},\n        globalDefQueue = [],\n        useInteractive = false;\n\n    function isFunction(it) {\n        return ostring.call(it) === '[object Function]';\n    }\n\n    function isArray(it) {\n        return ostring.call(it) === '[object Array]';\n    }\n\n    /**\n     * Helper function for iterating over an array. If the func returns\n     * a true value, it will break out of the loop.\n     */\n    function each(ary, func) {\n        if (ary) {\n            var i;\n            for (i = 0; i < ary.length; i += 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Helper function for iterating over an array backwards. If the func\n     * returns a true value, it will break out of the loop.\n     */\n    function eachReverse(ary, func) {\n        if (ary) {\n            var i;\n            for (i = ary.length - 1; i > -1; i -= 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    function hasProp(obj, prop) {\n        return hasOwn.call(obj, prop);\n    }\n\n    function getOwn(obj, prop) {\n        return hasProp(obj, prop) && obj[prop];\n    }\n\n    /**\n     * Cycles over properties in an object and calls a function for each\n     * property value. If the function returns a truthy value, then the\n     * iteration is stopped.\n     */\n    function eachProp(obj, func) {\n        var prop;\n        for (prop in obj) {\n            if (hasProp(obj, prop)) {\n                if (func(obj[prop], prop)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Simple function to mix in properties from source into target,\n     * but only if target does not already have a property of the same name.\n     */\n    function mixin(target, source, force, deepStringMixin) {\n        if (source) {\n            eachProp(source, function (value, prop) {\n                if (force || !hasProp(target, prop)) {\n                    if (deepStringMixin && typeof value === 'object' && value &&\n                        !isArray(val...<truncated>"
-    },
-    {
-      "id": 58,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
@@ -776,8 +746,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -785,6 +756,52 @@
       },
       "contentType": "application/javascript; charset=utf-8",
       "body": "(function (global, factory) {\n  if (typeof define === 'function' && define.amd) {\n    define('PropTypes', ['exports', 'module'], factory);\n  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {\n    factory(exports, module);\n  } else {\n    var mod = {\n      exports: {}\n    };\n    factory(mod.exports, mod);\n    global.PropTypes = mod.exports;\n  }\n})(this, function (exports, module) {\n\n  'use strict';\n\n  var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol['for']('react.element') || 0xeac7;\n\n  var ReactElement = {};\n\n  ReactElement.isValidElement = function (object) {\n    return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;\n  };\n\n  var ReactPropTypeLocationNames = {\n    prop: 'prop',\n    context: 'context',\n    childContext: 'child context'\n  };\n\n  var emptyFunction = {\n    thatReturns: function thatReturns(what) {\n      return function () {\n        return what;\n      };\n    }\n  };\n\n  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;\n  var FAUX_ITERATOR_SYMBOL = '@@iterator';\n  function getIteratorFn(maybeIterable) {\n    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);\n    if (typeof iteratorFn === 'function') {\n      return iteratorFn;\n    }\n  }\n\n  var ANONYMOUS = '<<anonymous>>';\n\n  var ReactPropTypes = {\n    array: createPrimitiveTypeChecker('array'),\n    bool: createPrimitiveTypeChecker('boolean'),\n    func: createPrimitiveTypeChecker('function'),\n    number: createPrimitiveTypeChecker('number'),\n    object: createPrimitiveTypeChecker('object'),\n    string: createPrimitiveTypeChecker('string'),\n    symbol: createPrimitiveTypeChecker('symbol'),\n\n    any: createAnyTypeChecker(),\n    arrayOf: createArrayOfTypeChecker,\n    element: createElementTypeChecker(),\n    instanceOf: createInstanceTypeChecker,\n    node: createNodeChecker(),\n    objectOf: createObjectOfTypeChecker,\n    oneOf: createEnumTypeChecker,\n    oneOfType: createUnionTypeChecker,\n    shape: createShapeTypeChecker\n  };\n\n  function createChainableTypeChecker(validate) {\n    function checkType(isRequired, props, propName, componentName, location, propFullName) {\n      componentName = componentName || ANONYMOUS;\n      propFullName = propFullName || propName;\n      if (props[propName] == null) {\n        var locationName = ReactPropTypeLocationNames[location];\n        if (isRequired) {\n          return new Error('Required ' + locationName + ' `' + propFullName + '` was not specified in ' + ('`' + componentName + '`.'));\n        }\n        return null;\n      } else {\n        return validate(props, propName, componentName, location, propFullName);\n      }\n    }\n\n    var chainedCheckType = checkType.bind(null, false);\n    chainedCheckType.isRequired = checkType.bind(null, true);\n\n    return chainedCheckType;\n  }\n\n  function createPrimitiveTypeChecker(expectedType) {\n    function validate(props, propName, componentName, location, propFullName) {\n      var propValue = props[propName];\n      var propType = getPropType(propValue);\n      if (propType !== expectedType) {\n        var locationName = ReactPropTypeLocationNames[location];\n\n        var preciseType = getPreciseType(propValue);\n\n        return new Error('Invalid ' + locationName + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));\n      }\n      return null;\n    }\n    return createChainableTypeChecker(validate);\n  }\n\n  function createAnyTypeChecker() {\n    return createChainableTypeChecker(emptyFunction.thatReturns(null));\n  }\n\n  function createArrayOfTypeChecker(typeChecker) {\n    function validate(props, propName, componentName, location, propFullName) {\n      var propValue = props[propName];\n      if (!Array.isArray(propValue)) {\n        var locationName = ReactPropTypeLocationNames[location];\n        var propType = getPropTyp...<truncated>"
+    },
+    {
+      "id": 57,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "!function(e,n){\"object\"==typeof exports&&\"undefined\"!=typeof module?n(exports):\"function\"==typeof define&&define.amd?define([\"exports\"],n):n(e.preact=e.preact||{})}(this,function(e){function n(e,n,t){this.nodeName=e,this.attributes=n,this.children=t,this.key=n&&n.key}function t(e,t){var o,r,i,l,a;for(a=arguments.length;a-- >2;)H.push(arguments[a]);t&&t.children&&(H.length||H.push(t.children),delete t.children);while(H.length)if((i=H.pop())instanceof Array)for(a=i.length;a--;)H.push(i[a]);else null!=i&&i!==!0&&i!==!1&&(\"number\"==typeof i&&(i+=\"\"),l=\"string\"==typeof i,l&&r?o[o.length-1]+=i:((o||(o=[])).push(i),r=l));var s=new n(e,t||void 0,o||V);return j.vnode&&j.vnode(s),s}function o(e,n){if(n)for(var t in n)e[t]=n[t];return e}function r(e){return o({},e)}function i(e,n){for(var t=n.split(\".\"),o=0;o<t.length&&e;o++)e=e[t[o]];return e}function l(e){return\"function\"==typeof e}function a(e){return\"string\"==typeof e}function s(e){var n=\"\";for(var t in e)e[t]&&(n&&(n+=\" \"),n+=t);return n}function c(e,n){return t(e.nodeName,o(r(e.attributes),n),arguments.length>2?[].slice.call(arguments,2):e.children)}function u(e,n,t){var o=n.split(\".\");return function(n){for(var r=n&&n.target||this,l={},s=l,c=a(t)?i(n,t):r.nodeName?r.type.match(/^che|rad/)?r.checked:r.value:n,u=0;u<o.length-1;u++)s=s[o[u]]||(s[o[u]]=!u&&e.state[o[u]]||{});s[o[u]]=c,e.setState(l)}}function p(e){!e._dirty&&(e._dirty=!0)&&1==Q.push(e)&&(j.debounceRendering||R)(f)}function f(){var e,n=Q;Q=[];while(e=n.pop())e._dirty&&E(e)}function d(e){var n=e&&e.nodeName;return n&&l(n)&&!(n.prototype&&n.prototype.render)}function m(e,n){return e.nodeName(_(e),n||F)}function h(e,n){return a(n)?e instanceof Text:a(n.nodeName)?!e._componentConstructor&&v(e,n.nodeName):l(n.nodeName)?!e._componentConstructor||e._componentConstructor===n.nodeName||d(n):void 0}function v(e,n){return e.normalizedNodeName===n||I(e.nodeName)===I(n)}function _(e){var n=r(e.attributes);n.children=e.children;var t=e.nodeName.defaultProps;if(t)for(var o in t)void 0===n[o]&&(n[o]=t[o]);return n}function y(e){var n=e.parentNode;n&&n.removeChild(e)}function b(e,n,t,o,r){if(\"className\"===n&&(n=\"class\"),\"class\"===n&&o&&\"object\"==typeof o&&(o=s(o)),\"key\"===n);else if(\"class\"!==n||r)if(\"style\"===n){if((!o||a(o)||a(t))&&(e.style.cssText=o||\"\"),o&&\"object\"==typeof o){if(!a(t))for(var i in t)i in o||(e.style[i]=\"\");for(var i in o)e.style[i]=\"number\"!=typeof o[i]||J[i]?o[i]:o[i]+\"px\"}}else if(\"dangerouslySetInnerHTML\"===n)o&&(e.innerHTML=o.__html||\"\");else if(\"o\"==n[0]&&\"n\"==n[1]){var c=e._listeners||(e._listeners={});n=I(n.substring(2)),o?c[n]||e.addEventListener(n,N,!!K[n]):c[n]&&e.removeEventListener(n,N,!!K[n]),c[n]=o}else if(\"list\"!==n&&\"type\"!==n&&!r&&n in e)x(e,n,null==o?\"\":o),null!=o&&o!==!1||e.removeAttribute(n);else{var u=r&&n.match(/^xlink\\:?(.+)/);null==o||o===!1?u?e.removeAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1])):e.removeAttribute(n):\"object\"==typeof o||l(o)||(u?e.setAttributeNS(\"http://www.w3.org/1999/xlink\",I(u[1]),o):e.setAttribute(n,o))}else e.className=o||\"\"}function x(e,n,t){try{e[n]=t}catch(e){}}function N(e){return this._listeners[e.type](j.event&&j.event(e)||e)}function C(e){if(y(e),e instanceof Element){e._component=e._componentConstructor=null;var n=e.normalizedNodeName||I(e.nodeName);(X[n]||(X[n]=[])).push(e)}}function g(e,n){var t=I(e),o=X[t]&&X[t].pop()||(n?document.createElementNS(\"http://www.w3.org/2000/svg\",e):document.createElement(e));return o.normalizedNodeName=t,o}function w(){var e;while(e=Y.pop())j.afterMount&&j.afterMount(e),e.componentDidMount&&e.componentDidMount()}function k(e,n,t,o,r,i){Z++||($=r&&void 0!==r.ownerSVGElement,ee=e&&!(q in e));var l=S(e,n,t,o);return r&&l.parentNode!==r&&r.appendChild(l),--Z||(ee=!1,i||w()),l}function S(e,n,t,o){var r=n&&n.attributes&&n.attributes.ref;while(d(n))n=m(n,t);if(null==n&&(n=\"\"),a(n))return e&&e instanceof Text&&e.parentNode?e.nodeValue!=n&&(e.nodeValue=n):(e&&T(e),e=document.createTextNode(n)),e;if(l(n.nodeName))return ...<truncated>"
+    },
+    {
+      "id": 58,
+      "phase": "response",
+      "resourceType": "script",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
+        "cache-control": "max-age=315360000",
+        "content-encoding": "gzip",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
+        "content-type": "application/javascript; charset=utf-8",
+        "vary": "Accept-Encoding",
+        "server": "nginx",
+        "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
+      },
+      "contentType": "application/javascript; charset=utf-8",
+      "body": "!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if(\".\"!==b.charAt(0))return b;for(var c=b.split(\"/\"),d=a.split(\"/\").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(\"..\"===g)d.pop();else{if(\".\"===g)continue;d.push(g)}}return d.join(\"/\")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error(\"Could not find module \"+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)\"exports\"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a(\"promise/all\",[\"./utils\",\"exports\"],function(a,b){\"use strict\";function c(a){var b=this;if(!d(a))throw new TypeError(\"You must pass an array to all.\");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a(\"promise/asap\",[\"exports\"],function(a){\"use strict\";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode(\"\");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h=\"undefined\"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j=\"undefined\"!=typeof global?global:void 0===this?window:this,k=[];g=\"undefined\"!=typeof process&&\"[object process]\"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a(\"promise/config\",[\"exports\"],function(a){\"use strict\";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a(\"promise/polyfill\",[\"./promise\",\"./utils\",\"exports\"],function(a,b,c){\"use strict\";function d(){var a;a=\"undefined\"!=typeof global?global:\"undefined\"!=typeof window&&window.document?window:self;var b=\"Promise\"in a&&\"resolve\"in a.Promise&&\"reject\"in a.Promise&&\"all\"in a.Promise&&\"race\"in a.Promise&&function(){var b;return new a.Promise(function(a){b=a}),f(b)}();b||(a.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a(\"promise/promise\",[\"./config\",\"./utils\",\"./all\",\"./race\",\"./resolve\",\"./reject\",\"./asap\",\"exports\"],function(a,b,c,d,e,f,g,h){\"use strict\";function i(a){if(!v(a))throw new TypeError(\"You must pass a resolver function as the first argument to the promise constructor\");if(!(this instanceof i))throw new TypeError(\"Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.\");this._subscribers=[],j(a,this)}function j(a,b){function c(a){o(b,a)}function d(a){q(b,a)}try{a(c,d)}catch(e){d(e)}}function k(a,b,c,d){var e,f,g,h,i=v(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;n(b,e)||(i&&g?o(b,e):h?q(b,f):a===D?o(b,e):a===E&&q(b,e))}function l(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+D]=c,e[f+E]=d}function m(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],k(b,c,d,f);a._subscribers=null}function n(a,b){var c,d=null;try{if(a===b)throw new TypeError(\"A promises callback cannot return that same promise.\");if(u(b)&&(d=b.then,v(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?o(a,d):p(a,d),void 0)},function(b){return c?!0:(c=!0,q(a,b),void 0)}),!0}catch(e){return c?!0:(q(a,e),!0)}return!1}function o(a,b){a===b?p(a,b):n(a,b)||p(a,b)}function p(a,b){a._state===B&&(a._state=C,a._detail=b,t.async(r,a))}function q(a,b){a._state===B&&(a._state=C,a._detail=b,t.async(s,a))}function r(a){m(a,a._state=D)}function s(a){m(a,a._state=E)}var t=a.config,u=(a.configure,b.objectOrFunction),v=b.isFunction,w=(b.now,c.all),x=d.race,y=e.resolve,z=f.reject,A=g.asap;t.async=A;var B=void 0,C=0,D=1,E=2;i.prototype={constructor:i,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function...<truncated>"
     },
     {
       "id": 59,
@@ -798,8 +815,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -813,22 +831,23 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
         "last-modified": "Tue, 19 May 2020 10:43:45 GMT"
       },
       "contentType": "application/javascript; charset=utf-8",
-      "body": "!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if(\".\"!==b.charAt(0))return b;for(var c=b.split(\"/\"),d=a.split(\"/\").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(\"..\"===g)d.pop();else{if(\".\"===g)continue;d.push(g)}}return d.join(\"/\")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error(\"Could not find module \"+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)\"exports\"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a(\"promise/all\",[\"./utils\",\"exports\"],function(a,b){\"use strict\";function c(a){var b=this;if(!d(a))throw new TypeError(\"You must pass an array to all.\");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a(\"promise/asap\",[\"exports\"],function(a){\"use strict\";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode(\"\");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h=\"undefined\"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j=\"undefined\"!=typeof global?global:void 0===this?window:this,k=[];g=\"undefined\"!=typeof process&&\"[object process]\"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a(\"promise/config\",[\"exports\"],function(a){\"use strict\";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a(\"promise/polyfill\",[\"./promise\",\"./utils\",\"exports\"],function(a,b,c){\"use strict\";function d(){var a;a=\"undefined\"!=typeof global?global:\"undefined\"!=typeof window&&window.document?window:self;var b=\"Promise\"in a&&\"resolve\"in a.Promise&&\"reject\"in a.Promise&&\"all\"in a.Promise&&\"race\"in a.Promise&&function(){var b;return new a.Promise(function(a){b=a}),f(b)}();b||(a.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a(\"promise/promise\",[\"./config\",\"./utils\",\"./all\",\"./race\",\"./resolve\",\"./reject\",\"./asap\",\"exports\"],function(a,b,c,d,e,f,g,h){\"use strict\";function i(a){if(!v(a))throw new TypeError(\"You must pass a resolver function as the first argument to the promise constructor\");if(!(this instanceof i))throw new TypeError(\"Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.\");this._subscribers=[],j(a,this)}function j(a,b){function c(a){o(b,a)}function d(a){q(b,a)}try{a(c,d)}catch(e){d(e)}}function k(a,b,c,d){var e,f,g,h,i=v(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;n(b,e)||(i&&g?o(b,e):h?q(b,f):a===D?o(b,e):a===E&&q(b,e))}function l(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+D]=c,e[f+E]=d}function m(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],k(b,c,d,f);a._subscribers=null}function n(a,b){var c,d=null;try{if(a===b)throw new TypeError(\"A promises callback cannot return that same promise.\");if(u(b)&&(d=b.then,v(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?o(a,d):p(a,d),void 0)},function(b){return c?!0:(c=!0,q(a,b),void 0)}),!0}catch(e){return c?!0:(q(a,e),!0)}return!1}function o(a,b){a===b?p(a,b):n(a,b)||p(a,b)}function p(a,b){a._state===B&&(a._state=C,a._detail=b,t.async(r,a))}function q(a,b){a._state===B&&(a._state=C,a._detail=b,t.async(s,a))}function r(a){m(a,a._state=D)}function s(a){m(a,a._state=E)}var t=a.config,u=(a.configure,b.objectOrFunction),v=b.isFunction,w=(b.now,c.all),x=d.race,y=e.resolve,z=f.reject,A=g.asap;t.async=A;var B=void 0,C=0,D=1,E=2;i.prototype={constructor:i,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function...<truncated>"
+      "body": "/** vim: et:ts=4:sw=4:sts=4\n * @license RequireJS 2.1.22 Copyright (c) 2010-2015, The Dojo Foundation All Rights Reserved.\n * Available via the MIT or new BSD license.\n * see: http://github.com/jrburke/requirejs for details\n */\n//Not using strict: uneven strict support in browsers, #392, and causes\n//problems with requirejs.exec()/transpiler plugins that may not be strict.\n/*jslint regexp: true, nomen: true, sloppy: true */\n/*global window, navigator, document, importScripts, setTimeout, opera */\n\nvar requirejs, require, define;\n(function (global) {\n    var req, s, head, baseElement, dataMain, src,\n        interactiveScript, currentlyAddingScript, mainScript, subPath,\n        version = '2.1.22',\n        commentRegExp = /(\\/\\*([\\s\\S]*?)\\*\\/|([^:]|^)\\/\\/(.*)$)/mg,\n        cjsRequireRegExp = /[^.]\\s*require\\s*\\(\\s*[\"']([^'\"\\s]+)[\"']\\s*\\)/g,\n        jsSuffixRegExp = /\\.js$/,\n        currDirRegExp = /^\\.\\//,\n        op = Object.prototype,\n        ostring = op.toString,\n        hasOwn = op.hasOwnProperty,\n        ap = Array.prototype,\n        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),\n        isWebWorker = !isBrowser && typeof importScripts !== 'undefined',\n        //PS3 indicates loaded and complete, but need to wait for complete\n        //specifically. Sequence is 'loading', 'loaded', execution,\n        // then 'complete'. The UA check is unfortunate, but not sure how\n        //to feature test w/o causing perf issues.\n        readyRegExp = isBrowser && navigator.platform === 'PLAYSTATION 3' ?\n                      /^complete$/ : /^(complete|loaded)$/,\n        defContextName = '_',\n        //Oh the tragedy, detecting opera. See the usage of isOpera for reason.\n        isOpera = typeof opera !== 'undefined' && opera.toString() === '[object Opera]',\n        contexts = {},\n        cfg = {},\n        globalDefQueue = [],\n        useInteractive = false;\n\n    function isFunction(it) {\n        return ostring.call(it) === '[object Function]';\n    }\n\n    function isArray(it) {\n        return ostring.call(it) === '[object Array]';\n    }\n\n    /**\n     * Helper function for iterating over an array. If the func returns\n     * a true value, it will break out of the loop.\n     */\n    function each(ary, func) {\n        if (ary) {\n            var i;\n            for (i = 0; i < ary.length; i += 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Helper function for iterating over an array backwards. If the func\n     * returns a true value, it will break out of the loop.\n     */\n    function eachReverse(ary, func) {\n        if (ary) {\n            var i;\n            for (i = ary.length - 1; i > -1; i -= 1) {\n                if (ary[i] && func(ary[i], i, ary)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    function hasProp(obj, prop) {\n        return hasOwn.call(obj, prop);\n    }\n\n    function getOwn(obj, prop) {\n        return hasProp(obj, prop) && obj[prop];\n    }\n\n    /**\n     * Cycles over properties in an object and calls a function for each\n     * property value. If the function returns a truthy value, then the\n     * iteration is stopped.\n     */\n    function eachProp(obj, func) {\n        var prop;\n        for (prop in obj) {\n            if (hasProp(obj, prop)) {\n                if (func(obj[prop], prop)) {\n                    break;\n                }\n            }\n        }\n    }\n\n    /**\n     * Simple function to mix in properties from source into target,\n     * but only if target does not already have a property of the same name.\n     */\n    function mixin(target, source, force, deepStringMixin) {\n        if (source) {\n            eachProp(source, function (value, prop) {\n                if (force || !hasProp(target, prop)) {\n                    if (deepStringMixin && typeof value === 'object' && value &&\n                        !isArray(val...<truncated>"
     },
     {
       "id": 61,
@@ -842,8 +861,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -875,7 +895,7 @@
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403215411",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -891,7 +911,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775202755762",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775224453249",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -910,7 +930,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775202755763",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775224453250",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -948,7 +968,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775202755764",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775224453251",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -967,15 +987,16 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403215411",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -989,7 +1010,7 @@
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403215411",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1001,15 +1022,16 @@
       "postData": null
     },
     {
-      "id": 72,
+      "id": 71,
       "phase": "response",
       "resourceType": "xhr",
       "method": "POST",
       "url": "https://www.ricequant.com/api/user/isLogin.do",
       "status": 200,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "318",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
@@ -1021,14 +1043,15 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775202755762",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775224453249",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "71",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
         "etag": "\"ef882808c5c730758d0f9c5fd0291454cdd999e3\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "71",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
@@ -1037,29 +1060,10 @@
     },
     {
       "id": 74,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775202755763",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "2",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
-        "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\"",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "{}"
-    },
-    {
-      "id": 75,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775202755765",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775224453252",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1074,18 +1078,39 @@
       "postData": null
     },
     {
-      "id": 76,
+      "id": 75,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775202755764",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "2",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "etag": "\"9832bdb6ccc8f6ed9de9dcdc8838017eac909761\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "883",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{\"default\": \"python3\", \"kernelspecs\": {\"python3\": {\"name\": \"python3\", \"spec\": {\"argv\": [\"/usr/local/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"Python 3\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3/logo-32x32.png\"}}, \"python3.9\": {\"name\": \"python3.9\", \"spec\": {\"argv\": [\"/usr/local/envs/Python3.9/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"python3.9\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3.9/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3.9/logo-32x32.png\"}}}}"
+    },
+    {
+      "id": 76,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775224453251",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "2",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
@@ -1097,19 +1122,20 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775224453250",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "883",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
-        "etag": "\"9832bdb6ccc8f6ed9de9dcdc8838017eac909761\"",
+        "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "2",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
       "contentType": "application/json",
-      "body": "{\"default\": \"python3\", \"kernelspecs\": {\"python3\": {\"name\": \"python3\", \"spec\": {\"argv\": [\"/usr/local/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"Python 3\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3/logo-32x32.png\"}}, \"python3.9\": {\"name\": \"python3.9\", \"spec\": {\"argv\": [\"/usr/local/envs/Python3.9/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"python3.9\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3.9/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3.9/logo-32x32.png\"}}}}"
+      "body": "{}"
     },
     {
       "id": 78,
@@ -1152,15 +1178,16 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403215411",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "no-cache",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1174,43 +1201,25 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381//api/notebook/sid",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "0",
-        "date": "Fri, 03 Apr 2026 07:52:36 GMT",
-        "etag": "\"da39a3ee5e6b4b0d3255bfef95601890afd80709\"",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": ""
-    },
-    {
-      "id": 82,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775202755765",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775224453252",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-encoding": "gzip",
-        "etag": "W/\"c3c8501c3804da9ed0b9135186d0149548ead12a\"",
-        "date": "Fri, 03 Apr 2026 07:52:36 GMT",
+        "etag": "W/\"c7882b98ae21b351a23b5392b51f1df6ccbafcd8\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/json",
         "vary": "Accept-Encoding",
         "server": "nginx",
-        "last-modified": "Fri, 03 Apr 2026 05:26:52 GMT"
+        "last-modified": "Fri, 03 Apr 2026 09:39:28 GMT"
       },
       "contentType": "application/json",
-      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T05:26:52.718869Z\", \"created\": \"2026-04-03T05:26:52.718869Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
+      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T09:39:28.113359Z\", \"created\": \"2026-04-03T13:54:08.703968Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
     },
     {
-      "id": 83,
+      "id": 82,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
@@ -1219,14 +1228,35 @@
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "etag": "\"24038d68741a896478fc714267be694b305dae31\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "41",
-        "date": "Fri, 03 Apr 2026 07:52:36 GMT",
-        "etag": "\"8dfce95b128b79f782fbb5b5b8a6a1eb9a3b0f3d\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
       "contentType": "application/json",
-      "body": "{\"total\": 8589934592, \"memory\": 66322432}"
+      "body": "{\"total\": 8589934592, \"memory\": 66203648}"
+    },
+    {
+      "id": 83,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381//api/notebook/sid",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "etag": "\"da39a3ee5e6b4b0d3255bfef95601890afd80709\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "0",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": ""
     },
     {
       "id": 85,
@@ -1349,17 +1379,18 @@
       "url": "https://www.ricequant.com/research/user/user_497381/tree?",
       "status": 200,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-encoding": "gzip",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "content-type": "text/html; charset=UTF-8",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
-        "etag": "W/\"929f2268c1878a777a67cd071797402309ced028\"",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
+        "etag": "W/\"9a856d88da4066a6fc62d80d2fc22839a0ec7736\"",
         "server": "nginx",
         "vary": "Accept-Encoding",
         "x-jupyterhub-version": "1.1.0"
       },
       "contentType": "text/html; charset=UTF-8",
-      "body": "<!DOCTYPE HTML>\n<html>\n\n<head>\n  <meta charset=\"utf-8\">\n\n  <title>策略研究 - RiceQuant米筐量化交易平台</title>\n  \n  <link id=\"favicon\" rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/research/user/user_497381/static/base/images/favicon.ico?v=b446914e32140bee34346177a8be9aba\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-ui/themes/smoothness/jquery-ui.min.css?v=9b2c8d3489227115310662a343fce11c\" type=\"text/css\"\n  />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-typeahead/dist/jquery.typeahead.min.css?v=7afb461de36accb1aa133a1710f5bc56\" type=\"text/css\"\n  />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/style.min.css?v=4e52139bcf73c6fa106fdc159205a39b\" type=\"text/css\" />\n   \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/custom/custom.css?_=20181101001\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/legacy.css?v=1596036a012cf3d9e66a44c646b5cb39\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/rqtheme.css?v=c9e502bbf6164805969ff8e4ae26dae1\" type=\"text/css\" />\n  <script src=\"/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <!-- Add by PoppinL for embedding in rqpro -->\n  <script>\n    if (window.requirejs) {\n      window.require = window.requirejs;\n    }\n  </script>\n\n  <script>\n    require.config({\n          \n    urlArgs: \"v=20260403155233\",\n      \n    baseUrl: '/research/user/user_497381/static/',\n      paths: {\n      'auth/js/main': 'auth/js/main.min',\n        custom : '/research/user/user_497381/custom',\n          nbextensions : '/research/user/user_497381/nbextensions',\n            kernelspecs : '/research/user/user_497381/kernelspecs',\n              underscore : 'components/underscore/underscore-min',\n                backbone : 'components/backbone/backbone-min',\n                  jed: 'components/jed/jed',\n                    jquery: 'components/jquery/jquery.min',\n                      json: 'components/requirejs-plugins/src/json',\n                        text: 'components/requirejs-text/text',\n                          bootstrap: 'components/bootstrap/js/bootstrap.min',\n                            bootstraptour: 'components/bootstrap-tour/build/js/bootstrap-tour.min',\n                              'jquery-ui': 'components/jquery-ui/ui/minified/jquery-ui.min',\n                                moment: 'components/moment/min/moment-with-locales',\n                                  codemirror: 'components/codemirror',\n                                    termjs: 'components/xterm.js/xterm',\n                                      typeahead: 'components/jquery-typeahead/dist/jquery.typeahead.min',\n      },\n    map: { // for backward compatibility\n      \"*\": {\n        \"jqueryui\": \"jquery-ui\",\n      }\n    },\n    shim: {\n      typeahead: {\n        deps: [\"jquery\"],\n          exports: \"typeahead\"\n      },\n      underscore: {\n        exports: '_'\n      },\n      backbone: {\n        deps: [\"underscore\", \"jquery\"],\n          exports: \"Backbone\"\n      },\n      bootstrap: {\n        deps: [\"jquery\"],\n          export...<truncated>"
+      "body": "<!DOCTYPE HTML>\n<html>\n\n<head>\n  <meta charset=\"utf-8\">\n\n  <title>策略研究 - RiceQuant米筐量化交易平台</title>\n  \n  <link id=\"favicon\" rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/research/user/user_497381/static/base/images/favicon.ico?v=b446914e32140bee34346177a8be9aba\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-ui/themes/smoothness/jquery-ui.min.css?v=9b2c8d3489227115310662a343fce11c\" type=\"text/css\"\n  />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/components/jquery-typeahead/dist/jquery.typeahead.min.css?v=7afb461de36accb1aa133a1710f5bc56\" type=\"text/css\"\n  />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/style.min.css?v=4e52139bcf73c6fa106fdc159205a39b\" type=\"text/css\" />\n   \n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/custom/custom.css?_=20181101001\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/legacy.css?v=1596036a012cf3d9e66a44c646b5cb39\" type=\"text/css\" />\n  <link rel=\"stylesheet\" href=\"/research/user/user_497381/static/style/rqtheme.css?v=c9e502bbf6164805969ff8e4ae26dae1\" type=\"text/css\" />\n  <script src=\"/research/user/user_497381/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact/index.js?v=00a2fac73c670ce39ac53d26640eb542\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/proptypes/index.js?v=c40890eb04df9811fcc4d47e53a29604\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/preact-compat/index.js?v=f865e990e65ad27e3a2601d8adb48db1\" type=\"text/javascript\"></script>\n  <script src=\"/research/user/user_497381/static/components/requirejs/require.js?v=6da8be361b9ee26c5e721e76c6d4afce\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <!-- Add by PoppinL for embedding in rqpro -->\n  <script>\n    if (window.requirejs) {\n      window.require = window.requirejs;\n    }\n  </script>\n\n  <script>\n    require.config({\n          \n    urlArgs: \"v=20260403215411\",\n      \n    baseUrl: '/research/user/user_497381/static/',\n      paths: {\n      'auth/js/main': 'auth/js/main.min',\n        custom : '/research/user/user_497381/custom',\n          nbextensions : '/research/user/user_497381/nbextensions',\n            kernelspecs : '/research/user/user_497381/kernelspecs',\n              underscore : 'components/underscore/underscore-min',\n                backbone : 'components/backbone/backbone-min',\n                  jed: 'components/jed/jed',\n                    jquery: 'components/jquery/jquery.min',\n                      json: 'components/requirejs-plugins/src/json',\n                        text: 'components/requirejs-text/text',\n                          bootstrap: 'components/bootstrap/js/bootstrap.min',\n                            bootstraptour: 'components/bootstrap-tour/build/js/bootstrap-tour.min',\n                              'jquery-ui': 'components/jquery-ui/ui/minified/jquery-ui.min',\n                                moment: 'components/moment/min/moment-with-locales',\n                                  codemirror: 'components/codemirror',\n                                    termjs: 'components/xterm.js/xterm',\n                                      typeahead: 'components/jquery-typeahead/dist/jquery.typeahead.min',\n      },\n    map: { // for backward compatibility\n      \"*\": {\n        \"jqueryui\": \"jquery-ui\",\n      }\n    },\n    shim: {\n      typeahead: {\n        deps: [\"jquery\"],\n          exports: \"typeahead\"\n      },\n      underscore: {\n        exports: '_'\n      },\n      backbone: {\n        deps: [\"underscore\", \"jquery\"],\n          exports: \"Backbone\"\n      },\n      bootstrap: {\n        deps: [\"jquery\"],\n          export...<truncated>"
     },
     {
       "id": 93,
@@ -1373,8 +1404,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1395,8 +1427,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1417,8 +1450,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1439,8 +1473,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1461,8 +1496,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1483,8 +1519,9 @@
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1516,7 +1553,7 @@
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403215411",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1532,7 +1569,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775202771638",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775224469188",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1551,7 +1588,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775202771639",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775224469189",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1589,7 +1626,7 @@
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775202771640",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775224469190",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1608,15 +1645,16 @@
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/static/services/contents.js?v=20260403215411",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "max-age=315360000",
         "content-encoding": "gzip",
-        "expires": "Mon, 31 Mar 2036 07:52:35 GMT",
-        "date": "Fri, 03 Apr 2026 07:52:35 GMT",
+        "expires": "Mon, 31 Mar 2036 13:54:13 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:13 GMT",
         "content-type": "application/javascript; charset=utf-8",
         "vary": "Accept-Encoding",
         "server": "nginx",
@@ -1630,7 +1668,7 @@
       "phase": "request",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403215411",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1650,8 +1688,9 @@
       "url": "https://www.ricequant.com/api/user/isLogin.do",
       "status": 200,
       "headers": {
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "318",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
@@ -1663,33 +1702,15 @@
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775224469188",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "883",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
-        "etag": "\"9832bdb6ccc8f6ed9de9dcdc8838017eac909761\"",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "{\"default\": \"python3\", \"kernelspecs\": {\"python3\": {\"name\": \"python3\", \"spec\": {\"argv\": [\"/usr/local/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"Python 3\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3/logo-32x32.png\"}}, \"python3.9\": {\"name\": \"python3.9\", \"spec\": {\"argv\": [\"/usr/local/envs/Python3.9/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"python3.9\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3.9/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3.9/logo-32x32.png\"}}}}"
-    },
-    {
-      "id": 111,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/tree?_=1775202771638",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "71",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
         "etag": "\"ef882808c5c730758d0f9c5fd0291454cdd999e3\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "71",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
@@ -1697,11 +1718,11 @@
       "body": "{\"load_extensions\": {\"nbextensions_configurator/tree_tab/main\": false}}"
     },
     {
-      "id": 112,
+      "id": 111,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775202771641",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775224469191",
       "headers": {
         "sec-ch-ua-platform": "\"macOS\"",
         "referer": "https://www.ricequant.com/research/user/user_497381/tree?",
@@ -1716,26 +1737,87 @@
       "postData": null
     },
     {
+      "id": 112,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775224469190",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "2",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "[]"
+    },
+    {
       "id": 113,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/kernelspecs",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "etag": "\"9832bdb6ccc8f6ed9de9dcdc8838017eac909761\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "883",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{\"default\": \"python3\", \"kernelspecs\": {\"python3\": {\"name\": \"python3\", \"spec\": {\"argv\": [\"/usr/local/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"Python 3\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3/logo-32x32.png\"}}, \"python3.9\": {\"name\": \"python3.9\", \"spec\": {\"argv\": [\"/usr/local/envs/Python3.9/bin/python\", \"-m\", \"ipykernel_launcher\", \"-f\", \"{connection_file}\"], \"env\": {}, \"display_name\": \"python3.9\", \"language\": \"python\", \"interrupt_mode\": \"signal\", \"metadata\": {}}, \"resources\": {\"logo-64x64\": \"/research/user/user_497381/kernelspecs/python3.9/logo-64x64.png\", \"logo-32x32\": \"/research/user/user_497381/kernelspecs/python3.9/logo-32x32.png\"}}}}"
+    },
+    {
+      "id": 114,
+      "phase": "response",
+      "resourceType": "xhr",
+      "method": "GET",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775224469189",
+      "status": 200,
+      "headers": {
+        "x-jupyterhub-version": "1.1.0",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "2",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
+        "content-type": "application/json",
+        "server": "nginx"
+      },
+      "contentType": "application/json",
+      "body": "{}"
+    },
+    {
+      "id": 115,
       "phase": "response",
       "resourceType": "script",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403155233",
+      "url": "https://www.ricequant.com/research/user/user_497381/custom/custom.js?v=20260403215411",
       "status": 304,
       "headers": {
-        "expires": "Mon, 31 Mar 2036 07:52:51 GMT",
         "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
         "cache-control": "no-cache",
+        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report",
+        "expires": "Mon, 31 Mar 2036 13:54:29 GMT",
         "accept-ranges": "bytes",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
         "server": "nginx"
       },
       "contentType": "",
       "body": null
     },
     {
-      "id": 114,
+      "id": 116,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
@@ -1753,7 +1835,7 @@
       "postData": null
     },
     {
-      "id": 115,
+      "id": 117,
       "phase": "request",
       "resourceType": "xhr",
       "method": "GET",
@@ -1769,44 +1851,6 @@
         "accept": "*/*"
       },
       "postData": null
-    },
-    {
-      "id": 116,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/sessions?_=1775202771640",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "2",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
-        "etag": "\"97d170e1550eee4afc0af065b78cda302a97674c\"",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "[]"
-    },
-    {
-      "id": 117,
-      "phase": "response",
-      "resourceType": "xhr",
-      "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/config/common?_=1775202771639",
-      "status": 200,
-      "headers": {
-        "x-jupyterhub-version": "1.1.0",
-        "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "2",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
-        "etag": "\"bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f\"",
-        "content-type": "application/json",
-        "server": "nginx"
-      },
-      "contentType": "application/json",
-      "body": "{}"
     },
     {
       "id": 118,
@@ -1818,35 +1862,37 @@
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
+        "etag": "\"ce861aa034fb57177e203c1322f80d41c7731d78\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
         "content-length": "41",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
-        "etag": "\"2fea3d39bedbefc9b3011f6784c28eb3d6be5819\"",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },
       "contentType": "application/json",
-      "body": "{\"total\": 8589934592, \"memory\": 66461696}"
+      "body": "{\"total\": 8589934592, \"memory\": 66547712}"
     },
     {
       "id": 119,
       "phase": "response",
       "resourceType": "xhr",
       "method": "GET",
-      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775202771641",
+      "url": "https://www.ricequant.com/research/user/user_497381/api/contents?type=directory&_=1775224469191",
       "status": 200,
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
         "content-encoding": "gzip",
-        "etag": "W/\"99f5e13bacd501a6373c21c35b70590afa1b8337\"",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
+        "etag": "W/\"c7882b98ae21b351a23b5392b51f1df6ccbafcd8\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
         "content-type": "application/json",
         "vary": "Accept-Encoding",
         "server": "nginx",
-        "last-modified": "Fri, 03 Apr 2026 05:26:52 GMT"
+        "last-modified": "Fri, 03 Apr 2026 09:39:28 GMT"
       },
       "contentType": "application/json",
-      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T05:26:52.718869Z\", \"created\": \"2026-04-03T07:52:42.648085Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
+      "body": "{\"name\": \"\", \"path\": \"\", \"last_modified\": \"2026-04-03T09:39:28.113359Z\", \"created\": \"2026-04-03T13:54:08.703968Z\", \"content\": [{\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_175959.ipynb\", \"last_modified\": \"2026-03-31T10:00:05.276341Z\", \"created\": \"2026-03-31T10:00:05.277341Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 26137, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_181744.ipynb\", \"last_modified\": \"2026-03-31T10:17:50.311332Z\", \"created\": \"2026-03-31T10:17:50.312332Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33421, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_185050.ipynb\", \"last_modified\": \"2026-03-31T10:50:56.024182Z\", \"created\": \"2026-03-31T10:50:56.025182Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 33266, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260331_200820.ipynb\", \"last_modified\": \"2026-03-31T12:08:28.017397Z\", \"created\": \"2026-03-31T12:08:28.018397Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3619, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_144231.ipynb\", \"last_modified\": \"2026-04-02T06:42:34.435034Z\", \"created\": \"2026-04-02T06:42:34.436033Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7410, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_173607.ipynb\", \"path\": \"RiceQuantAPI_20260402_173607.ipynb\", \"last_modified\": \"2026-04-02T09:36:13.095522Z\", \"created\": \"2026-04-02T09:36:13.096522Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 3387, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173709.ipynb\", \"last_modified\": \"2026-04-02T09:37:12.718516Z\", \"created\": \"2026-04-02T09:37:12.719516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 7075, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_173710.ipynb\", \"last_modified\": \"2026-04-02T09:37:14.608516Z\", \"created\": \"2026-04-02T09:37:14.609516Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6529, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"RiceQuantAPI_20260402_174157.ipynb\", \"path\": \"RiceQuantAPI_20260402_174157.ipynb\", \"last_modified\": \"2026-04-02T09:42:04.051485Z\", \"created\": \"2026-04-02T09:42:04.053485Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 2455, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"path\": \"\\u7b56\\u7565\\u6d4b\\u8bd5_20260402_174609.ipynb\", \"last_modified\": \"2026-04-02T09:50:05.519481Z\", \"created\": \"2026-04-02T09:50:05.520481Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 28545, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"path\": \"V1RFScore7\\u8fdb\\u653b_20260402_175522.ipynb\", \"last_modified\": \"2026-04-02T09:55:28.409571Z\", \"created\": \"2026-04-02T09:55:28.410571Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 15434, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"path\": \"\\u5b9e\\u9a8c1A\\u65e7\\u6c60\\u5b8c\\u6574\\u7248\\u57fa\\u51c6\\u5bf9_20260402_180232.ipynb\", \"last_modified\": \"2026-04-02T10:02:36.627676Z\", \"created\": \"2026-04-02T10:02:36.627676Z\", \"content\": null, \"format\": null, \"mimetype\": null, \"size\": 6623, \"writable\": true, \"type\": \"notebook\"}, {\"name\": \"\\u5b9e\\u9a8c1B\\u5220\\u9664\\u56fd\\u503aETF\\u7248_20260402_180235.ipynb\", \"path\": \"\\u5b9e\\...<truncated>"
     },
     {
       "id": 120,
@@ -1858,9 +1904,10 @@
       "headers": {
         "x-jupyterhub-version": "1.1.0",
         "content-security-policy": "frame-ancestors 'self';report-uri /research/hub/security/csp-report; default-src 'none'",
-        "content-length": "0",
-        "date": "Fri, 03 Apr 2026 07:52:51 GMT",
         "etag": "\"da39a3ee5e6b4b0d3255bfef95601890afd80709\"",
+        "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000, h3-27=\":443\"; ma=2592000, h3-Q050=\":443\"; ma=2592000, h3-Q046=\":443\"; ma=2592000, h3-Q043=\":443\"; ma=2592000, h3-Q039=\":443\"; ma=2592000, quic=\":443\"; ma=2592000; v=\"39,43,46\"",
+        "content-length": "0",
+        "date": "Fri, 03 Apr 2026 13:54:29 GMT",
         "content-type": "application/json",
         "server": "nginx"
       },

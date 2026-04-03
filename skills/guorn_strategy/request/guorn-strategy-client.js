@@ -5,6 +5,25 @@ import { OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 
+/**
+ * 常用因子 ID（从 /stock/meta 获取）
+ * 格式：0.M.股票每日指标_<指标名>.0
+ */
+export const FACTOR_IDS = {
+  ROA: '0.M.股票每日指标_中性ROA.0',
+  ROE: '0.M.股票每日指标_中性ROE.0',
+  PE: '0.M.股票每日指标_市盈率.0',
+  PB: '0.M.股票每日指标_市净率.0',
+  MOMENTUM: '0.M.股票每日指标_动量.0',
+};
+
+/**
+ * 账号限制说明：
+ * - level=1 普通账号：回测时间窗口限制在最近约 1 年内
+ * - 日期格式：斜杠 "2025/04/02"（内部转换，传入时可用连字符）
+ * - 回测通过浏览器 JS (scrat.utility.ajaxDispatch) 执行，不能直接 HTTP POST
+ */
+
 function ensureDir(filePath) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
 }
@@ -141,23 +160,49 @@ export class GuornStrategyClient {
   }
 
   /**
-   * Run backtest
+   * Run backtest via /stock/runtest
+   * NOTE: Direct HTTP POST to this endpoint returns "Server Error".
+   * Must be called from browser context via scrat.utility.ajaxDispatch.
+   * Use browser/run-backtest-via-js.js for actual execution.
+   *
+   * Correct payload format (from reverse-engineering the page JS):
+   * - start/end: slash format "2025/04/02" (not dashes)
+   * - calc_id: uid + "." + timestamp
+   * - All other fields from getCurrentStrategy().tabs.back_test
    */
-  async runBacktest(config) {
-    const url = '/stock/backtest';
-    const body = new URLSearchParams();
-    
-    body.append('id', config.strategyId || '');
-    body.append('start', config.startTime || '2020-01-01');
-    body.append('end', config.endTime || '2024-01-01');
-    body.append('benchmark', config.benchmark || 'hs300');
-    body.append('cost', config.transactionCost || '0.002');
-
-    return this.request(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-      body: body.toString()
-    });
+  buildRunBacktestPayload(config, uid) {
+    const toSlashDate = d => d.replace(/-/g, '/');
+    return {
+      filters: config.filters || [],
+      ranks: config.ranks || [],
+      pool: config.pool || '',
+      exclude_st: config.exclude_st || '0',
+      exclude_STIB: config.exclude_STIB ?? 1,
+      filter_suspend: config.filter_suspend || false,
+      industry_type: config.industry_type || 0,
+      timing: config.timing || { indicators: [], position: '0', threshold: ['-1', '-1'] },
+      start: toSlashDate(config.start || config.startTime || '2022/01/01'),
+      end: toSlashDate(config.end || config.endTime || '2024/01/01'),
+      reference: config.reference || '000300',
+      count: String(config.count || '10'),
+      period: config.period || 5,
+      price: config.price || 'close',
+      trade_cost: config.trade_cost ?? 0.002,
+      position_limit: config.position_limit ?? 1,
+      backup_num: config.backup_num || '0',
+      backup_fund: config.backup_fund || '',
+      ideal_position: config.ideal_position ?? 0.1,
+      min_position: config.min_position ?? 0.01,
+      position_bias: config.position_bias ?? 0.3,
+      model: config.model || 0,
+      weight: config.weight || '',
+      trading_strategy: config.trading_strategy || { buy_options: [], sell_options: [], hold_options: [] },
+      hedge: config.hedge || false,
+      always_tradable: config.always_tradable || 0,
+      ideal_count: config.ideal_count || 10,
+      max_count: config.max_count || 15,
+      calc_id: `${uid}.${Date.now()}`
+    };
   }
 
   /**

@@ -1,0 +1,67 @@
+{
+  "capturedAt": "2026-04-03T14:14:13.305Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/codingutf_20260403_221404.ipynb",
+  "notebookPath": "codingutf_20260403_221404.ipynb",
+  "kernelId": "34e58d5a-0dde-4981-94cf-be5bf43437bf",
+  "sessionId": "562d57c6-d308-4bbf-86be-d79d09e0128b",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "codingutf_20260403_221404.ipynb",
+    "path": "codingutf_20260403_221404.ipynb",
+    "last_modified": "2026-04-03T14:14:11.700843Z",
+    "created": "2026-04-03T14:14:11.702842Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 14888,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "# -*- coding: utf-8 -*-\n\"\"\"\n7因子短名单 — RiceQuant 可计算性验证\n\"\"\"\n\nprint(\"=\" * 70)\nprint(\"7因子短名单 — RiceQuant 可计算性验证\")\nprint(\"=\" * 70)\n\nimport pandas as pd\nimport numpy as np\n\nBASELINE_OK = False\nPRICE_OK = False\nSTR_OK = False\nAMP_OK = False\nMOM_OK = False\nprice_data = {}\nohlc_data = {}\nstr_series = pd.Series(dtype=float)\namp_series = pd.Series(dtype=float)\nmom_series = pd.Series(dtype=float)\nfactors = None\n\nSTART_DATE = \"2024-01-01\"\nEND_DATE = \"2024-12-31\"\nINDEX = \"000905.XSHG\"\nLOOKBACK = 22\n\nprint(f\"\\n股票池: {INDEX}\")\nprint(f\"时间范围: {START_DATE} ~ {END_DATE}\")\nprint(f\"回望期: {LOOKBACK} 交易日\")\n\nprint(\"\\n[1/5] 获取股票池...\")\nstocks = index_components(INDEX, START_DATE)\nprint(f\"  成分股数量: {len(stocks)}\")\n\nvalid_stocks = []\nfor s in stocks:\n    info = instruments(s)\n    if info and info.listed_date:\n        listed = (\n            pd.Timestamp(info.listed_date)\n            if isinstance(info.listed_date, str)\n            else info.listed_date\n        )\n        days_listed = (pd.Timestamp(START_DATE) - listed).days\n        if days_listed > 180:\n            valid_stocks.append(s)\n\nprint(f\"  过滤后数量: {len(valid_stocks)}\")\ntest_stocks = valid_stocks[:50]\nprint(f\"  测试数量: {len(test_stocks)}\")\n\nprint(\"\\n[2/5] 验证基线因子...\")\ntry:\n    factors = get_factor(\n        test_stocks,\n        [\"pe_ratio\", \"pb_ratio\", \"roe\", \"roa\"],\n        start_date=START_DATE,\n        end_date=END_DATE,\n    )\n    print(f\"  OK 基线因子获取成功, 形状: {factors.shape}\")\n    # get_factor returns MultiIndex: (order_book_id, date)\n    ld = factors.index.get_level_values(1).max()\n    lt = factors.xs(ld, level=1)\n    print(f\"  最新日期: {ld}\")\n    for col in [\"pe_ratio\", \"pb_ratio\", \"roe\", \"roa\"]:\n        if col in lt.columns:\n            s = lt[col].dropna()\n            if len(s) > 0:\n                print(f\"    {col}: mean={s.mean():.4f}, count={len(s)}\")\n    BASELINE_OK = True\nexcept Exception as e:\n    print(f\"  FAIL: {e}\")\n\nprint(\"\\n[3/5] 获取价格数据...\")\ntry:\n    price_df = get_price(\n        test_stocks,\n        start_date=START_DATE,\n        end_date=END_DATE,\n        frequency=\"1d\",\n        fields=[\"close\", \"high\", \"low\", \"open\"],\n    )\n    print(f\"  OK 价格数据获取成功, 形状: {price_df.shape}\")\n    print(f\"  Index names: {price_df.index.names}\")\n\n    # MultiIndex: level 0 = order_book_id, level 1 = date\n    for stock in test_stocks:\n        try:\n            sd = price_df.xs(stock, level=\"order_book_id\")\n            closes = sd[\"close\"].dropna().values\n            if len(closes) >= LOOKBACK:\n                price_data[stock] = closes\n            if all(f in sd.columns for f in [\"open\", \"high\", \"low\", \"close\"]):\n                ohlc = sd[[\"open\", \"high\", \"low\", \"close\"]].dropna()\n                if len(ohlc) >= LOOKBACK:\n                    ohlc_data[stock] = ohlc\n        except:\n            continue\n    print(f\"  有效收盘价: {len(price_data)}, 有效OHLC: {len(ohlc_data)}\")\n    if len(price_data) > 0:\n        PRICE_OK = True\nexcept Exception as e:\n    print(f\"  FAIL: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nif PRICE_OK:\n    print(\"\\n[4/5] 计算新因子...\")\n\n    # Get market returns\n    try:\n        mkt_df = get_price(\n            \"000300.XSHG\",\n            start_date=START_DATE,\n            end_date=END_DATE,\n            frequency=\"1d\",\n            fields=[\"close\"],\n        )\n        mkt_closes = (\n            mkt_df.xs(\"000300.XSHG\", level=\"order_book_id\")[\"close\"].dropna().values\n        )\n        mkt_returns = np.diff(mkt_closes) / mkt_closes[:-1]\n        mkt_returns = mkt_returns[-LOOKBACK:]\n        print(f\"  市场收益率: {len(mkt_returns)} 天\")\n    except Exception as e:\n        print(f\"  市场数据获取失败: {e}\")\n        mkt_returns = np.zeros(LOOKBACK)\n\n    print(\"\\n  [5.1] STR 因子...\")\n    try:\n        str_values = {}\n        for stock in test_stocks:\n            if stock not in price_data:\n                continue\n            closes = price_data[stock][-LOOKBACK - 1 :]\n            ret = np.diff(closes) / closes[:-1]\n            ret = ret[-LOOKBACK:]\n            if len(ret) < 10:\n                continue\n            ml = min(len(ret), len(mkt_returns))\n            ret, mkt_ret = ret[-ml:], mkt_returns[-ml:]\n            theta = 0.001\n            salience = np.abs(ret - mkt_ret) / (np.abs(ret) + np.abs(mkt_ret) + theta)\n            ranks = np.argsort(np.argsort(-salience)) + 1\n            delta = 0.7\n            weights = delta**ranks\n            weights = weights / weights.mean()\n            if np.std(weights) > 0 and np.std(ret) > 0:\n                str_values[stock] = np.cov(weights, ret)[0, 1]\n\n        str_series = pd.Series(str_values)\n        print(\n            f\"    OK 覆盖:{len(str_series)}, mean={str_series.mean():.6f}, \"\n            f\"min={str_series.min():.6f}, max={str_series.max():.6f}\"\n        )\n        STR_OK = True\n    except Exception as e:\n        print(f\"    FAIL: {e}\")\n        import traceback\n\n        traceback.print_exc()\n\n    print(\"\\n  [6.1] 理想振幅因子...\")\n    try:\n        LAMBDA = 0.25\n        amp_values = {}\n        for stock in test_stocks:\n            if stock not in ohlc_data:\n                continue\n            bars = ohlc_data[stock][-LOOKBACK:]\n            highs, lows, closes = (\n                bars[\"high\"].values,\n                bars[\"low\"].values,\n                bars[\"close\"].values,\n            )\n            if len(closes) < 2:\n                continue\n            amp = (highs[1:] - lows[1:]) / closes[:-1]\n            if len(amp) < LOOKBACK * 0.5:\n                continue\n            mid = (highs[1:] + lows[1:]) / 2\n            th_high = np.percentile(mid, 100 - LAMBDA * 100)\n            th_low = np.percentile(mid, LAMBDA * 100)\n            mask_h = mid >= th_high\n            mask_l = mid <= th_low\n            if mask_h.sum() > 0 and mask_l.sum() > 0:\n                std = amp.std()\n                if std > 1e-8:\n                    amp_values[stock] = (amp[mask_h].mean() - amp[mask_l].mean()) / std\n\n        amp_series = pd.Series(amp_values)\n        print(\n            f\"    OK 覆盖:{len(amp_series)}, mean={amp_series.mean():.6f}, \"\n            f\"min={amp_series.min():.6f}, max={amp_series.max():.6f}\"\n        )\n        AMP_OK = True\n    except Exception as e:\n        print(f\"    FAIL: {e}\")\n        import traceback\n\n        traceback.print_exc()\n\n    print(\"\\n  [7.1] 二阶动量...\")\n    try:\n        mom_values = {}\n        lw = 20\n        for stock in test_stocks:\n            if stock not in price_data:\n                continue\n            closes = price_data[stock]\n            if len(closes) < lw + 10:\n                continue\n            moms = [closes[i] / closes[i - lw] - 1 for i in range(lw, len(closes))]\n            if len(moms) < 10:\n                continue\n            arr = np.array(moms)\n            ewma = np.average(\n                arr[:-1], weights=np.exp(np.linspace(-1, 0, len(arr) - 1))\n            )\n            mom_values[stock] = arr[-1] - ewma\n\n        mom_series = pd.Series(mom_values)\n        print(\n            f\"    OK 覆盖:{len(mom_series)}, mean={mom_series.mean():.6f}, \"\n            f\"min={mom_series.min():.6f}, max={mom_series.max():.6f}\"\n        )\n        MOM_OK = True\n    except Exception as e:\n        print(f\"    FAIL: {e}\")\n        import traceback\n\n        traceback.print_exc()\n\nprint(\"\\n[5/5] 因子相关性...\")\ntry:\n    af = {}\n    if BASELINE_OK and factors is not None:\n        # get_factor returns MultiIndex: (order_book_id, date)\n        # Use level 1 for dates\n        ld = factors.index.get_level_values(1).max()\n        lt = factors.xs(ld, level=1)\n        for c in [\"pe_ratio\", \"pb_ratio\", \"roe\", \"roa\"]:\n            if c in lt.columns:\n                af[c] = lt[c]\n    if STR_OK and len(str_series) > 0:\n        af[\"STR\"] = str_series\n    if AMP_OK and len(amp_series) > 0:\n        af[\"ideal_amp\"] = amp_series\n    if MOM_OK and len(mom_series) > 0:\n        af[\"mom2\"] = mom_series\n\n    fdf = pd.DataFrame(af).dropna()\n    print(f\"  有效样本: {len(fdf)}, 因子: {fdf.columns.tolist()}\")\n    if len(fdf) > 2:\n        cm = fdf.rank().corr()\n        print(f\"\\n  秩相关矩阵:\")\n        print(cm.round(3).to_string())\n        print(f\"\\n  高相关(|r|>0.5):\")\n        found = False\n        for i in range(len(cm.columns)):\n            for j in range(i + 1, len(cm.columns)):\n                v = cm.iloc[i, j]\n                if abs(v) > 0.5:\n                    print(f\"    {cm.columns[i]} vs {cm.columns[j]}: {v:.3f}\")\n                    found = True\n        if not found:\n            print(f\"    无\")\nexcept Exception as e:\n    print(f\"  FAIL: {e}\")\n    import traceback\n\n    traceback.print_exc()\n\nprint(\"\\n\" + \"=\" * 70)\nprint(\"【结论】\")\nprint(\"=\" * 70)\nfor name, ok in [\n    (\"基线因子\", BASELINE_OK),\n    (\"STR\", STR_OK),\n    (\"理想振幅\", AMP_OK),\n    (\"二阶动量\", MOM_OK),\n]:\n    print(f\"  {name}: {'OK' if ok else 'FAIL'}\")\n\nif all([BASELINE_OK, STR_OK, AMP_OK, MOM_OK]):\n    print(\"\\n全部通过，进入阶段B（单因子IC验证）\")\nelse:\n    print(\"\\n部分失败，需排查\")\n",
+      "msgId": "0d8a90df445d4d638e2e16ecca1d15fc",
+      "websocketSessionId": "3bb7b81cf4a64b04bab46f3243150972",
+      "executionCount": 1,
+      "status": "ok",
+      "textOutput": "======================================================================\n7因子短名单 — RiceQuant 可计算性验证\n======================================================================\n\n股票池: 000905.XSHG\n时间范围: 2024-01-01 ~ 2024-12-31\n回望期: 22 交易日\n\n[1/5] 获取股票池...\n  成分股数量: 500\n  过滤后数量: 500\n  测试数量: 50\n\n[2/5] 验证基线因子...\n  OK 基线因子获取成功, 形状: (12100, 4)\n  最新日期: 2024-12-31 00:00:00\n    pe_ratio: mean=4.3848, count=50\n    pb_ratio: mean=3.5864, count=50\n\n[3/5] 获取价格数据...\n  OK 价格数据获取成功, 形状: (12100, 4)\n  Index names: ['order_book_id', 'date']\n  有效收盘价: 50, 有效OHLC: 50\n\n[4/5] 计算新因子...\n  市场收益率: 22 天\n\n  [5.1] STR 因子...\n    OK 覆盖:50, mean=0.000463, min=-0.020651, max=0.049256\n\n  [6.1] 理想振幅因子...\n    OK 覆盖:50, mean=0.803409, min=-0.574093, max=1.811742\n\n  [7.1] 二阶动量...\n    OK 覆盖:50, mean=-0.050976, min=-0.239651, max=0.224608\n\n[5/5] 因子相关性...\n  有效样本: 0, 因子: ['pe_ratio', 'pb_ratio', 'roe', 'roa', 'STR', 'ideal_amp', 'mom2']\n\n======================================================================\n【结论】\n======================================================================\n  基线因子: OK\n  STR: OK\n  理想振幅: OK\n  二阶动量: OK\n\n全部通过，进入阶段B（单因子IC验证）\n",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "======================================================================\n7因子短名单 — RiceQuant 可计算性验证\n======================================================================\n\n股票池: 000905.XSHG\n时间范围: 2024-01-01 ~ 2024-12-31\n回望期: 22 交易日\n\n[1/5] 获取股票池...\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  成分股数量: 500\n  过滤后数量: 500\n  测试数量: 50\n\n[2/5] 验证基线因子...\n  OK 基线因子获取成功, 形状: (12100, 4)\n  最新日期: 2024-12-31 00:00:00\n    pe_ratio: mean=4.3848, count=50\n    pb_ratio: mean=3.5864, count=50\n\n[3/5] 获取价格数据...\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "  OK 价格数据获取成功, 形状: (12100, 4)\n  Index names: ['order_book_id', 'date']\n  有效收盘价: 50, 有效OHLC: 50\n\n[4/5] 计算新因子...\n  市场收益率: 22 天\n\n  [5.1] STR 因子...\n    OK 覆盖:50, mean=0.000463, min=-0.020651, max=0.049256\n\n  [6.1] 理想振幅因子...\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "    OK 覆盖:50, mean=0.803409, min=-0.574093, max=1.811742\n\n  [7.1] 二阶动量...\n    OK 覆盖:50, mean=-0.050976, min=-0.239651, max=0.224608\n\n[5/5] 因子相关性...\n  有效样本: 0, 因子: ['pe_ratio', 'pb_ratio', 'roe', 'roa', 'STR', 'ideal_amp', 'mom2']\n\n======================================================================\n【结论】\n======================================================================\n  基线因子: OK\n  STR: OK\n  理想振幅: OK\n  二阶动量: OK\n\n全部通过，进入阶段B（单因子IC验证）\n"
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "codingutf",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "562d57c6-d308-4bbf-86be-d79d09e0128b",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/562d57c6-d308-4bbf-86be-d79d09e0128b: "
+  },
+  "autoShutdown": true
+}

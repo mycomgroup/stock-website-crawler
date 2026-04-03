@@ -1,0 +1,226 @@
+{
+  "summary": {
+    "backtestId": "69cf94b3ad2a7960ca33be2d",
+    "algoId": "69cf94b34c3a9c91a939afbb",
+    "strategyName": "fake_weak_log_20260403_20230601~20230602_8742",
+    "period": "2023-06-01 ~ 2023-06-02",
+    "capitalBase": 100000,
+    "frequency": "DAILY",
+    "benchmark": "000300.SH",
+    "runAt": "2026-04-03T10:21:50.921Z",
+    "totalReturn": 0,
+    "annualReturn": 0,
+    "benchmarkReturn": 0.0167,
+    "benchmarkAnnualReturn": 6.8897,
+    "excessReturn": -0.0167,
+    "maxDrawdown": 0,
+    "drawdownDate": "20230531",
+    "volatility": 0,
+    "downsideRisk": 0.1633,
+    "trackingError": 0.0968,
+    "sharpe": null,
+    "sortino": -0.1207,
+    "alpha": -0.0197,
+    "beta": 0,
+    "informationRatio": -21.47,
+    "winRate": 0,
+    "benchmarkWinRate": 0,
+    "tradeWinRate": null,
+    "tradeCount": 0,
+    "logCount": 9
+  },
+  "detail": {
+    "performance": {
+      "drawdown_most": "20230531",
+      "information_ratio": -21.47,
+      "alpha": -0.0197,
+      "sortino": -0.1207,
+      "volatility": 0,
+      "sharpe_ratio": null,
+      "benchmark_win_rate": 0,
+      "beta": 0,
+      "trade_winrate": null,
+      "tracking_error": 0.0968,
+      "yield": 0,
+      "benchmark_yield": 0.0167,
+      "drawdown_more": "20230531",
+      "benchmark_annual_yield": 6.8897,
+      "annual_yield": 0,
+      "progress": 1,
+      "downside_risk": 0.1633,
+      "win_rate": 0,
+      "max_drawdown": 0
+    },
+    "profit": {
+      "total": 3,
+      "list": {
+        "20230531": {
+          "algo_profit": 0,
+          "log_benchmark_profit": 0,
+          "excess_income": 0,
+          "profit_and_loss": 0,
+          "total_asset_value": 100000,
+          "trade_record": [],
+          "log_algo_profit": 0,
+          "max_drawdown": 0,
+          "benchmark_profit": 0,
+          "log_excess_income": 0
+        },
+        "20230601": {
+          "trade_record": [],
+          "log_algo_profit": 0,
+          "max_drawdown": 0,
+          "algo_profit": 0,
+          "profit_and_loss": 0,
+          "excess_income": -0.002187,
+          "benchmark_profit": 0.002191,
+          "total_asset_value": 100000,
+          "log_excess_income": -0.002189,
+          "log_benchmark_profit": 0.002189
+        },
+        "20230602": {
+          "trade_record": [],
+          "log_algo_profit": 0,
+          "max_drawdown": 0,
+          "algo_profit": 0,
+          "profit_and_loss": 0,
+          "excess_income": -0.016389,
+          "benchmark_profit": 0.016662,
+          "total_asset_value": 100000,
+          "log_excess_income": -0.016524,
+          "log_benchmark_profit": 0.016524
+        }
+      }
+    },
+    "is_collection": false
+  },
+  "performance": {
+    "win_rate": 0,
+    "benchmark_win_rate": 0,
+    "tracking_error": 0.0968,
+    "information_ratio": -21.47,
+    "sharpe_ratio": null,
+    "yield": 0,
+    "benchmark_annual_yield": 6.8897,
+    "progress": 1,
+    "drawdown_more": "20230531",
+    "beta": 0,
+    "trade_winrate": null,
+    "alpha": -0.0197,
+    "volatility": 0,
+    "sortino": -0.1207,
+    "downside_risk": 0.1633,
+    "benchmark_yield": 0.0167,
+    "max_drawdown": 0,
+    "annual_yield": 0,
+    "drawdown_most": "20230531"
+  },
+  "tradeLog": [],
+  "backtestLog": [
+    {
+      "type": "INFO",
+      "value": "INFO :回测开始运行",
+      "now": "2026-04-03 18:21:39.867322",
+      "time": "2026-04-03 18:21:39"
+    },
+    {
+      "type": "INFO",
+      "value": "回测开始",
+      "now": "2026-04-03 18:21:40.108808",
+      "time": "2026-04-03 18:21:40"
+    },
+    {
+      "type": "INFO",
+      "value": "HANDLE_BAR CALLED",
+      "now": "2026-04-03 18:21:40.917618",
+      "time": "2023-06-01 09:31:00"
+    },
+    {
+      "type": "INFO",
+      "value": "Stock: 000001.SZ",
+      "now": "2026-04-03 18:21:40.918202",
+      "time": "2023-06-01 09:31:00"
+    },
+    {
+      "type": "INFO",
+      "value": "bar_dict keys: []",
+      "now": "2026-04-03 18:21:40.918433",
+      "time": "2023-06-01 09:31:00"
+    },
+    {
+      "type": "INFO",
+      "value": "HANDLE_BAR CALLED",
+      "now": "2026-04-03 18:21:41.206743",
+      "time": "2023-06-02 09:31:00"
+    },
+    {
+      "type": "INFO",
+      "value": "Stock: 000001.SZ",
+      "now": "2026-04-03 18:21:41.207124",
+      "time": "2023-06-02 09:31:00"
+    },
+    {
+      "type": "INFO",
+      "value": "bar_dict keys: []",
+      "now": "2026-04-03 18:21:41.207642",
+      "time": "2023-06-02 09:31:00"
+    },
+    {
+      "type": "INFO",
+      "value": "回测结束",
+      "now": "2026-04-03 18:21:41.216511",
+      "time": "2026-04-03 18:21:41"
+    }
+  ],
+  "dailyGains": [
+    {
+      "position_date": "2023-06-02T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-06-01T15:15:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    },
+    {
+      "position_date": "2023-05-31T15:30:00",
+      "total_asset_value": 100000,
+      "ending_cash": 100000,
+      "profit_and_loss": 0,
+      "daily_position": []
+    }
+  ],
+  "specificInfo": {
+    "table": {
+      "2023-06": {
+        "1": {
+          "benchmark_yield": 0.0022,
+          "yield": 0
+        },
+        "3": {
+          "yield": null,
+          "benchmark_yield": null
+        },
+        "6": {
+          "yield": null,
+          "benchmark_yield": null
+        },
+        "12": {
+          "yield": null,
+          "benchmark_yield": null
+        }
+      }
+    },
+    "chart": {
+      "2023-06": {
+        "benchmark_yield": 0.0022,
+        "yield": 0
+      }
+    }
+  }
+}

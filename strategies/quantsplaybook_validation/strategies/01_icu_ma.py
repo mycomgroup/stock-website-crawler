@@ -27,7 +27,7 @@ def siegel_slope_numpy(y):
 
 def init(context):
     context.security = '000300.XSHG'
-    context.N = 5  # ICU均线周期
+    context.N = 20  # ICU均线周期 (Adapted from 5 to reduce drawdowns)
     context.pos = False
 
 def handle_bar(context, bar_dict):
