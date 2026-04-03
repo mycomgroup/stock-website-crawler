@@ -1,0 +1,32 @@
+{
+  "capturedAt": "2026-04-03T01:42:16.043Z",
+  "taskId": "66565570-d48e-46ef-8f44-f4a94beb0f49",
+  "runId": "9b794d34-436d-445e-a77e-9c1426cafef0",
+  "taskName": "strategy",
+  "startDate": "2023-01-01",
+  "endDate": "2023-03-31",
+  "capital": 100000,
+  "success": true,
+  "state": "completed",
+  "executions": [
+    {
+      "taskId": "66565570-d48e-46ef-8f44-f4a94beb0f49",
+      "runId": "9b794d34-436d-445e-a77e-9c1426cafef0",
+      "source": "print('bigquant test ok')",
+      "status": "ok",
+      "textOutput": "",
+      "outputs": [],
+      "logs": [
+        "2026-04-03 09:42:06 任务运行开始调度 state=trigger event= 66565570-d48e-46ef-8f44-f4a94beb0f49 ..",
+        "2026-04-03 09:42:11 任务运行状态更新 state=scheduled event=20260402 66565570-d48e-46ef-8f44-f4a94beb0f49",
+        "2026-04-03 09:42:14 任务运行状态更新 state=running event=20260402 66565570-d48e-46ef-8f44-f4a94beb0f49",
+        "2026-04-03 09:42:14 [info     ] run task_id='66565570-d48e-46ef-8f44-f4a94beb0f49' ..",
+        "2026-04-03 09:42:14 [info     ] fetch task 66565570-d48e-46ef-8f44-f4a94beb0f49 ..",
+        "2026-04-03 09:42:14 [info     ] start 66565570-d48e-46ef-8f44-f4a94beb0f49 ..",
+        "bigquant test ok",
+        "2026-04-03 09:42:15 [info     ] done.",
+        "2026-04-03 09:42:15 任务运行状态更新 state=completed event=20260402 66565570-d48e-46ef-8f44-f4a94beb0f49"
+      ]
+    }
+  ]
+}

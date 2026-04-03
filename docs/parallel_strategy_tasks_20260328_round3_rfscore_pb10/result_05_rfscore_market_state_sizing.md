@@ -328,7 +328,10 @@ def calc_position_size(market_breadth, trend_on):
 | 文件 | 路径 |
 |------|------|
 | 本报告 | `/Users/fengzhi/Downloads/git/testlixingren/docs/parallel_strategy_tasks_20260328_round3_rfscore_pb10/result_05_rfscore_market_state_sizing.md` |
-| 市场分析脚本 | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_nookbook/rfscore_market_state_analysis.py` |
+| 实测分析脚本 | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_notebook/examples/rfscore_position_sizing_detailed.py` |
+| 实测结果JSON | `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-usrbinenvpyt-1775105129392.json` |
+| 实测Notebook | `https://www.joinquant.com/user/21333940833/notebooks/usrbinenvpyt_20260401_164322.ipynb` |
+| 规则A(保守) | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/rfscore_rule_a_conservative.py` |
 | 规则A(保守) | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/rfscore_rule_a_conservative.py` |
 | 规则C(激进) | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/rfscore_rule_c_aggressive.py` |
 | 规则D(无空仓) | `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/rfscore_rule_d_no_empty.py` |

@@ -1,0 +1,33 @@
+{
+  "taskId": "573a47f2-ea17-4958-a185-5f600787a684",
+  "runId": "2983631f-7ec7-4184-a1b2-87ba7b3f0aa6",
+  "config": {
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "capital": 100000
+  },
+  "report": {
+    "config": {
+      "startDate": "2023-01-01",
+      "endDate": "2023-12-31",
+      "capital": 100000
+    },
+    "stdout": "",
+    "errors": "",
+    "metrics": {},
+    "timestamp": "2026-04-03T01:31:00.935Z"
+  },
+  "logs": [
+    "2026-04-03 09:30:51 任务运行开始调度 state=trigger event= 573a47f2-ea17-4958-a185-5f600787a684 ..",
+    "2026-04-03 09:30:55 任务运行状态更新 state=scheduled event=20260402 573a47f2-ea17-4958-a185-5f600787a684",
+    "2026-04-03 09:30:57 任务运行状态更新 state=running event=20260402 573a47f2-ea17-4958-a185-5f600787a684",
+    "2026-04-03 09:30:57 [info     ] run task_id='573a47f2-ea17-4958-a185-5f600787a684' ..",
+    "2026-04-03 09:30:57 [info     ] fetch task 573a47f2-ea17-4958-a185-5f600787a684 ..",
+    "2026-04-03 09:30:57 [info     ] start 573a47f2-ea17-4958-a185-5f600787a684 ..",
+    "hello from bigquant",
+    "test complete",
+    "2026-04-03 09:30:59 [info     ] done.",
+    "2026-04-03 09:30:59 任务运行状态更新 state=completed event=20260402 573a47f2-ea17-4958-a185-5f600787a684"
+  ],
+  "outputs": []
+}

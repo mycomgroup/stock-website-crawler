@@ -228,7 +228,7 @@ q_div = query(
     valuation.market_cap,
     valuation.pe_ratio,
     indicator.roe,
-    valuation.dividend_ratio,
+    valuation.dividend_yield_ratio,
 ).filter(
     valuation.code.in_(stocks_no_688),
     valuation.market_cap >= 10,
@@ -246,13 +246,15 @@ print(f"\n{'股息率阈值':<12}{'候选数量':>10}{'筛选率':>10}")
 print("-" * 35)
 
 for div_th in div_thresholds:
-    df_div_filtered = df_div[df_div["dividend_ratio"] >= div_th]
+    df_div_filtered = df_div[df_div["dividend_yield_ratio"] >= div_th]
     rate = len(df_div_filtered) / len(df_div) * 100 if len(df_div) > 0 else 0
     print(f"股息率 >= {div_th}%{len(df_div_filtered):>10}{rate:>9.1f}%")
 
 # 完整筛选条件
 df_full = df_div[
-    (df_div["pe_ratio"] < 30) & (df_div["roe"] > 5) & (df_div["dividend_ratio"] >= 2)
+    (df_div["pe_ratio"] < 30)
+    & (df_div["roe"] > 5)
+    & (df_div["dividend_yield_ratio"] >= 2)
 ]
 print(f"\n完整条件 (PE<30, ROE>5%, 股息率>=2%): {len(df_full)} 只")
 
@@ -345,16 +347,16 @@ print(f"  检查分红: {len(div_stable_codes)} 只 (前50只)")
 
 # Step 4: 股息率筛选
 print("\nStep 4: 股息率筛选 (>= 2%)")
-q_yield = query(valuation.code, valuation.dividend_ratio).filter(
+q_yield = query(valuation.code, valuation.dividend_yield_ratio).filter(
     valuation.code.in_(div_stable_codes)
 )
 df_yield = get_fundamentals(q_yield, date=test_date)
 df_yield = df_yield.drop_duplicates("code")
-df_yield = df_yield[df_yield["dividend_ratio"] >= 2]
+df_yield = df_yield[df_yield["dividend_yield_ratio"] >= 2]
 print(f"  股息率>=2%: {len(df_yield)} 只")
 
 # 最终候选
-final_candidates = df_yield.sort_values("dividend_ratio", ascending=False)
+final_candidates = df_yield.sort_values("dividend_yield_ratio", ascending=False)
 print(f"\n最终候选池 (最多15只):")
 print("-" * 50)
 
@@ -365,22 +367,22 @@ if len(final_candidates) > 0:
         valuation.market_cap,
         valuation.pe_ratio,
         indicator.roe,
-        valuation.dividend_ratio,
+        valuation.dividend_yield_ratio,
     ).filter(valuation.code.in_(final_candidates["code"].tolist()[:15]))
     df_final = get_fundamentals(q_final, date=test_date)
     df_final = df_final.merge(
-        final_candidates[["code", "dividend_ratio"]],
+        final_candidates[["code", "dividend_yield_ratio"]],
         on="code",
         how="left",
         suffixes=("", "_final"),
     )
-    df_final = df_final.sort_values("dividend_ratio", ascending=False)
+    df_final = df_final.sort_values("dividend_yield_ratio", ascending=False)
 
     print(f"\n排名 | 代码 | 市值(亿) | PE | ROE | 股息率")
     print("-" * 55)
     for i, row in df_final.iterrows():
         print(
-            f"{i + 1:>4} | {row['code'][:6]} | {row['market_cap']:>7.1f} | {row['pe_ratio']:>5.1f} | {row['roe']:>5.2f}% | {row['dividend_ratio']:>5.2f}%"
+            f"{i + 1:>4} | {row['code'][:6]} | {row['market_cap']:>7.1f} | {row['pe_ratio']:>5.1f} | {row['roe']:>5.2f}% | {row['dividend_yield_ratio']:>5.2f}%"
         )
 
     print(f"\n最终候选股数量: {len(df_final)} 只")

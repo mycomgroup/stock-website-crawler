@@ -47,23 +47,7 @@
 
 **适用场景：** 跨平台迁移、API 选择
 
-### 5. PRE_RUN_CHECKLIST.md - 回测提交前检查规则 ⭐ 必读
-**主要内容：**
-- 时间区间建议
-- 股票池筛选规则
-- 多因子策略建议
-- 超时时间设置
-- 平台选择指南
-- 数据获取优化
-- 策略格式检查
-- 分批运行长区间
-- 日志输出规则
-- 错误处理要求
-- 提交前检查清单
-
-**适用场景：** 提交回测前必读，避免超时、报错、资源浪费
-
-### 6. MIGRATION.md - Notebook 迁移指南
+### 5. MIGRATION.md - Notebook 迁移指南
 **主要内容：**
 - 迁移策略列表和优先级
 - 详细迁移步骤
@@ -74,7 +58,7 @@
 
 **适用场景：** JoinQuant → RiceQuant Notebook 迁移
 
-### 7. PROMPT.md - Agent 运行提示词
+### 6. PROMPT.md - Agent 运行提示词
 **主要内容：**
 - 标准提示词（推荐）
 - 精简提示词
@@ -213,25 +197,6 @@
 docs/backtest_guide/
 ├── README.md                                    # Notebook 回测指南（必读）
 ├── STRATEGY_EDITOR_GUIDE.md                     # 策略编辑器回测指南（必读）⭐
-├── PRE_RUN_CHECKLIST.md                         # 回测提交前检查规则（必读）⭐
-├── joinquant_to_ricequant_migration_guide.md    # 完整迁移指南（重要）
-├── ricequant_factor_list.md                     # 因子列表速查（重要）
-├── QUICK_START.md                               # 快速入门（常用）
-├── API_DIFF.md                                  # API 差异（迁移参考）
-├── MIGRATION.md                                 # Notebook 迁移指南
-├── PROMPT.md                                    # Agent 提示词（自动化必读）
-├── ORIGINAL_SUMMARY.md                          # 原始总结（参考）
-├── MIGRATION_PLAN.md                            # 迁移计划（参考）
-├── RICEQUANT_API_SUMMARY.md                     # RiceQuant API（参考）
-├── RICEQUANT_TEST_SUMMARY.md                    # RiceQuant 测试（参考）
-└── INDEX.md                                     # 本文档
-
-相关文档：
-└── strategies/Ricequant/README.md               # RiceQuant API 对照表
-```
-docs/backtest_guide/
-├── README.md                                    # Notebook 回测指南（必读）
-├── STRATEGY_EDITOR_GUIDE.md                     # 策略编辑器回测指南（必读）⭐
 ├── joinquant_to_ricequant_migration_guide.md    # 完整迁移指南（重要）
 ├── ricequant_factor_list.md                     # 因子列表速查（重要）
 ├── ricequant_factors_guide.md                   # 平台因子使用指南 ⭐ NEW
@@ -257,7 +222,6 @@ docs/backtest_guide/
 |---------|------------|
 | **首次使用 Notebook** | README.md → QUICK_START.md → 运行示例 |
 | **首次使用策略编辑器** | STRATEGY_EDITOR_GUIDE.md → 运行示例 |
-| **提交回测前** | PRE_RUN_CHECKLIST.md ⭐ 必读 |
 | **日常使用** | QUICK_START.md 或 STRATEGY_EDITOR_GUIDE.md |
 | **跨平台迁移** | STRATEGY_EDITOR_GUIDE.md → joinquant_to_ricequant_migration_guide.md |
 | **查找因子** | ricequant_factor_list.md |
@@ -271,18 +235,19 @@ docs/backtest_guide/
 |------|---------|
 | 如何开始 Notebook？ | README.md 或 QUICK_START.md |
 | 如何开始策略编辑器？ | STRATEGY_EDITOR_GUIDE.md |
-| 提交回测前要检查什么？ | PRE_RUN_CHECKLIST.md ⭐ |
-| 如何选择时间区间？ | PRE_RUN_CHECKLIST.md（时间区间建议） |
-| 如何设置超时时间？ | PRE_RUN_CHECKLIST.md（超时时间设置） |
 | 如何选择平台？ | STRATEGY_EDITOR_GUIDE.md（平台选择） |
 | 如何转换策略格式？ | README.md（策略代码适配） + PROMPT.md（策略转换提示词） |
 | API 如何替换？ | API_DIFF.md 或 joinquant_to_ricequant_migration_guide.md |
 | 如何迁移策略？ | joinquant_to_ricequant_migration_guide.md |
 | Session 过期怎么办？ | STRATEGY_EDITOR_GUIDE.md（常见问题） |
-| 超时怎么办？ | PRE_RUN_CHECKLIST.md（Q1: 回测超时怎么办） |
+| 超时怎么办？ | README.md（常见问题） |
 | 无输出怎么办？ | README.md（常见问题） |
 | 策略没有交易？ | STRATEGY_EDITOR_GUIDE.md（常见问题 Q2） |
+| **哪些因子平台提供？** | **ricequant_factors_guide.md** ⭐ NEW |
+| **因子要不要自己算？** | **ricequant_factors_guide.md** ⭐ NEW |
 | 如何获取因子？ | ricequant_factor_list.md 或 STRATEGY_EDITOR_GUIDE.md（常见问题 Q3） |
+| **查看运行结果？** | **ricequant_notebooks_list.md** ⭐ NEW |
+| **访问在线 Notebook？** | **ricequant_notebooks_list.md** ⭐ NEW |
 | Agent 如何运行？ | PROMPT.md |
 
 ## 文档更新
@@ -293,39 +258,3 @@ docs/backtest_guide/
   - 新增 `ricequant_notebooks_list.md` - Notebook 列表汇总
   - 更新 INDEX.md 添加新文档索引
 - 来源文档已保留在 `ORIGINAL_*.md` 文件中
-
----
-
-## THSQuant 文档（新增）
-
-### thsquant_backtest_api.md - THSQuant 回测接口文档 ⭐ NEW
-**主要内容：**
-- HTTP API 端点（已验证的真实接口）
-- 参数格式（camelCase 规则）
-- 返回数据结构（绩效/交易/日志/持仓）
-- 与 JoinQuant 接口对比
-- Session 管理和错误码
-
-**适用场景：** 自动化提交 THSQuant 回测、获取结果数据
-
-### thsquant_api_guide.md - THSQuant 平台数据 API 指南 ⭐ NEW
-**主要内容：**
-- 策略框架函数（init/handle_bar/before_trading 等）
-- 行情数据 API（get_price/history/get_last_tick 等）
-- 财务数据 API（get_fundamentals/query 等）
-- 证券信息 API（get_index_stocks/get_all_securities 等）
-- 交易函数（order/order_target_percent 等）
-- 问财接口（get_iwencai/query_iwencai）
-- 与 JoinQuant API 对比表
-- 代码迁移注意事项
-
-**适用场景：** 将策略迁移到 THSQuant 平台运行
-
-### 平台选择更新（含 THSQuant）
-
-| 阶段 | 场景 | 推荐平台 | Skill |
-|------|------|---------|-------|
-| 初步调研 | 快速验证概念 | JoinQuant Notebook | `skills/joinquant_notebook` |
-| 新策略开发 | 因子简单 | RiceQuant Notebook | `skills/ricequant_strategy` |
-| 完整回测 | 需要风险指标 | RiceQuant/JoinQuant 策略编辑器 | `skills/joinquant_strategy` |
-| THSQuant 验证 | 同花顺平台验证 | THSQuant SuperMind | `skills/thsquant_strategy` |

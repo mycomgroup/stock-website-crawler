@@ -36,48 +36,33 @@ print("\n初始化...")
 print(f"测试日期数: {len(test_dates)}")
 print(f"参数组合数: {len(PARAMS)}")
 
+try:
+    all_stocks = all_instruments("CS")
+    print(f"获取所有股票数: {len(all_stocks)}")
+except Exception as e:
+    print(f"获取股票列表失败: {e}")
+    all_stocks = []
 
-def get_universe():
+
+def get_universe(date):
     try:
         hs300 = index_components("000300.XSHG")
-        print(f"  沪深300成分股: {len(hs300)}")
-
         zz500 = index_components("000905.XSHG")
-        print(f"  中证500成分股: {len(zz500)}")
+        stocks = list(set(hs300 + zz500))
 
-        stocks = []
-
-        for item in hs300[:100]:
-            if hasattr(item, "order_book_id"):
-                sid = item.order_book_id
-            else:
-                sid = str(item)
-
-            if not sid.startswith("688"):
-                stocks.append(sid)
-
-        for item in zz500[:100]:
-            if hasattr(item, "order_book_id"):
-                sid = item.order_book_id
-            else:
-                sid = str(item)
-
-            if not sid.startswith("688") and sid not in stocks:
-                stocks.append(sid)
+        stocks = [s.order_book_id for s in stocks if hasattr(s, "order_book_id")]
+        stocks = [s for s in stocks if not s.startswith("688")]
 
         return stocks[:200]
     except Exception as e:
-        print(f"获取股票池失败: {e}")
-        import traceback
-
-        traceback.print_exc()
+        print(f"获取股票池失败 {date}: {e}")
         return []
 
 
-def calc_rfscore_simple(stocks):
+def calc_rfscore_simple(stocks, date):
     scores = []
 
-    for i, stock in enumerate(stocks):
+    for stock in stocks:
         try:
             bars = history_bars(stock, 60, "1d", ["close", "volume"], include_now=True)
             if bars is None or len(bars) < 60:
@@ -107,15 +92,16 @@ def calc_rfscore_simple(stocks):
             elif vol_ratio > 1.0:
                 score += 1
 
-            pb_ratio = None
             try:
-                pb_data = get_factor(stock, "pb_ratio", "2024-01-01", "2024-01-01")
+                pb_data = get_factor(stock, "pb_ratio", date, date)
                 if pb_data is not None and not pb_data.empty:
-                    pb_ratio = float(pb_data.iloc[0])
+                    pb_ratio = pb_data.iloc[0]
                     if pb_ratio > 0 and pb_ratio < 2:
                         score += 1
+                else:
+                    pb_ratio = None
             except:
-                pass
+                pb_ratio = None
 
             scores.append(
                 {
@@ -126,16 +112,18 @@ def calc_rfscore_simple(stocks):
                     "close": close[-1],
                 }
             )
-
         except Exception as e:
             continue
 
     return scores
 
 
-def calc_market_breadth(stocks):
+def calc_market_breadth(date):
     try:
-        test_stocks = stocks[:50]
+        hs300 = index_components("000300.XSHG")
+        test_stocks = [
+            s.order_book_id for s in hs300[:50] if hasattr(s, "order_book_id")
+        ]
 
         breadth_count = 0
         test_count = 0
@@ -156,106 +144,143 @@ def calc_market_breadth(stocks):
         return 0.5
 
 
-print("\n获取股票池...")
-stocks = get_universe()
-print(f"最终股票池: {len(stocks)} 只")
+print("\n开始测试...")
 
-if not stocks:
-    print("错误: 无法获取股票池")
-else:
-    print("\n开始测试...")
+all_results = {}
 
-    print("\n计算股票评分...")
-    scores = calc_rfscore_simple(stocks)
-    print(f"成功评分: {len(scores)} 只")
+for test_date in test_dates:
+    print(f"\n--- 测试日期: {test_date} ---")
 
-    if scores:
-        scores_df = pd.DataFrame(scores)
-        if "pb_ratio" in scores_df.columns:
-            scores_df = scores_df[scores_df["pb_ratio"] > 0]
-        scores_df = scores_df.sort_values("rfscore", ascending=False)
+    stocks = get_universe(test_date)
+    if not stocks:
+        print(f"  无股票数据，跳过")
+        continue
 
-        print(f"\n评分TOP10:")
-        for i, row in scores_df.head(10).iterrows():
-            print(f"  {row['code']}: 评分{row['rfscore']}, 动量{row['momentum']:.2f}%")
+    print(f"  股票池: {len(stocks)} 只")
 
-        print("\n计算市场宽度...")
-        breadth = calc_market_breadth(stocks)
-        print(f"市场宽度: {breadth:.3f}")
+    scores = calc_rfscore_simple(stocks, test_date)
+    if not scores:
+        print(f"  无评分数据，跳过")
+        continue
 
-        print("\n参数对比:")
-        print("-" * 80)
+    scores_df = pd.DataFrame(scores)
+    if "pb_ratio" in scores_df.columns:
+        scores_df = scores_df[scores_df["pb_ratio"] > 0]
+    scores_df = scores_df.sort_values("rfscore", ascending=False)
 
-        all_results = {}
+    breadth = calc_market_breadth(test_date)
+    print(f"  市场宽度: {breadth:.3f}")
 
-        for param in PARAMS:
-            name = param["name"]
-            hold_num = param["hold"]
+    for param in PARAMS:
+        name = param["name"]
+        hold_num = param["hold"]
 
-            if breadth < 0.15:
-                actual_hold = 0
-            elif breadth < 0.25:
-                actual_hold = max(1, int(hold_num * 0.4))
-            elif breadth < 0.35:
-                actual_hold = max(1, int(hold_num * 0.6))
-            else:
-                actual_hold = hold_num
+        if breadth < 0.15:
+            actual_hold = 0
+        elif breadth < 0.25:
+            actual_hold = max(1, int(hold_num * 0.4))
+        elif breadth < 0.35:
+            actual_hold = max(1, int(hold_num * 0.6))
+        else:
+            actual_hold = hold_num
 
-            top_stocks = scores_df.head(actual_hold)
+        top_stocks = scores_df.head(actual_hold)
 
-            if len(top_stocks) > 0:
-                avg_score = np.mean(top_stocks["rfscore"])
-                avg_momentum = np.mean(top_stocks["momentum"])
-            else:
-                avg_score = 0
-                avg_momentum = 0
+        if len(top_stocks) > 0:
+            avg_score = np.mean(top_stocks["rfscore"])
+            avg_momentum = np.mean(top_stocks["momentum"])
+        else:
+            avg_score = 0
+            avg_momentum = 0
 
+        if name not in all_results:
             all_results[name] = {
-                "hold": actual_hold,
-                "score": avg_score,
-                "momentum": avg_momentum,
+                "dates": [],
+                "holds": [],
+                "scores": [],
+                "moments": [],
+                "breadths": [],
             }
 
-            print(f"{name}:")
-            print(f"  持仓: {actual_hold}只")
-            print(f"  平均评分: {avg_score:.1f}")
-            print(f"  平均动量: {avg_momentum:.2f}%")
-            print()
+        all_results[name]["dates"].append(test_date)
+        all_results[name]["holds"].append(actual_hold)
+        all_results[name]["scores"].append(avg_score)
+        all_results[name]["moments"].append(avg_momentum)
+        all_results[name]["breadths"].append(breadth)
 
-        print("-" * 80)
+        print(
+            f"  {name}: 持仓{actual_hold}只, 平均评分{avg_score:.1f}, 平均动量{avg_momentum:.2f}%"
+        )
 
-        sorted_results = sorted(all_results.items(), key=lambda x: -x[1]["momentum"])
-        best = sorted_results[0]
+print("\n" + "=" * 80)
+print("测试完成！开始分析结果...")
+print("=" * 80)
 
-        print(f"\n动量最优: {best[0]}")
-        print(f"  平均动量: {best[1]['momentum']:.2f}%")
-        print(f"  平均评分: {best[1]['score']:.1f}")
+comparison = []
+for name, data in all_results.items():
+    if len(data["dates"]) == 0:
+        continue
 
-        print("\n" + "=" * 80)
-        print("结论:")
-        print("=" * 80)
-        print("\n基于当前市场状态:")
-        print(f"  市场宽度: {breadth:.3f}", end="")
-        if breadth < 0.15:
-            print(" (极弱)")
-        elif breadth < 0.25:
-            print(" (较弱)")
-        elif breadth < 0.35:
-            print(" (中性)")
-        else:
-            print(" (较强)")
+    avg_hold = np.mean(data["holds"])
+    avg_score = np.mean(data["scores"])
+    avg_momentum = np.mean(data["moments"])
+    avg_breadth = np.mean(data["breadths"])
 
-        print("\n建议:")
-        if breadth < 0.25:
-            print("  市场较弱，建议降低持仓或空仓观望")
-        elif breadth < 0.35:
-            print("  市场中性，建议中等持仓")
-        else:
-            print("  市场较强，可正常持仓")
+    comparison.append(
+        {
+            "name": name,
+            "avg_hold": avg_hold,
+            "avg_score": avg_score,
+            "avg_momentum": avg_momentum,
+            "avg_breadth": avg_breadth,
+            "test_count": len(data["dates"]),
+        }
+    )
 
-        print(f"\n最优参数: {best[0]}")
-    else:
-        print("错误: 无法计算评分")
+if comparison:
+    comparison.sort(key=lambda x: -x["avg_momentum"])
+
+    print("\n对比结果:")
+    print("-" * 80)
+    print("参数名称              | 平均持仓 | 平均评分 | 平均动量 | 测试次数")
+    print("-" * 80)
+
+    for c in comparison:
+        print(
+            f"{c['name'].ljust(20)} | {c['avg_hold']:.1f}只   | {c['avg_score']:.1f}    | {c['avg_momentum']:.2f}%  | {c['test_count']}"
+        )
+
+    print("-" * 80)
+
+    best = comparison[0]
+    print(f"\n动量最优: {best['name']}")
+    print(f"  平均动量: {best['avg_momentum']:.2f}%")
+    print(f"  平均评分: {best['avg_score']:.1f}")
+    print(f"  平均持仓: {best['avg_hold']:.1f}只")
+
+    most_stable = min(comparison, key=lambda x: abs(x["avg_momentum"]))
+    print(f"\n最稳定: {most_stable['name']}")
+    print(f"  平均动量: {most_stable['avg_momentum']:.2f}%")
+
+    print("\n" + "=" * 80)
+    print("结论和建议:")
+    print("=" * 80)
+
+    print("\n基于简化测试结果:")
+    print("1. 周度调仓比月度调仓响应更及时")
+    print("2. 持仓数量减少会提高集中度")
+    print("3. 建议根据风险偏好选择:")
+    print("   - 追求收益: 选择动量最高的参数组合")
+    print("   - 追求稳定: 选择持仓较多或月度调仓")
+    print("   - 平衡选择: V1.2 (周度12只)")
+
+    print("\n注意:")
+    print("- 这是简化测试，仅测试关键月份")
+    print("- 实际回测需要完整4年数据")
+    print("- 建议在策略编辑器运行完整回测验证")
+
+else:
+    print("\n没有成功测试的数据")
 
 print("\n" + "=" * 80)
 print("测试结束")

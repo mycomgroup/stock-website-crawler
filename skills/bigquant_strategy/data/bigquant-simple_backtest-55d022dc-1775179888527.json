@@ -1,0 +1,35 @@
+{
+  "taskId": "55d022dc-f41e-43a9-b61e-6dbbd3f93867",
+  "runId": "951a8cad-1d40-4b4a-95ce-477466127c84",
+  "config": {
+    "startDate": "2023-01-01",
+    "endDate": "2023-06-30",
+    "capital": "100000",
+    "benchmark": "000300.XSHG",
+    "frequency": "day"
+  },
+  "report": {
+    "config": {
+      "startDate": "2023-01-01",
+      "endDate": "2023-06-30",
+      "capital": "100000",
+      "benchmark": "000300.XSHG",
+      "frequency": "day"
+    },
+    "stdout": "",
+    "errors": "",
+    "metrics": {},
+    "timestamp": "2026-04-03T01:31:28.526Z"
+  },
+  "logs": [
+    "2026-04-03 09:31:19 任务运行开始调度 state=trigger event= 55d022dc-f41e-43a9-b61e-6dbbd3f93867 ..",
+    "2026-04-03 09:31:22 任务运行状态更新 state=scheduled event=20260402 55d022dc-f41e-43a9-b61e-6dbbd3f93867",
+    "2026-04-03 09:31:24 任务运行状态更新 state=running event=20260402 55d022dc-f41e-43a9-b61e-6dbbd3f93867",
+    "2026-04-03 09:31:24 [info     ] run task_id='55d022dc-f41e-43a9-b61e-6dbbd3f93867' ..",
+    "2026-04-03 09:31:24 [info     ] fetch task 55d022dc-f41e-43a9-b61e-6dbbd3f93867 ..",
+    "2026-04-03 09:31:24 [info     ] start 55d022dc-f41e-43a9-b61e-6dbbd3f93867 ..",
+    "2026-04-03 09:31:26 [info     ] done.",
+    "2026-04-03 09:31:26 任务运行状态更新 state=completed event=20260402 55d022dc-f41e-43a9-b61e-6dbbd3f93867"
+  ],
+  "outputs": []
+}

@@ -1,0 +1,886 @@
+{
+  "all": [
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/?folder=/home/aiuser/work",
+      "time": "2026-04-03T01:18:25.359Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/landing?studio_id=e6277718-0f37-11ed-93bb-da75731aa77c",
+      "time": "2026-04-03T01:18:27.517Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+      "postData": "{\"keys\":[\"web\",\"common\"]}",
+      "time": "2026-04-03T01:18:28.771Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+      "time": "2026-04-03T01:18:28.834Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/auth/v1/useraction",
+      "time": "2026-04-03T01:18:28.834Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+      "time": "2026-04-03T01:18:28.834Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/kbb2/v1/refactor/orders?constraints=%7B%22product_id__in%22%3A%5B%2279137090-4ea5-4772-b4a8-ad05599f9040%22%2C%22076dd251-ea40-4773-a55b-95b7e1630674%22%2C%22bc562ecd-b37a-49f4-b9ef-16f33bf59706%22%5D%2C%22status%22%3A%22paid%22%7D",
+      "time": "2026-04-03T01:18:28.868Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/auth/v1/users/setting",
+      "time": "2026-04-03T01:18:28.868Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/kbb2/v1/refactor/orders?constraints=%7B%22product_id__in%22%3A%5B%2279137090-4ea5-4772-b4a8-ad05599f9040%22%2C%22076dd251-ea40-4773-a55b-95b7e1630674%22%2C%22bc562ecd-b37a-49f4-b9ef-16f33bf59706%22%5D%2C%22status%22%3A%22paid%22%7D",
+      "time": "2026-04-03T01:18:28.962Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/auth/v1/users/setting",
+      "time": "2026-04-03T01:18:28.962Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/manifest.webmanifest",
+      "time": "2026-04-03T01:18:29.096Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+      "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\"]}",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/kbb2/v1/balance",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/bigactivity/v1/daily/aistudio/sign_in/week",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/bigactivity/v1/activity",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/aistudio/v1/studios/e6277718-0f37-11ed-93bb-da75731aa77c",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/aistudio/v1/userresourcespecs",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/aistudio/v1/resourcespecs",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/wiki/api/private.membership.user",
+      "postData": "{}",
+      "time": "2026-04-03T01:18:29.161Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/aistudio/v1/studios/e6277718-0f37-11ed-93bb-da75731aa77c/instances",
+      "postData": "{\"aistudio_version\":300}",
+      "time": "2026-04-03T01:18:29.834Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.BQhdFMY1.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.Dq_IR9rO.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.Di6jR-x-.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.CL6g_b3V.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.CTYiF6lA.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.Cx986IdX.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.DxDJ3AOS.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.NWA7e6Wa.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.B22Nviop.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.CZnvNsCZ.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.t53AETM-.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.D1sUS0GD.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.C3H0VqGB.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.DDBCnlJ7.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.D3wIWfF6.woff2",
+      "time": "2026-04-03T01:18:30.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.mCD8mA8B.woff2",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.Dy4dx90m.woff2",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.Dl5lxZxV.woff2",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.CO6r4hn1.woff2",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/AlimamaShuHeiTi-Bold.B58jJXpv.otf",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/AlimamaDongFangDaKai-Regular.ybWDgO5X.otf",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/Poppins.Bnr16EOz.otf",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/AlimamaFangYuanTiVF-Thin.BbHzK-Pj.woff2",
+      "time": "2026-04-03T01:18:30.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+      "time": "2026-04-03T01:18:30.720Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/kbb2/v1/balance",
+      "time": "2026-04-03T01:18:30.720Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+      "time": "2026-04-03T01:18:31.255Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+      "time": "2026-04-03T01:18:31.877Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+      "time": "2026-04-03T01:18:32.409Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+      "time": "2026-04-03T01:18:32.943Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+      "time": "2026-04-03T01:18:33.474Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/healthz",
+      "time": "2026-04-03T01:18:34.506Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/aistudio/v1/studios/e6277718-0f37-11ed-93bb-da75731aa77c",
+      "time": "2026-04-03T01:18:34.542Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_AMS-Regular.BQhdFMY1.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Bold.Dq_IR9rO.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Caligraphic-Regular.Di6jR-x-.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Bold.CL6g_b3V.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Fraktur-Regular.CTYiF6lA.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Bold.Cx986IdX.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-BoldItalic.DxDJ3AOS.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Italic.NWA7e6Wa.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Main-Regular.B22Nviop.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Math-BoldItalic.CZnvNsCZ.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Math-Italic.t53AETM-.woff2",
+      "time": "2026-04-03T01:18:35.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Bold.D1sUS0GD.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Italic.C3H0VqGB.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_SansSerif-Regular.DDBCnlJ7.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Script-Regular.D3wIWfF6.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Size1-Regular.mCD8mA8B.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Size2-Regular.Dy4dx90m.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Size4-Regular.Dl5lxZxV.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/KaTeX_Typewriter-Regular.CO6r4hn1.woff2",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/AlimamaShuHeiTi-Bold.B58jJXpv.otf",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/AlimamaDongFangDaKai-Regular.ybWDgO5X.otf",
+      "time": "2026-04-03T01:18:35.582Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/Poppins.Bnr16EOz.otf",
+      "time": "2026-04-03T01:18:35.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/assets/AlimamaFangYuanTiVF-Thin.BbHzK-Pj.woff2",
+      "time": "2026-04-03T01:18:35.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/",
+      "time": "2026-04-03T01:18:36.133Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/?folder=/home/aiuser/work",
+      "time": "2026-04-03T01:18:36.333Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://www.google.com/g/collect?v=2&tid=G-B58V018K6L&gtm=45je6411v879772846za200zd879772846&_p=1775179109202&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=519780893.1775021156&ul=zh-cn&sr=1440x900&uaa=x86&uab=64&uafvl=Chromium%3B145.0.7632.6%7CNot%253AA-Brand%3B99.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAEQ&tag_exp=0%7E115616986%7E115938466%7E115938468%7E116991817%7E117266400&sid=1775179109&sct=2&seg=1&dl=https%3A%2F%2Fbigquant.com%2Faistudio%2Flanding%3Fstudio_id%3De6277718-0f37-11ed-93bb-da75731aa77c&dr=https%3A%2F%2Fbigquant.com%2Faistudio%2Fstudios%2Fe6277718-0f37-11ed-93bb-da75731aa77c%2F%3Ffolder%3D%2Fhome%2Faiuser%2Fwork&dt=aistudio%E5%8A%A0%E8%BD%BD%E9%A1%B5+-+BigQuant%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&_s=4&tfd=8915&gaf=1",
+      "postData": "en=studio_startup_time&_ee=1&ep.time=4.2&_et=5980\r\nen=user_engagement&_et=1177",
+      "time": "2026-04-03T01:18:36.401Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fclp%2F227232ff8d50d301abd3285d937f6aa6.zh-cn%2Ffb2afbd9d62532be3952118adafff3972c63f3bc%2Fvs!workbench!workbench.web.main.nls.json",
+      "time": "2026-04-03T01:18:37.259Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/settings/v1/user_records/reads",
+      "postData": "[\"visit_aistudio\",\"click_aistudio_editor_runall\",\"submit_paper_trading\",\"alpha_guide\"]",
+      "time": "2026-04-03T01:18:37.262Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+      "postData": "{\"keys\":[\"aistudio\",\"common\"]}",
+      "time": "2026-04-03T01:18:37.404Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/bigweb/v1/sitesettings",
+      "postData": "{\"keys\":[\"aistudio\"]}",
+      "time": "2026-04-03T01:18:37.406Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/module/v1/modules",
+      "time": "2026-04-03T01:18:37.421Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/aistudio/v1/modules/configuration/auto",
+      "time": "2026-04-03T01:18:37.421Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/settings/v1/user_records",
+      "postData": "{\"key\":\"visit_aistudio\",\"value\":\"53\"}",
+      "time": "2026-04-03T01:18:37.427Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/cdnuploads/aistudio/v1.88.37/out/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html?&vscodeWebWorkerExtHostId=8dd68e07-3a7b-41e3-84c5-ebcddf27ee10&parentOrigin=https://bigquant.com",
+      "time": "2026-04-03T01:18:38.025Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=e016370e-6c32-40ae-a80c-c3fafe3c1c8d&origin=e016370e-6c32-40ae-a80c-c3fafe3c1c8d&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+      "time": "2026-04-03T01:18:38.287Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/kbb2/v1/balance",
+      "time": "2026-04-03T01:18:38.287Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/auth/v1/spaceusers/@hasprivileges",
+      "postData": "{\"space_id\":\"00000000-0000-0000-0000-000000000000\",\"privileges\":[\"/extra/bigpro/equity/*\",\"/extra/bigprov2/equity/*\"]}",
+      "time": "2026-04-03T01:18:38.288Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/bigactivity/v1/daily/aistudio/sign_in/week",
+      "time": "2026-04-03T01:18:38.288Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/bigactivity/v1/activity",
+      "time": "2026-04-03T01:18:38.288Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/aistudio/v1/studios/@default",
+      "time": "2026-04-03T01:18:38.288Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/bigapis/auth/v1/users/me",
+      "time": "2026-04-03T01:18:38.288Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=5217dff1-48ac-4d11-9889-895b20ad3933&origin=5217dff1-48ac-4d11-9889-895b20ad3933&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+      "time": "2026-04-03T01:18:38.368Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=5217dff1-48ac-4d11-9889-895b20ad3933",
+      "time": "2026-04-03T01:18:38.671Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2FBigQuant.bigquant-color-theme%2Fthemes%2Fbigquant-light-color-theme.json&tkn=",
+      "time": "2026-04-03T01:18:39.442Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fvscode-icons-team.vscode-icons-12.7.0%2Fdist%2Fsrc%2Fvsicons-icon-theme.json&tkn=",
+      "time": "2026-04-03T01:18:39.442Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2FBigQuant.aistudio-extension-bigquant%2Fresource%2Fimg%2Fintouch.png&tkn=",
+      "time": "2026-04-03T01:18:39.442Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2FBigQuant.aiflow-aistudio-extension%2Fresource%2Fimg%2Ftask.png&tkn=",
+      "time": "2026-04-03T01:18:39.442Z",
+      "response": {
+        "status": 200,
+        "body": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u00002\u0000\u0000\u0000,\b\u0006\u0000\u0000\u0001P���\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000DeXIfMM\u0000*\u0000\u0000\u0000\b\u0000\u0001�i\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0003�\u0001\u0000\u0003\u0000\u0000\u0000\u0001\u0000\u0001\u0000\u0000�\u0002\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u00002�\u0003\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000,\u0000\u0000\u0000\u0000�\u001b�H\u0000\u0000\u0005aIDATh\u0005�=l\\E\u0010��Ώ\u0002YPR\u0011��@8\u000e\u0014\ti\u0010\rH\tЀ�\bE��?�$�&ЀL\u0017)�?�\u0014$F�\bB\u0003r$(I\u0003�\u0013G�L\u0005X�\n\ta�\u0002����|�ٷo���r\\qb�癝�����쾏s����ن׭��N�Z=��3ʝ��\u000b�J_!>Y\\\\|pss���qgrnnn��h��lll����BNNNVEQ�\u0011uM���f�\u0001��C\u00162333+�\u0012Y��󇤘��?AT�CP%t�\u0003H`�����(�H�\u0018�ti2\u0000|\u000b��\"�/�\u0004V�f��;�\u0016?\u0019�d �\u0019��x�4<\u0003�.,,\fnmm�\u0014OZo��{'\u0003onQ̲\u0006[K��)��ԧJ|��<\u0013}/�\b+)���lMJ���#7 \f�J��jd$ݎ��i\u000bV2���Eٶo�X˵Q)��WD�]m�O���\u001cR�4v�d�\u0012�\n�\u0018-����}mD�#��n�7�Looo�һ��s����e�D�TYү� o�S\u0012�۰~����\"�g0�w�Ft��\u0010�8\u0011\u0003��t-�����h\u0003�(�i�N�5aq?��l\n\tf\t#�0P�SQpxM����\u0007��\u0019�T*\"�Z��+��u��\u000e�\u0016���Fe<u`{��w�t��m@�Z������W�N�\u0013ﵴo�$\u0017.a\u0011�1��E\n�ɲDy\u0015�\u00132�Wׁ���2]&%&\f)����<I��###��<�Z��\u0003\u0019b�\u001a\u001a��s\u000b\u001e\u0003I���whtt��Ô�<FK�$6�\u0015Y限\u001a=`=k��*\u0010�\u0018-�\u0001�Ȱ.�(\u001d\u000f]6C\u001d�:}��k��SW֤w��\u001d�N�\u000b����q;xA����R1?\u001b*B���a0���\u0018��[�F�\tg�5W�N��\u0013Ȇ��������]�I��T�}�\u001b�\u0014w�Er�\u001bo-g�����:Ϣ\u001f�:\u0002�\"c��.������\u0019wJ�����e��r�;&0�o\u0000\u0007W0��oP��U?f\u000b�VZ]>�\t�ܻq���_�b\u0019\u000e\u001b�_&\u0013oJ޴�teM��$MC�K��{\n!e6}�>�Yr}p'��\u001e�����.�j��8���K�\f'�oX��[\u0019S�M�U�lQ~��Ⴭ�"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2FBigQuant.dai-chat%2Fassets%2Ficon.svg&tkn=",
+      "time": "2026-04-03T01:18:39.446Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2FBigQuant.fai-aistudio-extension%2Fresource%2Fimg%2Ffai.png&tkn=",
+      "time": "2026-04-03T01:18:39.446Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fvscode-icons-team.vscode-icons-12.7.0%2Ficons%2Fdefault_folder.svg&tkn=",
+      "time": "2026-04-03T01:18:39.516Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fvscode-icons-team.vscode-icons-12.7.0%2Ficons%2Ffile_type_jupyter.svg&tkn=",
+      "time": "2026-04-03T01:18:39.516Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fjson%2Flanguage-configuration.json&tkn=",
+      "time": "2026-04-03T01:18:41.002Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fjson%2Fsyntaxes%2FJSONC.tmLanguage.json&tkn=",
+      "time": "2026-04-03T01:18:41.058Z"
+    },
+    {
+      "method": "GET",
+      "url": "blob:https://bigquant.com/31178064-9778-48ed-b9e0-cccd02c03756",
+      "time": "2026-04-03T01:18:41.417Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=ac19425b-f463-4fde-a8b6-3840717078fe&origin=0601b327-9460-467b-a20c-0e2b3407f095&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com&purpose=notebookRenderer",
+      "time": "2026-04-03T01:19:20.000Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=ac19425b-f463-4fde-a8b6-3840717078fe",
+      "time": "2026-04-03T01:19:20.111Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistatic/aistudio/html/dev/t.html",
+      "time": "2026-04-03T01:19:20.191Z"
+    },
+    {
+      "method": "GET",
+      "url": "blob:https://bigquant.com/1564a4ba-1df2-4594-a94c-bb7f7e57489e",
+      "time": "2026-04-03T01:19:20.192Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fpython%2Flanguage-configuration.json&tkn=",
+      "time": "2026-04-03T01:19:20.205Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fpython%2Fsyntaxes%2FMagicPython.tmLanguage.json&tkn=",
+      "time": "2026-04-03T01:19:20.206Z"
+    },
+    {
+      "method": "GET",
+      "url": "blob:https://bigquant.com/2978dd66-35e8-414f-b8c1-42112d6c42dc",
+      "time": "2026-04-03T01:19:20.349Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fbat%2Fsnippets%2Fbatchfile.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcoffeescript%2Fsnippets%2Fcoffeescript.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcpp%2Fsnippets%2Fc.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcpp%2Fsnippets%2Fcpp.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fcsharp%2Fsnippets%2Fcsharp.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Ffsharp%2Fsnippets%2Ffsharp.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fgroovy%2Fsnippets%2Fgroovy.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fhtml%2Fsnippets%2Fhtml.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fjava%2Fsnippets%2Fjava.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fjavascript%2Fsnippets%2Fjavascript.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fmarkdown-basics%2Fsnippets%2Fmarkdown.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fphp%2Fsnippets%2Fphp.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fswift%2Fsnippets%2Fswift.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Ftypescript-basics%2Fsnippets%2Ftypescript.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2Fvb%2Fsnippets%2Fvb.code-snippets&tkn=",
+      "time": "2026-04-03T01:19:20.379Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/mint-key",
+      "time": "2026-04-03T01:19:21.343Z",
+      "response": {
+        "status": 200,
+        "body": "��h8/\u0006\r��\\�\u0003@OK��~�\n��@l�42W�э�"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/s6/3rd/datatables/plug-ins/2.0.3/i18n/zh.json",
+      "time": "2026-04-03T01:19:21.837Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/s6/3rd/datatables/plug-ins/2.0.3/i18n/zh.json",
+      "time": "2026-04-03T01:19:21.841Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/s6/3rd/datatables/plug-ins/2.0.3/i18n/zh.json",
+      "time": "2026-04-03T01:19:21.880Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/settings/v1/user_records",
+      "postData": "{\"key\":\"click_aistudio_editor_runall\",\"value\":\"3\"}",
+      "time": "2026-04-03T01:19:22.347Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/bigactivity/v1/event",
+      "postData": "{\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"event_type\":\"run_strategy\"}",
+      "time": "2026-04-03T01:19:22.347Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/data/historydatafields.json?version=undefined",
+      "time": "2026-04-03T01:19:22.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/data/featurefields.json?version=undefined",
+      "time": "2026-04-03T01:19:22.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/data/bigexpr.json?version=undefined",
+      "time": "2026-04-03T01:19:22.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/data/stocks.json?version=undefined",
+      "time": "2026-04-03T01:19:22.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/data/datatypes.json?version=undefined",
+      "time": "2026-04-03T01:19:22.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistatic/aistudio/html/mlstudio/data/datasources.json?version=undefined",
+      "time": "2026-04-03T01:19:22.583Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fms-toolsai.jupyter-2024.2.0-linux-x64%2Fresources%2Flight%2Frestart-kernel.svg&tkn=",
+      "time": "2026-04-03T01:19:22.654Z",
+      "response": {
+        "status": 200,
+        "body": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path style=\"fill: #424242 !important; fill-rule: evenodd !important; clip-rule: evenodd !important\" d=\"M12.75 8C12.75 10.4853 10.7353 12.5 8.24999 12.5C6.41795 12.5 4.84162 11.4052 4.13953 9.83416L2.74882 10.399C3.67446 12.5186 5.78923 14 8.24999 14C11.5637 14 14.25 11.3137 14.25 8C14.25 4.68629 11.5637 2 8.24999 2C6.3169 2 4.59732 2.91418 3.5 4.3338V2.5H2V6.5L2.75 7.25H6.25V5.75H4.35201C5.13008 4.40495 6.58436 3.5 8.24999 3.5C10.7353 3.5 12.75 5.51472 12.75 8Z\"/>\n</svg>\n"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=6a1e5530-514f-4512-93e8-557e328f0c68&origin=2c411375-4e14-4f37-bac8-c2c1e9ddc361&swVersion=4&extensionId=BigQuant.aiflow-aistudio-extension&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+      "time": "2026-04-03T01:19:23.419Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=6a1e5530-514f-4512-93e8-557e328f0c68",
+      "time": "2026-04-03T01:19:23.566Z"
+    },
+    {
+      "method": "GET",
+      "url": "blob:https://bigquant.com/c32eac84-c155-4b2e-bd4b-d1586995bb71",
+      "time": "2026-04-03T01:19:24.612Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/node_modules/@vscode/vscode-languagedetection/model/model.json",
+      "time": "2026-04-03T01:19:24.716Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/cdnuploads/aistudio/v1.88.37/node_modules/@vscode/vscode-languagedetection/model/group1-shard1of1.bin",
+      "time": "2026-04-03T01:19:24.737Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=9476d21a-e900-4a27-9dd1-25480bc35fd2&origin=5380ac9b-40f3-4ed1-bb5c-d168d9a1ae20&swVersion=4&extensionId=BigQuant.aiflow-aistudio-extension&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+      "time": "2026-04-03T01:19:32.688Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=b4d0eef2-5679-4bc8-acbb-a66f36a21711&origin=f08b1458-8556-4e1c-b614-7e3ee5ccd304&swVersion=4&extensionId=BigQuant.aiflow-aistudio-extension&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com&purpose=webviewView",
+      "time": "2026-04-03T01:19:32.757Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/settings/v1/user_records",
+      "postData": "{\"key\":\"submit_paper_trading\",\"value\":\"1\"}",
+      "time": "2026-04-03T01:19:32.759Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=9476d21a-e900-4a27-9dd1-25480bc35fd2",
+      "time": "2026-04-03T01:19:32.800Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/bigapis/bigactivity/v1/event",
+      "postData": "{\"user_id\":\"e6277718-0f37-11ed-93bb-da75731aa77c\",\"event_type\":\"submit_demo_trade\"}",
+      "time": "2026-04-03T01:19:32.812Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/fake.html?id=b4d0eef2-5679-4bc8-acbb-a66f36a21711",
+      "time": "2026-04-03T01:19:32.891Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/s6/3rd/datatables/plug-ins/2.0.3/i18n/zh.json",
+      "time": "2026-04-03T01:19:36.646Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/s6/3rd/datatables/plug-ins/2.0.3/i18n/zh.json",
+      "time": "2026-04-03T01:19:36.685Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.bigquant.com/s6/3rd/datatables/plug-ins/2.0.3/i18n/zh.json",
+      "time": "2026-04-03T01:19:36.689Z"
+    }
+  ],
+  "interesting": [
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fusr%2Flib%2Faistudio%2Flib%2Fvscode%2Fextensions%2FBigQuant.aiflow-aistudio-extension%2Fresource%2Fimg%2Ftask.png&tkn=",
+      "time": "2026-04-03T01:18:39.442Z",
+      "response": {
+        "status": 200,
+        "body": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u00002\u0000\u0000\u0000,\b\u0006\u0000\u0000\u0001P���\u0000\u0000\u0000\u0001sRGB\u0000��\u001c�\u0000\u0000\u0000DeXIfMM\u0000*\u0000\u0000\u0000\b\u0000\u0001�i\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0003�\u0001\u0000\u0003\u0000\u0000\u0000\u0001\u0000\u0001\u0000\u0000�\u0002\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u00002�\u0003\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000,\u0000\u0000\u0000\u0000�\u001b�H\u0000\u0000\u0005aIDATh\u0005�=l\\E\u0010��Ώ\u0002YPR\u0011��@8\u000e\u0014\ti\u0010\rH\tЀ�\bE��?�$�&ЀL\u0017)�?�\u0014$F�\bB\u0003r$(I\u0003�\u0013G�L\u0005X�\n\ta�\u0002����|�ٷo���r\\qb�癝�����쾏s����ن׭��N�Z=��3ʝ��\u000b�J_!>Y\\\\|pss���qgrnnn��h��lll����BNNNVEQ�\u0011uM���f�\u0001��C\u00162333+�\u0012Y��󇤘��?AT�CP%t�\u0003H`�����(�H�\u0018�ti2\u0000|\u000b��\"�/�\u0004V�f��;�\u0016?\u0019�d �\u0019��x�4<\u0003�.,,\fnmm�\u0014OZo��{'\u0003onQ̲\u0006[K��)��ԧJ|��<\u0013}/�\b+)���lMJ���#7 \f�J��jd$ݎ��i\u000bV2���Eٶo�X˵Q)��WD�]m�O���\u001cR�4v�d�\u0012�\n�\u0018-����}mD�#��n�7�Looo�һ��s����e�D�TYү� o�S\u0012�۰~����\"�g0�w�Ft��\u0010�8\u0011\u0003��t-�����h\u0003�(�i�N�5aq?��l\n\tf\t#�0P�SQpxM����\u0007��\u0019�T*\"�Z��+��u��\u000e�\u0016���Fe<u`{��w�t��m@�Z������W�N�\u0013ﵴo�$\u0017.a\u0011�1��E\n�ɲDy\u0015�\u00132�Wׁ���2]&%&\f)����<I��###��<�Z��\u0003\u0019b�\u001a\u001a��s\u000b\u001e\u0003I���whtt��Ô�<FK�$6�\u0015Y限\u001a=`=k��*\u0010�\u0018-�\u0001�Ȱ.�(\u001d\u000f]6C\u001d�:}��k��SW֤w��\u001d�N�\u000b����q;xA����R1?\u001b*B���a0���\u0018��[�F�\tg�5W�N��\u0013Ȇ��������]�I��T�}�\u001b�\u0014w�Er�\u001bo-g�����:Ϣ\u001f�:\u0002�\"c��.������\u0019wJ�����e��r�;&0�o\u0000\u0007W0��oP��U?f\u000b�VZ]>�\t�ܻq���_�b\u0019\u000e\u001b�_&\u0013oJ޴�teM��$MC�K��{\n!e6}�>�Yr}p'��\u001e�����.�j��8���K�\f'�oX��[\u0019S�M�U�lQ~��Ⴭ�"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=ac19425b-f463-4fde-a8b6-3840717078fe&origin=0601b327-9460-467b-a20c-0e2b3407f095&swVersion=4&extensionId=&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com&purpose=notebookRenderer",
+      "time": "2026-04-03T01:19:20.000Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    },
+    {
+      "method": "POST",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/mint-key",
+      "time": "2026-04-03T01:19:21.343Z",
+      "response": {
+        "status": 200,
+        "body": "��h8/\u0006\r��\\�\u0003@OK��~�\n��@l�42W�э�"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/vscode-remote-resource?path=%2Fhome%2Faiuser%2F.local%2Fshare%2Faistudio%2Fextensions%2Fms-toolsai.jupyter-2024.2.0-linux-x64%2Fresources%2Flight%2Frestart-kernel.svg&tkn=",
+      "time": "2026-04-03T01:19:22.654Z",
+      "response": {
+        "status": 200,
+        "body": "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path style=\"fill: #424242 !important; fill-rule: evenodd !important; clip-rule: evenodd !important\" d=\"M12.75 8C12.75 10.4853 10.7353 12.5 8.24999 12.5C6.41795 12.5 4.84162 11.4052 4.13953 9.83416L2.74882 10.399C3.67446 12.5186 5.78923 14 8.24999 14C11.5637 14 14.25 11.3137 14.25 8C14.25 4.68629 11.5637 2 8.24999 2C6.3169 2 4.59732 2.91418 3.5 4.3338V2.5H2V6.5L2.75 7.25H6.25V5.75H4.35201C5.13008 4.40495 6.58436 3.5 8.24999 3.5C10.7353 3.5 12.75 5.51472 12.75 8Z\"/>\n</svg>\n"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=6a1e5530-514f-4512-93e8-557e328f0c68&origin=2c411375-4e14-4f37-bac8-c2c1e9ddc361&swVersion=4&extensionId=BigQuant.aiflow-aistudio-extension&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+      "time": "2026-04-03T01:19:23.419Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=9476d21a-e900-4a27-9dd1-25480bc35fd2&origin=5380ac9b-40f3-4ed1-bb5c-d168d9a1ae20&swVersion=4&extensionId=BigQuant.aiflow-aistudio-extension&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com",
+      "time": "2026-04-03T01:19:32.688Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://bigquant.com/aistudio/studios/e6277718-0f37-11ed-93bb-da75731aa77c/stable-fb2afbd9d62532be3952118adafff3972c63f3bc/static/out/vs/workbench/contrib/webview/browser/pre/index.html?id=b4d0eef2-5679-4bc8-acbb-a66f36a21711&origin=f08b1458-8556-4e1c-b614-7e3ee5ccd304&swVersion=4&extensionId=BigQuant.aiflow-aistudio-extension&platform=browser&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=https%3A%2F%2Fbigquant.com&remoteAuthority=bigquant.com&purpose=webviewView",
+      "time": "2026-04-03T01:19:32.757Z",
+      "response": {
+        "status": 200,
+        "body": "<!DOCTYPE html>\n<html lang=\"en\" style=\"width: 100%; height: 100%;\">\n\n<head>\n\t<meta charset=\"UTF-8\">\n\n\t<meta http-equiv=\"Content-Security-Policy\"\n\t\tcontent=\"default-src 'none'; script-src 'sha256-R3BsSkqy7qFbvWSmwr7WqT1eg6Sq4zSe0uIlrUQ4EKE=' 'self'; frame-src 'self'; style-src 'unsafe-inline';\">\n\n\t<!-- Disable pinch zooming -->\n\t<meta name=\"viewport\"\n\t\tcontent=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no\">\n</head>\n\n<body style=\"margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;\" role=\"document\">\n\t<script async type=\"module\">\n\t\t// @ts-check\n\t\t/// <reference lib=\"dom\" />\n\n\t\tconst isSafari = (\n\t\t\tnavigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('CriOS') === -1 &&\n\t\t\tnavigator.userAgent.indexOf('FxiOS') === -1\n\t\t);\n\n\t\tconst isFirefox = (\n\t\t\tnavigator.userAgent &&\n\t\t\tnavigator.userAgent.indexOf('Firefox') >= 0\n\t\t);\n\n\t\tconst searchParams = n"
+      }
+    }
+  ]
+}

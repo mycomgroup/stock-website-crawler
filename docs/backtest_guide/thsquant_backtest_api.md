@@ -53,7 +53,7 @@ Response: {"errorcode":0,"result":{"user_id":"772028948",...}}
 | `POST /platform/algorithms/queryall2/` | `isajax=1` | 获取策略列表 |
 | `POST /platform/algorithms/queryinfo/` | `algoId={id}&isajax=1` | 获取策略详情（含代码）|
 | `POST /platform/algorithms/update/` | `algoId={id}&algo_name={name}&code={code}&isajax=1` | 更新策略代码 |
-| `POST /platform/algorithms/add/` | `algo_name={name}&code={code}&stock_market=STOCK&isajax=1` | 创建新策略 |
+| `POST /platform/algorithms/add/` | `algoName={name}&stock_market=STOCK&algoCode={code}&isajax=1` | 创建新策略 |
 | `POST /platform/algorithms/delete/` | `algo_id={id}&isajax=1` | 删除策略 |
 
 ### 回测运行

@@ -1,0 +1,32 @@
+{
+  "capturedAt": "2026-04-03T01:43:35.387Z",
+  "taskId": "39500d93-197c-4a8e-9f4c-3b10b358eefd",
+  "runId": "7f7b4cb0-3ba9-4349-9a55-3ced3d6c8e4d",
+  "taskName": "simple_backtest",
+  "startDate": "2023-01-01",
+  "endDate": "2023-03-31",
+  "capital": 100000,
+  "success": true,
+  "state": "completed",
+  "executions": [
+    {
+      "taskId": "39500d93-197c-4a8e-9f4c-3b10b358eefd",
+      "runId": "7f7b4cb0-3ba9-4349-9a55-3ced3d6c8e4d",
+      "source": "# BigQuant 简单回测示例\n\nimport numpy as np\nimport pandas as pd\n\n\ndef initialize(context):\n    set_benchmark(\"000300.XSHG\")\n    context.stock = \"000001.XSHE\"\n\n\ndef handle_data(context, data):\n    if context",
+      "status": "error",
+      "textOutput": "",
+      "outputs": [],
+      "logs": [
+        "2026-04-03 09:43:23 任务运行开始调度 state=trigger event= 39500d93-197c-4a8e-9f4c-3b10b358eefd ..",
+        "2026-04-03 09:43:24 任务运行状态更新 state=scheduled event=20260402 39500d93-197c-4a8e-9f4c-3b10b358eefd",
+        "2026-04-03 09:43:27 [error    ] httpx_request error taskruns 401",
+        "2026-04-03 09:43:30 任务运行状态更新 state=running event=20260402 39500d93-197c-4a8e-9f4c-3b10b358eefd",
+        "2026-04-03 09:43:30 [info     ] run task_id='39500d93-197c-4a8e-9f4c-3b10b358eefd' ..",
+        "2026-04-03 09:43:30 [info     ] fetch task 39500d93-197c-4a8e-9f4c-3b10b358eefd ..",
+        "2026-04-03 09:43:30 [info     ] start 39500d93-197c-4a8e-9f4c-3b10b358eefd ..",
+        "2026-04-03 09:43:32 [info     ] done.",
+        "2026-04-03 09:43:32 任务运行状态更新 state=completed event=20260402 39500d93-197c-4a8e-9f4c-3b10b358eefd"
+      ]
+    }
+  ]
+}

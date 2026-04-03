@@ -151,10 +151,11 @@ export class THSQuantClient {
   }
 
   async createStrategy(name, code = '', stockMarket = 'STOCK') {
+    // 真实参数格式（从 JS 源码逆向）：algoName + stock_market + algoCode
     const body = new URLSearchParams({
-      algo_name: name,
-      code,
+      algoName: name,
       stock_market: stockMarket,
+      algoCode: code,
       isajax: '1'
     }).toString();
     const data = await this.request('/platform/algorithms/add/', body);
