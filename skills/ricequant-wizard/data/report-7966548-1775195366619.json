@@ -1,0 +1,48 @@
+{
+  "backtestId": "7966548",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-04-03T13:46:29.953000",
+    "start_at": "2026-04-03T13:46:33.390000",
+    "progress": 1,
+    "backtest_id": "7966548",
+    "description": "",
+    "strategy_id": 2417419,
+    "title": "低估值高股息",
+    "account_type": "stock",
+    "end_at": "2026-04-03T13:47:07.390000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1743147000000,
+    "trading_date": 20250328,
+    "alpha": -0.029156,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.1941282100683965,
+    "annual_downside_risk": 0
+  },
+  "summary": {
+    "timestamp": 1743147000000,
+    "trading_date": 20250328,
+    "alpha": -0.029156,
+    "beta": 0,
+    "sharpe": null,
+    "sortino": null,
+    "information_ratio": null,
+    "annual_volatility": 0,
+    "max_drawdown": 0,
+    "annual_tracking_error": 0.1941282100683965,
+    "annual_downside_risk": 0
+  },
+  "logs": [],
+  "exception": null
+}

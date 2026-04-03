@@ -251,14 +251,23 @@ export class WizardClient {
   }
 
   async waitForBacktest(backtestId, options = {}) {
-    const maxAttempts = options.maxAttempts || 60;
-    const interval = options.interval || 3000;
+    const maxAttempts = options.maxAttempts || 80;
+    const interval = options.interval || 4000;
+    const finishedStatuses = new Set(['normal_exit', 'finished']);
     const terminalStatuses = new Set(['error_exit', 'cancelled', 'failed', 'stopped']);
     
     for (let i = 0; i < maxAttempts; i++) {
-      const result = await this.getBacktestResult(backtestId);
+      let result;
+      try {
+        result = await this.getBacktestResult(backtestId);
+      } catch (e) {
+        // 网络抖动（504/502 等），等待后重试
+        process.stdout.write(`[retry]`);
+        await new Promise(r => setTimeout(r, interval * 2));
+        continue;
+      }
       
-      if (result.status === 'finished' || result.progress === 100) {
+      if (finishedStatuses.has(result.status) || result.progress === 1 || result.progress === 100) {
         return { status: 'finished', result };
       }
       
@@ -266,6 +275,7 @@ export class WizardClient {
         return { status: 'error', result, exception: result.exception || result.status };
       }
       
+      process.stdout.write(`[${result.status || 'running'}:${Math.round((result.progress || 0) * 100)}%]`);
       await new Promise(r => setTimeout(r, interval));
     }
     

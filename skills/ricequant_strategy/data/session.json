@@ -5,14 +5,14 @@
       "value": "3596f940fbcd94bd2bec34c51be04477",
       "domain": "www.ricequant.com",
       "path": "/",
-      "expires": 1775195826.456581,
+      "expires": 1775198858.566479,
       "httpOnly": false,
       "secure": true,
       "sameSite": "None"
     },
     {
       "name": "sid",
-      "value": "ckfT8dXWhxKo3bVsvalhNpJZ2ZBRWdJ4|6b988aa96b84abf18fbba74e1f20161c39c8394d1bbcb21e5d233e328d708d33d11144adcc8cf4d5861730e20901e1a7923fd0eddab5833d676b334280fffa63",
+      "value": "0mZyPLU0SMg63kiWvCRG1DxJe0aiD0oi|6b87c0042b3203d733ae5fb8f35a975469f8f212fcacc03f93a5f10222e8906ea3809e5bcea53663b9ac56877773951952ff1e32473fea9ce633b1f23f2c5c43",
       "domain": "www.ricequant.com",
       "path": "/",
       "expires": -1,
@@ -32,7 +32,7 @@
     },
     {
       "name": "rqjwt",
-      "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NTE5MjIzNSwgImV4cCI6IDE3Nzc3ODQyMzV9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.-LQ18jZTx4aF6csVZf5XX5dbPfLpfENF99PnXxJ4449oiugpwKRyk8Ww8DmXH6UTNRlg-jTr3L1PzVcZl6Xn3g",
+      "value": "eyJhbGciOiAiSFM1MTIiLCAiaWF0IjogMTc3NTE5NTI2NywgImV4cCI6IDE3Nzc3ODcyNjd9.eyJpZCI6IDQ5NzM4MSwgInVzZXJuYW1lIjogInl1cGluZzMyMiIsICJlbWFpbCI6IG51bGwsICJmdWxsbmFtZSI6ICJ5dXBpbmczMjIiLCAicGljdHVyZSI6ICJodHRwczovL3FjZG4ucmljZXF1YW50LmNvbS9pbWcvYXZhdGFyL2RlZmF1bHQtYXZhdGFyLnBuZyJ9.UkFbVNeWf2kX4WRPSliiUp-O6nNQm1ta1JLljxMln1ds2tszTA7OURNlkPqx2rwBBba5_osDlNtIb_x_wlfOyg",
       "domain": "www.ricequant.com",
       "path": "/",
       "expires": -1,
@@ -42,5 +42,5 @@
     }
   ],
   "csrfToken": "",
-  "timestamp": 1775192240131
+  "timestamp": 1775195272441
 }

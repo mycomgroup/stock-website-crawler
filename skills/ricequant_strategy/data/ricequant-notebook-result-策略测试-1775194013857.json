@@ -1,0 +1,68 @@
+{
+  "capturedAt": "2026-04-03T05:26:53.857Z",
+  "notebookUrl": "https://www.ricequant.com/research/user/user_497381/notebooks/%E7%AD%96%E7%95%A5%E6%B5%8B%E8%AF%95_20260403_132646.ipynb",
+  "notebookPath": "策略测试_20260403_132646.ipynb",
+  "kernelId": "aa7e332f-d664-44eb-8f1e-a177c8872003",
+  "sessionId": "dcb6460a-4882-4459-8dc4-6215d7e780d1",
+  "appendedCellIndex": 0,
+  "managedCellIndex": 0,
+  "mode": "partial",
+  "targetCellIndices": [
+    0
+  ],
+  "notebookMetadata": {
+    "name": "策略测试_20260403_132646.ipynb",
+    "path": "策略测试_20260403_132646.ipynb",
+    "last_modified": "2026-04-03T05:26:52.709869Z",
+    "created": "2026-04-03T05:26:52.710869Z",
+    "content": null,
+    "format": null,
+    "mimetype": null,
+    "size": 6353,
+    "writable": true,
+    "type": "notebook"
+  },
+  "executions": [
+    {
+      "cellIndex": 0,
+      "source": "\"\"\"\nRiceQuant API 验证测试\n\"\"\"\n\nprint(\"=\" * 70)\nprint(\"RiceQuant API 验证测试\")\nprint(\"=\" * 70)\n\n# 1. 获取交易日\nprint(\"\\n1. 获取交易日\")\ndates = get_trading_dates(\"2024-01-01\", \"2024-01-31\")\nprint(f\"2024年1月交易日: {len(dates)}天\")\nprint(f\"首个交易日: {dates[0]}\")\nprint(f\"最后交易日: {dates[-1]}\")\n\n# 2. 获取股票列表\nprint(\"\\n2. 获取股票列表\")\nall_stocks = all_instruments(\"CS\")\nprint(f\"股票总数: {len(all_stocks)}\")\nprint(f\"列名: {all_stocks.columns.tolist()}\")\n\n# 3. 过滤股票\nstock_list = all_stocks[\"order_book_id\"].tolist()\nprint(f\"股票代码示例: {stock_list[:5]}\")\n\n# 排除科创板、北交所\nfiltered = [s for s in stock_list if not s.startswith((\"688\", \"4\", \"8\"))]\nprint(f\"过滤后股票数: {len(filtered)}\")\n\n# 4. 测试获取价格数据\nprint(\"\\n3. 测试获取价格数据\")\ntest_stock = filtered[0]\nprint(f\"测试股票: {test_stock}\")\n\nbars = history_bars(\n    test_stock, 5, \"1d\", \"close,open,high,low,limit_up\", end_date=dates[-1]\n)\nif bars is not None:\n    print(f\"获取到 {len(bars)} 条数据\")\n    print(f\"最新数据: close={bars[-1]['close']}, limit_up={bars[-1]['limit_up']}\")\n    print(f\"是否涨停: {bars[-1]['close'] >= bars[-1]['limit_up'] * 0.99}\")\nelse:\n    print(\"获取数据失败\")\n\n# 5. 统计涨停（扩大样本）\nprint(\"\\n4. 统计涨停股票（样本200只）\")\nzt_count = 0\nzt_stocks = []\nfor stock in filtered[:200]:\n    try:\n        bars = history_bars(stock, 1, \"1d\", \"close,limit_up\", end_date=dates[-1])\n        if bars is not None and len(bars) > 0:\n            if bars[-1][\"close\"] >= bars[-1][\"limit_up\"] * 0.99:\n                zt_count += 1\n                zt_stocks.append(stock)\n    except:\n        pass\n\nprint(f\"涨停股票数: {zt_count}\")\nprint(f\"涨停股票示例: {zt_stocks[:5]}\")\n\n# 6. 测试二板判断\nprint(\"\\n5. 测试二板判断\")\nif len(zt_stocks) > 0:\n    test_stock = zt_stocks[0]\n    print(f\"测试股票: {test_stock}\")\n\n    # 获取3天数据\n    bars = history_bars(test_stock, 3, \"1d\", \"close,limit_up\", end_date=dates[-1])\n    if bars is not None and len(bars) >= 3:\n        for i, bar in enumerate(bars):\n            is_zt = bar[\"close\"] >= bar[\"limit_up\"] * 0.99\n            print(\n                f\"  第{i + 1}天: close={bar['close']:.2f}, limit_up={bar['limit_up']:.2f}, 涨停={is_zt}\"\n            )\n\nprint(\"\\n\" + \"=\" * 70)\nprint(\"API验证完成\")\nprint(\"=\" * 70)\n",
+      "msgId": "f99ce531c004472483a5d9698f9b064c",
+      "websocketSessionId": "30d5b80fd7f0424a8406d71ed0ba951e",
+      "executionCount": 1,
+      "status": "error",
+      "textOutput": "======================================================================\nRiceQuant API 验证测试\n======================================================================\n\n1. 获取交易日\n2024年1月交易日: 22天\n首个交易日: 2024-01-02\n最后交易日: 2024-01-31\n\n2. 获取股票列表\n股票总数: 5540\n列名: ['order_book_id', 'industry_code', 'market_tplus', 'symbol', 'special_type', 'exchange', 'status', 'type', 'de_listed_date', 'listed_date', 'sector_code_name', 'abbrev_symbol', 'sector_code', 'round_lot', 'trading_hours', 'board_type', 'industry_name', 'issue_price', 'trading_code', 'office_address', 'province', 'purchasedate']\n股票代码示例: ['000001.XSHE', '000002.XSHE', '000003.XSHE', '000004.XSHE', '000005.XSHE']\n过滤后股票数: 4929\n\n3. 测试获取价格数据\n测试股票: 000001.XSHE\nNameError: name 'history_bars' is not defined",
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "======================================================================\nRiceQuant API 验证测试\n======================================================================\n\n1. 获取交易日\n2024年1月交易日: 22天\n首个交易日: 2024-01-02\n最后交易日: 2024-01-31\n\n2. 获取股票列表\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "股票总数: 5540\n列名: ['order_book_id', 'industry_code', 'market_tplus', 'symbol', 'special_type', 'exchange', 'status', 'type', 'de_listed_date', 'listed_date', 'sector_code_name', 'abbrev_symbol', 'sector_code', 'round_lot', 'trading_hours', 'board_type', 'industry_name', 'issue_price', 'trading_code', 'office_address', 'province', 'purchasedate']\n股票代码示例: ['000001.XSHE', '000002.XSHE', '000003.XSHE', '000004.XSHE', '000005.XSHE']\n过滤后股票数: 4929\n\n3. 测试获取价格数据\n测试股票: 000001.XSHE\n"
+        },
+        {
+          "output_type": "error",
+          "ename": "NameError",
+          "evalue": "name 'history_bars' is not defined",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-1-238df5cfc475>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m     33\u001b[0m \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34mf\"测试股票: {test_stock}\"\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     34\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 35\u001b[0;31m bars = history_bars(\n\u001b[0m\u001b[1;32m     36\u001b[0m     \u001b[0mtest_stock\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m5\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m\"1d\"\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m\"close,open,high,low,limit_up\"\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mend_date\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mdates\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m-\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     37\u001b[0m )\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'history_bars' is not defined"
+          ]
+        }
+      ]
+    }
+  ],
+  "newNotebookCreated": true,
+  "reuseNotebook": false,
+  "strategyBaseName": "策略测试",
+  "shutdownResult": {
+    "success": false,
+    "sessionId": "dcb6460a-4882-4459-8dc4-6215d7e780d1",
+    "error": "接口未返回 JSON https://www.ricequant.com/research/user/user_497381/api/sessions/dcb6460a-4882-4459-8dc4-6215d7e780d1: "
+  },
+  "autoShutdown": true
+}
