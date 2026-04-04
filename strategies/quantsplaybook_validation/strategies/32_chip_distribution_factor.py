@@ -2,31 +2,33 @@
 # 来源：《根据前景理论的筹码因子构建》
 # 核心逻辑：基于换手率加权计算筹码分布，构建相对资本收益（RC）均值/偏度因子
 #           RC均值低（大量筹码被套）时，处置效应导致抛压大，做空；RC均值高时做多
+# 修复：用 volume 代替 turnover_rate（RiceQuant history_bars 不支持 turnover_rate 字段）
+#       换手率代理 = 当日成交量 / 过去N日平均成交量（相对成交量）
 
 import numpy as np
 
 
-def calc_chip_distribution(prices, turnovers, window=60):
+def calc_chip_distribution(prices, rel_volumes, window=60):
     """
     计算筹码分布的代理变量
-    - prices: 收盘价序列
-    - turnovers: 换手率序列
+    - prices: 收盘价序列 (window个)
+    - rel_volumes: 相对成交量序列 (window个，已归一化)
     - 返回：RC均值、RC偏度
     """
-    if len(prices) < window or len(turnovers) < window:
+    if len(prices) < window or len(rel_volumes) < window:
         return None, None
 
     p = np.array(prices[-window:], dtype=float)
-    tr = np.array(turnovers[-window:], dtype=float)
+    tr = np.array(rel_volumes[-window:], dtype=float)
     current_price = p[-1]
 
-    # 计算调整换手率（路径依赖）
+    # 计算调整换手率（路径依赖衰减）
     atr = np.zeros(window)
     atr[0] = tr[0]
     for i in range(1, window):
         atr[i] = tr[i]
         for j in range(i):
-            atr[j] *= (1 - tr[i])
+            atr[j] *= (1 - min(tr[i], 0.99))  # 防止乘以1导致全0
 
     # 归一化换手率
     atr_sum = atr.sum()
@@ -68,21 +70,28 @@ def handle_bar(context, bar_dict):
     for stock in stocks:
         try:
             prices = history_bars(stock, context.window + 1, '1d', 'close')
-            turnovers = history_bars(stock, context.window, '1d', 'turnover_rate')
+            volumes = history_bars(stock, context.window + 10, '1d', 'volume')
             if prices is None or len(prices) < context.window + 1:
                 continue
-            if turnovers is None or len(turnovers) < context.window:
+            if volumes is None or len(volumes) < context.window:
                 continue
+
             prices_arr = np.array(prices, dtype=float)
             if prices_arr[-1] == 0:
                 continue
-            # turnover_rate 在 RiceQuant 中是百分比（如1.5表示1.5%），归一化到小数
-            tr_arr = np.array(turnovers, dtype=float)
-            tr_arr = np.where(tr_arr > 1, tr_arr / 100.0, tr_arr)  # 兼容两种格式
-            tr_arr = np.clip(tr_arr, 0, 1)
+
+            vol_arr = np.array(volumes, dtype=float)
+            # 用相对成交量作为换手率代理（归一化到0-1范围）
+            avg_vol = np.mean(vol_arr)
+            if avg_vol == 0:
+                continue
+            rel_vol = vol_arr[-context.window:] / avg_vol
+            # 归一化到合理范围（0~1），避免极端值
+            rel_vol = np.clip(rel_vol / (rel_vol.max() + 1e-10), 0, 1)
+
             rc_mean, rc_skew = calc_chip_distribution(
-                prices_arr,
-                tr_arr,
+                prices_arr[-context.window:],
+                rel_vol,
                 context.window
             )
             if rc_mean is not None:

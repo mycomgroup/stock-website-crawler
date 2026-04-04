@@ -1,678 +1,416 @@
-# Template Analyzer Skills - 架构文档
+# Skills 架构文档
 
 ## 概述
 
-Template Analyzer 系统由 2 个独立的 Skills 组成，用于自动分析网站 URL 模式和页面模板，生成配置驱动的解析规则。
+`skills/` 目录是本项目的核心能力库，包含多个独立的 Skill 模块，覆盖量化策略研发的完整链路：**数据获取 → 策略回测 → 策略迭代 → 组合管理**。
 
-## 系统架构
+每个 Skill 独立运行，有明确的职责边界，通过标准化接口协作。
 
-### 整体架构图
+---
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                  Template Analyzer System                        │
-│                      (2 Skills 架构)                             │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  输入: links.txt (8403 URLs)                                     │
-│         pages/*.md (已抓取的页面)                                │
-│                                                                   │
-│  ┌──────────────────────┐                                        │
-│  │   Skill 1:           │                                        │
-│  │   url-pattern-       │                                        │
-│  │   analyzer           │                                        │
-│  │                      │                                        │
-│  │  职责:               │                                        │
-│  │  - 读取 links.txt    │                                        │
-│  │  - URL 聚类分组      │                                        │
-│  │  - 生成正则表达式    │                                        │
-│  └──────────┬───────────┘                                        │
-│             │                                                     │
-│             ▼                                                     │
-│  输出: url-patterns.json                                         │
-│  [                                                                │
-│    {                                                              │
-│      name: "api-doc",                                            │
-│      pathTemplate: "/open/api/doc",                              │
-│      pattern: "^https://...",                                    │
-│      urlCount: 163,                                              │
-│      samples: [...]                                              │
-│    }                                                              │
-│  ]                                                                │
-│             │                                                     │
-│             ▼                                                     │
-│  ┌──────────────────────┐                                        │
-│  │   Skill 2:           │                                        │
-│  │   template-content-  │                                        │
-│  │   analyzer           │                                        │
-│  │                      │                                        │
-│  │  职责:               │                                        │
-│  │  - 读取 url-patterns │                                        │
-│  │  - 分析页面内容      │                                        │
-│  │  - 识别模板/数据     │                                        │
-│  │  - 生成配置文件      │                                        │
-│  └──────────┬───────────┘                                        │
-│             │                                                     │
-│             ▼                                                     │
-│  输出: template-rules.jsonl                                      │
-│  (每行一个 TemplateConfig JSON 对象)                             │
-│                                                                   │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### 目录结构
+## 整体架构
 
 ```
 skills/
-├── url-pattern-analyzer/              # Skill 1: URL 模式分析器
-│   ├── main.js                        # 入口文件
-│   ├── skill.json                     # Skill 配置
-│   ├── README.md                      # 使用说明
-│   ├── lib/                           # 算法库
-│   │   ├── url-clusterer.js           # URL 聚类算法
-│   │   ├── links-reader.js            # links.txt 读取器
-│   │   └── report-generator.js        # 报告生成器
-│   ├── test/                          # 测试
-│   │   ├── url-clusterer.test.js
-│   │   ├── links-reader.test.js
-│   │   └── performance.test.js
-│   └── scripts/                       # 工具脚本
-│       └── analyze-url-patterns.js
 │
-├── template-content-analyzer/         # Skill 2: 模板内容分析器
-│   ├── main.js                        # 入口文件
-│   ├── skill.json                     # Skill 配置
-│   ├── README.md                      # 使用说明
-│   ├── lib/                           # 算法库
-│   │   ├── content-analyzer.js        # 内容分析
-│   │   ├── template-config-generator.js  # 配置生成
-│   │   ├── template-parser.js         # 模板解析器
-│   │   └── config-loader.js           # 配置加载器
-│   ├── test/                          # 测试
-│   │   ├── content-analyzer.test.js
-│   │   ├── template-config-generator.test.js
-│   │   ├── template-parser.test.js
-│   │   └── performance.test.js
-│   ├── scripts/                       # 工具脚本
-│   │   ├── analyze-page-template.js
-│   │   ├── generate-template-config.js
-│   │   └── test-real-pages.js
-│   └── docs/                          # 文档
-│       ├── CONFIG_FORMAT.md
-│       ├── EXTRACTOR_GUIDE.md
-│       ├── FILTER_GUIDE.md
-│       ├── CONFIG_EXAMPLES.md
-│       └── USAGE_GUIDE.md
+├── 数据层
+│   ├── query_data/              # 多数据源查询（A股/美股/宏观）
+│   ├── lixinger-screener/       # 理杏仁股票筛选器
+│   └── url-pattern-analyzer/    # URL 模式分析（爬虫辅助）
 │
-├── ARCHITECTURE.md                    # 本文档
-├── INSTALLATION_GUIDE.md              # 安装指南
-└── test-complete-workflow.js          # 完整工作流测试
+├── 网页工具层
+│   ├── web-api-generator/       # URL patterns → API 文档/配置
+│   └── html-template-generator/ # 网页 → XPath 模板 → Markdown
+│
+├── 策略回测层（多平台）
+│   ├── backtest_guide/          # 平台选择指南 + 通用文档
+│   ├── joinquant_strategy/      # 聚宽策略运行器
+│   ├── joinquant_nookbook/      # 聚宽 Notebook 研究
+│   ├── ricequant_strategy/      # 米筐策略运行器（推荐日常使用）
+│   ├── ricequant-wizard/        # 米筐辅助工具
+│   ├── thsquant_strategy/       # 同花顺量化运行器
+│   ├── bigquant_strategy/       # BigQuant AIStudio 运行器
+│   └── guorn_strategy/          # 果仁网策略运行器
+│
+├── 策略研发层
+│   ├── strategy_kits/           # 策略标准化接入与增强框架
+│   └── autoresearch/            # 策略自动迭代优化系统
+│
+└── ARCHITECTURE.md              # 本文档
 ```
 
-## Skill 1: URL Pattern Analyzer
+---
 
-### 职责
+## 数据层
 
-从 `links.txt` 文件中识别 URL 模式，按 `pathTemplate` 分组。
+### query_data — 多数据源查询插件
 
-### 核心算法
+**职责**：统一封装多个金融数据 API，支持 A 股、港股、美股、宏观数据查询。
 
-#### 1. URL 特征提取
+**支持数据源**：
 
-```javascript
-extractFeatures(url) {
-  return {
-    protocol: 'https',
-    host: 'www.lixinger.com',
-    pathSegments: ['open', 'api', 'doc'],
-    queryParams: ['api-key'],
-    pathDepth: 3
-  };
-}
+| 类型 | 数据源 |
+|------|--------|
+| A 股 | 理杏仁 (Lixinger)、AKShare |
+| 美股 | Finnhub、FMP、Alpha Vantage、Tiingo、EODHD |
+| 搜索 | Brave Search、Tavily、SerpAPI |
+| 其他 | Eulerpool、Massive、AllTick、Financial Datasets |
+
+**快速使用**：
+```bash
+cd skills/query_data
+python3 test_datasource.py --source lixinger
+python3 test_datasource.py --source finnhub --symbol AAPL
 ```
 
-**提取的特征:**
-- **protocol**: 协议（http/https）
-- **host**: 主机名
-- **pathSegments**: 路径段数组（去除空段）
-- **queryParams**: 查询参数键列表
-- **pathDepth**: 路径深度
+---
 
-#### 2. URL 相似度计算
+### lixinger-screener — 理杏仁股票筛选器
 
-```javascript
-calculateSimilarity(url1, url2) {
-  // 评分规则:
-  // - 协议和主机不同: 0 分
-  // - 路径深度相同: +20 分
-  // - 每个匹配的路径段: +10 分
-  // - 每个匹配的查询参数: +5 分
-  
-  // 返回相似度分数，由聚类算法决定分组
-}
+**职责**：通过理杏仁平台筛选 A 股/港股/美股，支持自然语言查询和结构化 JSON 条件。
+
+**两种使用方式**：
+
+```bash
+cd skills/lixinger-screener
+
+# 方式一：自然语言快速试错（浏览器版）
+node run-skill.js --query "市盈率(TTM)小于20，股息率大于3%" --headless false
+
+# 方式二：固化条件批量导出（request 版）
+node request/fetch-lixinger-screener.js --input-file ./my-screen.json --output csv
 ```
 
-**相似度评分规则:**
-- 协议或主机不同 → 0 分（不会聚在一起）
-- 路径深度相同 → +20 分
-- 每个匹配的路径段 → +10 分
-- 每个匹配的查询参数 → +5 分
+**推荐工作流**：先用浏览器版试错，试出手感后固化成 `input.json`，再用 request 版批量导出。
 
-**示例:**
-```javascript
-url1 = 'https://www.lixinger.com/open/api/doc?api-key=cn/company'
-url2 = 'https://www.lixinger.com/open/api/doc?api-key=hk/index'
+---
 
-// 相似度 = 20 (深度) + 30 (3个路径段) + 5 (1个参数) = 55 分
+### url-pattern-analyzer — URL 模式分析器
+
+**职责**：从 `links.txt` 中识别 URL 模式，按路径结构聚类，生成正则表达式和 `url-patterns.json`。
+
+**核心算法**：层次聚类 + 相似度评分（路径深度、路径段匹配、查询参数匹配）。
+
+```bash
+node skills/url-pattern-analyzer/main.js \
+  --links-file stock-crawler/output/lixinger-crawler/links.txt \
+  --output-file stock-crawler/output/lixinger-crawler/url-patterns.json
 ```
 
-#### 3. URL 聚类算法
-
-使用**层次聚类（Hierarchical Clustering）**算法:
-
-```javascript
-clusterURLs(urls) {
-  // 1. 初始化: 每个 URL 一个簇
-  let clusters = urls.map(url => [url]);
-  
-  // 2. 迭代合并相似的簇
-  while (canMerge) {
-    // 找到最相似的两个簇
-    const [cluster1, cluster2] = findMostSimilarClusters(clusters);
-    
-    // 合并簇
-    clusters = mergeClusters(cluster1, cluster2);
-  }
-  
-  // 3. 返回聚类结果
-  return clusters;
-}
-```
-
-**判断依据:**
-- URL 正则匹配
-- 页面是否同一个后端渲染
-- **不使用固定阈值**，而是动态决定分组
-
-#### 4. 正则表达式生成
-
-```javascript
-generatePattern(urlGroup) {
-  // 分析 URL 组，识别固定部分和变化部分
-  // 固定段: 保持不变
-  // 变化段: 用捕获组 ([^/]+) 表示
-  
-  return {
-    pattern: '^https://www\\.lixinger\\.com/open/api/([^/]+)(\\?.*)?$',
-    pathTemplate: '/open/api/{param2}',
-    queryParams: ['api-key']
-  };
-}
-```
-
-### 数据流
-
-```
-links.txt (8403 URLs)
-    ↓
-LinksReader.readLinksFile()
-    ↓
-LinksReader.extractURLs({ status: 'fetched', excludeErrors: true })
-    ↓
-URLClusterer.clusterURLs()
-    ↓
-URLClusterer.generatePattern() (for each cluster)
-    ↓
-ReportGenerator.generateJSON()
-    ↓
-url-patterns.json
-```
-
-### 输入输出
-
-**输入:** `links.txt`
-```json
-{"url":"https://www.lixinger.com/open/api/doc?api-key=cn/company","status":"fetched","addedAt":1234567890}
-{"url":"https://www.lixinger.com/open/api/doc?api-key=hk/index","status":"fetched","addedAt":1234567891}
-```
-
-**输出:** `url-patterns.json`
+**输出格式**：
 ```json
 {
-  "success": true,
-  "patternCount": 5,
-  "totalUrls": 8403,
   "patterns": [
     {
       "name": "api-doc",
       "pathTemplate": "/open/api/doc",
       "pattern": "^https://www\\.lixinger\\.com/open/api/doc\\?api-key=(.+)$",
-      "queryParams": ["api-key"],
       "urlCount": 163,
-      "samples": [
-        "https://www.lixinger.com/open/api/doc?api-key=cn/company",
-        "https://www.lixinger.com/open/api/doc?api-key=hk/index"
-      ]
+      "samples": ["..."]
     }
   ]
 }
 ```
 
-## Skill 2: Template Content Analyzer
+---
 
-### 职责
+## 网页工具层
 
-针对每个 `pathTemplate`，分析其对应的所有页面，生成该模板的解析配置。
+### web-api-generator — Web API 生成器
 
-### 核心算法
+**职责**：将 `url-patterns.json` 转换为 API 文档和配置，提供命令行客户端进行网页抓取。
 
-#### 1. 内容块提取
+**工作流**：
+```bash
+cd skills/web-api-generator
 
-```javascript
-extractContentBlocks(markdown) {
-  // 识别 markdown 结构:
-  // - 标题: # 标题, ## 标题
-  // - 段落: 连续的文本行
-  // - 表格: | 列1 | 列2 |
-  // - 代码块: ```language ... ```
-  // - 列表: - 项目 或 1. 项目
-  
-  return [
-    { type: 'heading', content: '# API文档', lineNumber: 1 },
-    { type: 'paragraph', content: '获取用户信息', lineNumber: 2 },
-    { type: 'table', content: '...', rows: 3, lineNumber: 4 }
-  ];
-}
+# 1. 生成文档和配置
+node main.js generate-docs
+
+# 2. 分析数据选择器（可选）
+node scripts/analyze-data-selectors.js --limit=5
+
+# 3. 调用 API
+node main.js call --api=constituents-list --param4=480301
 ```
 
-#### 2. 频率计算
+---
 
-```javascript
-calculateFrequency(pages) {
-  const frequency = new Map();
-  
-  pages.forEach((page, pageIndex) => {
-    const blocks = extractContentBlocks(page);
-    
-    blocks.forEach(block => {
-      const normalized = normalizeText(block.content);
-      const key = `${block.type}:${normalized}`;
-      
-      if (!frequency.has(key)) {
-        frequency.set(key, {
-          type: block.type,
-          content: block.content,
-          normalizedContent: normalized,
-          count: 0,
-          pages: []
-        });
-      }
-      
-      const entry = frequency.get(key);
-      if (!entry.pages.includes(pageIndex)) {
-        entry.count++;
-        entry.pages.push(pageIndex);
-      }
-    });
-  });
-  
-  return frequency;
-}
+### html-template-generator — HTML 模板生成器
+
+**职责**：分析样本网页，自动生成 XPath 提取规则，将 HTML 渲染为结构化 Markdown。
+
+**工作流（需人工确认）**：
+```bash
+cd skills/html-template-generator
+
+# Phase 1: 生成单个模板并预览（必须人工确认）
+node scripts/generate-and-test.js api-doc \
+  --input ../../stock-crawler/output/lixinger-crawler/url-patterns.json \
+  --output-dir ../../stock-crawler/output/lixinger-crawler/templates \
+  --preview-dir ../../stock-crawler/output/lixinger-crawler/previews
+
+# Phase 2: 确认无误后批量生成
+node scripts/batch-generate-templates.js \
+  --input ../../stock-crawler/output/lixinger-crawler/url-patterns.json \
+  --output-dir ../../stock-crawler/output/lixinger-crawler/templates
 ```
 
-#### 3. 内容分类
+---
 
-```javascript
-classifyContent(frequency, totalPages, thresholds) {
-  const result = {
-    template: [],  // 高频 >80%: 模板噪音
-    unique: [],    // 低频 <20%: 独特数据
-    mixed: []      // 中频 20-80%: 需进一步分析
-  };
-  
-  frequency.forEach((entry, key) => {
-    const ratio = entry.count / totalPages;
-    
-    if (ratio > thresholds.template) {
-      result.template.push({ ...entry, ratio });
-    } else if (ratio < thresholds.unique) {
-      result.unique.push({ ...entry, ratio });
-    } else {
-      result.mixed.push({ ...entry, ratio });
-    }
-  });
-  
-  return result;
-}
-```
+## 策略回测层
 
-**分类规则:**
-- **模板内容** (ratio > 0.8): 高频出现的内容，通常是导航、页眉、页脚等噪音
-- **独特内容** (ratio < 0.2): 低频出现的内容，通常是页面特有的数据
-- **混合内容** (0.2 ≤ ratio ≤ 0.8): 中频内容，需要进一步分析
+### backtest_guide — 平台选择指南
 
-#### 4. 数据结构识别
+**职责**：提供各量化平台的使用文档、平台选择建议、通用参数说明。
 
-```javascript
-identifyDataStructures(pages) {
-  return {
-    tables: analyzeTableStructures(pages),
-    codeBlocks: analyzeCodeBlocks(pages),
-    lists: analyzeLists(pages)
-  };
-}
+**平台选择速查**：
 
-analyzeTableStructures(pages) {
-  // 识别表格列名、列数、数据类型
-  return [
-    {
-      columns: ['参数名称', '必选', '类型', '说明'],
-      rowCount: 5,
-      frequency: 0.95
-    }
-  ];
-}
-```
+| 平台 | Skill 目录 | 适合场景 | 主要限制 |
+|------|-----------|---------|---------|
+| JoinQuant | `joinquant_strategy/` | 复杂因子、最终验证 | 需手动维护 session |
+| RiceQuant | `ricequant_strategy/` | 日常开发、快速验证 | 策略编辑器 180min/天 |
+| THSQuant | `thsquant_strategy/` | 同花顺生态 | 首次需手动登录 |
+| BigQuant | `bigquant_strategy/` | AI/ML 策略 | Task-based，无策略 ID |
+| GuornQuant | `guorn_strategy/` | 因子选股 | 结果不持久化 |
 
-#### 5. 配置生成
+---
 
-```javascript
-generateConfig(urlPattern, analysisResult) {
-  return {
-    name: urlPattern.name,
-    description: `Parser configuration for ${urlPattern.pathTemplate}`,
-    priority: 100,
-    
-    urlPattern: {
-      pattern: urlPattern.pattern,
-      pathTemplate: urlPattern.pathTemplate,
-      queryParams: urlPattern.queryParams
-    },
-    
-    extractors: generateExtractors(analysisResult),
-    filters: generateFilters(analysisResult),
-    
-    metadata: {
-      generatedAt: new Date().toISOString(),
-      pageCount: analysisResult.stats.totalPages,
-      version: '1.0.0'
-    }
-  };
-}
-```
+### joinquant_strategy — 聚宽策略运行器
 
-### 数据流
-
-```
-url-patterns.json + pages/*.md
-    ↓
-对每个 pathTemplate:
-    ↓
-ContentAnalyzer.extractContentBlocks()
-    ↓
-ContentAnalyzer.calculateFrequency()
-    ↓
-ContentAnalyzer.classifyContent()
-    ↓
-ContentAnalyzer.identifyDataStructures()
-    ↓
-TemplateConfigGenerator.generateExtractors()
-    ↓
-TemplateConfigGenerator.generateFilters()
-    ↓
-TemplateConfigGenerator.generateConfig()
-    ↓
-TemplateConfigGenerator.saveAsJSONL()
-    ↓
-template-rules.jsonl
-```
-
-### 输入输出
-
-**输入:** `url-patterns.json` + `pages/*.md`
-
-**输出:** `template-rules.jsonl`
-```jsonl
-{"name":"api-doc","description":"Parser configuration for /open/api/doc","priority":100,"urlPattern":{"pattern":"^https://www\\.lixinger\\.com/open/api/doc\\?api-key=(.+)$","pathTemplate":"/open/api/doc","queryParams":["api-key"]},"extractors":[{"field":"title","type":"text","selector":"h1, h2, title","required":true},{"field":"parameters","type":"table","selector":"table","columns":["参数名称","必选","类型","说明"]}],"filters":[{"type":"remove","target":"heading","pattern":"API文档","reason":"Template noise (100% frequency)"}],"metadata":{"generatedAt":"2026-02-25T10:00:00.000Z","pageCount":163,"version":"1.0.0"}}
-```
-
-## 算法库详解
-
-### url-pattern-analyzer 算法库
-
-#### LinksReader
-
-**职责:** 读取和解析 `links.txt` 文件
-
-**核心方法:**
-- `readLinksFile(filePath)`: 读取 JSON 格式的 links 文件
-- `extractURLs(records, options)`: 提取 URL 列表（支持过滤）
-- `getStatistics(records)`: 获取统计信息
-
-**特点:**
-- 容错处理：跳过格式错误的行
-- 灵活过滤：按状态、错误等条件过滤
-- 统计分析：提供详细的统计信息
-
-#### URLClusterer
-
-**职责:** URL 聚类和模式识别
-
-**核心方法:**
-- `extractFeatures(url)`: 提取 URL 特征
-- `calculateSimilarity(url1, url2)`: 计算相似度
-- `clusterURLs(urls)`: URL 聚类
-- `generatePattern(urlGroup)`: 生成正则表达式
-
-**特点:**
-- 层次聚类算法
-- 动态阈值（不使用固定值）
-- 基于 URL 正则匹配和后端渲染判断
-
-#### ReportGenerator
-
-**职责:** 生成分析报告
-
-**核心方法:**
-- `generateJSON(clusters)`: 生成 JSON 报告
-- `generateMarkdown(clusters)`: 生成 Markdown 报告
-
-### template-content-analyzer 算法库
-
-#### ContentAnalyzer
-
-**职责:** 内容分析和提取
-
-**核心方法:**
-- `extractContentBlocks(markdown)`: 提取内容块
-- `normalizeText(text)`: 文本标准化
-- `calculateFrequency(pages)`: 计算频率
-- `classifyContent(frequency, totalPages, thresholds)`: 内容分类
-- `analyzeTemplate(pages, options)`: 完整分析流程
-
-**特点:**
-- 精确的 markdown 解析
-- 智能的文本标准化
-- 基于频率的自动分类
-
-#### TemplateConfigGenerator
-
-**职责:** 生成模板配置
-
-**核心方法:**
-- `generateConfig(urlPattern, analysisResult)`: 生成配置对象
-- `generateExtractors(dataStructures, classified)`: 生成提取器
-- `generateFilters(cleaningRules, classified)`: 生成过滤器
-- `saveAsJSONL(configs, outputPath)`: 保存为 JSONL
-
-**特点:**
-- 基于分析结果自动生成配置
-- 支持多种提取器类型（text, table, code, list）
-- 支持多种过滤器类型（remove, keep, transform）
-
-#### TemplateParser
-
-**职责:** 配置驱动的模板解析
-
-**核心方法:**
-- `matches(url)`: URL 匹配
-- `parse(page, url, options)`: 解析页面
-- `executeExtractor(page, extractor)`: 执行提取器
-- `applyFilters(result)`: 应用过滤器
-
-**特点:**
-- 完全配置驱动
-- 支持所有提取器和过滤器类型
-- 易于测试和调试
-
-#### ConfigLoader
-
-**职责:** 配置加载和管理
-
-**核心方法:**
-- `loadConfigs(jsonlPath)`: 加载配置
-- `loadConfigByName(jsonlPath, name)`: 按名称加载
-- `createParsers(jsonlPath, ParserClass)`: 创建 Parser 实例
-- `getConfigStats(jsonlPath)`: 获取统计信息
-
-**特点:**
-- 支持 JSONL 格式
-- 配置验证
-- 统计分析
-
-## 执行流程
-
-### 完整工作流
+**职责**：在聚宽平台提交策略、运行回测、查询结果。支持批量回测、归因分析。
 
 ```bash
-# 1. 执行 Skill 1: URL 模式分析
-node skills/url-pattern-analyzer/main.js \
-  --links-file stock-crawler/output/lixinger-crawler/links.txt \
-  --output-file stock-crawler/output/lixinger-crawler/url-patterns.json
-
-# 2. 执行 Skill 2: 模板内容分析
-node skills/template-content-analyzer/main.js \
-  --url-patterns stock-crawler/output/lixinger-crawler/url-patterns.json \
-  --pages-dir stock-crawler/output/lixinger-crawler/pages \
-  --output-file stock-crawler/output/lixinger-crawler/template-rules.jsonl
-
-# 3. 测试生成的配置
-node skills/template-content-analyzer/scripts/test-real-pages.js
+cd skills/joinquant_strategy
+node run-skill.js --id <algorithmId> --file ./my_strategy.py \
+  --start 2021-01-01 --end 2024-12-31
+node fetch-backtest-results.js --algorithm-id <id> --latest
 ```
 
-### 测试流程
+**特点**：包含大量策略脚本（ETF 轮动、动量、价值、情绪切换等），适合复杂因子验证。
+
+---
+
+### joinquant_nookbook — 聚宽 Notebook 研究
+
+**职责**：在聚宽 Notebook 环境中进行事件驱动研究和策略快速验证（Python 脚本直接运行）。
 
 ```bash
-# 测试 Skill 1
-npm test --prefix skills/url-pattern-analyzer
-
-# 测试 Skill 2
-cd skills/template-content-analyzer
-npm test
-
-# 完整工作流测试
-node skills/test-complete-workflow.js
+cd skills/joinquant_nookbook
+python run_notebook.py
 ```
 
-## 性能指标
+---
 
-### Skill 1: URL Pattern Analyzer
+### ricequant_strategy — 米筐策略运行器（推荐）
 
-- **处理速度**: 8403 个 URL < 10 秒
-- **内存使用**: < 100 MB
-- **准确率**: > 90%
+**职责**：在米筐平台运行策略，支持策略编辑器回测和 Notebook 两种模式。
 
-### Skill 2: Template Content Analyzer
+**核心优势**：Notebook 模式无每日 180 分钟时间限制，Session 自动管理。
 
-- **处理速度**: 163 个页面 < 30 秒
-- **内存使用**: < 200 MB
-- **准确率**: > 85%
+```bash
+cd skills/ricequant_strategy
 
-### 配置生成
+# Notebook 模式（推荐，无时间限制）
+node run-strategy.js --strategy examples/simple_backtest.py --create-new
 
-- **生成速度**: < 1 秒
-- **配置加载**: < 100 ms
+# 策略编辑器模式
+node run-skill.js --id <strategyId> --file ./my_strategy.py \
+  --start 2021-01-01 --end 2024-12-31
+```
 
-## 设计原则
+**推荐流程**：Notebook → 快速验证逻辑 → 参数调优 → 策略编辑器精确回测。
 
-### 1. 模块化
+---
 
-- 每个 Skill 独立运行
-- 算法库可单独使用
-- 清晰的职责划分
+### thsquant_strategy — 同花顺量化运行器
 
-### 2. 配置驱动
+**职责**：在同花顺量化平台提交策略、运行回测。
 
-- 生成配置文件而非代码
-- 易于修改和调试
-- 支持大模型优化
+```bash
+cd skills/thsquant_strategy
+node run-skill.js --id <algoId> --file ./my_strategy.py \
+  --start 2023-01-01 --end 2024-12-31
+```
 
-### 3. 可扩展性
+---
 
-- 支持添加新的提取器类型
-- 支持添加新的过滤器类型
-- 支持自定义分析策略
+### bigquant_strategy — BigQuant AIStudio 运行器
 
-### 4. 错误容忍
+**职责**：在 BigQuant AIStudio 中运行策略代码和回测，支持 AI/ML 量化策略。
 
-- 格式错误的数据会被跳过
-- 详细的错误日志
-- 优雅的降级处理
+```bash
+cd skills/bigquant_strategy
+node run-skill.js --id <strategyId> --file examples/simple_backtest.py \
+  --start 2022-01-01 --end 2025-03-28
+```
 
-### 5. 性能优化
+**特点**：Task-based 架构，无策略 ID，按名称前缀查询历史结果。
 
-- 批量处理
-- 缓存机制
-- 并行处理
+---
 
-## 判断依据
+### guorn_strategy — 果仁网策略运行器
 
-### URL 分组判断
+**职责**：在果仁网平台运行因子选股策略，结果保存到本地。
 
-- **URL 正则匹配**: 路径结构相似
-- **后端渲染判断**: 页面是否由同一模板渲染
-- **不使用固定阈值**: 动态决定分组
+```bash
+cd skills/guorn_strategy
+node run-skill.js
+# 结果保存在 output/backtest-{timestamp}.json
+```
 
-### 内容分类判断
+**注意**：果仁网结果不持久化，每次回测后立即记录关键指标。
 
-- **频率分析**: 基于出现频率分类
-- **数据结构识别**: 识别表格、代码块、列表
-- **模板抽取结果**: 结合实际抽取效果
+---
 
-## 优势
+## 策略研发层
 
-1. **自动化**: 从 URL 分析到配置生成全自动
-2. **准确性**: 基于统计分析，准确率高
-3. **灵活性**: 支持自定义阈值和规则
-4. **可维护性**: 配置驱动，易于修改
-5. **可扩展性**: 易于添加新功能
-6. **性能**: 处理大量数据速度快
+### strategy_kits — 策略标准化接入与增强框架
 
-## 局限性
+**职责**：把任意策略脚本接入标准化研发闭环，统一 contract、回测流程、报告产物。
 
-1. **依赖数据质量**: 需要足够的样本数据
-2. **阈值调整**: 可能需要根据实际情况调整阈值
-3. **复杂页面**: 对于非常复杂的页面可能需要手动调整
-4. **动态内容**: 对于 JavaScript 渲染的动态内容支持有限
+**核心能力**：
+1. 统一输入 contract：`pool_panel / score_panel / local_features`
+2. 统一任务入口：`orchestration/task_runner.py`
+3. 统一产物落盘：`summary.json`, `run_report.json`, `run_report.md`
+4. 平台验证接入：配合 `backtest_guide` 做提交和结果拉取
+5. 循环增强规范：每轮固定 5 步（本地回测 → 平台回测 → 差异归因 → 单点改动 → 版本结论）
 
-## 未来改进
+**快速开始**：
+```bash
+# 环境自检
+uv run pytest skills/strategy_kits/tests -q
 
-1. **机器学习**: 使用 ML 算法提高准确率
-2. **增量分析**: 支持增量更新
-3. **可视化**: 提供可视化的分析报告
-4. **自动优化**: 根据使用情况自动优化配置
-5. **多网站支持**: 支持多个网站的配置管理
+# 执行本地回测
+PYTHONPATH=skills python -m strategy_kits.orchestration.cli \
+  --spec /abs/path/task_spec.json \
+  --print-result-json
+```
+
+**目录结构**：
+```
+strategy_kits/
+├── contracts/          # 输入/输出 contract 定义
+├── core/               # 核心回测逻辑
+├── execution/          # 执行引擎
+├── orchestration/      # 任务调度（task_runner.py, cli）
+├── portfolio/          # 组合管理
+├── risk/               # 风险控制
+├── signals/            # 信号生成
+├── strategy_templates/ # 策略模板
+├── universal_mechanisms/ # 通用机制（动量、股息、EPO 等）
+├── docs/               # 架构设计、接入手册
+└── tests/              # 单元测试
+```
+
+---
+
+### autoresearch — 策略自动迭代优化系统
+
+**职责**：输入一个成型的 RiceQuant 单文件策略，系统自动进行多轮迭代优化，全程留档可追溯。
+
+**核心思想**：
+- 每轮只允许修改策略脚本本身
+- 以 RiceQuant 平台回测结果为目标函数
+- 自动完成：提交回测 → 评分 → keep/rollback 决策 → 生成下一轮变异建议
+
+**目标函数**（复合加权）：
+```
+score = annual_return × 0.45
+      + max_drawdown × (-0.30)
+      + sharpe × 0.20
+      + win_rate × 0.05
+```
+
+**快速开始**：
+```bash
+cd skills/autoresearch
+
+# 初始化实验环境
+python initialize.py \
+  --project-root /path/to/project \
+  --strategy-name rfscore7_pb10_rq \
+  --seed-strategy-path /path/to/strategy.py \
+  --seed-config-path ./seed_config.json
+
+# 运行自动迭代
+python -c "
+from orchestrator import AutoresearchOrchestrator
+from pathlib import Path
+o = AutoresearchOrchestrator(base_path=Path('skills/strategy_autoresearch_rfscore7_pb10_rq'))
+o.run_loop(max_iterations=20)
+"
+```
+
+**核心模块**：
+
+| 模块 | 文件 | 作用 |
+|------|------|------|
+| 初始化 | `initialize.py` | 创建实验环境和目录结构 |
+| 运行管理 | `run_manager.py` | 管理每轮迭代的目录和文件 |
+| 平台执行器 | `ricequant_executor.py` | 封装 RiceQuant 回测提交和结果获取 |
+| 预检查器 | `preflight_checker.py` | 提交前本地轻量检查（语法、编码等） |
+| 评分器 | `scorer.py` | 解析回测结果，计算目标函数得分 |
+| 台账 | `ledger.py` | 记录所有执行细节（TSV/JSONL/Markdown） |
+| 变异生成器 | `mutator.py` | 生成策略修改建议 |
+
+**推荐工作流**：
+1. 先用 `strategy_kits` 或人工研究强化出单文件版本
+2. 转成 RiceQuant 可运行脚本
+3. 作为 `autoresearch` 的 seed
+4. 让系统围绕这个脚本持续小步迭代
+
+---
+
+## Skill 间协作关系
+
+```
+query_data / lixinger-screener
+        ↓ 数据获取
+url-pattern-analyzer → web-api-generator → html-template-generator
+        ↓ 爬虫辅助链路
+
+strategy_kits（标准化接入）
+        ↓ 生成 pool_panel / score_panel
+backtest_guide（平台选择）
+        ↓
+joinquant_strategy / ricequant_strategy / thsquant_strategy / bigquant_strategy / guorn_strategy
+        ↓ 回测结果
+autoresearch（自动迭代优化）
+```
+
+---
+
+## 通用约定
+
+### Session 管理
+
+- **RiceQuant / BigQuant**：自动管理，无需手动干预
+- **JoinQuant**：需手动捕获 session：`node browser/capture-session.js --headed`
+- **THSQuant**：首次需手动登录：`node browser/manual-login-capture.js`
+
+### 重试策略（所有平台统一）
+
+| 错误类型 | 第1次等待 | 第2次等待 | 第3次等待 |
+|---------|---------|---------|---------|
+| 429 / 503 并发限制 | 60s | 120s | 300s |
+| 5xx 服务端错误 | 10s | 20s | 40s |
+| 网络/超时 | 5s | 10s | 20s |
+
+### 环境变量
+
+每个 Skill 目录下有 `.env` 文件，参考 `.env.example` 配置账号凭证。
+
+### 输出目录
+
+各平台回测结果保存在各自 Skill 的 `data/` 或 `output/` 目录，带时间戳的 JSON 文件。
+
+---
 
 ## 相关文档
 
-- [安装指南](./INSTALLATION_GUIDE.md)
-- [URL Pattern Analyzer README](./url-pattern-analyzer/README.md)
-- [Template Content Analyzer README](./template-content-analyzer/README.md)
-- [配置格式说明](./template-content-analyzer/docs/CONFIG_FORMAT.md)
-- [提取器配置指南](./template-content-analyzer/docs/EXTRACTOR_GUIDE.md)
-- [过滤器配置指南](./template-content-analyzer/docs/FILTER_GUIDE.md)
-- [使用指南](./template-content-analyzer/docs/USAGE_GUIDE.md)
-
-## 总结
-
-Template Analyzer 系统通过 2 个独立的 Skills 实现了从 URL 分析到配置生成的完整流程。系统采用配置驱动的设计，易于维护和扩展，性能优秀，准确率高。通过合理的算法设计和模块化架构，系统能够处理大量数据并生成高质量的解析配置。
+- [backtest_guide/SKILL.md](backtest_guide/SKILL.md) — 平台选择与通用使用指南
+- [strategy_kits/docs/](strategy_kits/docs/) — 策略接入手册、架构设计
+- [autoresearch/README.md](autoresearch/README.md) — 自动迭代系统完整文档
+- [lixinger-screener/SKILL.md](lixinger-screener/SKILL.md) — 股票筛选方法论
+- [query_data/README.md](query_data/README.md) — 数据源配置说明
