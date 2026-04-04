@@ -210,8 +210,8 @@ docs/small_cap_research_20260331/
 
 ### 技术文档
 
-- `docs/backtest_guide/PROMPT.md` - Notebook 回测提示词
-- `docs/backtest_guide/README.md` - Notebook 回测指南
+- `skills/backtest_guide/SKILL.md` - Notebook 回测提示词
+- `skills/backtest_guide/SKILL.md` - Notebook 回测指南
 - `docs/notebook_backtest_summary.md` - Notebook 总结
 
 ---

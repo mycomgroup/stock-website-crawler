@@ -417,14 +417,14 @@ def select_stocks_lr(features_df, returns_series, hold_n=10):
 
 - 详细报告: `07_ML_MultiFactor_Validation_Report_REAL.md`
 - 简明对比: `07_ML_Results_Summary.md`
-- 回测指南: `docs/backtest_guide/README.md`
-- API对照: `docs/backtest_guide/API_DIFF.md`
+- 回测指南: `skills/backtest_guide/SKILL.md`
+- API对照: `skills/backtest_guide/SKILL.md`
 
 ### 10.2 联系与支持
 
 如有问题，请参考:
 - JoinQuant文档: https://www.joinquant.com/help/api/
-- 回测指南: `docs/backtest_guide/`
+- 回测指南: `skills/backtest_guide/SKILL.md`
 - Skill文档: `skills/joinquant_notebook/README.md`
 
 ### 10.3 版本历史

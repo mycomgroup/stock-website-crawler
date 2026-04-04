@@ -18,6 +18,27 @@ export function loadJson(filePath) {
   }
 }
 
+/**
+ * 根据 HTTP 状态码决定重试等待时间
+ * - 429 / 503 并发限制：60s / 120s / 300s
+ * - 其他 5xx 服务端错误：10s / 20s / 40s
+ * - 其他状态码不重试，返回 0
+ */
+function retryDelay(status, retryCount) {
+  if (status === 429 || status === 503) {
+    return [60000, 120000, 300000][retryCount] ?? 300000;
+  }
+  if (status >= 500) {
+    return Math.pow(2, retryCount) * 10000; // 10s / 20s / 40s
+  }
+  return 0; // 4xx 等不重试
+}
+
+/** 网络/超时错误的退避：5s / 10s / 20s */
+function networkRetryDelay(retryCount) {
+  return Math.pow(2, retryCount) * 5000;
+}
+
 export class RiceQuantClient {
   constructor(options = {}) {
     this.sessionFile = path.resolve(options.sessionFile || SESSION_FILE);
@@ -63,11 +84,13 @@ export class RiceQuantClient {
       const text = await response.text();
 
       if (!response.ok) {
-        if (response.status >= 500 && retryCount < maxRetries) {
-          const delay = Math.pow(2, retryCount) * 1000;
-          console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${response.status}, retrying in ${delay}ms...`);
-          await new Promise(r => setTimeout(r, delay));
-          return this.request(url, options, retryCount + 1);
+        if (retryCount < maxRetries) {
+          const delay = retryDelay(response.status, retryCount);
+          if (delay > 0) {
+            console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${response.status}, waiting ${delay/1000}s...`);
+            await new Promise(r => setTimeout(r, delay));
+            return this.request(url, options, retryCount + 1);
+          }
         }
         throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
       }
@@ -81,9 +104,9 @@ export class RiceQuantClient {
         error.message.includes('ECONN') ||
         error.message.includes('ECONNRESET');
       if (isRetryable && retryCount < maxRetries) {
-        const delay = Math.pow(2, retryCount) * 1000;
+        const delay = networkRetryDelay(retryCount);
         const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
-        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, retrying in ${delay}ms...`);
+        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, waiting ${delay/1000}s...`);
         await new Promise(r => setTimeout(r, delay));
         return this.request(url, options, retryCount + 1);
       }

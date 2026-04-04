@@ -1,0 +1,13 @@
+{
+  "updatedAt": "2026-04-04T00:33:21.033Z",
+  "sourceDir": "/Users/fengzhi/Downloads/git/testlixingren/聚宽有价值策略558",
+  "runDir": "/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/data/jq558_batch_20260404",
+  "totalFiles": 492,
+  "alreadySubmitted": 13,
+  "selectedThisRun": 492,
+  "completedThisRun": 13,
+  "successCount": 13,
+  "failCount": 0,
+  "activeBacktests": 13,
+  "lastFile": "聚宽有价值策略558/03 截止到21年12月依然有效的小市值适配因子.txt"
+}

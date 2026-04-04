@@ -429,7 +429,7 @@ cat data/ricequant-notebook-result-*.json
 如有问题，请参考：
 - JoinQuant文档：`skills/joinquant_notebook/README.md`
 - RiceQuant文档：`skills/ricequant_strategy/README.md`
-- 回测指南：`docs/backtest_guide/README.md`
+- 回测指南：`skills/backtest_guide/SKILL.md`
 
 ---
 

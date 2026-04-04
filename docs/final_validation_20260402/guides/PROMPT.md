@@ -150,10 +150,10 @@ node run-strategy.js --strategy your_strategy.py --timeout-ms 600000  # 10分钟
 **8. 参考文档**
 
 请参考以下文档获取详细说明：
-- 总体指南: `docs/backtest_guide/README.md`
-- 快速入门: `docs/backtest_guide/QUICK_START.md`
-- API差异: `docs/backtest_guide/API_DIFF.md`
-- 迁移指南: `docs/backtest_guide/MIGRATION.md`
+- 总体指南: `skills/backtest_guide/SKILL.md`
+- 快速入门: `skills/backtest_guide/SKILL.md`
+- API差异: `skills/backtest_guide/SKILL.md`
+- 迁移指南: `skills/backtest_guide/SKILL.md`
 ```
 
 ---
@@ -176,7 +176,7 @@ node run-strategy.js --strategy your_strategy.py --timeout-ms 600000  # 10分钟
 2. 查看结果：JoinQuant 在 output/ 目录，RiceQuant 在 data/ 目录
 3. 如超时，增加 --timeout-ms 参数
 
-参考文档：docs/backtest_guide/README.md
+参考文档：skills/backtest_guide/SKILL.md
 ```
 
 ---
@@ -200,7 +200,7 @@ node run-strategy.js --strategy your_strategy.py --timeout-ms 600000  # 10分钟
 - 不能是策略编辑器格式（initialize/handle_data）
 - API 使用 JoinQuant 格式：get_all_securities("stock", date)
 
-参考文档：docs/backtest_guide/README.md, skills/joinquant_notebook/README.md
+参考文档：skills/backtest_guide/SKILL.md, skills/joinquant_notebook/README.md
 ```
 
 ---
@@ -225,7 +225,7 @@ node run-strategy.js --strategy your_strategy.py --timeout-ms 600000  # 10分钟
 
 Session 自动管理，无需手动抓取。
 
-参考文档：docs/backtest_guide/README.md, skills/ricequant_strategy/README.md
+参考文档：skills/backtest_guide/SKILL.md, skills/ricequant_strategy/README.md
 ```
 
 ---
@@ -345,7 +345,7 @@ print("=== 测试完成 ===")
 
 请生成迁移后的代码。
 
-参考文档：docs/backtest_guide/MIGRATION.md, docs/backtest_guide/API_DIFF.md
+参考文档：skills/backtest_guide/SKILL.md, skills/backtest_guide/SKILL.md
 ```
 
 ---

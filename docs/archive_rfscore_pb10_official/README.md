@@ -200,8 +200,8 @@ PB20%: 年化 15.03%, 回撤 -10.77%, 夏普 0.65  ← 已淘汰
 
 - 原升级报告: `docs/parallel_strategy_tasks_20260328/11_rfscore7_pb10_upgrade_report.md`
 - Round3汇总: `docs/parallel_strategy_tasks_20260328_round3_rfscore_pb10/00_round3_summary.md`
-- 回测指南: `docs/backtest_guide/README.md`
-- API差异: `docs/backtest_guide/API_DIFF.md`
+- 回测指南: `skills/backtest_guide/SKILL.md`
+- API差异: `skills/backtest_guide/SKILL.md`
 
 ---
 

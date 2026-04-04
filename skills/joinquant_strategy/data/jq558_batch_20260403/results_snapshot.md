@@ -1,5 +1,5 @@
 # JQ558 最近1年回测结果快照
-> 生成时间: 2026-04-04T00:03:22.680Z
+> 生成时间: 2026-04-04T00:28:56.220Z
 > 运行目录: /Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/data/jq558_batch_20260403
 
 - 已提交: 16

@@ -208,10 +208,9 @@ node run-strategy.js --strategy ./test.py --timeout-ms 600000  # 10分钟
 
 ## 七、参考文档
 
-- 标准提示词: `docs/backtest_guide/PROMPT.md`
+- 回测平台指南: `skills/backtest_guide/SKILL.md`
 - RiceQuant API: `skills/ricequant_strategy/README.md`
-- 迁移指南: `docs/backtest_guide/MIGRATION.md`
-- API 差异: `docs/backtest_guide/API_DIFF.md`
+- JQ→RQ 迁移指南: `skills/backtest_guide/reference/jq_to_rq_migration.md`
 
 ---
 

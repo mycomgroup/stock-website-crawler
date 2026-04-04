@@ -76,5 +76,5 @@ ml_multifactor_validation_20260401/
 ## 联系方式
 
 如有问题，请参考：
-- 回测指南: `docs/backtest_guide/README.md`
+- 回测指南: `skills/backtest_guide/SKILL.md`
 - JoinQuant文档: https://www.joinquant.com/help/api/

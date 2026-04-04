@@ -8,7 +8,7 @@
 
 它不再讨论“平台有没有数据”“回测平台怎么用”，这些已经由：
 
-- `docs/backtest_guide/`
+- `skills/backtest_guide/`
 - `stock-backtesting-system/skills/`
 
 承担。
@@ -28,7 +28,7 @@
 建议继续沿用：
 
 - `skills/`
-- `docs/backtest_guide/`
+- `skills/backtest_guide/`
 
 职责：
 

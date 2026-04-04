@@ -90,7 +90,7 @@ print("最大回撤: -8.3%")
 | `cn_stock_dividend` | 分红 | bonus_rate/cash_before_tax/ex_date |
 | `cn_stock_suspend` | 停牌 | suspend_period/suspend_reason |
 
-详细 API 参考：`docs/backtest_guide/bigquant_api_reference.md`
+详细 API 参考：[skills/backtest_guide/reference/bigquant_api_reference.md](../backtest_guide/reference/bigquant_api_reference.md)
 
 ## 结果数据
 

@@ -86,7 +86,7 @@
 ## 📚 文档结构总览
 
 ```
-docs/backtest_guide/
+skills/backtest_guide/SKILL.md
 ├── README.md                                    # Notebook 回测指南
 ├── STRATEGY_EDITOR_GUIDE.md                     # 策略编辑器回测指南 ⭐
 ├── joinquant_to_ricequant_migration_guide.md    # 完整迁移指南

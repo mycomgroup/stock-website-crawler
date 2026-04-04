@@ -272,6 +272,19 @@ async function waitForSlotIfNeeded(activeBacktests, client, contextCache, maxCon
   return active;
 }
 
+async function waitForPlatformCapacity(activeBacktests, client, contextCache, maxConcurrent) {
+  let active = activeBacktests;
+  while (true) {
+    active = await refreshActiveBacktests(active, client, contextCache);
+    if (active.length < maxConcurrent) {
+      console.log(`  平台空位检查完成，当前活跃回测: ${active.length}`);
+      return active;
+    }
+    console.log(`  平台仍然拥挤(${active.length}/${maxConcurrent})，30秒后继续检查...`);
+    await sleep(30000);
+  }
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const startDate = args.start || '2025-04-03';
@@ -358,8 +371,6 @@ async function main() {
       };
 
       try {
-        activeBacktests = await waitForSlotIfNeeded(activeBacktests, client, contextCache, maxConcurrent);
-
         let created = null;
         if (reuseAlgorithmId) {
           record.algorithmId = reuseAlgorithmId;
@@ -392,8 +403,7 @@ async function main() {
           } catch (error) {
             if (!isRateLimitError(error)) throw error;
             console.log('  平台并发回测已满，等待后重试当前策略...');
-            activeBacktests = await refreshActiveBacktests(activeBacktests, client, contextCache);
-            activeBacktests = await waitForSlotIfNeeded(activeBacktests, client, contextCache, maxConcurrent);
+            activeBacktests = await waitForPlatformCapacity(activeBacktests, client, contextCache, maxConcurrent);
           }
         }
 
