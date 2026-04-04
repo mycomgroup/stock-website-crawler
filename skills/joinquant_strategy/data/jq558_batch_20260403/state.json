@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-03T15:45:49.617Z",
+  "updatedAt": "2026-04-03T23:44:20.880Z",
   "sourceDir": "/Users/fengzhi/Downloads/git/testlixingren/聚宽有价值策略558",
   "runDir": "/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/data/jq558_batch_20260403",
   "totalFiles": 492,
@@ -11,6 +11,6 @@
   "capital": "100000",
   "frequency": "day",
   "sleepMs": 5000,
-  "reuseAlgorithmId": null,
+  "reuseAlgorithmId": "cd45eba022e60387deb91ee6f725ef50",
   "maxConcurrent": 10
 }

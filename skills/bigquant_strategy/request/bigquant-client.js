@@ -68,14 +68,47 @@ export class BigQuantClient {
     };
   }
 
-  async request(method, url, body = null) {
+  async request(method, url, body = null, retryCount = 0) {
     const fullUrl = url.startsWith('http') ? url : `${ORIGIN}${url}`;
-    const opts = { method, headers: this.buildHeaders() };
-    if (body !== null) opts.body = JSON.stringify(body);
-    const resp = await fetch(fullUrl, opts);
-    const text = await resp.text();
-    if (!resp.ok) throw new Error(`HTTP ${resp.status} ${method} ${fullUrl}: ${text.slice(0, 300)}`);
-    try { return JSON.parse(text); } catch { return text; }
+    const maxRetries = 3;
+    const timeoutMs = 30000;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const opts = { method, headers: this.buildHeaders(), signal: controller.signal };
+      if (body !== null) opts.body = JSON.stringify(body);
+      const resp = await fetch(fullUrl, opts);
+      clearTimeout(timer);
+
+      const text = await resp.text();
+      if (!resp.ok) {
+        if (resp.status >= 500 && retryCount < maxRetries) {
+          const delay = Math.pow(2, retryCount) * 1000;
+          console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${resp.status}, retrying in ${delay}ms...`);
+          await new Promise(r => setTimeout(r, delay));
+          return this.request(method, url, body, retryCount + 1);
+        }
+        throw new Error(`HTTP ${resp.status} ${method} ${fullUrl}: ${text.slice(0, 300)}`);
+      }
+      try { return JSON.parse(text); } catch { return text; }
+    } catch (error) {
+      clearTimeout(timer);
+      const isRetryable = error.name === 'AbortError' ||
+        error.message.includes('timeout') ||
+        error.message.includes('network') ||
+        error.message.includes('ECONN') ||
+        error.message.includes('ECONNRESET');
+      if (isRetryable && retryCount < maxRetries) {
+        const delay = Math.pow(2, retryCount) * 1000;
+        const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
+        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, retrying in ${delay}ms...`);
+        await new Promise(r => setTimeout(r, delay));
+        return this.request(method, url, body, retryCount + 1);
+      }
+      throw error;
+    }
   }
 
   // ── 资源规格 ─────────────────────────────────────────────────────

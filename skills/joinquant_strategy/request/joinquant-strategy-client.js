@@ -39,23 +39,50 @@ export class JoinQuantStrategyClient {
     return headers;
   }
 
-  async request(url, options = {}) {
+  async request(url, options = {}, retryCount = 0) {
     const fullUrl = url.startsWith('http') ? url : `${this.origin}${url}`;
-    const response = await fetch(fullUrl, {
-      method: options.method || 'GET',
-      headers: this.buildHeaders(fullUrl, options.headers),
-      body: options.body
-    });
+    const maxRetries = 3;
+    const timeoutMs = options.timeoutMs || 30000;
 
-    const text = await response.text();
-    if (!response.ok) {
-      throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
-    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      return JSON.parse(text);
-    } catch (e) {
-      return text;
+      const response = await fetch(fullUrl, {
+        method: options.method || 'GET',
+        headers: this.buildHeaders(fullUrl, options.headers),
+        body: options.body,
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+
+      const text = await response.text();
+      if (!response.ok) {
+        if (response.status >= 500 && retryCount < maxRetries) {
+          const delay = Math.pow(2, retryCount) * 1000;
+          console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${response.status}, retrying in ${delay}ms...`);
+          await new Promise(r => setTimeout(r, delay));
+          return this.request(url, options, retryCount + 1);
+        }
+        throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
+      }
+
+      try { return JSON.parse(text); } catch { return text; }
+    } catch (error) {
+      clearTimeout(timer);
+      const isRetryable = error.name === 'AbortError' ||
+        error.message.includes('timeout') ||
+        error.message.includes('network') ||
+        error.message.includes('ECONN') ||
+        error.message.includes('ECONNRESET');
+      if (isRetryable && retryCount < maxRetries) {
+        const delay = Math.pow(2, retryCount) * 1000;
+        const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
+        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, retrying in ${delay}ms...`);
+        await new Promise(r => setTimeout(r, delay));
+        return this.request(url, options, retryCount + 1);
+      }
+      throw error;
     }
   }
 

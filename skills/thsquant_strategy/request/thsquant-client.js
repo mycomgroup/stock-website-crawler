@@ -66,29 +66,60 @@ export class THSQuantClient {
     };
   }
 
-  async request(endpoint, body = 'isajax=1') {
+  async request(endpoint, body = 'isajax=1', retryCount = 0) {
     const url = endpoint.startsWith('http') ? endpoint : `${this.origin}${endpoint}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: this.buildHeaders(url),
-      body: body.includes('isajax') ? body : body + '&isajax=1'
-    });
+    const maxRetries = 3;
+    const timeoutMs = 30000;
 
-    const text = await response.text();
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} ${url}: ${text.slice(0, 200)}`);
-    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-    // 解析 JSONP 或 JSON
     try {
-      const trimmed = text.trim();
-      if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-        const m = trimmed.match(/\(\{.+\}\)/s);
-        if (m) return JSON.parse(m[1]);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this.buildHeaders(url),
+        body: body.includes('isajax') ? body : body + '&isajax=1',
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+
+      const text = await response.text();
+      if (!response.ok) {
+        if (response.status >= 500 && retryCount < maxRetries) {
+          const delay = Math.pow(2, retryCount) * 1000;
+          console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${response.status}, retrying in ${delay}ms...`);
+          await new Promise(r => setTimeout(r, delay));
+          return this.request(endpoint, body, retryCount + 1);
+        }
+        throw new Error(`HTTP ${response.status} ${url}: ${text.slice(0, 200)}`);
       }
-      return JSON.parse(trimmed);
-    } catch (e) {
-      return { raw: text.slice(0, 500), parseError: e.message };
+
+      // 解析 JSONP 或 JSON
+      try {
+        const trimmed = text.trim();
+        if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+          const m = trimmed.match(/\(\{.+\}\)/s);
+          if (m) return JSON.parse(m[1]);
+        }
+        return JSON.parse(trimmed);
+      } catch (e) {
+        return { raw: text.slice(0, 500), parseError: e.message };
+      }
+    } catch (error) {
+      clearTimeout(timer);
+      const isRetryable = error.name === 'AbortError' ||
+        error.message.includes('timeout') ||
+        error.message.includes('network') ||
+        error.message.includes('ECONN') ||
+        error.message.includes('ECONNRESET');
+      if (isRetryable && retryCount < maxRetries) {
+        const delay = Math.pow(2, retryCount) * 1000;
+        const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
+        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, retrying in ${delay}ms...`);
+        await new Promise(r => setTimeout(r, delay));
+        return this.request(endpoint, body, retryCount + 1);
+      }
+      throw error;
     }
   }
 

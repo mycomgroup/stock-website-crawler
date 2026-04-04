@@ -46,38 +46,45 @@ export class RiceQuantClient {
   async request(url, options = {}, retryCount = 0) {
     const fullUrl = url.startsWith('http') ? url : `${this.origin}${url}`;
     const maxRetries = 3;
-    
+    const timeoutMs = options.timeoutMs || 30000;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
     try {
       const response = await fetch(fullUrl, {
         method: options.method || 'GET',
         headers: this.buildHeaders(fullUrl, options.headers),
-        body: options.body
+        body: options.body,
+        signal: controller.signal
       });
+      clearTimeout(timer);
 
       const text = await response.text();
-      
+
       if (!response.ok) {
-        // 如果是 5xx 错误，尝试重试
         if (response.status >= 500 && retryCount < maxRetries) {
           const delay = Math.pow(2, retryCount) * 1000;
-          console.warn(`      [Retry ${retryCount+1}/${maxRetries}] Request failed ${response.status}, retrying in ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${response.status}, retrying in ${delay}ms...`);
+          await new Promise(r => setTimeout(r, delay));
           return this.request(url, options, retryCount + 1);
         }
         throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
       }
 
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        return text;
-      }
+      try { return JSON.parse(text); } catch { return text; }
     } catch (error) {
-      // 捕获网络错误并在必要时重试
-      if (retryCount < maxRetries && (error.message.includes('timeout') || error.message.includes('network') || error.message.includes('ECONN'))) {
+      clearTimeout(timer);
+      const isRetryable = error.name === 'AbortError' ||
+        error.message.includes('timeout') ||
+        error.message.includes('network') ||
+        error.message.includes('ECONN') ||
+        error.message.includes('ECONNRESET');
+      if (isRetryable && retryCount < maxRetries) {
         const delay = Math.pow(2, retryCount) * 1000;
-        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] Network error: ${error.message}, retrying in ${delay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
+        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, retrying in ${delay}ms...`);
+        await new Promise(r => setTimeout(r, delay));
         return this.request(url, options, retryCount + 1);
       }
       throw error;
@@ -195,6 +202,53 @@ export class RiceQuantClient {
       : `/api/backtest/v1/workspaces/${workspaceId}/backtests`;
     const result = await this.request(url);
     return result.backtests || [];
+  }
+
+  /**
+   * 查询策略的所有回测记录，按时间倒序排列
+   * @param {string} strategyId
+   * @returns {Array} 回测列表
+   */
+  async listStrategyBacktests(strategyId) {
+    if (!strategyId) throw new Error('strategyId is required');
+    const backtests = await this.getBacktestList(strategyId);
+    // 按创建时间倒序
+    return backtests.sort((a, b) => {
+      const ta = new Date(a.created_at || a.createdAt || 0).getTime();
+      const tb = new Date(b.created_at || b.createdAt || 0).getTime();
+      return tb - ta;
+    });
+  }
+
+  /**
+   * 获取策略最近一次回测的完整结果
+   * @param {string} strategyId
+   * @returns {{ backtest, result, risk }}
+   */
+  async getLatestBacktestResult(strategyId) {
+    const list = await this.listStrategyBacktests(strategyId);
+    if (!list.length) throw new Error(`No backtests found for strategy ${strategyId}`);
+    const latest = list[0];
+    const backtestId = latest._id || latest.backtest_id || latest.id;
+    const [result, risk] = await Promise.all([
+      this.getBacktestResult(backtestId),
+      this.getBacktestRisk(backtestId)
+    ]);
+    return { backtest: latest, backtestId, result, risk };
+  }
+
+  /**
+   * 获取策略指定回测的完整结果（通过 backtestId）
+   * @param {string} backtestId
+   * @returns {{ backtestId, result, risk }}
+   */
+  async getBacktestResultById(backtestId) {
+    if (!backtestId) throw new Error('backtestId is required');
+    const [result, risk] = await Promise.all([
+      this.getBacktestResult(backtestId),
+      this.getBacktestRisk(backtestId)
+    ]);
+    return { backtestId, result, risk };
   }
 
   async getRunningBacktestCount() {

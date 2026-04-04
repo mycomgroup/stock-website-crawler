@@ -64,7 +64,7 @@ STRATEGIES=(
   "2417665|/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/strategies/notebook_rsrs_volume_weighted_dampened.py"
 )
 
-START_DATE="2026-01-01"
+START_DATE="2023-01-01"
 END_DATE="2026-04-01"
 LOG_FILE="/Users/fengzhi/Downloads/git/testlixingren/strategies/quantsplaybook_validation/SUBMITTED_BACKTESTS.md"
 
