@@ -120,19 +120,26 @@ _INDUSTRY_SW_SCHEMA = [
 
 
 class IndustrySWDBManager:
-    """申万行业 DuckDB 管理器"""
+    """申万行业 DuckDB 管理器（延迟初始化）"""
 
     _instance = None
+    _initialized = False
 
     def __new__(cls, db_path: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._manager = None
+            cls._instance._db_path = None
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
+    def _ensure_initialized(self, db_path: str = None):
+        """延迟初始化：只在首次使用时才初始化"""
+        if self._initialized:
+            return
+
         if not _DUCKDB_AVAILABLE:
             self._manager = None
+            self._initialized = True
             return
 
         if db_path is None:
@@ -141,7 +148,7 @@ class IndustrySWDBManager:
             )
             db_path = os.path.join(base_dir, "data", "industry_sw.db")
 
-        self.db_path = db_path
+        self._db_path = db_path
         self._manager = None
 
         try:
@@ -150,6 +157,8 @@ class IndustrySWDBManager:
         except Exception as e:
             logger.warning(f"DuckDB 初始化失败: {e}")
             self._manager = None
+
+        self._initialized = True
 
     def _init_tables(self):
         if self._manager is None:
@@ -277,7 +286,15 @@ class IndustrySWDBManager:
             return False
 
 
-_db_manager = IndustrySWDBManager() if _DUCKDB_AVAILABLE else None
+def _get_db_manager():
+    """获取数据库管理器单例（延迟初始化）"""
+    if not _DUCKDB_AVAILABLE:
+        return None
+    manager = IndustrySWDBManager()
+    manager._ensure_initialized()
+    return manager
+
+_db_manager = None  # 延迟初始化，避免导入时副作用
 
 
 def _extract_code_num(symbol: str) -> str:
@@ -335,9 +352,10 @@ def get_sw_industry_list(level: int = 1) -> RobustResult:
             source="error",
         )
 
-    if _db_manager is not None:
-        if _db_manager.is_cache_valid(cache_days=90):
-            df_cached = _db_manager.get_industry_list(level)
+    db_manager = _get_db_manager()
+    if db_manager is not None:
+        if db_manager.is_cache_valid(cache_days=90):
+            df_cached = db_manager.get_industry_list(level)
             if not df_cached.empty:
                 return RobustResult(success=True, data=df_cached, source="cache")
 
@@ -354,8 +372,9 @@ def get_sw_industry_list(level: int = 1) -> RobustResult:
             result["industry_name"] = df.get("行业名称", df.get("板块名称", ""))
             result["level"] = [level] * len(df)
 
-            if _db_manager is not None:
-                _db_manager.insert_industry_list(result, level)
+            db_manager = _get_db_manager()
+            if db_manager is not None:
+                db_manager.insert_industry_list(result, level)
 
             return RobustResult(success=True, data=result, source="network")
     except Exception as e:
@@ -391,9 +410,10 @@ def get_stock_industry(symbol: str, use_cache: bool = True) -> RobustResult:
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    if use_cache and _db_manager is not None:
-        if _db_manager.is_cache_valid(jq_code, cache_days=90):
-            df_cached = _db_manager.get_industry(jq_code)
+    if use_cache:
+        db_manager = _get_db_manager()
+        if db_manager is not None and db_manager.is_cache_valid(jq_code, cache_days=90):
+            df_cached = db_manager.get_industry(jq_code)
             if not df_cached.empty:
                 result = DEFAULT_INDUSTRY_SCHEMA.copy()
                 for row in df_cached.itertuples():
@@ -435,8 +455,9 @@ def get_stock_industry(symbol: str, use_cache: bool = True) -> RobustResult:
                 ]
             )
 
-            if _db_manager is not None:
-                _db_manager.insert_industry(df_industry)
+            db_manager = _get_db_manager()
+            if db_manager is not None:
+                db_manager.insert_industry(df_industry)
 
             return RobustResult(success=True, data=result, source="network")
     except Exception as e:

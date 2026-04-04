@@ -29,40 +29,39 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-import matplotlib
+# Matplotlib 延迟初始化，避免首次导入时构建字体缓存
+_matplotlib_initialized = False
+_plt = None  # 延迟导入 matplotlib.pyplot
 
-# headless 环境使用非交互后端
-import os as _os
+def _ensure_matplotlib_init():
+    """延迟初始化 matplotlib，只在首次使用时配置"""
+    global _matplotlib_initialized
+    if _matplotlib_initialized:
+        return
 
-if not _os.environ.get("DISPLAY"):
-    matplotlib.use("Agg")
+    import matplotlib
+    import os as _os
 
-# 中文字体 fallback
-matplotlib.rcParams["font.family"] = [
-    "Noto Sans CJK JP",
-    "SimHei",
-    "Microsoft YaHei",
-    "DejaVu Sans",
-]
-matplotlib.rcParams["axes.unicode_minus"] = False
+    # headless 环境使用非交互后端
+    if not _os.environ.get("DISPLAY"):
+        matplotlib.use("Agg")
 
-import matplotlib.pyplot as plt
-
-# patch plt.show
-_orig_show = plt.show
-
-
-def _patched_show(*args, **kwargs):
-    import datetime as _dt
-    fname = f"output_chart_{_dt.datetime.now().strftime('%H%M%S')}.png"
+    # 中文字体 fallback（使用更安全的设置）
     try:
-        plt.savefig(fname, dpi=120, bbox_inches="tight")
-        print(f"[INFO] [图表] 已保存为 {fname}")
+        matplotlib.rcParams["font.family"] = [
+            "Noto Sans CJK JP",
+            "SimHei",
+            "Microsoft YaHei",
+            "DejaVu Sans",
+        ]
+        matplotlib.rcParams["axes.unicode_minus"] = False
     except Exception:
+        # 字体设置失败时忽略，避免阻塞导入
         pass
 
+    _matplotlib_initialized = True
 
-plt.show = _patched_show
+# patch pandas fillna（保持原有代码）
 
 # patch pandas fillna
 import pandas as _pd
@@ -96,6 +95,13 @@ def _df_fillna_compat(self, value=None, method=None, **kwargs):
 
 
 _pd.DataFrame.fillna = _df_fillna_compat
+
+# 延迟导入 matplotlib.pyplot，在需要时才初始化
+def _get_plt():
+    """获取 matplotlib.pyplot（延迟导入）"""
+    _ensure_matplotlib_init()
+    import matplotlib.pyplot as plt_module
+    return plt_module
 
 # =====================================================================
 # 1. 标准库和第三方库

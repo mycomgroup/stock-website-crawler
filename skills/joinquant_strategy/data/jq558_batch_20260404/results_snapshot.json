@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-04T00:37:31.143Z",
+  "generatedAt": "2026-04-04T01:21:14.778Z",
   "runDir": "/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/data/jq558_batch_20260404",
   "totals": {
-    "submitted": 13,
+    "submitted": 84,
     "completed": 0,
-    "pending": 13,
+    "pending": 84,
     "failed": 0
   },
   "completed": [],
@@ -31,7 +31,7 @@
       "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
       "backtestId": "4e4ccdbad456c246dfdebe1285562a3d",
       "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=4e4ccdbad456c246dfdebe1285562a3d",
-      "state": "1"
+      "state": "2"
     },
     {
       "file": "聚宽有价值策略558/01 一颗耀眼的星—【回顾2】小市值成长股策略更新—改.txt",
@@ -63,7 +63,7 @@
       "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
       "backtestId": "4145a3bfe44162c0c060a82089e2d596",
       "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=4145a3bfe44162c0c060a82089e2d596",
-      "state": "1"
+      "state": "2"
     },
     {
       "file": "聚宽有价值策略558/02 龙头底分型战法-两年23倍.txt",
@@ -71,7 +71,7 @@
       "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
       "backtestId": "b86fbde7ca8b1a4d95247d16e7ac9c1c",
       "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=b86fbde7ca8b1a4d95247d16e7ac9c1c",
-      "state": "1"
+      "state": "2"
     },
     {
       "file": "聚宽有价值策略558/02 ETF动量轮动RSRS择时-魔改3小优化.txt",
@@ -95,7 +95,7 @@
       "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
       "backtestId": "598c4a012fd0229ba684876723095776",
       "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=598c4a012fd0229ba684876723095776",
-      "state": "1"
+      "state": "2"
     },
     {
       "file": "聚宽有价值策略558/03 高评分ETF策略之核心资产轮动.txt",
@@ -111,6 +111,574 @@
       "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
       "backtestId": "2d73a262f7f5530d64bd7c937982c648",
       "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=2d73a262f7f5530d64bd7c937982c648",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "strategyName": "JQ558_0014_聚宽有价值策略558_03_一个简单而持续稳定的懒人超额收益策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "a7c58bbe70de48e299df9045522ea490",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=a7c58bbe70de48e299df9045522ea490",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/04 高股息低市盈率高增长的价投策略.txt",
+      "strategyName": "JQ558_0015_聚宽有价值策略558_04_高股息低市盈率高增长的价投策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "77b7db83172fb0ac2f6c5707a133a947",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=77b7db83172fb0ac2f6c5707a133a947",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/04 红利搬砖，年化29%.txt",
+      "strategyName": "JQ558_0016_聚宽有价值策略558_04_红利搬砖_年化29",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c42dc2da1b10098c87d174c1a7f8b65b",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c42dc2da1b10098c87d174c1a7f8b65b",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/04 集合竞价摸奖策略1.0-致敬2022.txt",
+      "strategyName": "JQ558_0017_聚宽有价值策略558_04_集合竞价摸奖策略1_0-致敬2022",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "e08b4b220d187cde192d11c862154fd8",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=e08b4b220d187cde192d11c862154fd8",
+      "state": "3"
+    },
+    {
+      "file": "聚宽有价值策略558/04 苦咖啡-默默赚钱系列-改.txt",
+      "strategyName": "JQ558_0018_聚宽有价值策略558_04_苦咖啡-默默赚钱系列-改",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "cee12040bbb08e265e4f2494808fd60a",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=cee12040bbb08e265e4f2494808fd60a",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/04 首板低开策略.txt",
+      "strategyName": "JQ558_0019_聚宽有价值策略558_04_首板低开策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "e0bd9f652175e9a7d6eadf6d33f89189",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=e0bd9f652175e9a7d6eadf6d33f89189",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 8年10倍回撤小,有滑点,ETF动量简单轮动策略.txt",
+      "strategyName": "JQ558_0020_聚宽有价值策略558_05_8年10倍回撤小_有滑点_ETF动量简单轮动策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "58138b216db15f781ea1ca8f7bd94224",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=58138b216db15f781ea1ca8f7bd94224",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 价值低波（下）--十年十倍（2020拜年）.txt",
+      "strategyName": "JQ558_0021_聚宽有价值策略558_05_价值低波_下_--十年十倍_2020拜年",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "0733a0175355bf006f7dbb822e0bc135",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=0733a0175355bf006f7dbb822e0bc135",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 尝试用机器学习的原文网址.txt",
+      "strategyName": "JQ558_0022_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_尝试用机器学习的原文网址",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "3a180533c875c1e72f574f98d1f78639",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=3a180533c875c1e72f574f98d1f78639",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 尝试用机器学习的原文网址.txt",
+      "strategyName": "JQ558_0023_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "bb069ead043b565e7b04c92ec61d2367",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=bb069ead043b565e7b04c92ec61d2367",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ARBR-SGAI-NPTTOR-RPPS.txt",
+      "strategyName": "JQ558_0024_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "6531e11897b2eb2886a79765b8f79b66",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=6531e11897b2eb2886a79765b8f79b66",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/FL-VOL240-AEttm.txt",
+      "strategyName": "JQ558_0025_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "403a74d00323d999a59f1735ad21e7d8",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=403a74d00323d999a59f1735ad21e7d8",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ITR-StPR-STM-NLoMC.txt",
+      "strategyName": "JQ558_0026_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "4fba2657c055a3f46cbbb9ee5603d85a",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=4fba2657c055a3f46cbbb9ee5603d85a",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/Liquidity-VCPttm-ROAttm.txt",
+      "strategyName": "JQ558_0027_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "1817bb72c156abaa9cfbb98b8a23f26b",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=1817bb72c156abaa9cfbb98b8a23f26b",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/NCAR-AER-ATR6-VOL20.txt",
+      "strategyName": "JQ558_0028_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "988e4a56cc8beff9b264ee7316c8e7cc",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=988e4a56cc8beff9b264ee7316c8e7cc",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ORGR-SRFps-VSTD20-NOCFtOI.txt",
+      "strategyName": "JQ558_0029_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "6a4f6ba24262b28e788f0b5062e431ea",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=6a4f6ba24262b28e788f0b5062e431ea",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ORGR-TPGR-NPGR-EGR-EPS.txt",
+      "strategyName": "JQ558_0030_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c5f73c9386e185f7dd856b5ec3d8c0f2",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c5f73c9386e185f7dd856b5ec3d8c0f2",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/PNF-TPtCR-ITR.txt",
+      "strategyName": "JQ558_0031_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "65fdee825371864e02da5c44eb9f94c5",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=65fdee825371864e02da5c44eb9f94c5",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/SQR-CoS-CtE.txt",
+      "strategyName": "JQ558_0032_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "cc5909ce50dccf464edaa3f0935d63d2",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=cc5909ce50dccf464edaa3f0935d63d2",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/VSTD20-ARTR-LTDtAR-OC.txt",
+      "strategyName": "JQ558_0033_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "e44082455505c7390830dbefb7ef5766",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=e44082455505c7390830dbefb7ef5766",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ARBR-SGAI-NPTTOR-RPPS.txt",
+      "strategyName": "JQ558_0034_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_ARBR-SGAI-NPTTOR-RPPS",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "f450f67f4e46bbb4677125bd750c53cb",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=f450f67f4e46bbb4677125bd750c53cb",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/FL-VOL240-AEttm.txt",
+      "strategyName": "JQ558_0035_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_FL-VOL240-AEttm",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "610afd282b2864ec3f60b45d78ab8dc4",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=610afd282b2864ec3f60b45d78ab8dc4",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ITR-StPR-STM-NLoMC.txt",
+      "strategyName": "JQ558_0036_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_ITR-StPR-STM-NLoMC",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "620d69012642bc5d78ccbcd6e64c5a1d",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=620d69012642bc5d78ccbcd6e64c5a1d",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/Liquidity-VCPttm-ROAttm.txt",
+      "strategyName": "JQ558_0037_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_Liquidity-VCPttm-ROAttm",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c36bf3d7822100fd0e32d83476336102",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c36bf3d7822100fd0e32d83476336102",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/NCAR-AER-ATR6-VOL20.txt",
+      "strategyName": "JQ558_0038_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_NCAR-AER-ATR6-VOL20",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "5d7e16c346763064b3b392c9451fa745",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=5d7e16c346763064b3b392c9451fa745",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ORGR-SRFps-VSTD20-NOCFtOI.txt",
+      "strategyName": "JQ558_0039_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_ORGR-SRFps-VSTD20-NOCFtOI",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "fe6c6ee51cce9f1098af8b4b1c40ded4",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=fe6c6ee51cce9f1098af8b4b1c40ded4",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/ORGR-TPGR-NPGR-EGR-EPS.txt",
+      "strategyName": "JQ558_0040_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_ORGR-TPGR-NPGR-EGR-EPS",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "1b994d06e695b8c690710febfcc497fb",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=1b994d06e695b8c690710febfcc497fb",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/PNF-TPtCR-ITR.txt",
+      "strategyName": "JQ558_0041_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_PNF-TPtCR-ITR",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "fcf20494d677ca824089d8d21df3d2ab",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=fcf20494d677ca824089d8d21df3d2ab",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/SQR-CoS-CtE.txt",
+      "strategyName": "JQ558_0042_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_SQR-CoS-CtE",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "94e7761b892f538f85d810ee068949fd",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=94e7761b892f538f85d810ee068949fd",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 使用机器学习AI辅助批量生成的10个小盘策略源代码/VSTD20-ARTR-LTDtAR-OC.txt",
+      "strategyName": "JQ558_0043_聚宽有价值策略558_05_使用机器学习AI辅助批量生成的10个小盘策略源代码_VSTD20-ARTR-LTDtAR-OC",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "a1ab1e91d167a31d08447294620378d9",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=a1ab1e91d167a31d08447294620378d9",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 四大搅屎棍策略.txt",
+      "strategyName": "JQ558_0044_聚宽有价值策略558_05_四大搅屎棍策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "03120c8455efbe22843dbd19fbecaa32",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=03120c8455efbe22843dbd19fbecaa32",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/05 随机森林策略，低换手率，年化近50%.txt",
+      "strategyName": "JQ558_0045_聚宽有价值策略558_05_随机森林策略_低换手率_年化近50",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "1b99a699569e35c9def59300d678f240",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=1b99a699569e35c9def59300d678f240",
+      "state": "3"
+    },
+    {
+      "file": "聚宽有价值策略558/05 用机器学习批量快速生产小盘策略.txt",
+      "strategyName": "JQ558_0046_聚宽有价值策略558_05_用机器学习批量快速生产小盘策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "0486ec8c4de60c9d1c257d29f95b36d7",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=0486ec8c4de60c9d1c257d29f95b36d7",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/06 87.5%胜率之分歧反包二板.txt",
+      "strategyName": "JQ558_0047_聚宽有价值策略558_06_87_5_胜率之分歧反包二板",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "42c767bfced4dde9de3d9b561635c9ee",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=42c767bfced4dde9de3d9b561635c9ee",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/06 高股息低杠杆稳定小市值轮动策略.txt",
+      "strategyName": "JQ558_0048_聚宽有价值策略558_06_高股息低杠杆稳定小市值轮动策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "0ba664234ec5f76b9fb6b73150a66abe",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=0ba664234ec5f76b9fb6b73150a66abe",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/06 国九小市值策略【年化100.5% 回撤25.6%】.txt",
+      "strategyName": "JQ558_0049_聚宽有价值策略558_06_国九小市值策略_年化100_5_回撤25_6",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "8cf84d7f64cd9a97789a8b738bdbb118",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=8cf84d7f64cd9a97789a8b738bdbb118",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/06 iAlpha 基金投资策略.txt",
+      "strategyName": "JQ558_0050_聚宽有价值策略558_06_iAlpha_基金投资策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "23a8b4801aab1ec3f918fd10f24aa718",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=23a8b4801aab1ec3f918fd10f24aa718",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/06 PEG+成长+小市值+RSRS择时.txt",
+      "strategyName": "JQ558_0051_聚宽有价值策略558_06_PEG_成长_小市值_RSRS择时",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "d91d5b7ad7abd18452d6141fea9c2398",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=d91d5b7ad7abd18452d6141fea9c2398",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/07 股债波动平衡.txt",
+      "strategyName": "JQ558_0052_聚宽有价值策略558_07_股债波动平衡",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "13680ebc12f21afae235c5eba0cd9dfe",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=13680ebc12f21afae235c5eba0cd9dfe",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/07 连板龙头策略.txt",
+      "strategyName": "JQ558_0053_聚宽有价值策略558_07_连板龙头策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "07848de1721ac407954362435be6326e",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=07848de1721ac407954362435be6326e",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/07 为了挣点积分自己实盘的策略分享出来.txt",
+      "strategyName": "JQ558_0054_聚宽有价值策略558_07_为了挣点积分自己实盘的策略分享出来",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "4165d80ab6b4e1fbe3cf3b22555b0a30",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=4165d80ab6b4e1fbe3cf3b22555b0a30",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/07 致敬经典作品——小兵哥《一致性风险度量》——极速版.txt",
+      "strategyName": "JQ558_0055_聚宽有价值策略558_07_致敬经典作品_小兵哥_一致性风险度量_极速版",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "af6aef8dc2e4c491687d35b3b90275c6",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=af6aef8dc2e4c491687d35b3b90275c6",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/07 追首板涨停 过去两年年化304%.txt",
+      "strategyName": "JQ558_0056_聚宽有价值策略558_07_追首板涨停_过去两年年化304",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c87c69ecb4c9bcb57c59fb0dd47af253",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c87c69ecb4c9bcb57c59fb0dd47af253",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/08 14个月200%，超短线实盘交易策略！无未来函数.txt",
+      "strategyName": "JQ558_0057_聚宽有价值策略558_08_14个月200_超短线实盘交易策略_无未来函数",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "be28aa5bb19ca403ea8415d066853ef2",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=be28aa5bb19ca403ea8415d066853ef2",
+      "state": "1"
+    },
+    {
+      "file": "聚宽有价值策略558/08 国九条后中小板微盘小改，年化135.40%.txt",
+      "strategyName": "JQ558_0058_聚宽有价值策略558_08_国九条后中小板微盘小改_年化135_40",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "5bb8653f0b2049edc07ec68b7e2d297c",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=5bb8653f0b2049edc07ec68b7e2d297c",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/08 科技与狠活 纯粹的数据挖掘策略.txt",
+      "strategyName": "JQ558_0059_聚宽有价值策略558_08_科技与狠活_纯粹的数据挖掘策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "6a699a67cd49017d3e011898801d6a64",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=6a699a67cd49017d3e011898801d6a64",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/08 因子分析 营业利润TTM.txt",
+      "strategyName": "JQ558_0060_聚宽有价值策略558_08_因子分析_营业利润TTM",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "a617ba68f9876b856aa53bdc707a0235",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=a617ba68f9876b856aa53bdc707a0235",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/08 ETF动量轮动RSRS择时-魔改3小优化.txt",
+      "strategyName": "JQ558_0061_聚宽有价值策略558_08_ETF动量轮动RSRS择时-魔改3小优化",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "977a462344d5b2ca82a94e7626c7062e",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=977a462344d5b2ca82a94e7626c7062e",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 持续跑赢大盘-真蓝筹v2(资金容量千万以上).txt",
+      "strategyName": "JQ558_0062_聚宽有价值策略558_09_持续跑赢大盘-真蓝筹v2_资金容量千万以上",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "b09ce7f78e16bec0ee3bb8a8edc81052",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=b09ce7f78e16bec0ee3bb8a8edc81052",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 大容量小市值持仓95只，媲美金元顺安元启.txt",
+      "strategyName": "JQ558_0063_聚宽有价值策略558_09_大容量小市值持仓95只_媲美金元顺安元启",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c1f09bc5ee639262cc07c51c7f2e80fe",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c1f09bc5ee639262cc07c51c7f2e80fe",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 分享几个截止2022年3月仍有效的策略/多个成长因子评分.txt",
+      "strategyName": "JQ558_0064_聚宽有价值策略558_09_分享几个截止2022年3月仍有效的策略_多个成长因子评分",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "31f45801f152690bc5c5f42dfb104f01",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=31f45801f152690bc5c5f42dfb104f01",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 分享几个截止2022年3月仍有效的策略/经典小市值.txt",
+      "strategyName": "JQ558_0065_聚宽有价值策略558_09_分享几个截止2022年3月仍有效的策略_经典小市值",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "533d8b0729247102a175bda023a301e4",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=533d8b0729247102a175bda023a301e4",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 分享几个截止2022年3月仍有效的策略/中小综指数增强.txt",
+      "strategyName": "JQ558_0066_聚宽有价值策略558_09_分享几个截止2022年3月仍有效的策略_中小综指数增强",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "47dfae5f94252a258392d31bb7761be8",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=47dfae5f94252a258392d31bb7761be8",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 分享几个截止2022年3月仍有效的策略/PEG-EBIT-CAP加入换手率因子.txt",
+      "strategyName": "JQ558_0067_聚宽有价值策略558_09_分享几个截止2022年3月仍有效的策略_PEG-EBIT-CAP加入换手率因子",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "796d764929353b760a0e3be4a2efaeaf",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=796d764929353b760a0e3be4a2efaeaf",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 干积分-量化策略简易框架.txt",
+      "strategyName": "JQ558_0068_聚宽有价值策略558_09_干积分-量化策略简易框架",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "eac49cbe2ceab1e0a52f041f89b7b90b",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=eac49cbe2ceab1e0a52f041f89b7b90b",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/09 iAlpha 基金投资策略.txt",
+      "strategyName": "JQ558_0069_聚宽有价值策略558_09_iAlpha_基金投资策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "b2166c82708bf9cddedcbc450a6d7533",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=b2166c82708bf9cddedcbc450a6d7533",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/10 10倍-二板排板战法优化.txt",
+      "strategyName": "JQ558_0070_聚宽有价值策略558_10_10倍-二板排板战法优化",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "877939f690dc5805ac493d24e63e794e",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=877939f690dc5805ac493d24e63e794e",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/10 10年52倍，年化59%，全新因子方法超稳定.txt",
+      "strategyName": "JQ558_0071_聚宽有价值策略558_10_10年52倍_年化59_全新因子方法超稳定",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "da7b4f371fdbf1c108cdfaab95080050",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=da7b4f371fdbf1c108cdfaab95080050",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/10 多因子宽基ETF择时轮动改进版-高收益大资金低回撤.txt",
+      "strategyName": "JQ558_0072_聚宽有价值策略558_10_多因子宽基ETF择时轮动改进版-高收益大资金低回撤",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "3e166bc057c6b56997cb9d7995a3c135",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=3e166bc057c6b56997cb9d7995a3c135",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/10 龙头首阴战法改版二.txt",
+      "strategyName": "JQ558_0073_聚宽有价值策略558_10_龙头首阴战法改版二",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "d768cf1d07c51851ff06340f3b43bc3e",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=d768cf1d07c51851ff06340f3b43bc3e",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/100 配套资料说明.txt",
+      "strategyName": "JQ558_0074_聚宽有价值策略558_100_配套资料说明",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "71bfbd22e94fa8171ee7f27fad6cf6d4",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=71bfbd22e94fa8171ee7f27fad6cf6d4",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/100 全市场选股？7年5倍不择时，回撤30%左右.txt",
+      "strategyName": "JQ558_0075_聚宽有价值策略558_100_全市场选股_7年5倍不择时_回撤30_左右",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "6a10b829ed151c45a380b7d63b2e8ac1",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=6a10b829ed151c45a380b7d63b2e8ac1",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/11 缠论交易策略.txt",
+      "strategyName": "JQ558_0076_聚宽有价值策略558_11_缠论交易策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "be6b10b0dbd960e5ae98ab8b06b40161",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=be6b10b0dbd960e5ae98ab8b06b40161",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/11 低风险中等收益策略.txt",
+      "strategyName": "JQ558_0077_聚宽有价值策略558_11_低风险中等收益策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "46362b8510293db6b58182e83f39adf8",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=46362b8510293db6b58182e83f39adf8",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/11 低价小盘简单有效.txt",
+      "strategyName": "JQ558_0078_聚宽有价值策略558_11_低价小盘简单有效",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "68621e2e9f89b18ce975019da08eabe1",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=68621e2e9f89b18ce975019da08eabe1",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/11 一个简单而持续稳定的懒人超额收益策略.txt",
+      "strategyName": "JQ558_0079_聚宽有价值策略558_11_一个简单而持续稳定的懒人超额收益策略",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "973e223e24125ade33501a49a875aba7",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=973e223e24125ade33501a49a875aba7",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/12 全市场选股？7年5倍不择时，回撤30%左右.txt",
+      "strategyName": "JQ558_0080_聚宽有价值策略558_12_全市场选股_7年5倍不择时_回撤30_左右",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c70ff3c0cea867abc10110800dd0b8d6",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c70ff3c0cea867abc10110800dd0b8d6",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/12 用子账户模拟多策略分仓.txt",
+      "strategyName": "JQ558_0081_聚宽有价值策略558_12_用子账户模拟多策略分仓",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "45243399bdde93e631babf0aaccd5728",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=45243399bdde93e631babf0aaccd5728",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/12 致敬聚宽： 机器学习多因子，50只持仓，14年37倍.txt",
+      "strategyName": "JQ558_0082_聚宽有价值策略558_12_致敬聚宽_机器学习多因子_50只持仓_14年37倍",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c11b8cb4e98a9588d2e7ad50ba7e5d46",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c11b8cb4e98a9588d2e7ad50ba7e5d46",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/12 致敬市场--5 定投ETF之躺平赢.txt",
+      "strategyName": "JQ558_0083_聚宽有价值策略558_12_致敬市场--5_定投ETF之躺平赢",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "b6e14f58792632cddd52b82a3cdd8a08",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=b6e14f58792632cddd52b82a3cdd8a08",
+      "state": "2"
+    },
+    {
+      "file": "聚宽有价值策略558/13 【涨停研究三】连板股票收益统计与回测.txt",
+      "strategyName": "JQ558_0084_聚宽有价值策略558_13_涨停研究三_连板股票收益统计与回测",
+      "algorithmId": "cd45eba022e60387deb91ee6f725ef50",
+      "backtestId": "c5b5f6fc4f56a401d84323824a834350",
+      "backtestUrl": "https://www.joinquant.com/algorithm/backtest?backtestId=c5b5f6fc4f56a401d84323824a834350",
       "state": "2"
     }
   ],

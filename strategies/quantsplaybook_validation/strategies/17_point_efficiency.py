@@ -54,7 +54,7 @@ def handle_bar(context, bar_dict):
     # 高效率 + 下降趋势 → 卖出
 
     if efficiency > 0.5 and trend > 0 and eff_percentile > 0.6 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: eff={efficiency:.2f}, trend={trend}")
     elif (efficiency > 0.5 and trend < 0) or (eff_percentile < 0.3 and context.pos):

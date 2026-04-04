@@ -58,7 +58,7 @@ def handle_bar(context, bar_dict):
     # 物极必反：极端低位买入，极端高位卖出
 
     if is_extreme_low and extreme_pct < 0.1 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: pos={position:.2f}, skew={skewness:.2f}")
     elif is_extreme_high and context.pos:

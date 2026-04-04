@@ -40,7 +40,7 @@ def handle_bar(context, bar_dict):
     # 强度下降 + 强度低于阈值 → 卖出
 
     if market_strength > 0.55 and strength_change > 0.05 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: strength={market_strength:.2f}, change={strength_change:.2f}")
     elif market_strength < 0.45 and strength_change < -0.05 and context.pos:

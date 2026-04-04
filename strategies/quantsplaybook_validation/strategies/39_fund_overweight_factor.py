@@ -22,7 +22,8 @@ def handle_bar(context, bar_dict):
     context.quarter = current_quarter
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
@@ -41,7 +42,7 @@ def handle_bar(context, bar_dict):
 
             # 机构超配代理：动量好 + 成交量稳定
             scores[stock] = price_mom * 0.7 - vol_cv * 0.3
-        except:
+        except Exception:
             continue
 
     if not scores:

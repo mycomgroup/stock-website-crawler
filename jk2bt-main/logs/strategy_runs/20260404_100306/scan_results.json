@@ -1,0 +1,39 @@
+{
+  "/var/folders/j9/7zb3x9657rj5ptnfbbb6q1740000gn/T/tmp3oafz716/valid.txt": {
+    "file_path": "/var/folders/j9/7zb3x9657rj5ptnfbbb6q1740000gn/T/tmp3oafz716/valid.txt",
+    "file_name": "valid.txt",
+    "status": "valid",
+    "has_initialize": true,
+    "has_handle": true,
+    "missing_apis": [],
+    "error_message": "",
+    "is_executable": true,
+    "details": {
+      "defined_funcs": [
+        "initialize",
+        "handle_data"
+      ],
+      "called_funcs": [],
+      "imported_names": [],
+      "code_lines": 5
+    }
+  },
+  "/var/folders/j9/7zb3x9657rj5ptnfbbb6q1740000gn/T/tmp3oafz716/invalid.txt": {
+    "file_path": "/var/folders/j9/7zb3x9657rj5ptnfbbb6q1740000gn/T/tmp3oafz716/invalid.txt",
+    "file_name": "invalid.txt",
+    "status": "no_initialize",
+    "has_initialize": false,
+    "has_handle": false,
+    "missing_apis": [],
+    "error_message": "no_initialize",
+    "is_executable": false,
+    "details": {
+      "defined_funcs": [
+        "my_func"
+      ],
+      "called_funcs": [],
+      "imported_names": [],
+      "code_lines": 3
+    }
+  }
+}

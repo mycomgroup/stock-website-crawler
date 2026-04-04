@@ -52,7 +52,7 @@ def handle_bar(context, bar_dict):
     # 多数信号看空 → 卖出
 
     if vote >= 2 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: vote={vote}, signals={signals}")
     elif vote <= -2 and context.pos:

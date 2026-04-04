@@ -108,6 +108,9 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
         # 设置当前策略实例（全局访问）
         _set_current_strategy_instance(self)
 
+        # 初始化运行时错误记录列表（GATE-2修复）
+        self.runtime_errors = []
+
         # 调用父类初始化
         super().__init__()
 
@@ -144,8 +147,17 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
                 strategy_funcs["initialize"](self.context)
             except Exception as e:
                 import traceback
-                self.log(f"initialize执行错误: {e}")
+                error_msg = f"initialize执行错误: {e}"
+                self.log(error_msg)
                 self.log(f"详细traceback:\n{traceback.format_exc()}")
+                # GATE-2修复：记录异常到runtime_errors
+                self.runtime_errors.append({
+                    "function": "initialize",
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                    "traceback": traceback.format_exc(),
+                    "datetime": "init_phase",
+                })
 
         # 调用after_code_changed函数（聚宽风格）
         if "after_code_changed" in strategy_funcs:
@@ -153,8 +165,17 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
                 strategy_funcs["after_code_changed"](self.context)
             except Exception as e:
                 import traceback
-                self.log(f"after_code_changed执行错误: {e}")
+                error_msg = f"after_code_changed执行错误: {e}"
+                self.log(error_msg)
                 self.log(f"详细traceback:\n{traceback.format_exc()}")
+                # GATE-2修复：记录异常到runtime_errors
+                self.runtime_errors.append({
+                    "function": "after_code_changed",
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                    "traceback": traceback.format_exc(),
+                    "datetime": "init_phase",
+                })
 
         # 保存handle函数引用
         self._handle_functions = {}
@@ -181,7 +202,17 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
                 if len(params) >= 1:
                     self._before_trading_start_func(self.context)
             except Exception as e:
-                self.log(f"before_trading_start执行错误: {e}")
+                import traceback
+                error_msg = f"before_trading_start执行错误: {e}"
+                self.log(error_msg)
+                # GATE-2修复：记录异常到runtime_errors，不能只打日志
+                self.runtime_errors.append({
+                    "function": "before_trading_start",
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                    "traceback": traceback.format_exc(),
+                    "datetime": str(self.current_dt) if hasattr(self, 'current_dt') else "unknown",
+                })
 
         # 执行handle函数（如果定时器中没有注册）
         # 创建 data 参数代理
@@ -198,7 +229,17 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
                     # handle_data(context) 格式
                     func(self.context)
             except Exception as e:
-                self.log(f"{name}执行错误: {e}")
+                import traceback
+                error_msg = f"{name}执行错误: {e}"
+                self.log(error_msg)
+                # GATE-2修复：记录异常到runtime_errors，不能只打日志
+                self.runtime_errors.append({
+                    "function": name,
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                    "traceback": traceback.format_exc(),
+                    "datetime": str(self.current_dt) if hasattr(self, 'current_dt') else "unknown",
+                })
 
     def _get_security_data(self, security):
         """获取证券的当前数据"""

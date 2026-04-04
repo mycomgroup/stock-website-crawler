@@ -1,0 +1,15 @@
+{
+  "/var/folders/j9/7zb3x9657rj5ptnfbbb6q1740000gn/T/tmp3gdse4w7/研究说明.txt": {
+    "file_path": "/var/folders/j9/7zb3x9657rj5ptnfbbb6q1740000gn/T/tmp3gdse4w7/研究说明.txt",
+    "file_name": "研究说明.txt",
+    "status": "not_strategy",
+    "has_initialize": false,
+    "has_handle": false,
+    "missing_apis": [],
+    "error_message": "非策略文件（研究文档/配套资料）",
+    "is_executable": false,
+    "details": {
+      "reason": "file_pattern_excluded"
+    }
+  }
+}

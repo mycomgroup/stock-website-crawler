@@ -50,7 +50,7 @@ def handle_bar(context, bar_dict):
     # QRS < 0.3 且 QRS_MA下降趋势 → 卖出
 
     if qrs > 0.7 and qrs_ma > 0.5 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: QRS={qrs:.2f}, QRS_MA={qrs_ma:.2f}")
     elif qrs < 0.3 and qrs_ma < 0.5 and context.pos:

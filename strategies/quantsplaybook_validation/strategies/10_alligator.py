@@ -69,7 +69,7 @@ def handle_bar(context, bar_dict):
 
         # 突破买入：从睡眠/空头转为多头排列
         if bullish and not prev_bullish and not context.pos:
-            order_value(security, context.portfolio.starting_cash * 0.95)
+            order_value(security, context.portfolio.total_value * 0.95)
             context.pos = True
             print(f"买入鳄鱼唤醒: lips={lips:.2f}, teeth={teeth:.2f}, jaw={jaw:.2f}")
 

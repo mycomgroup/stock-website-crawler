@@ -36,11 +36,11 @@ def handle_data(context, data):
     if g.days%g.refresh_rate==0:
         if hour == g.hour and minute == g.minute:
             buy_stocks = select_stocks(context,data)
-            print '前%d个交易日港资（北向资金）净买额最高的股票：\n'%g.nday
+            print('前%d个交易日港资（北向资金）净买额最高的股票：\n'%g.nday)
             for stock in buy_stocks:
-                print show_stock(stock)
+                print(show_stock(stock))
             adjust_position(context, buy_stocks)
-            print get_portfolio_info_text(context,buy_stocks)
+            print(get_portfolio_info_text(context,buy_stocks))
     g.days+=1
         
 def select_stocks(context,data):
@@ -172,4 +172,4 @@ def get_portfolio_info_text(context,new_stocks,op_sfs=[0]):
             total_values,
             len(context.subportfolios[sf_id].long_positions)
             ,p_value*100/(cash+p_value))
-    print '子仓详情:\n' + sub_str + str(table)
+    print('子仓详情:\n' + sub_str + str(table))

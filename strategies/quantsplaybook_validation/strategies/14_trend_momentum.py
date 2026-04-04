@@ -93,7 +93,7 @@ def handle_bar(context, bar_dict):
     # 趋势共振：趋和势方向一致且强度高
 
     if trend > 0 and momentum > 0 and trend_pct > 0.6 and momentum_pct > 0.6 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: 趋={trend:.4f}, 势={momentum:.4f}")
     elif (trend < 0 or momentum < 0) and context.pos:

@@ -45,14 +45,14 @@ def handle_bar(context, bar_dict):
     try:
         slope, intercept = siegel_slope_numpy(closes)
         icu_ma = intercept + slope * (N - 1)
-    except:
+    except Exception:
         return
 
     current_close = closes[-1]
 
     # 交易逻辑: 价格上穿ICU均线买入，下穿卖出
     if current_close > icu_ma and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: close={current_close:.2f}, ICU_MA={icu_ma:.2f}")
     elif current_close < icu_ma and context.pos:

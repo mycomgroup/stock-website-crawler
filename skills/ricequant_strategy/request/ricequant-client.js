@@ -214,7 +214,7 @@ export class RiceQuantClient {
 
   async getBacktestResult(backtestId) {
     const workspaceId = await this.getWorkspaceId();
-    const url = `/api/backtest/v1/workspaces/${workspaceId}/backtests/${backtestId}`;
+    const url = `/api/backtest/v1/workspaces/${workspaceId}/backtests/${backtestId}?extra_fields=summary`;
     return this.request(url);
   }
 

@@ -61,24 +61,34 @@ def handle_bar(context, bar_dict):
     context.month = current_month
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
         try:
             prices = history_bars(stock, context.window + 1, '1d', 'close')
             turnovers = history_bars(stock, context.window, '1d', 'turnover_rate')
-            if prices is None or turnovers is None:
+            if prices is None or len(prices) < context.window + 1:
                 continue
+            if turnovers is None or len(turnovers) < context.window:
+                continue
+            prices_arr = np.array(prices, dtype=float)
+            if prices_arr[-1] == 0:
+                continue
+            # turnover_rate 在 RiceQuant 中是百分比（如1.5表示1.5%），归一化到小数
+            tr_arr = np.array(turnovers, dtype=float)
+            tr_arr = np.where(tr_arr > 1, tr_arr / 100.0, tr_arr)  # 兼容两种格式
+            tr_arr = np.clip(tr_arr, 0, 1)
             rc_mean, rc_skew = calc_chip_distribution(
-                np.array(prices, dtype=float),
-                np.array(turnovers, dtype=float),
+                prices_arr,
+                tr_arr,
                 context.window
             )
             if rc_mean is not None:
                 # 选RC均值高（浮盈多）且偏度为正的股票
                 scores[stock] = rc_mean + 0.5 * rc_skew
-        except:
+        except Exception:
             continue
 
     if not scores:

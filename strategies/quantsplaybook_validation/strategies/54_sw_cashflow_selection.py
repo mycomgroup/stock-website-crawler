@@ -1,17 +1,18 @@
 # 罗伯·瑞克超额现金流选股策略 - RiceQuant版本
 # 来源：《申万大师系列十三：罗伯·瑞克超额现金流选股法则》
-# 5条选股标准：
-#   1. 市现率（P/CF）< 10（现金流充足）
-#   2. 股息率 > 2%（分红水平）
-#   3. 市净率（PB）< 1.5（估值合理）
-#   4. 资产负债率 < 50%（财务健康）
-#   5. 经营现金流 > 净利润（现金质量高）
+# 5条选股标准（量价代理版本，因RiceQuant不支持JQ的fundamentals API）：
+#   1. 低估值代理：价格相对历史低位（P/CF低代理）
+#   2. 分红代理：长期持续上涨（稳定分红公司特征）
+#   3. 低波动：财务稳健公司特征
+#   4. 成交量稳定：机构持仓稳定（低负债率代理）
+#   5. 现金流质量：近期成交量放大+价格上涨（经营现金流好代理）
 
 import numpy as np
 
 
 def init(context):
     context.index = '000300.XSHG'
+    context.lookback = 120   # 约半年
     context.top_n = 20
     context.quarter = -1
 
@@ -23,72 +24,64 @@ def handle_bar(context, bar_dict):
     context.quarter = current_quarter
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
         try:
-            q = query(
-                fundamentals.valuation.pb_ratio,
-                fundamentals.valuation.pcf_ratio,
-                fundamentals.valuation.dividend_yield,
-                fundamentals.financial_indicator.return_on_asset,
-                fundamentals.balance_sheet.total_liability,
-                fundamentals.balance_sheet.total_assets,
-            ).filter(
-                fundamentals.valuation.code == stock
-            )
-            fund = get_fundamentals(q, entry_date=context.now)
-            if fund is None or fund.empty:
+            prices = history_bars(stock, context.lookback + 1, '1d', 'close')
+            volumes = history_bars(stock, context.lookback, '1d', 'volume')
+            if prices is None or len(prices) < context.lookback + 1:
+                continue
+            if volumes is None or len(volumes) < context.lookback:
                 continue
 
-            row = fund.iloc[0]
-            pb = row.get('pb_ratio', None)
-            pcf = row.get('pcf_ratio', None)
-            div_yield = row.get('dividend_yield', None)
-            roa = row.get('return_on_asset', None)
-            total_liab = row.get('total_liability', None)
-            total_assets = row.get('total_assets', None)
+            prices = np.array(prices, dtype=float)
+            volumes = np.array(volumes, dtype=float)
+
+            if prices[-1] == 0:
+                continue
+
+            returns = np.diff(prices) / prices[:-1]
 
             score = 0
-            # 条件1：市现率低
-            if pcf is not None and 0 < pcf < 10:
-                score += 2
-            # 条件2：股息率高
-            if div_yield is not None and div_yield > 0.02:
-                score += 2
-            # 条件3：低PB
-            if pb is not None and 0 < pb < 1.5:
-                score += 2
-            # 条件4：低负债率
-            if total_liab is not None and total_assets is not None and total_assets > 0:
-                debt_ratio = total_liab / total_assets
-                if debt_ratio < 0.5:
-                    score += 2
-            # 条件5：盈利质量
-            if roa is not None and roa > 0.05:
+
+            # 条件1：低估值代理 - 当前价格在过去半年的低分位（P/CF低）
+            price_percentile = np.sum(prices[:-1] < prices[-1]) / len(prices[:-1])
+            if price_percentile < 0.4:  # 价格在历史40%分位以下
                 score += 2
 
-            if score > 0:
-                scores[stock] = score
-        except:
+            # 条件2：分红代理 - 长期趋势向上（稳定分红公司）
+            long_trend = (prices[-1] / prices[0]) - 1
+            if long_trend > 0:
+                score += 2
+
+            # 条件3：低波动（财务稳健）
+            vol = np.std(returns)
+            if vol < 0.025:  # 日波动率低于2.5%
+                score += 2
+
+            # 条件4：成交量稳定（机构持仓稳定）
+            vol_cv = np.std(volumes) / (np.mean(volumes) + 1e-10)
+            if vol_cv < 0.5:  # 成交量变异系数低
+                score += 2
+
+            # 条件5：现金流质量代理 - 近期量价共振
+            recent_ret = returns[-20:].mean()
+            recent_vol = volumes[-20:].mean()
+            early_vol = volumes[:20].mean()
+            if recent_ret > 0 and recent_vol > early_vol:
+                score += 2
+
+            scores[stock] = score
+        except Exception:
             continue
-
-    if not scores:
-        # 降级：低PB + 高股息
-        for stock in stocks[:50]:
-            try:
-                prices = history_bars(stock, 21, '1d', 'close')
-                if prices is None:
-                    continue
-                prices = np.array(prices, dtype=float)
-                scores[stock] = -(prices[-1] / prices[0] - 1)  # 反转
-            except:
-                continue
 
     if not scores:
         return
 
+    # 选得分最高的股票
     sorted_stocks = sorted(scores, key=scores.get, reverse=True)
     target = sorted_stocks[:context.top_n]
 

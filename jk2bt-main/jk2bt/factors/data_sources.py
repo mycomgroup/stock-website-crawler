@@ -284,7 +284,13 @@ class ValuationDataSource:
 
     def __init__(self, cache_dir: str = "stock_cache"):
         self.cache_dir = cache_dir
-        os.makedirs(cache_dir, exist_ok=True)
+        self._cache_dir_created = False  # 延迟创建目录，避免导入副作用
+
+    def _ensure_cache_dir(self):
+        """确保缓存目录存在（延迟创建）"""
+        if not self._cache_dir_created:
+            os.makedirs(self.cache_dir, exist_ok=True)
+            self._cache_dir_created = True
 
     def _get_cache_path(self, symbol: str, source: DataSource) -> str:
         """获取缓存文件路径"""
@@ -303,6 +309,7 @@ class ValuationDataSource:
     def _save_cache(self, df: pd.DataFrame, symbol: str, source: DataSource) -> None:
         """保存缓存"""
         if df is not None and not df.empty:
+            self._ensure_cache_dir()  # 确保目录存在后再保存
             cache_path = self._get_cache_path(symbol, source)
             df.to_pickle(cache_path)
 
@@ -552,7 +559,13 @@ class TurnoverDataSource:
 
     def __init__(self, cache_dir: str = "stock_cache"):
         self.cache_dir = cache_dir
-        os.makedirs(cache_dir, exist_ok=True)
+        self._cache_dir_created = False  # 延迟创建目录，避免导入副作用
+
+    def _ensure_cache_dir(self):
+        """确保缓存目录存在（延迟创建）"""
+        if not self._cache_dir_created:
+            os.makedirs(self.cache_dir, exist_ok=True)
+            self._cache_dir_created = True
 
     def _get_cache_path(self, symbol: str) -> str:
         return os.path.join(self.cache_dir, f"{symbol}_turnover.pkl")
@@ -653,6 +666,7 @@ class TurnoverDataSource:
         if df is not None and not df.empty:
             validation = validate_turnover_data(df, symbol, strict=False)
             if validation["is_valid"]:
+                self._ensure_cache_dir()  # 确保目录存在后再保存
                 df.to_pickle(cache_path)
                 return df
 

@@ -58,7 +58,7 @@ def handle_bar(context, bar_dict):
     if prev_llt is not None:
         # 上穿：昨收<昨趋势线 且 今收>今趋势线
         if prev_close < prev_llt and current_close > llt and not context.pos:
-            order_value(security, context.portfolio.starting_cash * 0.95)
+            order_value(security, context.portfolio.total_value * 0.95)
             context.pos = True
             print(f"买入上穿: close={current_close:.2f}, LLT={llt:.2f}")
         # 下穿：昨收>昨趋势线 且 今收<今趋势线

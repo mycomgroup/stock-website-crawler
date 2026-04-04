@@ -83,19 +83,26 @@ _CB_SCHEMA = [
 
 
 class ConversionBondDBManager:
-    """可转债 DuckDB 管理器"""
+    """可转债 DuckDB 管理器（延迟初始化）"""
 
     _instance = None
+    _initialized = False
 
     def __new__(cls, db_path: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._manager = None
+            cls._instance._db_path = None
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
+    def _ensure_initialized(self, db_path: str = None):
+        """延迟初始化：只在首次使用时才初始化"""
+        if self._initialized:
+            return
+
         if not _DUCKDB_AVAILABLE:
             self._manager = None
+            self._initialized = True
             return
 
         if db_path is None:
@@ -104,7 +111,7 @@ class ConversionBondDBManager:
             )
             db_path = os.path.join(base_dir, "data", "conversion_bond.db")
 
-        self.db_path = db_path
+        self._db_path = db_path
         self._manager = None
 
         try:
@@ -113,6 +120,8 @@ class ConversionBondDBManager:
         except Exception as e:
             logger.warning(f"DuckDB 初始化失败: {e}")
             self._manager = None
+
+        self._initialized = True
 
     def _init_tables(self):
         if self._manager is None:
@@ -202,7 +211,15 @@ class ConversionBondDBManager:
             return False
 
 
-_db_manager = ConversionBondDBManager() if _DUCKDB_AVAILABLE else None
+def _get_db_manager():
+    """获取数据库管理器单例（延迟初始化）"""
+    if not _DUCKDB_AVAILABLE:
+        return None
+    manager = ConversionBondDBManager()
+    manager._ensure_initialized()
+    return manager
+
+_db_manager = None  # 延迟初始化，避免导入时副作用
 
 
 def _normalize_stock_code(symbol: str) -> str:
@@ -309,8 +326,10 @@ def get_conversion_bond_list(
                     subset=["bond_code"], keep="first"
                 )
                 result_df.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_cb(result_df)
+                if use_duckdb:
+                    db_manager = _get_db_manager()
+                    if db_manager is not None:
+                        db_manager.insert_cb(result_df)
                 return result_df
 
         except Exception as e:

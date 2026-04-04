@@ -1829,14 +1829,20 @@ def run_jq_strategy(
 
     if stock_pool is None and auto_discover_stocks:
         logger.info("[阶段1] 预运行 - 发现策略需要的股票...")
-        discovered = _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy_source)
+        discovered, prerun_failure = _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy_source)
         if discovered:
             stock_pool = list(discovered)
             logger.info(
                 f"  发现 {len(stock_pool)} 只股票: {stock_pool[:10]}{'...' if len(stock_pool) > 10 else ''}"
             )
         else:
+            # 预运行失败，使用默认股票池
             logger.warning("  未发现股票需求，使用默认股票池")
+            logger.warning("  ℹ️  预运行失败不影响真实回测统计，以下默认股票仅用于预运行测试")
+            if prerun_failure["warnings"]:
+                logger.warning("  失败原因:")
+                for warning in prerun_failure["warnings"]:
+                    logger.warning(f"    • {warning}")
             stock_pool = [
                 "600519.XSHG",
                 "000858.XSHE",
@@ -1844,6 +1850,9 @@ def run_jq_strategy(
                 "600036.XSHG",
                 "601318.XSHG",
             ]
+            logger.warning(f"  默认股票池: {stock_pool}")
+            # 标记使用了fallback，但不影响后续真实回测
+            logger.warning("  说明: 默认股票池仅用于预运行测试，真实回测将从策略代码动态获取股票池")
 
     if stock_pool is None:
         logger.error("错误: 未指定股票池")
@@ -1851,7 +1860,7 @@ def run_jq_strategy(
 
     if use_cache_only and validate_cache:
         logger.info(f"[阶段2] 验证缓存 - 股票池: {len(stock_pool)}只")
-        from .db.cache_status import get_cache_manager
+        from jk2bt.db.cache_status import get_cache_manager
 
         cache_manager = get_cache_manager()
         is_valid, report = cache_manager.validate_cache_for_offline(
@@ -1880,6 +1889,12 @@ def run_jq_strategy(
 
     datas = []
     failed_stocks = []
+    failure_reasons = {
+        "cache_empty": [],  # 缓存为空（离线模式专用）
+        "network_unavailable": [],  # 网络连接失败
+        "no_data_source": [],  # 数据源无此股票数据
+        "other_errors": [],  # 其他异常
+    }
 
     for i, stock in enumerate(stock_pool, 1):
         try:
@@ -1895,19 +1910,73 @@ def run_jq_strategy(
                 print(" ✓")
             else:
                 failed_stocks.append(stock)
-                reason = "无缓存" if use_cache_only else "无数据"
+                if use_cache_only:
+                    reason = "无缓存"
+                    failure_reasons["cache_empty"].append(stock)
+                else:
+                    reason = "无数据"
+                    failure_reasons["no_data_source"].append(stock)
                 print(f" ✗ ({reason})")
         except Exception as e:
             failed_stocks.append(stock)
-            print(f" ✗ ({e})")
+            error_msg = str(e).lower()
+            # 根据异常信息分类错误原因
+            if use_cache_only:
+                failure_reasons["cache_empty"].append(stock)
+                print(f" ✗ (缓存不存在)")
+            elif "network" in error_msg or "connection" in error_msg or "timeout" in error_msg:
+                failure_reasons["network_unavailable"].append(stock)
+                print(f" ✗ (网络连接失败)")
+            elif "no data" in error_msg or "empty" in error_msg:
+                failure_reasons["no_data_source"].append(stock)
+                print(f" ✗ (数据源无数据)")
+            else:
+                failure_reasons["other_errors"].append(stock)
+                print(f" ✗ ({e})")
 
     if not datas:
-        logger.error("错误: 没有成功下载任何股票数据")
+        # 生成详细的错误诊断报告
+        logger.error("=" * 80)
+        logger.error("数据加载失败诊断报告：")
+        logger.error(f"  请求股票数: {len(stock_pool)}")
+        logger.error(f"  成功加载数: {len(datas)}")
+        logger.error(f"  失败股票数: {len(failed_stocks)}")
+        logger.error("")
+        if failure_reasons["cache_empty"]:
+            logger.error(f"  【缓存问题】{len(failure_reasons['cache_empty'])} 只股票无缓存数据:")
+            logger.error(f"    示例: {failure_reasons['cache_empty'][:5]}")
+            logger.error("  → 解决方案: 请先运行数据预热脚本")
+            logger.error("    python prewarm_data.py --stocks {}".join(failure_reasons['cache_empty'][:10]))
+        if failure_reasons["network_unavailable"]:
+            logger.error(f"  【网络问题】{len(failure_reasons['network_unavailable'])} 只股票网络下载失败:")
+            logger.error(f"    示例: {failure_reasons['network_unavailable'][:5]}")
+            logger.error("  → 解决方案: 请检查网络连接，或使用离线模式:")
+            logger.error("    run_jq_strategy(..., use_cache_only=True)")
+        if failure_reasons["no_data_source"]:
+            logger.error(f"  【数据源问题】{len(failure_reasons['no_data_source'])} 只股票在数据源中不存在:")
+            logger.error(f"    示例: {failure_reasons['no_data_source'][:5]}")
+            logger.error("  → 解决方案: 请检查股票代码是否正确，或该股票已退市/未上市")
+        if failure_reasons["other_errors"]:
+            logger.error(f"  【其他异常】{len(failure_reasons['other_errors'])} 只股票加载出错:")
+            logger.error(f"    示例: {failure_reasons['other_errors'][:5]}")
+        logger.error("=" * 80)
         return None
 
-    logger.info(f"成功下载: {len(datas)}只股票数据")
+    logger.info(f"成功加载: {len(datas)}只股票数据")
     if failed_stocks:
         logger.warning(f"失败: {len(failed_stocks)}只股票")
+        # 简要提示失败原因分布
+        brief_reasons = []
+        if failure_reasons["cache_empty"]:
+            brief_reasons.append(f"无缓存{len(failure_reasons['cache_empty'])}只")
+        if failure_reasons["network_unavailable"]:
+            brief_reasons.append(f"网络失败{len(failure_reasons['network_unavailable'])}只")
+        if failure_reasons["no_data_source"]:
+            brief_reasons.append(f"无数据源{len(failure_reasons['no_data_source'])}只")
+        if failure_reasons["other_errors"]:
+            brief_reasons.append(f"其他异常{len(failure_reasons['other_errors'])}只")
+        if brief_reasons:
+            logger.warning(f"  失败原因: {', '.join(brief_reasons)}")
 
     logger.info("[阶段3] 正式运行回测...")
     cerebro = bt.Cerebro()

@@ -57,7 +57,8 @@ def handle_bar(context, bar_dict):
     context.month = current_month
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
@@ -71,7 +72,7 @@ def handle_bar(context, bar_dict):
             )
             if factor is not None:
                 scores[stock] = factor
-        except:
+        except Exception:
             continue
 
     if not scores:

@@ -154,3 +154,107 @@ def persist_task_artifacts(
         files=len(manifest),
     )
     return manifest
+
+
+def persist_platform_artifacts(
+    result: Mapping[str, Any],
+    spec: Mapping[str, Any],
+    artifact_dir: str | Path,
+) -> dict[str, str]:
+    """Persist artifacts for a cloud-platform backtest run."""
+    task = dict(spec.get("task", {}))
+    run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    task_id = str(task.get("task_id", "task"))
+    engine = str(result.get("engine", "platform"))
+
+    root = Path(artifact_dir).expanduser().resolve()
+    out_dir = root / task_id / run_id
+    try:
+        out_dir.mkdir(parents=True, exist_ok=True)
+    except Exception as exc:
+        raise StrategyKitsError(
+            ErrorCode.ARTIFACT_WRITE_FAILED,
+            "failed to create artifact output directory",
+            details={"artifact_dir": str(out_dir)},
+        ) from exc
+
+    manifest: dict[str, str] = {}
+
+    # task_spec
+    task_spec_path = out_dir / "task_spec.json"
+    task_spec_path.write_text(
+        json.dumps(spec, ensure_ascii=False, indent=2, default=_json_default),
+        encoding="utf-8",
+    )
+    manifest["task_spec"] = str(task_spec_path)
+
+    # stdout log
+    stdout_path = out_dir / "platform_stdout.txt"
+    stdout_path.write_text(result.get("stdout", ""), encoding="utf-8")
+    manifest["platform_stdout"] = str(stdout_path)
+
+    # platform report JSON (if available)
+    if result.get("platform_report"):
+        report_path = out_dir / "platform_report.json"
+        report_path.write_text(
+            json.dumps(result["platform_report"], ensure_ascii=False, indent=2, default=_json_default),
+            encoding="utf-8",
+        )
+        manifest["platform_report"] = str(report_path)
+
+    # metrics summary
+    metrics = result.get("metrics", {})
+    summary = {
+        "artifact_schema_version": ARTIFACT_SCHEMA_VERSION,
+        "task_id": task_id,
+        "strategy_name": task.get("strategy_name"),
+        "engine": engine,
+        "strategy_id": result.get("strategy_id"),
+        "backtest_id": metrics.get("backtest_id"),
+        "total_return": metrics.get("total_return"),
+        "annual_return": metrics.get("annual_return"),
+        "max_drawdown": metrics.get("max_drawdown"),
+        "sharpe": metrics.get("sharpe"),
+        "start_date": spec.get("data", {}).get("start_date"),
+        "end_date": spec.get("data", {}).get("end_date"),
+        "generated_at": datetime.now().isoformat(),
+    }
+    summary_path = out_dir / "summary.json"
+    summary_path.write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2, default=_json_default),
+        encoding="utf-8",
+    )
+    manifest["summary"] = str(summary_path)
+
+    # run_report.md
+    lines = [
+        "# Platform Strategy Task Run Report",
+        f"- `task_id`: {task_id}",
+        f"- `strategy_name`: {task.get('strategy_name')}",
+        f"- `engine`: {engine}",
+        f"- `strategy_id`: {result.get('strategy_id')}",
+        f"- `period`: {spec.get('data', {}).get('start_date')} -> {spec.get('data', {}).get('end_date')}",
+        f"- `generated_at`: {summary['generated_at']}",
+        "",
+        "## Metrics",
+    ]
+    for k, v in metrics.items():
+        lines.append(f"- `{k}`: {v}")
+    if result.get("platform_report_path"):
+        lines += ["", f"## Platform Report", f"Saved to: `{result['platform_report_path']}`"]
+
+    run_report_md_path = out_dir / "run_report.md"
+    run_report_md_path.write_text("\n".join(lines), encoding="utf-8")
+    manifest["run_report_md"] = str(run_report_md_path)
+
+    manifest["artifact_dir"] = str(out_dir)
+
+    log_kv(
+        _logger,
+        20,
+        "platform_artifacts_persisted",
+        task_id=task_id,
+        engine=engine,
+        out_dir=str(out_dir),
+    )
+    return manifest

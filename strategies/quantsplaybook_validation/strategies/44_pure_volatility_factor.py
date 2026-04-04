@@ -24,7 +24,7 @@ def calc_idiosyncratic_vol(stock_returns, market_returns, window=60):
         residuals = y - x_with_const @ beta
         ivol = np.std(residuals)
         return ivol
-    except:
+    except Exception:
         return None
 
 
@@ -51,13 +51,14 @@ def handle_bar(context, bar_dict):
     market_returns = np.diff(market_prices) / market_prices[:-1]
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
         try:
             prices = history_bars(stock, context.window + 1, '1d', 'close')
-            if prices is None or len(prices) < context.window + 1:
+            if prices is None or len(prices) < context.window + 1 or prices[-1] == 0:
                 continue
             prices = np.array(prices, dtype=float)
             stock_returns = np.diff(prices) / prices[:-1]
@@ -65,7 +66,7 @@ def handle_bar(context, bar_dict):
             ivol = calc_idiosyncratic_vol(stock_returns, market_returns, context.window)
             if ivol is not None:
                 scores[stock] = ivol
-        except:
+        except Exception:
             continue
 
     if not scores:

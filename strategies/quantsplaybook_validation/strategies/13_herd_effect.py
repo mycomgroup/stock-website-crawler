@@ -69,7 +69,7 @@ def handle_bar(context, bar_dict):
     recent_return = np.mean(market_returns[-5:])
 
     if vol_percentile < 0.3 and recent_return > 0 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: vol_pct={vol_percentile:.2f}, trend={recent_return:.4f}")
     elif vol_percentile > 0.7 and context.pos:

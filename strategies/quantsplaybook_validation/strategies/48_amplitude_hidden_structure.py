@@ -49,7 +49,8 @@ def handle_bar(context, bar_dict):
     context.month = current_month
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
@@ -71,7 +72,7 @@ def handle_bar(context, bar_dict):
 
             # 低跳空振幅（信息对称）+ 高日内振幅（流动性好）
             scores[stock] = -gap_amp + intraday_amp * 0.5
-        except:
+        except Exception:
             continue
 
     if not scores:

@@ -70,7 +70,7 @@ def handle_bar(context, bar_dict):
 
     if skewness < -0.5 and skew_percentile < 0.3 and not context.pos:
         # 负偏度较大，市场恐慌，买入机会
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: skew={skewness:.3f}, kurt={kurtosis:.3f}")
     elif skewness > 0.5 and skew_percentile > 0.7 and context.pos:

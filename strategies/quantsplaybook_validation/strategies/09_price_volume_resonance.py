@@ -56,7 +56,7 @@ def handle_bar(context, bar_dict):
     # 强负共振（z < -1）或价跌量增背离 → 卖出信号
 
     if z_score > 1.0 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入价量共振: z={z_score:.2f}, resonance={resonance:.4f}")
     elif z_score < -1.0 and context.pos:

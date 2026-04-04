@@ -1,0 +1,355 @@
+[
+  {
+    "id": "V1",
+    "name": "指数权重轮动策略",
+    "file": "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt",
+    "description": "README示例策略，最简单的指数权重轮动",
+    "type": "stock",
+    "complexity": "simple",
+    "apis": [
+      "get_index_weights",
+      "get_current_data",
+      "run_monthly",
+      "order_target",
+      "order_value"
+    ],
+    "stock_pool": {
+      "type": "dynamic",
+      "source": "index_weights",
+      "index": "000300.XSHG",
+      "limit": 10,
+      "description": "沪深300前10大权重股（动态）"
+    },
+    "fixed_stock_pool": {
+      "type": "fixed",
+      "symbols": ["600519.XSHG", "000858.XSHE", "000333.XSHE", "600036.XSHG", "601318.XSHG"],
+      "description": "测试用固定股票池（沪深300典型蓝筹）"
+    },
+    "time_range": {
+      "start": "2020-01-01",
+      "end": "2023-12-31",
+      "years": 4
+    },
+    "data_requirements": {
+      "stock_daily": {
+        "symbols": "dynamic",
+        "count_estimate": 10,
+        "note": "指数权重变化，实际股票池动态变化，预估10只"
+      },
+      "index_weights": {
+        "symbols": ["000300.XSHG"],
+        "note": "沪深300指数成分权重数据"
+      },
+      "meta": ["trade_days", "securities"]
+    },
+    "expected_run_time": "< 30s",
+    "validation_priority": "P0"
+  },
+  {
+    "id": "V2",
+    "name": "红利搬砖策略",
+    "file": "strategies/04 红利搬砖，年化29%.txt",
+    "description": "基本面选股策略，使用财务数据和分红数据",
+    "type": "stock",
+    "complexity": "medium",
+    "apis": [
+      "get_index_stocks",
+      "get_fundamentals",
+      "finance.run_query",
+      "get_security_info",
+      "run_monthly",
+      "get_current_data",
+      "order_target",
+      "order_value"
+    ],
+    "stock_pool": {
+      "type": "dynamic",
+      "source": "index_stocks",
+      "index": "000300.XSHG",
+      "count_estimate": 300,
+      "description": "沪深300成分股（约300只）"
+    },
+    "fixed_stock_pool": {
+      "type": "fixed",
+      "symbols": ["600519.XSHG", "000858.XSHE", "000333.XSHE", "600036.XSHG", "601318.XSHG", "600030.XSHG", "600276.XSHG", "000002.XSHE", "601166.XSHG", "600887.XSHG"],
+      "description": "测试用固定股票池（沪深300典型蓝筹10只）"
+    },
+    "time_range": {
+      "start": "2020-01-01",
+      "end": "2022-12-31",
+      "years": 3
+    },
+    "data_requirements": {
+      "stock_daily": {
+        "symbols": "dynamic",
+        "count_estimate": 300,
+        "note": "沪深300成分股历史数据"
+      },
+      "fundamentals": {
+        "tables": ["valuation"],
+        "fields": ["market_cap", "pb_ratio", "pe_ratio", "pcf_ratio"],
+        "note": "估值数据"
+      },
+      "finance": {
+        "tables": ["STK_XR_XD"],
+        "fields": ["code", "bonus_amount_rmb", "board_plan_pub_date"],
+        "note": "分红数据"
+      },
+      "index_stocks": {
+        "symbols": ["000300.XSHG"],
+        "note": "沪深300成分股列表"
+      },
+      "meta": ["trade_days", "securities"]
+    },
+    "expected_run_time": "1-2 min",
+    "validation_priority": "P0"
+  },
+  {
+    "id": "V3",
+    "name": "动量轮动策略",
+    "file": "strategies/validation_v3_etf_rotation.txt",
+    "description": "动量轮动策略（简化版，不依赖talib），使用缓存已有股票",
+    "type": "stock",
+    "complexity": "medium",
+    "apis": [
+      "get_price",
+      "get_current_data",
+      "run_daily",
+      "order_value",
+      "order_target"
+    ],
+    "stock_pool": {
+      "type": "fixed",
+      "symbols": [
+        "600519.XSHG",
+        "000858.XSHE",
+        "000333.XSHE",
+        "600036.XSHG",
+        "601318.XSHG",
+        "600030.XSHG",
+        "600276.XSHG",
+        "000002.XSHE",
+        "601166.XSHG",
+        "600887.XSHG"
+      ],
+      "count": 10,
+      "description": "10只核心蓝筹股（缓存已有数据，不依赖talib）"
+    },
+    "time_range": {
+      "start": "2020-01-01",
+      "end": "2022-12-31",
+      "years": 3
+    },
+    "data_requirements": {
+      "stock_daily": {
+        "symbols": [
+          "600519.XSHG",
+          "000858.XSHE",
+          "000333.XSHE",
+          "600036.XSHG",
+          "601318.XSHG",
+          "600030.XSHG",
+          "600276.XSHG",
+          "000002.XSHE",
+          "601166.XSHG",
+          "600887.XSHG"
+        ],
+        "count": 10,
+        "note": "10只核心股票日线数据（缓存已有）"
+      },
+      "meta": ["trade_days", "securities"]
+    },
+    "expected_run_time": "1-2 min",
+    "validation_priority": "P1",
+    "note": "原策略依赖talib且使用ETF数据缺失，此为简化版替代"
+  },
+  {
+    "id": "V4",
+    "name": "双均线择时策略",
+    "file": "strategies/validation_v4_double_ma.txt",
+    "description": "简单技术指标策略，不依赖基本面数据",
+    "type": "stock",
+    "complexity": "simple",
+    "apis": [
+      "get_price",
+      "history",
+      "run_daily",
+      "order_target_percent"
+    ],
+    "stock_pool": {
+      "type": "fixed",
+      "symbols": [
+        "600519.XSHG",
+        "000858.XSHE",
+        "000333.XSHE",
+        "600036.XSHG",
+        "601318.XSHG"
+      ],
+      "count": 5,
+      "description": "5只核心蓝筹股（贵州茅台、五粮液、美的集团、招商银行、中国平安）"
+    },
+    "time_range": {
+      "start": "2021-01-01",
+      "end": "2023-12-31",
+      "years": 3
+    },
+    "data_requirements": {
+      "stock_daily": {
+        "symbols": [
+          "600519.XSHG",
+          "000858.XSHE",
+          "000333.XSHE",
+          "600036.XSHG",
+          "601318.XSHG"
+        ],
+        "count": 5,
+        "note": "5只蓝筹股日线数据"
+      },
+      "meta": ["trade_days"]
+    },
+    "expected_run_time": "< 30s",
+    "validation_priority": "P0"
+  },
+  {
+    "id": "V5",
+    "name": "小市值选股策略（简化版）",
+    "file": "strategies/validation_v5_small_cap.txt",
+    "description": "经典量化策略，基本面+市值过滤",
+    "type": "stock",
+    "complexity": "medium",
+    "apis": [
+      "get_fundamentals",
+      "get_index_stocks",
+      "run_monthly",
+      "filter_st",
+      "filter_paused",
+      "order_target_percent"
+    ],
+    "stock_pool": {
+      "type": "dynamic",
+      "source": "index_stocks",
+      "index": "000300.XSHG",
+      "count_estimate": 300,
+      "description": "沪深300成分股"
+    },
+    "fixed_stock_pool": {
+      "type": "fixed",
+      "symbols": ["600519.XSHG", "000858.XSHE", "000333.XSHE", "600036.XSHG", "601318.XSHG", "600030.XSHG", "600276.XSHG", "000002.XSHE", "601166.XSHG", "600887.XSHG"],
+      "description": "测试用固定股票池（沪深300典型蓝筹10只）"
+    },
+    "time_range": {
+      "start": "2020-01-01",
+      "end": "2022-12-31",
+      "years": 3
+    },
+    "data_requirements": {
+      "stock_daily": {
+        "symbols": "dynamic",
+        "count_estimate": 300,
+        "note": "沪深300成分股"
+      },
+      "fundamentals": {
+        "tables": ["valuation"],
+        "fields": ["market_cap", "pe_ratio", "pb_ratio"],
+        "note": "市值和估值数据"
+      },
+      "index_stocks": {
+        "symbols": ["000300.XSHG"],
+        "note": "沪深300成分股"
+      },
+      "meta": ["trade_days", "securities"]
+    },
+    "expected_run_time": "1-2 min",
+    "validation_priority": "P1"
+  },
+  {
+    "id": "V6",
+    "name": "指数成分股跟踪策略",
+    "file": "strategies/validation_v6_index_tracking.txt",
+    "description": "跟踪指数成分股变化，按权重配置",
+    "type": "stock",
+    "complexity": "medium",
+    "apis": [
+      "get_index_stocks",
+      "get_index_weights",
+      "run_monthly",
+      "order_target"
+    ],
+    "stock_pool": {
+      "type": "dynamic",
+      "source": "index_stocks",
+      "index": ["000300.XSHG", "000905.XSHG"],
+      "count_estimate": 500,
+      "description": "沪深300和中证500成分股（动态）"
+    },
+    "fixed_stock_pool": {
+      "type": "fixed",
+      "symbols": ["600519.XSHG", "000858.XSHE", "000333.XSHE", "600036.XSHG", "601318.XSHG", "600030.XSHG", "600276.XSHG", "000002.XSHE", "601166.XSHG", "600887.XSHG"],
+      "description": "测试用固定股票池（沪深300+中证500典型成分股）"
+    },
+    "time_range": {
+      "start": "2020-01-01",
+      "end": "2023-12-31",
+      "years": 4
+    },
+    "data_requirements": {
+      "stock_daily": {
+        "symbols": "dynamic",
+        "count_estimate": 500,
+        "note": "沪深300+中证500成分股"
+      },
+      "index_stocks": {
+        "symbols": ["000300.XSHG", "000905.XSHG"],
+        "note": "两个指数的成分股列表"
+      },
+      "index_weights": {
+        "symbols": ["000300.XSHG", "000905.XSHG"],
+        "note": "两个指数的成分权重"
+      },
+      "meta": ["trade_days", "securities"]
+    },
+    "expected_run_time": "1-2 min",
+    "validation_priority": "P1"
+  },
+  {
+    "id": "V7",
+    "name": "RSI择时策略",
+    "file": "strategies/validation_v7_rsi_timing.txt",
+    "description": "技术指标择时策略，不依赖基本面（因ETF数据缺失改为股票）",
+    "type": "stock",
+    "complexity": "simple",
+    "apis": [
+      "get_price",
+      "get_current_data",
+      "run_daily",
+      "order_target_percent",
+      "order_target"
+    ],
+    "stock_pool": {
+      "type": "fixed",
+      "symbols": [
+        "600519.XSHG",
+        "000858.XSHE",
+        "000333.XSHE"
+      ],
+      "count": 3,
+      "description": "3只核心股票（贵州茅台、五粮液、美的集团）"
+    },
+    "time_range": {
+      "start": "2021-01-01",
+      "end": "2023-12-31",
+      "years": 3
+    },
+    "data_requirements": {
+      "stock_daily": {
+        "symbols": ["600519.XSHG", "000858.XSHE", "000333.XSHE"],
+        "count": 3,
+        "note": "3只核心股票日线数据（缓存已有）"
+      },
+      "meta": ["trade_days"]
+    },
+    "expected_run_time": "< 30s",
+    "validation_priority": "P1",
+    "note": "原策略使用ETF，因ETF数据缺失改为股票"
+  }
+]

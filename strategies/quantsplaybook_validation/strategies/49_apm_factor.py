@@ -29,7 +29,7 @@ def calc_apm_factor(stock_returns, market_returns, window=20):
     x_with_const = np.column_stack([np.ones(half), x_train])
     try:
         beta = np.linalg.lstsq(x_with_const, y_train, rcond=None)[0]
-    except:
+    except Exception:
         return None
 
     # 用后半段计算APM
@@ -63,13 +63,14 @@ def handle_bar(context, bar_dict):
     market_returns = np.diff(market_prices) / market_prices[:-1]
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
         try:
             prices = history_bars(stock, context.window + 1, '1d', 'close')
-            if prices is None or len(prices) < context.window + 1:
+            if prices is None or len(prices) < context.window + 1 or prices[-1] == 0:
                 continue
             prices = np.array(prices, dtype=float)
             stock_returns = np.diff(prices) / prices[:-1]
@@ -77,7 +78,7 @@ def handle_bar(context, bar_dict):
             apm = calc_apm_factor(stock_returns, market_returns, context.window)
             if apm is not None:
                 scores[stock] = apm
-        except:
+        except Exception:
             continue
 
     if not scores:

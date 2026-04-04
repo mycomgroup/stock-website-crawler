@@ -33,7 +33,7 @@ def handle_bar(context, bar_dict):
 
     # 突破噪声上边界：做多信号
     if today_move > noise_upper and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: move={today_move:.4f}, noise={noise_upper:.4f}")
 

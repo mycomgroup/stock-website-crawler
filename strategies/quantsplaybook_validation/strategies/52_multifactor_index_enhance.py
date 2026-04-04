@@ -26,13 +26,14 @@ def handle_bar(context, bar_dict):
     context.month = current_month
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
         try:
             prices = history_bars(stock, context.lookback + 1, '1d', 'close')
-            if prices is None or len(prices) < context.lookback + 1:
+            if prices is None or len(prices) < context.lookback + 1 or prices[-1] == 0:
                 continue
             prices = np.array(prices, dtype=float)
             returns = np.diff(prices) / prices[:-1]
@@ -54,7 +55,7 @@ def handle_bar(context, bar_dict):
                 context.w_low_vol * low_vol +
                 context.w_reversal * reversal
             )
-        except:
+        except Exception:
             continue
 
     if not scores:

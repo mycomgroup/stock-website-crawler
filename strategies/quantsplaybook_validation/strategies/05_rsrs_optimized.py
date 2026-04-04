@@ -36,7 +36,7 @@ def handle_bar(context, bar_dict):
                 model = sm.OLS(highs, X).fit()
                 context.beta_history.append(model.params[1])
                 context.r2_history.append(model.rsquared)
-            except:
+            except Exception:
                 continue
         if len(context.beta_history) < M:
             return
@@ -49,7 +49,7 @@ def handle_bar(context, bar_dict):
             model = sm.OLS(highs, X).fit()
             context.beta_history.append(model.params[1])
             context.r2_history.append(model.rsquared)
-        except:
+        except Exception:
             return
 
     # 保持长度
@@ -72,7 +72,7 @@ def handle_bar(context, bar_dict):
 
     # 交易逻辑
     if rsrs > context.buy_threshold and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: RSRS={rsrs:.3f}")
     elif rsrs < context.sell_threshold and context.pos:

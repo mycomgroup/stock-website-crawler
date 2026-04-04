@@ -8,6 +8,11 @@ market_data/stock.py
 3. Baostock - 备用数据源2 (免费)
 4. Sina - 备用数据源3
 5. 本地 DuckDB 缓存 - 最后备份
+
+并发优化 (P2-7):
+- 使用工厂函数获取单例管理器
+- 读操作使用只读模式，避免锁冲突
+- 写操作使用静默重试，减少噪音
 """
 
 import logging
@@ -15,7 +20,12 @@ import pandas as pd
 import time
 
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from ..db.duckdb_manager import (
+        DuckDBManager,
+        get_shared_read_only_manager,
+        get_writer_manager,
+        clear_global_cache,
+    )
     from ..utils.symbol import format_stock_symbol
     from ..utils.standardize import standardize_ohlcv
     from ..utils.data_source_backup import (
@@ -27,7 +37,12 @@ try:
         set_tushare_token,
     )
 except ImportError:
-    from jk2bt.db.duckdb_manager import DuckDBManager
+    from jk2bt.db.duckdb_manager import (
+        DuckDBManager,
+        get_shared_read_only_manager,
+        get_writer_manager,
+        clear_global_cache,
+    )
     from utils.symbol import format_stock_symbol
     from utils.standardize import standardize_ohlcv
     from utils.data_source_backup import (
@@ -92,22 +107,27 @@ def get_stock_daily(
     3. baostock: Baostock (免费，无需注册) - 备用数据源2
     4. sina: 新浪财经 - 备用数据源3
     5. local: 本地 DuckDB 缓存 - 最后备份
+
+    并发优化 (P2-7):
+    - 读操作使用只读单例管理器，避免锁冲突
+    - 写操作使用写入管理器，静默重试
     """
-    db = DuckDBManager()
+    # 读操作使用只读管理器（并发安全）
+    db_read = get_shared_read_only_manager()
 
     # 检查本地缓存
-    if not force_update and db.has_data("stock_daily", symbol, start, end, adjust):
-        df = db.get_stock_daily(symbol, start, end, adjust)
+    if not force_update and db_read.has_data("stock_daily", symbol, start, end, adjust):
+        df = db_read.get_stock_daily(symbol, start, end, adjust)
         if not df.empty:
-            logger.info(f"{symbol} ({adjust}): 从 DuckDB 加载数据")
+            logger.debug(f"{symbol} ({adjust}): 从 DuckDB 加载数据")
             return standardize_ohlcv(df)
 
     # 离线模式
     if offline_mode:
-        logger.warning(f"{symbol} ({adjust}): 离线模式，跳过下载")
-        df = db.get_stock_daily(symbol, start, end, adjust)
+        logger.debug(f"{symbol} ({adjust}): 离线模式，跳过下载")
+        df = db_read.get_stock_daily(symbol, start, end, adjust)
         if not df.empty:
-            logger.info(f"{symbol} ({adjust}): 使用本地缓存数据")
+            logger.debug(f"{symbol} ({adjust}): 使用本地缓存数据")
             return standardize_ohlcv(df)
         else:
             raise ValueError(f"{symbol}: 离线模式下无缓存数据可用")
@@ -117,7 +137,7 @@ def get_stock_daily(
 
     def cache_getter(sym, s, e, adj):
         try:
-            return db.get_stock_daily(sym, s, e, adj)
+            return db_read.get_stock_daily(sym, s, e, adj)
         except Exception:
             return pd.DataFrame()
 
@@ -133,17 +153,19 @@ def get_stock_daily(
 
     if raw_df is None or raw_df.empty:
         # 最后尝试本地缓存
-        df = db.get_stock_daily(symbol, start, end, adjust)
+        df = db_read.get_stock_daily(symbol, start, end, adjust)
         if not df.empty:
-            logger.warning(f"{symbol}: 所有数据源失败，使用本地缓存")
+            logger.debug(f"{symbol}: 所有数据源失败，使用本地缓存")
             return standardize_ohlcv(df)
         raise ValueError(f"{symbol}: 所有数据源获取失败")
 
-    # 存入本地数据库
+    # 存入本地数据库（使用写入管理器，静默重试）
     try:
-        db.insert_stock_daily(symbol, raw_df, adjust)
+        db_write = get_writer_manager()
+        db_write.insert_stock_daily(symbol, raw_df, adjust)
     except Exception as e:
-        logger.warning(f"{symbol}: 写入数据库失败（可能并发锁冲突）: {e}")
+        # 静默处理写入失败，不影响读取
+        logger.debug(f"{symbol}: 写入数据库跳过: {e}")
 
     # 过滤日期范围
     if "datetime" in raw_df.columns:
@@ -160,12 +182,14 @@ def get_stock_daily_fast(symbol, start, end, adjust="qfq"):
     快速获取股票日线数据（仅使用本地缓存和东方财富）。
 
     适用于高频查询场景，跳过备用数据源。
+
+    并发优化 (P2-7): 使用只读管理器进行读取
     """
-    db = DuckDBManager()
+    db_read = get_shared_read_only_manager()
 
     # 仅检查缓存
-    if db.has_data("stock_daily", symbol, start, end, adjust):
-        df = db.get_stock_daily(symbol, start, end, adjust)
+    if db_read.has_data("stock_daily", symbol, start, end, adjust):
+        df = db_read.get_stock_daily(symbol, start, end, adjust)
         if not df.empty:
             return standardize_ohlcv(df)
 
@@ -173,7 +197,8 @@ def get_stock_daily_fast(symbol, start, end, adjust="qfq"):
     raw_df = fetch_stock_daily_eastmoney(symbol, start, end, adjust)
     if raw_df is not None and not raw_df.empty:
         try:
-            db.insert_stock_daily(symbol, raw_df, adjust)
+            db_write = get_writer_manager()
+            db_write.insert_stock_daily(symbol, raw_df, adjust)
         except Exception:
             pass
         return standardize_ohlcv(raw_df)
@@ -193,25 +218,27 @@ def get_stock_daily_legacy(
 ):
     """
     旧版获取函数（仅使用 akshare），保留兼容性。
-    """
-    db = DuckDBManager()
 
-    if not force_update and db.has_data("stock_daily", symbol, start, end, adjust):
-        df = db.get_stock_daily(symbol, start, end, adjust)
+    并发优化 (P2-7): 使用只读管理器进行读取
+    """
+    db_read = get_shared_read_only_manager()
+
+    if not force_update and db_read.has_data("stock_daily", symbol, start, end, adjust):
+        df = db_read.get_stock_daily(symbol, start, end, adjust)
         if not df.empty:
-            logger.info(f"{symbol} ({adjust}): 从 DuckDB 加载数据")
+            logger.debug(f"{symbol} ({adjust}): 从 DuckDB 加载数据")
             return standardize_ohlcv(df)
 
     if offline_mode:
-        logger.warning(f"{symbol} ({adjust}): 离线模式，跳过下载")
-        df = db.get_stock_daily(symbol, start, end, adjust)
+        logger.debug(f"{symbol} ({adjust}): 离线模式，跳过下载")
+        df = db_read.get_stock_daily(symbol, start, end, adjust)
         if not df.empty:
-            logger.info(f"{symbol} ({adjust}): 使用本地缓存数据")
+            logger.debug(f"{symbol} ({adjust}): 使用本地缓存数据")
             return standardize_ohlcv(df)
         else:
             raise ValueError(f"{symbol}: 离线模式下无缓存数据可用")
 
-    logger.info(f"{symbol} ({adjust}): 从 akshare 下载数据")
+    logger.debug(f"{symbol} ({adjust}): 从 akshare 下载数据")
 
     akshare_symbol = format_stock_symbol(symbol)
 
@@ -235,20 +262,20 @@ def get_stock_daily_legacy(
 
         except Exception as e:
             last_error = e
-            logger.warning(
+            logger.debug(
                 f"{symbol}: 下载失败 (尝试 {attempt + 1}/{max_retries}): {e}"
             )
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
 
-                df = db.get_stock_daily(symbol, start, end, adjust)
+                df = db_read.get_stock_daily(symbol, start, end, adjust)
                 if not df.empty:
-                    logger.info(f"{symbol} ({adjust}): 下载失败，回退到本地缓存")
+                    logger.debug(f"{symbol} ({adjust}): 下载失败，回退到本地缓存")
                     return standardize_ohlcv(df)
             else:
-                df = db.get_stock_daily(symbol, start, end, adjust)
+                df = db_read.get_stock_daily(symbol, start, end, adjust)
                 if not df.empty:
-                    logger.warning(f"{symbol}: 所有重试失败，使用本地缓存数据")
+                    logger.debug(f"{symbol}: 所有重试失败，使用本地缓存数据")
                     return standardize_ohlcv(df)
                 else:
                     logger.error(f"{symbol}: 下载失败且无本地缓存")
@@ -280,7 +307,9 @@ def get_stock_daily_legacy(
 
     df = df[select_cols].copy()
 
-    db.insert_stock_daily(symbol, df, adjust)
+    # 使用写入管理器
+    db_write = get_writer_manager()
+    db_write.insert_stock_daily(symbol, df, adjust)
 
     df = df[
         (df["datetime"] >= pd.to_datetime(start))

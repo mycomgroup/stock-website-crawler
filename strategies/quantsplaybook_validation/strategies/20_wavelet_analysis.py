@@ -46,7 +46,7 @@ def handle_bar(context, bar_dict):
     cross_down = trend_short < 0 and prev_trend_short >= 0
 
     if cross_up and above_long and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: short={ma_short:.2f}, mid={ma_mid:.2f}, long={ma_long:.2f}")
     elif cross_down and context.pos:

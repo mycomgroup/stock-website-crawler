@@ -1,0 +1,44 @@
+{
+  "task": {
+    "task_id": "rfscore7_pb10_v3",
+    "strategy_name": "rfscore7_pb10_optimized_v3",
+    "mode": "single_strategy_research"
+  },
+  "data": {
+    "panel_type": "pool_panel",
+    "panel_path": "/Users/fengzhi/Downloads/git/testlixingren/output/rfscore7_pb10_pool_panel.csv",
+    "start_date": "2018-01-01",
+    "end_date": "2025-12-31"
+  },
+  "pipeline": {
+    "top_n": 15,
+    "weight_mode": "equal"
+  },
+  "backtest": {
+    "template": "EqualWeightStrategy",
+    "initial_cash": 1000000,
+    "rebalance_threshold": 0.01,
+    "hold_days": 21
+  },
+  "portfolio": {
+    "max_positions": 15,
+    "max_single": 0.10,
+    "cash_target": 0.05
+  },
+  "risk": {
+    "enable_constraints": true,
+    "max_industry": 0.30,
+    "max_turnover": 0.40
+  },
+  "platform": {
+    "engine": "joinquant",
+    "strategy_id": "cd45eba022e60387deb91ee6f725ef50",
+    "strategy_file": "/Users/fengzhi/Downloads/git/testlixingren/strategies/enhanced_v2/rfscore7_pb10_optimized.py",
+    "freq": "day",
+    "timeout_seconds": 600
+  },
+  "output": {
+    "save_artifacts": true,
+    "artifact_dir": "/Users/fengzhi/Downloads/git/testlixingren/output/strategy_kits_runs"
+  }
+}

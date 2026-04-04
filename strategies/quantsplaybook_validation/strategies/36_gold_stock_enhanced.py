@@ -20,7 +20,8 @@ def handle_bar(context, bar_dict):
     context.month = current_month
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
@@ -40,7 +41,7 @@ def handle_bar(context, bar_dict):
 
             # 综合得分
             scores[stock] = momentum * 0.6 + (vol_ratio - 1) * 0.4
-        except:
+        except Exception:
             continue
 
     if not scores:

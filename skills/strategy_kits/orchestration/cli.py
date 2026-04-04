@@ -45,6 +45,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--spec", required=True, help="Path to task spec JSON/YAML file.")
     parser.add_argument("--no-save-artifacts", action="store_true", help="Disable artifact persistence for this run.")
     parser.add_argument("--print-result-json", action="store_true", help="Print compact run summary as JSON.")
+    parser.add_argument(
+        "--platform",
+        choices=["local", "joinquant", "ricequant"],
+        default=None,
+        help="Override platform.engine in task spec (local/joinquant/ricequant).",
+    )
     return parser
 
 
@@ -55,21 +61,55 @@ def main(argv: list[str] | None = None) -> int:
     from .task_runner import run_strategy_task
 
     spec = load_task_spec(args.spec)
+
+    # CLI --platform 覆盖 spec 里的 platform.engine
+    if args.platform:
+        if "platform" not in spec:
+            spec["platform"] = {}
+        spec["platform"]["engine"] = args.platform
+
     result = run_strategy_task(
         spec,
         persist_artifacts=not args.no_save_artifacts,
     )
 
     if args.print_result_json:
-        payload = {
-            "portfolio_value": float(result.get("portfolio_value", 0.0)),
-            "artifact_dir": result.get("artifact_manifest", {}).get("artifact_dir") if isinstance(result.get("artifact_manifest"), dict) else None,
-            "run_report_md": result.get("artifact_manifest", {}).get("run_report_md") if isinstance(result.get("artifact_manifest"), dict) else None,
-            "task_id": result.get("task_spec", {}).get("task", {}).get("task_id"),
-        }
+        engine = result.get("engine", "local")
+        if engine in {"joinquant", "ricequant"}:
+            metrics = result.get("metrics", {})
+            payload = {
+                "engine": engine,
+                "strategy_id": result.get("strategy_id"),
+                "backtest_id": metrics.get("backtest_id"),
+                "total_return": metrics.get("total_return"),
+                "annual_return": metrics.get("annual_return"),
+                "max_drawdown": metrics.get("max_drawdown"),
+                "sharpe": metrics.get("sharpe"),
+                "artifact_dir": result.get("artifact_manifest", {}).get("artifact_dir"),
+                "run_report_md": result.get("artifact_manifest", {}).get("run_report_md"),
+                "task_id": result.get("task_spec", {}).get("task", {}).get("task_id"),
+            }
+        else:
+            payload = {
+                "engine": "local",
+                "portfolio_value": float(result.get("portfolio_value", 0.0)),
+                "artifact_dir": result.get("artifact_manifest", {}).get("artifact_dir") if isinstance(result.get("artifact_manifest"), dict) else None,
+                "run_report_md": result.get("artifact_manifest", {}).get("run_report_md") if isinstance(result.get("artifact_manifest"), dict) else None,
+                "task_id": result.get("task_spec", {}).get("task", {}).get("task_id"),
+            }
         print(json.dumps(payload, ensure_ascii=False))
     else:
-        print(f"portfolio_value={float(result.get('portfolio_value', 0.0)):.2f}")
+        engine = result.get("engine", "local")
+        if engine in {"joinquant", "ricequant"}:
+            metrics = result.get("metrics", {})
+            print(f"engine={engine}")
+            print(f"strategy_id={result.get('strategy_id')}")
+            print(f"backtest_id={metrics.get('backtest_id')}")
+            for k, v in metrics.items():
+                if k != "backtest_id":
+                    print(f"{k}={v}")
+        else:
+            print(f"portfolio_value={float(result.get('portfolio_value', 0.0)):.2f}")
         if isinstance(result.get("artifact_manifest"), dict):
             print(f"artifact_dir={result['artifact_manifest'].get('artifact_dir')}")
             print(f"run_report_md={result['artifact_manifest'].get('run_report_md')}")

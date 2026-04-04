@@ -99,7 +99,7 @@ def handle_bar(context, bar_dict):
     # 买入条件：当前价格突破前高且在200日均线上方
     if not context.pos:
         if current > p_high_price and current > ma200:
-            order_value(security, context.portfolio.starting_cash * 0.95)
+            order_value(security, context.portfolio.total_value * 0.95)
             context.pos = True
             context.buy_price = current
             print(f"买入(圆弧底突破): price={current:.2f}, p_high={p_high_price:.2f}")

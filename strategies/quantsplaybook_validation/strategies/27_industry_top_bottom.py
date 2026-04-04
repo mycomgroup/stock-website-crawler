@@ -11,9 +11,9 @@ def init(context):
     context.index = '000300.XSHG'
     context.security = '510300.XSHG'  # 沪深300ETF
     context.nhnl_window = 252          # 年度新高新低窗口
-    context.signal_window = 20         # 信号平滑窗口
-    context.buy_threshold = -0.3       # NHNL%低于此值买入（底部）
-    context.sell_threshold = 0.5       # NHNL%高于此值卖出（顶部）
+    context.signal_window = 5          # 信号平滑窗口，减少冷启动
+    context.buy_threshold = -0.1       # NHNL%低于此值买入（底部），放宽阈值
+    context.sell_threshold = 0.3       # NHNL%高于此值卖出（顶部），放宽阈值
     context.pos = False
     context.nhnl_history = []
 
@@ -47,7 +47,7 @@ def handle_bar(context, bar_dict):
                 new_high_count += 1
             elif current <= year_low:
                 new_low_count += 1
-        except:
+        except Exception:
             continue
 
     if valid_count == 0:
@@ -65,7 +65,7 @@ def handle_bar(context, bar_dict):
 
     # 交易逻辑：反转策略
     if smooth_nhnl < context.buy_threshold and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入(底部信号): NHNL%={smooth_nhnl:.3f}")
 

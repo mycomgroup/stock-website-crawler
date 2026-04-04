@@ -69,7 +69,7 @@ def handle_bar(context, bar_dict):
     # 相对强弱低分位(<0.3) → 下跌波动占优 → 卖出
 
     if rs_percentile > 0.7 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: RS={relative_strength:.3f}, percentile={rs_percentile:.2f}")
     elif rs_percentile < 0.3 and context.pos:

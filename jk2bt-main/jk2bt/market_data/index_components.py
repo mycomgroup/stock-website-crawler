@@ -83,19 +83,26 @@ _INDEX_SOURCE_MAP = {
 
 
 class IndexComponentsDBManager:
-    """指数成分股 DuckDB 管理器"""
+    """指数成分股 DuckDB 管理器（延迟初始化）"""
 
     _instance = None
+    _initialized = False
 
     def __new__(cls, db_path: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._manager = None
+            cls._instance._db_path = None
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
+    def _ensure_initialized(self, db_path: str = None):
+        """延迟初始化：只在首次使用时才初始化"""
+        if self._initialized:
+            return
+
         if not _DUCKDB_AVAILABLE:
             self._manager = None
+            self._initialized = True
             return
 
         if db_path is None:
@@ -104,7 +111,7 @@ class IndexComponentsDBManager:
             )
             db_path = os.path.join(base_dir, "data", "index_components.db")
 
-        self.db_path = db_path
+        self._db_path = db_path
         self._manager = None
 
         try:
@@ -113,6 +120,8 @@ class IndexComponentsDBManager:
         except Exception as e:
             logger.warning(f"DuckDB 初始化失败: {e}")
             self._manager = None
+
+        self._initialized = True
 
     def _init_tables(self):
         if self._manager is None:
@@ -218,7 +227,15 @@ class IndexComponentsDBManager:
             return False
 
 
-_db_manager = IndexComponentsDBManager() if _DUCKDB_AVAILABLE else None
+def _get_db_manager():
+    """获取数据库管理器单例（延迟初始化）"""
+    if not _DUCKDB_AVAILABLE:
+        return None
+    manager = IndexComponentsDBManager()
+    manager._ensure_initialized()
+    return manager
+
+_db_manager = None  # 延迟初始化，避免导入时副作用
 
 
 _INDEX_CODE_MAP = {
@@ -380,9 +397,10 @@ def get_index_components(
 
     cache_days = _get_cache_days(index_num)
 
-    if use_duckdb and _db_manager is not None and not force_update:
-        if _db_manager.is_cache_valid(jq_index_code, cache_days=cache_days):
-            df_cached = _db_manager.get_index_components(jq_index_code)
+    if use_duckdb and not force_update:
+        db_manager = _get_db_manager()
+        if db_manager is not None and db_manager.is_cache_valid(jq_index_code, cache_days=cache_days):
+            df_cached = db_manager.get_index_components(jq_index_code)
             if not df_cached.empty:
                 return _normalize_weights(df_cached[_INDEX_COMPONENTS_SCHEMA])
 
@@ -396,8 +414,10 @@ def get_index_components(
             cached_df = pd.read_pickle(cache_file)
             file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
             if (datetime.now() - file_mtime).days < cache_days:
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_index_components(cached_df)
+                if use_duckdb:
+                    db_manager = _get_db_manager()
+                    if db_manager is not None:
+                        db_manager.insert_index_components(cached_df)
                 return _normalize_weights(cached_df)
             need_download = True
         except Exception:
@@ -424,8 +444,10 @@ def get_index_components(
             if not result.empty:
                 result = _normalize_weights(result)
                 result.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_index_components(result)
+                if use_duckdb:
+                    db_manager = _get_db_manager()
+                    if db_manager is not None:
+                        db_manager.insert_index_components(result)
                 return result
 
     return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)

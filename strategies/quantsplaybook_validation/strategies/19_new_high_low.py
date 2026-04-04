@@ -56,7 +56,7 @@ def handle_bar(context, bar_dict):
     # 净新低占比高 → 市场弱势
 
     if nh_nl > 0.4 and percentile > 0.7 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: NH-NL={nh_nl:.2f}, pct={percentile:.2f}")
     elif nh_nl < -0.4 and context.pos:

@@ -26,6 +26,11 @@ dependencies = [
     "tqdm>=4.64.0",
 ]
 
+[project.scripts]
+jk2bt-run = "jk2bt.cli:run_strategy_main"
+jk2bt-prewarm = "jk2bt.cli:prewarm_main"
+jk2bt-validate = "jk2bt.cli:validate_cache_main"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
@@ -38,10 +43,15 @@ full = [
     "statsmodels>=0.13.0",
     "scipy>=1.8.0",
 ]
+# 技术分析依赖（可选，部分策略需要）
+ta = [
+    "talib-binary>=0.4.28",  # 预编译版本，避免编译问题
+]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["jk2bt*", "src*", "market_data*", "finance_data*", "factors*", "indicators*", "utils*"]
+# 显式指定要打包的模块，避免重复打包
+# src只包含兼容桥接文件，不包含子目录（子目录在jk2bt内已存在）
+[tool.setuptools]
+packages = ["jk2bt", "jk2bt.api", "jk2bt.api._internal", "jk2bt.core", "jk2bt.data_access", "jk2bt.data_access.examples", "jk2bt.db", "jk2bt.factors", "jk2bt.finance_data", "jk2bt.indicators", "jk2bt.market_data", "jk2bt.risk", "jk2bt.signals", "jk2bt.strategy", "jk2bt.utils", "jk2bt.validation", "tools", "tools.data", "tools.offline_data", "tools.validation"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

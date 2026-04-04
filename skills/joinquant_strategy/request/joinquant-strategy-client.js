@@ -90,7 +90,15 @@ export class JoinQuantStrategyClient {
         throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
       }
 
-      try { return JSON.parse(text); } catch { return text; }
+      // 自动检测：parseJson=true 强制解析；否则根据内容类型或内容特征决定
+      if (options.parseJson) {
+        try { return JSON.parse(text); } catch { return text; }
+      }
+      // GET 请求默认返回原始文本（HTML）；POST 请求尝试 JSON 解析
+      if ((options.method || 'GET') !== 'GET') {
+        try { return JSON.parse(text); } catch { return text; }
+      }
+      return text;
     } catch (error) {
       clearTimeout(timer);
       const isRetryable = error.name === 'AbortError' ||
@@ -172,7 +180,8 @@ export class JoinQuantStrategyClient {
     return this.request(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-      body: body.toString()
+      body: body.toString(),
+      parseJson: true
     });
   }
 
@@ -205,7 +214,8 @@ export class JoinQuantStrategyClient {
     const result = await this.request(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-      body: body.toString()
+      body: body.toString(),
+      parseJson: true
     });
 
     if (result.status != 0 && result.status != '0') {
@@ -227,32 +237,24 @@ export class JoinQuantStrategyClient {
     return this.request(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-      body: body.toString()
+      body: body.toString(),
+      parseJson: true
     });
   }
 
-  /**
-   * Get all transactions (trades) for a backtest
-   */
   async getTransactionInfo(backtestId) {
     const url = `/algorithm/backtest/transactionInfo?backtestId=${backtestId}&ajax=1`;
-    return this.request(url, { method: 'POST' });
+    return this.request(url, { method: 'POST', parseJson: true });
   }
 
-  /**
-   * Get all position details for a backtest
-   */
   async getPositionInfo(backtestId) {
     const url = `/algorithm/backtest/positionInfo?backtestId=${backtestId}&ajax=1`;
-    return this.request(url, { method: 'POST' });
+    return this.request(url, { method: 'POST', parseJson: true });
   }
 
-  /**
-   * Get backtest logs
-   */
   async getLog(backtestId, offset = 0) {
     const url = `/algorithm/backtest/log?backtestId=${backtestId}&offset=${offset}&ajax=1`;
-    return this.request(url, { method: 'POST' });
+    return this.request(url, { method: 'POST', parseJson: true });
   }
 
   /**
@@ -314,70 +316,52 @@ export class JoinQuantStrategyClient {
     const body = new URLSearchParams();
     if (context.token) body.append('token', context.token);
     body.append('ajax', '1');
-    return this.request(url, { method: 'POST', body });
+    return this.request(url, { method: 'POST', body, parseJson: true });
   }
 
-  /**
-   * Attribution Analysis: Returns Overview
-   */
   async getAttributionReturnOverview(backtestId, context = {}) {
     const url = `/factor/backtest/returnOverview?backtestId=${backtestId}&ajax=1`;
     const body = new URLSearchParams();
     if (context.token) body.append('token', context.token);
     body.append('ajax', '1');
-    return this.request(url, { method: 'POST', body });
+    return this.request(url, { method: 'POST', body, parseJson: true });
   }
 
-  /**
-   * Attribution Analysis: Benefit Analysis
-   */
   async getAttributionBenefit(backtestId, context = {}) {
     const url = `/factor/backtest/benifit?backtestId=${backtestId}&ajax=1`;
     const body = new URLSearchParams();
     if (context.token) body.append('token', context.token);
     body.append('ajax', '1');
-    return this.request(url, { method: 'POST', body });
+    return this.request(url, { method: 'POST', body, parseJson: true });
   }
 
-  /**
-   * Attribution Analysis: Risk Indicators
-   */
   async getAttributionRiskIndicator(backtestId, context = {}) {
     const url = `/factor/backtest/riskIndicator?backtestId=${backtestId}&ajax=1`;
     const body = new URLSearchParams();
     if (context.token) body.append('token', context.token);
     body.append('ajax', '1');
-    return this.request(url, { method: 'POST', body });
+    return this.request(url, { method: 'POST', body, parseJson: true });
   }
 
-  /**
-   * Attribution Analysis: Position Analysis
-   */
   async getAttributionPositionAnaly(backtestId, context = {}) {
     const url = `/factor/backtest/positionAnaly?backtestId=${backtestId}&ajax=1`;
     const body = new URLSearchParams();
     if (context.token) body.append('token', context.token);
     body.append('ajax', '1');
-    return this.request(url, { method: 'POST', body });
+    return this.request(url, { method: 'POST', body, parseJson: true });
   }
 
-  /**
-   * Attribution Analysis: Brinson Attribution
-   */
   async getAttributionBrinson(backtestId, context = {}) {
     const url = `/factor/backtest/Brinson?backtestId=${backtestId}&ajax=1`;
     const body = new URLSearchParams();
     if (context.token) body.append('token', context.token);
     body.append('ajax', '1');
-    return this.request(url, { method: 'POST', body });
+    return this.request(url, { method: 'POST', body, parseJson: true });
   }
 
-  /**
-   * Attribution Analysis: Attribution Status
-   */
   async getAttributionStatus(backtestId) {
     const url = `/factor/backtest/AttributionStatus?backtestId=${backtestId}`;
-    return this.request(url, { method: 'POST' });
+    return this.request(url, { method: 'POST', parseJson: true });
   }
 
   /**

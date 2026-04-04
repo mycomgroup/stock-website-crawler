@@ -134,9 +134,9 @@ def before_markt_open(context):
     log.info("-------------------------------------------------------------------")
 
     if g.mode2_flag == 1:
-		log.info("Pe上行，操作股票:")
-		
-		mode2_check_stock(context)
+        log.info("Pe上行，操作股票:")
+        
+        mode2_check_stock(context)
     else:
         log.info("Pe下行或超出中位数值，空仓:")
         mode1_check_rsrs(context)
@@ -684,60 +684,60 @@ def calc_rsrs(high,low,index,M,N):
 
 
 def mode2_pe_check_month(context):
-	
-	g.mode2_temp_list = []
-	g.mode2_buy_list = []
-	start = '2005-01-01'  # 时间序列范围
-	end = context.previous_date
-	time_list = list(pd.date_range(start, end, freq='M'))
-	#print("time_list:",time_list)
-	# 获取数据
-	sector = '000300.XSHG'
-	pe_data = []
-	for date in time_list:
-		_ret_val = np.nan
-		stocks = get_index_stocks(sector, date=date)
-		if stocks:
-			q = query(valuation.code, valuation.market_cap, valuation.pe_ratio).filter(valuation.code.in_(stocks))
-			df = get_fundamentals(q, date)
-			_ret_val = avg_calc(df)
-		
-		if not np.isnan(_ret_val):
-			pe_data.append(_ret_val)
-	
-		pe_arr = np.array(pe_data)
-		zws_50 = np.median(pe_arr)
+    
+    g.mode2_temp_list = []
+    g.mode2_buy_list = []
+    start = '2005-01-01'  # 时间序列范围
+    end = context.previous_date
+    time_list = list(pd.date_range(start, end, freq='M'))
+    #print("time_list:",time_list)
+    # 获取数据
+    sector = '000300.XSHG'
+    pe_data = []
+    for date in time_list:
+        _ret_val = np.nan
+        stocks = get_index_stocks(sector, date=date)
+        if stocks:
+            q = query(valuation.code, valuation.market_cap, valuation.pe_ratio).filter(valuation.code.in_(stocks))
+            df = get_fundamentals(q, date)
+            _ret_val = avg_calc(df)
+        
+        if not np.isnan(_ret_val):
+            pe_data.append(_ret_val)
+    
+        pe_arr = np.array(pe_data)
+        zws_50 = np.median(pe_arr)
 
-	g.mode2_flag = 0
-	if len(pe_arr) >= 3:
-		
-		if pe_arr[-2] < pe_arr[-1] < zws_50:
-			#log.info("Pe上行，操作股票:")
-			g.mode2_flag = 1
-			
+    g.mode2_flag = 0
+    if len(pe_arr) >= 3:
+        
+        if pe_arr[-2] < pe_arr[-1] < zws_50:
+            #log.info("Pe上行，操作股票:")
+            g.mode2_flag = 1
+            
 
 def mode2_pe_check_week(context):
-	start = '2009-01-01'  # 时间序列范围
-	end = context.previous_date
-	time_list = list(pd.date_range(start, end, freq='w-mon'))[-5:]
-	# 获取数据
-	sector = '000300.XSHG'
-	pe_data = []
-	for date in time_list:
-		_ret_val = np.nan
-		stocks = get_index_stocks(sector, date=date)
-		if stocks:
-			q = query(valuation.code, valuation.market_cap, valuation.pe_ratio).filter(valuation.code.in_(stocks))
-			df = get_fundamentals(q, date)
-			_ret_val = avg_calc(df)
-		if not np.isnan(_ret_val):
-			pe_data.append(_ret_val)
-		pe_arr = np.array(pe_data)
-	g.mode2_flag = 0
-	if len(pe_arr) >= 3:
-		if pe_arr[-2] > pe_arr[-1] :
-			g.mode2_flag = 0
-	
+    start = '2009-01-01'  # 时间序列范围
+    end = context.previous_date
+    time_list = list(pd.date_range(start, end, freq='w-mon'))[-5:]
+    # 获取数据
+    sector = '000300.XSHG'
+    pe_data = []
+    for date in time_list:
+        _ret_val = np.nan
+        stocks = get_index_stocks(sector, date=date)
+        if stocks:
+            q = query(valuation.code, valuation.market_cap, valuation.pe_ratio).filter(valuation.code.in_(stocks))
+            df = get_fundamentals(q, date)
+            _ret_val = avg_calc(df)
+        if not np.isnan(_ret_val):
+            pe_data.append(_ret_val)
+        pe_arr = np.array(pe_data)
+    g.mode2_flag = 0
+    if len(pe_arr) >= 3:
+        if pe_arr[-2] > pe_arr[-1] :
+            g.mode2_flag = 0
+    
 
 def mode2_check_stock(context):  # 根据7日涨幅降序排列，取涨得最快的
     #g.mode2_buy_list = []

@@ -35,7 +35,7 @@ def handle_bar(context, bar_dict):
                 if prices[-1] > prices[-2]:
                     up_count += 1
                 valid_count += 1
-        except:
+        except Exception:
             continue
 
     if valid_count == 0:
@@ -45,7 +45,7 @@ def handle_bar(context, bar_dict):
 
     # 交易逻辑
     if diffusion > context.buy_threshold and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: 扩散指标={diffusion:.2%}")
     elif diffusion < context.sell_threshold and context.pos:

@@ -53,7 +53,7 @@ def handle_bar(context, bar_dict):
     # 低VIX分位 → 市场平静
 
     if cvix_percentile > 0.8 and term_structure > 1.2 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入恐慌: CVIX={cvix:.2f}, term={term_structure:.2f}")
     elif cvix_percentile < 0.3 and context.pos:

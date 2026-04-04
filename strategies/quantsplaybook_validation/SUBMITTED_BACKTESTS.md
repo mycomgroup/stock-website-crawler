@@ -1,63 +1,63 @@
-# RiceQuant 批量回测提交记录
-> 提交时间: Sat Apr  4 08:01:54 CST 2026
+# RiceQuant 3年期深度回测报告 (2023-2026)
+> 数据源: RiceQuant Cloud API | 更新时间: 4/4/2026, 10:20:04 AM
 
-| 策略文件 | 策略ID | 回测ID | 状态 |
-|----------|---------|---------|------|
-| 01_icu_ma.py | 2417178 | 7967455 | 🔄 已提交 |
-| 02_time_varying_sharpe.py | 2417179 | 7967456 | 🔄 已提交 |
-| 03_diffusion_indicator.py | 2417180 | 7967457 | 🔄 已提交 |
-| 04_ma_channel.py | 2417186 | 7967458 | 🔄 已提交 |
-| 05_rsrs_optimized.py | 2417084 | 7967459 | 🔄 已提交 |
-| 06_qrs.py | 2417187 | 7967460 | 🔄 已提交 |
-| 07_low_lag_trend.py | 2417188 | 7967461 | 🔄 已提交 |
-| 08_bull_bear_indicator.py | 2417189 | 7967462 | 🔄 已提交 |
-| 09_price_volume_resonance.py | 2417190 | 7967463 | 🔄 已提交 |
-| 10_alligator.py | 2417192 | 7967464 | 🔄 已提交 |
-| 11_unidirectional_volatility.py | 2417193 | 7967465 | 🔄 已提交 |
-| 12_higher_moments.py | 2417194 | 7967466 | 🔄 已提交 |
-| 13_herd_effect.py | 2417217 | 7967467 | 🔄 已提交 |
-| 14_trend_momentum.py | 2417198 | 7967468 | 🔄 已提交 |
-| 15_northbound_fund.py | 2417199 | 7967469 | 🔄 已提交 |
-| 16_volatility_factor.py | 2417200 | 7967470 | 🔄 已提交 |
-| 17_point_efficiency.py | 2417203 | 7967471 | 🔄 已提交 |
-| 18_investor_sentiment.py | 2417204 | 7967472 | 🔄 已提交 |
-| 19_new_high_low.py | 2417205 | 7967473 | 🔄 已提交 |
-| 20_wavelet_analysis.py | 2417206 | 7967474 | 🔄 已提交 |
-| 21_cvix.py | 2417207 | 7967475 | 🔄 已提交 |
-| 22_distribution_model.py | 2417208 | 7967476 | 🔄 已提交 |
-| 23_trader_company.py | 2417219 | 7967477 | 🔄 已提交 |
-| 24_pattern_recognition.py | 2417212 | 7967478 | 🔄 已提交 |
-| 25_hht_model.py | 2417215 | 7967479 | 🔄 已提交 |
-| 26_etf_intraday_momentum.py | 2417633 | 7967480 | 🔄 已提交 |
-| 27_industry_top_bottom.py | 2417634 | 7967481 | 🔄 已提交 |
-| 28_rounding_bottom_pattern.py | 2417635 | 7967482 | 🔄 已提交 |
-| 29_high_quality_momentum.py | 2417636 | 7967483 | 🔄 已提交 |
-| 30_smart_money_v2.py | 2417637 | 7967484 | 🔄 已提交 |
-| 31_momentum_a_share.py | 2417638 | 7967485 | 🔄 已提交 |
-| 32_chip_distribution_factor.py | 2417639 | 7967486 | 🔄 已提交 |
-| 33_disposal_effect_factor.py | 2417640 | 7967487 | 🔄 已提交 |
-| 34_cpv_factor.py | 2417641 | 7967488 | 🔄 已提交 |
-| 35_industry_rotation_pv.py | 2417642 | 7967489 | 🔄 已提交 |
-| 36_gold_stock_enhanced.py | 2417643 | 7967490 | 🔄 已提交 |
-| 37_buy_sell_pressure.py | 2417644 | 7967491 | 🔄 已提交 |
-| 38_overnight_intraday_network.py | 2417645 | 7967492 | 🔄 已提交 |
-| 39_fund_overweight_factor.py | 2417646 | 7967493 | 🔄 已提交 |
-| 40_stock_network_centrality.py | 2417647 | 7967494 | 🔄 已提交 |
-| 41_fund_manager_alpha.py | 2417648 | 7967495 | 🔄 已提交 |
-| 42_enterprise_lifecycle.py | 2417649 | 7967496 | 🔄 已提交 |
-| 43_upper_lower_shadow.py | 2417650 | 7967497 | 🔄 已提交 |
-| 44_pure_volatility_factor.py | 2417651 | 7967498 | 🔄 已提交 |
-| 45_salience_str_factor.py | 2417652 | 7967499 | 🔄 已提交 |
-| 46_factor_timing.py | 2417653 | 7967500 | 🔄 已提交 |
-| 47_revisit_momentum.py | 2417654 | 7967501 | 🔄 已提交 |
-| 48_amplitude_hidden_structure.py | 2417655 | 7967502 | 🔄 已提交 |
-| 49_apm_factor.py | 2417656 | 7967503 | 🔄 已提交 |
-| 50_team_coin_momentum.py | 2417657 | 7967504 | 🔄 已提交 |
-| 51_microstructure_reversal.py | 2417658 | 7967505 | 🔄 已提交 |
-| 52_multifactor_index_enhance.py | 2417659 | 7967506 | 🔄 已提交 |
-| 53_ffscore_selection.py | 2417660 | 7967507 | 🔄 已提交 |
-| 54_sw_cashflow_selection.py | 2417661 | 7967508 | 🔄 已提交 |
-| 55_de_portfolio_optimization.py | 2417662 | 7967509 | 🔄 已提交 |
-| 56_mlt_tsmom.py | 2417663 | 7967510 | 🔄 已提交 |
-| notebook_rsrs_dampened.py | 2417664 | 7967511 | 🔄 已提交 |
-| notebook_rsrs_volume_weighted_dampened.py | 2417665 | 7967512 | 🔄 已提交 |
+| 策略文件 | 累计收益 | 年化收益 | 夏普比率 | 最大回撤 | 状态 | 云端链接 |
+|:---|:---|:---|:---|:---|:---|:---|
+| 01_icu_ma.py | **3.77%** | 1.20% | -0.042 | 15.11% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967581) |
+| 02_time_varying_sharpe.py | **12.06%** | 3.73% | 0.226 | 7.26% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967582) |
+| 03_diffusion_indicator.py | -19.11% | -6.59% | -0.698 | 28.69% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967583) |
+| 04_ma_channel.py | **0.33%** | 0.11% | -0.126 | 17.65% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967584) |
+| 05_rsrs_optimized.py | **3.45%** | 1.10% | -0.022 | 20.62% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967585) |
+| 06_qrs.py | **4.51%** | 1.43% | -0.016 | 15.26% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967586) |
+| 07_low_lag_trend.py | **0.86%** | 0.28% | -0.112 | 18.87% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967587) |
+| 08_bull_bear_indicator.py | -16.54% | -5.64% | -0.877 | 28.10% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967588) |
+| 09_price_volume_resonance.py | -12.73% | -4.28% | -0.435 | 33.80% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967589) |
+| 10_alligator.py | -0.74% | -0.24% | -0.187 | 17.91% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967590) |
+| 11_unidirectional_volatility.py | **16.68%** | 5.08% | 0.283 | 14.71% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967591) |
+| 12_higher_moments.py | **14.11%** | 4.33% | 0.252 | 9.93% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967593) |
+| 13_herd_effect.py | -5.99% | -1.97% | -0.461 | 20.74% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967594) |
+| 14_trend_momentum.py | **1.57%** | 0.50% | -0.124 | 14.36% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967595) |
+| 15_northbound_fund.py | **10.68%** | 3.31% | 0.133 | 12.28% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967596) |
+| 16_volatility_factor.py | -2.29% | -0.74% | -0.368 | 17.07% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967597) |
+| 17_point_efficiency.py | -2.78% | -0.90% | -0.360 | 11.90% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967598) |
+| 18_investor_sentiment.py | **12.00%** | 3.71% | 0.177 | 14.86% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967599) |
+| 19_new_high_low.py | **0.42%** | 0.14% | -0.107 | 14.81% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967600) |
+| 20_wavelet_analysis.py | -3.78% | -1.23% | -0.490 | 17.07% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967601) |
+| 21_cvix.py | **30.18%** | 8.85% | 0.585 | 13.45% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967602) |
+| 22_distribution_model.py | **5.95%** | 1.88% | -0.016 | 15.01% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967603) |
+| 23_trader_company.py | **15.02%** | 4.60% | 0.224 | 12.52% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967604) |
+| 24_pattern_recognition.py | **7.55%** | 2.37% | 0.077 | 23.28% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967605) |
+| 25_hht_model.py | **6.87%** | 2.16% | -0.001 | 10.02% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967606) |
+| 26_etf_intraday_momentum.py | **27.88%** | 8.23% | 0.537 | 13.84% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967607) |
+| 27_industry_top_bottom.py | **23.79%** | 7.10% | 0.367 | 19.41% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967608) |
+| 28_rounding_bottom_pattern.py | **10.29%** | 3.20% | 0.124 | 15.41% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967609) |
+| 29_high_quality_momentum.py | **35.65%** | 10.30% | 0.621 | 12.69% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967610) |
+| 30_smart_money_v2.py | **2.08%** | 0.66% | -0.157 | 20.28% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967611) |
+| 31_momentum_a_share.py | **1.93%** | 0.62% | -0.076 | 26.94% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967612) |
+| 32_chip_distribution_factor.py | 0.00% | 0.00% | 0.000 | 0.00% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967613) |
+| 33_disposal_effect_factor.py | 0.00% | 0.00% | 0.000 | 0.00% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967615) |
+| 34_cpv_factor.py | 0.00% | 0.00% | 0.000 | 0.00% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967616) |
+| 35_industry_rotation_pv.py | **62.78%** | 16.95% | 0.745 | 21.79% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967618) |
+| 36_gold_stock_enhanced.py | **3.66%** | 1.16% | -0.037 | 22.13% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967619) |
+| 37_buy_sell_pressure.py | **9.73%** | 3.03% | 0.112 | 13.48% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967620) |
+| 38_overnight_intraday_network.py | **30.85%** | 9.03% | 0.653 | 10.78% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967621) |
+| 39_fund_overweight_factor.py | **7.12%** | 2.23% | 0.016 | 10.01% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967622) |
+| 40_stock_network_centrality.py | **26.84%** | 7.94% | 0.505 | 18.73% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967623) |
+| 41_fund_manager_alpha.py | **18.23%** | 5.53% | 0.301 | 13.98% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967624) |
+| 42_enterprise_lifecycle.py | **40.85%** | 11.64% | 0.875 | 11.41% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967625) |
+| 43_upper_lower_shadow.py | -0.93% | -0.30% | -0.278 | 12.01% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967626) |
+| 44_pure_volatility_factor.py | **34.23%** | 9.92% | 0.671 | 11.09% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967627) |
+| 45_salience_str_factor.py | **50.93%** | 14.15% | 1.092 | 8.68% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967628) |
+| 46_factor_timing.py | **8.57%** | 2.68% | 0.077 | 12.91% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967629) |
+| 47_revisit_momentum.py | -1.06% | -0.34% | -0.179 | 19.13% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967630) |
+| 48_amplitude_hidden_structure.py | -8.45% | -2.80% | -0.499 | 22.27% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967631) |
+| 49_apm_factor.py | -6.11% | -2.01% | -0.488 | 20.70% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967632) |
+| 50_team_coin_momentum.py | **10.16%** | 3.16% | 0.121 | 19.15% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967633) |
+| 51_microstructure_reversal.py | -19.66% | -6.79% | -1.234 | 23.46% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967634) |
+| 52_multifactor_index_enhance.py | **3.75%** | 1.19% | -0.158 | 7.17% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967635) |
+| 53_ffscore_selection.py | **26.02%** | 7.72% | 0.459 | 15.01% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967636) |
+| 54_sw_cashflow_selection.py | **27.59%** | 8.15% | 0.517 | 13.48% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967637) |
+| 55_de_portfolio_optimization.py | **35.02%** | 10.13% | 0.452 | 32.85% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967638) |
+| 56_mlt_tsmom.py | **100.39%** | 25.03% | 1.697 | 8.99% | ✅ 已完成 | [查看详情](https://www.ricequant.com/quant/backtest/7967639) |
+| notebook_rsrs_dampened.py | 0.00% | 0.00% | 0.000 | 0.00% | ⏳ running | [查看详情](https://www.ricequant.com/quant/backtest/7967640) |
+| notebook_rsrs_volume_weighted_dampened.py | 0.00% | 0.00% | 0.000 | 0.00% | ⏳ running | [查看详情](https://www.ricequant.com/quant/backtest/7967641) |

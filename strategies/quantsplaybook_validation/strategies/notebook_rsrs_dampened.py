@@ -48,7 +48,7 @@ else:
             model = sm.OLS(h, X).fit()
             beta_history.append(model.params[1])
             r2_history.append(model.rsquared)
-        except:
+        except Exception:
             beta_history.append(np.nan)
             r2_history.append(np.nan)
 

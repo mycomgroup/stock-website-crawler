@@ -261,28 +261,9 @@ async function refreshActiveBacktests(activeBacktests, client, contextCache) {
   return stillActive;
 }
 
-async function waitForSlotIfNeeded(activeBacktests, client, contextCache, maxConcurrent) {
-  let active = activeBacktests;
-  while (active.length >= maxConcurrent) {
-    console.log(`  并行回测已满(${active.length}/${maxConcurrent})，等待空位...`);
-    await sleep(30000);
-    active = await refreshActiveBacktests(active, client, contextCache);
-    console.log(`  空位检查完成，当前活跃回测: ${active.length}`);
-  }
-  return active;
-}
-
-async function waitForPlatformCapacity(activeBacktests, client, contextCache, maxConcurrent) {
-  let active = activeBacktests;
-  while (true) {
-    active = await refreshActiveBacktests(active, client, contextCache);
-    if (active.length < maxConcurrent) {
-      console.log(`  平台空位检查完成，当前活跃回测: ${active.length}`);
-      return active;
-    }
-    console.log(`  平台仍然拥挤(${active.length}/${maxConcurrent})，30秒后继续检查...`);
-    await sleep(30000);
-  }
+async function waitForPlatformCapacity(retrySeconds = 60) {
+  console.log(`  平台并发回测已满，${retrySeconds}秒后直接重试提交...`);
+  await sleep(retrySeconds * 1000);
 }
 
 async function main() {
@@ -402,8 +383,7 @@ async function main() {
             break;
           } catch (error) {
             if (!isRateLimitError(error)) throw error;
-            console.log('  平台并发回测已满，等待后重试当前策略...');
-            activeBacktests = await waitForPlatformCapacity(activeBacktests, client, contextCache, maxConcurrent);
+            await waitForPlatformCapacity();
           }
         }
 

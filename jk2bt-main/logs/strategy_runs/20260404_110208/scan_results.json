@@ -1,0 +1,44 @@
+{
+  "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+    "file_path": "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt",
+    "file_name": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+    "status": "valid",
+    "has_initialize": true,
+    "has_handle": true,
+    "missing_apis": [],
+    "error_message": "",
+    "is_executable": true,
+    "details": {
+      "defined_funcs": [
+        "initialize",
+        "after_code_changed",
+        "handle_prepare",
+        "handle_trader",
+        "report_portoflio"
+      ],
+      "called_funcs": [
+        "tolist",
+        "order_target",
+        "info",
+        "int",
+        "set_option",
+        "sort_values",
+        "unschedule_all",
+        "get_index_weights",
+        "set_level",
+        "get_current_data",
+        "run_monthly",
+        "order_value",
+        "head",
+        "run_daily"
+      ],
+      "imported_names": [
+        "numpy",
+        "pandas",
+        "jqdata",
+        "*"
+      ],
+      "code_lines": 58
+    }
+  }
+}

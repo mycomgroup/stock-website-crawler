@@ -152,19 +152,26 @@ class RobustResult:
 
 
 class OptionDBManager:
-    """期权 DuckDB 管理器"""
+    """期权 DuckDB 管理器（延迟初始化）"""
 
     _instance = None
+    _initialized = False
 
     def __new__(cls, db_path: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._manager = None
+            cls._instance._db_path = None
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
+    def _ensure_initialized(self, db_path: str = None):
+        """延迟初始化：只在首次使用时才初始化"""
+        if self._initialized:
+            return
+
         if not _DUCKDB_AVAILABLE:
             self._manager = None
+            self._initialized = True
             return
 
         if db_path is None:
@@ -173,7 +180,7 @@ class OptionDBManager:
             )
             db_path = os.path.join(base_dir, "data", "option.db")
 
-        self.db_path = db_path
+        self._db_path = db_path
         self._manager = None
 
         try:
@@ -182,6 +189,8 @@ class OptionDBManager:
         except Exception as e:
             logger.warning(f"DuckDB 初始化失败: {e}")
             self._manager = None
+
+        self._initialized = True
 
     def _init_tables(self):
         if self._manager is None:
@@ -341,7 +350,15 @@ class OptionDBManager:
             return False
 
 
-_db_manager = OptionDBManager() if _DUCKDB_AVAILABLE else None
+def _get_db_manager():
+    """获取数据库管理器单例（延迟初始化）"""
+    if not _DUCKDB_AVAILABLE:
+        return None
+    manager = OptionDBManager()
+    manager._ensure_initialized()
+    return manager
+
+_db_manager = None  # 延迟初始化，避免导入时副作用
 
 
 def _parse_num(value) -> Optional[float]:
@@ -486,8 +503,10 @@ def get_option_list(
             result_df = pd.DataFrame(results)
             result_df = result_df.drop_duplicates(subset=["option_code"], keep="first")
             _save_pickle_cache(cache_file, result_df)
-            if use_duckdb and _db_manager is not None:
-                _db_manager.insert_option(result_df)
+            if use_duckdb:
+                db_manager = _get_db_manager()
+                if db_manager is not None:
+                    db_manager.insert_option(result_df)
             return RobustResult(success=True, data=result_df, source="network")
 
         return RobustResult(success=False, reason="未获取到期权数据")
@@ -738,8 +757,9 @@ def get_option_greeks(
             result_df = pd.DataFrame([result])
             _save_pickle_cache(cache_file, result_df)
 
-            if _db_manager is not None:
-                _db_manager.insert_greeks(result_df)
+            db_manager = _get_db_manager()
+            if db_manager is not None:
+                db_manager.insert_greeks(result_df)
 
             return RobustResult(success=True, data=result_df, source="network")
 
@@ -874,14 +894,15 @@ def get_option_daily(
 
             _save_pickle_cache(cache_file, df)
 
-            if _db_manager is not None:
+            db_manager = _get_db_manager()
+            if db_manager is not None:
                 insert_df = df.copy()
                 insert_df["option_name"] = ""
                 insert_df["underlying"] = ""
                 insert_df["strike"] = None
                 insert_df["expiry_date"] = None
                 insert_df["option_type"] = ""
-                _db_manager.insert_option(insert_df)
+                db_manager.insert_option(insert_df)
 
             return RobustResult(success=True, data=df, source="network")
 

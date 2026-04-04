@@ -35,8 +35,8 @@ _project_root = os.path.dirname(
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
-# 需要先导入 src
-jk2bt.
+# 需要先导入 jk2bt
+import jk2bt
 
 from tools.offline_data.utils.stock_pool import get_stock_pool, DEFAULT_STOCKS
 from tools.offline_data.utils.progress import ProgressTracker

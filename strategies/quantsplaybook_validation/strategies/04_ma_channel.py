@@ -41,7 +41,7 @@ def handle_bar(context, bar_dict):
     confirmed_up = ma_cross_up and current_close > long_ma
 
     if confirmed_up and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入金叉并且价格确认: 短MA={short_ma:.2f}, 长MA={long_ma:.2f}, Close={current_close:.2f}")
     # 死叉信号：短期均线下穿长期均线

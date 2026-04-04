@@ -79,18 +79,18 @@ def handle_bar(context, bar_dict):
 
     weights = {}
     for etf in context.etfs:
-        if etf not in bar_dict:
-            continue
+        if etf is None:  # placeholder, actual check via history_bars
+            pass
         try:
             prices = history_bars(etf, 255, '1d', 'close')
-            if prices is None or len(prices) < 63:
+            if prices is None or len(prices) < 63 or prices[-1] == 0:
                 continue
             prices = np.array(prices, dtype=float)
             returns = np.diff(prices) / prices[:-1]
 
             w = calc_mlt_weight(returns, [63, 126, 252], context.vol_window)
             weights[etf] = w
-        except:
+        except Exception:
             continue
 
     if not weights:

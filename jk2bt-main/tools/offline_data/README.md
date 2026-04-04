@@ -92,16 +92,16 @@ crontab -e
 
 # 添加以下任务
 # 每季度初更新静态数据 (1/4/7/10月1日 6:00)
-0 6 1 1,4,7,10 * cd /path/to/jk2bt && python scripts/offline_data/prewarm_static.py
+0 6 1 1,4,7,10 * cd /path/to/jk2bt && python tools/offline_data/prewarm_static.py
 
 # 每月1日更新月度数据
-0 6 1 * * cd /path/to/jk2bt && python scripts/offline_data/prewarm_monthly.py
+0 6 1 * * cd /path/to/jk2bt && python tools/offline_data/prewarm_monthly.py
 
 # 每周一更新周度数据
-0 6 * * 1 cd /path/to/jk2bt && python scripts/offline_data/prewarm_weekly.py
+0 6 * * 1 cd /path/to/jk2bt && python tools/offline_data/prewarm_weekly.py
 
 # 每交易日收盘后更新日度数据 (工作日 18:00)
-0 18 * * 1-5 cd /path/to/jk2bt && python scripts/offline_data/prewarm_daily.py --sample
+0 18 * * 1-5 cd /path/to/jk2bt && python tools/offline_data/prewarm_daily.py --sample
 ```
 
 ### Windows (任务计划程序)
@@ -111,7 +111,7 @@ crontab -e
 3. 设置触发器（每日/每周/每月）
 4. 设置操作：启动程序
    - 程序：`python`
-   - 参数：`scripts/offline_data/prewarm_all.py`
+   - 参数：`tools/offline_data/prewarm_all.py`
    - 起始位置：`C:\path\to\jk2bt`
 
 ## 数据存储位置

@@ -26,9 +26,6 @@ def handle_bar(context, bar_dict):
     if not stocks:
         return
 
-    # 过滤ST和停牌
-    stocks = [s for s in stocks if s in bar_dict]
-
     scores = {}
     for stock in stocks:
         try:
@@ -36,6 +33,9 @@ def handle_bar(context, bar_dict):
             if prices is None or len(prices) < context.lookback + 1:
                 continue
             prices = np.array(prices, dtype=float)
+            # 跳过停牌（最新价为0或与前日相同超过5天）
+            if prices[-1] == 0:
+                continue
             returns = np.diff(prices) / prices[:-1]
 
             r60 = (prices[-1] / prices[0]) - 1
@@ -43,7 +43,7 @@ def handle_bar(context, bar_dict):
             # 风险调整动量因子
             momentum_factor = r60 - 3000 * sigma ** 2
             scores[stock] = momentum_factor
-        except:
+        except Exception:
             continue
 
     if not scores:
@@ -62,5 +62,4 @@ def handle_bar(context, bar_dict):
     weight = 1.0 / len(target)
     total_value = context.portfolio.total_value
     for stock in target:
-        target_value = total_value * weight * 0.95
-        order_value(stock, target_value - context.portfolio.positions.get(stock, type('', (), {'market_value': 0})()).market_value)
+        order_target_value(stock, total_value * weight * 0.95)

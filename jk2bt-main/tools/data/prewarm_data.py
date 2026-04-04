@@ -80,8 +80,15 @@ def prewarm_meta_data(cache_base_dir: str = None, force_update: bool = False) ->
     logger.info("=" * 60)
 
     if cache_base_dir is None:
-        utility_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        cache_base_dir = os.path.join(utility_dir, "cache")
+        # 从统一配置获取缓存目录
+        try:
+            from jk2bt.utils.config import get_config
+            config = get_config()
+            cache_base_dir = config.cache.cache_dir
+        except Exception:
+            # fallback 到原有逻辑（向后兼容）
+            utility_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            cache_base_dir = os.path.join(utility_dir, "cache")
 
     result = {"trade_days": False, "securities": False, "errors": []}
 
@@ -312,8 +319,15 @@ def prewarm_index_weights(
     logger.info("=" * 60)
 
     if cache_base_dir is None:
-        utility_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        cache_base_dir = os.path.join(utility_dir, "cache")
+        # 从统一配置获取缓存目录
+        try:
+            from jk2bt.utils.config import get_config
+            config = get_config()
+            cache_base_dir = config.cache.cache_dir
+        except Exception:
+            # fallback 到原有逻辑（向后兼容）
+            utility_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            cache_base_dir = os.path.join(utility_dir, "cache")
 
     result = {"success": 0, "skipped": 0, "failed": [], "errors": []}
 

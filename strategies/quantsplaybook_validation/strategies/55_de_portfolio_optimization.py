@@ -79,8 +79,7 @@ def handle_bar(context, bar_dict):
         if context.weights is not None:
             total_value = context.portfolio.total_value
             for etf, w in zip(context.etfs, context.weights):
-                if etf in bar_dict:
-                    order_target_value(etf, total_value * w * 0.95)
+                order_target_value(etf, total_value * w * 0.95)
         return
     context.quarter = current_quarter
 
@@ -88,17 +87,15 @@ def handle_bar(context, bar_dict):
     returns_list = []
     valid_etfs = []
     for etf in context.etfs:
-        if etf not in bar_dict:
-            continue
         try:
             prices = history_bars(etf, context.lookback + 1, '1d', 'close')
-            if prices is None or len(prices) < context.lookback + 1:
+            if prices is None or len(prices) < context.lookback + 1 or prices[-1] == 0:
                 continue
             prices = np.array(prices, dtype=float)
             returns = np.diff(prices) / prices[:-1]
             returns_list.append(returns)
             valid_etfs.append(etf)
-        except:
+        except Exception:
             continue
 
     if len(valid_etfs) < 2:
@@ -110,7 +107,7 @@ def handle_bar(context, bar_dict):
     try:
         weights = differential_evolution_sharpe(returns_matrix)
         context.weights = weights
-    except:
+    except Exception:
         # 降级：等权
         context.weights = np.ones(len(valid_etfs)) / len(valid_etfs)
 

@@ -1,0 +1,57 @@
+{
+  "strategies/92 配套资料说明.txt": {
+    "file_path": "strategies/92 配套资料说明.txt",
+    "file_name": "92 配套资料说明.txt",
+    "status": "not_strategy",
+    "has_initialize": false,
+    "has_handle": false,
+    "missing_apis": [],
+    "error_message": "非策略文件（研究文档/配套资料）",
+    "is_executable": false,
+    "details": {
+      "reason": "file_pattern_excluded"
+    }
+  },
+  "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+    "file_path": "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt",
+    "file_name": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+    "status": "valid",
+    "has_initialize": true,
+    "has_handle": true,
+    "missing_apis": [],
+    "error_message": "",
+    "is_executable": true,
+    "details": {
+      "defined_funcs": [
+        "initialize",
+        "after_code_changed",
+        "handle_prepare",
+        "handle_trader",
+        "report_portoflio"
+      ],
+      "called_funcs": [
+        "int",
+        "head",
+        "get_current_data",
+        "tolist",
+        "run_daily",
+        "info",
+        "run_monthly",
+        "set_option",
+        "order_target",
+        "sort_values",
+        "set_level",
+        "get_index_weights",
+        "unschedule_all",
+        "order_value"
+      ],
+      "imported_names": [
+        "numpy",
+        "pandas",
+        "jqdata",
+        "*"
+      ],
+      "code_lines": 58
+    }
+  }
+}

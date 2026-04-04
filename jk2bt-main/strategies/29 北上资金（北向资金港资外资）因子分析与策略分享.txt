@@ -65,9 +65,9 @@ def handle_data(context, data):
                 if context.portfolio.positions[stock].total_amount == 0:
                     order_target_value(stock, value)
                     print('买入股票：',stock)
-        print get_portfolio_info_text(context,buy_stocks)
+        print(get_portfolio_info_text(context,buy_stocks))
         g.day_count += 1
-        print '计数日：',g.day_count
+        print('计数日：',g.day_count)
         
 def get_all_stocks():
     stock_list = get_index_stocks(g.index) # 指数成分股
@@ -171,10 +171,10 @@ def shifttradingday(date,shift):
     #获取N天前的交易日日期
     # 获取所有的交易日，返回一个包含所有交易日的 list,元素值为 datetime.date 类型.
     tradingday = get_all_trade_days()
-    print tradingday
+    print(tradingday)
     # 得到date之后shift天那一天在列表中的行标号 返回一个数
     shiftday_index = list(tradingday).index(date)+shift
-    print shiftday_index
+    print(shiftday_index)
     # 根据行号返回该日日期 为datetime.date类型
     return tradingday[shiftday_index]
 
@@ -218,4 +218,4 @@ def get_portfolio_info_text(context,new_stocks,op_sfs=[0]):
             total_values,
             len(context.subportfolios[sf_id].long_positions)
             ,p_value*100/(cash+p_value))
-    print '子仓详情:\n' + sub_str + str(table)
+    print('子仓详情:\n' + sub_str + str(table))

@@ -48,11 +48,11 @@ def _load_stock_data_from_cache(stock, start_date, end_date, adjust="qfq"):
         ak_code = ("sh" if stock.startswith("6") else "sz") + stock.zfill(6)
 
     try:
-        from .db.duckdb_manager import DuckDBManager
+        from ..db.duckdb_manager import DuckDBManager
         db = DuckDBManager(read_only=True, use_cache=True)
         df = db.get_stock_daily(ak_code, start_date, end_date, adjust)
     except ImportError:
-        from jk2bt.core.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.duckdb_manager import DuckDBManager
         db = DuckDBManager(read_only=True, use_cache=True)
         df = db.get_stock_daily(ak_code, start_date, end_date, adjust)
 
@@ -99,7 +99,7 @@ def _load_minute_data(stock, start_date, end_date, frequency="5m"):
         ak_code = ("sh" if stock.startswith("6") else "sz") + stock.zfill(6)
 
     try:
-        from .market_data.minute import get_stock_minute
+        from ..market_data.minute import get_stock_minute
         df = get_stock_minute(ak_code, start_date, end_date, period=frequency)
     except ImportError:
         from jk2bt.market_data.minute import get_stock_minute
@@ -168,8 +168,20 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
     参数:
         strategy_functions: 策略函数字典
         strategy_source: 策略完整源代码字符串（用于ETF/指数代码识别）
+
+    返回:
+        tuple: (discovered_stocks, failure_report)
+            - discovered_stocks: 发现的股票集合
+            - failure_report: 预运行失败的详细信息字典
     """
     discovered_stocks = set()
+    failure_report = {
+        "index_weight_failures": [],  # 指数权重获取失败
+        "all_securities_failure": False,  # 全市场股票获取失败
+        "network_failures": [],  # 网络连接失败
+        "total_attempted": 0,  # 尝试获取的股票池调用次数
+        "total_successful": 0,  # 成功获取的次数
+    }
 
     # 优先使用完整源代码进行分析（因为 exec() 创建的函数无法使用 inspect.getsource）
     if strategy_source:
@@ -187,6 +199,7 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                 # 标准化指数代码
                 for key in _COMMON_INDICES:
                     if index_code == key or index_code.startswith(key[:6]):
+                        failure_report["total_attempted"] += 1
                         # 尝试获取该指数成分股
                         try:
                             try:
@@ -196,13 +209,32 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                             stocks = get_index_stocks(key, robust=False)
                             if stocks:
                                 discovered_stocks.update(stocks)
+                                failure_report["total_successful"] += 1
                                 logger.info(f"    发现指数调用: {key} ({_COMMON_INDICES.get(key, key)}) -> {len(stocks)}只")
+                            else:
+                                # 获取到空结果
+                                failure_report["index_weight_failures"].append({
+                                    "index": key,
+                                    "reason": "指数权重数据为空（可能未缓存或网络失败）"
+                                })
+                                logger.warning(f"    获取指数{key}失败: 指数权重数据为空")
                         except Exception as e:
-                            logger.warning(f"    获取指数{key}失败: {e}")
+                            error_msg = str(e).lower()
+                            failure_report["index_weight_failures"].append({
+                                "index": key,
+                                "reason": str(e),
+                                "is_network": "network" in error_msg or "connection" in error_msg or "timeout" in error_msg
+                            })
+                            if "network" in error_msg or "connection" in error_msg or "timeout" in error_msg:
+                                failure_report["network_failures"].append(key)
+                                logger.warning(f"    获取指数{key}失败 (网络问题): {e}")
+                            else:
+                                logger.warning(f"    获取指数{key}失败 (指数权重未缓存): {e}")
                         break
 
         # 识别 get_all_securities 调用
         if "get_all_securities" in source:
+            failure_report["total_attempted"] += 1
             # 如果策略使用全市场股票，尝试获取常用股票池
             try:
                 try:
@@ -214,9 +246,18 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                     # 限制数量，只取前100只活跃股票
                     sample_stocks = list(all_secs.keys())[:100]
                     discovered_stocks.update(sample_stocks)
+                    failure_report["total_successful"] += 1
                     logger.info(f"    发现全市场调用: 获取 {len(sample_stocks)} 只样本股票")
+                else:
+                    failure_report["all_securities_failure"] = True
+                    logger.warning(f"    获取全市场股票失败: 证券数据为空（可能未缓存）")
             except Exception as e:
-                logger.warning(f"    获取全市场股票失败: {e}")
+                failure_report["all_securities_failure"] = True
+                error_msg = str(e).lower()
+                if "network" in error_msg or "connection" in error_msg or "timeout" in error_msg:
+                    logger.warning(f"    获取全市场股票失败 (网络问题): {e}")
+                else:
+                    logger.warning(f"    获取全市场股票失败 (数据未缓存): {e}")
 
         # 识别ETF代码 (51xxxx.XSHG, 159xxx.XSHE)
         etf_patterns = [
@@ -292,7 +333,7 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                         discovered_stocks.add(match)
                         logger.info(f"    发现股票代码: {match}")
 
-        return discovered_stocks
+        return discovered_stocks, failure_report
 
     # 如果没有提供源代码，尝试使用 inspect.getsource（用于兼容旧调用方式）
     import inspect
@@ -312,6 +353,7 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                     # 标准化指数代码
                     for key in _COMMON_INDICES:
                         if index_code == key or index_code.startswith(key[:6]):
+                            failure_report["total_attempted"] += 1
                             # 尝试获取该指数成分股
                             try:
                                 try:
@@ -321,13 +363,27 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                                 stocks = get_index_stocks(key, robust=False)
                                 if stocks:
                                     discovered_stocks.update(stocks)
+                                    failure_report["total_successful"] += 1
                                     logger.info(f"    发现指数调用: {key} ({_COMMON_INDICES.get(key, key)}) -> {len(stocks)}只")
+                                else:
+                                    failure_report["index_weight_failures"].append({
+                                        "index": key,
+                                        "reason": "指数权重数据为空"
+                                    })
+                                    logger.warning(f"    获取指数{key}失败: 指数权重数据为空")
                             except Exception as e:
+                                error_msg = str(e).lower()
+                                failure_report["index_weight_failures"].append({
+                                    "index": key,
+                                    "reason": str(e),
+                                    "is_network": "network" in error_msg or "connection" in error_msg or "timeout" in error_msg
+                                })
                                 logger.warning(f"    获取指数{key}失败: {e}")
                             break
 
             # 识别 get_all_securities 调用
             if "get_all_securities" in source:
+                failure_report["total_attempted"] += 1
                 # 如果策略使用全市场股票，尝试获取常用股票池
                 try:
                     try:
@@ -339,8 +395,13 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                         # 限制数量，只取前100只活跃股票
                         sample_stocks = list(all_secs.keys())[:100]
                         discovered_stocks.update(sample_stocks)
+                        failure_report["total_successful"] += 1
                         logger.info(f"    发现全市场调用: 获取 {len(sample_stocks)} 只样本股票")
+                    else:
+                        failure_report["all_securities_failure"] = True
+                        logger.warning(f"    获取全市场股票失败: 证券数据为空")
                 except Exception as e:
+                    failure_report["all_securities_failure"] = True
                     logger.warning(f"    获取全市场股票失败: {e}")
 
             # 识别直接的股票代码引用
@@ -387,6 +448,7 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                     match = match.strip("'\"")
                     # 指数代码需要获取成分股
                     if match in _COMMON_INDICES or match[:6] in _COMMON_INDICES:
+                        failure_report["total_attempted"] += 1
                         try:
                             try:
                                 from .strategy_base import get_index_stocks
@@ -396,14 +458,25 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                             stocks = get_index_stocks(index_key, robust=False)
                             if stocks:
                                 discovered_stocks.update(stocks)
+                                failure_report["total_successful"] += 1
                                 logger.info(f"    发现指数代码: {match} -> {len(stocks)}只成分股")
+                            else:
+                                failure_report["index_weight_failures"].append({
+                                    "index": match,
+                                    "reason": "指数权重数据为空"
+                                })
+                                logger.warning(f"    获取指数{match}失败: 指数权重数据为空")
                         except Exception as e:
+                            failure_report["index_weight_failures"].append({
+                                "index": match,
+                                "reason": str(e)
+                            })
                             logger.warning(f"    获取指数{match}失败: {e}")
 
         except Exception as e:
             pass
 
-    return discovered_stocks
+    return discovered_stocks, failure_report
 
 
 def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy_source=None):
@@ -419,15 +492,46 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
         strategy_source: 策略源代码字符串
 
     返回:
-        set: 发现的股票代码集合
+        tuple: (discovered_stocks, prerun_failure_report)
+            - discovered_stocks: 发现的股票集合
+            - prerun_failure_report: 预运行失败报告（包含详细归因）
     """
     discovered_stocks = set()
+    prerun_failure_report = {
+        "static_analysis": None,  # 静态分析的失败报告
+        "dynamic_prerun": None,   # 动态预运行的失败报告
+        "fallback_used": False,   # 是否使用了默认股票池
+        "warnings": [],           # 收集的所有警告信息
+    }
 
     # 1. 首先进行静态分析，识别策略代码中的股票池调用
-    static_discovered = _static_analyze_stock_pool(strategy_functions, strategy_source)
+    static_discovered, static_failure = _static_analyze_stock_pool(strategy_functions, strategy_source)
+    prerun_failure_report["static_analysis"] = static_failure
+
     if static_discovered:
         discovered_stocks.update(static_discovered)
         logger.info(f"  [静态分析] 发现股票池调用: {len(static_discovered)} 只股票")
+
+    # 生成静态分析警告
+    if static_failure["index_weight_failures"]:
+        for failure in static_failure["index_weight_failures"]:
+            warning_msg = f"指数权重获取失败: {failure['index']} - {failure['reason']}"
+            prerun_failure_report["warnings"].append(warning_msg)
+
+    if static_failure["all_securities_failure"]:
+        prerun_failure_report["warnings"].append("全市场证券数据获取失败（可能未缓存或网络问题）")
+
+    # 检查是否所有股票池调用都失败了
+    if static_failure["total_attempted"] > 0 and static_failure["total_successful"] == 0:
+        logger.warning("  [静态分析警告] 所有股票池调用均失败:")
+        for failure in static_failure["index_weight_failures"]:
+            is_network = failure.get("is_network", False)
+            if is_network:
+                logger.warning(f"    • {failure['index']}: 网络连接失败")
+            else:
+                logger.warning(f"    • {failure['index']}: 指数权重数据未缓存")
+        if static_failure["all_securities_failure"]:
+            logger.warning("    • 全市场证券数据: 未缓存或网络失败")
 
     # 2. 动态预运行 - 设置预运行模式
     try:
@@ -479,7 +583,9 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
                 discovered_stocks.update(dynamic_stocks)
                 logger.info(f"  [动态预运行-下单] 发现股票: {len(dynamic_stocks)} 只")
     except Exception as e:
-        logger.error(f"预运行异常: {e}")
+        prerun_failure_report["dynamic_prerun"] = {"error": str(e)}
+        prerun_failure_report["warnings"].append(f"动态预运行异常: {e}")
+        logger.warning(f"  [动态预运行异常] {e}")
     finally:
         # 结束预运行模式，获取全局捕获的股票
         set_prerun_mode(False)
@@ -488,7 +594,21 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
             discovered_stocks.update(prerun_stocks)
             logger.info(f"  [动态预运行-API] 发现股票: {len(prerun_stocks)} 只")
 
-    return discovered_stocks
+    # 3. 最终汇总警告
+    if prerun_failure_report["warnings"]:
+        logger.warning("=" * 80)
+        logger.warning("【预运行阶段警告汇总】")
+        logger.warning(f"  预运行期间出现 {len(prerun_failure_report['warnings'])} 个警告:")
+        for i, warning in enumerate(prerun_failure_report["warnings"], 1):
+            logger.warning(f"  {i}. {warning}")
+        if not discovered_stocks:
+            logger.warning("  ⚠️  预运行未发现任何股票，后续将使用默认股票池（不影响真实回测统计）")
+            prerun_failure_report["fallback_used"] = True
+        else:
+            logger.warning("  ℹ️  已发现部分股票，预运行失败不影响真实回测统计")
+        logger.warning("=" * 80)
+
+    return discovered_stocks, prerun_failure_report
 
 
 __all__ = [

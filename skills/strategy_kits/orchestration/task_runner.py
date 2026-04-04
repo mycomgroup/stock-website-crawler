@@ -1,6 +1,8 @@
 """Unified task runner for skill-driven single-strategy research."""
 from __future__ import annotations
 
+import json
+import subprocess
 from pathlib import Path
 from typing import Any, Mapping, Optional, Type
 
@@ -21,7 +23,7 @@ from ..strategy_templates.presets import (
     EqualWeightStrategy,
     WeightedTopNStrategy,
 )
-from .artifacts import persist_task_artifacts
+from .artifacts import persist_platform_artifacts, persist_task_artifacts
 from .task_schema import validate_strategy_task_spec
 
 _logger = get_logger("orchestration.task_runner")
@@ -110,9 +112,18 @@ def run_strategy_task(
 ) -> dict[str, Any]:
     """Validate task spec and execute template backtest.
 
-    This is the primary entry for future skill.md automation.
+    Supports two execution engines:
+    - platform.engine = "local"      → backtrader (default)
+    - platform.engine = "joinquant"  → JoinQuant cloud backtest
+    - platform.engine = "ricequant"  → RiceQuant cloud backtest
     """
     spec = validate_strategy_task_spec(raw_spec)
+    engine = spec.get("platform", {}).get("engine", "local")
+
+    if engine in {"joinquant", "ricequant"}:
+        return _run_platform_task(spec, persist_artifacts)
+
+    # ── local backtrader path ─────────────────────────────────────────────────
     pred_df = build_prediction_frame_from_task(spec)
     if pred_df.empty:
         raise StrategyKitsError(
@@ -173,3 +184,158 @@ def run_strategy_task(
         persisted_artifacts=should_persist,
     )
     return result
+
+
+# ── 云平台执行路径 ─────────────────────────────────────────────────────────────
+
+_PLATFORM_SKILL_DIRS = {
+    "joinquant": Path(__file__).parent.parent.parent / "joinquant_strategy",
+    "ricequant": Path(__file__).parent.parent.parent / "ricequant_strategy",
+}
+
+
+def _run_platform_task(
+    spec: Mapping[str, Any],
+    persist_artifacts: Optional[bool] = None,
+) -> dict[str, Any]:
+    """Execute strategy on a cloud platform via run-skill.js."""
+    platform_cfg = dict(spec.get("platform", {}))
+    engine = platform_cfg["engine"]
+    strategy_id = platform_cfg["strategy_id"]
+    strategy_file = platform_cfg["strategy_file"]
+    start_date = spec["data"]["start_date"]
+    end_date = spec["data"]["end_date"]
+    capital = str(int(spec["backtest"]["initial_cash"]))
+    freq = platform_cfg.get("freq", "day")
+
+    skill_dir = _PLATFORM_SKILL_DIRS.get(engine)
+    if skill_dir is None or not skill_dir.exists():
+        raise StrategyKitsError(
+            ErrorCode.CONTRACT_INVALID_VALUE,
+            f"Platform skill directory not found for engine: {engine}",
+            details={"expected_dir": str(skill_dir)},
+        )
+
+    if not Path(strategy_file).exists():
+        raise StrategyKitsError(
+            ErrorCode.CONTRACT_INVALID_VALUE,
+            f"strategy_file not found: {strategy_file}",
+        )
+
+    cmd = [
+        "node", "run-skill.js",
+        "--id", strategy_id,
+        "--file", str(Path(strategy_file).resolve()),
+        "--start", start_date,
+        "--end", end_date,
+        "--capital", capital,
+        "--freq", freq,
+    ]
+
+    log_kv(
+        _logger,
+        20,
+        "platform_task_started",
+        engine=engine,
+        task_id=spec["task"]["task_id"],
+        strategy_id=strategy_id,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+    try:
+        proc = subprocess.run(
+            cmd,
+            cwd=str(skill_dir),
+            capture_output=True,
+            text=True,
+            timeout=platform_cfg.get("timeout_seconds", 600),
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise StrategyKitsError(
+            ErrorCode.CONTRACT_INVALID_VALUE,
+            f"Platform backtest timed out after {platform_cfg.get('timeout_seconds', 600)}s",
+        ) from exc
+
+    stdout = proc.stdout or ""
+    stderr = proc.stderr or ""
+
+    if proc.returncode != 0:
+        raise StrategyKitsError(
+            ErrorCode.CONTRACT_INVALID_VALUE,
+            f"Platform run-skill.js exited with code {proc.returncode}",
+            details={"stderr": stderr[-2000:], "stdout": stdout[-2000:]},
+        )
+
+    # 解析终端输出里的关键指标
+    metrics = _parse_platform_stdout(stdout)
+
+    result: dict[str, Any] = {
+        "engine": engine,
+        "strategy_id": strategy_id,
+        "stdout": stdout,
+        "stderr": stderr,
+        "returncode": proc.returncode,
+        "metrics": metrics,
+        "portfolio_value": metrics.get("portfolio_value", 0.0),
+        "task_spec": spec,
+    }
+
+    # 尝试找最新的 output JSON 文件
+    output_dir = skill_dir / "output"
+    if output_dir.exists():
+        json_files = sorted(output_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        if json_files:
+            try:
+                result["platform_report"] = json.loads(json_files[0].read_text(encoding="utf-8"))
+                result["platform_report_path"] = str(json_files[0])
+            except Exception:
+                pass
+
+    should_persist = spec["output"]["save_artifacts"] if persist_artifacts is None else bool(persist_artifacts)
+    if should_persist:
+        artifact_manifest = persist_platform_artifacts(
+            result=result,
+            spec=spec,
+            artifact_dir=spec["output"]["artifact_dir"],
+        )
+        result["artifact_manifest"] = artifact_manifest
+
+    log_kv(
+        _logger,
+        20,
+        "platform_task_finished",
+        engine=engine,
+        task_id=spec["task"]["task_id"],
+        returncode=proc.returncode,
+        metrics=metrics,
+    )
+    return result
+
+
+def _parse_platform_stdout(stdout: str) -> dict[str, Any]:
+    """从 run-skill.js 的终端输出里提取关键指标。"""
+    metrics: dict[str, Any] = {}
+    for line in stdout.splitlines():
+        line = line.strip()
+        # JoinQuant / RiceQuant 输出格式：  "Total Return: 12.34 %"
+        for key, patterns in {
+            "total_return": ["Total Return:", "总收益:"],
+            "annual_return": ["Annual Return:", "年化收益:"],
+            "max_drawdown": ["Max Drawdown:", "最大回撤:"],
+            "sharpe": ["Sharpe Ratio:", "夏普比率:"],
+        }.items():
+            for pat in patterns:
+                if pat in line:
+                    try:
+                        val_str = line.split(pat, 1)[1].strip().rstrip("%").strip()
+                        metrics[key] = float(val_str)
+                    except (ValueError, IndexError):
+                        pass
+        # Backtest ID
+        if "Backtest started! ID:" in line or "回测ID:" in line:
+            try:
+                metrics["backtest_id"] = line.split(":", 1)[1].strip()
+            except IndexError:
+                pass
+    return metrics

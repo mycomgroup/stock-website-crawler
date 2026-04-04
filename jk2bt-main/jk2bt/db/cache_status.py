@@ -7,6 +7,10 @@ db/cache_status.py
 2. 批量预热数据
 3. 离线模式支持
 4. 缓存范围统计
+
+格式兼容 (GATE-3):
+- 支持 akshare 格式 (sh600519) 和聚宽格式 (600519.XSHG) 输入
+- 内部统一转换为聚宽格式查询数据库
 """
 
 import os
@@ -18,6 +22,40 @@ import pandas as pd
 from .duckdb_manager import DuckDBManager
 
 logger = logging.getLogger(__name__)
+
+
+def _normalize_to_jq_format(symbol: str) -> str:
+    """
+    将各种股票代码格式统一转换为聚宽格式。
+
+    支持:
+    - akshare格式: sh600519, sz000001
+    - 聚宽格式: 600519.XSHG, 000001.XSHE
+    - 纯数字: 600519, 000001
+
+    返回:
+    - 聚宽格式: 600519.XSHG, 000001.XSHE
+    """
+    if symbol is None:
+        return None
+
+    symbol = str(symbol)
+
+    # 已经是聚宽格式
+    if symbol.endswith('.XSHG') or symbol.endswith('.XSHE'):
+        return symbol
+
+    # akshare格式 sh/sz 前缀
+    if symbol.startswith('sh'):
+        return symbol[2:].zfill(6) + '.XSHG'
+    if symbol.startswith('sz'):
+        return symbol[2:].zfill(6) + '.XSHE'
+
+    # 纯数字，按首位判断交易所
+    code_num = symbol.zfill(6)
+    if code_num.startswith('6'):
+        return code_num + '.XSHG'
+    return code_num + '.XSHE'
 
 
 class CacheManager:
@@ -32,6 +70,9 @@ class CacheManager:
     ) -> Dict:
         """
         检查股票日线缓存状态。
+
+        参数:
+            symbol: 股票代码，支持多种格式（sh600519, 600519.XSHG, 600519）
 
         Returns:
             Dict: {
@@ -50,8 +91,11 @@ class CacheManager:
             "count": 0,
         }
 
+        # 统一转换为聚宽格式查询数据库
+        jq_symbol = _normalize_to_jq_format(symbol)
+
         try:
-            count = self.db.count_records("stock_daily", symbol, adjust)
+            count = self.db.count_records("stock_daily", jq_symbol, adjust)
             if count > 0:
                 result["has_data"] = True
                 result["count"] = count
@@ -63,7 +107,7 @@ class CacheManager:
                         FROM stock_daily
                         WHERE symbol = ? AND adjust = ?
                     """,
-                        [symbol, adjust],
+                        [jq_symbol, adjust],
                     ).fetchone()
 
                     if row and row[0]:
@@ -82,7 +126,12 @@ class CacheManager:
         return result
 
     def check_etf_daily_cache(self, symbol: str, start: str, end: str) -> Dict:
-        """检查ETF日线缓存状态"""
+        """
+        检查ETF日线缓存状态。
+
+        参数:
+            symbol: ETF代码，支持多种格式（510300.XSHG, 510300）
+        """
         result = {
             "has_data": False,
             "is_complete": False,
@@ -91,8 +140,11 @@ class CacheManager:
             "count": 0,
         }
 
+        # 统一转换为聚宽格式查询数据库
+        jq_symbol = _normalize_to_jq_format(symbol)
+
         try:
-            count = self.db.count_records("etf_daily", symbol)
+            count = self.db.count_records("etf_daily", jq_symbol)
             if count > 0:
                 result["has_data"] = True
                 result["count"] = count
@@ -104,7 +156,7 @@ class CacheManager:
                         FROM etf_daily
                         WHERE symbol = ?
                     """,
-                        [symbol],
+                        [jq_symbol],
                     ).fetchone()
 
                     if row and row[0]:
@@ -123,7 +175,12 @@ class CacheManager:
         return result
 
     def check_index_daily_cache(self, symbol: str, start: str, end: str) -> Dict:
-        """检查指数日线缓存状态"""
+        """
+        检查指数日线缓存状态。
+
+        参数:
+            symbol: 指数代码，支持多种格式（000300.XSHG, 000300）
+        """
         result = {
             "has_data": False,
             "is_complete": False,
@@ -132,8 +189,11 @@ class CacheManager:
             "count": 0,
         }
 
+        # 统一转换为聚宽格式查询数据库
+        jq_symbol = _normalize_to_jq_format(symbol)
+
         try:
-            count = self.db.count_records("index_daily", symbol)
+            count = self.db.count_records("index_daily", jq_symbol)
             if count > 0:
                 result["has_data"] = True
                 result["count"] = count
@@ -145,7 +205,7 @@ class CacheManager:
                         FROM index_daily
                         WHERE symbol = ?
                     """,
-                        [symbol],
+                        [jq_symbol],
                     ).fetchone()
 
                     if row and row[0]:
@@ -219,8 +279,15 @@ class CacheManager:
             }
         """
         if cache_base_dir is None:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            cache_base_dir = os.path.join(base_dir, "cache")
+            # 从统一配置获取缓存目录
+            try:
+                from jk2bt.utils.config import get_config
+                config = get_config()
+                cache_base_dir = config.cache.cache_dir
+            except Exception:
+                # fallback 到原有逻辑（向后兼容）
+                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                cache_base_dir = os.path.join(base_dir, "cache")
 
         result = {
             "trade_days": False,
@@ -243,15 +310,17 @@ class CacheManager:
             except Exception:
                 pass
 
-        securities_files = [
-            f for f in os.listdir(meta_cache_dir) if f.startswith("securities_")
-        ]
-        if securities_files:
-            result["securities"] = True
-            latest = sorted(securities_files)[-1]
-            result["securities_date"] = latest.replace("securities_", "").replace(
-                ".pkl", ""
-            )
+        # 检查 securities 文件前，确保目录存在
+        if os.path.exists(meta_cache_dir):
+            securities_files = [
+                f for f in os.listdir(meta_cache_dir) if f.startswith("securities_")
+            ]
+            if securities_files:
+                result["securities"] = True
+                latest = sorted(securities_files)[-1]
+                result["securities_date"] = latest.replace("securities_", "").replace(
+                    ".pkl", ""
+                )
 
         if os.path.exists(index_cache_dir):
             for f in os.listdir(index_cache_dir):
@@ -272,6 +341,9 @@ class CacheManager:
         """
         验证缓存是否足够支持离线运行。
 
+        参数:
+            stock_pool: 股票代码列表，支持多种格式（600519.XSHG, sh600519, 600519）
+
         Returns:
             Tuple[bool, Dict]: (是否可用, 详细报告)
         """
@@ -284,15 +356,8 @@ class CacheManager:
         }
 
         for stock in stock_pool:
-            ak_code = stock
-            if stock.endswith(".XSHG") or stock.endswith(".XSHE"):
-                ak_code = (
-                    "sh" + stock[:6] if stock.endswith(".XSHG") else "sz" + stock[:6]
-                )
-            elif not stock.startswith("sh") and not stock.startswith("sz"):
-                ak_code = ("sh" if stock.startswith("6") else "sz") + stock.zfill(6)
-
-            status = self.check_stock_daily_cache(ak_code, start_date, end_date, adjust)
+            # 直接传递原始格式，check_stock_daily_cache内部会处理格式转换
+            status = self.check_stock_daily_cache(stock, start_date, end_date, adjust)
 
             if not status["has_data"]:
                 report["missing_stocks"].append(stock)

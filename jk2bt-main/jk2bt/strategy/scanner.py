@@ -46,6 +46,20 @@ class ScanResult:
     is_executable: bool
     details: Dict
 
+    def to_dict(self) -> Dict:
+        """将扫描结果转换为字典,便于JSON序列化"""
+        return {
+            "file_path": self.file_path,
+            "file_name": self.file_name,
+            "status": self.status.value,
+            "has_initialize": self.has_initialize,
+            "has_handle": self.has_handle,
+            "missing_apis": self.missing_apis,
+            "error_message": self.error_message,
+            "is_executable": self.is_executable,
+            "details": self.details,
+        }
+
 
 class StrategyScanner:
     """策略扫描器"""
@@ -138,32 +152,59 @@ class StrategyScanner:
         "standardlize",
     }
 
+    # 真实未支持的 API（分层管理）
+    # 分层说明：
+    #   - 暂不支持：低频使用或特殊场景，不影响核心策略
+    #   - 可降级模拟：中频使用，可提供简化实现或降级方案
+    #   - 必须实现：高频使用，需要完整实现
     _UNIMPLEMENTED_APIS = {
-        "get_margin_stocks",
+        # === 暂不支持层 ===
+        # 融资融券详细信息（已有 get_mtss 提供基础数据）
         "get_margin_info",
-        "get_future_contracts",
-        "get_dominant_contract",
-        "get_contract_multiplier",
-        "get_cash_flow",
-        "get_call_info",
-        "get_ticks",
+        # 交易详细信息
         "get_trade_info",
-        "get_trading_dates",
-        "get_dividends",
-        "get_splits",
+        "get_trading_dates",  # 已有 get_all_trade_days
+        # 债券相关（低频使用）
         "get_interest_rate",
         "get_yield_curve",
         "get_bond_prices",
         "get_bond_yield",
+        # 期权相关（特殊场景）
         "get_option_pricing",
         "get_volatility_surface",
+        "get_call_info",
+        # 其他低频API
         "get_credit_data",
         "get_macro_data",
         "get_company_info",
-        "get_shareholder_info",
         "get_board_info",
-        "get_institutional_holdings",
         "get insider_trades",
+
+        # === 可降级模拟层 ===
+        # 融资融券标的列表（已通过 get_margincash_stocks/get_marginsec_stocks 实现）
+        # 如果策略需要旧的 get_margin_stocks 接口，可提供降级映射
+        # "get_margin_stocks",  # 移除：已通过新接口实现
+
+        # 现金流数据（已有 income/cash_flow/balance 模块）
+        "get_cash_flow",
+
+        # === 必须实现层（待实现）===
+        # 分红拆股数据（高频使用）
+        "get_dividends",
+        "get_splits",
+
+        # 股东信息（中频使用）
+        "get_shareholder_info",
+    }
+
+    # API 名称映射（解决扫描器与runtime命名差异）
+    # 扫描器检查旧名称 -> runtime 实现新名称
+    _API_NAME_MAPPING = {
+        "get_ticks": "get_ticks_enhanced",  # tick数据已实现，名称不同
+        "get_future_contracts": "get_future_contracts",  # 期货合约已实现
+        "get_dominant_contract": "get_dominant_future",  # 主力合约已实现
+        "get_institutional_holdings": "get_institutional_holdings",  # 机构持股已实现
+        "get_margin_stocks": "get_margincash_stocks",  # 融资标的已实现（新接口）
     }
 
     _NON_STRATEGY_PATTERNS = [
@@ -185,6 +226,14 @@ class StrategyScanner:
         r".*note.*",
         r".*非策略.*",
         r".*配套资料.*",
+        r".*output.*",
+        r".*result.*",
+        r".*\.log$",
+        r".*_log.*",
+        r".*field_map.*",
+        r".*\.csv$",
+        r".*\.json$",
+        r".*\.xlsx$",
     ]
 
     _STRATEGY_REQUIRED_PATTERNS = [
@@ -344,6 +393,11 @@ class StrategyScanner:
 
         missing_apis = []
         for func in called_funcs:
+            # 先检查是否通过名称映射已实现
+            if func in self._API_NAME_MAPPING:
+                # 名称映射存在，表示实际已实现（名称不同）
+                continue
+            # 检查是否在真实未实现列表中
             if func in self._UNIMPLEMENTED_APIS:
                 missing_apis.append(func)
 

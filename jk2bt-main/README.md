@@ -1,7 +1,8 @@
 # jk2bt - 聚宽策略本地运行框架
 
-[![测试收集](https://img.shields.io/badge/pytest-4298_collected-brightgreen)](https://github.com)
+[![测试收集](https://img.shields.io/badge/pytest-4500_collected-brightgreen)](https://github.com)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue)](https://www.python.org)
+[![版本](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com)
 
 **让聚宽策略代码无需修改，直接在本地运行！**
 
@@ -29,7 +30,10 @@ run_jq_strategy(
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -e .
+pip install -e .                # 基础安装
+pip install -e ".[dev]"         # 开发依赖（pytest等）
+pip install -e ".[full]"        # 机器学习依赖（可选）
+pip install -e ".[ta]"          # 技术分析依赖（可选）
 ```
 
 ## 安装后验收（推荐）
@@ -156,7 +160,7 @@ def select_stocks(context):
 
 1. **必须指定股票池** - 策略中用到的所有股票都要包含在 `stock_pool` 参数中
 2. **股票代码格式** - 支持 `600519.XSHG`、`sh600519`、`600519` 三种格式
-3. **数据缓存** - 自动缓存到 `data/market.db`，无需重复下载
+3. **数据缓存** - 自动缓存到 `data/jk2bt.duckdb`，无需重复下载
 
 ---
 

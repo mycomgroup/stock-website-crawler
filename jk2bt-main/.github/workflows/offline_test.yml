@@ -1,0 +1,236 @@
+name: Offline Mode CI Test
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'jk2bt/db/cache_status.py'
+      - 'jk2bt/db/duckdb_manager.py'
+      - 'jk2bt/market_data/*.py'
+      - 'tools/data/prewarm_data.py'
+      - 'tests/test_offline_mode.py'
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  # 场景1: 空环境测试
+  offline-empty-test:
+    name: Empty Cache Environment Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pandas duckdb akshare
+          # 安装项目依赖
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run empty cache tests
+        env:
+          OFFLINE_MODE: true
+          # 通过pytest mock模拟无网络，不需要实际禁用网络
+        run: |
+          pytest tests/test_offline_mode.py -v \
+            -k "TestOfflineEmptyEnvironment" \
+            --tb=short \
+            --capture=no
+
+      - name: Report test results
+        if: always()
+        run: |
+          echo "Empty environment test completed"
+          echo "Tests verify that:"
+          echo "1. Empty cache is properly detected"
+          echo "2. Error messages are friendly and informative"
+          echo "3. Missing data is clearly reported"
+
+  # 场景2: 预热环境测试
+  offline-prewarmed-test:
+    name: Prewarmed Cache Environment Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pandas duckdb akshare
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Create prewarmed cache directory
+        run: |
+          mkdir -p $HOME/test_cache/meta_cache
+          mkdir -p $HOME/test_cache/index_cache
+          mkdir -p $HOME/test_db
+
+      - name: Prewarm test data
+        env:
+          # 预热阶段允许网络访问
+          PREWARM_MODE: true
+        run: |
+          python -c "
+          import os
+          import pandas as pd
+          import sys
+          sys.path.insert(0, '.')
+
+          from jk2bt.db.duckdb_manager import DuckDBManager
+
+          # 创建测试数据目录
+          db_path = os.path.expanduser('$HOME/test_db/market.db')
+          db = DuckDBManager(db_path=db_path, read_only=False)
+
+          # 创建模拟股票数据
+          test_stocks = ['sh600519', 'sz000858']
+          start_date = '2023-01-01'
+          end_date = '2023-03-31'
+
+          dates = pd.date_range(start_date, end_date, freq='B')
+          for stock in test_stocks:
+              n = len(dates)
+              base_price = 100 if stock.startswith('sh6') else 50
+              prices = [base_price + i * 0.5 for i in range(n)]
+              df = pd.DataFrame({
+                  'datetime': dates,
+                  'open': prices,
+                  'high': [p + 2 for p in prices],
+                  'low': [p - 2 for p in prices],
+                  'close': prices,
+                  'volume': [1000000 + i * 10000 for i in range(n)],
+                  'amount': [p * 1000000 for p in prices]
+              })
+              db.insert_stock_daily(stock, df, adjust='qfq')
+              print(f'Prewarmed: {stock}, {len(df)} records')
+
+          # 创建交易日历
+          cache_dir = os.path.expanduser('$HOME/test_cache')
+          meta_dir = os.path.join(cache_dir, 'meta_cache')
+          trade_days = pd.DataFrame({
+              'trade_date': dates
+          })
+          trade_days.to_pickle(os.path.join(meta_dir, 'trade_days.pkl'))
+          print(f'Prewarmed trade_days: {len(trade_days)} records')
+
+          # 创建证券信息
+          securities = pd.DataFrame({
+              'code': ['sh600519', 'sz000858', 'sh600036'],
+              'name': ['贵州茅台', '五粮液', '招商银行']
+          })
+          securities.to_pickle(os.path.join(meta_dir, 'securities_20230404.pkl'))
+          print(f'Prewarmed securities: {len(securities)} records')
+
+          print('Prewarm complete!')
+          "
+
+      - name: Run prewarmed cache tests
+        env:
+          OFFLINE_MODE: true
+          TEST_CACHE_DIR: $HOME/test_cache
+          TEST_DB_PATH: $HOME/test_db/market.db
+        run: |
+          pytest tests/test_offline_mode.py -v \
+            -k "TestOfflinePrewarmedEnvironment" \
+            --tb=short \
+            --capture=no
+
+      - name: Verify offline data access
+        env:
+          OFFLINE_MODE: true
+          TEST_DB_PATH: $HOME/test_db/market.db
+        run: |
+          python -c "
+          import os
+          import sys
+          sys.path.insert(0, '.')
+
+          from jk2bt.db.duckdb_manager import DuckDBManager
+
+          db_path = os.environ.get('TEST_DB_PATH')
+          db = DuckDBManager(db_path=db_path, read_only=True)
+
+          # 验证数据可离线读取
+          df = db.get_stock_daily('sh600519', '2023-01-01', '2023-03-31')
+          print(f'Offline read: sh600519, {len(df)} records')
+          assert len(df) > 0, 'Offline data should be available'
+
+          print('Offline verification passed!')
+          "
+
+      - name: Report test results
+        if: always()
+        run: |
+          echo "Prewarmed environment test completed"
+          echo "Tests verify that:"
+          echo "1. Prewarmed cache is properly detected"
+          echo "2. Offline data fetch succeeds"
+          echo "3. Meta cache (trade_days, securities) is available"
+
+  # 缓存状态集成测试
+  cache-status-integration:
+    name: Cache Status Integration Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest pandas duckdb
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run cache status tests
+        run: |
+          pytest tests/test_offline_mode.py -v \
+            -k "TestCacheStatusIntegration" \
+            --tb=short
+
+  # 测试汇总
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [offline-empty-test, offline-prewarmed-test, cache-status-integration]
+    if: always()
+
+    steps:
+      - name: Check all tests passed
+        run: |
+          echo "All offline mode tests completed!"
+          echo ""
+          echo "Test scenarios covered:"
+          echo "1. Empty cache environment - Error messages friendly"
+          echo "2. Prewarmed cache environment - Offline run succeeds"
+          echo "3. Cache status integration - CacheManager functionality"
+
+      - name: Final status
+        run: |
+          if [ "${{ needs.offline-empty-test.result }}" == "success" ] && \
+             [ "${{ needs.offline-prewarmed-test.result }}" == "success" ] && \
+             [ "${{ needs.cache-status-integration.result }}" == "success" ]; then
+            echo "All tests PASSED!"
+            exit 0
+          else
+            echo "Some tests FAILED!"
+            exit 1
+          fi

@@ -44,24 +44,29 @@ def handle_bar(context, bar_dict):
     context.month = current_month
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
         try:
             prices = history_bars(stock, context.window + 1, '1d', 'close')
             turnovers = history_bars(stock, context.window, '1d', 'turnover_rate')
-            if prices is None or turnovers is None:
+            if prices is None or len(prices) < context.window + 1:
                 continue
-            cgo = calc_cgo(
-                np.array(prices, dtype=float),
-                np.array(turnovers, dtype=float),
-                context.window
-            )
+            if turnovers is None or len(turnovers) < context.window:
+                continue
+            prices_arr = np.array(prices, dtype=float)
+            if prices_arr[-1] == 0:
+                continue
+            tr_arr = np.array(turnovers, dtype=float)
+            tr_arr = np.where(tr_arr > 1, tr_arr / 100.0, tr_arr)
+            tr_arr = np.clip(tr_arr, 0, 1)
+            cgo = calc_cgo(prices_arr, tr_arr, context.window)
             if cgo is not None:
                 # 选CGO低的股票（浮亏多，处置效应导致持有，未来反弹）
                 scores[stock] = -cgo
-        except:
+        except Exception:
             continue
 
     if not scores:

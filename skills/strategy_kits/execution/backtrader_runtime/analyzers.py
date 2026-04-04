@@ -48,25 +48,31 @@ class TradeRecordAnalyzer(bt.Analyzer):
     def _get_trade_record(self, trade: bt.Trade, closed: bool = True) -> Dict[str, Any]:
         """生成交易记录"""
         brokervalue = self.strategy.broker.getvalue()
+        history = trade.history or []
+        size = len(history)
 
-        # 方向
-        dir_str = "long" if trade.history[0].event.size > 0 else "short"
+        # 方向（history 可能为空，fallback 到 trade.size）
+        if size > 0:
+            dir_str = "long" if history[0].event.size > 0 else "short"
+        else:
+            dir_str = "long" if (getattr(trade, 'size', 0) or 0) >= 0 else "short"
 
         # 基础信息
-        size = len(trade.history)
-        barlen = trade.history[size - 1].status.barlen if size > 0 else 0
-        pricein = trade.history[0].status.price if size > 0 else 0
-        datein = bt.num2date(trade.history[0].status.dt) if size > 0 else None
+        barlen = history[size - 1].status.barlen if size > 0 else 0
+        pricein = history[0].status.price if size > 0 else 0
+        datein = bt.num2date(history[0].status.dt) if size > 0 else None
 
-        if closed:
-            dateout = bt.num2date(trade.history[size - 1].status.dt)
-            priceout = trade.history[size - 1].event.price
-
+        if closed and size > 0:
+            dateout = bt.num2date(history[size - 1].status.dt)
+            priceout = history[size - 1].event.price
             # 计算 MFE/MAE
-            highest = max(trade.data.high.get(ago=0, size=barlen + 1))
-            lowest = min(trade.data.low.get(ago=0, size=barlen + 1))
-            hp = 100 * (highest - pricein) / pricein if pricein else 0
-            lp = 100 * (lowest - pricein) / pricein if pricein else 0
+            try:
+                highest = max(trade.data.high.get(ago=0, size=barlen + 1))
+                lowest = min(trade.data.low.get(ago=0, size=barlen + 1))
+                hp = 100 * (highest - pricein) / pricein if pricein else 0
+                lp = 100 * (lowest - pricein) / pricein if pricein else 0
+            except Exception:
+                hp, lp = np.nan, np.nan
         else:
             dateout = pd.to_datetime(trade.data.datetime.date(0))
             priceout = trade.data.close[0]
@@ -81,7 +87,7 @@ class TradeRecordAnalyzer(bt.Analyzer):
 
         # 盈亏计算
         pcntchange = 100 * priceout / pricein - 100 if pricein else 0
-        pnl = trade.history[size - 1].status.pnlcomm if size > 0 else 0
+        pnl = history[size - 1].status.pnlcomm if size > 0 else 0
         pnlpcnt = 100 * pnl / brokervalue if brokervalue else 0
 
         self.cumprofit += pnl
@@ -89,7 +95,7 @@ class TradeRecordAnalyzer(bt.Analyzer):
         # 最大持仓
         max_size = 0
         max_value = 0.0
-        for record in trade.history:
+        for record in history:
             if abs(max_size) < abs(record.status.size):
                 max_size = record.status.size
                 max_value = record.status.value

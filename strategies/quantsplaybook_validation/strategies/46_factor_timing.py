@@ -51,13 +51,14 @@ def handle_bar(context, bar_dict):
     regime = detect_market_regime(market_prices)
 
     stocks = index_components(context.index)
-    stocks = [s for s in stocks if s in bar_dict]
+    if not stocks:
+        return
 
     scores = {}
     for stock in stocks:
         try:
             prices = history_bars(stock, 65, '1d', 'close')
-            if prices is None or len(prices) < 65:
+            if prices is None or len(prices) < 65 or prices[-1] == 0:
                 continue
             prices = np.array(prices, dtype=float)
             returns = np.diff(prices) / prices[:-1]
@@ -73,7 +74,7 @@ def handle_bar(context, bar_dict):
                 factor = -((prices[-1] / prices[-20]) - 1)
 
             scores[stock] = factor
-        except:
+        except Exception:
             continue
 
     if not scores:

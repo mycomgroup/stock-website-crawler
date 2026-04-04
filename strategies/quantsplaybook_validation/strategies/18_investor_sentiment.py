@@ -51,7 +51,7 @@ def handle_bar(context, bar_dict):
     # 情绪低迷(z < -1) → 买入
 
     if sentiment_z < -1.0 and not context.pos:
-        order_value(security, context.portfolio.starting_cash * 0.95)
+        order_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: sentiment_z={sentiment_z:.2f}")
     elif sentiment_z > 1.0 and context.pos:

@@ -4,6 +4,11 @@
 
 使用方法:
     python run_strategies_parallel.py --num 10 --start 2020-01-01 --end 2023-12-31
+
+并发优化 (P2-7 DuckDB并发治理):
+1. 启动间隔：错开策略启动时间，避免同时初始化DuckDB
+2. 降低日志级别：减少噪音日志输出
+3. 读写分离：推荐使用只读模式进行数据访问
 """
 
 import os
@@ -12,6 +17,7 @@ import random
 import argparse
 import subprocess
 import time
+import logging
 from datetime import datetime
 from pathlib import Path
 import json
@@ -20,6 +26,14 @@ import concurrent.futures
 from enum import Enum
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any, List
+
+# 配置logger - 降低DuckDB相关日志级别，减少噪音
+logging.getLogger('jk2bt.db.duckdb_manager').setLevel(logging.WARNING)
+logging.getLogger('jk2bt.market_data').setLevel(logging.WARNING)
+
+# 配置logger
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # 项目根目录
 PROJECT_ROOT = Path(__file__).parent
@@ -66,6 +80,9 @@ class StrategyRunResult:
     error: str = ""
     traceback: str = ""
     exception_type: str = ""
+    # GATE-2修复：添加runtime_errors字段
+    runtime_errors: List[Dict[str, Any]] = field(default_factory=list)
+    runtime_errors_count: int = 0
     scan_result: Dict[str, Any] = field(default_factory=dict)
     evidence: Dict[str, Any] = field(default_factory=dict)
     attribution: Dict[str, Any] = field(default_factory=dict)
@@ -77,6 +94,7 @@ def _classify_run_status(
     has_data: bool,
     scan_result: Optional[Dict],
     evidence: Optional[Dict] = None,
+    runtime_errors: Optional[List[Dict]] = None,
 ) -> RunStatus:
     """
     根据回测结果和异常分类运行状态
@@ -87,6 +105,7 @@ def _classify_run_status(
         has_data: 是否有数据
         scan_result: 扫描结果
         evidence: 证据字典
+        runtime_errors: 运行时异常列表（GATE-2修复）
 
     返回:
         RunStatus 枚举值
@@ -126,6 +145,11 @@ def _classify_run_status(
             return RunStatus.LOAD_FAILED
         return RunStatus.LOAD_FAILED
 
+    # GATE-2修复：检查运行时异常
+    if runtime_errors and len(runtime_errors) > 0:
+        # 有运行时异常，不应该标记为success
+        return RunStatus.RUN_EXCEPTION
+
     # 检查证据；未提供时根据回测结果做兼容推断（兼容旧测试与历史调用）
     if evidence is None:
         strategy_obj = (
@@ -151,7 +175,7 @@ def _classify_run_status(
     has_nav_series = evidence.get("has_nav_series", False)
     has_transactions = evidence.get("has_transactions", False)
 
-    # 成功情况
+    # 成功情况（必须无runtime_errors）
     if loaded and entered_backtest_loop and has_nav_series:
         pnl_pct = backtest_result.get("pnl_pct", 0) if isinstance(backtest_result, dict) else 0
         if pnl_pct != 0:
@@ -218,11 +242,15 @@ def run_single_strategy(
             "recoverable": False,
             "recommendation": "",
         },
+        # GATE-2修复：初始化runtime_errors
+        runtime_errors=[],
+        runtime_errors_count=0,
     )
 
     exception_caught = None
     backtest_result = None
     has_data = True
+    runtime_errors_list = []  # GATE-2修复：用于收集运行时异常
 
     try:
         # 导入运行器
@@ -256,6 +284,20 @@ def run_single_strategy(
                     if result.evidence["has_transactions"]:
                         result.evidence["entered_backtest_loop"] = True
 
+                # GATE-2修复：获取策略的runtime_errors
+                if hasattr(strategy, "runtime_errors") and strategy.runtime_errors:
+                    runtime_errors_list = strategy.runtime_errors
+                    result.runtime_errors = runtime_errors_list
+                    result.runtime_errors_count = len(runtime_errors_list)
+                    # 如果有runtime_errors，更新evidence
+                    result.evidence["has_runtime_errors"] = True
+                    result.evidence["runtime_errors_count"] = len(runtime_errors_list)
+                    # 收集错误摘要
+                    error_summary = []
+                    for err in runtime_errors_list[:5]:  # 只取前5个
+                        error_summary.append(f"{err.get('function', 'unknown')}: {err.get('error', 'unknown')}")
+                    result.evidence["runtime_errors_summary"] = error_summary
+
     except Exception as e:
         exception_caught = e
         result.error = str(e)
@@ -266,13 +308,14 @@ def run_single_strategy(
     result.end_time = end_time.isoformat()
     result.duration = (end_time - start_time).total_seconds()
 
-    # 分类状态
+    # 分类状态（GATE-2修复：传入runtime_errors）
     result.run_status = _classify_run_status(
         backtest_result=backtest_result,
         exception=exception_caught,
         has_data=has_data,
         scan_result=scan_result,
         evidence=result.evidence,
+        runtime_errors=runtime_errors_list,
     ).value
 
     result.success = result.run_status in [
@@ -286,10 +329,12 @@ def run_single_strategy(
 
 def is_valid_strategy_file(filepath):
     """
-    检查是否为有效策略文件
+    检查是否为有效策略文件（已弃用）
 
+    注意：此函数已被StrategyScanner替代，仅作为兜底逻辑保留
     有效策略文件必须包含至少一个策略函数定义
     """
+    logger.warning("is_valid_strategy_file已弃用，请使用StrategyScanner")
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -314,13 +359,57 @@ def is_valid_strategy_file(filepath):
 
 
 def get_all_strategy_files():
-    """获取所有策略文件路径"""
-    strategy_files = []
-    if STRATEGIES_DIR.exists():
-        for f in STRATEGIES_DIR.iterdir():
-            if f.suffix == ".txt" and is_valid_strategy_file(f):
-                strategy_files.append(str(f))
-    return sorted(strategy_files)
+    """
+    获取所有可执行策略文件路径（基于scanner统一逻辑）
+
+    改进:
+    1. 使用StrategyScanner统一判断逻辑，避免与扫描器不一致
+    2. 只返回is_executable=True的策略，排除研究文档、notebook等
+    3. 支持从strategies_registry.json读取缓存（提升性能）
+    """
+    # 尝试从registry缓存读取
+    registry_path = STRATEGIES_DIR / "strategies_registry.json"
+    if registry_path.exists():
+        try:
+            import json
+            with open(registry_path, "r", encoding="utf-8") as f:
+                registry = json.load(f)
+            in_scope_strategies = [
+                item["path"] for item in registry.get("strategies", [])
+                if item.get("in_scope") and item.get("run_status") == "executable"
+            ]
+            if in_scope_strategies:
+                logger.info(f"从registry缓存读取 {len(in_scope_strategies)} 个可执行策略")
+                return sorted(in_scope_strategies)
+        except Exception as e:
+            logger.warning(f"读取registry缓存失败: {e}，回退到扫描模式")
+
+    # 回退到scanner扫描
+    try:
+        from jk2bt.strategy.scanner import StrategyScanner
+
+        scanner = StrategyScanner()
+        executable_strategies = []
+
+        # 扫描strategies目录下的所有txt和py文件
+        for ext in ["*.txt", "*.py"]:
+            for file_path in STRATEGIES_DIR.glob(ext):
+                scan_result = scanner.scan_file(str(file_path))
+                if scan_result.is_executable:
+                    executable_strategies.append(str(file_path))
+
+        logger.info(f"扫描发现 {len(executable_strategies)} 个可执行策略")
+        return sorted(executable_strategies)
+
+    except Exception as e:
+        # 兜底逻辑：使用旧的启发式方法
+        logger.warning(f"Scanner不可用，回退到旧逻辑: {e}")
+        strategy_files = []
+        if STRATEGIES_DIR.exists():
+            for f in STRATEGIES_DIR.iterdir():
+                if f.suffix == ".txt" and is_valid_strategy_file(f):
+                    strategy_files.append(str(f))
+        return sorted(strategy_files)
 
 
 def random_pick_strategies(num=10):
@@ -444,6 +533,10 @@ def run_strategies_with_agents(strategies, start_date, end_date, initial_capital
 
     返回:
         list: 所有策略的运行结果
+
+    并发优化 (P2-7):
+    - 添加启动间隔，错开DuckDB初始化
+    - 降低日志级别，减少噪音
     """
     results = []
 
@@ -458,18 +551,22 @@ def run_strategies_with_agents(strategies, start_date, end_date, initial_capital
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
     # 使用ThreadPoolExecutor来管理子进程
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(strategies)) as executor:
-        futures = {
-            executor.submit(
+    # 限制并发数，避免过多进程同时访问DuckDB
+    max_workers = min(len(strategies), os.cpu_count() or 4)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {}
+        for i, strategy in enumerate(strategies):
+            # 添加启动间隔，错开DuckDB初始化（避免锁冲突）
+            if i > 0:
+                time.sleep(0.5)
+            futures[executor.submit(
                 run_single_strategy_subprocess,
                 strategy,
                 start_date,
                 end_date,
                 initial_capital,
                 timeout,
-            ): strategy
-            for strategy in strategies
-        }
+            )] = strategy
 
         for future in concurrent.futures.as_completed(futures):
             strategy = futures[future]
@@ -546,6 +643,94 @@ def generate_summary_report(results, output_file=None):
     return report
 
 
+def _collect_metadata(
+    start_date: str,
+    end_date: str,
+    initial_capital: float,
+    timeout_per_strategy: int,
+    max_workers: int,
+) -> Dict[str, Any]:
+    """
+    收集运行元信息，用于结果追溯和调试。
+
+    Returns:
+        Dict: 包含版本、配置、缓存状态、环境等元信息
+    """
+    import platform
+    import sys
+    from datetime import datetime
+
+    metadata = {
+        "version": "",
+        "run_timestamp": datetime.now().isoformat(),
+        "run_params": {
+            "start_date": start_date,
+            "end_date": end_date,
+            "initial_capital": initial_capital,
+            "timeout_per_strategy": timeout_per_strategy,
+            "max_workers": max_workers,
+        },
+        "data_timestamp": {
+            "backtest_start": start_date,
+            "backtest_end": end_date,
+        },
+        "cache_summary": {},
+        "cache_meta": {},
+        "network_mode": "online",
+        "cache_only": False,
+        "environment": {
+            "python_version": platform.python_version(),
+            "python_implementation": platform.python_implementation(),
+            "os_platform": platform.platform(),
+            "hostname": platform.node(),
+        },
+        "config_snapshot": {},
+    }
+
+    # 获取版本信息
+    try:
+        from jk2bt import __version__
+        metadata["version"] = __version__
+    except ImportError:
+        metadata["version"] = "unknown"
+
+    # 获取缓存配置和状态
+    try:
+        from jk2bt.utils.config import get_config
+        from jk2bt.db.cache_status import get_cache_manager
+
+        config = get_config()
+        metadata["config_snapshot"] = {
+            "cache_enabled": config.cache.enabled,
+            "cache_dir": config.cache.cache_dir,
+            "duckdb_path": config.cache.duckdb_path,
+            "data_source": config.data_source.provider,
+            "benchmark": config.backtest.benchmark,
+        }
+
+        # 缓存摘要
+        cache_manager = get_cache_manager()
+        metadata["cache_summary"] = cache_manager.get_cache_summary()
+
+        # 元数据缓存状态
+        metadata["cache_meta"] = cache_manager.check_meta_cache()
+
+        # 判断网络模式
+        if not config.cache.enabled:
+            metadata["network_mode"] = "online"
+            metadata["cache_only"] = False
+        elif metadata["cache_summary"].get("total_records", 0) > 0:
+            # 有缓存数据，检查是否足够支持离线
+            metadata["network_mode"] = "hybrid"
+            metadata["cache_only"] = False
+
+    except Exception as e:
+        logger.warning(f"收集缓存信息失败: {e}")
+        metadata["cache_error"] = str(e)
+
+    return metadata
+
+
 def run_strategies_parallel(
     strategy_files=None,
     max_workers=4,
@@ -561,10 +746,15 @@ def run_strategies_parallel(
     返回结构示例:
     {
       "run_id": "...",
+      "metadata": {...},  # 新增：运行元信息
       "results": [...],
       "summary": {...},
       "attribution_summary": {...},
     }
+
+    并发优化 (P2-7):
+    - 添加启动间隔，错开DuckDB初始化
+    - 限制并发数，减少锁冲突
     """
     if strategy_files is None:
         strategy_files = get_all_strategy_files()
@@ -573,31 +763,86 @@ def run_strategies_parallel(
     run_log_dir = LOGS_DIR / run_id
     run_log_dir.mkdir(parents=True, exist_ok=True)
 
+    # 收集运行元信息（用于结果追溯）
+    metadata = _collect_metadata(
+        start_date=start_date,
+        end_date=end_date,
+        initial_capital=initial_capital,
+        timeout_per_strategy=timeout_per_strategy,
+        max_workers=max_workers,
+    )
+    metadata["run_id"] = run_id
+
     scan_results = {}
     runnable_files = list(strategy_files)
+    skipped_results = []
+
     if not skip_scan:
         try:
-            from strategy_scanner import StrategyScanner, StrategyStatus
+            from jk2bt.strategy.scanner import StrategyScanner, StrategyStatus
 
             scanner = StrategyScanner()
             runnable_files = []
             for file_path in strategy_files:
                 scan = scanner.scan_file(file_path)
                 scan_results[file_path] = scan.to_dict()
-                if scan.status in {
-                    StrategyStatus.VALID,
-                    StrategyStatus.VALID_WITH_HANDLE,
-                }:
+
+                # 可执行策略进入运行队列
+                if scan.is_executable:
                     runnable_files.append(file_path)
-        except Exception:
+                # 扫描拒绝的文件标记为 SKIPPED 状态并记录结果
+                elif scan.status == StrategyStatus.NOT_STRATEGY:
+                    skipped_results.append(StrategyRunResult(
+                        strategy=os.path.basename(file_path),
+                        strategy_file=file_path,
+                        success=False,
+                        run_status=RunStatus.SKIPPED_NOT_STRATEGY.value,
+                        scan_result=scan.to_dict(),
+                        error=scan.error_message,
+                    ))
+                elif scan.status == StrategyStatus.SYNTAX_ERROR:
+                    skipped_results.append(StrategyRunResult(
+                        strategy=os.path.basename(file_path),
+                        strategy_file=file_path,
+                        success=False,
+                        run_status=RunStatus.SKIPPED_SYNTAX_ERROR.value,
+                        scan_result=scan.to_dict(),
+                        error=scan.error_message,
+                    ))
+                elif scan.status == StrategyStatus.NO_INITIALIZE:
+                    skipped_results.append(StrategyRunResult(
+                        strategy=os.path.basename(file_path),
+                        strategy_file=file_path,
+                        success=False,
+                        run_status=RunStatus.SKIPPED_NO_INITIALIZE.value,
+                        scan_result=scan.to_dict(),
+                        error=scan.error_message,
+                    ))
+                elif scan.status == StrategyStatus.MISSING_API:
+                    skipped_results.append(StrategyRunResult(
+                        strategy=os.path.basename(file_path),
+                        strategy_file=file_path,
+                        success=False,
+                        run_status=RunStatus.SKIPPED_MISSING_API.value,
+                        scan_result=scan.to_dict(),
+                        error=f"缺失API: {', '.join(scan.missing_apis)}",
+                    ))
+        except Exception as e:
             # 扫描不可用时回退到直接运行，避免兼容入口不可用。
+            import traceback
+            logger.warning(f"扫描器导入失败，回退到直接运行: {e}")
+            logger.warning(traceback.format_exc())
             runnable_files = list(strategy_files)
 
     results = []
     workers = max(1, min(max_workers, max(len(runnable_files), 1)))
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {
-            executor.submit(
+        futures = {}
+        for i, file_path in enumerate(runnable_files):
+            # 添加启动间隔，错开DuckDB初始化（避免锁冲突）
+            if i > 0:
+                time.sleep(0.3)
+            futures[executor.submit(
                 run_single_strategy,
                 strategy_file=file_path,
                 start_date=start_date,
@@ -605,9 +850,7 @@ def run_strategies_parallel(
                 initial_capital=initial_capital,
                 timeout=timeout_per_strategy,
                 scan_result=scan_results.get(file_path),
-            ): file_path
-            for file_path in runnable_files
-        }
+            )] = file_path
 
         for future in concurrent.futures.as_completed(futures):
             file_path = futures[future]
@@ -634,6 +877,9 @@ def run_strategies_parallel(
                 obj = StrategyRunResult(strategy_file=file_path)
                 obj.__dict__.update(run_result)
                 results.append(obj)
+
+    # 将扫描拒绝的文件结果合并到总结果中
+    results.extend(skipped_results)
 
     result_dicts = [r.__dict__ for r in results]
     status_counts = {}
@@ -665,6 +911,7 @@ def run_strategies_parallel(
 
     summary = {
         "run_id": run_id,
+        "metadata": metadata,
         "results": result_dicts,
         "summary": {
             "total": len(result_dicts),
@@ -683,6 +930,12 @@ def run_strategies_parallel(
 
     with open(run_log_dir / "report.txt", "w", encoding="utf-8") as f:
         f.write(f"run_id={run_id}\n")
+        f.write(f"version={metadata['version']}\n")
+        f.write(f"run_timestamp={metadata['run_timestamp']}\n")
+        f.write(f"backtest_range={start_date}~{end_date}\n")
+        f.write(f"initial_capital={initial_capital}\n")
+        f.write(f"cache_summary={json.dumps(metadata['cache_summary'])}\n")
+        f.write(f"network_mode={metadata['network_mode']}\n")
         f.write(f"total={summary['summary']['total']}\n")
         f.write(f"success={summary['summary']['success_total']}\n")
         f.write(f"failed={summary['summary']['failed_total']}\n")

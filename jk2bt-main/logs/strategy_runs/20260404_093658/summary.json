@@ -1,0 +1,195 @@
+{
+  "run_id": "20260404_093658",
+  "results": [
+    {
+      "strategy": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "strategy_file": "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "success": true,
+      "run_status": "success_zero_return",
+      "status": "",
+      "start_time": "2026-04-04T09:36:58.979780",
+      "end_time": "2026-04-04T09:38:49.293468",
+      "duration": 110.313688,
+      "final_value": 1000000.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 0,
+      "error": "",
+      "traceback": "",
+      "exception_type": "",
+      "scan_result": {
+        "file_path": "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt",
+        "file_name": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+        "status": "valid",
+        "has_initialize": true,
+        "has_handle": true,
+        "missing_apis": [],
+        "error_message": "",
+        "is_executable": true,
+        "details": {
+          "defined_funcs": [
+            "initialize",
+            "after_code_changed",
+            "handle_prepare",
+            "handle_trader",
+            "report_portoflio"
+          ],
+          "called_funcs": [
+            "int",
+            "head",
+            "get_current_data",
+            "tolist",
+            "run_daily",
+            "info",
+            "run_monthly",
+            "set_option",
+            "order_target",
+            "sort_values",
+            "set_level",
+            "get_index_weights",
+            "unschedule_all",
+            "order_value"
+          ],
+          "imported_names": [
+            "numpy",
+            "pandas",
+            "jqdata",
+            "*"
+          ],
+          "code_lines": 58
+        }
+      },
+      "evidence": {
+        "loaded": true,
+        "entered_backtest_loop": true,
+        "has_transactions": false,
+        "has_nav_series": true,
+        "nav_series_length": 98,
+        "strategy_obj_valid": true,
+        "cerebro_valid": true
+      },
+      "attribution": {
+        "failure_root_cause": "",
+        "missing_dependency": "",
+        "missing_api": "",
+        "missing_resource_file": "",
+        "error_category": "",
+        "recoverable": false,
+        "recommendation": ""
+      }
+    },
+    {
+      "strategy": "92 配套资料说明.txt",
+      "strategy_file": "strategies/92 配套资料说明.txt",
+      "success": false,
+      "run_status": "skipped_not_strategy",
+      "status": "",
+      "start_time": "",
+      "end_time": "",
+      "duration": 0.0,
+      "final_value": 0.0,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "max_drawdown": 0.0,
+      "annual_return": 0.0,
+      "sharpe_ratio": 0.0,
+      "trading_days": 0,
+      "error": "非策略文件（研究文档/配套资料）",
+      "traceback": "",
+      "exception_type": "",
+      "scan_result": {
+        "file_path": "strategies/92 配套资料说明.txt",
+        "file_name": "92 配套资料说明.txt",
+        "status": "not_strategy",
+        "has_initialize": false,
+        "has_handle": false,
+        "missing_apis": [],
+        "error_message": "非策略文件（研究文档/配套资料）",
+        "is_executable": false,
+        "details": {
+          "reason": "file_pattern_excluded"
+        }
+      },
+      "evidence": {},
+      "attribution": {}
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "success_total": 1,
+    "failed_total": 1,
+    "recoverable_failures": 0,
+    "unrecoverable_failures": 1,
+    "status_counts": {
+      "success_zero_return": 1,
+      "skipped_not_strategy": 1
+    }
+  },
+  "attribution_summary": {
+    "recoverable": {},
+    "unrecoverable": {
+      "success_zero_return": 1,
+      "skipped_not_strategy": 1
+    }
+  },
+  "scan_results": {
+    "strategies/92 配套资料说明.txt": {
+      "file_path": "strategies/92 配套资料说明.txt",
+      "file_name": "92 配套资料说明.txt",
+      "status": "not_strategy",
+      "has_initialize": false,
+      "has_handle": false,
+      "missing_apis": [],
+      "error_message": "非策略文件（研究文档/配套资料）",
+      "is_executable": false,
+      "details": {
+        "reason": "file_pattern_excluded"
+      }
+    },
+    "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt": {
+      "file_path": "strategies/03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "file_name": "03 一个简单而持续稳定的懒人超额收益策略.txt",
+      "status": "valid",
+      "has_initialize": true,
+      "has_handle": true,
+      "missing_apis": [],
+      "error_message": "",
+      "is_executable": true,
+      "details": {
+        "defined_funcs": [
+          "initialize",
+          "after_code_changed",
+          "handle_prepare",
+          "handle_trader",
+          "report_portoflio"
+        ],
+        "called_funcs": [
+          "int",
+          "head",
+          "get_current_data",
+          "tolist",
+          "run_daily",
+          "info",
+          "run_monthly",
+          "set_option",
+          "order_target",
+          "sort_values",
+          "set_level",
+          "get_index_weights",
+          "unschedule_all",
+          "order_value"
+        ],
+        "imported_names": [
+          "numpy",
+          "pandas",
+          "jqdata",
+          "*"
+        ],
+        "code_lines": 58
+      }
+    }
+  }
+}
