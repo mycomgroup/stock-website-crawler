@@ -121,11 +121,28 @@ def run_single_strategy(strategy: Dict, offline_mode: bool = False) -> Dict:
         )
 
         if run_result:
-            result['success'] = True
-            result['final_value'] = run_result.get('final_value', 0)
-            result['pnl_pct'] = run_result.get('pnl_pct', 0)
-            logger.info(f"✅ 策略 {strategy['id']} 运行成功: "
-                       f"收益率 {result['pnl_pct']:.2f}%")
+            # GATE-2修复：runtime_errors为空是验收成功的必要条件
+            runtime_errors = run_result.get('runtime_errors', [])
+            if runtime_errors and len(runtime_errors) > 0:
+                # 有运行时错误，标记为失败
+                result['success'] = False
+                result['runtime_errors'] = runtime_errors
+                result['runtime_errors_count'] = len(runtime_errors)
+                result['error'] = f'运行时有{len(runtime_errors)}个错误: {runtime_errors[0]["function"]} - {runtime_errors[0]["error_type"]}'
+                result['final_value'] = run_result.get('final_value', 0)
+                result['pnl_pct'] = run_result.get('pnl_pct', 0)
+                logger.error(f"❌ 策略 {strategy['id']} 运行失败: "
+                           f"runtime_errors={len(runtime_errors)}个, "
+                           f"首个错误: {runtime_errors[0]['function']} - {runtime_errors[0]['error_type']}")
+            else:
+                # 无运行时错误，验收成功
+                result['success'] = True
+                result['runtime_errors'] = []
+                result['runtime_errors_count'] = 0
+                result['final_value'] = run_result.get('final_value', 0)
+                result['pnl_pct'] = run_result.get('pnl_pct', 0)
+                logger.info(f"✅ 策略 {strategy['id']} 运行成功: "
+                           f"收益率 {result['pnl_pct']:.2f}%")
         else:
             result['error'] = '运行结果为None'
             logger.error(f"❌ 策略 {strategy['id']} 运行失败: {result['error']}")
@@ -159,32 +176,41 @@ def generate_validation_report(results: List[Dict]) -> str:
     p0_count = sum(1 for r in results if r.get('priority') == 'P0')
     p0_success = sum(1 for r in results if r['success'] and r.get('priority') == 'P0')
 
+    # GATE-2修复：统计runtime_errors
+    runtime_error_count = sum(1 for r in results if r.get('runtime_errors_count', 0) > 0)
+    total_runtime_errors = sum(r.get('runtime_errors_count', 0) for r in results)
+
     report_lines.append(f"- 总策略数: {total}\n")
     report_lines.append(f"- 成功: {success_count}\n")
     report_lines.append(f"- 失败: {failed_count}\n")
     report_lines.append(f"- P0策略: {p0_count}（必须通过）\n")
     report_lines.append(f"- P0通过: {p0_success}\n")
+    report_lines.append(f"- **runtime_errors**: {runtime_error_count}个策略有错误，共{total_runtime_errors}个错误\n")
 
-    if p0_success == p0_count:
-        report_lines.append(f"\n✅ **验收通过：所有P0策略运行成功**\n")
-    else:
+    if p0_success == p0_count and runtime_error_count == 0:
+        report_lines.append(f"\n✅ **验收通过：所有P0策略运行成功，无runtime_errors**\n")
+    elif p0_success < p0_count:
         report_lines.append(f"\n❌ **验收失败：{p0_count - p0_success}个P0策略失败**\n")
+    elif runtime_error_count > 0:
+        report_lines.append(f"\n❌ **验收失败：{runtime_error_count}个策略有runtime_errors**\n")
 
     # 详细结果
     report_lines.append(f"\n## 策略运行详情\n")
-    report_lines.append("| ID | 策略名称 | 优先级 | 状态 | 收益率 | 运行时间 | 备注 |\n")
-    report_lines.append("|----|---------|-------|------|--------|---------|-----|\n")
+    report_lines.append("| ID | 策略名称 | 优先级 | 状态 | 收益率 | 运行时间 | runtime_errors | 备注 |\n")
+    report_lines.append("|----|---------|-------|------|--------|---------|---------------|-----|\n")
 
     for result in results:
         status = "✅ 通过" if result['success'] else "❌ 失败"
         priority = result.get('priority', 'P1')
         pnl = f"{result.get('pnl_pct', 0):.2f}%" if result['success'] else "N/A"
         run_time = f"{result.get('run_time', 0):.1f}s" if result['success'] else "N/A"
+        runtime_errors_count = result.get('runtime_errors_count', 0)
+        runtime_errors_str = f"{runtime_errors_count}个" if runtime_errors_count > 0 else "0"
         note = result.get('error', '')[:30] if not result['success'] else ""
 
         report_lines.append(
             f"| {result['strategy_id']} | {result['strategy_name']} | {priority} | "
-            f"{status} | {pnl} | {run_time} | {note} |\n"
+            f"{status} | {pnl} | {run_time} | {runtime_errors_str} | {note} |\n"
         )
 
     # 数据统计

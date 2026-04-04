@@ -43,7 +43,10 @@ def handle_bar(context, bar_dict):
             vol_trend = np.polyfit(np.arange(context.lookback), volumes, 1)[0]
 
             # 盈利质量代理：收益率稳定性（成熟期企业收益稳定）
-            ret_stability = -np.std(returns)
+            # 用变异系数（CV）衡量，归一化到 [-1, 0] 范围
+            mean_ret = np.mean(np.abs(returns))
+            ret_cv = np.std(returns) / (mean_ret + 1e-8)  # 变异系数
+            ret_stability = -min(ret_cv, 5) / 5  # 归一化到 [-1, 0]
 
             # 综合得分：趋势向上 + 成交量放大 + 收益稳定
             price_score = 1 if price_trend > 0 else -1

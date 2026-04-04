@@ -28,6 +28,9 @@ try:
 except ImportError:
     raise ImportError("请安装 duckdb: pip install duckdb")
 
+# 导入统一的代码转换工具
+from jk2bt.utils.code_converter import normalize_to_jq_format
+
 logger = logging.getLogger(__name__)
 
 # 进程级单例管理器缓存
@@ -454,7 +457,8 @@ class DuckDBManager:
         参数
         ----
         symbol : str
-            股票代码，如 'sh600000'
+            股票代码，支持多种格式：'sh600000'、'sz000001'、'600000.XSHG'、'000001.XSHE'、'600000'
+            内部统一转换为聚宽格式存储
         df : pd.DataFrame
             日线数据，必须包含 datetime/open/high/low/close/volume 列
         adjust : str
@@ -464,8 +468,11 @@ class DuckDBManager:
             logger.warning(f"{symbol}: 无数据需要插入")
             return
 
+        # 统一转换为聚宽格式存储
+        jq_symbol = normalize_to_jq_format(symbol)
+
         df = df.copy()
-        df["symbol"] = symbol
+        df["symbol"] = jq_symbol  # 使用统一格式存储
         df["adjust"] = adjust
 
         if "datetime" not in df.columns:
@@ -491,11 +498,11 @@ class DuckDBManager:
             with self._get_connection() as conn:
                 count_before = conn.execute(
                     "SELECT COUNT(*) FROM stock_daily WHERE symbol=? AND adjust=?",
-                    [symbol, adjust],
+                    [jq_symbol, adjust],
                 ).fetchone()[0]
 
                 conn.execute("""
-                    INSERT OR REPLACE INTO stock_daily 
+                    INSERT OR REPLACE INTO stock_daily
                     (symbol, datetime, open, high, low, close, volume, amount, adjust)
                     SELECT symbol, datetime, open, high, low, close, volume, amount, adjust
                     FROM df
@@ -503,26 +510,34 @@ class DuckDBManager:
 
                 count_after = conn.execute(
                     "SELECT COUNT(*) FROM stock_daily WHERE symbol=? AND adjust=?",
-                    [symbol, adjust],
+                    [jq_symbol, adjust],
                 ).fetchone()[0]
 
                 logger.info(
-                    f"{symbol} ({adjust}): 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
+                    f"{jq_symbol} ({adjust}): 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
                 )
 
                 if self.use_cache:
-                    _global_cache.invalidate(table="stock_daily", symbol=symbol)
+                    _global_cache.invalidate(table="stock_daily", symbol=jq_symbol)
 
         self._retry_write(_do_insert)
 
     def insert_etf_daily(self, symbol: str, df: pd.DataFrame):
-        """插入 ETF 日线数据"""
+        """插入 ETF 日线数据。
+
+        参数:
+            symbol: ETF代码，支持多种格式，内部统一转换为聚宽格式存储
+            df: 日线数据
+        """
         if df is None or df.empty:
             logger.warning(f"{symbol}: 无数据需要插入")
             return
 
+        # 统一转换为聚宽格式存储
+        jq_symbol = normalize_to_jq_format(symbol)
+
         df = df.copy()
-        df["symbol"] = symbol
+        df["symbol"] = jq_symbol  # 使用统一格式存储
 
         if "datetime" not in df.columns:
             raise ValueError(f"{symbol}: DataFrame 必须包含 'datetime' 列")
@@ -545,37 +560,45 @@ class DuckDBManager:
         def _do_insert():
             with self._get_connection() as conn:
                 count_before = conn.execute(
-                    "SELECT COUNT(*) FROM etf_daily WHERE symbol=?", [symbol]
+                    "SELECT COUNT(*) FROM etf_daily WHERE symbol=?", [jq_symbol]
                 ).fetchone()[0]
 
                 conn.execute("""
-                    INSERT OR REPLACE INTO etf_daily 
+                    INSERT OR REPLACE INTO etf_daily
                     (symbol, datetime, open, high, low, close, volume, amount)
                     SELECT symbol, datetime, open, high, low, close, volume, amount
                     FROM df
                 """)
 
                 count_after = conn.execute(
-                    "SELECT COUNT(*) FROM etf_daily WHERE symbol=?", [symbol]
+                    "SELECT COUNT(*) FROM etf_daily WHERE symbol=?", [jq_symbol]
                 ).fetchone()[0]
 
                 logger.info(
-                    f"{symbol}: 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
+                    f"{jq_symbol}: 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
                 )
 
                 if self.use_cache:
-                    _global_cache.invalidate(table="etf_daily", symbol=symbol)
+                    _global_cache.invalidate(table="etf_daily", symbol=jq_symbol)
 
         self._retry_write(_do_insert)
 
     def insert_lof_daily(self, symbol: str, df: pd.DataFrame):
-        """插入 LOF 日线数据"""
+        """插入 LOF 日线数据。
+
+        参数:
+            symbol: LOF代码，支持多种格式，内部统一转换为聚宽格式存储
+            df: 日线数据
+        """
         if df is None or df.empty:
             logger.warning(f"{symbol}: 无数据需要插入")
             return
 
+        # 统一转换为聚宽格式存储
+        jq_symbol = normalize_to_jq_format(symbol)
+
         df = df.copy()
-        df["symbol"] = symbol
+        df["symbol"] = jq_symbol  # 使用统一格式存储
 
         if "datetime" not in df.columns:
             raise ValueError(f"{symbol}: DataFrame 必须包含 'datetime' 列")
@@ -598,37 +621,45 @@ class DuckDBManager:
         def _do_insert():
             with self._get_connection() as conn:
                 count_before = conn.execute(
-                    "SELECT COUNT(*) FROM lof_daily WHERE symbol=?", [symbol]
+                    "SELECT COUNT(*) FROM lof_daily WHERE symbol=?", [jq_symbol]
                 ).fetchone()[0]
 
                 conn.execute("""
-                    INSERT OR REPLACE INTO lof_daily 
+                    INSERT OR REPLACE INTO lof_daily
                     (symbol, datetime, open, high, low, close, volume, amount)
                     SELECT symbol, datetime, open, high, low, close, volume, amount
                     FROM df
                 """)
 
                 count_after = conn.execute(
-                    "SELECT COUNT(*) FROM lof_daily WHERE symbol=?", [symbol]
+                    "SELECT COUNT(*) FROM lof_daily WHERE symbol=?", [jq_symbol]
                 ).fetchone()[0]
 
                 logger.info(
-                    f"{symbol}: 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
+                    f"{jq_symbol}: 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
                 )
 
                 if self.use_cache:
-                    _global_cache.invalidate(table="lof_daily", symbol=symbol)
+                    _global_cache.invalidate(table="lof_daily", symbol=jq_symbol)
 
         self._retry_write(_do_insert)
 
     def insert_index_daily(self, symbol: str, df: pd.DataFrame):
-        """插入指数日线数据"""
+        """插入指数日线数据。
+
+        参数:
+            symbol: 指数代码，支持多种格式，内部统一转换为聚宽格式存储
+            df: 日线数据
+        """
         if df is None or df.empty:
             logger.warning(f"{symbol}: 无数据需要插入")
             return
 
+        # 统一转换为聚宽格式存储
+        jq_symbol = normalize_to_jq_format(symbol)
+
         df = df.copy()
-        df["symbol"] = symbol
+        df["symbol"] = jq_symbol  # 使用统一格式存储
 
         if "datetime" not in df.columns:
             raise ValueError(f"{symbol}: DataFrame 必须包含 'datetime' 列")
@@ -651,26 +682,26 @@ class DuckDBManager:
         def _do_insert():
             with self._get_connection() as conn:
                 count_before = conn.execute(
-                    "SELECT COUNT(*) FROM index_daily WHERE symbol=?", [symbol]
+                    "SELECT COUNT(*) FROM index_daily WHERE symbol=?", [jq_symbol]
                 ).fetchone()[0]
 
                 conn.execute("""
-                    INSERT OR REPLACE INTO index_daily 
+                    INSERT OR REPLACE INTO index_daily
                     (symbol, datetime, open, high, low, close, volume, amount)
                     SELECT symbol, datetime, open, high, low, close, volume, amount
                     FROM df
                 """)
 
                 count_after = conn.execute(
-                    "SELECT COUNT(*) FROM index_daily WHERE symbol=?", [symbol]
+                    "SELECT COUNT(*) FROM index_daily WHERE symbol=?", [jq_symbol]
                 ).fetchone()[0]
 
                 logger.info(
-                    f"{symbol}: 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
+                    f"{jq_symbol}: 插入/更新 {len(df)} 条数据，总记录数 {count_after}"
                 )
 
                 if self.use_cache:
-                    _global_cache.invalidate(table="index_daily", symbol=symbol)
+                    _global_cache.invalidate(table="index_daily", symbol=jq_symbol)
 
         self._retry_write(_do_insert)
 
@@ -688,7 +719,8 @@ class DuckDBManager:
         参数
         ----
         symbol : str
-            股票代码，支持多种格式：'sh600000'、'sz000001'、'600000.XSHG'、'000001.XSHE'
+            股票代码，支持多种格式：'sh600000'、'sz000001'、'600000.XSHG'、'000001.XSHE'、'600000'
+            内部统一转换为聚宽格式查询
         start : str
             起始日期 'YYYY-MM-DD'
         end : str
@@ -706,79 +738,56 @@ class DuckDBManager:
         if use_cache is None:
             use_cache = self.use_cache
 
-        # 标准化股票代码格式，尝试多种格式查询
-        symbols_to_try = self._normalize_symbol_for_query(symbol)
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol)
 
         if use_cache:
-            for sym in symbols_to_try:
-                cached = _global_cache.get("stock_daily", sym, start, end, adjust=adjust)
-                if cached is not None:
-                    logger.debug(f"{sym} ({adjust}): 使用缓存数据")
-                    return cached
+            cached = _global_cache.get("stock_daily", jq_symbol, start, end, adjust=adjust)
+            if cached is not None:
+                logger.debug(f"{jq_symbol} ({adjust}): 使用缓存数据")
+                return cached
 
         with self._get_connection(read_only=True) as conn:
-            for sym in symbols_to_try:
-                df = conn.execute(
-                    """
-                    SELECT datetime, open, high, low, close, volume, amount
-                    FROM stock_daily
-                    WHERE symbol = ? AND adjust = ?
-                      AND datetime >= ? AND datetime <= ?
-                    ORDER BY datetime
-                """,
-                    [sym, adjust, start, end],
-                ).fetchdf()
+            df = conn.execute(
+                """
+                SELECT datetime, open, high, low, close, volume, amount
+                FROM stock_daily
+                WHERE symbol = ? AND adjust = ?
+                  AND datetime >= ? AND datetime <= ?
+                ORDER BY datetime
+            """,
+                [jq_symbol, adjust, start, end],
+            ).fetchdf()
 
-                if not df.empty:
-                    logger.info(
-                        f"{sym} ({adjust}): 查询到 {len(df)} 条数据 ({start} ~ {end})"
-                    )
-                    if use_cache:
-                        _global_cache.set("stock_daily", sym, start, end, df, adjust=adjust)
-                    return df
+            if not df.empty:
+                logger.info(
+                    f"{jq_symbol} ({adjust}): 查询到 {len(df)} 条数据 ({start} ~ {end})"
+                )
+                if use_cache:
+                    _global_cache.set("stock_daily", jq_symbol, start, end, df, adjust=adjust)
+            else:
+                logger.warning(f"{jq_symbol} ({adjust}): 数据库中无数据")
 
-            logger.warning(f"{symbol} ({adjust}): 数据库中无数据")
             return df
 
-    def _normalize_symbol_for_query(self, symbol: str) -> list:
-        """
-        将股票代码标准化为多种可能的格式，用于查询。
-        数据库中可能存在多种格式的代码。
-        """
-        symbols = set()
-        symbols.add(symbol)  # 原始格式
-
-        # 如果是 sh/sz 开头的格式，尝试转换为 .XSHG/.XSHE 格式
-        if symbol.startswith("sh"):
-            code = symbol[2:]
-            symbols.add(f"{code}.XSHG")
-            symbols.add(code)
-        elif symbol.startswith("sz"):
-            code = symbol[2:]
-            symbols.add(f"{code}.XSHE")
-            symbols.add(code)
-
-        # 如果是 .XSHG/.XSHE 结尾的格式，尝试转换为 sh/sz 格式
-        if symbol.endswith(".XSHG"):
-            code = symbol.replace(".XSHG", "")
-            symbols.add(f"sh{code}")
-            symbols.add(code)
-        elif symbol.endswith(".XSHE"):
-            code = symbol.replace(".XSHE", "")
-            symbols.add(f"sz{code}")
-            symbols.add(code)
-
-        return list(symbols)
+    # 旧的格式转换方法已移除，使用统一的 jk2bt.utils.code_converter.normalize_to_jq_format
 
     def get_etf_daily(
         self, symbol: str, start: str, end: str, use_cache: bool = None
     ) -> pd.DataFrame:
-        """查询 ETF 日线数据（支持缓存）"""
+        """查询 ETF 日线数据（支持缓存）。
+
+        参数:
+            symbol: ETF代码，支持多种格式，内部统一转换为聚宽格式查询
+        """
         if use_cache is None:
             use_cache = self.use_cache
 
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol)
+
         if use_cache:
-            cached = _global_cache.get("etf_daily", symbol, start, end)
+            cached = _global_cache.get("etf_daily", jq_symbol, start, end)
             if cached is not None:
                 return cached
 
@@ -790,28 +799,35 @@ class DuckDBManager:
                 WHERE symbol = ? AND datetime >= ? AND datetime <= ?
                 ORDER BY datetime
             """,
-                [symbol, start, end],
+                [jq_symbol, start, end],
             ).fetchdf()
 
             if df.empty:
-                logger.warning(f"{symbol}: 数据库中无数据")
+                logger.warning(f"{jq_symbol}: 数据库中无数据")
             else:
-                logger.info(f"{symbol}: 查询到 {len(df)} 条数据 ({start} ~ {end})")
+                logger.info(f"{jq_symbol}: 查询到 {len(df)} 条数据 ({start} ~ {end})")
 
             if use_cache and not df.empty:
-                _global_cache.set("etf_daily", symbol, start, end, df)
+                _global_cache.set("etf_daily", jq_symbol, start, end, df)
 
             return df
 
     def get_lof_daily(
         self, symbol: str, start: str, end: str, use_cache: bool = None
     ) -> pd.DataFrame:
-        """查询 LOF 日线数据（支持缓存）"""
+        """查询 LOF 日线数据（支持缓存）。
+
+        参数:
+            symbol: LOF代码，支持多种格式，内部统一转换为聚宽格式查询
+        """
         if use_cache is None:
             use_cache = self.use_cache
 
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol)
+
         if use_cache:
-            cached = _global_cache.get("lof_daily", symbol, start, end)
+            cached = _global_cache.get("lof_daily", jq_symbol, start, end)
             if cached is not None:
                 return cached
 
@@ -823,28 +839,35 @@ class DuckDBManager:
                 WHERE symbol = ? AND datetime >= ? AND datetime <= ?
                 ORDER BY datetime
             """,
-                [symbol, start, end],
+                [jq_symbol, start, end],
             ).fetchdf()
 
             if df.empty:
-                logger.warning(f"{symbol}: 数据库中无数据")
+                logger.warning(f"{jq_symbol}: 数据库中无数据")
             else:
-                logger.info(f"{symbol}: 查询到 {len(df)} 条数据 ({start} ~ {end})")
+                logger.info(f"{jq_symbol}: 查询到 {len(df)} 条数据 ({start} ~ {end})")
 
             if use_cache and not df.empty:
-                _global_cache.set("lof_daily", symbol, start, end, df)
+                _global_cache.set("lof_daily", jq_symbol, start, end, df)
 
             return df
 
     def get_index_daily(
         self, symbol: str, start: str, end: str, use_cache: bool = None
     ) -> pd.DataFrame:
-        """查询指数日线数据（支持缓存）"""
+        """查询指数日线数据（支持缓存）。
+
+        参数:
+            symbol: 指数代码，支持多种格式，内部统一转换为聚宽格式查询
+        """
         if use_cache is None:
             use_cache = self.use_cache
 
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol)
+
         if use_cache:
-            cached = _global_cache.get("index_daily", symbol, start, end)
+            cached = _global_cache.get("index_daily", jq_symbol, start, end)
             if cached is not None:
                 return cached
 
@@ -856,16 +879,16 @@ class DuckDBManager:
                 WHERE symbol = ? AND datetime >= ? AND datetime <= ?
                 ORDER BY datetime
             """,
-                [symbol, start, end],
+                [jq_symbol, start, end],
             ).fetchdf()
 
             if df.empty:
-                logger.warning(f"{symbol}: 数据库中无数据")
+                logger.warning(f"{jq_symbol}: 数据库中无数据")
             else:
-                logger.info(f"{symbol}: 查询到 {len(df)} 条数据 ({start} ~ {end})")
+                logger.info(f"{jq_symbol}: 查询到 {len(df)} 条数据 ({start} ~ {end})")
 
             if use_cache and not df.empty:
-                _global_cache.set("index_daily", symbol, start, end, df)
+                _global_cache.set("index_daily", jq_symbol, start, end, df)
 
             return df
 
@@ -878,7 +901,7 @@ class DuckDBManager:
         参数
         ----
         symbol : str
-            股票代码，如 'sh600000'
+            股票代码，支持多种格式，内部统一转换为聚宽格式存储
         period : str
             周期：1/5/15/30/60
         df : pd.DataFrame
@@ -890,8 +913,11 @@ class DuckDBManager:
             logger.warning(f"{symbol} ({period}): 无数据需要插入")
             return
 
+        # 统一转换为聚宽格式存储
+        jq_symbol = normalize_to_jq_format(symbol)
+
         df = df.copy()
-        df["symbol"] = symbol
+        df["symbol"] = jq_symbol  # 使用统一格式存储
         df["period"] = period
         df["adjust"] = adjust
 
@@ -918,29 +944,38 @@ class DuckDBManager:
         def _do_insert():
             with self._get_connection() as conn:
                 conn.execute("""
-                    INSERT OR REPLACE INTO stock_minute 
+                    INSERT OR REPLACE INTO stock_minute
                     (symbol, datetime, period, open, high, low, close, volume, money, adjust)
                     SELECT symbol, datetime, period, open, high, low, close, volume, money, adjust
                     FROM df
                 """)
 
                 logger.info(
-                    f"{symbol} ({period} {adjust}): 插入/更新 {len(df)} 条分钟数据"
+                    f"{jq_symbol} ({period} {adjust}): 插入/更新 {len(df)} 条分钟数据"
                 )
 
                 if self.use_cache:
-                    _global_cache.invalidate(table="stock_minute", symbol=symbol)
+                    _global_cache.invalidate(table="stock_minute", symbol=jq_symbol)
 
         self._retry_write(_do_insert)
 
     def insert_etf_minute(self, symbol: str, period: str, df: pd.DataFrame):
-        """插入 ETF 分钟数据"""
+        """插入 ETF 分钟数据。
+
+        参数:
+            symbol: ETF代码，支持多种格式，内部统一转换为聚宽格式存储
+            period: 周期
+            df: 分钟数据
+        """
         if df is None or df.empty:
             logger.warning(f"{symbol} ({period}): 无数据需要插入")
             return
 
+        # 统一转换为聚宽格式存储
+        jq_symbol = normalize_to_jq_format(symbol)
+
         df = df.copy()
-        df["symbol"] = symbol
+        df["symbol"] = jq_symbol  # 使用统一格式存储
         df["period"] = period
 
         if "datetime" not in df.columns:
@@ -965,16 +1000,16 @@ class DuckDBManager:
         def _do_insert():
             with self._get_connection() as conn:
                 conn.execute("""
-                    INSERT OR REPLACE INTO etf_minute 
+                    INSERT OR REPLACE INTO etf_minute
                     (symbol, datetime, period, open, high, low, close, volume, money)
                     SELECT symbol, datetime, period, open, high, low, close, volume, money
                     FROM df
                 """)
 
-                logger.info(f"{symbol} ({period}): 插入/更新 {len(df)} 条分钟数据")
+                logger.info(f"{jq_symbol} ({period}): 插入/更新 {len(df)} 条分钟数据")
 
                 if self.use_cache:
-                    _global_cache.invalidate(table="etf_minute", symbol=symbol)
+                    _global_cache.invalidate(table="etf_minute", symbol=jq_symbol)
 
         self._retry_write(_do_insert)
 
@@ -993,7 +1028,7 @@ class DuckDBManager:
         参数
         ----
         symbol : str
-            股票代码，如 'sh600000'
+            股票代码，支持多种格式，内部统一转换为聚宽格式查询
         period : str
             周期：1/5/15/30/60
         start : str
@@ -1013,9 +1048,12 @@ class DuckDBManager:
         if use_cache is None:
             use_cache = self.use_cache
 
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol)
+
         if use_cache:
             cached = _global_cache.get(
-                "stock_minute", symbol, start, end, period=period, adjust=adjust
+                "stock_minute", jq_symbol, start, end, period=period, adjust=adjust
             )
             if cached is not None:
                 return cached
@@ -1032,19 +1070,19 @@ class DuckDBManager:
                   AND datetime >= ? AND datetime <= ?
                 ORDER BY datetime
             """,
-                [symbol, period, adjust, start_dt, end_dt],
+                [jq_symbol, period, adjust, start_dt, end_dt],
             ).fetchdf()
 
             if df.empty:
-                logger.warning(f"{symbol} ({period} {adjust}): 数据库中无分钟数据")
+                logger.warning(f"{jq_symbol} ({period} {adjust}): 数据库中无分钟数据")
             else:
                 logger.info(
-                    f"{symbol} ({period} {adjust}): 查询到 {len(df)} 条分钟数据"
+                    f"{jq_symbol} ({period} {adjust}): 查询到 {len(df)} 条分钟数据"
                 )
 
             if use_cache and not df.empty:
                 _global_cache.set(
-                    "stock_minute", symbol, start, end, df, period=period, adjust=adjust
+                    "stock_minute", jq_symbol, start, end, df, period=period, adjust=adjust
                 )
 
             return df
@@ -1052,12 +1090,19 @@ class DuckDBManager:
     def get_etf_minute(
         self, symbol: str, period: str, start: str, end: str, use_cache: bool = None
     ) -> pd.DataFrame:
-        """查询 ETF 分钟数据（支持缓存）"""
+        """查询 ETF 分钟数据（支持缓存）。
+
+        参数:
+            symbol: ETF代码，支持多种格式，内部统一转换为聚宽格式查询
+        """
         if use_cache is None:
             use_cache = self.use_cache
 
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol)
+
         if use_cache:
-            cached = _global_cache.get("etf_minute", symbol, start, end, period=period)
+            cached = _global_cache.get("etf_minute", jq_symbol, start, end, period=period)
             if cached is not None:
                 return cached
 
@@ -1073,16 +1118,16 @@ class DuckDBManager:
                   AND datetime >= ? AND datetime <= ?
                 ORDER BY datetime
             """,
-                [symbol, period, start_dt, end_dt],
+                [jq_symbol, period, start_dt, end_dt],
             ).fetchdf()
 
             if df.empty:
-                logger.warning(f"{symbol} ({period}): 数据库中无分钟数据")
+                logger.warning(f"{jq_symbol} ({period}): 数据库中无分钟数据")
             else:
-                logger.info(f"{symbol} ({period}): 查询到 {len(df)} 条分钟数据")
+                logger.info(f"{jq_symbol} ({period}): 查询到 {len(df)} 条分钟数据")
 
             if use_cache and not df.empty:
-                _global_cache.set("etf_minute", symbol, start, end, df, period=period)
+                _global_cache.set("etf_minute", jq_symbol, start, end, df, period=period)
 
             return df
 
@@ -1103,7 +1148,7 @@ class DuckDBManager:
         table : str
             表名：stock_daily/etf_daily/index_daily/stock_minute/etf_minute
         symbol : str
-            代码
+            代码，支持多种格式，内部统一转换为聚宽格式查询
         start : str
             起始日期/时间 'YYYY-MM-DD' 或 'YYYY-MM-DD HH:MM:SS'
         end : str
@@ -1118,6 +1163,9 @@ class DuckDBManager:
         bool
             True 表示数据覆盖完整
         """
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol)
+
         with self._get_connection(read_only=True) as conn:
             if table == "stock_daily":
                 if adjust is None:
@@ -1128,7 +1176,7 @@ class DuckDBManager:
                     FROM stock_daily
                     WHERE symbol = ? AND adjust = ?
                 """,
-                    [symbol, adjust],
+                    [jq_symbol, adjust],
                 ).fetchone()
             elif table == "stock_minute":
                 if adjust is None:
@@ -1141,7 +1189,7 @@ class DuckDBManager:
                     FROM stock_minute
                     WHERE symbol = ? AND period = ? AND adjust = ?
                 """,
-                    [symbol, period, adjust],
+                    [jq_symbol, period, adjust],
                 ).fetchone()
             elif table == "etf_minute":
                 if period is None:
@@ -1152,7 +1200,7 @@ class DuckDBManager:
                     FROM etf_minute
                     WHERE symbol = ? AND period = ?
                 """,
-                    [symbol, period],
+                    [jq_symbol, period],
                 ).fetchone()
             else:
                 result = conn.execute(
@@ -1161,7 +1209,7 @@ class DuckDBManager:
                     FROM {table}
                     WHERE symbol = ?
                 """.format(table=table),
-                    [symbol],
+                    [jq_symbol],
                 ).fetchone()
 
             if result[0] is None:
@@ -1183,7 +1231,7 @@ class DuckDBManager:
         table : str
             表名
         symbol : str
-            代码（可选，不指定则统计全部）
+            代码（可选，不指定则统计全部），支持多种格式，内部统一转换为聚宽格式查询
         adjust : str
             复权类型（仅 stock_daily 需要）
 
@@ -1192,25 +1240,28 @@ class DuckDBManager:
         int
             记录数量
         """
+        # 统一转换为聚宽格式查询
+        jq_symbol = normalize_to_jq_format(symbol) if symbol else None
+
         with self._get_connection(read_only=True) as conn:
             if table == "stock_daily":
-                if symbol and adjust:
+                if jq_symbol and adjust:
                     count = conn.execute(
                         "SELECT COUNT(*) FROM stock_daily WHERE symbol=? AND adjust=?",
-                        [symbol, adjust],
+                        [jq_symbol, adjust],
                     ).fetchone()[0]
-                elif symbol:
+                elif jq_symbol:
                     count = conn.execute(
-                        "SELECT COUNT(*) FROM stock_daily WHERE symbol=?", [symbol]
+                        "SELECT COUNT(*) FROM stock_daily WHERE symbol=?", [jq_symbol]
                     ).fetchone()[0]
                 else:
                     count = conn.execute("SELECT COUNT(*) FROM stock_daily").fetchone()[
                         0
                     ]
             else:
-                if symbol:
+                if jq_symbol:
                     count = conn.execute(
-                        f"SELECT COUNT(*) FROM {table} WHERE symbol=?", [symbol]
+                        f"SELECT COUNT(*) FROM {table} WHERE symbol=?", [jq_symbol]
                     ).fetchone()[0]
                 else:
                     count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
@@ -1234,30 +1285,33 @@ class DuckDBManager:
         table : str
             表名
         symbol : str
-            代码（可选，不指定则清空全部）
+            代码（可选，不指定则清空全部），支持多种格式，内部统一转换为聚宽格式
         adjust : str
             复权类型（仅 stock_daily 需要）
         """
+        # 统一转换为聚宽格式
+        jq_symbol = normalize_to_jq_format(symbol) if symbol else None
+
         with self._get_connection() as conn:
             if table == "stock_daily":
-                if symbol and adjust:
+                if jq_symbol and adjust:
                     conn.execute(
                         "DELETE FROM stock_daily WHERE symbol=? AND adjust=?",
-                        [symbol, adjust],
+                        [jq_symbol, adjust],
                     )
                     logger.warning(
-                        f"已删除 {table} 中 symbol={symbol}, adjust={adjust} 的数据"
+                        f"已删除 {table} 中 symbol={jq_symbol}, adjust={adjust} 的数据"
                     )
-                elif symbol:
-                    conn.execute("DELETE FROM stock_daily WHERE symbol=?", [symbol])
-                    logger.warning(f"已删除 {table} 中 symbol={symbol} 的数据")
+                elif jq_symbol:
+                    conn.execute("DELETE FROM stock_daily WHERE symbol=?", [jq_symbol])
+                    logger.warning(f"已删除 {table} 中 symbol={jq_symbol} 的数据")
                 else:
                     conn.execute("DELETE FROM stock_daily")
                     logger.warning(f"已清空表 {table}")
             else:
-                if symbol:
-                    conn.execute(f"DELETE FROM {table} WHERE symbol=?", [symbol])
-                    logger.warning(f"已删除 {table} 中 symbol={symbol} 的数据")
+                if jq_symbol:
+                    conn.execute(f"DELETE FROM {table} WHERE symbol=?", [jq_symbol])
+                    logger.warning(f"已删除 {table} 中 symbol={jq_symbol} 的数据")
                 else:
                     conn.execute(f"DELETE FROM {table}")
                     logger.warning(f"已清空表 {table}")

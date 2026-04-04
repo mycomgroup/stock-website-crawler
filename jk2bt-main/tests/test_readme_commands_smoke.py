@@ -44,19 +44,24 @@ class TestInstallationValidationCommands:
         assert result.stdout.strip() == "1.0.0", f"版本不正确: {result.stdout.strip()}"
 
     def test_core_smoke_tests(self):
-        """测试核心链路smoke命令"""
+        """测试核心链路smoke命令 - 真实执行README示例命令"""
         # README命令: pytest -q tests/test_package_import.py tests/integration/test_jq_runner.py
-        # 只运行快速收集检查
+        # 真实执行完整链路测试，覆盖README主流程
         result = subprocess.run(
-            [sys.executable, "-m", "pytest", "-q", "--collect-only",
-             "tests/test_package_import.py"],
+            [sys.executable, "-m", "pytest", "-q",
+             "tests/test_package_import.py",
+             "tests/integration/test_jq_runner.py::test_simple_strategy",
+             "--tb=short"],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=60
+            timeout=180
         )
-        assert result.returncode == 0, f"测试收集失败: {result.stderr}"
-        assert "test_package_import" in result.stdout, "应包含测试文件"
+        # 硬验收：测试必须通过
+        assert result.returncode == 0, \
+            f"核心链路smoke测试失败 - 硬验收:\n" \
+            f"  stdout: {result.stdout[-500:]}\n" \
+            f"  stderr: {result.stderr[-500:]}"
 
     def test_pytest_collect_only(self):
         """测试扫描全部测试用例命令"""
@@ -547,6 +552,132 @@ class TestREADMEConsistency:
 
         assert "[![测试收集]" in content, "应有测试收集徽章"
         assert "[![Python 3.9+]" in content, "应有Python版本徽章"
+
+
+class TestREADMEFullWorkflow:
+    """README完整链路验收测试 - 干净机器验收gate"""
+
+    def test_validation_strategy_exists(self):
+        """硬验收：仓库内必须有验证策略文件"""
+        # 干净机器验收必须使用仓库内资源，不允许外部路径
+        strategy_file = os.path.join(PROJECT_ROOT, "strategies", "validation_v4_double_ma.txt")
+        if not os.path.exists(strategy_file):
+            pytest.fail(
+                f"验证策略文件不存在 - 硬验收失败:\n"
+                f"  期望路径: {strategy_file}\n"
+                f"  仓库必须包含validation_v4策略以支持干净机器验收"
+            )
+
+    def test_run_readme_example_strategy(self):
+        """硬验收：真实执行README示例策略"""
+        # README示例: run_jq_strategy(strategy_file='策略.txt', ...)
+        strategy_file = os.path.join(PROJECT_ROOT, "strategies", "validation_v4_double_ma.txt")
+
+        # 硬验收：策略文件必须存在
+        if not os.path.exists(strategy_file):
+            pytest.fail(f"策略文件不存在 - 硬验收失败: {strategy_file}")
+
+        # 真实执行策略运行
+        from jk2bt import run_jq_strategy
+
+        try:
+            result = run_jq_strategy(
+                strategy_file=strategy_file,
+                start_date="2022-01-01",
+                end_date="2022-12-31",
+                initial_capital=1000000,
+                stock_pool=["600519.XSHG", "000858.XSHE", "000333.XSHE", "600036.XSHG", "601318.XSHG"],
+            )
+
+            # 硬验收：结果必须有效
+            if result is None:
+                pytest.fail("策略返回None - 硬验收失败")
+
+            # 硬验收：必须有基本字段
+            assert "final_value" in result, \
+                f"结果缺少final_value字段 - 硬验收失败: {result.keys()}"
+            assert "pnl_pct" in result, \
+                f"结果缺少pnl_pct字段 - 硬验收失败: {result.keys()}"
+
+            # 硬验收：数值必须合理
+            assert result["final_value"] > 0, \
+                f"最终资金无效 - 硬验收失败: {result['final_value']}"
+
+        except Exception as e:
+            import traceback
+            tb_lines = traceback.format_exc()
+            pytest.fail(
+                f"README示例策略运行失败 - 硬验收:\n"
+                f"  策略文件: {strategy_file}\n"
+                f"  错误: {str(e)}\n"
+                f"  Traceback:\n{tb_lines[-10:]}"
+            )
+
+    def test_run_daily_strategy_batch_readme_command(self):
+        """硬验收：真实执行README批量运行命令"""
+        # README命令: python3 run_daily_strategy_batch.py --strategies_dir strategies --limit 1
+        result = subprocess.run(
+            [sys.executable, "run_daily_strategy_batch.py",
+             "--strategies_dir", "strategies",
+             "--limit", "1"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=180
+        )
+
+        # 硬验收：命令必须成功执行
+        assert result.returncode == 0, \
+            f"README批量运行命令失败 - 硬验收:\n" \
+            f"  stdout: {result.stdout[-500:]}\n" \
+            f"  stderr: {result.stderr[-500:]}"
+
+        # 硬验收：必须有输出表明策略被发现和执行
+        assert "发现" in result.stdout or "总数" in result.stdout or "策略" in result.stdout, \
+            f"批量运行输出异常 - 硬验收:\n" \
+            f"  stdout: {result.stdout[-200:]}"
+
+    def test_installation_validation_workflow(self):
+        """硬验收：README安装后验收完整链路"""
+        # README安装后验收命令: pytest -q tests/test_package_import.py tests/integration/test_jq_runner.py
+        result = subprocess.run(
+            [sys.executable, "-m", "pytest", "-q",
+             "tests/test_package_import.py",
+             "tests/integration/test_jq_runner.py::test_simple_strategy",
+             "--tb=short"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=180
+        )
+
+        # 硬验收：测试必须通过
+        assert result.returncode == 0, \
+            f"README安装后验收命令失败 - 硬验收:\n" \
+            f"  stdout: {result.stdout[-500:]}\n" \
+            f"  stderr: {result.stderr[-500:]}"
+
+    def test_quick_start_import_and_signature(self):
+        """硬验收：README快速开始API导入和签名"""
+        # README快速开始: from jk2bt import run_jq_strategy
+        from jk2bt import run_jq_strategy
+
+        # 硬验收：函数必须可调用
+        assert callable(run_jq_strategy), "run_jq_strategy必须可调用"
+
+        # 硬验收：签名必须匹配README示例
+        import inspect
+        sig = inspect.signature(run_jq_strategy)
+        params = list(sig.parameters.keys())
+
+        assert "strategy_file" in params, \
+            f"run_jq_strategy缺少strategy_file参数 - 硬验收失败: {params}"
+        assert "start_date" in params, \
+            f"run_jq_strategy缺少start_date参数 - 硬验收失败: {params}"
+        assert "end_date" in params, \
+            f"run_jq_strategy缺少end_date参数 - 硬验收失败: {params}"
+        assert "stock_pool" in params, \
+            f"run_jq_strategy缺少stock_pool参数 - 硬验收失败: {params}"
 
 
 if __name__ == "__main__":

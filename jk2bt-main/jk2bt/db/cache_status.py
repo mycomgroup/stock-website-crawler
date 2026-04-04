@@ -9,7 +9,7 @@ db/cache_status.py
 4. 缓存范围统计
 
 格式兼容 (GATE-3):
-- 支持 akshare 格式 (sh600519) 和聚宽格式 (600519.XSHG) 输入
+- 支持 akshare 格式 (sh600519)、聚宽格式 (600519.XSHG)、纯数字 (600519) 三种格式输入
 - 内部统一转换为聚宽格式查询数据库
 """
 
@@ -20,42 +20,9 @@ from datetime import datetime
 import pandas as pd
 
 from .duckdb_manager import DuckDBManager
+from jk2bt.utils.code_converter import normalize_to_jq_format
 
 logger = logging.getLogger(__name__)
-
-
-def _normalize_to_jq_format(symbol: str) -> str:
-    """
-    将各种股票代码格式统一转换为聚宽格式。
-
-    支持:
-    - akshare格式: sh600519, sz000001
-    - 聚宽格式: 600519.XSHG, 000001.XSHE
-    - 纯数字: 600519, 000001
-
-    返回:
-    - 聚宽格式: 600519.XSHG, 000001.XSHE
-    """
-    if symbol is None:
-        return None
-
-    symbol = str(symbol)
-
-    # 已经是聚宽格式
-    if symbol.endswith('.XSHG') or symbol.endswith('.XSHE'):
-        return symbol
-
-    # akshare格式 sh/sz 前缀
-    if symbol.startswith('sh'):
-        return symbol[2:].zfill(6) + '.XSHG'
-    if symbol.startswith('sz'):
-        return symbol[2:].zfill(6) + '.XSHE'
-
-    # 纯数字，按首位判断交易所
-    code_num = symbol.zfill(6)
-    if code_num.startswith('6'):
-        return code_num + '.XSHG'
-    return code_num + '.XSHE'
 
 
 class CacheManager:
@@ -92,7 +59,7 @@ class CacheManager:
         }
 
         # 统一转换为聚宽格式查询数据库
-        jq_symbol = _normalize_to_jq_format(symbol)
+        jq_symbol = normalize_to_jq_format(symbol)
 
         try:
             count = self.db.count_records("stock_daily", jq_symbol, adjust)
@@ -141,7 +108,7 @@ class CacheManager:
         }
 
         # 统一转换为聚宽格式查询数据库
-        jq_symbol = _normalize_to_jq_format(symbol)
+        jq_symbol = normalize_to_jq_format(symbol)
 
         try:
             count = self.db.count_records("etf_daily", jq_symbol)
@@ -190,7 +157,7 @@ class CacheManager:
         }
 
         # 统一转换为聚宽格式查询数据库
-        jq_symbol = _normalize_to_jq_format(symbol)
+        jq_symbol = normalize_to_jq_format(symbol)
 
         try:
             count = self.db.count_records("index_daily", jq_symbol)

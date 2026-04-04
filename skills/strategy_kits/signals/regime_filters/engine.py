@@ -14,6 +14,7 @@ from .crowding_filter import calc_crowding_rate
 from .newhigh_filter import calc_new_high_ratio
 from .volatility_filter import calc_volatility_regime
 from .momentum_filter import calc_momentum_trend
+from .cvix_filter import calc_cvix_regime
 
 
 def run_regime_gate(
@@ -84,7 +85,14 @@ def run_regime_gate(
             sub_signals.append(s)
             raw_scores["momentum_trend"] = s.value
 
-    # 6. 风险标志解析（简化版：直接基于阈值判断）
+    # 6. cvix_regime
+    if sig_cfg.get("cvix_regime", {}).get("enabled", False):
+        s = calc_cvix_regime(market_data, sig_cfg["cvix_regime"], calc_date)
+        if s:
+            sub_signals.append(s)
+            raw_scores["cvix_regime"] = s.value
+
+    # 7. 风险标志解析（简化版：直接基于阈值判断）
     risk_cfg = cfg.get("risk_flags", {})
     for name, rc in risk_cfg.items():
         if not rc.get("enabled", False):

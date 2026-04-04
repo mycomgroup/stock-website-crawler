@@ -1014,15 +1014,8 @@ def get_all_securities(types=['stock'], date=None):
 # 全局变量容器（在策略执行时动态绑定）
 # =====================================================================
 
-# 当前策略实例（全局访问）
-_current_strategy_instance = None
-
-
-def _get_current_strategy():
-    """获取当前策略实例"""
-    global _current_strategy_instance
-    return _current_strategy_instance
-
+# 注意：_get_current_strategy 从 strategy_wrapper.py 导入，不要在此重新定义
+# 策略实例的设置/获取统一由 strategy_wrapper.py 管理
 
 # Wrapper for get_current_data to automatically pass the current strategy
 def get_current_data_wrapper():
@@ -2048,12 +2041,26 @@ def run_jq_strategy(
 
     logger.info("=" * 80)
 
+    # 收集运行时错误（GATE-2修复：runtime_errors作为验收必要条件）
+    runtime_errors = []
+    if hasattr(strategy, 'runtime_errors'):
+        runtime_errors = strategy.runtime_errors
+
+    # 如果有运行时错误，打印警告
+    if runtime_errors:
+        logger.warning(f"检测到 {len(runtime_errors)} 个运行时错误:")
+        for err in runtime_errors[:5]:  # 只显示前5个
+            logger.warning(f"  - {err['function']}: {err['error_type']} - {err['error'][:50]}")
+        if len(runtime_errors) > 5:
+            logger.warning(f"  ... 还有 {len(runtime_errors) - 5} 个错误")
+
     return {
         "cerebro": cerebro,
         "strategy": strategy,
         "final_value": final_value,
         "pnl": pnl,
         "pnl_pct": pnl_pct,
+        "runtime_errors": runtime_errors,  # GATE-2修复：返回runtime_errors
         "resource_pack": get_resource_pack() if enable_resource_pack else None,
         "strategy_name": strategy_name if enable_resource_pack else None,
     }

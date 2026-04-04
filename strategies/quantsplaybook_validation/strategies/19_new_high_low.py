@@ -27,12 +27,12 @@ def handle_bar(context, bar_dict):
 
     for i in range(lookback, len(closes)):
         window = closes[i-lookback:i]
-        if closes[i-1] >= np.max(window):  # 创新高
+        if closes[i] >= np.max(window):  # 创新高（当日收盘价 vs 过去lookback天）
             highs.append(1)
         else:
             highs.append(0)
 
-        if closes[i-1] <= np.min(window):  # 创新低
+        if closes[i] <= np.min(window):  # 创新低（当日收盘价 vs 过去lookback天）
             lows.append(1)
         else:
             lows.append(0)

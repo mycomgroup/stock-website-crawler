@@ -119,9 +119,14 @@ def get_index_weights(index_code, date=None, cache_dir="index_cache", robust=Fal
         if df.empty:
             result_data = pd.DataFrame(columns=["weight", "display_name"])
         else:
-            result_data = pd.DataFrame(index=df.get("stock_code", df.get("code", [])))
-            result_data["weight"] = df.get("weight", 0).tolist() if "weight" in df.columns else 0
-            result_data["display_name"] = df.get("stock_name", "").tolist() if "stock_name" in df.columns else ""
+            # 获取股票代码列（优先使用stock_code，fallback到code）
+            code_col = "stock_code" if "stock_code" in df.columns else "code"
+            stock_codes = df[code_col].tolist() if code_col in df.columns else []
+            result_data = pd.DataFrame(index=stock_codes)
+            result_data["weight"] = df["weight"].tolist() if "weight" in df.columns else [0] * len(stock_codes)
+            # 获取股票名称列（优先使用stock_name，fallback到display_name）
+            name_col = "stock_name" if "stock_name" in df.columns else "display_name"
+            result_data["display_name"] = df[name_col].tolist() if name_col in df.columns else [""] * len(stock_codes)
 
         if robust:
             return RobustResult(

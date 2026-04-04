@@ -79,8 +79,6 @@ def handle_bar(context, bar_dict):
 
     weights = {}
     for etf in context.etfs:
-        if etf is None:  # placeholder, actual check via history_bars
-            pass
         try:
             prices = history_bars(etf, 255, '1d', 'close')
             if prices is None or len(prices) < 63 or prices[-1] == 0:
@@ -110,7 +108,10 @@ def handle_bar(context, bar_dict):
     if total_w > 0:
         for etf, w in long_weights.items():
             if w > 0:
-                target_value = total_value * (w / total_w) * 0.95
+                # 单个ETF最多持仓40%，避免过度集中
+                raw_weight = w / total_w
+                capped_weight = min(raw_weight, 0.40)
+                target_value = total_value * capped_weight * 0.95
                 order_target_value(etf, target_value)
 
     print(f"MLT-TSMOM权重: {weights}")

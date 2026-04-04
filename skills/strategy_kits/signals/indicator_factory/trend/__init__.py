@@ -6,11 +6,14 @@ Trend Following Signals
 
 from .alligator import AlligatorSignal, calculate_alligator_indicator
 from .macd import MACDSignal
+from .quality_momentum import QualityMomentumSignal, calculate_quality_momentum
 
 __all__ = [
     "MACDSignal",
     "AlligatorSignal",
     "calculate_alligator_indicator",
+    "QualityMomentumSignal",
+    "calculate_quality_momentum",
     # "AOMomentumSignal",
     # "ICUMASignal",
 ]

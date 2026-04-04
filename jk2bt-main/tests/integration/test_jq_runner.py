@@ -55,7 +55,7 @@ def rebalance(context):
     with open(test_file, "w", encoding="utf-8") as f:
         f.write(test_strategy)
 
-    # 运行策略
+    # 运行策略 - 硬验收：必须成功运行
     try:
         result = run_jq_strategy(
             strategy_file=test_file,
@@ -65,18 +65,34 @@ def rebalance(context):
             stock_pool=["600519.XSHG", "000858.XSHE", "000333.XSHE"],
         )
 
-        if result:
-            print("\n✅ 测试通过！策略成功运行")
-            print(f"最终资金: {result['final_value']:,.2f}")
-            print(f"收益率: {result['pnl_pct']:.2f}%")
-        else:
-            print("\n❌ 测试失败")
+        # 硬验收：结果必须有效
+        if result is None:
+            pytest.fail("策略返回None - 硬验收失败")
+
+        # 硬验收：必须有基本字段
+        assert "final_value" in result, \
+            f"结果缺少final_value字段 - 硬验收失败: {result.keys()}"
+
+        assert "pnl_pct" in result, \
+            f"结果缺少pnl_pct字段 - 硬验收失败: {result.keys()}"
+
+        # 硬验收：数值必须合理
+        assert result["final_value"] > 0, \
+            f"最终资金无效 - 硬验收失败: {result['final_value']}"
+
+        print(f"\n✅ 测试通过！策略成功运行")
+        print(f"最终资金: {result['final_value']:,.2f}")
+        print(f"收益率: {result['pnl_pct']:.2f}%")
 
     except Exception as e:
-        print(f"\n❌ 测试失败: {e}")
         import traceback
-
-        traceback.print_exc()
+        tb_lines = traceback.format_exc()
+        # 硬验收：异常即失败
+        pytest.fail(
+            f"策略运行异常 - 硬验收失败:\n"
+            f"  错误: {str(e)}\n"
+            f"  Traceback:\n{tb_lines[-10:]}"
+        )
 
     finally:
         # 清理测试文件
@@ -85,17 +101,25 @@ def rebalance(context):
 
 
 def test_real_strategy():
-    """测试真实策略文件"""
+    """测试真实策略文件 - 使用仓库内策略"""
 
     print("\n\n测试2: 真实策略文件")
     print("=" * 80)
 
-    # 使用真实策略文件
-    strategy_file = "../jkcode/jkcode/03 一个简单而持续稳定的懒人超额收益策略.txt"
+    # 使用仓库内的真实策略文件（干净机器验收必须使用仓库内资源）
+    # 项目根目录相对于本测试文件的位置（tests/integration -> tests -> project_root）
+    integration_dir = os.path.dirname(os.path.abspath(__file__))
+    tests_dir = os.path.dirname(integration_dir)
+    project_root = os.path.dirname(tests_dir)
+    strategy_file = os.path.join(project_root, "strategies", "validation_v4_double_ma.txt")
 
+    # 硬验收：策略文件必须存在，不允许静默跳过
     if not os.path.exists(strategy_file):
-        print(f"策略文件不存在: {strategy_file}")
-        return
+        pytest.fail(
+            f"策略文件不存在 - 硬验收失败:\n"
+            f"  期望路径: {strategy_file}\n"
+            f"  仓库内必须包含验证策略文件以支持干净机器验收"
+        )
 
     # 沪深300成分股（示例）
     hs300_stocks = [
@@ -120,18 +144,35 @@ def test_real_strategy():
             stock_pool=hs300_stocks[:5],  # 只测试前5只
         )
 
-        if result:
-            print("\n✅ 真实策略运行成功！")
-            print(f"最终资金: {result['final_value']:,.2f}")
-            print(f"收益率: {result['pnl_pct']:.2f}%")
-        else:
-            print("\n❌ 策略运行失败")
+        # 硬验收：结果必须有效
+        if result is None:
+            pytest.fail("真实策略返回None - 硬验收失败")
+
+        # 硬验收：必须有基本字段
+        assert "final_value" in result, \
+            f"结果缺少final_value字段 - 硬验收失败: {result.keys()}"
+
+        assert "pnl_pct" in result, \
+            f"结果缺少pnl_pct字段 - 硬验收失败: {result.keys()}"
+
+        # 硬验收：数值必须合理
+        assert result["final_value"] > 0, \
+            f"最终资金无效 - 硬验收失败: {result['final_value']}"
+
+        print(f"\n✅ 真实策略运行成功！")
+        print(f"最终资金: {result['final_value']:,.2f}")
+        print(f"收益率: {result['pnl_pct']:.2f}%")
 
     except Exception as e:
-        print(f"\n❌ 策略运行失败: {e}")
         import traceback
-
-        traceback.print_exc()
+        tb_lines = traceback.format_exc()
+        # 硬验收：异常即失败
+        pytest.fail(
+            f"真实策略运行异常 - 硬验收失败:\n"
+            f"  策略文件: {strategy_file}\n"
+            f"  错误: {str(e)}\n"
+            f"  Traceback:\n{tb_lines[-10:]}"
+        )
 
 
 def test_utf8_encoding():

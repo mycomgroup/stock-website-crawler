@@ -2,13 +2,31 @@
 """
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Union
 import pandas as pd
 import numpy as np
 import logging
 
 
 logger = logging.getLogger(__name__)
+
+
+class PortfolioReturnsMixin:
+    """Mixin providing common portfolio returns calculation for risk rules"""
+
+    def _calculate_portfolio_returns(
+        self, weights: pd.DataFrame, returns_data: pd.DataFrame
+    ) -> Union[np.ndarray, pd.Series]:
+        """Calculate portfolio returns from individual asset returns"""
+        weighted_returns = pd.DataFrame()
+
+        for _, row in weights.iterrows():
+            code = str(row['code'])
+            weight = row['target_weight']
+            if code in returns_data.columns:
+                weighted_returns[code] = returns_data[code] * weight
+
+        return weighted_returns.sum(axis=1)
 
 
 class RiskRule:
@@ -93,7 +111,7 @@ class IndustryConcentrationRule(RiskRule):
         return ctx
 
 
-class VaRRule(RiskRule):
+class VaRRule(PortfolioReturnsMixin, RiskRule):
     """Value at Risk rule"""
     def __init__(self, max_var: float = 0.05, confidence: float = 0.95, horizon: int = 1):
         self.max_var = max_var
@@ -132,21 +150,8 @@ class VaRRule(RiskRule):
         portfolio_returns = self._calculate_portfolio_returns(weights, returns_data)
         return abs(np.percentile(portfolio_returns, (1 - self.confidence) * 100))
 
-    def _calculate_portfolio_returns(self, weights: pd.DataFrame, returns_data: pd.DataFrame) -> np.ndarray:
-        """Calculate portfolio returns from individual asset returns"""
-        # Merge weights with returns data
-        weighted_returns = pd.DataFrame()
 
-        for _, row in weights.iterrows():
-            code = str(row['code'])
-            weight = row['target_weight']
-            if code in returns_data.columns:
-                weighted_returns[code] = returns_data[code] * weight
-
-        return weighted_returns.sum(axis=1).values
-
-
-class CVaRRule(RiskRule):
+class CVaRRule(PortfolioReturnsMixin, RiskRule):
     """Conditional Value at Risk (Expected Shortfall) rule"""
     def __init__(self, max_cvar: float = 0.07, confidence: float = 0.95):
         self.max_cvar = max_cvar
@@ -184,20 +189,8 @@ class CVaRRule(RiskRule):
         tail_losses = portfolio_returns[portfolio_returns <= var_threshold]
         return abs(np.mean(tail_losses)) if len(tail_losses) > 0 else 0
 
-    def _calculate_portfolio_returns(self, weights: pd.DataFrame, returns_data: pd.DataFrame) -> np.ndarray:
-        """Calculate portfolio returns from individual asset returns"""
-        weighted_returns = pd.DataFrame()
 
-        for _, row in weights.iterrows():
-            code = str(row['code'])
-            weight = row['target_weight']
-            if code in returns_data.columns:
-                weighted_returns[code] = returns_data[code] * weight
-
-        return weighted_returns.sum(axis=1).values
-
-
-class VolatilityRule(RiskRule):
+class VolatilityRule(PortfolioReturnsMixin, RiskRule):
     """Portfolio volatility control rule"""
     def __init__(self, max_volatility: float = 0.25):  # 25% annual volatility
         self.max_volatility = max_volatility
@@ -231,18 +224,6 @@ class VolatilityRule(RiskRule):
         """Calculate annualized portfolio volatility"""
         portfolio_returns = self._calculate_portfolio_returns(weights, returns_data)
         return np.std(portfolio_returns) * np.sqrt(252)  # Annualize
-
-    def _calculate_portfolio_returns(self, weights: pd.DataFrame, returns_data: pd.DataFrame) -> np.ndarray:
-        """Calculate portfolio returns"""
-        weighted_returns = pd.DataFrame()
-
-        for _, row in weights.iterrows():
-            code = str(row['code'])
-            weight = row['target_weight']
-            if code in returns_data.columns:
-                weighted_returns[code] = returns_data[code] * weight
-
-        return weighted_returns.sum(axis=1).values
 
 
 class StressTestRule(RiskRule):
@@ -342,20 +323,8 @@ class MaximumDrawdownRule(RiskRule):
         drawdown = (cumulative - running_max) / running_max
         return abs(np.min(drawdown))
 
-    def _calculate_portfolio_returns(self, weights: pd.DataFrame, returns_data: pd.DataFrame) -> np.ndarray:
-        """Calculate portfolio returns"""
-        weighted_returns = pd.DataFrame()
 
-        for _, row in weights.iterrows():
-            code = str(row['code'])
-            weight = row['target_weight']
-            if code in returns_data.columns:
-                weighted_returns[code] = returns_data[code] * weight
-
-        return weighted_returns.sum(axis=1).values
-
-
-class BetaRule(RiskRule):
+class BetaRule(PortfolioReturnsMixin, RiskRule):
     """Portfolio beta control rule"""
     def __init__(self, max_beta: float = 1.5, benchmark: str = '000001'):  # HS300
         self.max_beta = max_beta
@@ -404,20 +373,8 @@ class BetaRule(RiskRule):
 
         return covariance / variance if variance > 0 else 1.0
 
-    def _calculate_portfolio_returns(self, weights: pd.DataFrame, returns_data: pd.DataFrame) -> pd.Series:
-        """Calculate portfolio returns"""
-        weighted_returns = pd.DataFrame()
 
-        for _, row in weights.iterrows():
-            code = str(row['code'])
-            weight = row['target_weight']
-            if code in returns_data.columns:
-                weighted_returns[code] = returns_data[code] * weight
-
-        return weighted_returns.sum(axis=1)
-
-
-class SharpeRatioRule(RiskRule):
+class SharpeRatioRule(PortfolioReturnsMixin, RiskRule):
     """Minimum Sharpe ratio rule"""
     def __init__(self, min_sharpe: float = 0.5, risk_free_rate: float = 0.03):
         self.min_sharpe = min_sharpe
@@ -455,20 +412,8 @@ class SharpeRatioRule(RiskRule):
 
         return np.mean(excess_returns) / np.std(excess_returns) * np.sqrt(252)  # Annualize
 
-    def _calculate_portfolio_returns(self, weights: pd.DataFrame, returns_data: pd.DataFrame) -> np.ndarray:
-        """Calculate portfolio returns"""
-        weighted_returns = pd.DataFrame()
 
-        for _, row in weights.iterrows():
-            code = str(row['code'])
-            weight = row['target_weight']
-            if code in returns_data.columns:
-                weighted_returns[code] = returns_data[code] * weight
-
-        return weighted_returns.sum(axis=1).values
-
-
-class TrackingErrorRule(RiskRule):
+class TrackingErrorRule(PortfolioReturnsMixin, RiskRule):
     """Tracking error control rule"""
     def __init__(self, max_tracking_error: float = 0.08, benchmark: str = '000001'):
         self.max_tracking_error = max_tracking_error
@@ -512,18 +457,6 @@ class TrackingErrorRule(RiskRule):
         differences = port_ret - bench_ret
         return np.std(differences) * np.sqrt(252)  # Annualize
 
-    def _calculate_portfolio_returns(self, weights: pd.DataFrame, returns_data: pd.DataFrame) -> pd.Series:
-        """Calculate portfolio returns"""
-        weighted_returns = pd.DataFrame()
-
-        for _, row in weights.iterrows():
-            code = str(row['code'])
-            weight = row['target_weight']
-            if code in returns_data.columns:
-                weighted_returns[code] = returns_data[code] * weight
-
-        return weighted_returns.sum(axis=1)
-
 
 class CompositeRiskEngine:
     def __init__(self, rules: List[RiskRule]):
@@ -545,14 +478,14 @@ class CompositeRiskEngine:
                 portfolio_returns = self._calculate_portfolio_returns(weights, returns_data)
                 metrics['var_95'] = abs(np.percentile(portfolio_returns, 5))
                 metrics['var_99'] = abs(np.percentile(portfolio_returns, 1))
-            except:
+            except Exception:
                 metrics['var_95'] = 0.0
                 metrics['var_99'] = 0.0
 
             # Volatility
             try:
                 metrics['volatility'] = np.std(portfolio_returns) * np.sqrt(252)
-            except:
+            except Exception:
                 metrics['volatility'] = 0.0
 
             # Sharpe ratio (assuming 3% risk-free rate)
@@ -560,7 +493,7 @@ class CompositeRiskEngine:
                 risk_free_daily = 0.03 / 252
                 excess_returns = portfolio_returns - risk_free_daily
                 metrics['sharpe_ratio'] = np.mean(excess_returns) / np.std(excess_returns) * np.sqrt(252)
-            except:
+            except Exception:
                 metrics['sharpe_ratio'] = 0.0
 
         # Maximum drawdown
@@ -571,7 +504,7 @@ class CompositeRiskEngine:
                 running_max = np.maximum.accumulate(cumulative)
                 drawdown = (cumulative - running_max) / running_max
                 metrics['max_drawdown'] = abs(np.min(drawdown))
-            except:
+            except Exception:
                 metrics['max_drawdown'] = 0.0
 
         # Beta
@@ -587,7 +520,7 @@ class CompositeRiskEngine:
                     metrics['beta'] = covariance / variance if variance > 0 else 1.0
                 else:
                     metrics['beta'] = 1.0
-            except:
+            except Exception:
                 metrics['beta'] = 1.0
 
         return metrics

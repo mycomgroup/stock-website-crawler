@@ -180,6 +180,10 @@ class TestValidationStrategies:
             assert result is not None, f"策略{strategy['id']}运行返回None"
             assert 'final_value' in result, f"策略{strategy['id']}结果缺少final_value"
             assert 'pnl_pct' in result, f"策略{strategy['id']}结果缺少pnl_pct"
+            # GATE-2修复：runtime_errors为空是验收必要条件
+            assert 'runtime_errors' in result, f"策略{strategy['id']}结果缺少runtime_errors字段"
+            runtime_errors = result.get('runtime_errors', [])
+            assert len(runtime_errors) == 0, f"策略{strategy['id']}有{len(runtime_errors)}个runtime_errors，不应验收通过"
 
             # 验证结果合理性
             assert result['final_value'] > 0, f"策略{strategy['id']}最终资金<=0"
@@ -242,10 +246,24 @@ class TestValidationStrategies:
                     stock_pool=pool[:10],
                 )
 
-                if result is None or result['final_value'] <= 0:
+                # GATE-2修复：runtime_errors检查
+                if result is None:
                     failed.append({
                         'id': strategy['id'],
-                        'reason': '运行结果异常'
+                        'reason': '运行结果为None'
+                    })
+                elif result['final_value'] <= 0:
+                    failed.append({
+                        'id': strategy['id'],
+                        'reason': '运行结果异常：final_value<=0'
+                    })
+                elif result.get('runtime_errors') and len(result['runtime_errors']) > 0:
+                    # 有runtime_errors，P0策略必须失败
+                    runtime_errors = result['runtime_errors']
+                    first_error = runtime_errors[0]
+                    failed.append({
+                        'id': strategy['id'],
+                        'reason': f"runtime_errors={len(runtime_errors)}个: {first_error['function']} - {first_error['error_type']}"
                     })
 
             except Exception as e:

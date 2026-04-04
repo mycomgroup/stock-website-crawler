@@ -75,11 +75,6 @@ def init(context):
 def handle_bar(context, bar_dict):
     current_quarter = (context.now.month - 1) // 3
     if current_quarter == context.quarter:
-        # 按优化权重持仓
-        if context.weights is not None:
-            total_value = context.portfolio.total_value
-            for etf, w in zip(context.etfs, context.weights):
-                order_target_value(etf, total_value * w * 0.95)
         return
     context.quarter = current_quarter
 

@@ -9,6 +9,8 @@ on:
       - 'jk2bt/market_data/*.py'
       - 'tools/data/prewarm_data.py'
       - 'tests/test_offline_mode.py'
+      - 'tests/validation/test_golden_benchmark.py'
+      - 'strategies/validation_v4_double_ma.txt'
   pull_request:
     branches: [main, master]
   workflow_dispatch:  # 手动触发
@@ -206,11 +208,80 @@ jobs:
             -k "TestCacheStatusIntegration" \
             --tb=short
 
+  # 金标基准策略测试 - 硬验收门槛
+  golden-benchmark-test:
+    name: Golden Benchmark Strategy Test (Hard Gate)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pandas numpy backtrader akshare duckdb statsmodels pyyaml requests tqdm
+          pip install -e .
+
+      - name: Verify strategy file exists
+        run: |
+          # 硬验收：金标策略文件必须存在
+          if [ ! -f "strategies/validation_v4_double_ma.txt" ]; then
+            echo "ERROR: Golden benchmark strategy file missing!"
+            echo "File: strategies/validation_v4_double_ma.txt"
+            exit 1
+          fi
+          echo "Strategy file verified: validation_v4_double_ma.txt"
+
+      - name: Run golden benchmark tests
+        run: |
+          # 硬验收：策略必须能运行，结果必须有效
+          pytest tests/validation/test_golden_benchmark.py -v \
+            -k "test_config_is_valid or test_strategy_runs_without_error or test_golden_benchmark_quick" \
+            --tb=short \
+            --capture=no
+
+      - name: Report golden benchmark results
+        if: always()
+        run: |
+          echo "Golden benchmark test completed"
+          echo ""
+          echo "Hard gate verification:"
+          echo "1. Strategy file exists: validation_v4_double_ma.txt"
+          echo "2. Strategy runs without error"
+          echo "3. Results have valid final_value and pnl_pct"
+          echo "4. If baseline exists, results within tolerance"
+
+      - name: Fail if golden benchmark failed
+        if: failure()
+        run: |
+          echo "========================================="
+          echo "GOLDEN BENCHMARK FAILED - HARD GATE"
+          echo "========================================="
+          echo ""
+          echo "This is a hard acceptance gate that CI MUST pass."
+          echo "Possible causes:"
+          echo "  1. Strategy file missing or corrupted"
+          echo "  2. Data cache incomplete"
+          echo "  3. Strategy logic broken"
+          echo "  4. Baseline mismatch (if baseline exists)"
+          echo ""
+          echo "Fix steps:"
+          echo "  1. Check strategy file: strategies/validation_v4_double_ma.txt"
+          echo "  2. Verify data availability"
+          echo "  3. Run locally to diagnose"
+          exit 1
+
   # 测试汇总
   test-summary:
     name: Test Summary
     runs-on: ubuntu-latest
-    needs: [offline-empty-test, offline-prewarmed-test, cache-status-integration]
+    needs: [offline-empty-test, offline-prewarmed-test, cache-status-integration, golden-benchmark-test]
     if: always()
 
     steps:
@@ -222,15 +293,20 @@ jobs:
           echo "1. Empty cache environment - Error messages friendly"
           echo "2. Prewarmed cache environment - Offline run succeeds"
           echo "3. Cache status integration - CacheManager functionality"
+          echo "4. Golden benchmark strategy - Hard gate validation"
 
       - name: Final status
         run: |
           if [ "${{ needs.offline-empty-test.result }}" == "success" ] && \
              [ "${{ needs.offline-prewarmed-test.result }}" == "success" ] && \
-             [ "${{ needs.cache-status-integration.result }}" == "success" ]; then
+             [ "${{ needs.cache-status-integration.result }}" == "success" ] && \
+             [ "${{ needs.golden-benchmark-test.result }}" == "success" ]; then
             echo "All tests PASSED!"
             exit 0
           else
             echo "Some tests FAILED!"
+            if [ "${{ needs.golden-benchmark-test.result }}" != "success" ]; then
+              echo "CRITICAL: Golden benchmark test FAILED - Hard gate not passed!"
+            fi
             exit 1
           fi

@@ -1,0 +1,16 @@
+{
+  "strategy_file": "strategies/validation_v4_double_ma.txt",
+  "start_date": "2023-01-01",
+  "end_date": "2023-12-31",
+  "stock_pool": [
+    "600519.XSHG",
+    "000858.XSHE"
+  ],
+  "initial_capital": 1000000,
+  "final_value": 1000000.0,
+  "pnl_pct": 0.0,
+  "runtime_errors": [],
+  "run_time_seconds": 0.3204329013824463,
+  "baseline_updated": "2026-04-04 13:18:10",
+  "run_environment": "local"
+}

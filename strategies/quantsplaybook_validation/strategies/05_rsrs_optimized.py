@@ -28,7 +28,8 @@ def handle_bar(context, bar_dict):
 
     # 初始化历史数据
     if len(context.beta_history) < M:
-        for i in range(N, min(len(prices) - 1, M + N)):
+        # 用历史数据填充 beta_history（从最早的N根K线开始，到最新一根）
+        for i in range(N, len(prices)):
             highs = prices['high'][i-N:i]
             lows = prices['low'][i-N:i]
             X = sm.add_constant(lows)
@@ -41,7 +42,7 @@ def handle_bar(context, bar_dict):
         if len(context.beta_history) < M:
             return
     else:
-        # 正常更新
+        # 正常更新：只追加最新一根K线的beta
         highs = prices['high'][-N:]
         lows = prices['low'][-N:]
         X = sm.add_constant(lows)

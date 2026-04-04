@@ -42,6 +42,14 @@ DEFAULT_REGIME_CONFIG: Dict[str, Any] = {
             "slow_window": 28,
             "benchmark": "000300.XSHG",
         },
+        "cvix_regime": {
+            "enabled": True,
+            "period": 20,
+            "threshold_panic": 0.8,
+            "threshold_calm": 0.3,
+            "term_structure_threshold": 1.2,
+            "weight": 1.5,
+        },
     },
     "risk_flags": {
         "extreme_breadth_low": {
@@ -68,6 +76,12 @@ DEFAULT_REGIME_CONFIG: Dict[str, Any] = {
             "severity": "medium",
             "suggestion": "趋势转空，建议降仓",
         },
+        "cvix_panic": {
+            "enabled": True,
+            "condition": "cvix_regime > 0.8",
+            "severity": "high",
+            "suggestion": "CVIX恐慌分位极高，可能是底部抄底机会",
+        },
     },
     "composite": {
         "any_high_risk_to_warning": True,
@@ -78,6 +92,7 @@ DEFAULT_REGIME_CONFIG: Dict[str, Any] = {
             "new_high_ratio": 0.8,
             "volatility_regime": 1.2,
             "momentum_trend": 1.0,
+            "cvix_regime": 1.5,
         },
         "thresholds": {
             "allowed": 0.2,

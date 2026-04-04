@@ -1,6 +1,6 @@
 # 高质量动量因子选股策略 - RiceQuant版本
 # 来源：《高质量动量因子选股》
-# 核心逻辑：使用风险调整后的60日动量因子（r60 - 3000*sigma^2）
+# 核心逻辑：使用风险调整后的60日动量因子（r60 - 3*sigma_annual^2）
 #           在中证500成分股中选股，月度调仓
 
 import numpy as np
@@ -39,9 +39,11 @@ def handle_bar(context, bar_dict):
             returns = np.diff(prices) / prices[:-1]
 
             r60 = (prices[-1] / prices[0]) - 1
-            sigma = np.std(returns)
-            # 风险调整动量因子
-            momentum_factor = r60 - 3000 * sigma ** 2
+            # 年化波动率（原论文用年化标准差）
+            sigma_annual = np.std(returns) * np.sqrt(252)
+            # 风险调整动量因子：r60 - 3 * sigma_annual^2
+            # 原论文系数约为3（年化），不是3000（日化）
+            momentum_factor = r60 - 3 * sigma_annual ** 2
             scores[stock] = momentum_factor
         except Exception:
             continue

@@ -48,8 +48,6 @@ def handle_bar(context, bar_dict):
 
     scores = {}
     for etf in context.etfs:
-        if etf is None:  # placeholder, actual check via history_bars
-            pass
         try:
             prices = history_bars(etf, context.window + 2, '1d', 'close')
             volumes = history_bars(etf, context.window + 1, '1d', 'volume')
