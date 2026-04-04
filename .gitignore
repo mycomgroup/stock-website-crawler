@@ -30,4 +30,4 @@ output
 
 QuantsPlaybook/*
 stock-backtesting-system/*
-skills/autoresearch/*
+skills/autoresearch/*jk2bt-main/data/db/*.duckdb
