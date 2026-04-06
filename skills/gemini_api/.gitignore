@@ -1,0 +1,14 @@
+# Session data (contains sensitive cookies and API keys)
+data/
+
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
