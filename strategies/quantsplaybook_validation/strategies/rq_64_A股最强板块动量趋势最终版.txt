@@ -1,0 +1,7 @@
+# SKIP REASON: This is a Jupyter notebook (.ipynb file) not a direct strategy file
+#
+# Original: A股最强板块动量趋势（最终版）
+# URL: https://www.joinquant.com/view/community/detail/30175
+#
+# This is a Jupyter notebook containing research and analysis code,
+# not a directly executable trading strategy in .txt format.

@@ -1,0 +1,108 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - ETF宽基轮动策略
+原文: https://www.joinquant.com/post/29165
+作者: 几米哥
+
+迁移说明:
+- initialize -> init
+- g.xxx -> context.xxx
+- log.info -> logger.info
+- attribute_history -> history
+- get_current_data()[security].last_price -> get_current_data().get(security).last_price
+"""
+import numpy as np
+import pandas as pd
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    log.set_level('order', 'error')
+
+    set_slippage(FixedSlippage(0))
+    set_commission(PerTrade(buy_cost=0.0005, sell_cost=0.0005, min_cost=5))
+
+    context.lag1 = 20
+    context.lag2 = 10
+    context.ma_threshold = 0.9
+    context.mtm_threshold = 2
+    context.ETFList = np.array([
+        ['513100.XSHG', '513100.XSHG'],
+        ['513500.XSHG', '513500.XSHG'],
+        ['518880.XSHG', '518880.XSHG'],
+        ['399006.XSHE', '159915.XSHE'],
+        ['000300.XSHG', '510300.XSHG'],
+        ['000905.XSHG', '510500.XSHG'],
+        ['159920.XSHE', '159920.XSHE']
+    ])
+
+    run_daily(ETFtrade1, time='10:30')
+    run_daily(ETFtrade2, time='14:30')
+
+
+def ETFtrade1(context):
+    buy_list, context.buy_list_weights = get_signal(context)
+    if buy_list.size == 1 and isinstance(buy_list, np.str_):
+        context.buy_list = list(buy_list.split())
+    else:
+        context.buy_list = list(buy_list)
+    print(context.buy_list)
+
+
+def ETFtrade2(context):
+    sell_the_stocks(context, context.buy_list)
+    buy_the_stocks(context, context.buy_list, context.buy_list_weights)
+
+
+def get_signal(context):
+    i = 0
+    df = pd.DataFrame()
+    for row in context.ETFList:
+        security = row[0]
+        close_data = history(security, context.lag1, '1d', ['close'])
+        current_data = get_current_data()
+        current_price = current_data[security].last_price
+
+        cp_increase = 100 * (current_price / close_data['close'][0] - 1)
+
+        close_data = history(security, context.lag2, '1d', ['close'])
+        ma_n1 = (current_price + close_data['close'].sum() - close_data['close'][0]) / context.lag2
+
+        pre_price = current_price - ma_n1 * context.ma_threshold
+        df.loc[i, '代码'] = row[1]
+        df.loc[i, '涨幅'] = cp_increase
+        df.loc[i, '均线差'] = pre_price
+        i = i + 1
+
+    df.sort_values(by='涨幅', ascending=False, inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    log.info("行情表格:\n %s" % (df))
+
+    df_buy = df[(df['涨幅'] > context.mtm_threshold) & (df['均线差'] > 0)]
+    df_buy.set_index('代码', inplace=True)
+
+    print(df_buy.iloc[0:4, 0]/df_buy.iloc[0:4, 0].sum())
+
+    if len(df_buy) > 0:
+        return df_buy.index[0:4], df_buy.iloc[0:4, 0]/df_buy.iloc[0:4, 0].sum()
+    else:
+        return np.array(['511010.XSHG'], dtype=np.str_)[0], pd.Series([1], index=['511010.XSHG'])
+
+
+def sell_the_stocks(context, buy_list):
+    list_position = context.portfolio.positions.keys()
+    for stock in list_position:
+        if stock not in buy_list:
+            order_target_value(stock, 0)
+            log.info("正在卖出 %s" % stock)
+
+
+def buy_the_stocks(context, buy_list, buy_list_weights):
+    context.everyStock = context.portfolio.portfolio_value / len(buy_list)
+
+    for stock in buy_list:
+        order_target_value(stock, buy_list_weights.loc[stock] * context.portfolio.portfolio_value)
+        log.info("正在买入 %s, 百分比为：%s", stock, buy_list_weights.loc[stock])

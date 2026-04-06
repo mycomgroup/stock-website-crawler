@@ -1,0 +1,9 @@
+# SKIP_REASON: 使用了 jqfactor 库的 get_factor_values，JoinQuant 特有库，RiceQuant 不支持
+# 原文：机器学习线性回归小市值
+# 作者：MarioC
+# 原文网址：https://www.joinquant.com/post/48426
+
+"""
+该策略使用了 JoinQuant 的 jqfactor 库中的 get_factor_values 函数
+进行因子值获取，这是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

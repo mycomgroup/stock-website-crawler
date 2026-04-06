@@ -1,0 +1,114 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+# RiceQuant Python 格式迁移策略
+# 原文：现在便宜的300就是最好的，收益惊人
+# 作者：jqz1226
+# 原文网址：https://www.joinquant.com/post/29096
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    set_log_level('order', 'error')
+
+    context.security_universe_index = "399102.XSHE"  # 创业板
+    context.buy_stock_count = 3
+
+    set_order_cost(OrderCost(close_tax=0.001, open_commission=0.0003, close_commission=0.0003, min_commission=5), type='stock')
+
+    run_daily(my_trade, time_rule=market_open(hour=14, minute=40))
+    run_daily(after_market_close, time_rule=market_close())
+
+
+def my_trade(context):
+    check_out_lists = index_components(context.security_universe_index)
+    h = history(1, '1d', 'close', check_out_lists).T
+    h.columns = ['close', ]
+    check_out_lists = list(h.sort_values(by='close').index[:context.buy_stock_count * 4])
+    check_out_lists = filter_st_stock(check_out_lists)
+    check_out_lists = filter_limitup_stock(context, check_out_lists)
+    check_out_lists = filter_limitdown_stock(context, check_out_lists)
+    check_out_lists = filter_paused_stock(check_out_lists)
+    check_out_lists = check_out_lists[:context.buy_stock_count]
+    adjust_position(context, check_out_lists)
+
+
+def after_market_close(context):
+    logger.info('函数运行时间(after_market_close):' + str(context.current_dt.time()))
+    trades = get_trades()
+    for _trade in trades.values():
+        logger.info('成交记录：' + str(_trade))
+    logger.info('一天结束')
+    logger.info('##############################################################')
+
+
+def order_target_value_(security, value):
+    if value == 0:
+        logger.debug("Selling out %s" % security)
+    else:
+        logger.debug("Order %s to value %f" % (security, value))
+    return order_target_value(security, value)
+
+
+def open_position(security, value):
+    order = order_target_value_(security, value)
+    if order is not None and order.filled > 0:
+        return True
+    return False
+
+
+def close_position(position):
+    security = position.order_book_id
+    order = order_target_value_(security, 0)
+    if order is not None:
+        if order.status == OrderStatus.FILLED and order.filled == order.amount:
+            return True
+    return False
+
+
+def adjust_position(context, buy_stocks):
+    for stock in context.portfolio.positions:
+        if stock not in buy_stocks:
+            logger.info("stock [%s] in position is not buyable" % stock)
+            position = context.portfolio.positions[stock]
+            close_position(position)
+        else:
+            logger.info("stock [%s] is already in position" % stock)
+
+    position_count = len(context.portfolio.positions)
+    if context.buy_stock_count > position_count:
+        value = context.portfolio.cash / (context.buy_stock_count - position_count)
+        for stock in buy_stocks:
+            if context.portfolio.positions[stock].total_amount == 0:
+                if open_position(stock, value):
+                    if len(context.portfolio.positions) == context.buy_stock_count:
+                        break
+
+
+def filter_paused_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list if not current_data[stock].paused]
+
+
+def filter_st_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list
+            if not current_data[stock].is_st
+            and 'ST' not in current_data[stock].name
+            and '*' not in current_data[stock].name
+            and '退' not in current_data[stock].name]
+
+
+def filter_limitup_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    current_data = get_current_data()
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] < current_data[stock].high_limit]
+
+
+def filter_limitdown_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    current_data = get_current_data()
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] > current_data[stock].low_limit]

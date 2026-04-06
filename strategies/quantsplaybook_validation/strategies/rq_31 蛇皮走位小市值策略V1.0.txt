@@ -1,0 +1,166 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - 蛇皮走位小市值策略
+原文: https://www.joinquant.com/post/48284
+作者: MarioC
+
+迁移说明:
+- initialize -> init
+- g.xxx -> context.xxx
+- log.info -> logger.info
+- order_target -> order_target_value
+- context.portfolio.available_cash -> context.portfolio.cash
+"""
+import numpy as np
+import datetime
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    log.set_level('order', 'error')
+
+    context.stock_num = 10
+
+    run_daily(prepare_high_limit_list, time='9:05', reference_security='000300.XSHG')
+    run_daily(check_limit_up, time='14:00')
+    run_daily(consistent, time='14:30')
+
+
+def consistent(context):
+    yesterday = context.previous_date
+    stocks = get_index_stocks('399101.XSHE')
+    q = query(valuation.code, valuation.circulating_market_cap, indicator.eps).filter(
+        valuation.code.in_(stocks)).order_by(valuation.circulating_market_cap.asc())
+    df = get_fundamentals(q)
+    lst = list(df.code)[:20]
+    h_ratio = get_price(lst, end_date=yesterday, frequency='1d', fields=['close'], count=2)['close']
+    first_row = h_ratio.iloc[0]
+    last_row = h_ratio.iloc[-1]
+    change_BIG = (last_row - first_row) / first_row * 100
+    A1 = np.array(change_BIG)
+    norm = np.linalg.norm(A1)
+    normalized_array = A1 / norm
+    variance = np.var(normalized_array)
+    mean = np.mean(normalized_array)
+
+    COST = []
+    current = []
+    for stock in context.portfolio.positions.keys():
+        current.append(context.portfolio.positions[stock].price)
+        COST.append(context.portfolio.positions[stock].avg_cost)
+    paired_prices = zip(COST, current)
+    change_list = [(current - cost) / cost for cost, current in paired_prices if current > cost]
+    total_change = sum(change_list)
+    print(total_change)
+
+    if variance < 0.02 and mean > 0:
+        target_list = choose_stocks(context)
+        current_data = get_current_data()
+        for s in context.portfolio.positions:
+            if s in target_list or current_data[s].paused or current_data[s].last_price == current_data[s].high_limit:
+                continue
+            order_target_value(s, 0)
+        to_buy(context, target_list)
+
+    if -0.1 < total_change < 0.4:
+        pass
+    else:
+        print('等')
+        hold_list = list(context.portfolio.positions)
+        for s in hold_list:
+            position = context.portfolio.positions[s]
+            close_position(position)
+
+
+def prepare_high_limit_list(context):
+    context.high_limit_list = []
+    hold_list = list(context.portfolio.positions)
+    if hold_list:
+        context.high_limit_list = get_price(
+            hold_list, end_date=context.previous_date, frequency='daily',
+            fields=['close', 'high_limit', 'paused'],
+            count=1, panel=False).query('close == high_limit and paused == 0')['code'].tolist()
+
+
+def check_limit_up(context):
+    sold_sth = False
+    current_data = get_current_data()
+    for stock in context.high_limit_list:
+        if current_data[stock].last_price < current_data[stock].high_limit:
+            order_target_value(stock, 0)
+            sold_sth = True
+
+
+def choose_stocks(context):
+    by_date = context.previous_date - datetime.timedelta(days=250)
+    stocks = get_all_securities('stock', by_date).index.tolist()
+    stocks = filter_stock_basic(stocks)
+    stocks = filter_high_price_stock(stocks)
+    stocks = get_peg(stocks)
+    return stocks[:context.stock_num]
+
+
+def filter_stock_basic(stock_list):
+    curr_data = get_current_data()
+    return [
+        stock for stock in stock_list if not
+        (
+                stock.startswith(('68', '4', '8')) or
+                curr_data[stock].paused or
+                curr_data[stock].is_st or
+                (curr_data[stock].last_price >= curr_data[stock].high_limit * 0.97) or
+                (curr_data[stock].last_price <= curr_data[stock].low_limit * 1.04)
+        )]
+
+
+def filter_high_price_stock(stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list).iloc[0]
+    return last_prices[last_prices < 10].index.tolist()
+
+
+def to_buy(context, target_list):
+    current_data = get_current_data()
+    position_count = len(context.portfolio.positions)
+    if position_count < context.stock_num:
+        value = context.portfolio.cash / (context.stock_num - position_count)
+        for s in target_list:
+            if s not in context.portfolio.positions:
+                order_value(s, value)
+                if len(context.portfolio.positions) == context.stock_num:
+                    break
+
+
+def get_peg(stocks):
+    stocks = get_fundamentals(
+        query(
+            valuation.code,
+        ).filter(
+            indicator.roe > 0.15,
+            indicator.roa > 0.10,
+            valuation.code.in_(stocks)
+        ).order_by(
+            valuation.market_cap.asc()
+        )
+    )['code'].tolist()
+
+    return stocks
+
+
+def order_target_value_(security, value):
+    if value == 0:
+        log.debug("Selling out %s" % (security))
+    else:
+        log.debug("Order %s to value %f" % (security, value))
+    return order_target_value(security, value)
+
+
+def close_position(position):
+    security = position.security
+    order = order_target_value_(security, 0)
+    if order is not None:
+        if order.status == OrderStatus.held and order.filled == order.amount:
+            return True
+    return False

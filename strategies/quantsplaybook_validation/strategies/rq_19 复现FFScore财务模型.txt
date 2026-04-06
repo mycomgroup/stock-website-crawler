@@ -1,0 +1,10 @@
+# SKIP_REASON: 使用了 jqfactor 库（calc_factors, Factor, winsorize_med, neutralize, standardlize），JoinQuant 特有库，RiceQuant 不支持
+# 原文：复现FFScore财务模型
+# 作者：Hugo2046
+# 原文网址：https://www.joinquant.com/post/34748
+
+"""
+该策略使用了 JoinQuant 的 jqfactor 库进行财务因子计算，
+包括 calc_factors, Factor, winsorize_med, neutralize, standardlize 等函数，
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

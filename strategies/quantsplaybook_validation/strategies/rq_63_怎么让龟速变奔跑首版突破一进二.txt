@@ -1,0 +1,7 @@
+# SKIP REASON: Uses jqlib.technical_analysis library (JoinQuant-specific)
+#
+# Original: 怎么让龟速变奔跑？以"首版突破一进二"为例
+# URL: (from JoinQuant)
+#
+# The strategy uses technical analysis indicators from jqlib.technical_analysis
+# which is a JoinQuant-specific library not available in RiceQuant.

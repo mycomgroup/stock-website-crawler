@@ -1,0 +1,198 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - 超跌反弹策略
+原文: https://www.joinquant.com/post/35377
+作者: _查尔斯葱_
+
+迁移说明:
+- initialize -> init
+- g.xxx -> context.xxx
+- log.info -> logger.info
+- context.portfolio.available_cash -> context.portfolio.cash
+- attribute_history -> history
+- order_target -> order_target_value
+- get_ticks -> RQ不支持，简化处理
+"""
+import numpy as np
+import datetime
+
+
+def init(context):
+    set_option("avoid_future_data", True)
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    log.set_level('order', 'error')
+
+    set_order_cost(OrderCost(open_tax=0, close_tax=0.001,
+                             open_commission=0.0003, close_commission=0.0003,
+                             close_today_commission=0, min_commission=5), type='stock')
+
+    run_daily(before_market_open, time='before_open', reference_security='000300.XSHG')
+    run_daily(market_open_buy, time='9:30', reference_security='000300.XSHG')
+    run_daily(market_open_sell, time='14:55', reference_security='000300.XSHG')
+    run_daily(after_market_close, time='after_close', reference_security='000300.XSHG')
+    context.stock_list = []
+    context.buy_stock_num = 5
+
+
+def before_market_open(context):
+    context.stock_list = get_stocks(context)
+
+
+def get_stocks(context):
+    stocklist = list(get_all_securities(['stock']).index)
+
+    stocklist = filter_st_stock(stocklist)
+    stocklist = filter_paused_stock(stocklist)
+    stocklist = filter_kcb_stock(context, stocklist)
+    stocklist = filter_stock_by_days(context, stocklist, 250)
+
+    stocklist = buy_point_filter(context, stocklist)
+
+    q = query(valuation.code
+             ).filter(valuation.code.in_(stocklist),
+                    valuation.circulating_market_cap > 50,
+                    indicator.roe > 0
+             ).order_by(indicator.roe.desc()
+             ).limit(10)
+    stocklist = list(get_fundamentals(q).code)
+
+    print(f'选出{len(stocklist)}只股票：{stocklist}')
+
+    return stocklist
+
+
+def market_open_buy(context):
+    if len(context.portfolio.positions) < context.buy_stock_num:
+        new_buy_stock_num = context.buy_stock_num - len(context.portfolio.positions)
+        buy_cash = context.portfolio.cash / new_buy_stock_num
+        for s in context.stock_list[:new_buy_stock_num]:
+            if s not in context.portfolio.positions and context.portfolio.cash >= buy_cash >= 100 * get_current_data()[s].last_price:
+                order_target_value(s, buy_cash)
+                print(f'买入股票：{s}')
+
+
+def market_open_sell(context):
+    sells = list(context.portfolio.positions)
+    for s in sells:
+        loss = context.portfolio.positions[s].price / context.portfolio.positions[s].avg_cost
+        s_sell, sell_msg = check_sell_point(context, s)
+        if s_sell or loss < 0.95:
+            if context.portfolio.positions[s].sellable_quantity > 0:
+                order_target_value(s, 0)
+                print(f'卖出股票：{s}, sell_msg={sell_msg}')
+
+
+def buy_point_filter(context, stocks):
+    final_stocks = []
+    for stock in stocks:
+        s_buy = check_buy_point(context, stock)
+        if s_buy == True:
+            final_stocks.append(stock)
+
+    return final_stocks
+
+
+def check_buy_point(context, stock):
+    s_buy = False
+    close_data = history(stock, 120, '1d', ['close', 'high'])
+
+    closes = close_data['close'].values
+
+    ma55_list = list(np.zeros(120))
+    for i in range(54, 120):
+        ma55_list[i] = closes[i-54:i+1].mean()
+
+    over_55_in_40_days = np.array(closes[-40:]) > np.array(ma55_list[-40:])
+
+    num_over_55_40_days = sum(over_55_in_40_days)
+    ever_upcross_ma55 = sum(over_55_in_40_days[:20])
+    nowadays_upcross_ma55 = sum(over_55_in_40_days[-3:])
+    yesterday_over_ma55 = over_55_in_40_days[-1]
+
+    current_price = get_current_data()[stock].last_price
+    current_ma55 = (np.sum(closes[-54:]) + current_price)/55
+
+    now_over_ma55 = current_price > current_ma55
+
+    ten_days_lowest = min(closes[-10:]) == min(closes[-60:])
+
+    if 1 <= ever_upcross_ma55 <= 3 and \
+        nowadays_upcross_ma55 >= 1 and \
+        now_over_ma55 and \
+        ten_days_lowest:
+        s_buy = True
+
+    return s_buy
+
+
+def check_sell_point(context, stock):
+    s_sell = False
+
+    current_price = get_current_data()[stock].last_price
+    bars = get_bars(stock, 60, '1d', ['high', 'close'], include_now=True)
+    closes = bars['close']
+    highs = bars['high']
+
+    closes[-1] = current_price
+    ma3 = closes[-3:].mean()
+    ma5 = closes[-5:].mean()
+    ma55 = closes[-55:].mean()
+    ma55_ = closes[-56:-1].mean()
+
+    loss = current_price / context.portfolio.positions[stock].avg_cost
+
+    high_allday = highs[-1]
+    signal1 = 0
+    signal2 = current_price / closes[-2] < 0.95
+    signal3 = current_price / high_allday < 0.95
+    signal4 = loss < 0.95
+    signal5 = current_price < ma55 * 0.98
+    if signal1 or signal2 or signal3 or signal4 or signal5:
+        s_sell = True
+    msg = []
+    if signal1:
+        msg.append('跌破MA5')
+    if signal2:
+        msg.append('下跌5%')
+    if signal3:
+        msg.append('高点回撤5%')
+    if signal4:
+        msg.append('总亏损5%')
+    if signal5:
+        msg.append('跌破MA55')
+
+    return s_sell, msg
+
+
+def after_market_close(context):
+    log.info('现持有：{}；帐户收益：{}%'.format(list(context.portfolio.positions), round(100*context.portfolio.returns, 1)))
+    log.info('---------------------------------------------------------------------')
+
+def filter_stock_by_days(context, stock_list, days):
+    tmpList = []
+    for stock in stock_list:
+        days_public = (context.current_dt.date() - get_security_info(stock).start_date).days
+        if days_public > days:
+            tmpList.append(stock)
+    return tmpList
+
+
+def filter_paused_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list if not current_data[stock].paused]
+
+
+def filter_st_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list
+            if not current_data[stock].is_st
+            and 'ST' not in current_data[stock].name
+            and '*' not in current_data[stock].name
+            and '退' not in current_data[stock].name]
+
+
+def filter_kcb_stock(context, stock_list):
+    return [stock for stock in stock_list if stock[0:3] != '688']

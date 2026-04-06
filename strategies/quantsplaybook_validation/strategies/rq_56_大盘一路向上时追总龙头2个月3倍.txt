@@ -1,0 +1,9 @@
+# SKIP REASON: Uses JoinQuant-specific industry stock queries (get_industry_stocks with HY001-HY011)
+# which are not available in RiceQuant
+#
+# Original: 大盘一路向上时，追总龙头2个月3倍
+# Author: 叶松
+# URL: https://www.joinquant.com/post/29336
+#
+# The strategy uses get_industry_stocks() to filter stocks by industry categories,
+# which is a JoinQuant-specific API that doesn't exist in RiceQuant.

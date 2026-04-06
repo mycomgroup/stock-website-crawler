@@ -1,0 +1,11 @@
+# SKIP_REASON: 使用了 sklearn.decomposition.PCA 和 jqlib.optimizer，JoinQuant 特有机器学习库，RiceQuant 不支持
+# 原文：【复现】高频价量相关性，意想不到的选股因子
+# 作者：Hugo2046
+# 原文网址：https://www.joinquant.com/post/36016
+
+"""
+该策略使用了以下 JoinQuant 特有库：
+1. sklearn.decomposition.PCA - 机器学习降维库
+2. jqlib.optimizer - JoinQuant 优化器库
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

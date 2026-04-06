@@ -1,0 +1,9 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values，JoinQuant 特有库，RiceQuant 不支持
+# 原文：截止到21年12月依然有效的小市值适配因子
+# 作者：wywy1995
+# 原文网址：https://www.joinquant.com/post/35690
+
+"""
+该策略使用了 JoinQuant 的 jqfactor 库中的 get_factor_values 函数
+获取 'sales_growth' 等因子值，这是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

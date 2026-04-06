@@ -1,0 +1,8 @@
+# SKIP REASON: Uses requests library for web scraping (capturing web content)
+# which is not suitable for live trading systems and outside the scope of simple strategy migration
+#
+# Original: 基金溢价（模拟效果好！）
+# URL: (from JoinQuant)
+#
+# The strategy appears to use web scraping techniques to capture fund premium data,
+# which is not a standard quant strategy API migration.

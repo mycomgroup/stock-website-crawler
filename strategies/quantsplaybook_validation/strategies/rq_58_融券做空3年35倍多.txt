@@ -1,0 +1,9 @@
+# SKIP REASON: Uses JoinQuant margin trading APIs (marginsec_open, marginsec_close,
+# get_marginsec_stocks, context.portfolio.short_positions) which are not available in RiceQuant
+#
+# Original: 融券做空,3年35倍多！已模拟2年半，动态跑盘收益惊人！
+# Author: naruto
+# URL: https://www.joinquant.com/post/41913
+#
+# The strategy relies heavily on JoinQuant's margin trading infrastructure which
+# doesn't have a direct equivalent in RiceQuant's API.

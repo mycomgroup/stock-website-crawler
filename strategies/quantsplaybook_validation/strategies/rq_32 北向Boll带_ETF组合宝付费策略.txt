@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用finance.STK_ML_QUOTA获取北向资金（北向资金boll带）数据，
+# 属于JQ专有finance数据，SKIP规则中的"JQ专有数据"类别。
+# 原文: https://www.joinquant.com/post/30461

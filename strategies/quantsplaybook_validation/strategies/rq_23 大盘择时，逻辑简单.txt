@@ -1,0 +1,12 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values 和 talib，JoinQuant 特有库，RiceQuant 不支持
+# 原文：大盘择时，逻辑简单
+# 作者：gjbdyrs
+# 原文网址：https://www.joinquant.com/post/47516
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqfactor.get_factor_values - 获取因子值
+2. talib.MACD - 技术指标
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

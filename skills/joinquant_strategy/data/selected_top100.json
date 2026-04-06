@@ -1,0 +1,712 @@
+{
+  "generatedAt": "2026-04-05T23:20:12.675Z",
+  "totalCandidates": 281,
+  "selected": 100,
+  "statistics": {
+    "newStrategies": 29,
+    "retryFailed": 71,
+    "avgScore": "4.88"
+  },
+  "strategies": [
+    {
+      "rank": 1,
+      "file": "strategies/43 窄基ETF轮动：年化收益82.68%，最大回撤13.54%.txt",
+      "basename": "43 窄基ETF轮动：年化收益82.68%，最大回撤13.54%.txt",
+      "score": 11.5,
+      "status": "retry"
+    },
+    {
+      "rank": 2,
+      "file": "strategies/68 胜率78%，6年36倍，今年行情依然50%年化.txt",
+      "basename": "68 胜率78%，6年36倍，今年行情依然50%年化.txt",
+      "score": 11.5,
+      "status": "retry"
+    },
+    {
+      "rank": 3,
+      "file": "strategies/89 年化收益55.7%， 超高胜率 0.799！.txt",
+      "basename": "89 年化收益55.7%， 超高胜率 0.799！.txt",
+      "score": 11,
+      "status": "new"
+    },
+    {
+      "rank": 4,
+      "file": "strategies/43 小市值再优化【年化98% 胜率69% 回撤27%】无未来函数.txt",
+      "basename": "43 小市值再优化【年化98% 胜率69% 回撤27%】无未来函数.txt",
+      "score": 10.5,
+      "status": "retry"
+    },
+    {
+      "rank": 5,
+      "file": "strategies/97 趋势筛选后相关性最小etf轮动-加速10倍版.txt",
+      "basename": "97 趋势筛选后相关性最小etf轮动-加速10倍版.txt",
+      "score": 10,
+      "status": "new"
+    },
+    {
+      "rank": 6,
+      "file": "strategies/47 多策略整合大E小十年百倍（年化64%回撤28%）.txt",
+      "basename": "47 多策略整合大E小十年百倍（年化64%回撤28%）.txt",
+      "score": 8.5,
+      "status": "retry"
+    },
+    {
+      "rank": 7,
+      "file": "strategies/71 多因子模板分位法策略，年化65%.txt",
+      "basename": "71 多因子模板分位法策略，年化65%.txt",
+      "score": 8.5,
+      "status": "retry"
+    },
+    {
+      "rank": 8,
+      "file": "strategies/77 研报三因子II-新规高分红小市值-年化60回撤19.txt",
+      "basename": "77 研报三因子II-新规高分红小市值-年化60回撤19.txt",
+      "score": 8.5,
+      "status": "retry"
+    },
+    {
+      "rank": 9,
+      "file": "strategies/39 绩优小市值量化君也-模拟交易年化333.75%.txt",
+      "basename": "39 绩优小市值量化君也-模拟交易年化333.75%.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 10,
+      "file": "strategies/39 随机森林策略，低换手率，年化近50%.txt",
+      "basename": "39 随机森林策略，低换手率，年化近50%.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 11,
+      "file": "strategies/58 融券做空,3年35倍多！已模拟2年半，动态跑盘收益惊人！.txt",
+      "basename": "58 融券做空,3年35倍多！已模拟2年半，动态跑盘收益惊人！.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 12,
+      "file": "strategies/59 追板策略，今年收益已翻倍，低操作低回撤高收益可实盘.txt",
+      "basename": "59 追板策略，今年收益已翻倍，低操作低回撤高收益可实盘.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 13,
+      "file": "strategies/61 简单ETF策略，年化97%.txt",
+      "basename": "61 简单ETF策略，年化97%.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 14,
+      "file": "strategies/63 5年12倍-小市值.txt",
+      "basename": "63 5年12倍-小市值.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 15,
+      "file": "strategies/75 最近2年年化100%以上回撤12%的打板策略-验证策略.txt",
+      "basename": "75 最近2年年化100%以上回撤12%的打板策略-验证策略.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 16,
+      "file": "strategies/76 小市值止损策略【年化104.11% 最大回撤30.65%】.txt",
+      "basename": "76 小市值止损策略【年化104.11% 最大回撤30.65%】.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 17,
+      "file": "strategies/78 首板低开策略-终极版 最大回撤15%，年化50%.txt",
+      "basename": "78 首板低开策略-终极版 最大回撤15%，年化50%.txt",
+      "score": 7.5,
+      "status": "retry"
+    },
+    {
+      "rank": 18,
+      "file": "strategies/88 基于动量因子的ETF轮动加上RSRS择时.txt",
+      "basename": "88 基于动量因子的ETF轮动加上RSRS择时.txt",
+      "score": 7,
+      "status": "new"
+    },
+    {
+      "rank": 19,
+      "file": "strategies/40 穿越牛熊 稳健高收益 年化37.txt",
+      "basename": "40 穿越牛熊 稳健高收益 年化37.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 20,
+      "file": "strategies/47 高收益低回撤的小市值策略.txt",
+      "basename": "47 高收益低回撤的小市值策略.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 21,
+      "file": "strategies/47 随机森林量价多因子选股短线交易机器学习.txt",
+      "basename": "47 随机森林量价多因子选股短线交易机器学习.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 22,
+      "file": "strategies/49 动量策略年化62%.txt",
+      "basename": "49 动量策略年化62%.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 23,
+      "file": "strategies/59 年化62%的动量策略.txt",
+      "basename": "59 年化62%的动量策略.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 24,
+      "file": "strategies/67 三因子策略年化21%简单多因子策略框架.txt",
+      "basename": "67 三因子策略年化21%简单多因子策略框架.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 25,
+      "file": "strategies/74 【动量应用V1】12年120倍，根据研报思路调整.txt",
+      "basename": "74 【动量应用V1】12年120倍，根据研报思路调整.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 26,
+      "file": "strategies/80 过滤两个因子，12年15倍的roa选股500指数增强.txt",
+      "basename": "80 过滤两个因子，12年15倍的roa选股500指数增强.txt",
+      "score": 6.5,
+      "status": "retry"
+    },
+    {
+      "rank": 27,
+      "file": "strategies/89 韶华研究之二，顺势而为，年化140.txt",
+      "basename": "89 韶华研究之二，顺势而为，年化140.txt",
+      "score": 6,
+      "status": "new"
+    },
+    {
+      "rank": 28,
+      "file": "strategies/90 2019年到现在19倍的新策略.txt",
+      "basename": "90 2019年到现在19倍的新策略.txt",
+      "score": 6,
+      "status": "new"
+    },
+    {
+      "rank": 29,
+      "file": "strategies/91 ETF-T0动量策略，年化 18%，回撤3.31%.txt",
+      "basename": "91 ETF-T0动量策略，年化 18%，回撤3.31%.txt",
+      "score": 6,
+      "status": "new"
+    },
+    {
+      "rank": 30,
+      "file": "strategies/93 234板介入-2023年14倍-无未来.txt",
+      "basename": "93 234板介入-2023年14倍-无未来.txt",
+      "score": 6,
+      "status": "new"
+    },
+    {
+      "rank": 31,
+      "file": "strategies/96 首版+2版龙虎榜挖掘V2.0，年化1400.txt",
+      "basename": "96 首版+2版龙虎榜挖掘V2.0，年化1400.txt",
+      "score": 6,
+      "status": "new"
+    },
+    {
+      "rank": 32,
+      "file": "strategies/42 大盘ETF动量轮动 RSRS择时策略-无纳指（5年半861%）.txt",
+      "basename": "42 大盘ETF动量轮动 RSRS择时策略-无纳指（5年半861%）.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 33,
+      "file": "strategies/44 国九条 年化130.74% 回撤11% 众神Debug版.txt",
+      "basename": "44 国九条 年化130.74% 回撤11% 众神Debug版.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 34,
+      "file": "strategies/45 海龟突破系统，19-21年化150，无未来函数和过拟合.txt",
+      "basename": "45 海龟突破系统，19-21年化150，无未来函数和过拟合.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 35,
+      "file": "strategies/48 动量ETF轮动-RSRS择时-卡尔曼滤波.txt",
+      "basename": "48 动量ETF轮动-RSRS择时-卡尔曼滤波.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 36,
+      "file": "strategies/50 ETF动量轮动RSRS择时-V2.1.txt",
+      "basename": "50 ETF动量轮动RSRS择时-V2.1.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 37,
+      "file": "strategies/54 发一个学习策略5年70倍，思路可以学习.txt",
+      "basename": "54 发一个学习策略5年70倍，思路可以学习.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 38,
+      "file": "strategies/55 价值投资改进版-6年9.5倍.txt",
+      "basename": "55 价值投资改进版-6年9.5倍.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 39,
+      "file": "strategies/56 大盘一路向上时，追总龙头2个月3倍.txt",
+      "basename": "56 大盘一路向上时，追总龙头2个月3倍.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 40,
+      "file": "strategies/58 ETF动量轮动RSRS与北上择时-股债平衡-盘中止损.txt",
+      "basename": "58 ETF动量轮动RSRS与北上择时-股债平衡-盘中止损.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 41,
+      "file": "strategies/60 ETF动量轮动RSRS择时-v2.txt",
+      "basename": "60 ETF动量轮动RSRS择时-v2.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 42,
+      "file": "strategies/66 ETF动量轮动MA乖离择时.txt",
+      "basename": "66 ETF动量轮动MA乖离择时.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 43,
+      "file": "strategies/69 场内基金定投价值平均增强策略，年化30%+.txt",
+      "basename": "69 场内基金定投价值平均增强策略，年化30%+.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 44,
+      "file": "strategies/81 无杠杆，稳定盈利的etf轮动.txt",
+      "basename": "81 无杠杆，稳定盈利的etf轮动.txt",
+      "score": 5.5,
+      "status": "retry"
+    },
+    {
+      "rank": 45,
+      "file": "strategies/83 回测“一创模拟盘2号”，最终改造优化，年化39%.txt",
+      "basename": "83 回测“一创模拟盘2号”，最终改造优化，年化39%.txt",
+      "score": 5,
+      "status": "new"
+    },
+    {
+      "rank": 46,
+      "file": "strategies/98 韶华研究之六，简单不一样的发现趋势，3年6倍.txt",
+      "basename": "98 韶华研究之六，简单不一样的发现趋势，3年6倍.txt",
+      "score": 5,
+      "status": "new"
+    },
+    {
+      "rank": 47,
+      "file": "strategies/41 手把手教你“机器学习-动态多因子选股”(附保姆级教程)/41 手把手教你“机器学习-动态多因子选股”(附保姆级教程).txt",
+      "basename": "41 手把手教你“机器学习-动态多因子选股”(附保姆级教程).txt",
+      "score": 4.5,
+      "status": "retry"
+    },
+    {
+      "rank": 48,
+      "file": "strategies/47 年化46%的北向资金+20日涨幅的创业板策略.txt",
+      "basename": "47 年化46%的北向资金+20日涨幅的创业板策略.txt",
+      "score": 4.5,
+      "status": "retry"
+    },
+    {
+      "rank": 49,
+      "file": "strategies/51 行业反转效应（年化32%，回撤8%）.txt",
+      "basename": "51 行业反转效应（年化32%，回撤8%）.txt",
+      "score": 4.5,
+      "status": "retry"
+    },
+    {
+      "rank": 50,
+      "file": "strategies/63 3年复合200+%收益+超低回撤11%以内，无惧大跌.txt",
+      "basename": "63 3年复合200+%收益+超低回撤11%以内，无惧大跌.txt",
+      "score": 4.5,
+      "status": "retry"
+    },
+    {
+      "rank": 51,
+      "file": "strategies/72 随机森林 - 多因子模型.txt",
+      "basename": "72 随机森林 - 多因子模型.txt",
+      "score": 4.5,
+      "status": "retry"
+    },
+    {
+      "rank": 52,
+      "file": "strategies/78 国盛多因子系列选股体系和基于Lasso的收益预测模型策略（9大类共59个因子）.txt",
+      "basename": "78 国盛多因子系列选股体系和基于Lasso的收益预测模型策略（9大类共59个因子）.txt",
+      "score": 4.5,
+      "status": "retry"
+    },
+    {
+      "rank": 53,
+      "file": "strategies/81 搞市场最靓的仔！指数ETF动量轮动策略-2.txt",
+      "basename": "81 搞市场最靓的仔！指数ETF动量轮动策略-2.txt",
+      "score": 4.5,
+      "status": "retry"
+    },
+    {
+      "rank": 54,
+      "file": "strategies/82 无需先验知识，动态选择的etf轮动策略，更具鲁棒性.txt",
+      "basename": "82 无需先验知识，动态选择的etf轮动策略，更具鲁棒性.txt",
+      "score": 4,
+      "status": "new"
+    },
+    {
+      "rank": 55,
+      "file": "strategies/86 最新解密--追涨龙头打板策略.txt",
+      "basename": "86 最新解密--追涨龙头打板策略.txt",
+      "score": 4,
+      "status": "new"
+    },
+    {
+      "rank": 56,
+      "file": "strategies/87 山寨每月轮动调仓的红利策略.txt",
+      "basename": "87 山寨每月轮动调仓的红利策略.txt",
+      "score": 4,
+      "status": "new"
+    },
+    {
+      "rank": 57,
+      "file": "strategies/88 打首板策略，今年收益达到40%，绝无未来函数.txt",
+      "basename": "88 打首板策略，今年收益达到40%，绝无未来函数.txt",
+      "score": 4,
+      "status": "new"
+    },
+    {
+      "rank": 58,
+      "file": "strategies/88 WY大神的“龙头打板”策略小改.txt",
+      "basename": "88 WY大神的“龙头打板”策略小改.txt",
+      "score": 4,
+      "status": "new"
+    },
+    {
+      "rank": 59,
+      "file": "strategies/93 【超跌反弹v1.0】3年2.3倍的超跌反弹小牛股.txt",
+      "basename": "93 【超跌反弹v1.0】3年2.3倍的超跌反弹小牛股.txt",
+      "score": 4,
+      "status": "new"
+    },
+    {
+      "rank": 60,
+      "file": "strategies/46 高增股池小市值轮动.txt",
+      "basename": "46 高增股池小市值轮动.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 61,
+      "file": "strategies/49 【漂亮50 2.0止损版本】为了降低回撤，加入择时止损模块.txt",
+      "basename": "49 【漂亮50 2.0止损版本】为了降低回撤，加入择时止损模块.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 62,
+      "file": "strategies/55 ETF轮动策略-入门1.0.txt",
+      "basename": "55 ETF轮动策略-入门1.0.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 63,
+      "file": "strategies/57 别人恐惧我贪婪3——年化20%的股债组合.txt",
+      "basename": "57 别人恐惧我贪婪3——年化20%的股债组合.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 64,
+      "file": "strategies/57 韶华研究之五-ETF轮动,躺赚,夏普2.txt",
+      "basename": "57 韶华研究之五-ETF轮动,躺赚,夏普2.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 65,
+      "file": "strategies/64 ETF轮动策略升级-增加盘中止损.txt",
+      "basename": "64 ETF轮动策略升级-增加盘中止损.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 66,
+      "file": "strategies/68 说说对ETF轮动策略的看法.txt",
+      "basename": "68 说说对ETF轮动策略的看法.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 67,
+      "file": "strategies/72 【回撤二波2.0】透过一次过拟合的机器学习摸底策略的收益上限.txt",
+      "basename": "72 【回撤二波2.0】透过一次过拟合的机器学习摸底策略的收益上限.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 68,
+      "file": "strategies/74 趋势筛选后相关性最小etf轮动.txt",
+      "basename": "74 趋势筛选后相关性最小etf轮动.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 69,
+      "file": "strategies/75 ETF轮动策略-入门2.0.txt",
+      "basename": "75 ETF轮动策略-入门2.0.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 70,
+      "file": "strategies/76 ETF基金溢价高收益低回测策略 改进版.txt",
+      "basename": "76 ETF基金溢价高收益低回测策略 改进版.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 71,
+      "file": "strategies/79 南澳推荐配套的随机森林选股的小市值策略.txt",
+      "basename": "79 南澳推荐配套的随机森林选股的小市值策略.txt",
+      "score": 3.5,
+      "status": "retry"
+    },
+    {
+      "rank": 72,
+      "file": "strategies/83 大小外择时小市值.txt",
+      "basename": "83 大小外择时小市值.txt",
+      "score": 3,
+      "status": "new"
+    },
+    {
+      "rank": 73,
+      "file": "strategies/84 韶华研究之一，布林突破+均线金叉，四年五倍.txt",
+      "basename": "84 韶华研究之一，布林突破+均线金叉，四年五倍.txt",
+      "score": 3,
+      "status": "new"
+    },
+    {
+      "rank": 74,
+      "file": "strategies/89 基于Gyro^.^大神的小市值策略的因子匹配研究.txt",
+      "basename": "89 基于Gyro^.^大神的小市值策略的因子匹配研究.txt",
+      "score": 3,
+      "status": "new"
+    },
+    {
+      "rank": 75,
+      "file": "strategies/90 超稳+翻倍，贝塔值只有0.048的期指策略.txt",
+      "basename": "90 超稳+翻倍，贝塔值只有0.048的期指策略.txt",
+      "score": 3,
+      "status": "new"
+    },
+    {
+      "rank": 76,
+      "file": "strategies/93 因子看板多因子模型---由量化课堂多因子模型修改.txt",
+      "basename": "93 因子看板多因子模型---由量化课堂多因子模型修改.txt",
+      "score": 3,
+      "status": "new"
+    },
+    {
+      "rank": 77,
+      "file": "strategies/97 稳定高回报周期股策略2-RSRS择时.txt",
+      "basename": "97 稳定高回报周期股策略2-RSRS择时.txt",
+      "score": 3,
+      "status": "new"
+    },
+    {
+      "rank": 78,
+      "file": "strategies/39 多因子策略（多元线性回归）.txt",
+      "basename": "39 多因子策略（多元线性回归）.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 79,
+      "file": "strategies/41 SVR机器学习上证综指择时中小板财务选股策略.txt",
+      "basename": "41 SVR机器学习上证综指择时中小板财务选股策略.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 80,
+      "file": "strategies/44 兼顾业绩增长和PEG指标的5因子股票策略.txt",
+      "basename": "44 兼顾业绩增长和PEG指标的5因子股票策略.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 81,
+      "file": "strategies/45 真真正正的诚意之作-2021超十倍.txt",
+      "basename": "45 真真正正的诚意之作-2021超十倍.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 82,
+      "file": "strategies/48 一种宏观数据的中长线策略，年化15%，最大回撤9%.txt",
+      "basename": "48 一种宏观数据的中长线策略，年化15%，最大回撤9%.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 83,
+      "file": "strategies/53 超跌网格交易大法V1.2：稳健跑赢大盘-年化13%回撤7%.txt",
+      "basename": "53 超跌网格交易大法V1.2：稳健跑赢大盘-年化13%回撤7%.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 84,
+      "file": "strategies/59 基于Gyro^.^大神的小市值策略的因子匹配研究.txt",
+      "basename": "59 基于Gyro^.^大神的小市值策略的因子匹配研究.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 85,
+      "file": "strategies/61 抄底神器2.0，低回撤，高成功率.txt",
+      "basename": "61 抄底神器2.0，低回撤，高成功率.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 86,
+      "file": "strategies/64 大小外择时小市值3.0.txt",
+      "basename": "64 大小外择时小市值3.0.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 87,
+      "file": "strategies/65 多因子指数增强.txt",
+      "basename": "65 多因子指数增强.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 88,
+      "file": "strategies/66 SVR机器学习上证综指择时中小板财务选股策略.txt",
+      "basename": "66 SVR机器学习上证综指择时中小板财务选股策略.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 89,
+      "file": "strategies/70 （股票交易模板）小市值-EPS-成长因子选股.txt",
+      "basename": "70 （股票交易模板）小市值-EPS-成长因子选股.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 90,
+      "file": "strategies/75 勾股神器2，代码40行，年化一百点。.txt",
+      "basename": "75 勾股神器2，代码40行，年化一百点。.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 91,
+      "file": "strategies/79 【多因子选股模型框架】(单因子各项指标评分细则).txt",
+      "basename": "79 【多因子选股模型框架】(单因子各项指标评分细则).txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 92,
+      "file": "strategies/79 国九条-新的红利因子，修正「审计意见」函数.txt",
+      "basename": "79 国九条-新的红利因子，修正「审计意见」函数.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 93,
+      "file": "strategies/81 低PB小市值低换手策略总结.txt",
+      "basename": "81 低PB小市值低换手策略总结.txt",
+      "score": 2.5,
+      "status": "retry"
+    },
+    {
+      "rank": 94,
+      "file": "strategies/84 多大规模的基金收益最好？偏股基金规模研究.txt",
+      "basename": "84 多大规模的基金收益最好？偏股基金规模研究.txt",
+      "score": 2,
+      "status": "new"
+    },
+    {
+      "rank": 95,
+      "file": "strategies/84 正黄旗大妈选股改进-加入涨停卖出后的买入，提高资金利用率.txt",
+      "basename": "84 正黄旗大妈选股改进-加入涨停卖出后的买入，提高资金利用率.txt",
+      "score": 2,
+      "status": "new"
+    },
+    {
+      "rank": 96,
+      "file": "strategies/84 ETF网格交易策略.txt",
+      "basename": "84 ETF网格交易策略.txt",
+      "score": 2,
+      "status": "new"
+    },
+    {
+      "rank": 97,
+      "file": "strategies/85 【深度解析 七】BBI指标-大盘涨跌-宽基轮动 模型.txt",
+      "basename": "85 【深度解析 七】BBI指标-大盘涨跌-宽基轮动 模型.txt",
+      "score": 2,
+      "status": "new"
+    },
+    {
+      "rank": 98,
+      "file": "strategies/85 稳健型ETF策略.txt",
+      "basename": "85 稳健型ETF策略.txt",
+      "score": 2,
+      "status": "new"
+    },
+    {
+      "rank": 99,
+      "file": "strategies/86 手把手教你构建ETF策略候选池优化版.txt",
+      "basename": "86 手把手教你构建ETF策略候选池优化版.txt",
+      "score": 2,
+      "status": "new"
+    },
+    {
+      "rank": 100,
+      "file": "strategies/87 山寨红利.txt",
+      "basename": "87 山寨红利.txt",
+      "score": 2,
+      "status": "new"
+    }
+  ]
+}

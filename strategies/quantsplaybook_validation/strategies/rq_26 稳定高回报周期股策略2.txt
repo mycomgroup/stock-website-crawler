@@ -1,0 +1,13 @@
+# SKIP_REASON: 使用了 finance.run_query 查询金融和财务数据，RiceQuant 不支持该模块
+# 原文：稳定高回报周期股策略2
+# 作者：jqz1226
+# 原文网址：https://www.joinquant.com/post/23858
+
+"""
+该策略使用了 JoinQuant 的 finance.run_query 模块：
+- finance.STK_COMPANY_INFO - 上市公司信息
+- finance.STK_LIST - 股票列表
+- income, balance, indicator 等财务表
+
+RiceQuant 可能没有完全对应的 finance 模块。
+"""

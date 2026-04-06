@@ -44,7 +44,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     scores = {}
     for etf in context.etfs:
@@ -66,12 +65,14 @@ def handle_bar(context, bar_dict):
     if not scores:
         return
 
+    context.month = current_month
+
     sorted_etfs = sorted(scores, key=scores.get, reverse=True)
     target = sorted_etfs[:context.top_n]
 
     for etf in list(context.portfolio.positions.keys()):
         if etf not in target:
-            order_to(etf, 0)
+            order_target_value(etf, 0)
 
     weight = 1.0 / len(target)
     total_value = context.portfolio.total_value

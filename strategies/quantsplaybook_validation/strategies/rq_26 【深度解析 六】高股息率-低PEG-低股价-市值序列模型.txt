@@ -1,0 +1,11 @@
+# SKIP_REASON: 使用了 finance.run_query 查询分红数据，RiceQuant 不支持该模块
+# 原文：【深度解析 六】高股息率-低PEG-低股价-市值序列模型
+# 作者：加百力
+# 原文网址：https://www.joinquant.com/post/44487
+
+"""
+该策略使用了 JoinQuant 的 finance.run_query 模块查询分红数据：
+- finance.STK_XR_XD - 除权除息数据表
+
+RiceQuant 可能没有完全对应的 finance 模块来获取分红数据。
+"""

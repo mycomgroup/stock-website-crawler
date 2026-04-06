@@ -103,7 +103,7 @@ def handle_bar(context, bar_dict):
     # 先平仓不需要的
     for etf in list(context.portfolio.positions.keys()):
         if etf not in long_weights or long_weights[etf] == 0:
-            order_to(etf, 0)
+            order_target_value(etf, 0)
 
     if total_w > 0:
         for etf, w in long_weights.items():

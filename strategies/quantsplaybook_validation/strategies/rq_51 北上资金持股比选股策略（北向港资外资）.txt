@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: finance.STK_HK_HOLD_INFO (HK/Northbound stock hold ratio data)
+# Uses JQ finance API for northbound capital flow data not available in RiceQuant

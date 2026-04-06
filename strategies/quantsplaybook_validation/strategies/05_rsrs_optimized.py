@@ -3,7 +3,21 @@
 # 已验证策略，作为基准对比
 
 import numpy as np
-import statsmodels.api as sm
+
+
+def ols_beta_r2(x, y):
+    """纯 numpy OLS，返回 slope(beta) 和 R²"""
+    x_mean, y_mean = np.mean(x), np.mean(y)
+    ss_xx = np.sum((x - x_mean) ** 2)
+    if ss_xx == 0:
+        return None, None
+    beta = np.sum((x - x_mean) * (y - y_mean)) / ss_xx
+    alpha = y_mean - beta * x_mean
+    y_hat = alpha + beta * x
+    ss_res = np.sum((y - y_hat) ** 2)
+    ss_tot = np.sum((y - y_mean) ** 2)
+    r2 = 1 - ss_res / ss_tot if ss_tot > 0 else 0
+    return beta, r2
 
 def init(context):
     context.security = '000300.XSHG'
@@ -20,43 +34,29 @@ def handle_bar(context, bar_dict):
     N = context.N
     M = context.M
 
-    # 获取历史数据
-    lookback = M + N + 50
-    prices = history_bars(security, lookback, '1d', ['high', 'low', 'close'])
-    if prices is None or len(prices) < M:
+    # 分开获取高低价（RiceQuant history_bars 不支持多字段列表，需单独调用）
+    lookback = N + 1
+    all_highs = history_bars(security, lookback, '1d', 'high')
+    all_lows = history_bars(security, lookback, '1d', 'low')
+    if all_highs is None or all_lows is None or len(all_highs) < N:
         return
 
-    # 初始化历史数据
-    if len(context.beta_history) < M:
-        # 用历史数据填充 beta_history（从最早的N根K线开始，到最新一根）
-        for i in range(N, len(prices)):
-            highs = prices['high'][i-N:i]
-            lows = prices['low'][i-N:i]
-            X = sm.add_constant(lows)
-            try:
-                model = sm.OLS(highs, X).fit()
-                context.beta_history.append(model.params[1])
-                context.r2_history.append(model.rsquared)
-            except Exception:
-                continue
-        if len(context.beta_history) < M:
-            return
-    else:
-        # 正常更新：只追加最新一根K线的beta
-        highs = prices['high'][-N:]
-        lows = prices['low'][-N:]
-        X = sm.add_constant(lows)
-        try:
-            model = sm.OLS(highs, X).fit()
-            context.beta_history.append(model.params[1])
-            context.r2_history.append(model.rsquared)
-        except Exception:
-            return
+    highs = np.array(all_highs[-N:], dtype=float)
+    lows = np.array(all_lows[-N:], dtype=float)
+
+    beta, r2 = ols_beta_r2(lows, highs)
+    if beta is None:
+        return
+    context.beta_history.append(beta)
+    context.r2_history.append(r2)
 
     # 保持长度
     if len(context.beta_history) > M:
         context.beta_history = context.beta_history[-M:]
         context.r2_history = context.r2_history[-M:]
+
+    if len(context.beta_history) < M:
+        return
 
     # 计算标准分
     beta_arr = np.array(context.beta_history)
@@ -73,10 +73,10 @@ def handle_bar(context, bar_dict):
 
     # 交易逻辑
     if rsrs > context.buy_threshold and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: RSRS={rsrs:.3f}")
     elif rsrs < context.sell_threshold and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: RSRS={rsrs:.3f}")

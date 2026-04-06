@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: finance.STK_HOLDER_NUM, finance.STK_SHAREHOLDER_FLOATING_TOP10, send_message()
+# Uses JQ finance APIs for shareholder data and WeChat notification not available in RiceQuant

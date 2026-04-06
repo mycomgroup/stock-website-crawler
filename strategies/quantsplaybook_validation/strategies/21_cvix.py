@@ -13,13 +13,15 @@ def handle_bar(context, bar_dict):
     security = context.security
     period = context.period
 
-    prices = history_bars(security, period + 60, '1d', ['close', 'high', 'low'])
-    if prices is None or len(prices) < period + 30:
+    closes = history_bars(security, period + 60, '1d', 'close')
+    highs = history_bars(security, period + 60, '1d', 'high')
+    lows = history_bars(security, period + 60, '1d', 'low')
+    if closes is None or highs is None or lows is None or len(closes) < period + 30:
         return
 
-    closes = np.array(prices['close'])
-    highs = np.array(prices['high'])
-    lows = np.array(prices['low'])
+    closes = np.array(closes)
+    highs = np.array(highs)
+    lows = np.array(lows)
 
     # Parkinson波动率（使用高低价）
     hl_ratio = np.log(highs / lows)
@@ -53,10 +55,10 @@ def handle_bar(context, bar_dict):
     # 低VIX分位 → 市场平静
 
     if cvix_percentile > 0.8 and term_structure > 1.2 and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入恐慌: CVIX={cvix:.2f}, term={term_structure:.2f}")
     elif cvix_percentile < 0.3 and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出平静: CVIX={cvix:.2f}")

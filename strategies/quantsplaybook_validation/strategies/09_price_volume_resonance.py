@@ -14,12 +14,13 @@ def handle_bar(context, bar_dict):
     period = context.period
 
     # 获取历史数据（收盘价和成交量）
-    bars = history_bars(security, period + 10, '1d', ['close', 'volume'])
-    if bars is None or len(bars) < period:
+    closes = history_bars(security, period + 10, '1d', 'close')
+    volumes = history_bars(security, period + 10, '1d', 'volume')
+    if closes is None or volumes is None or len(closes) < period:
         return
 
-    closes = np.array(bars['close'])
-    volumes = np.array(bars['volume'])
+    closes = np.array(closes)
+    volumes = np.array(volumes)
 
     # 计算价格变化率
     price_change = (closes[-1] - closes[-2]) / closes[-2]
@@ -56,10 +57,10 @@ def handle_bar(context, bar_dict):
     # 强负共振（z < -1）或价跌量增背离 → 卖出信号
 
     if z_score > 1.0 and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入价量共振: z={z_score:.2f}, resonance={resonance:.4f}")
     elif z_score < -1.0 and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出价量背离: z={z_score:.2f}, resonance={resonance:.4f}")

@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用sklearn.linear_model.LinearRegression进行线性回归拟合，
+# 属于SKIP规则中的"sklearn"类别。
+# 原文: https://www.joinquant.com/post/32795

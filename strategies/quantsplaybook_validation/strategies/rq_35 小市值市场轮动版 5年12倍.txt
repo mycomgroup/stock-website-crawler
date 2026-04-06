@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用jqfactor.get_factor_values和jqlib.technical_analysis库，
+# 属于SKIP规则中的"jqfactor"和"jqlib"类别。
+# 原文: https://www.joinquant.com/post/44880

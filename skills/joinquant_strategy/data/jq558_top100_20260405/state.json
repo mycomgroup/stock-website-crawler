@@ -1,0 +1,13 @@
+{
+  "updatedAt": "2026-04-06T00:00:45.812Z",
+  "sourceDir": "/Users/yuping/Downloads/git/stock-website-crawler/jk2bt-main/strategies",
+  "runDir": "/Users/yuping/Downloads/git/stock-website-crawler/skills/joinquant_strategy/data/jq558_top100_20260405",
+  "selectedFile": "/Users/yuping/Downloads/git/stock-website-crawler/skills/joinquant_strategy/data/selected_top100.json",
+  "totalSelected": 100,
+  "alreadySubmitted": 100,
+  "pending": 100,
+  "completedThisRun": 100,
+  "successCount": 76,
+  "failCount": 24,
+  "lastRank": 100
+}

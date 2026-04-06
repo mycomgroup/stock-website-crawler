@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用finance.STK_COMPANY_INFO、finance.STK_LIST等finance模块获取财务数据，
+# 以及statsmodels.api进行OLS回归计算RSRS指标，属于JQ专有finance数据和复杂统计模型。
+# 原文: https://www.joinquant.com/post/24224

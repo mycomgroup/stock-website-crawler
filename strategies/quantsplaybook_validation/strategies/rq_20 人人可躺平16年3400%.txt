@@ -1,0 +1,60 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+# RiceQuant Python 格式迁移策略
+# 原文：人人可躺平16年3400%
+# 作者：逆流的鱼
+# 原文网址：https://www.joinquant.com/post/33859
+
+import numpy as np
+
+security = '162605.XSHE'
+
+
+def init(context):
+    set_benchmark('162605.XSHE')
+    set_universe([security])
+    set_commission(PerTrade(buy_cost=0.0001, sell_cost=0.0001, min_cost=0.1))
+    set_slippage(FixedSlippage(0))
+    context.days = 20
+
+
+def handle_bar(context, bar_dict):
+    # 判断股票当前是否停牌
+    if bar_dict[security].is_trading:
+        paused = False
+    else:
+        paused = True
+    current_price = bar_dict[security].close
+    bolling(context, current_price, paused)
+
+
+def bolling(context, current_price, paused):
+    days = context.days
+    # 用 price 保存 days 天的股票收盘价
+    price = history_bars(security, days, '1d', 'close')
+    # 转成 array 方便数据处理
+    price = np.array(price)
+    # 计算中轨线
+    middle = price.sum() / days
+    # 计算标准差
+    std = np.std(price)
+    # 计算上轨线
+    up = middle + 2.75 * std
+    # 计算下轨线
+    down = middle - 1 * std
+
+    # 如果股价跌破下轨线则买入
+    if middle - 0.5 * std < current_price < middle + 0.5 * std:
+        if paused is False:
+            cash = context.portfolio.cash
+            num_of_shares = int(cash / current_price)
+            if num_of_shares > 0:
+                order_shares(security, num_of_shares)
+                logger.info("buying %s" % security)
+
+    # 如果突破上轨线则卖出
+    elif current_price > up or current_price < down:
+        if paused is False:
+            order_target_value(security, 0)
+            logger.info("selling %s" % security)

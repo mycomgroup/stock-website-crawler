@@ -1,0 +1,200 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+# RiceQuant Python 格式迁移策略
+# 原文：国庆节献礼：实例说明白马股攻防转换策略
+# 作者：蚂蚁量化
+# 原文网址：https://www.joinquant.com/post/44563
+
+from rqdatac import *
+
+def init(context):
+    # 设定沪深300作为基准
+    set_benchmark('000300.XSHG')
+    # 开启动态复权模式(真实价格)
+    set_option('use_real_price', True)
+    # 防止未来函数
+    set_option("avoid_future_data", True)
+    # 输出内容到日志
+    logger.info('初始函数开始运行且全局只运行一次')
+    # 过滤掉order系列API产生的比error级别低的log
+    set_log_level('order', 'error')
+
+    # 股票池
+    context.buy_stock_count = 5
+    context.check_out_lists = []
+    context.market_temperature = "warm"
+
+    # 股票相关设定
+    set_order_cost(OrderCost(close_tax=0.001, open_commission=0.00012, close_commission=0.00012, min_commission=5),
+                   type='stock')
+
+    # 开盘前运行
+    run_monthly(before_market_open, 1, time_rule=market_open(minute=5))
+    run_monthly(my_trade, 1, time_rule=market_open(minute=45))
+    # 收盘后运行
+    run_daily(after_market_close, time_rule=market_close())
+
+
+def my_trade(context):
+    # 买卖
+    adjust_position(context, context.check_out_lists)
+
+
+def after_market_close(context):
+    logger.info('#########################################################################################\n\n')
+
+
+# 自定义下单
+def order_target_value_(security, value):
+    if value == 0:
+        logger.debug("卖出 %s" % (get_security_info(security).display_name))
+    else:
+        logger.debug("买入 %s ，市值： %f" % (get_security_info(security).display_name, value))
+    return order_target_value(security, value)
+
+
+# 开仓，买入指定价值的证券
+def open_position(security, value):
+    order = order_target_value_(security, value)
+    if order is not None and order.filled > 0:
+        return True
+    return False
+
+
+# 平仓，卖出指定持仓
+def close_position(position):
+    security = position.order_book_id
+    order = order_target_value_(security, 0)
+    if order is not None:
+        if order.status == OrderStatus.FILLED and order.filled == order.amount:
+            return True
+    return False
+
+
+# 交易
+def adjust_position(context, buy_stocks):
+    for stock in context.portfolio.positions:
+        current_data = get_current_data()
+        nosell_1 = context.portfolio.positions[stock].last_price >= current_data[stock].high_limit
+        sell_2 = stock not in buy_stocks
+        if sell_2 and not nosell_1:
+            logger.info("调出平仓：[%s]" % (stock))
+            position = context.portfolio.positions[stock]
+            close_position(position)
+        else:
+            logger.info("已持仓，本次不买入：[%s]" % (stock))
+
+    # 根据股票数量分仓
+    position_count = len(context.portfolio.positions)
+    if context.buy_stock_count > position_count:
+        value = context.portfolio.cash / (context.buy_stock_count - position_count)
+
+        for stock in buy_stocks[:context.buy_stock_count]:
+            if stock not in context.portfolio.positions:
+                if open_position(stock, value):
+                    if len(context.portfolio.positions) >= context.buy_stock_count:
+                        break
+
+
+def get_name(stk):
+    return get_security_info(stk).display_name + ':' + stk[:6]
+
+
+def market_temperature(context):
+    index300 = history_bars('000300.XSHG', 220, '1d', 'close')
+    market_height = (np.mean(index300[-5:]) - np.min(index300)) / (np.max(index300) - np.min(index300))
+    if market_height < 0.20:
+        context.market_temperature = "cold"
+    elif market_height > 0.90:
+        context.market_temperature = "hot"
+    elif np.max(index300[-60:]) / np.min(index300) > 1.20:
+        context.market_temperature = "warm"
+
+    if context.market_temperature == "cold":
+        temp = 200
+    elif context.market_temperature == "warm":
+        temp = 300
+    else:
+        temp = 400
+
+    if context.run_params.type != 'sim_trade':
+        record(temp=temp)
+
+
+def before_market_open(context):
+    market_temperature(context)
+    context.check_out_lists = []
+    current_data = get_current_data()
+    check_date = context.previous_date - datetime.timedelta(days=200)
+    all_stocks = list(get_all_securities(date=check_date).index)
+    all_stocks = index_components("000300.XSHG")
+    # 过滤创业板、ST、停牌、当日涨停
+    all_stocks = [stock for stock in all_stocks if not (
+            (current_data[stock].open == current_data[stock].high_limit) or  # 涨停开盘
+            (current_data[stock].open == current_data[stock].low_limit) or  # 跌停开盘
+            current_data[stock].paused or  # 停牌
+            current_data[stock].is_st or  # ST
+            ('ST' in current_data[stock].name) or
+            ('*' in current_data[stock].name) or
+            ('退' in current_data[stock].name) or
+            (stock.startswith('30')) or  # 创业
+            (stock.startswith('68')) or  # 科创
+            (stock.startswith('8')) or  # 北交
+            (stock.startswith('4'))   # 北交
+    )]
+
+    if context.market_temperature == "cold":
+        q = query(
+            valuation.code,
+        ).filter(
+            valuation.pb_ratio > 0,
+            valuation.pb_ratio < 1,
+            cash_flow.subtotal_operate_cash_inflow > 0,
+            indicator.adjusted_profit > 0,
+            cash_flow.subtotal_operate_cash_inflow / indicator.adjusted_profit > 2.0,
+            indicator.inc_return > 1.5,
+            indicator.inc_net_profit_year_on_year > -15,
+            valuation.code.in_(all_stocks)
+        ).order_by(
+            (indicator.roa / valuation.pb_ratio).desc()
+        ).limit(
+            context.buy_stock_count + 1
+        )
+    elif context.market_temperature == "warm":
+        q = query(
+            valuation.code,
+        ).filter(
+            valuation.pb_ratio > 0,
+            valuation.pb_ratio < 1,
+            cash_flow.subtotal_operate_cash_inflow > 0,
+            indicator.adjusted_profit > 0,
+            cash_flow.subtotal_operate_cash_inflow / indicator.adjusted_profit > 1.0,
+            indicator.inc_return > 2.0,
+            indicator.inc_net_profit_year_on_year > 0,
+            valuation.code.in_(all_stocks)
+        ).order_by(
+            (indicator.roa / valuation.pb_ratio).desc()
+        ).limit(
+            context.buy_stock_count + 1
+        )
+    elif context.market_temperature == "hot":
+        q = query(
+            valuation.code,
+        ).filter(
+            valuation.pb_ratio > 3,
+            cash_flow.subtotal_operate_cash_inflow > 0,
+            indicator.adjusted_profit > 0,
+            cash_flow.subtotal_operate_cash_inflow / indicator.adjusted_profit > 0.5,
+            indicator.inc_return > 3.0,
+            indicator.inc_net_profit_year_on_year > 20,
+            valuation.code.in_(all_stocks)
+        ).order_by(
+            indicator.roa.desc()
+        ).limit(
+            context.buy_stock_count + 1
+        )
+
+    check_out_lists = list(get_fundamentals(q).code)
+    context.check_out_lists = check_out_lists
+    logger.info("今日股票池：%s" % context.check_out_lists)

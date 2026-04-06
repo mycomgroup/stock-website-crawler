@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific module: jqfactor library (get_factor_values)
+# Factor-based strategy requiring JoinQuant factor data not available in RiceQuant

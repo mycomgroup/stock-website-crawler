@@ -1,0 +1,13 @@
+# SKIP_REASON: 使用了 jqlib.technical_analysis 库（BBI等技术指标）和 get_concepts/get_concept_stocks，RiceQuant 不支持
+# 原文：年初至今4倍，极致的Day Trading，56.8%胜率
+# 作者：Dr.QYQ
+# 原文网址：https://www.joinquant.com/post/38940
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqlib.technical_analysis - 技术分析库（BBI, MACD, KDJ等）
+2. get_concepts() - 获取概念板块列表
+3. get_concept_stocks() - 获取概念板块成分股
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

@@ -1,0 +1,11 @@
+# SKIP_REASON: 使用了 talib 库（MA等技术指标），RiceQuant 不支持
+# 原文：基本不耍六毛的ETF轮动策略
+# 作者：jqz1226
+# 原文网址：https://www.joinquant.com/post/24432
+
+"""
+该策略使用了 talib 库的技术指标：
+- talib.MA(volume, g.lag0) - 移动平均线
+
+talib 是 JoinQuant 平台集成的技术分析库，RiceQuant 不支持。
+"""

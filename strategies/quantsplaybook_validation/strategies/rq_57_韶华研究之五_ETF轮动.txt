@@ -1,0 +1,8 @@
+# SKIP REASON: Uses jqlib.technical_analysis library (JoinQuant-specific)
+#
+# Original: 韶华研究之五-ETF轮动,躺赚,夏普2
+# Author: 韶华不负
+# URL: https://www.joinquant.com/post/32253
+#
+# The strategy imports "from jqlib.technical_analysis import *" which is a
+# JoinQuant-specific technical analysis library not available in RiceQuant.

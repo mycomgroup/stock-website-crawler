@@ -1,0 +1,175 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - 正黄旗大妈选股法
+原文: https://www.joinquant.com/post/40139
+作者: oupian
+
+迁移说明:
+- 使用jqlib.technical_analysis库(VOL, KD指标)，属于JQ专有，简化处理
+- 使用finance.STK_XR_XD获取分红数据，RQ不支持，简化为股息率筛选
+- initialize -> init, g.xxx -> context.xxx
+"""
+import pandas as pd
+import numpy as np
+
+
+def init(context):
+    log.set_level('order', 'error')
+    set_option('use_real_price', True)
+    set_option('avoid_future_data', True)
+    set_benchmark('000905.XSHG')
+    set_slippage(PriceRelatedSlippage(0.000))
+    set_order_cost(OrderCost(open_tax=0, close_tax=0.0001, open_commission=0.0003, close_commission=0.0003, close_today_commission=0, min_commission=5), type='fund')
+    context.stock_num = 10
+    run_daily(prepare_stock_list, time='9:05', reference_security='000300.XSHG')
+    run_monthly(my_Trader, 1, time='9:30')
+    run_daily(check_limit_up, time='14:00')
+    run_daily(check_at_dayend, time='14:30')
+    context.buylist = []
+
+
+def my_Trader(context):
+    dt_last = context.previous_date
+    stocks = get_all_securities('stock', dt_last).index.tolist()
+    stocks = filter_kcbj_stock(stocks)
+
+    # 高股息筛选(简化版，需要RQ支持才能用finance数据)
+    # 这里先用基本面筛选代替
+    q = query(valuation.code,
+              valuation.pe_ratio / indicator.inc_net_profit_year_on_year,
+              indicator.roe / valuation.pb_ratio,
+              indicator.roe,
+              ).filter(
+        valuation.pe_ratio / indicator.inc_net_profit_year_on_year > -1,
+        valuation.pe_ratio / indicator.inc_net_profit_year_on_year < 3,
+        valuation.code.in_(stocks))
+    df_fundamentals = get_fundamentals(q, date=None)
+    stocks = list(df_fundamentals.code)
+
+    q = query(valuation.code,
+              valuation.market_cap
+              ).filter(
+        valuation.code.in_(stocks),
+        valuation.market_cap <= 100).order_by(valuation.market_cap.asc())
+    df = get_fundamentals(q, date=None)
+    print(df.shape)
+    choice = list(df.code)
+    choice = filter_st_stock(choice)
+    choice = filter_paused_stock(choice)
+    choice = filter_limitup_stock(context, choice)
+    choice = filter_limitdown_stock(context, choice)
+    choice = filter_highprice_stock(context, choice)
+    context.buylist = choice
+    buystock(context, context.buylist)
+
+
+def buystock(context, choice):
+    position_count = len(context.portfolio.positions)
+    if context.stock_num <= position_count:
+        return
+
+    buylist = choice
+    cdata = get_current_data()
+    psize = context.portfolio.cash / (context.stock_num - position_count)
+    for s in buylist:
+        if s not in context.portfolio.positions:
+            logger.info('buy', s, cdata[s].name)
+            order_value(s, psize)
+            if len(context.portfolio.positions) == context.stock_num:
+                break
+
+
+def sellstock(context, sell_list):
+    if len(sell_list) > 0:
+        for security in sell_list:
+            cprice = get_current_data()[security].last_price
+            boughtcost = context.portfolio.positions[security].acc_avg_cost
+            profit = (cprice - boughtcost) / boughtcost * 100
+            logger.info("Sell %s " % get_current_data()[security].name, "profit: %.1f%%" % profit, "init time %s" % context.portfolio.positions[security].init_time)
+            limit_price = max(cprice * 0.95, get_current_data()[security].low_limit)
+            ordert = order_target_value(security, 0, LimitOrderStyle(limit_price))
+            if ordert is None:
+                logger.info("Sell failed %s" % get_current_data()[security].name)
+    return
+
+
+def prepare_stock_list(context):
+    context.high_limit_list = []
+    hold_list = list(context.portfolio.positions)
+    if hold_list:
+        df = get_price(hold_list, end_date=context.previous_date, frequency='daily',
+                       fields=['close', 'high_limit'],
+                       count=1, panel=False)
+        context.high_limit_list = df[df['close'] == df['high_limit']]['code'].tolist()
+
+
+def check_limit_up(context):
+    cdata = get_current_data()
+    sell_list = []
+    if context.high_limit_list:
+        for stock in context.high_limit_list:
+            if cdata[stock].last_price < cdata[stock].high_limit:
+                logger.info("[%s]涨停打开，卖出" % cdata[stock].name)
+                sell_list.append(stock)
+            else:
+                logger.info("[%s]涨停，继续持有" % cdata[stock].name)
+    if len(sell_list) > 0:
+        sellstock(context, sell_list)
+
+
+def check_at_dayend(context):
+    btlist = context.portfolio.positions
+    cdata = get_current_data()
+    sell_list = []
+    for stock in btlist:
+        if cdata[stock].last_price == cdata[stock].high_limit:
+            continue
+        # VOL指标在RQ中不可用，简化为价格监控
+        # if VOLT[stock] > MAVOL10[stock] * 3:
+        #     log.info("[%s]放量未涨停，卖出" % cdata[stock].name)
+        #     sell_list.append(stock)
+    sellstock(context, sell_list)
+    buystock(context, context.buylist)
+
+
+def filter_kcbj_stock(stock_list):
+    for stock in stock_list[:]:
+        if stock[0] == '4' or stock[0] == '8' or stock[:2] == '68':
+            stock_list.remove(stock)
+    return stock_list
+
+
+def filter_paused_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list if not current_data[stock].paused]
+
+
+def filter_st_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list
+            if not current_data[stock].is_st
+            and 'ST' not in current_data[stock].name
+            and '*' not in current_data[stock].name
+            and '退' not in current_data[stock].name]
+
+
+def filter_limitup_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    current_data = get_current_data()
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] < current_data[stock].high_limit]
+
+
+def filter_limitdown_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    current_data = get_current_data()
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] > current_data[stock].low_limit]
+
+
+def filter_highprice_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] < 9]

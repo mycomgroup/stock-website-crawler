@@ -1,0 +1,12 @@
+# SKIP_REASON: 使用了 jqdata.macro 模块查询宏观经济数据（PMI等），RiceQuant 不支持该模块
+# 原文：利用宏观经济数据的中长线策略深度研究
+# 作者：Acne Studio
+# 原文网址：https://www.joinquant.com/post/40154
+
+"""
+该策略使用了 JoinQuant 的 macro 模块来获取宏观经济数据：
+- macro.run_query(query(macro.MAC_MANUFACTURING_PMI.pmi))
+- macro.MAC_MANUFACTING_PMI - 制造业PMI数据
+
+这些是 JoinQuant 平台特有的宏观数据 API，RiceQuant 不支持。
+"""

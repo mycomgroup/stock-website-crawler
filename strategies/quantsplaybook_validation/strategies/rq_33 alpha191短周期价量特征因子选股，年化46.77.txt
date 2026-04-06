@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用sklearn.svm.SVR进行机器学习回归，
+# 以及jqlib.alpha191获取alpha191因子，属于SKIP规则中的"sklearn"和"jqlib"类别。
+# 原文: https://www.joinquant.com/post/44491

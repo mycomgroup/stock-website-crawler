@@ -1,0 +1,8 @@
+# SKIP REASON: Uses statsmodels library for statistical calculations (OLS regression)
+#
+# Original: 北向RSRS与布林带择时
+# Author: 韭菜001
+# URL: https://www.joinquant.com/post/34253
+#
+# The strategy uses "import statsmodels.api as sm" for OLS regression calculations,
+# which may not be available in RiceQuant's default environment.

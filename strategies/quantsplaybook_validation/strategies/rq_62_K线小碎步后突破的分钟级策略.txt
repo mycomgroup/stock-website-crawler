@@ -1,0 +1,7 @@
+# SKIP REASON: Uses jqlib.technical_analysis library (JoinQuant-specific)
+#
+# Original: 研究一种K线小碎步后突破的分钟级策略
+# URL: (from JoinQuant)
+#
+# The strategy uses technical analysis indicators from jqlib.technical_analysis
+# which is a JoinQuant-specific library not available in RiceQuant.

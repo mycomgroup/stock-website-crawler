@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-04-06T00:02:36.314Z",
+  "batches": [
+    {
+      "batchName": "jq558_batch_20260403",
+      "batchDir": "/Users/yuping/Downloads/git/stock-website-crawler/skills/joinquant_strategy/data/jq558_batch_20260403",
+      "totalSubmissions": 21,
+      "successfulSubmissions": 16,
+      "failedSubmissions": 5,
+      "successRate": "76.19%",
+      "hasResults": true,
+      "completedBacktests": 0,
+      "pendingBacktests": 16,
+      "profitableStrategies": [],
+      "topStrategies": []
+    },
+    {
+      "batchName": "jq558_batch_20260404",
+      "batchDir": "/Users/yuping/Downloads/git/stock-website-crawler/skills/joinquant_strategy/data/jq558_batch_20260404",
+      "totalSubmissions": 585,
+      "successfulSubmissions": 211,
+      "failedSubmissions": 374,
+      "successRate": "36.07%",
+      "hasResults": true,
+      "completedBacktests": 0,
+      "pendingBacktests": 210,
+      "profitableStrategies": [],
+      "topStrategies": []
+    },
+    {
+      "batchName": "jq558_top100_20260405",
+      "batchDir": "/Users/yuping/Downloads/git/stock-website-crawler/skills/joinquant_strategy/data/jq558_top100_20260405",
+      "totalSubmissions": 100,
+      "successfulSubmissions": 76,
+      "failedSubmissions": 24,
+      "successRate": "76.00%",
+      "hasResults": false,
+      "completedBacktests": 0,
+      "pendingBacktests": 0,
+      "profitableStrategies": [],
+      "topStrategies": []
+    }
+  ],
+  "totals": {
+    "submissions": 706,
+    "successful": 303,
+    "failed": 403,
+    "completed": 0,
+    "pending": 226,
+    "profitable": 0
+  }
+}

@@ -1,0 +1,9 @@
+# SKIP REASON: Uses jqfactor library (get_factor_values) which is a JoinQuant-specific
+# factor library not available in RiceQuant
+#
+# Original: 年化62%的动量策略
+# Author: 逸_
+# URL: https://www.joinquant.com/view/community/detail/39838
+#
+# The strategy imports "from jqfactor import get_factor_values" which is in the skip list
+# (jqfactor, sklearn, torch, neural networks, pickle, redis, XGBoost, BiLSTM, alpha101, technical_analysis)

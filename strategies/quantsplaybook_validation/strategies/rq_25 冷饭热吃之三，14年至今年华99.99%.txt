@@ -1,0 +1,9 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values，JoinQuant 特有库，RiceQuant 不支持
+# 原文：冷饭热吃之三，14年至今年华99.99%
+# 作者：韶华不负
+# 原文网址：https://www.joinquant.com/post/47527
+
+"""
+该策略使用了 JoinQuant 的 jqfactor 库中的 get_factor_values 函数
+获取选股因子，这是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

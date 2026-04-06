@@ -1,0 +1,4 @@
+# SKIP REASON
+# JQ-specific: jqtrade library for local live trading
+# Uses one quant API not available in RiceQuant
+# Local live trading framework incompatible with RiceQuant backtest

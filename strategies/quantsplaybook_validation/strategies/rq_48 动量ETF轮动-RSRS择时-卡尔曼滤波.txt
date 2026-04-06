@@ -1,0 +1,4 @@
+# SKIP REASON
+# JQ-specific: attribute_history() not available in RiceQuant
+# Uses pykalman library but depends on JQ-specific data API
+# RSRS (Resistance Support Relative Strength) implementation requires JQ historical data API

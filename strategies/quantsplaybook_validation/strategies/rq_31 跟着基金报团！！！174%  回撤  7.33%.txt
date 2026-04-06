@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用jqlib.technical_analysis库和finance.FUND_PORTFOLIO_STOCK获取基金持仓数据，
+# 以及statsmodels.api进行RSRS计算，属于SKIP规则中的"jqlib"和JQ专有finance数据类别。
+# 原文: https://www.joinquant.com/post/31496

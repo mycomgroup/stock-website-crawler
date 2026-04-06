@@ -1,5 +1,5 @@
-# Session data (contains sensitive cookies and API keys)
-data/
+# Session data (contains sensitive cookies)
+data/session.json
 
 # Environment variables
 .env

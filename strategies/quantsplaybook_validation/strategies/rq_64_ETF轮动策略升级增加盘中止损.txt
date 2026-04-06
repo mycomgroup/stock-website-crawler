@@ -1,0 +1,9 @@
+# SKIP REASON: Uses talib library for technical analysis calculations
+# (ta.MA - Moving Average)
+#
+# Original: ETF轮动策略升级-增加盘中止损
+# Author: 长鸿
+# URL: https://www.joinquant.com/post/38838
+#
+# The strategy uses talib (line: ma_filter = ta.MA(price_data.close.values, g.ma_period))
+# which is a technical analysis library not natively available in RiceQuant.

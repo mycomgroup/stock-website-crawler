@@ -1,0 +1,242 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - 追高概率涨停策略
+原文: https://www.joinquant.com/post/39553
+作者: 养家大哥
+
+迁移说明:
+- initialize -> init
+- g.xxx -> context.xxx
+- log.info -> logger.info
+- order_target -> order_target_value
+- context.portfolio.available_cash -> context.portfolio.cash
+- attribute_history -> history
+- get_ticks -> RQ不支持，简化处理(集合竞价部分)
+"""
+import numpy as np
+import datetime
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    set_option("avoid_future_data", True)
+    log.set_level('order', 'error')
+    log.set_level('history', 'error')
+    log.set_level('system', 'error')
+
+    context.prepare_lists = []
+    context.check_out_lists = []
+    context.buy_stock_count = 3
+
+    set_order_cost(OrderCost(close_tax=0.001, open_commission=0.00013, close_commission=0.00013, min_commission=5), type='stock')
+
+    run_weekly(prepare_stock_list, weekday=1, time='7:00', reference_security='000300.XSHG')
+    run_daily(before_market_open, time='09:26', reference_security='000300.XSHG')
+    run_daily(market_open, time='09:30', reference_security='000300.XSHG')
+    run_daily(check_raise_up, time='14:00', reference_security='000300.XSHG')
+    run_daily(after_market_close, time='after_close', reference_security='000300.XSHG')
+
+
+def prepare_stock_list(context):
+    by_date = context.previous_date - datetime.timedelta(days=375)
+    check_out_lists = get_all_securities(date=by_date).index.tolist()
+    check_out_lists = market_cap_filter(context, check_out_lists)
+    check_out_lists = filter_kcb_stock(check_out_lists)
+    check_out_lists = filter_cyb_stock(check_out_lists)
+    check_out_lists = filter_st_stock(check_out_lists)
+    check_out_lists = filter_paused_stock(check_out_lists)
+    context.prepare_lists = get_recent_limit_up_stock(context, check_out_lists, 120)
+
+
+def before_market_open(context):
+    check_out_lists = get_recent_limit_up_stock(context, context.prepare_lists, 5)
+    check_out_lists = filter_limitdown_stock(context, check_out_lists)
+    check_out_lists = get_available_price_stock(context, check_out_lists, 50, 1.2, 1.4, -0.05)
+    check_out_lists = get_available_volume_stock(context, check_out_lists, 5, 1.8)
+    # 集合竞价部分 - RQ不支持get_ticks，简化处理
+    # check_out_lists = get_available_auction_stock(context, check_out_lists, 1.05)
+    check_out_lists = add_hold_stock(context, check_out_lists, 0.96)
+    if len(check_out_lists) > context.buy_stock_count:
+        context.check_out_lists = check_out_lists[:context.buy_stock_count]
+    else:
+        context.check_out_lists = check_out_lists
+
+
+def market_open(context):
+    log.info("运行 market_open 函数")
+    adjust_position(context, context.check_out_lists)
+
+
+def after_market_close(context):
+    log.info(str('函数运行时间(after_market_close):' + str(context.current_dt.time())))
+    trades = get_trades()
+    for _trade in trades.values():
+        log.info('成交记录：' + str(_trade))
+    log.info('一天结束')
+    log.info('##############################################################')
+
+
+def order_target_value_(security, value):
+    if value == 0:
+        log.debug("Selling out %s" % (security))
+    else:
+        log.debug("Order %s to value %f" % (security, value))
+    return order_target_value(security, value)
+
+
+def open_position(security, value):
+    order = order_target_value_(security, value)
+    if order is not None and order.filled > 0:
+        return True
+    return False
+
+
+def close_position(position):
+    security = position.security
+    order = order_target_value_(security, 0)
+    if order is not None:
+        if order.status == OrderStatus.held and order.filled == order.amount:
+            return True
+    return False
+
+
+def adjust_position(context, buy_stocks):
+    for stock in context.portfolio.positions:
+        if stock not in buy_stocks:
+            log.info("stock [%s] in position is not buyable" % (stock))
+            position = context.portfolio.positions[stock]
+            close_position(position)
+
+    buy_stocks = buy_stocks[:context.buy_stock_count]
+    position_count = len(context.portfolio.positions)
+    if context.buy_stock_count > position_count:
+        value = context.portfolio.cash / (context.buy_stock_count - position_count)
+
+        for stock in buy_stocks:
+            if context.portfolio.positions[stock].total_amount == 0:
+                if open_position(stock, value):
+                    if len(context.portfolio.positions) == context.buy_stock_count:
+                        break
+
+
+def filter_st_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list if not (
+            current_data[stock].is_st or
+            'ST' in current_data[stock].name or
+            '*' in current_data[stock].name or
+            '退' in current_data[stock].name)]
+
+
+def filter_paused_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list if not current_data[stock].paused]
+
+
+def filter_kcb_stock(stock_list):
+    return [stock for stock in stock_list if not (stock.startswith('68'))]
+
+
+def filter_cyb_stock(stock_list):
+    return [stock for stock in stock_list if not (stock.startswith('30'))]
+
+
+def market_cap_filter(context, stock_list):
+    q = query(valuation.code, valuation.market_cap).filter(
+        valuation.code.in_(stock_list),
+        valuation.market_cap < 200
+    ).order_by(
+        valuation.circulating_market_cap.asc()
+    )
+    return list(get_fundamentals(q).code)
+
+
+def filter_limitup_stock(context, stock_list):
+    close = history(1, unit='1m', field='close', security_list=stock_list)
+    high_limit = history(1, unit='1m', field='high_limit', security_list=stock_list)
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or close[stock][-1] < high_limit[stock][-1]]
+
+
+def filter_limitdown_stock(context, stock_list):
+    close = history(1, unit='1m', field='close', security_list=stock_list)
+    low_limit = history(1, unit='1m', field='low_limit', security_list=stock_list)
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or close[stock][-1] > low_limit[stock][-1]]
+
+
+def get_recent_limit_up_stock(context, stock_list, recent_days=1, limit_num=0):
+    yesterday = context.previous_date
+    h = get_price(stock_list, end_date=yesterday, frequency='daily', fields=['close', 'high_limit', 'paused'],
+                  count=recent_days, panel=False)
+    s_limit = h.query('close==high_limit and paused==0').groupby('code')['high_limit'].count()
+    if limit_num > 0:
+        fix_limit = s_limit[(s_limit.values == limit_num)]
+        return fix_limit.index.tolist()
+    else:
+        return s_limit.index.tolist()
+
+
+def get_recent_limit_low_stock(context, stock_list, recent_days=1, limit_num=0):
+    yesterday = context.previous_date
+    h = get_price(stock_list, end_date=yesterday, frequency='daily', fields=['low', 'low_limit', 'paused'],
+                  count=recent_days, panel=False)
+    s_limit = h.query('low==low_limit and paused==0').groupby('code')['low_limit'].count()
+    if limit_num > 0:
+        fix_limit = s_limit[(s_limit.values == limit_num)]
+        return fix_limit.index.tolist()
+    else:
+        return s_limit.index.tolist()
+
+
+def get_available_price_stock(context, stock_list, recent_days, up_low_r=1.2, bottom_up_r=1.4, yes_price_r=-0.05):
+    return_stocks = []
+    for stock in stock_list:
+        data = attribute_history(stock, recent_days, '1d', ['close', 'pre_close'])
+        min_close = data.close.min()
+        max_close = data.close.max()
+        if (data.close[-1] <= min_close * up_low_r) and \
+          (max_close <= min_close * bottom_up_r) and \
+          (data.close[-1] >= data.pre_close[-1] * (1 + yes_price_r)):
+            return_stocks.append(stock)
+    return return_stocks
+
+
+def get_available_volume_stock(context, stock_list, recent_days, up_volume_r=2):
+    return_stocks = []
+    for stock in stock_list:
+        data = attribute_history(stock, recent_days, '1d', ['volume'])
+        mean_volume = data.volume.mean()
+        max_volume = data.volume.max()
+        if (max_volume <= mean_volume * up_volume_r):
+            return_stocks.append(stock)
+    return return_stocks
+
+
+def add_hold_stock(context, stock_list, fall_r=0.96):
+    return_stocks = stock_list
+    has_stocks = context.portfolio.positions.keys()
+    for stock in has_stocks:
+        stk_data = attribute_history(stock, 1, '1d', ['close', 'high_limit', 'pre_close'])
+        if (stk_data.close[0] >= stk_data.pre_close[0] * fall_r) and \
+          (stock not in return_stocks):
+            return_stocks.insert(0, stock)
+    return return_stocks
+
+
+def check_raise_up(context):
+    raise_r = 1.09
+    fall_r = 0.94
+    current_data = get_current_data()
+    holding_list = list(context.portfolio.positions)
+    if holding_list:
+        for stock in holding_list:
+            if (current_data[stock].last_price < current_data[stock].high_limit):
+                if (current_data[stock].last_price >= context.portfolio.positions[stock].avg_cost * raise_r) or \
+                  (current_data[stock].last_price <= context.portfolio.positions[stock].avg_cost * fall_r):
+                    log.info("[%s]涨幅或跌幅过大，卖出" % stock)
+                    position = context.portfolio.positions[stock]
+                    close_position(position)

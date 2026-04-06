@@ -14,14 +14,17 @@ def handle_bar(context, bar_dict):
     period = context.period
 
     # 获取历史高低收盘价
-    prices = history_bars(security, period + 5, '1d', ['open', 'high', 'low', 'close'])
-    if prices is None or len(prices) < period:
+    opens = history_bars(security, period + 5, '1d', 'open')
+    highs = history_bars(security, period + 5, '1d', 'high')
+    lows = history_bars(security, period + 5, '1d', 'low')
+    closes = history_bars(security, period + 5, '1d', 'close')
+    if opens is None or highs is None or lows is None or closes is None or len(opens) < period:
         return
 
-    opens = np.array(prices['open'])
-    highs = np.array(prices['high'])
-    lows = np.array(prices['low'])
-    closes = np.array(prices['close'])
+    opens = np.array(opens)
+    highs = np.array(highs)
+    lows = np.array(lows)
+    closes = np.array(closes)
 
     # 计算单向波动
     # 上涨波动 = high - open (当日向上波动)
@@ -69,10 +72,10 @@ def handle_bar(context, bar_dict):
     # 相对强弱低分位(<0.3) → 下跌波动占优 → 卖出
 
     if rs_percentile > 0.7 and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: RS={relative_strength:.3f}, percentile={rs_percentile:.2f}")
     elif rs_percentile < 0.3 and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: RS={relative_strength:.3f}, percentile={rs_percentile:.2f}")

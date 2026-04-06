@@ -1,0 +1,10 @@
+# SKIP_REASON: 使用了 sklearn.linear_model.LinearRegression，JoinQuant 特有机器学习库，RiceQuant 不支持
+# 原文：冲天炮最高板策略，收益惊呆了我
+# 作者：jqz1226
+# 原文网址：https://www.joinquant.com/post/37573
+
+"""
+该策略使用了 sklearn.linear_model.LinearRegression 进行直线拟合计算，
+这是 JoinQuant 平台特有的小市值选股策略中集成的机器学习方法，
+RiceQuant 不支持 sklearn 库。
+"""

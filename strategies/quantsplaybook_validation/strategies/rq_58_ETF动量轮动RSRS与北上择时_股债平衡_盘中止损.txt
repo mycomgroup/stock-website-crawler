@@ -1,0 +1,8 @@
+# SKIP REASON: Uses pykalman library (KalmanFilter) for statistical calculations
+#
+# Original: ETF动量轮动RSRS与北上择时-股债平衡-盘中止损
+# Author: Jim000
+# URL: https://www.joinquant.com/post/36162
+#
+# The strategy uses "from pykalman import KalmanFilter" which is a statistical
+# library that may not be available in RiceQuant's default environment.

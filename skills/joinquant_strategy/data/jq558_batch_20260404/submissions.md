@@ -409,3 +409,182 @@
 | 404 | 聚宽有价值策略558/81 搞市场最靓的仔！指数ETF动量轮动策略-2.txt | JQ558_0404_聚宽有价值策略558_81_搞市场最靓的仔_指数ETF动量轮动策略-2 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
 | 405 | 聚宽有价值策略558/81 配套资料说明.txt | JQ558_0405_聚宽有价值策略558_81_配套资料说明 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
 | 406 | 聚宽有价值策略558/81 无杠杆，稳定盈利的etf轮动.txt | JQ558_0406_聚宽有价值策略558_81_无杠杆_稳定盈利的etf轮动 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 1 | strategies/01 7年40倍模拟超过两年年化高回撤低.txt | JQ558_0001_strategies_01_7年40倍模拟超过两年年化高回撤低 | cd45eba022e60387deb91ee6f725ef50 | 604ecfa88e8fca59c89a8a3035c09bed | submitted |
+| 2 | strategies/01 龙回头3.0回测速度优化版.txt | JQ558_0002_strategies_01_龙回头3_0回测速度优化版 | cd45eba022e60387deb91ee6f725ef50 | fd83645a95fdd25d0f954d8bd0788612 | submitted |
+| 3 | strategies/01 首板低开策略.txt | JQ558_0003_strategies_01_首板低开策略 | cd45eba022e60387deb91ee6f725ef50 | 6f1c9b73e545503001f737696a605760 | submitted |
+| 16 | strategies/04 红利搬砖_测试版.txt | JQ558_0016_strategies_04_红利搬砖_测试版 | cd45eba022e60387deb91ee6f725ef50 | 82d26532fd5a6fb90a063659bfa6abd1 | submitted |
+| 17 | strategies/04 红利搬砖_简化测试版.txt | JQ558_0017_strategies_04_红利搬砖_简化测试版 | cd45eba022e60387deb91ee6f725ef50 | 6ad722ad5dda66b716ed7d791e042093 | submitted |
+| 87 | strategies/13 5年15倍的收益，年化79.93%，可实盘策略，拿走不谢！.txt | JQ558_0087_strategies_13_5年15倍的收益_年化79_93_可实盘策略_拿走不谢 | cd45eba022e60387deb91ee6f725ef50 | f705e0d5fb3759377bd61c416b972f57 | submitted |
+| 88 | strategies/13 7年40倍模拟超过两年年化高回撤低.txt | JQ558_0088_strategies_13_7年40倍模拟超过两年年化高回撤低 | cd45eba022e60387deb91ee6f725ef50 | 7f36688633a6fd76171ebb66ecea5ac5 | submitted |
+| 89 | strategies/13 不含未来宽基etf轮动8年50倍年化60%.txt | JQ558_0089_strategies_13_不含未来宽基etf轮动8年50倍年化60 | cd45eba022e60387deb91ee6f725ef50 | 6e53cd2af09d06a2b140dddc9b53d363 | submitted |
+| 90 | strategies/13 首板高开-低开-弱转强混合策略（今年收益1138.61%）.txt | JQ558_0090_strategies_13_首板高开-低开-弱转强混合策略_今年收益1138_61 | cd45eba022e60387deb91ee6f725ef50 | c535c7b3208f981a60a4433c26779c00 | submitted |
+| 91 | strategies/14 安全摸狗策略.txt | JQ558_0091_strategies_14_安全摸狗策略 | cd45eba022e60387deb91ee6f725ef50 | d06cbfa3c2614083ee90a7222d268a84 | submitted |
+| 92 | strategies/14 胜率65%之缩量分歧反包战法.txt | JQ558_0092_strategies_14_胜率65_之缩量分歧反包战法 | cd45eba022e60387deb91ee6f725ef50 | c483526dc5bfb4387857531571d3d785 | submitted |
+| 93 | strategies/14 四年多翻9倍，年化73%，成长因子评分筛选.txt | JQ558_0093_strategies_14_四年多翻9倍_年化73_成长因子评分筛选 | cd45eba022e60387deb91ee6f725ef50 | 6397b2794773a3509ba1624912b562ff | submitted |
+| 94 | strategies/14 为实盘做的更新： 分钟级别和盘中止损.txt | JQ558_0094_strategies_14_为实盘做的更新_分钟级别和盘中止损 | cd45eba022e60387deb91ee6f725ef50 | ec670f8ac511d16c8df2ed2865bd8d08 | submitted |
+| 95 | strategies/14 FOF养老成长基金-v2.0.txt | JQ558_0095_strategies_14_FOF养老成长基金-v2_0 | cd45eba022e60387deb91ee6f725ef50 | 6bc7ae7ac1101f1c4899335a41c413af | submitted |
+| 96 | strategies/15 10年52倍，年化59%，全新因子方法超稳定.txt | JQ558_0096_strategies_15_10年52倍_年化59_全新因子方法超稳定 | cd45eba022e60387deb91ee6f725ef50 | 6a78ef0879f791d99d288d941778e6f2 | submitted |
+| 97 | strategies/15 2020年 267%年化 13%回撤 上涨趋势策略修改版.txt | JQ558_0097_strategies_15_2020年_267_年化_13_回撤_上涨趋势策略修改版 | cd45eba022e60387deb91ee6f725ef50 | 32aeda70b3a160d2cd4975511ebff61d | submitted |
+| 98 | strategies/15 高股息低杠杆小市值轮动策略.txt | JQ558_0098_strategies_15_高股息低杠杆小市值轮动策略 | cd45eba022e60387deb91ee6f725ef50 | 47a9245553eaa4008db4bd511e72b217 | submitted |
+| 99 | strategies/15 小市值策略之再优化，年化接近翻倍.txt | JQ558_0099_strategies_15_小市值策略之再优化_年化接近翻倍 | cd45eba022e60387deb91ee6f725ef50 | ec301979173371d09a87908e34a1668d | submitted |
+| 100 | strategies/15 小市值排除3个bug版，22年至今收益506%回撤11%.txt | JQ558_0100_strategies_15_小市值排除3个bug版_22年至今收益506_回撤11 | cd45eba022e60387deb91ee6f725ef50 | b8b04a95fa79191b0e7e540d4cb5ee44 | submitted |
+| 101 | strategies/16 大市值价值投资，从2005年至今超额稳定.txt | JQ558_0101_strategies_16_大市值价值投资_从2005年至今超额稳定 | cd45eba022e60387deb91ee6f725ef50 | 680acde02892c42b70df1f550e563788 | submitted |
+| 102 | strategies/16 动量ETF轮动RSRS择时-升级.txt | JQ558_0102_strategies_16_动量ETF轮动RSRS择时-升级 | cd45eba022e60387deb91ee6f725ef50 | b046e0ebf1f3e708e7ba102a28d2605b | submitted |
+| 103 | strategies/16 集合竞价三合一，今年收益1067%，年化198%.txt | JQ558_0103_strategies_16_集合竞价三合一_今年收益1067_年化198 | cd45eba022e60387deb91ee6f725ef50 | 11d5fd4493ac72dc8d3ef323da9678e2 | submitted |
+| 104 | strategies/16 ETF轮动策略升级-多类别-低回撤.txt | JQ558_0104_strategies_16_ETF轮动策略升级-多类别-低回撤 | cd45eba022e60387deb91ee6f725ef50 | 812c1cb225160482b1f1e52b0504028b | submitted |
+| 105 | strategies/17 5年多因子超额收益1055%，K线风险过滤，无未来函数.txt | JQ558_0105_strategies_17_5年多因子超额收益1055_K线风险过滤_无未来函数 | cd45eba022e60387deb91ee6f725ef50 | 190b380081c1855be2b18970f85230a3 | submitted |
+| 106 | strategies/17 8年13倍的ETF动量轮动策略,有滑点,无未来函数,回撤小.txt | JQ558_0106_strategies_17_8年13倍的ETF动量轮动策略_有滑点_无未来函数_回撤小 | cd45eba022e60387deb91ee6f725ef50 | 8f6f7cd06e953550e47d2e33950a263c | submitted |
+| 107 | strategies/17 多品种ETF动量轮动+EPO优化.txt | JQ558_0107_strategies_17_多品种ETF动量轮动_EPO优化 | cd45eba022e60387deb91ee6f725ef50 | 17facd8a7673cc2060fa63bc7857c2d3 | submitted |
+| 108 | strategies/17 基金跟随策略，19年年化60%.txt | JQ558_0108_strategies_17_基金跟随策略_19年年化60 | cd45eba022e60387deb91ee6f725ef50 | 9542195aeaa5c0b523356f01a4f774ab | submitted |
+| 109 | strategies/17 科技与狠活.txt | JQ558_0109_strategies_17_科技与狠活 | cd45eba022e60387deb91ee6f725ef50 | 326497d8dd89acba1433e266e40a21db | submitted |
+| 110 | strategies/18 20行代码8年高胜率躲过了牛年第一场大跌.txt | JQ558_0110_strategies_18_20行代码8年高胜率躲过了牛年第一场大跌 | cd45eba022e60387deb91ee6f725ef50 | 6a95af0fa36fb44bccbfe2afc3b026c9 | submitted |
+| 111 | strategies/18 6年17倍的etf+分级b的轮动趋势策略跟随感悟.txt | JQ558_0111_strategies_18_6年17倍的etf_分级b的轮动趋势策略跟随感悟 | cd45eba022e60387deb91ee6f725ef50 | 72a48ee848b766885391f74600ac4ab9 | submitted |
+| 112 | strategies/18 动量ETF轮动-RSRS择时-卡尔曼滤波.txt | JQ558_0112_strategies_18_动量ETF轮动-RSRS择时-卡尔曼滤波 | cd45eba022e60387deb91ee6f725ef50 | 7eb7efe2305c49258e6524ab153ad525 | submitted |
+| 113 | strategies/18 国庆节献礼：实例说明白马股攻防转换策略.txt | JQ558_0113_strategies_18_国庆节献礼_实例说明白马股攻防转换策略 | cd45eba022e60387deb91ee6f725ef50 | 73cbd1a8a31606d03227bc5ce378dcfd | submitted |
+| 114 | strategies/18 微盘股400多角度深入研究.txt | JQ558_0114_strategies_18_微盘股400多角度深入研究 | cd45eba022e60387deb91ee6f725ef50 | 0bc387f173422ea3f60e53875388d3f7 | submitted |
+| 115 | strategies/19 【复现】高频价量相关性，意想不到的选股因子.txt | JQ558_0115_strategies_19_复现_高频价量相关性_意想不到的选股因子 | cd45eba022e60387deb91ee6f725ef50 | dd5c06890c3487dc4e2c2bc555418d1f | submitted |
+| 116 | strategies/19 复现FFScore财务模型.txt | JQ558_0116_strategies_19_复现FFScore财务模型 | cd45eba022e60387deb91ee6f725ef50 | 2a5a3f64dec0c1fb3d28b69c8fbaf981 | submitted |
+| 117 | strategies/19 高股息低市盈率稳健增长的价投策略.txt | JQ558_0117_strategies_19_高股息低市盈率稳健增长的价投策略 | cd45eba022e60387deb91ee6f725ef50 | a18086e3e2f0a7d670cd06eb18e944c6 | submitted |
+| 118 | strategies/19 机器学习线性回归小市值.txt | JQ558_0118_strategies_19_机器学习线性回归小市值 | cd45eba022e60387deb91ee6f725ef50 | 91b8fd45c120a384e49ee5af94b92da9 | submitted |
+| 119 | strategies/19 简单到发指的股指策略(2013到现在收益10949%).txt | JQ558_0119_strategies_19_简单到发指的股指策略_2013到现在收益10949 | cd45eba022e60387deb91ee6f725ef50 | 0cee2e783942b4d8d091a074a25bbaaa | submitted |
+| 120 | strategies/20 【复现】因子择时？？？.txt | JQ558_0120_strategies_20_复现_因子择时 | cd45eba022e60387deb91ee6f725ef50 | 6f7404cf7fce8e0cef363ad6daeafbe5 | submitted |
+| 121 | strategies/20 冲天炮最高板策略，收益惊呆了我.txt | JQ558_0121_strategies_20_冲天炮最高板策略_收益惊呆了我 | cd45eba022e60387deb91ee6f725ef50 | 46835b93cde134ba4142a442ca773c32 | submitted |
+| 122 | strategies/20 人人可躺平16年3400%.txt | JQ558_0122_strategies_20_人人可躺平16年3400 | cd45eba022e60387deb91ee6f725ef50 | 2898a4bea62c19d3b68270eb259bbc1a | submitted |
+| 123 | strategies/20 小市值高频交易法有赚就好 2年3.86%低回撤.txt | JQ558_0123_strategies_20_小市值高频交易法有赚就好_2年3_86_低回撤 | cd45eba022e60387deb91ee6f725ef50 | 65b1249d93efc4631830b5ae90257f85 | submitted |
+| 124 | strategies/21 【原创】年化123%最大回撤14%涨停弱转强竞价战法.txt | JQ558_0124_strategies_21_原创_年化123_最大回撤14_涨停弱转强竞价战法 | cd45eba022e60387deb91ee6f725ef50 | 7754c50f2182facff025df60e6cef2f3 | submitted |
+| 125 | strategies/21 北向资金股票轮动-优质策略可直接实盘.txt | JQ558_0125_strategies_21_北向资金股票轮动-优质策略可直接实盘 | cd45eba022e60387deb91ee6f725ef50 | c5f32fa02d03ccef14586a12b5e7f975 | submitted |
+| 126 | strategies/21 利用宏观经济数据的中长线策略深度研究.txt | JQ558_0126_strategies_21_利用宏观经济数据的中长线策略深度研究 | cd45eba022e60387deb91ee6f725ef50 | 1f3fa6a3839a65893101e4d65c223d44 | submitted |
+| 127 | strategies/21 行业ETF轮动+择时，15年至今年化收益35%，回撤16%.txt | JQ558_0127_strategies_21_行业ETF轮动_择时_15年至今年化收益35_回撤16 | cd45eba022e60387deb91ee6f725ef50 | bcdbdbf94a4f1d57458d392f2c0b8c44 | submitted |
+| 128 | strategies/21 以“网红”ETF轮动为例.txt | JQ558_0128_strategies_21_以_网红_ETF轮动为例 | cd45eba022e60387deb91ee6f725ef50 | 658912a2f7bad0b57f1b7ca027231127 | submitted |
+| 129 | strategies/22 “开弓”ETF轮动模型——改.txt | JQ558_0129_strategies_22_开弓_ETF轮动模型_改 | cd45eba022e60387deb91ee6f725ef50 | ab2b446ea770d00e9356b76bdb19ab0c | submitted |
+| 130 | strategies/22 菜场大妈高质低价法策略.txt | JQ558_0130_strategies_22_菜场大妈高质低价法策略 | cd45eba022e60387deb91ee6f725ef50 | d9cce40b045ffb176fe7bc832b6bf15d | submitted |
+| 131 | strategies/22 菜场大妈选股法.txt | JQ558_0131_strategies_22_菜场大妈选股法 | cd45eba022e60387deb91ee6f725ef50 | 97f28a64b622704b5b3df751e8898428 | submitted |
+| 132 | strategies/22 带上止损的核心资产轮动才更安心，低回撤，高收益率.txt | JQ558_0132_strategies_22_带上止损的核心资产轮动才更安心_低回撤_高收益率 | cd45eba022e60387deb91ee6f725ef50 | 53a6a32f7f433aca6c5a249fc4c14a5b | submitted |
+| 133 | strategies/22 截止到21年12月依然有效的小市值适配因子.txt | JQ558_0133_strategies_22_截止到21年12月依然有效的小市值适配因子 | cd45eba022e60387deb91ee6f725ef50 | e18b663571978d756228bcf042a5f710 | submitted |
+| 134 | strategies/23 大盘择时，逻辑简单.txt | JQ558_0134_strategies_23_大盘择时_逻辑简单 | cd45eba022e60387deb91ee6f725ef50 | 864fb3cdbb271637022e52daf7ebc8a5 | submitted |
+| 135 | strategies/23 低价小盘简单有效.txt | JQ558_0135_strategies_23_低价小盘简单有效 | cd45eba022e60387deb91ee6f725ef50 | 53b31465a6e256f4c59a7a9e54c65028 | submitted |
+| 136 | strategies/23 简单到发指的股指策略(2013到现在收益10949%).txt | JQ558_0136_strategies_23_简单到发指的股指策略_2013到现在收益10949 | cd45eba022e60387deb91ee6f725ef50 | a2bc9624c4e19d6520b153d0d4c92634 | submitted |
+| 137 | strategies/23 wywy1995大神机器学习策略年化提升版.txt | JQ558_0137_strategies_23_wywy1995大神机器学习策略年化提升版 | cd45eba022e60387deb91ee6f725ef50 | f941b9e00614f0acff7af972f256ad7c | submitted |
+| 138 | strategies/24 大容量低回撤价值投资-排除小市值因子.txt | JQ558_0138_strategies_24_大容量低回撤价值投资-排除小市值因子 | cd45eba022e60387deb91ee6f725ef50 | 8f015dfdd8a03b4144be2a183dc3537d | submitted |
+| 139 | strategies/24 低AH溢价选股.txt | JQ558_0139_strategies_24_低AH溢价选股 | cd45eba022e60387deb91ee6f725ef50 | 6a0fe3ccb2fc31ccf9b77203af645cac | submitted |
+| 140 | strategies/24 多因子线性回归组合策略.txt | JQ558_0140_strategies_24_多因子线性回归组合策略 | cd45eba022e60387deb91ee6f725ef50 | 31e628b739082564deb7b714e3bc6b09 | submitted |
+| 141 | strategies/24 宽基ETF动量轮动钝化RSRS择时-回撤小.txt | JQ558_0141_strategies_24_宽基ETF动量轮动钝化RSRS择时-回撤小 | cd45eba022e60387deb91ee6f725ef50 | f36bf245a1540c593cc033ae8c67a587 | submitted |
+| 142 | strategies/24 现在便宜的300就是最好的，收益惊人.txt | JQ558_0142_strategies_24_现在便宜的300就是最好的_收益惊人 | cd45eba022e60387deb91ee6f725ef50 | d65d22c1e0990a745a7f3ba660d9fc56 | submitted |
+| 143 | strategies/25 低价股优化，18年至今10625.40%，加入防未来函数.txt | JQ558_0143_strategies_25_低价股优化_18年至今10625_40_加入防未来函数 | cd45eba022e60387deb91ee6f725ef50 | 4539c8c5afd866ee90a08555ef90ecf2 | submitted |
+| 144 | strategies/25 基本不耍六毛的ETF轮动策略.txt | JQ558_0144_strategies_25_基本不耍六毛的ETF轮动策略 | cd45eba022e60387deb91ee6f725ef50 | 583071717f5622bca5f45ebc7bc1c275 | submitted |
+| 145 | strategies/25 冷饭热吃之三，14年至今年华99.99%.txt | JQ558_0145_strategies_25_冷饭热吃之三_14年至今年华99_99 | cd45eba022e60387deb91ee6f725ef50 | 0bba619ac04990f0a492334449027e3e | submitted |
+| 146 | strategies/25 年初至今4倍，极致的Day Trading，56.8%胜率.txt | JQ558_0146_strategies_25_年初至今4倍_极致的Day_Trading_56_8_胜率 | cd45eba022e60387deb91ee6f725ef50 | 931c98b4fc68643a9b9f75d73e10fd32 | submitted |
+| 147 | strategies/25 ROE-PB模型的优化.txt | JQ558_0147_strategies_25_ROE-PB模型的优化 | cd45eba022e60387deb91ee6f725ef50 | f423dbddd621f71e3aa94173c0183540 | submitted |
+| 148 | strategies/26 【深度解析 六】高股息率-低PEG-低股价-市值序列模型.txt | JQ558_0148_strategies_26_深度解析_六_高股息率-低PEG-低股价-市值序列模型 | cd45eba022e60387deb91ee6f725ef50 | 037e9027a32705b367ca5b852dc1f1d5 | submitted |
+| 149 | strategies/26 波动率过滤后相关性最小etf轮动.txt | JQ558_0149_strategies_26_波动率过滤后相关性最小etf轮动 | cd45eba022e60387deb91ee6f725ef50 | 231eef603c2100a04517e35954a3453b | submitted |
+| 150 | strategies/26 近几年一直有效的股票BOLL择时策略.txt | JQ558_0150_strategies_26_近几年一直有效的股票BOLL择时策略 | cd45eba022e60387deb91ee6f725ef50 | c499c26c14956e2f9329f534c819ad51 | submitted |
+| 151 | strategies/26 稳定高回报周期股策略2.txt | JQ558_0151_strategies_26_稳定高回报周期股策略2 | cd45eba022e60387deb91ee6f725ef50 | da25b37b06e79881d1d07c6049760f66 | submitted |
+| 152 | strategies/26 这个可入得了你们法眼.txt | JQ558_0152_strategies_26_这个可入得了你们法眼 | cd45eba022e60387deb91ee6f725ef50 | 4cb1d613b858af949e7e550461a45686 | submitted |
+| 153 | strategies/27 根据动量模型切换大小盘板块选股策略.txt | JQ558_0153_strategies_27_根据动量模型切换大小盘板块选股策略 | cd45eba022e60387deb91ee6f725ef50 | cff8422fdea1e7251a5ec186ee592a54 | submitted |
+| 154 | strategies/27 基于RSRS的趋势交易与网格交易相结合的尝试.txt | JQ558_0154_strategies_27_基于RSRS的趋势交易与网格交易相结合的尝试 | cd45eba022e60387deb91ee6f725ef50 | 49a6d891da34f89b8e690f271e1b3376 | submitted |
+| 155 | strategies/27 人工智能强化学习DQN交易智能体（回馈社区公开训练代码）.txt | JQ558_0155_strategies_27_人工智能强化学习DQN交易智能体_回馈社区公开训练代码 | cd45eba022e60387deb91ee6f725ef50 | 64274154c46f8eeb5484dbe0795d5070 | submitted |
+| 156 | strategies/27 中证500指增+CTA，胜率52%盈亏比1.9。不输顶尖私募.txt | JQ558_0156_strategies_27_中证500指增_CTA_胜率52_盈亏比1_9_不输顶尖私募 | cd45eba022e60387deb91ee6f725ef50 | 2141a16efd14141dc9aefc4284eca00e | submitted |
+| 157 | strategies/27 追涨大师（超额142）.txt | JQ558_0157_strategies_27_追涨大师_超额142 | cd45eba022e60387deb91ee6f725ef50 | d7a57bdf45a963e5b3d482e640555fd1 | submitted |
+| 158 | strategies/28 【回顾2】小市值成长股策略更新/FROEC-PB-CAP-HL.txt | JQ558_0158_strategies_28_回顾2_小市值成长股策略更新_FROEC-PB-CAP-HL | cd45eba022e60387deb91ee6f725ef50 | b6d6c67f9accea8a7099551bacf989f7 | submitted |
+| 159 | strategies/28 【回顾2】小市值成长股策略更新/SG-MS-PEG-HL.txt | JQ558_0159_strategies_28_回顾2_小市值成长股策略更新_SG-MS-PEG-HL | cd45eba022e60387deb91ee6f725ef50 | 779192c6aa506f6b6b756e7ae2f776d3 | submitted |
+| 160 | strategies/28 从相关系数角度探讨etf轮动高评分.txt | JQ558_0160_strategies_28_从相关系数角度探讨etf轮动高评分 | cd45eba022e60387deb91ee6f725ef50 | e2c98a8e0d8752335745225343edf9c6 | submitted |
+| 161 | strategies/28 韶华研究之十九，一致性用在微盘控制回撤.txt | JQ558_0161_strategies_28_韶华研究之十九_一致性用在微盘控制回撤 | cd45eba022e60387deb91ee6f725ef50 | b36165eca755af338269dbcbf99d9816 | submitted |
+| 162 | strategies/28 正黄旗大妈策略V3.0修改版.txt | JQ558_0162_strategies_28_正黄旗大妈策略V3_0修改版 | cd45eba022e60387deb91ee6f725ef50 | 2e25bd0e02125e57eb12da0fd6cc85ee | submitted |
+| 163 | strategies/28 XGBoost模型多因子策略分享.txt | JQ558_0163_strategies_28_XGBoost模型多因子策略分享 | cd45eba022e60387deb91ee6f725ef50 | 1094043caefe206357cbafd716e94ebc | submitted |
+| 164 | strategies/29 北上资金（北向资金港资外资）因子分析与策略分享.txt | JQ558_0164_strategies_29_北上资金_北向资金港资外资_因子分析与策略分享 | cd45eba022e60387deb91ee6f725ef50 | 8c490625a7fd317790e21dc4aec2c72a | submitted |
+| 165 | strategies/29 穿越牛熊2.0（非小市值）年化50%的cta策略.txt | JQ558_0165_strategies_29_穿越牛熊2_0_非小市值_年化50_的cta策略 | cd45eba022e60387deb91ee6f725ef50 | de4c2add118547941cf119b0ad7dcddf | submitted |
+| 166 | strategies/29 高增长业绩股池小市值成长型策略.txt | JQ558_0166_strategies_29_高增长业绩股池小市值成长型策略 | cd45eba022e60387deb91ee6f725ef50 | e938596c7da0454a6ca4e3962b56fd68 | submitted |
+| 167 | strategies/29 F_Score 选股，年化80%+.txt | JQ558_0167_strategies_29_F_Score_选股_年化80 | cd45eba022e60387deb91ee6f725ef50 | 0816b1875b837c00cc3c994531c57ad6 | submitted |
+| 168 | strategies/30 【超跌反弹v1.0】3年2.3倍的超跌反弹小牛股.txt | JQ558_0168_strategies_30_超跌反弹v1_0_3年2_3倍的超跌反弹小牛股 | cd45eba022e60387deb91ee6f725ef50 | e577f8abc094f012ab8899cfda40c597 | submitted |
+| 169 | strategies/30 错杀反弹，掌握人性规律，开启投资新纪元.txt | JQ558_0169_strategies_30_错杀反弹_掌握人性规律_开启投资新纪元 | cd45eba022e60387deb91ee6f725ef50 | 108a0ef9f67176a5a10feaabdcb696a0 | submitted |
+| 170 | strategies/30 价值成长轮动策略.txt | JQ558_0170_strategies_30_价值成长轮动策略 | cd45eba022e60387deb91ee6f725ef50 | 46b3b9f77028ecf012a0067aa4020ed2 | submitted |
+| 171 | strategies/30 挖掘特色估值体系因子，把握投资机会，年化150%+.txt | JQ558_0171_strategies_30_挖掘特色估值体系因子_把握投资机会_年化150 | cd45eba022e60387deb91ee6f725ef50 | 5206656d5049b0b9027a175f1afc940a | submitted |
+| 172 | strategies/30 ETF宽基轮动修改版-1.0.txt | JQ558_0172_strategies_30_ETF宽基轮动修改版-1_0 | cd45eba022e60387deb91ee6f725ef50 | c538a9dfbfb09c79ad1e1cbdcdffff7b | submitted |
+| 173 | strategies/31 《趋势永存》持续16年跑赢大盘的真正靠谱策略.txt | JQ558_0173_strategies_31_趋势永存_持续16年跑赢大盘的真正靠谱策略 | cd45eba022e60387deb91ee6f725ef50 | 9be605b5dfef22f65bdb7b5268d08e97 | submitted |
+| 174 | strategies/31 跟着基金报团！！！174%  回撤  7.33%.txt | JQ558_0174_strategies_31_跟着基金报团_174_回撤_7_33 | cd45eba022e60387deb91ee6f725ef50 | 9e67118490c303dae6efb753f883896e | submitted |
+| 175 | strategies/31 蛇皮走位小市值策略V1.0.txt | JQ558_0175_strategies_31_蛇皮走位小市值策略V1_0 | cd45eba022e60387deb91ee6f725ef50 | 0937e6ef5c99eb47ca5f9286d29beb36 | submitted |
+| 176 | strategies/31 ETF核心资产轮动动量因子加RSRS择时每日策略.txt | JQ558_0176_strategies_31_ETF核心资产轮动动量因子加RSRS择时每日策略 | cd45eba022e60387deb91ee6f725ef50 | 34e1713908c386698bef34efb2fb616f | submitted |
+| 177 | strategies/31 RSRS择时+货币基金--6年8倍行业周期股策略.txt | JQ558_0177_strategies_31_RSRS择时_货币基金--6年8倍行业周期股策略 | cd45eba022e60387deb91ee6f725ef50 | 856bc8d72390bfbeb8de9b323479d021 | submitted |
+| 178 | strategies/32 北向资金A股择时策略（5年16倍）.txt | JQ558_0178_strategies_32_北向资金A股择时策略_5年16倍 | cd45eba022e60387deb91ee6f725ef50 | 19380df881b43911b3684a8c77bf81da | submitted |
+| 179 | strategies/32 北向Boll带_ETF组合宝付费策略.txt | JQ558_0179_strategies_32_北向Boll带_ETF组合宝付费策略 | cd45eba022e60387deb91ee6f725ef50 | 91f501cc709ae8868e8e96a9b64eb96c | submitted |
+| 180 | strategies/32 非线性关系市值（不是小市值）4只绩优股组合.txt | JQ558_0180_strategies_32_非线性关系市值_不是小市值_4只绩优股组合 | cd45eba022e60387deb91ee6f725ef50 | 6cf51f929941dd1b5986cb87492ed94c | submitted |
+| 181 | strategies/32 追高概率涨停策略, 2022年化350%.txt | JQ558_0181_strategies_32_追高概率涨停策略_2022年化350 | cd45eba022e60387deb91ee6f725ef50 | 5337d905306bfde5164737bcaad7c6df | submitted |
+| 182 | strategies/32 EPO优化低相关etf组合.txt | JQ558_0182_strategies_32_EPO优化低相关etf组合 | cd45eba022e60387deb91ee6f725ef50 | 97e09db517f6c41f6d1b7399ada51234 | submitted |
+| 183 | strategies/33 回馈社区顺便搞积分《一个完整的机器学习pipeline》.txt | JQ558_0183_strategies_33_回馈社区顺便搞积分_一个完整的机器学习pipeline | cd45eba022e60387deb91ee6f725ef50 | 8a513ada5439b54b450055b42d73bf7d | submitted |
+| 184 | strategies/33 胜率88.9%之君正集团策略-大阳分歧反包.txt | JQ558_0184_strategies_33_胜率88_9_之君正集团策略-大阳分歧反包 | cd45eba022e60387deb91ee6f725ef50 | b5ccd5bd7246c389d06e68b3345612e1 | submitted |
+| 185 | strategies/33 最适合上班族的策略-神奇公式策略.txt | JQ558_0185_strategies_33_最适合上班族的策略-神奇公式策略 | cd45eba022e60387deb91ee6f725ef50 | 3b0897cc89936916c14e55bab74587cb | submitted |
+| 186 | strategies/33 alpha191短周期价量特征因子选股，年化46.77.txt | JQ558_0186_strategies_33_alpha191短周期价量特征因子选股_年化46_77 | cd45eba022e60387deb91ee6f725ef50 | 3c2676ead0ba9a6c7db8a628c5e5afa0 | submitted |
+| 187 | strategies/34 【回撤二波2.0】透过一次过拟合的机器学习摸底策略的收益上限.txt | JQ558_0187_strategies_34_回撤二波2_0_透过一次过拟合的机器学习摸底策略的收益上限 | cd45eba022e60387deb91ee6f725ef50 | 2fec45c484b634f1bc3646264c586e8c | submitted |
+| 188 | strategies/34 趋势交易5.0 无择时-2年5倍不是梦.txt | JQ558_0188_strategies_34_趋势交易5_0_无择时-2年5倍不是梦 | cd45eba022e60387deb91ee6f725ef50 | 698bbf0870d87bf108a398978c7a62b8 | submitted |
+| 189 | strategies/34 韶华研究之十八 首板低开201系列.txt | JQ558_0189_strategies_34_韶华研究之十八_首板低开201系列 | cd45eba022e60387deb91ee6f725ef50 | e2ac7e9e305efc2106495a73ca2b0c99 | submitted |
+| 190 | strategies/34 十年回测 年化103.32% 最大回撤23.89%.txt | JQ558_0190_strategies_34_十年回测_年化103_32_最大回撤23_89 | cd45eba022e60387deb91ee6f725ef50 | 2667efa306f0fa36dc95a7a8b4458c68 | submitted |
+| 191 | strategies/35 【菜场大妈】股息率小市值策略,10年206倍,5年10.8倍.txt | JQ558_0191_strategies_35_菜场大妈_股息率小市值策略_10年206倍_5年10_8倍 | cd45eba022e60387deb91ee6f725ef50 | 25711df043e9a0fd169e018184c98469 | submitted |
+| 192 | strategies/35 超稳+翻倍，贝塔值只有0.048的期指策略.txt | JQ558_0192_strategies_35_超稳_翻倍_贝塔值只有0_048的期指策略 | cd45eba022e60387deb91ee6f725ef50 | a0b653193cb14b80b6d62c958532b958 | submitted |
+| 193 | strategies/35 精选价值策略.txt | JQ558_0193_strategies_35_精选价值策略 | cd45eba022e60387deb91ee6f725ef50 | 2440cbc4b18f2ce9fc737c9893d3ac54 | submitted |
+| 194 | strategies/35 小市值市场轮动版 5年12倍.txt | JQ558_0194_strategies_35_小市值市场轮动版_5年12倍 | cd45eba022e60387deb91ee6f725ef50 | 4e88cf5e3c347bbfee2943d2650ffd1d | submitted |
+| 195 | strategies/35 自适应量化终极算法2.0 （全新升级）.txt | JQ558_0195_strategies_35_自适应量化终极算法2_0_全新升级 | cd45eba022e60387deb91ee6f725ef50 | 53a6ba7c999e5e63409b4421f652a162 | submitted |
+| 196 | strategies/36 【菜场大妈】股息率小市值策略,10年206倍,5年10.8倍.txt | JQ558_0196_strategies_36_菜场大妈_股息率小市值策略_10年206倍_5年10_8倍 | cd45eba022e60387deb91ee6f725ef50 | 0387308af44501592c886251b123b58b | submitted |
+| 197 | strategies/36 快过年了。不想呆在小市值的，可以拿这个策略躲一躲.txt | JQ558_0197_strategies_36_快过年了_不想呆在小市值的_可以拿这个策略躲一躲 | cd45eba022e60387deb91ee6f725ef50 | d25f5217416955ada4ad4678b8fd52f1 | submitted |
+| 198 | strategies/36 致敬市场(6) ，指数期货贴水.txt | JQ558_0198_strategies_36_致敬市场_6_指数期货贴水 | cd45eba022e60387deb91ee6f725ef50 | a7136e8fbfc16674807dcbd9c98ca251 | submitted |
+| 199 | strategies/36 最简强者恒强策略.txt | JQ558_0199_strategies_36_最简强者恒强策略 | cd45eba022e60387deb91ee6f725ef50 | 1db8014e82bdab63a1fc329ff96a5a99 | submitted |
+| 200 | strategies/37 三阳三阴战法.txt | JQ558_0200_strategies_37_三阳三阴战法 | cd45eba022e60387deb91ee6f725ef50 | ca23785a783c5133d51fc437b21bd735 | submitted |
+| 201 | strategies/37 微盘股扩散指数双均线择时.txt | JQ558_0201_strategies_37_微盘股扩散指数双均线择时 | cd45eba022e60387deb91ee6f725ef50 | 6b0ae9224c24c94495a963d1da8c81bb | submitted |
+| 202 | strategies/37 择时模块加风控的实际效果.txt | JQ558_0202_strategies_37_择时模块加风控的实际效果 | cd45eba022e60387deb91ee6f725ef50 | 3f6723db239d018be83e021e485ad422 | submitted |
+| 203 | strategies/37 PEG+EBIT对小市值因子的优化.txt | JQ558_0203_strategies_37_PEG_EBIT对小市值因子的优化 | cd45eba022e60387deb91ee6f725ef50 | ade5de003395212a9b10addffa918b1c | submitted |
+| 204 | strategies/38 【回顾3】ETF策略之核心资产轮动-增强版.txt | JQ558_0204_strategies_38_回顾3_ETF策略之核心资产轮动-增强版 | cd45eba022e60387deb91ee6f725ef50 | 6dd7f183325f068369d6eef630423f1e | submitted |
+| 205 | strategies/38 ETF策略之核心资产轮动（线性增加权重）.txt | JQ558_0205_strategies_38_ETF策略之核心资产轮动_线性增加权重 | cd45eba022e60387deb91ee6f725ef50 | 5425ce4222114ac3bfaf3222351a48d1 | submitted |
+| 206 | strategies/38 ETF动量轮动RSRS择时-魔改3-北向资金择时-再优化.txt | JQ558_0206_strategies_38_ETF动量轮动RSRS择时-魔改3-北向资金择时-再优化 | cd45eba022e60387deb91ee6f725ef50 | 99eff86b9a76bb75cbdca1a5325a4339 | submitted |
+| 207 | strategies/38 ETF动量轮动RSRS择时-魔改4-低通滤波.txt | JQ558_0207_strategies_38_ETF动量轮动RSRS择时-魔改4-低通滤波 | cd45eba022e60387deb91ee6f725ef50 | 3610f3039026630f5e7e7625b35a0b01 | submitted |
+| 208 | strategies/39 大资金强基本面优质股组合策略 收益1217% 无小市值因子.txt | JQ558_0208_strategies_39_大资金强基本面优质股组合策略_收益1217_无小市值因子 | cd45eba022e60387deb91ee6f725ef50 | 1da8a5bb4e84109538f175e5afc8513c | submitted |
+| 209 | strategies/39 多因子策略（多元线性回归）.txt | JQ558_0209_strategies_39_多因子策略_多元线性回归 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 210 | strategies/39 干积分-大小盘反复横跳V2.0.txt | JQ558_0210_strategies_39_干积分-大小盘反复横跳V2_0 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 211 | strategies/39 绩优小市值量化君也-模拟交易年化333.75%.txt | JQ558_0211_strategies_39_绩优小市值量化君也-模拟交易年化333_75 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 212 | strategies/39 随机森林策略，低换手率，年化近50%.txt | JQ558_0212_strategies_39_随机森林策略_低换手率_年化近50 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 213 | strategies/40 穿越牛熊 稳健高收益 年化37.txt | JQ558_0213_strategies_40_穿越牛熊_稳健高收益_年化37 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 214 | strategies/40 低风险高收益的期货策略.txt | JQ558_0214_strategies_40_低风险高收益的期货策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 215 | strategies/40 高股息策略.txt | JQ558_0215_strategies_40_高股息策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 216 | strategies/40 RSI学习贴.txt | JQ558_0216_strategies_40_RSI学习贴 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 217 | strategies/41 均线黏合，突破前三十个交易日最高点选股法.txt | JQ558_0217_strategies_41_均线黏合_突破前三十个交易日最高点选股法 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 218 | strategies/41 配套资料.txt | JQ558_0218_strategies_41_配套资料 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 219 | strategies/41 人工智能强化学习DQN交易智能体策略.txt | JQ558_0219_strategies_41_人工智能强化学习DQN交易智能体策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 220 | strategies/41 手把手教你“机器学习-动态多因子选股”(附保姆级教程)/41 手把手教你“机器学习-动态多因子选股”(附保姆级教程).txt | JQ558_0220_strategies_41_手把手教你_机器学习-动态多因子选股_附保姆级教程_41_手把手教你_机器学习-动态多因子选股_附保姆级教程 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 221 | strategies/41 再改进可实盘-默默赚钱系列-风险控制-增强版本-V5.0.txt | JQ558_0221_strategies_41_再改进可实盘-默默赚钱系列-风险控制-增强版本-V5_0 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 222 | strategies/41 SVR机器学习上证综指择时中小板财务选股策略.txt | JQ558_0222_strategies_41_SVR机器学习上证综指择时中小板财务选股策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 223 | strategies/42 大盘ETF动量轮动 RSRS择时策略-无纳指（5年半861%）.txt | JQ558_0223_strategies_42_大盘ETF动量轮动_RSRS择时策略-无纳指_5年半861 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 224 | strategies/42 国九条：三年分红5千万以下且占净利润30%以下将被ST.txt | JQ558_0224_strategies_42_国九条_三年分红5千万以下且占净利润30_以下将被ST | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 225 | strategies/42 实盘出现的问题和解决办法.txt | JQ558_0225_strategies_42_实盘出现的问题和解决办法 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 226 | strategies/42 市值，研发支出，roe，三因子，跑赢大盘.txt | JQ558_0226_strategies_42_市值_研发支出_roe_三因子_跑赢大盘 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 227 | strategies/43 小市值再优化【年化98% 胜率69% 回撤27%】无未来函数.txt | JQ558_0227_strategies_43_小市值再优化_年化98_胜率69_回撤27_无未来函数 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 228 | strategies/43 窄基ETF轮动：年化收益82.68%，最大回撤13.54%.txt | JQ558_0228_strategies_43_窄基ETF轮动_年化收益82_68_最大回撤13_54 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 229 | strategies/44 国九条 年化130.74% 回撤11% 众神Debug版.txt | JQ558_0229_strategies_44_国九条_年化130_74_回撤11_众神Debug版 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 230 | strategies/44 集合竞价摸奖策略1.0-致敬2022.txt | JQ558_0230_strategies_44_集合竞价摸奖策略1_0-致敬2022 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 231 | strategies/44 兼顾业绩增长和PEG指标的5因子股票策略.txt | JQ558_0231_strategies_44_兼顾业绩增长和PEG指标的5因子股票策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 232 | strategies/44 最易上手的网格策略v2.0，设置几个参数就可以直接使用.txt | JQ558_0232_strategies_44_最易上手的网格策略v2_0_设置几个参数就可以直接使用 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 233 | strategies/45 此消彼长.txt | JQ558_0233_strategies_45_此消彼长 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 234 | strategies/45 海龟突破系统，19-21年化150，无未来函数和过拟合.txt | JQ558_0234_strategies_45_海龟突破系统_19-21年化150_无未来函数和过拟合 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 235 | strategies/45 价值投资+期货对冲V4.0,无惧市场大跌.txt | JQ558_0235_strategies_45_价值投资_期货对冲V4_0_无惧市场大跌 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 236 | strategies/45 真真正正的诚意之作-2021超十倍.txt | JQ558_0236_strategies_45_真真正正的诚意之作-2021超十倍 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 237 | strategies/46 【深度解析 四】聚宽三因子基本面周线模型策略.txt | JQ558_0237_strategies_46_深度解析_四_聚宽三因子基本面周线模型策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 238 | strategies/46 大盘股也能穿越牛熊市.txt | JQ558_0238_strategies_46_大盘股也能穿越牛熊市 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 239 | strategies/46 敢于直接实盘的—八仙过海V2.txt | JQ558_0239_strategies_46_敢于直接实盘的_八仙过海V2 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 240 | strategies/46 高增股池小市值轮动.txt | JQ558_0240_strategies_46_高增股池小市值轮动 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 241 | strategies/46 韶华研究之十二--还算可以的竞价研究.txt | JQ558_0241_strategies_46_韶华研究之十二--还算可以的竞价研究 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 242 | strategies/47 别人恐惧我贪婪——重视大盘择时.txt | JQ558_0242_strategies_47_别人恐惧我贪婪_重视大盘择时 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 243 | strategies/47 多策略整合大E小十年百倍（年化64%回撤28%）.txt | JQ558_0243_strategies_47_多策略整合大E小十年百倍_年化64_回撤28 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 244 | strategies/47 高收益低回撤的小市值策略.txt | JQ558_0244_strategies_47_高收益低回撤的小市值策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 245 | strategies/47 年化46%的北向资金+20日涨幅的创业板策略.txt | JQ558_0245_strategies_47_年化46_的北向资金_20日涨幅的创业板策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 246 | strategies/47 随机森林量价多因子选股短线交易机器学习.txt | JQ558_0246_strategies_47_随机森林量价多因子选股短线交易机器学习 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 247 | strategies/48 低代码迁移成本的实盘方案：jqtrade+one quant.txt | JQ558_0247_strategies_48_低代码迁移成本的实盘方案_jqtrade_one_quant | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 248 | strategies/48 动量ETF轮动-RSRS择时-卡尔曼滤波.txt | JQ558_0248_strategies_48_动量ETF轮动-RSRS择时-卡尔曼滤波 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 249 | strategies/48 配套资料.txt | JQ558_0249_strategies_48_配套资料 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 250 | strategies/48 投资回报率ROIC中等市值.txt | JQ558_0250_strategies_48_投资回报率ROIC中等市值 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 251 | strategies/48 研究 聚宽高手文章300篇列表.txt | JQ558_0251_strategies_48_研究_聚宽高手文章300篇列表 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 252 | strategies/48 一种宏观数据的中长线策略，年化15%，最大回撤9%.txt | JQ558_0252_strategies_48_一种宏观数据的中长线策略_年化15_最大回撤9 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 253 | strategies/49 【漂亮50 2.0止损版本】为了降低回撤，加入择时止损模块.txt | JQ558_0253_strategies_49_漂亮50_2_0止损版本_为了降低回撤_加入择时止损模块 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 254 | strategies/49 动量策略年化62%.txt | JQ558_0254_strategies_49_动量策略年化62 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 255 | strategies/49 干货贴《机器学习5折保形回归》.py | JQ558_0255_strategies_49_干货贴_机器学习5折保形回归 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 256 | strategies/49 干货贴《机器学习5折保形回归挂模拟回测.py | JQ558_0256_strategies_49_干货贴_机器学习5折保形回归挂模拟回测 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 257 | strategies/49 根据北上资金买股票的最佳持股时间探讨.txt | JQ558_0257_strategies_49_根据北上资金买股票的最佳持股时间探讨 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 258 | strategies/49 修改成一创版本.txt | JQ558_0258_strategies_49_修改成一创版本 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 259 | strategies/50 【7日趋势】短线交易策略.txt | JQ558_0259_strategies_50_7日趋势_短线交易策略 | cd45eba022e60387deb91ee6f725ef50 |  | failed |
+| 260 | strategies/50 分享一种K线小碎步后突破的分钟级打法.txt | JQ558_0260_strategies_50_分享一种K线小碎步后突破的分钟级打法 | cd45eba022e60387deb91ee6f725ef50 |  | failed |

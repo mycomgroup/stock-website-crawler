@@ -1,0 +1,14 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values, jqlib.technical_analysis, statsmodels, sklearn.preprocessing，JoinQuant 特有库，RiceQuant 不支持
+# 原文：大容量低回撤价值投资-排除小市值因子
+# 作者：Ahfu
+# 原文网址：https://www.joinquant.com/post/47566
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqfactor.get_factor_values - 获取因子值 (roic_ttm, gross_income_ratio, sales_to_price_ratio, Variance120)
+2. jqlib.technical_analysis - 技术分析库
+3. statsmodels.api - 统计模型
+4. sklearn.preprocessing.MinMaxScaler - 数据预处理
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

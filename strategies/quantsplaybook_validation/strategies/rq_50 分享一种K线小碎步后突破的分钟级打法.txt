@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqlib.technical_analysis, jqfactor, attribute_history()
+# Uses JQ proprietary technical analysis libraries and factor system not available in RiceQuant

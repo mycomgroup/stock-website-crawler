@@ -35,10 +35,10 @@ def handle_bar(context, bar_dict):
 
     # 交易逻辑
     if tsharpe > context.buy_threshold and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: TSharpe={tsharpe:.3f}")
     elif tsharpe < context.sell_threshold and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: TSharpe={tsharpe:.3f}")

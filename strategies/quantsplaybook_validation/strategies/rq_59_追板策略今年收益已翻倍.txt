@@ -1,0 +1,11 @@
+# SKIP REASON: Uses jqfactor and jqlib.technical_analysis libraries (JoinQuant-specific)
+#
+# Original: 追板策略，今年收益已翻倍，低操作低回撤高收益可实盘
+# Author: 古月量化研究
+# URL: https://www.joinquant.com/post/49749
+#
+# The strategy imports:
+# - "from jqfactor import *" which is in the skip list
+# - "from jqlib.technical_analysis import *" which is in the skip list
+#
+# These are JoinQuant-specific libraries not available in RiceQuant.

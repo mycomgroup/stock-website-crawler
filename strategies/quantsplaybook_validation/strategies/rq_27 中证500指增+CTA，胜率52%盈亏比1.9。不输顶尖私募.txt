@@ -1,0 +1,5 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 策略包含股票指增和期货CTA两部分。期货部分使用jqlib.technical_analysis库
+# (ATR, EMA等指标)，该库为聚宽专有。股票部分使用get_fundamentals查询财务数据，
+# 包含复杂的财务筛选逻辑，迁移工作量较大且期货指标函数不可用。
+# 原文: https://www.joinquant.com/post/37685

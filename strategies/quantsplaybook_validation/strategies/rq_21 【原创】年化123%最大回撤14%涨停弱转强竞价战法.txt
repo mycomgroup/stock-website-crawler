@@ -1,0 +1,12 @@
+# SKIP_REASON: 使用了 jqfactor 和 jqlib.technical_analysis 库，JoinQuant 特有库，RiceQuant 不支持
+# 原文：【原创】年化123%最大回撤14%涨停弱转强竞价战法
+# 作者：漩涡蓝蛙
+# 原文网址：https://www.joinquant.com/post/40004
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqfactor - 因子库
+2. jqlib.technical_analysis - 技术分析库
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

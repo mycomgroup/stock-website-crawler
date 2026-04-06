@@ -52,10 +52,10 @@ def handle_bar(context, bar_dict):
 
     # 交易逻辑: 价格上穿ICU均线买入，下穿卖出
     if current_close > icu_ma and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: close={current_close:.2f}, ICU_MA={icu_ma:.2f}")
     elif current_close < icu_ma and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: close={current_close:.2f}, ICU_MA={icu_ma:.2f}")

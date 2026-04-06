@@ -1,0 +1,7 @@
+# SKIP REASON: Uses jqfactor library (JoinQuant-specific factor library)
+#
+# Original: 5年12倍-小市值
+# URL: (from JoinQuant)
+#
+# The strategy uses jqfactor for factor calculations which is a
+# JoinQuant-specific library not available in RiceQuant.

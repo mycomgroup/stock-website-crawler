@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqlib.technical_analysis, subscribe/unsubscribe for tick data, get_bars()
+# Uses JQ proprietary technical analysis libraries and tick-level data API not available in RiceQuant

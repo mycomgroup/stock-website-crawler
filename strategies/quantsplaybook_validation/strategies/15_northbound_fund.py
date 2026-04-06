@@ -1,6 +1,11 @@
-# 北向资金择时策略 - RiceQuant版本
+# 市场强度择时策略（北向资金替代版）- RiceQuant版本
 # 来源：《安信证券-北向资金交易能力一定强吗》
-# 跟踪北向资金流向进行择时
+#
+# ⚠️ 注意：原策略依赖北向资金（沪深港通）净流入数据进行择时，
+#    但 RiceQuant 平台不提供北向资金数据，无法直接实现原策略。
+#    此处改用"市场强度（上涨天数占比）"作为替代指标，
+#    逻辑相近（均反映市场情绪/资金偏好），但并非真正的北向资金数据。
+#    策略名称已更新以避免误导。
 
 import numpy as np
 
@@ -40,10 +45,10 @@ def handle_bar(context, bar_dict):
     # 强度下降 + 强度低于阈值 → 卖出
 
     if market_strength > 0.55 and strength_change > 0.05 and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: strength={market_strength:.2f}, change={strength_change:.2f}")
     elif market_strength < 0.45 and strength_change < -0.05 and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: strength={market_strength:.2f}, change={strength_change:.2f}")

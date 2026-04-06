@@ -1,0 +1,12 @@
+# SKIP_REASON: 使用了 jqlib.technical_analysis 库（BBI等技术指标）和 finance 模块，RiceQuant 不支持
+# 原文：行业ETF轮动+择时，15年至今年化收益35%，回撤16%
+# 作者：Jacobb75
+# 原文网址：https://www.joinquant.com/post/36544
+
+"""
+该策略使用了 JoinQuant 的 jqlib.technical_analysis 库：
+- BBI() - 技术指标多空指数
+- EMA() - 指数移动平均
+
+这些是 JoinQuant 平台特有的技术分析 API，RiceQuant 不支持。
+"""

@@ -1,0 +1,13 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values 和 jqlib.technical_analysis，JoinQuant 特有库，RiceQuant 不支持
+# 原文：近几年一直有效的股票BOLL择时策略
+# 作者：勤奋的大海龟
+# 原文网址：https://www.joinquant.com/post/39510
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqfactor.get_factor_values - 获取因子值
+2. jqlib.technical_analysis - 技术分析库（BOLL等指标）
+3. Boll399101Strat().get_stock_list() - 自定义选股类
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

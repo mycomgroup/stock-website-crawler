@@ -19,12 +19,13 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     # 获取中证500成分股
     stocks = index_components(context.index)
     if not stocks:
         return
+
+    context.month = current_month
 
     scores = {}
     for stock in stocks:
@@ -58,7 +59,7 @@ def handle_bar(context, bar_dict):
     # 卖出不在目标中的持仓
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:
-            order_to(stock, 0)
+            order_target_value(stock, 0)
 
     # 等权买入目标股票
     weight = 1.0 / len(target)

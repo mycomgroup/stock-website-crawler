@@ -45,11 +45,11 @@ def handle_bar(context, bar_dict):
     # 交易逻辑
     if vol_percentile < 0.3 and trend_up and not context.pos:
         # 低波动+上升趋势 → 牛市信号
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入牛市信号: vol_pct={vol_percentile:.2f}, vol={vol:.2f}")
     elif vol_percentile > 0.7 and context.pos:
         # 高波动 → 熊市信号
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出熊市信号: vol_pct={vol_percentile:.2f}, vol={vol:.2f}")

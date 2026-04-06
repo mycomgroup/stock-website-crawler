@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用jqfactor.get_factor_values获取eps_ttm、margin_stability、PEG、EBIT等因子，
+# 属于SKIP规则中的"jqfactor"类别。
+# 原文: https://www.joinquant.com/post/34745

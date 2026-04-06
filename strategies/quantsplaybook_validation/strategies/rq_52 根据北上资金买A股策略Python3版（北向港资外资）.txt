@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: finance.STK_EL_TOP_ACTIVATE (HK/Northbound stock data)
+# Uses JQ finance API for northbound capital flow data not available in RiceQuant

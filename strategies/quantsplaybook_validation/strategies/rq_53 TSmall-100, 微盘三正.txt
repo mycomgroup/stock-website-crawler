@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: get_index_stocks('399317.XSHE') index membership API, write_file() for CSV export
+# Uses JQ-specific index membership API and file export not available in RiceQuant

@@ -1,0 +1,12 @@
+# SKIP_REASON: 使用了 jqlib.technical_analysis 库（KD, VOL等技术指标），JoinQuant 特有库，RiceQuant 不支持
+# 原文：菜场大妈高质低价法策略
+# 作者：Clarence.罗
+# 原文网址：https://www.joinquant.com/post/40850
+
+"""
+该策略使用了 JoinQuant 的 jqlib.technical_analysis 库：
+- KD() - KDJ指标
+- VOL() - 成交量指标
+
+这些是 JoinQuant 平台特有的技术分析 API，RiceQuant 不支持。
+"""

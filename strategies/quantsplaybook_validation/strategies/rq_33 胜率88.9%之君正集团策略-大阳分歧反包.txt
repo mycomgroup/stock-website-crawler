@@ -1,0 +1,3 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用get_ticks获取分钟级别tick数据，属于JQ专有函数。
+# 原文: https://www.joinquant.com/post/36885

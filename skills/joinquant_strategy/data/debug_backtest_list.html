@@ -1,0 +1,648 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>回测列表 - JoinQuant</title>
+        <meta name="keywords" content="joinquant,聚宽,量化,宽客,quant,量化交易,量化平台,量化投资,量化策略,程序化交易,量化投研平台,python,金融工程,level2,level1" />
+        <meta name="description" content="聚宽（JoinQuant）量化投研平台是为量化爱好者（宽客）量身打造的云平台，我们为您提供精准的回测功能、高速实盘交易接口、易用的API文档、由易入难的策略库，便于您快速实现、使用自己的量化交易策略。" />
+        <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="vipType" content="VIP">
+        <meta name="tick-access" content="1" />
+	            <link type='text/css'  href="https://cdn.joinquant.com/common/css/lib.min.css?v=1772433728242" rel='stylesheet'></link>
+        <link type='text/css'  href="https://cdn.joinquant.com/common/css/common.min.css?v=1772433728242" rel='stylesheet'></link>
+        <link rel="stylesheet" href="https://cdn.joinquant.com/themes/jq/static/common/css/jq-common.min.css?v=1772433728242">
+                <link rel="stylesheet" href="https://cdn.joinquant.com/themes/jq/static/default/css/newUserTip.css?v=1772433728242">
+        <link rel="stylesheet" href="https://cdn.joinquant.com/themes/jq/dist/static_v2/default/backtotop/detail/index/index.component.bundle.css?v=1772433728242">
+	      <link rel="icon" href="https://cdn.joinquant.com/common/img/favicon-16-16.png?v=2" type="image/x-icon">
+
+        <link rel="stylesheet" type='text/css' href="https://cdn.joinquant.com/dist/static_v2/global/user/login/index/index.component.bundle.css?v=1772433728242" />
+        <link rel="stylesheet" type='text/css' href="https://cdn.joinquant.com/user/css/unreadMsg.css?v=1772433728242" />
+        <link type='text/css'  href="https://cdn.joinquant.com/themes/jq/static/default/css/iconfont.css" rel='stylesheet'/>
+
+        
+        <link href="https://cdn.joinquant.com/themes/jq/static/third/ace-diff/ace-diff.min.css" rel="stylesheet" />
+<link href="https://cdn.joinquant.com/third/jquery-ui/jquery-ui-jq.min.css?v=1772433728242" rel="stylesheet" />
+	<link href="https://cdn.joinquant.com/std/algorithm/css/iconfont/iconfont.min.css?v=1772433728242" rel="stylesheet"/>
+	<link href="https://cdn.joinquant.com/std/algorithm/css/algorithm.min.css?v=1772433728242" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdn.joinquant.com/common/css/newBootstrapDialog.min.css?v=1772433728242">
+	<link href="https://cdn.joinquant.com/std/algorithm/css/backtest-list.min.css?v=1772433728242" rel="stylesheet" />
+	<link href="https://cdn.joinquant.com/themes/jq/static/algorithm/css/algorithm.min.css?v=1772433728242" rel="stylesheet" />
+<style>
+	.mobile .subnav #title-box{
+		width:75%;
+	}
+	.kk_body{
+		padding-bottom: 350px;
+	}
+	.backtest-name{
+		color: #333;
+		user-select: none;
+	}
+	.backtest-list-status{
+		border: none;
+		background: transparent;
+		height: auto;
+		margin: 0;
+		color: inherit;
+		outline: none;
+		padding: 0;
+	}
+	.backtest-list-status option{
+		padding: 8px 0;
+	}
+</style>
+
+
+        
+                                                                        <style>
+        span.new{
+        background: rgba(0,0,0,0);
+    }
+    .side-bar .top .name.user-alias img{
+        width:16px;
+        height:16px;
+        float: none;
+        margin-right:0;
+    }
+    .kk_footer .wp20.last img{
+        position: relative;
+        top:-2px;
+    }
+    .kk_footer .wp20.last .item>a{
+        position: relative;
+        left:-5px;
+    }
+        </style>
+    <script type='text/javascript'>
+        var _vds = _vds || [];
+        window._vds = _vds;
+        (function(){
+                            _vds.push(['setAccountId', '949f6a566feb9b09']);
+                                        _vds.push(['trackBot', false]);
+         (function() {
+           // if (window.location.href.indexOf('www.joinquant.com') > -1) {
+            //  var vds = document.createElement('script');
+            //  vds.type='text/javascript';
+            //  vds.async = true;
+            //  vds.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'assets.giocdn.com/vds.js';
+            //  var s = document.getElementsByTagName('script')[0];
+            //  s.parentNode.insertBefore(vds, s);
+           // }
+         })();
+        })();
+        var g_domain = 'https://www.joinquant.com';
+        var g_filedomain = 'https://file.joinquant.com';
+
+        </script>
+    </head>
+    <body >
+                                <div class="kk_main in_wrap">
+                        
+            <header id="kk_nav" class="fixed-top kk_nav navbar narbar-static-top heigh_nav">
+              <div class="kk_nav_container js-jq-header" ></div>
+            </header>
+            
+            <!--/header-->
+
+            <!-- <div class="kk_body  js-jq-body hidden top_50  "> -->
+            <div class="kk_body js-jq-body top_50  ">
+                <div class="content content-area old-style padding_b0" style="min-height:450px">
+  <form name="AlgorithmModel">
+    <input type="hidden"
+      id="backtestId"
+      value=""
+    />
+    <input type="hidden" value="62cbd53ff7fbc06d6752dddf1f2b5756" id="algorithmId">
+    <div id="subnav" class="subnav">
+      <a href="/algorithm/index/list" class="algo-back" title="所有策略">
+        <i class="icon icon-chevron-left no-decoration"></i>
+      </a>
+      <input type="text"
+        class="algo-title-box medium disabled"
+        style="margin-left:7px;height:45px\9\0;"
+        id="title-box"
+        size="30"
+        name="algorithm[title]"
+        value="JQ558_0019_聚宽有价值策略558_04_首板低开策略"
+        data-backtest-number="null"
+        disabled=""
+      />
+      <div class="state-triangle-detail"></div>
+      <div class="state-triangle-detail border"></div>
+              <div class="pull-right mode-buttons">
+          <span class="run-time-info-icon"></span>
+          <div class="run-time-popover-html"></div>
+          <div class="mode-container head-con">
+            <div class="btn-group inline-block toggle-buttons"
+              data-toggle="buttons-radio"
+              id="algo-toggle-buttons"
+            >
+              <a class="btn-item no-decoration"
+                href="/algorithm/index/edit?algorithmId=60a7b0c6e35511c4812c0848b7e5b2e4"
+                id="algo-button">
+                编辑策略
+              </a>
+              <a class="no-decoration btn-item disabled" href="" id="algo-backtest">
+                回测详情
+              </a>
+              <span class="line_bg"></span>
+                              <a class="btn-item no-decoration"
+                  href="/algorithm/backtest/buildList?algorithmId=cb6d9a26480731e9a8743cf6905230c2"
+                  id="edit-button">
+                  编译运行列表
+                </a>
+                            <a class="btn-item active no-decoration" href="#backtest" id="backtest-button">
+                回测列表
+                <i class="icon icon-comments chat-count hidden">
+                  <span class="comment-count"></span>
+                </i>
+              </a>
+            </div>
+          </div>
+        </div>
+          </div>
+    <div id="main-pane" class="backtest-list__body">
+      <div id="backtest-area" class="">
+        <div id="backtest-feed-container" class="backtest-list__container">
+          <!-- <div class=""> -->
+            <div class="backtest-list__toolbar">
+              <div class="title inline-block backtests-feed-title unselectable">
+                共有0个回测
+              </div>
+              <div class="search-form">
+                <div class="form-group relative">
+                  <div class="bg">
+                    <span class="icon-search-wrapper" id="btn-search-submit"></span>
+                    <span class="hidden icon-close icon-close-wrapper" id="btn-search-del"></span>
+                  </div>
+                  <input type="text" value="" placeholder="策略名称..." id="search-box" class="form-control">
+                </div>
+              </div>
+                              <div class="btn-group inline-block" id="diff_del">
+                  <button type="button" id="diff-backtest-button" class="btn diff-button disabled">
+                    <i class="iconfont icon-contrast1"></i>
+                    回测对比
+                  </button>
+                  <button type="button" id="diff-button" class="btn diff-button disabled">
+                    <i class="iconfont icon-contrast"></i>
+                    代码对比
+                  </button>
+                                    <button type="button" class="btn delete-button disabled" id="del-backtest">
+                    <i class="iconfont icon-delete"></i>
+                    删除
+                  </button>
+                                  </div>
+                          </div>
+            <div class="backtest-list__table-column-checkboxes">
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_create-time"
+                    value="create-time"
+                  />
+                  创建时间
+                </label>
+              </div>
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_base-capital"
+                    value="base-capital"
+                  />
+                  初始资金
+                </label>
+              </div>
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_sharpe"
+                    value="sharpe"
+                  />
+                  夏普比率
+                </label>
+              </div>
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_excess-return"
+                    value="excess-return"
+                  />
+                  超额收益
+                </label>
+              </div>
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_avg-excess-return"
+                    value="avg-excess-return"
+                  />
+                  日均超额收益
+                </label>
+              </div>
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_excess-return-max-drawdown"
+                    value="excess-return-max-drawdown"
+                  />
+                  超额收益最大回撤
+                </label>
+              </div>
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_excess-return-sharpe"
+                    value="excess-return-sharpe"
+                  />
+                  超额收益夏普比率
+                </label>
+              </div>
+              <div class="backtest-list__table-column-checkbox-item">
+                <label>
+                  <input type="checkbox"
+                    class="backtest-list__table-column-checkbox"
+                    id="backtest-list__table-column-checkbox_python-version"
+                    value="python-version"
+                  />
+                  Python版本
+                </label>
+              </div>
+            </div>
+            <div class="backtest-list__table-wrapper" style="margin-bottom: 20px; overflow-x: hidden;">
+              <table id="backtest-feed-table"
+                delete-button-id="backtest-delete-button"
+                class="table backtest-list checkbox-table checkbox-done backtest-list__table"
+                style="margin-bottom: 0">
+                <thead class="backtest-list__table-thead">
+                  <tr>
+                    <td class="checkbox_td">
+                      <div class="backtest-list__checkbox-wrapper unselected">
+                        <input type="checkbox" id="selectAll" disabled>
+                      </div>
+                    </td>
+                    <td class="backtest-list__td_index">#</td>
+                    <td>策略名称</td>
+                    <td class="backtest-list__td_create-time hidden">创建时间</td>
+                    <td>时间范围</td>
+                    <td class="backtest-list__td_base-capital hidden">初始资金</td>
+                    <td>回测用时</td>
+                    <td>运行频率</td>
+                    <td>策略收益</td>
+                    <td>基准收益</td>
+                    <td>最大回撤</td>
+                    <td class="backtest-list__td_sharpe hidden">夏普比率</td>
+                    <td class="backtest-list__td_excess-return hidden">超额收益</td>
+                    <td class="backtest-list__td_avg-excess-return hidden">日均超额收益</td>
+                    <td class="backtest-list__td_excess-return-max-drawdown hidden"
+                      style="padding: 3px 0;">
+                      超额收益<br/>
+                      最大回撤
+                    </td>
+                    <td class="backtest-list__td_excess-return-sharpe hidden"
+                      style="padding: 3px 0;">
+                      超额收益<br/>
+                      夏普比率
+                    </td>
+                    <td>
+                                            状态
+                                          </td>
+                    <td class="backtest-list__td_python-version hidden">Python版本</td>
+                    <!--
+                      <td>
+                          分享
+                      </td>
+                    -->
+                  </tr>
+                </thead>
+                <tbody>
+                                  </tbody>
+              </table>
+            </div>
+            <style>
+  .pager-with-setting-row{
+    font-size: 0;
+  }
+  .pager-with-setting-row .mt_m.page_box{
+    display: inline-block;
+  }
+  .pager-with-setting-row .mt_m.page_box .pagination>li:last-child>a,
+  .pager-with-setting-row .mt_m.page_box .pagination>li:last-child>span{
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+  .pager-with-setting-row .mt_m.page_box+.pagination>li:last-child>span{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+  }
+  .pager-with-setting-row .setting-row-span{
+    display: inline-block;
+    min-width: 50px;
+    height: 32px;
+    padding: 0;
+  }
+  .pager-with-setting-row .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
+    width: auto;
+    margin: 0;
+  }
+  .pager-with-setting-row .btn-group>.btn{
+    width: auto;
+    height: 30px;
+    line-height: 30px;
+    background: transparent;
+    border: none;
+    outline: none !important;
+    padding: 0 24px 0 12px;
+    color: #255da8;
+  }
+  .pager-with-setting-row .selected{
+    background: none;
+  }
+</style>
+<div class="pager-with-setting-row">
+ 
+    <ul class="pagination">
+    <li class="page">
+      <span class="setting-row-span"><select class="selectpicker" onchange="settingPagerRow(this)">
+          <option value="10">展示10行</option>
+<option value="50">展示50行</option>
+<option value="100" selected="selected">展示100行</option>
+
+        </select></span>
+    </li>
+  </ul>
+  
+</div>
+<script>
+  function settingPagerRow(target) {
+    Cy.ajax('/algorithm/index/setLimit', { 
+      data: {
+        limit: target.value
+      }, 
+      success: function () {
+        window.location.reload()
+      }
+      })
+  }
+</script>          <!-- </div> -->
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- 继续运行 -->
+<div class="modal fade" id="continueRunModal" tabindex="-1" role="dialog" aria-labelledby="continueRunModalLabel">
+  <div class="modal-dialog" role="document" >
+    <div class="modal-content" >
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">继续运行</h4>
+      </div>
+      <div class="modal-body">
+        <form id="continueRunForm">
+          <label>
+            <span>截止日期</span>
+            <input type="input" name="endDate" style="width: 180px; height: 34px; margin: 0 10px; padding: 0 10px; border: 1px solid #DDE3E9" placeholder="不填默认运行至昨天">
+          </label>
+          <input type="hidden" name="backtestIds">
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="continueRunFormSubmit">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+            </div>
+            <input type="hidden" id="imagePath" value="https://image.joinquant.com"/>
+            <input type="hidden" id="cdnPath" value="https://cdn.joinquant.com"/>
+            <!--/body-->
+            
+            <footer class="kk_footer clearfix bottom-50">
+                <div class="inner auto_w">
+                    <div class="wp19 fleft">
+                        <div class="item title">关于</div>
+                        <!-- <div class="item"><a href="/about#aboutUs">关于我们</a></div> -->
+                        <!-- <div class="item"><a href="/about#contactUs">联系我们</a></div> -->
+                        <div class="item"><a href="javascript:void(0);">联系我们：hi@joinquant.com</a></div>
+                        <div class="item"><a href="https://app.mokahr.com/m/social-recruitment/joinquant/92346">加入我们</a></div>
+                    </div>
+                    <div class="wp19 fleft hidden">
+                        <div class="item title">数据</div>
+                        <div class="item"><a href="/help/data/index">指数数据</a></div>
+                        <div class="item"><a href="/help/data/fund">基金数据</a></div>
+                        <div class="item"><a href="/data/dict/gta">国泰安数据</a></div>
+                        <div class="item"><a href="/help/data/stock">股票财务数据</a></div>
+                        <div class="item"><a href="/help/data/futures">金融期货数据</a></div>
+                        <div class="item"><a href="/help/api/plateData">行业概念数据</a></div>
+                    </div>
+                    <div class="wp19 fleft">
+                        <div class="item title">帮助</div>
+                        <div class="item"><a href="/faq">常见问题</a></div>
+                        <div class="item"><a href="/api" target="_blank">API文档</a></div>
+                        <div class="item"><a href="/study#python" target="_blank">Python教程</a></div>
+                        <!-- <div class="item"><a href="/algorithm/apishare/list" target="_blank">共享函数库</a></div> -->
+                        <div class="item"><a href="/view/algorithm/pythonConversion?utm_source=bottom"  target="_blank">Python 2 to 3</a></div>
+                    </div>
+                    <div class="wp19 fleft">
+                        <div class="item title">友情链接</div>
+                        <div class="item"><a href="https://guorn.com/?from=joinquant">果仁网</a></div>
+                    </div>
+                    <div class="wp19 fleft">
+                        <div class="item title" style="padding-left:5px">关注我们</div>
+                        <div class="item"><a href="https://zhuanlan.zhihu.com/JoinQuant"><img style="width:24px;" src="https://cdn.joinquant.com/common/img/zhi.png" alt="">知乎专栏</a></div>
+                        <div class="item"><a href="https://xueqiu.com/JoinQuant/profile"> <img style="width:24px;" src="https://cdn.joinquant.com/common/img/xq.png" alt="">雪球</a></div>
+                    </div>
+                    <div class="wp24 fleft last tright">
+                        <div class="item inline-block pr_10 fleft">
+                            <img class="mb_10" src="https://cdn.joinquant.com/themes/jq/static/common/img/wechat.png" alt="">
+                            <p class="f14 tcenter">微信公众号</p>
+                        </div>
+                    </div>
+                    <div class="copyright tcenter clear">
+                        <p><a href="https://cdn.joinquant.com/std/user/protocol/user.pdf" target="_blank">用户协议</a> | <a href="https://cdn.joinquant.com/std/user/protocol/privacy.pdf" target="_blank">隐私政策</a></p>
+                        <p>@2026 @joinquant.com | <a href="https://beian.miit.gov.cn" target="_blank">京ICP备17068639号-5</a> | 增值电信业务经营许可证：京B2-20212305</p>
+                    </div>
+                </div>
+            </footer>
+            <div class="mkk_footer">
+                <div class="inner">
+                    <div class="list">
+                        <a href="#mfooter1" class="item title" type="button" data-toggle='collapse' data-target='#mfooter1' aria-expanded="false" aria-controls="mfooter1">关于</a>
+                        <div class='collapse mfooter1' id="mfooter1">
+                            <!-- <div class="item"><a href="/about#aboutUs">关于我们</a></div>
+                            <div class="item"><a href="/about#contactUs">联系我们</a></div> -->
+                            <div class="item"><a href="javascript:void(0);">联系我们：hi@joinquant.com</a></div>
+                            <div class="item"><a href="https://app.mokahr.com/m/social-recruitment/joinquant/92346">加入我们</a></div>
+                        </div>
+                    </div>
+                    <div class="list">
+                        <a href="#mfooter2" class="item title" data-toggle='collapse' data-target='#mfooter2' aria-expanded="false" aria-controls="mfooter2">数据</a>
+                        <div class='collapse mfooter2' id="mfooter2">
+                            <div class="item"><a href="/help/data/index">指数数据</a></div>
+                            <div class="item"><a href="/help/data/fund">基金数据</a></div>
+                            <div class="item"><a href="/data/dict/gta">国泰安数据</a></div>
+                            <div class="item"><a href="/help/data/stock">股票财务数据</a></div>
+                            <div class="item"><a href="/help/data/futures">金融期货数据</a></div>
+                            <div class="item"><a href="/help/api/plateData">行业概念数据</a></div>
+                        </div>
+                    </div>
+                    <div class="list">
+                        <a href="#mfooter3" class="item title" data-toggle='collapse' data-target='#mfooter3' aria-expanded="false" aria-controls="mfooter3">帮助</a>
+                        <div class='collapse mfooter3' id="mfooter3">
+                        	<div class="item"><a href="/faq">常见问题</a></div>
+                        	<div class="item"><a href="/api">API文档</a></div>
+                            <div class="item"><a href="/study#python" target="_blank">Python教程</a></div>
+                        </div>
+                    </div>
+                    <div class="list last">
+                        <div class="logo"><a href="/"></a></div>
+                        <div class="copyright">@2026 @joinquant.com | <a href="https://beian.miit.gov.cn" target="_blank">京ICP备17068639号-5</a> | 增值电信业务经营许可证：京B2-20212305</div>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+                  <!-- 回到顶部 联系我们 -->
+<div id="leftsead" class="">
+  <ul></ul>
+  <input type="text" class="timeStamp" value="1772433728242" style="display:none">
+  <input type="text" class="js-cdn-path" value="https://cdn.joinquant.com" style="display:none">
+</div>
+        
+
+        <script>
+        var g_staticHost = 'https://cdn.joinquant.com';
+
+                    var isInnerEnv = false;
+        
+                var g_isMobile = false;
+        
+                var g_isLogin = true;
+        
+                var g_isWinApp= false;
+        
+        </script>
+        <script>
+          window.tokenData = {
+            name: "token",
+            value: "a66dcb0ea53593f147639803ac12af0f6a1fd3c66737d3c7988a8d99548334d243d4b4cf7b44d95a"
+          }
+        </script>
+
+        
+	               <script src="https://cdn.joinquant.com/common/js/mustache.min.js"></script>
+        <script src="https://cdn.joinquant.com/common/js/lib.min.js?v=1772433728242"></script>
+        <script src="https://cdn.joinquant.com/themes/jq/static/common/js/setGroIO.js?v=1772433728242"></script>
+                
+        <script src="https://cdn.joinquant.com/std/third/pdfjs-2.16.105-legacy-dist/build/pdf.js"></script>
+        <script src="https://cdn.joinquant.com/dist/static_v2/venders/common.js"></script>
+        <script src="https://cdn.joinquant.com/dist/static_v2/util.js?v=1772433728242"></script>
+        <script src="https://cdn.joinquant.com/dist/static_v2/component.js?v=1772433728242" ></script>
+        <script src="https://cdn.joinquant.com/dist/static_v2/common/common.header.module.bundle.js?v=1772433728242" ></script>
+        <script src="https://cdn.joinquant.com/dist/static_v2/global/user/login/index/index.module.bundle.js?v=1772433728242" ></script>
+        <script src="https://cdn.joinquant.com/themes/jq/dist/static_v2/global/include/include/include.module.bundle.js?v=1772433728242" ></script>
+        <!-- <script src="https://cdn.joinquant.com/themes/jq/static/dist/asset/general/baidu-tongji.bundle.js?v=1772433728242" ></script> -->
+                  <script src="https://cdn.joinquant.com/themes/jq/dist/static_v2/default/backtotop/detail/index/index.module.bundle.js?v=1772433728242" ></script>
+                
+	    
+        
+        
+        <script>
+            // 显示隐藏nav选项
+            $('.dropdown_menu').click(function(){
+                return false;
+            })
+            $('.dropdown_menu').hover(function(){
+                var href = $(this).attr('href');
+                $('.nav-dropdown-item').addClass('hidden');
+                $(href).removeClass('hidden');
+            },function(){});
+
+            $('ul.nav').find('li').find('a').hover(function(){
+                if ($(this).hasClass('dropdown_menu')) {
+                    return;
+                }
+               $('.nav-dropdown-item').addClass('hidden');
+            })
+            $('#kk_nav').mouseleave(function(){
+                $('.nav-dropdown-item').addClass('hidden');
+            })
+        </script>
+
+        <script>
+        $('.dropdown-toggle').dropdown();
+        $("body").delegate("a","click",function(){
+            if ($(this)[0].hostname.length>0 && $(this)[0].hostname != window.location.hostname) {
+                window.open($(this)[0].href);
+                return false;
+            }
+        });
+
+	</script>
+        <script charset="UTF-8">
+        var isFromMobile = 0;
+    </script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.joinquant.com/third/jquery-ui/jquery-ui.min.js"></script>
+<script type="text/javascript" charset="gb2312" src="https://cdn.joinquant.com/third/jquery-ui/jquery.ui.datepicker-zh-CN.js"></script>
+    <script charset="UTF-8" type="text/javascript" src="https://cdn.joinquant.com/third/ace/ace.min.js?v=1772433728242"></script>
+    <script charset="UTF-8" type="text/javascript" src="https://cdn.joinquant.com/themes/jq/static/algorithm/js/backtestList.min.js?v=1772433728242"></script>
+    <script type="text/javascript">
+    var curStatus = "";
+    $('#backtestListStatus').val(curStatus).on('change', function(){
+        window.location.href = location.href.replace(/&status=[^&]+/, '').replace(/&page=[^&]+/, '') + (this.value?('&status=' + this.value):'')
+    })
+        $('.dot-clamp').each(function (index, node) {
+            $clamp(node)
+        })
+</script>
+
+	            <div style="display:none">
+        <!-- 返回顶部 -->
+
+        <script>
+             var img = new Image();
+             var referer = "https%3A%2F%2Fwww.joinquant.com%2Falgorithm%2Fbacktest%2Flist%3FalgorithmId%3D740a8cb4400ce1bf26b008384db19aa5";
+             var euid = "e6972fab5c941de855aa4c39d3bd9fee";
+             var urd = "2020_09_14";
+             var logHost = '';
+             var timestamp=new Date().getTime();
+             img.src = logHost+'/log/p.gif?euid='+euid+"&referer="+referer+'&urd='+urd+'&_t='+timestamp;
+        </script>
+        <script>
+
+          $('.js-tag-hot').on('click', function() {
+            window.setCookie('isActiveHot', 1, 365 * 10 * 24 * 60);
+          });
+
+          if ($.cookie('isActiveHot') === '1') {
+            $('.js-tag-hot div').hide();
+          };
+        </script>
+                <!-- 网易七鱼客户系统 -->
+        <script>
+            (function (w, d, n, a, j) {
+                w[n] = w[n] || function () {
+                    (w[n].a = w[n].a || []).push(arguments);
+                };
+                j = d.createElement('script');
+                j.async = true;
+                j.src = 'https://qiyukf.com/script/d65beefd7552d92ee02344b3cc6173de.js';
+                d.body.appendChild(j);
+            })(window, document, 'ysf');
+        </script>
+                </div>
+    </body>
+</html>

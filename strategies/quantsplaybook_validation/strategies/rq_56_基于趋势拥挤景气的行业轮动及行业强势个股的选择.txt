@@ -1,0 +1,9 @@
+# SKIP REASON: Uses jqfactor and jqlib.technical_analysis libraries
+#
+# Original: 基于趋势、拥挤、景气的行业轮动，及行业强势个股的选择
+# Author: hayy
+# URL: https://www.joinquant.com/post/47033
+#
+# The strategy uses:
+# - "from jqfactor import *" (jqfactor)
+# - "from jqlib.technical_analysis import *" (technical_analysis)

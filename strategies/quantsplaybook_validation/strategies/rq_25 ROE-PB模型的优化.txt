@@ -1,0 +1,12 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values 和 get_history_fundamentals，JoinQuant 特有库，RiceQuant 不支持
+# 原文：ROE-PB模型的优化
+# 作者：wywy1995
+# 原文网址：https://www.joinquant.com/post/34862
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqfactor.get_factor_values - 获取因子值
+2. get_history_fundamentals - 历史财务数据
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

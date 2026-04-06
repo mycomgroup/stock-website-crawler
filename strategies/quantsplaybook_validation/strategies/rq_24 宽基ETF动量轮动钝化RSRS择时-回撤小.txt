@@ -1,0 +1,129 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+# RiceQuant Python 格式迁移策略
+# 原文：宽基ETF动量轮动钝化RSRS择时-回撤小
+# 作者：DominicLiu
+# 原文网址：https://www.joinquant.com/post/37120
+
+import numpy as np
+import math
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    set_option("avoid_future_data", True)
+
+    context.stock_pool = [
+        '000300.XSHG',  # 沪深300
+        '000905.XSHG',  # 中证500
+        '399006.XSHE',  # 创业板
+    ]
+    context.momentum_day = 29
+    context.N = {'000300.XSHG': 18, '000905.XSHG': 18, '399006.XSHE': 18}
+    context.M = {'000300.XSHG': 700, '000905.XSHG': 800, '399006.XSHE': 500}
+    context.score_threshold = {'000300.XSHG': 0.7, '000905.XSHG': 1, '399006.XSHE': 0.4}
+    context.max_value = None
+    context.last_value = None
+    context.check_out_list = None
+    context.timing_signal = None
+
+    set_order_cost(OrderCost(close_tax=0, open_commission=0.00011, close_commission=0.00011, min_commission=5), type='stock')
+    set_slippage(FixedSlippage(0.001))
+
+    run_daily(calculate, time_rule=market_open(minute=0))
+    run_daily(my_trade, time_rule=market_open(hour=11, minute=20))
+    run_daily(my_trade, time_rule=market_open(hour=14, minute=50))
+
+
+def get_rank(context, stock_pool):
+    score_list = []
+    for stock in context.stock_pool:
+        data = history_bars(stock, context.momentum_day, '1d', 'close')
+        y = np.log(data)
+        x = np.arange(len(y))
+        slope, intercept = np.polyfit(x, y, 1)
+        annualized_returns = math.exp(slope * 250) - 1
+        r_squared = 1 - (sum((y - (slope * x + intercept)) ** 2) / ((len(y) - 1) * np.var(y, ddof=1)))
+        score = annualized_returns * r_squared
+        score_list.append(score)
+    stock_dict = dict(zip(context.stock_pool, score_list))
+    sort_list = sorted(stock_dict.items(), key=lambda item: item[1], reverse=True)
+    code_list = [sort_list[i][0] for i in range(len(context.stock_pool))]
+    rank_stock = code_list[0]
+    return rank_stock
+
+
+def get_ols(x, y):
+    slope, intercept = np.polyfit(x, y, 1)
+    r2 = 1 - (sum((y - (slope * x + intercept)) ** 2) / ((len(y) - 1) * np.var(y, ddof=1)))
+    return intercept, slope, r2
+
+
+def get_zscore(slope_series):
+    mean = np.mean(slope_series)
+    std = np.std(slope_series)
+    return (slope_series[-1] - mean) / std
+
+
+def get_timing_signal(context, stock):
+    data = history_bars(stock, context.M[stock] + context.N[stock], '1d', ['high', 'low', 'close'])
+    pre_close = np.roll(data['close'], 1)
+    pre_close[0] = data['close'][0]
+    ret = data['close'] / pre_close - 1
+    ret_std = pd.Series(ret).rolling(context.N[stock]).std()
+    ret_quantile = ret_std.tail(context.M[stock]).rank(pct=True)[-1]
+
+    low_window = data['low'][-context.N[stock]:]
+    high_window = data['high'][-context.N[stock]:]
+    intercept, slope, r2 = get_ols(low_window, high_window)
+
+    slope_series = [get_ols(data.low[i:i + context.N[stock]], data.high[i:i + context.N[stock]])[1] for i in range(context.M[stock])]
+    slope_series.append(slope)
+    zscore = get_zscore(slope_series[-context.M[stock]:])
+    rsrs_score = zscore * r2 ** (2 * ret_quantile)
+
+    if rsrs_score > context.score_threshold[stock]:
+        return "BUY"
+    elif rsrs_score < -context.score_threshold[stock]:
+        return "SELL"
+    else:
+        return "KEEP"
+
+
+def calculate(context):
+    context.check_out_list = get_rank(context, context.stock_pool)
+    context.timing_signal = get_timing_signal(context, context.check_out_list)
+    print("今天选股：", context.check_out_list)
+    print("今天信号：", context.timing_signal)
+
+
+def my_trade(context):
+    loss_ctrl(context)
+    if context.portfolio.positions_value == 0:
+        order_value('511880.XSHG', context.portfolio.cash)
+
+
+def loss_ctrl(context):
+    if context.max_value is None:
+        context.max_value = context.portfolio.total_value
+    if context.last_value is None:
+        context.last_value = context.portfolio.total_value
+
+    k = context.portfolio.total_value / context.last_value - 1
+    if k < -0.02:
+        for code in context.portfolio.positions:
+            order_target_value(code, 0)
+        logger.info('市值极速下跌清仓')
+
+    k = context.portfolio.total_value / context.max_value - 1
+    if k < -0.1:
+        for code in context.portfolio.positions:
+            order_target_value(code, 0)
+        logger.info('最大市值下跌清仓')
+        context.max_value = context.portfolio.total_value
+
+    if context.portfolio.total_value > context.max_value:
+        context.max_value = context.portfolio.total_value
+    context.last_value = context.portfolio.total_value

@@ -12,12 +12,13 @@ def handle_bar(context, bar_dict):
     security = context.security
     period = context.period
 
-    prices = history_bars(security, period + 30, '1d', ['close', 'volume'])
-    if prices is None or len(prices) < period + 10:
+    closes = history_bars(security, period + 30, '1d', 'close')
+    volumes = history_bars(security, period + 30, '1d', 'volume')
+    if closes is None or volumes is None or len(closes) < period + 10:
         return
 
-    closes = np.array(prices['close'])
-    volumes = np.array(prices['volume'])
+    closes = np.array(closes)
+    volumes = np.array(volumes)
 
     # 构建简化的情绪指数
     # 情绪 = 收益率 * 成交量变化
@@ -51,10 +52,10 @@ def handle_bar(context, bar_dict):
     # 情绪低迷(z < -1) → 买入
 
     if sentiment_z < -1.0 and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: sentiment_z={sentiment_z:.2f}")
     elif sentiment_z > 1.0 and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: sentiment_z={sentiment_z:.2f}")

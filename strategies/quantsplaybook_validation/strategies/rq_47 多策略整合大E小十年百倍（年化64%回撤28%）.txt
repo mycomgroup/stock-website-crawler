@@ -1,0 +1,4 @@
+# SKIP REASON
+# JQ-specific module: kuanke.wizard (custom wizard/strategy builder)
+# Uses SubPortfolioConfig and set_subportfolios() which are JoinQuant-specific
+# Multiple strategy integration framework not compatible with RiceQuant

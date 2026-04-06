@@ -1,0 +1,4 @@
+# SKIP REASON
+# JQ-specific: get_current_tick() API not available in RiceQuant
+# Uses attribute_history() which should be converted to history_bars() - requires significant refactoring
+# context.portfolio.available_cash should be context.portfolio.cash in RQ

@@ -1,0 +1,128 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+# RiceQuant Python 格式迁移策略
+# 原文：菜场大妈选股法
+# 作者：开心果
+# 原文网址：https://www.joinquant.com/post/40004
+
+"""
+注意：该策略使用了 finance.STK_XR_XD 分红数据，
+RiceQuant 可能需要适配。
+"""
+
+import pandas as pd
+
+
+def init(context):
+    set_log_level('order', 'error')
+    set_option('use_real_price', True)
+    set_option('avoid_future_data', True)
+    set_benchmark('000905.XSHG')
+    set_slippage(PriceRelatedSlippage(0.000))
+    set_order_cost(OrderCost(open_tax=0, close_tax=0.001, open_commission=0.0003, close_commission=0.0003, close_today_commission=0, min_commission=5), type='fund')
+    context.stock_num = 10
+    run_daily(prepare_stock_list, time_rule=market_open(minute=5))
+    run_monthly(my_trader, 1, time_rule=market_open(minute=30))
+    run_daily(check_limit_up, time_rule=market_open(hour=14, minute=0))
+
+
+def my_trader(context):
+    dt_last = context.previous_date
+    stocks = all_instruments('CS').order_book_id.tolist()
+    stocks = filter_kcbj_stock(stocks)
+    stocks = get_dividend_ratio_filter_list(context, stocks, False, 0, 0.25)
+
+    df = get_fundamentals(query(valuation.code).filter(
+        valuation.code.in_(stocks)
+    ).order_by(valuation.market_cap.asc()))
+
+    choice = list(df.code)
+    choice = filter_st_stock(choice)
+    choice = filter_paused_stock(choice)
+    choice = filter_limitup_stock(context, choice)
+    choice = filter_limitdown_stock(context, choice)
+    choice = filter_highprice_stock(context, choice)
+    choice = choice[:context.stock_num]
+    cdata = get_current_data()
+
+    for s in context.portfolio.positions:
+        if (s not in choice):
+            logger.info('Sell', s, cdata[s].name)
+            order_target_value(s, 0)
+
+    position_count = len(context.portfolio.positions)
+    if context.stock_num > position_count:
+        psize = context.portfolio.cash / (context.stock_num - position_count)
+        for s in choice:
+            if s not in context.portfolio.positions:
+                logger.info('buy', s, cdata[s].name)
+                order_value(s, psize)
+                if len(context.portfolio.positions) == context.stock_num:
+                    break
+
+
+def prepare_stock_list(context):
+    context.high_limit_list = []
+    hold_list = list(context.portfolio.positions)
+    if hold_list:
+        df = history_bars(hold_list[0], 1, '1d', ['close', 'limit_up'])
+        # 简化处理，实际需要遍历
+        context.high_limit_list = []
+
+
+def check_limit_up(context):
+    current_data = get_current_data()
+    if context.high_limit_list:
+        for stock in context.high_limit_list:
+            if current_data[stock].last_price < current_data[stock].high_limit:
+                logger.info("[%s]涨停打开，卖出" % stock)
+                order_target_value(stock, 0)
+            else:
+                logger.info("[%s]涨停，继续持有" % stock)
+
+
+def filter_kcbj_stock(stock_list):
+    for stock in stock_list[:]:
+        if stock[0] == '4' or stock[0] == '8' or stock[:2] == '68':
+            stock_list.remove(stock)
+    return stock_list
+
+
+def filter_paused_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list if not current_data[stock].paused]
+
+
+def filter_st_stock(stock_list):
+    current_data = get_current_data()
+    return [stock for stock in stock_list
+            if not current_data[stock].is_st
+            and 'ST' not in current_data[stock].name
+            and '*' not in current_data[stock].name
+            and '退' not in current_data[stock].name]
+
+
+def filter_limitup_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    current_data = get_current_data()
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] < current_data[stock].high_limit]
+
+
+def filter_limitdown_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    current_data = get_current_data()
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] > current_data[stock].low_limit]
+
+
+def filter_highprice_stock(context, stock_list):
+    last_prices = history(1, unit='1m', field='close', security_list=stock_list)
+    return [stock for stock in stock_list if stock in context.portfolio.positions.keys()
+            or last_prices[stock][-1] < 9]
+
+
+def get_dividend_ratio_filter_list(context, stock_list, sort, p1, p2):
+    # 注意：分红数据需要适配 RiceQuant API
+    return stock_list

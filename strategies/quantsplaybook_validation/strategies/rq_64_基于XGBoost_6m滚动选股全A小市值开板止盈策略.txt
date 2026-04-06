@@ -1,0 +1,17 @@
+# SKIP REASON: Uses multiple skip-list libraries:
+# - XGBoost (XGBClassifier)
+# - sklearn (svm, metrics, model_selection)
+# - jqfactor (get_factor_values, winsorize_med, standardlize, neutralizing)
+# - jqlib.technical_analysis
+# - pickle
+#
+# Original: 基于XGBoost_6m滚动选股全A小市值开板止盈策略
+# Author: 雨汪
+# URL: https://www.joinquant.com/post/42706
+#
+# The strategy uses multiple dependencies in the skip list:
+# - "from xgboost import XGBClassifier"
+# - "from sklearn import svm"
+# - "from jqfactor import get_factor_values, winsorize_med, standardlize, neutralizing"
+# - "from jqlib.technical_analysis import *"
+# - "import pickle"

@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用get_history_fundamentals获取复杂财务数据（连续5个季度数据），
+# 以及finance.STK_CAPITAL_CHANGE获取股票变动数据，属于JQ专有数据。
+# 原文: https://www.joinquant.com/post/42211

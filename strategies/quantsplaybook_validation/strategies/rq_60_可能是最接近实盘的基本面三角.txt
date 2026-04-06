@@ -1,0 +1,11 @@
+# SKIP REASON: Uses multiple JoinQuant-specific libraries:
+# - kuanke.wizard (JoinQuant-specific)
+# - sklearn.linear_model.LinearRegression (skip list)
+# - jqfactor (skip list)
+# - jqlib.technical_analysis (skip list)
+#
+# Original: 可能是最接近实盘的"基本面三角"
+# Author: 美吉姆优秀毕业代表
+# URL: https://www.joinquant.com/post/34881
+#
+# The strategy uses multiple dependencies that are not available in RiceQuant.

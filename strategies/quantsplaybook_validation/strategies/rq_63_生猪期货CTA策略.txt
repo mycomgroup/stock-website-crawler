@@ -1,0 +1,9 @@
+# SKIP REASON: Uses talib library for technical analysis calculations
+# (SMA - Simple Moving Average)
+#
+# Original: 生猪期货CTA策略
+# Author: PokerTrader
+# URL: https://www.joinquant.com/post/35604
+#
+# The strategy imports and uses talib (line: ma=talib.SMA(closed,timeperiod = sma_length))
+# which is a technical analysis library not natively available in RiceQuant.

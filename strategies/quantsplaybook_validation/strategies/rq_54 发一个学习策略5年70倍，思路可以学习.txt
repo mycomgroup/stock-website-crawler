@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: get_fundamentals() with complex queries, get_price() panel data, get_security_info()
+# Uses JQ-specific fundamental data query API and panel data structure not available in RiceQuant

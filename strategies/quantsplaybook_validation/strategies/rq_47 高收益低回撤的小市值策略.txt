@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific module: kuanke.wizard (RiskControl class from wizard module)
+# Uses custom wizard module for strategy building not available in RiceQuant

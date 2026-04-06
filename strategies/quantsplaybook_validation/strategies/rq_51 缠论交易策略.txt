@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: get_bars() not available in RiceQuant
+# Uses JQ-specific bar data API for minute-level缠论 (Chan) trading strategy

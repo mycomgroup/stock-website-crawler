@@ -1,26 +1,19 @@
 # 处置效应因子（CGO）选股策略 - RiceQuant版本
 # 来源：《处置效应因子：资本利得突出量CGO与风险偏好》
-# 核心逻辑：CGO = (当前价格 - 参考价格) / 参考价格
-#           参考价格为过去N日成交量加权平均成本
-#           CGO高（浮盈大）时，投资者倾向卖出，股价承压；CGO低时反弹
-# 修复：用 volume 代替 turnover_rate（RiceQuant history_bars 不支持 turnover_rate 字段）
+# 核心逻辑：CGO = (当前价格 - VWAP参考价) / VWAP参考价
+#           CGO低（浮亏多）时，处置效应导致持有不卖，未来反弹
+# 修复：
+#   1. 月度调仓失败时不更新 month，下个 bar 重试
+#   2. 加强数据校验，避免静默失败
 
 import numpy as np
 
 
 def calc_cgo(prices, volumes, window=52):
-    """
-    计算资本利得突出量 CGO
-    参考价格 = 成交量加权的历史均价（VWAP）
-    """
-    if len(prices) < window or len(volumes) < window:
-        return None
-
+    """CGO = (当前价 - VWAP) / VWAP"""
     p = np.array(prices[-window:], dtype=float)
     vol = np.array(volumes[-window:], dtype=float)
-    current_price = p[-1]
 
-    # 成交量加权参考价格（VWAP）
     vol_sum = vol.sum()
     if vol_sum == 0:
         return None
@@ -28,27 +21,27 @@ def calc_cgo(prices, volumes, window=52):
     ref_price = np.average(p, weights=vol)
     if ref_price == 0:
         return None
-    cgo = (current_price - ref_price) / ref_price
 
-    return cgo
+    return (p[-1] - ref_price) / ref_price
 
 
 def init(context):
     context.index = '000905.XSHG'   # 中证500
-    context.window = 52              # 约一季度
+    context.window = 52
     context.top_n = 30
     context.month = -1
 
 
 def handle_bar(context, bar_dict):
+    if context.month == -1:
+        print(f"[33] 首次运行: {context.now}")
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     stocks = index_components(context.index)
-    if not stocks:
-        return
+    if not stocks or len(stocks) < 10:
+        return  # 不更新 month，重试
 
     scores = {}
     for stock in stocks:
@@ -57,29 +50,30 @@ def handle_bar(context, bar_dict):
             volumes = history_bars(stock, context.window + 1, '1d', 'volume')
             if prices is None or len(prices) < context.window + 1:
                 continue
-            if volumes is None or len(volumes) < context.window:
+            if volumes is None or len(volumes) < context.window + 1:
                 continue
-            prices_arr = np.array(prices, dtype=float)
-            if prices_arr[-1] == 0:
-                continue
-            vol_arr = np.array(volumes, dtype=float)
 
-            cgo = calc_cgo(prices_arr, vol_arr, context.window)
+            p = np.array(prices, dtype=float)
+            v = np.array(volumes, dtype=float)
+            if p[-1] == 0:
+                continue
+
+            cgo = calc_cgo(p, v, context.window)
             if cgo is not None:
-                # 选CGO低的股票（浮亏多，处置效应导致持有，未来反弹）
-                scores[stock] = -cgo
+                scores[stock] = -cgo  # CGO 越低越好
         except Exception:
             continue
 
     if not scores:
-        return
+        return  # 不更新 month，重试
 
-    sorted_stocks = sorted(scores, key=scores.get, reverse=True)
-    target = sorted_stocks[:context.top_n]
+    context.month = current_month
+
+    target = sorted(scores, key=scores.get, reverse=True)[:context.top_n]
 
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:
-            order_to(stock, 0)
+            order_target_value(stock, 0)
 
     weight = 1.0 / len(target)
     total_value = context.portfolio.total_value

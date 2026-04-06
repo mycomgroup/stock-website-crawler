@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: get_all_securities() and get_fundamentals() with JQ-specific query syntax
+# Uses JoinQuant's specific data API syntax that differs from RiceQuant

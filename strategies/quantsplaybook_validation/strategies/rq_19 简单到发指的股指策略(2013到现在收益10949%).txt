@@ -1,0 +1,15 @@
+# SKIP_REASON: 使用了股指期货和 order_target 的 side='long' 参数，RiceQuant 不支持期货合约的 side 参数
+# 原文：简单到发指的股指策略(2013到现在收益10949%)
+# 作者：资金永不眠
+# 原文网址：https://www.joinquant.com/post/30480
+
+"""
+该策略是股指期货交易策略，使用了：
+1. set_subportfolios([SubPortfolioConfig(...type='index_futures')]) - 期货子账户
+2. get_dominant_future() - 获取主力合约
+3. order_target_value(code, cash, side='long') - 期货做多
+4. context.portfolio.long_positions - 期货多头持仓
+
+RiceQuant 对股指期货的支持与 JoinQuant 不同，特别是 side='long' 参数和
+期货子账户机制，迁移后可能无法正常运行。
+"""

@@ -39,11 +39,12 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     stocks = index_components(context.index)
     if not stocks:
         return
+
+    context.month = current_month
 
     scores = {}
     for stock in stocks:
@@ -69,7 +70,7 @@ def handle_bar(context, bar_dict):
 
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:
-            order_to(stock, 0)
+            order_target_value(stock, 0)
 
     weight = 1.0 / len(target)
     total_value = context.portfolio.total_value

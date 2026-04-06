@@ -1,0 +1,8 @@
+# SKIP REASON: Uses PyTorch BiLSTM neural network which is in the skip list
+# (sklearn, torch, neural networks, pickle, redis, jqfactor, XGBoost, BiLSTM, alpha101, technical_analysis)
+#
+# Original: BiLSTM for ETF
+# URL: (from JoinQuant)
+#
+# The strategy uses torch.nn.BiLSTM which is a neural network architecture
+# explicitly listed in the skip conditions.

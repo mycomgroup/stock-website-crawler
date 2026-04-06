@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqfactor library (get_factor_values with 'sales_growth'), attribute_history()
+# Uses JoinQuant factor system not available in RiceQuant

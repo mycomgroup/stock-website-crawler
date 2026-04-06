@@ -1,0 +1,5 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用期货策略(type='index_futures')和set_subportfolios配置期货账户，
+# 以及get_dominant_future、get_future_contracts等期货专用函数，
+# RiceQuant主要支持股票策略，期货策略不在本次迁移范围内。
+# 原文: https://www.joinquant.com/post/28714

@@ -1,0 +1,7 @@
+# SKIP REASON: Uses sklearn (LinearRegression) for strategy calculation
+#
+# Original: 韶华研究之四-菲阿里四阶在T+1的短线策略应用
+# URL: https://www.joinquant.com/post/32187
+#
+# The strategy uses sklearn.linear_model.LinearRegression which is in the skip list
+# (sklearn, torch, neural networks, pickle, redis, jqfactor, XGBoost, BiLSTM, alpha101, technical_analysis)

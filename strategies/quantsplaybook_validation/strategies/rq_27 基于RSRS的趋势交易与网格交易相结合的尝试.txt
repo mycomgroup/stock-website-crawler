@@ -1,0 +1,5 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用statsmodels进行OLS回归，但RSRS指标实现过于复杂且依赖历史数据初始化，
+# 在RiceQuant中需要大量适配工作。策略核心逻辑为RSRS择时+网格交易，
+# 需要对初始化阶段的历史数据获取逻辑进行深度重构。
+# 原文: https://www.joinquant.com/post/24680

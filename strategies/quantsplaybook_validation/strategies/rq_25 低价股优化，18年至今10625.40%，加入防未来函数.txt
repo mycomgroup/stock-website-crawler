@@ -1,0 +1,15 @@
+# SKIP_REASON: 使用了分钟级别回测（time='every_bar'）和 order 的 LimitOrderStyle，RiceQuant 适配复杂
+# 原文：低价股优化，18年至今10625.40%，加入防未来函数
+# 作者：南国草
+# 原文网址：https://www.joinquant.com/post/40992
+
+"""
+该策略使用了：
+1. 分钟级别回测 - run_daily(market_open, time='every_bar')
+2. order() 函数配合 LimitOrderStyle
+3. attribute_history() 获取分钟数据
+
+RiceQuant 的分钟回测机制与 JoinQuant 不同，
+'market_open' time='every_bar' 在 RiceQuant 中需要适配，
+而且 order 的 LimitOrderStyle 参数可能不完全兼容。
+"""

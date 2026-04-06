@@ -1,0 +1,71 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - 趋势交易5.0无择时策略
+原文: https://www.joinquant.com/post/31286
+作者: 矢南
+
+迁移说明:
+- initialize -> init
+- g.xxx -> context.xxx
+- log.info -> logger.info
+- scipy.stats.linregress is available in RiceQuant
+- order_target -> order_target_value
+- context.portfolio.available_cash -> context.portfolio.cash
+"""
+import numpy as np
+from scipy.stats import linregress
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    log.set_level('order', 'error')
+
+    set_order_cost(OrderCost(close_tax=0.001, open_commission=0.0003, close_commission=0.0003, min_commission=5), type='stock')
+
+    run_daily(before_market_open, time='before_open', reference_security='000300.XSHG')
+    run_daily(market_open, time='open', reference_security='000300.XSHG')
+    run_daily(after_market_close, time='after_close', reference_security='000300.XSHG')
+
+    context.buy_list = []
+
+
+def before_market_open(context):
+    log.info('函数运行时间(before_market_open)：' + str(context.current_dt.time()))
+
+
+def after_market_close(context):
+    log.info(str('函数运行时间(after_market_close):' + str(context.current_dt.time())))
+    trades = get_trades()
+    for _trade in trades.values():
+        log.info('成交记录：' + str(_trade))
+    log.info('一天结束')
+    log.info('##############################################################')
+
+
+def orderStocks(context):
+    current_data = get_current_data()
+    buy_lists = context.buy_list
+
+    for s in context.portfolio.positions:
+        if s not in buy_lists:
+            _order = order_target_value(s, 0)
+            if _order is not None:
+                log.info('卖出: %s (%s)' % (get_security_info(s).display_name, s))
+
+    if buy_lists:
+        amount = context.portfolio.total_value / len(buy_lists)
+        for stock in buy_lists:
+            if stock in context.portfolio.positions:
+                continue
+            if context.portfolio.cash >= amount:
+                _order = order_target_value(stock, amount)
+                if _order is not None:
+                    log.info('买入: %s (%s)' % (get_security_info(stock).display_name, stock))
+
+
+def market_open(context):
+    log.info('函数运行时间(market_open):' + str(context.current_dt.time()))
+    orderStocks(context)

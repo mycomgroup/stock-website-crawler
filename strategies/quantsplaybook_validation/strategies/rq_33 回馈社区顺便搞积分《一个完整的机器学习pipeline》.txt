@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用pickle反序列化模型文件(load_file + pickle.loads)，
+# 属于SKIP规则中的"pickle"类别。
+# 原文: https://www.joinquant.com/post/47395

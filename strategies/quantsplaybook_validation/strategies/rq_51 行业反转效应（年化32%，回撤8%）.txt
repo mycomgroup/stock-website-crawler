@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: get_industries(name='sw_l1'), get_industry_stocks()
+# Uses Shen Wan industry classification API not available in RiceQuant

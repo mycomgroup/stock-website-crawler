@@ -1,0 +1,11 @@
+# SKIP_REASON: 使用了 talib 库（EMA等技术指标），RiceQuant 不支持 talib
+# 原文：小市值高频交易法有赚就好 2年3.86%低回撤
+# 作者：CMA
+# 原文网址：https://www.joinquant.com/post/43965
+
+"""
+该策略使用了 talib 库的 EMA 函数计算指数移动平均线：
+- talib.EMA(his.values.flatten(), timeperiod=5)
+
+talib 是 JoinQuant 平台集成的技术分析库，RiceQuant 不支持。
+"""

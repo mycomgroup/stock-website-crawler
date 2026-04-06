@@ -1,0 +1,149 @@
+# 任务清理台账（1:1 对应）
+
+## 总览
+
+- `rq_*.txt` 总数：`151`
+- 同名 `rq_*.py` 已对应：`32`
+- 未对应（待迁移）：`119`
+- 规则：每个 `txt` 对应唯一任务 ID（`T001~T119`），避免重复迁移。
+- 这里的“已对应”只表示名称上已有同名 `py`，不代表该策略已经通过平台回测验收。
+- 一部分同名 `py` 属于 alias / 桥接复用，仍然需要单独做运行性验证。
+
+## 未迁移任务技术标签统计
+
+- `jqfactor`: `39`
+- `jqlib_ta`: `33`
+- `ml_lib`: `28`
+- `plain_port`: `20`
+- `external_data`: `16`
+- `finance_query`: `14`
+- `futures_logic`: `9`
+- `intraday`: `7`
+- `talib`: `6`
+- `already_migrated_placeholder`: `5`
+- `macro_data`: `2`
+- `source_missing`: `2`
+
+## 1:1 任务列表（未迁移 119）
+
+| 任务ID | txt文件 | 标签 | 技术方案（简） |
+|---|---|---|---|
+| T001 | rq_18 国庆节献礼：实例说明白马股攻防转换策略.txt | futures_logic, intraday, already_migrated_placeholder | 按原文链接或标题关键词匹配已有 `rq_*.py`，补同名桥接 `py`（仅转发实现），确保同名一一对应。；期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。；分钟级策略统一到 `handle_bar`/调度器，确认撮合频率、滑点和成交价口径一致。 |
+| T002 | rq_19 【复现】高频价量相关性，意想不到的选股因子.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T003 | rq_19 机器学习线性回归小市值.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T004 | rq_20 【复现】因子择时？？？.txt | ml_lib, external_data | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T005 | rq_20 冲天炮最高板策略，收益惊呆了我.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T006 | rq_20 小市值高频交易法有赚就好 2年3.86%低回撤.txt | talib | 移除 `talib` 依赖，使用本地指标函数（MA/EMA/MACD/RSI/BOLL）替换。 |
+| T007 | rq_21 以"网红"ETF轮动为例.txt | source_missing | 先补全原帖源码（joinquant 链接或历史仓库）；拿不到源码则标记 `BLOCKED_SOURCE` 并暂停迁移。 |
+| T008 | rq_21 利用宏观经济数据的中长线策略深度研究.txt | finance_query, macro_data | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。；宏观数据改为外部日频表（CSV/接口落地）+ 日期对齐缓存，不在策略内直接调 `jqdata.macro`。 |
+| T009 | rq_21 行业ETF轮动+择时，15年至今年化收益35%，回撤16%.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T010 | rq_22 "开弓"ETF轮动模型——改.txt | source_missing | 先补全原帖源码（joinquant 链接或历史仓库）；拿不到源码则标记 `BLOCKED_SOURCE` 并暂停迁移。 |
+| T011 | rq_22 截止到21年12月依然有效的小市值适配因子.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T012 | rq_22 菜场大妈高质低价法策略.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T013 | rq_23 wywy1995大神机器学习策略年化提升版.txt | jqfactor, ml_lib | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T014 | rq_23 大盘择时，逻辑简单.txt | jqfactor, talib | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；移除 `talib` 依赖，使用本地指标函数（MA/EMA/MACD/RSI/BOLL）替换。 |
+| T015 | rq_24 低AH溢价选股.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T016 | rq_24 多因子线性回归组合策略.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T017 | rq_24 大容量低回撤价值投资-排除小市值因子.txt | jqfactor, jqlib_ta, ml_lib | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T018 | rq_25 ROE-PB模型的优化.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T019 | rq_25 年初至今4倍，极致的Day Trading，56.8%胜率.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T020 | rq_26 【深度解析 六】高股息率-低PEG-低股价-市值序列模型.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T021 | rq_26 稳定高回报周期股策略2.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T022 | rq_26 近几年一直有效的股票BOLL择时策略.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T023 | rq_26 这个可入得了你们法眼.txt | jqlib_ta, talib | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；移除 `talib` 依赖，使用本地指标函数（MA/EMA/MACD/RSI/BOLL）替换。 |
+| T024 | rq_27 中证500指增+CTA，胜率52%盈亏比1.9。不输顶尖私募.txt | jqlib_ta, futures_logic | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。 |
+| T025 | rq_27 人工智能强化学习DQN交易智能体（回馈社区公开训练代码）.txt | ml_lib, external_data | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T026 | rq_27 追涨大师（超额142）.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T027 | rq_28 XGBoost模型多因子策略分享.txt | ml_lib, external_data | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T028 | rq_28 韶华研究之十九，一致性用在微盘控制回撤.txt | jqfactor, futures_logic, already_migrated_placeholder | 按原文链接或标题关键词匹配已有 `rq_*.py`，补同名桥接 `py`（仅转发实现），确保同名一一对应。；新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。 |
+| T029 | rq_29 北上资金（北向资金港资外资）因子分析与策略分享.txt | jqfactor, finance_query | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T030 | rq_29 穿越牛熊2.0（非小市值）年化50%的cta策略.txt | futures_logic | 期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。 |
+| T031 | rq_30 价值成长轮动策略.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T032 | rq_30 挖掘特色估值体系因子，把握投资机会，年化150%+.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T033 | rq_30 错杀反弹，掌握人性规律，开启投资新纪元.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T034 | rq_31 ETF核心资产轮动动量因子加RSRS择时每日策略.txt | already_migrated_placeholder | 按原文链接或标题关键词匹配已有 `rq_*.py`，补同名桥接 `py`（仅转发实现），确保同名一一对应。 |
+| T035 | rq_31 RSRS择时+货币基金--6年8倍行业周期股策略.txt | finance_query, ml_lib | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T036 | rq_31 蛇皮走位小市值策略V1.0.txt | already_migrated_placeholder | 按原文链接或标题关键词匹配已有 `rq_*.py`，补同名桥接 `py`（仅转发实现），确保同名一一对应。 |
+| T037 | rq_31 跟着基金报团！！！174%  回撤  7.33%.txt | jqlib_ta, ml_lib | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T038 | rq_32 北向Boll带_ETF组合宝付费策略.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T039 | rq_32 北向资金A股择时策略（5年16倍）.txt | futures_logic | 期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。 |
+| T040 | rq_32 追高概率涨停策略, 2022年化350%.txt | futures_logic, intraday, already_migrated_placeholder | 按原文链接或标题关键词匹配已有 `rq_*.py`，补同名桥接 `py`（仅转发实现），确保同名一一对应。；期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。；分钟级策略统一到 `handle_bar`/调度器，确认撮合频率、滑点和成交价口径一致。 |
+| T041 | rq_32 非线性关系市值（不是小市值）4只绩优股组合.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T042 | rq_33 alpha191短周期价量特征因子选股，年化46.77.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T043 | rq_33 回馈社区顺便搞积分《一个完整的机器学习pipeline》.txt | external_data | 补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T044 | rq_33 最适合上班族的策略-神奇公式策略.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T045 | rq_33 胜率88.9%之君正集团策略-大阳分歧反包.txt | intraday | 分钟级策略统一到 `handle_bar`/调度器，确认撮合频率、滑点和成交价口径一致。 |
+| T046 | rq_34 【回撤二波2.0】透过一次过拟合的机器学习摸底策略的收益上限.txt | jqlib_ta, ml_lib, external_data | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T047 | rq_34 十年回测 年化103.32% 最大回撤23.89%.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T048 | rq_34 韶华研究之十八 首板低开201系列.txt | jqlib_ta, ml_lib | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T049 | rq_35 【菜场大妈】股息率小市值策略,10年206倍,5年10.8倍.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T050 | rq_35 小市值市场轮动版 5年12倍.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T051 | rq_35 自适应量化终极算法2.0 （全新升级）.txt | jqlib_ta, ml_lib | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T052 | rq_35 超稳+翻倍，贝塔值只有0.048的期指策略.txt | futures_logic | 期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。 |
+| T053 | rq_46 【深度解析 四】聚宽三因子基本面周线模型策略.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T054 | rq_47 别人恐惧我贪婪——重视大盘择时.txt | intraday | 分钟级策略统一到 `handle_bar`/调度器，确认撮合频率、滑点和成交价口径一致。 |
+| T055 | rq_47 多策略整合大E小十年百倍（年化64%回撤28%）.txt | futures_logic | 期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。 |
+| T056 | rq_47 年化46%的北向资金+20日涨幅的创业板策略.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T057 | rq_47 随机森林量价多因子选股短线交易机器学习.txt | jqfactor, ml_lib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T058 | rq_47 高收益低回撤的小市值策略.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T059 | rq_48 一种宏观数据的中长线策略，年化15%，最大回撤9%.txt | macro_data | 宏观数据改为外部日频表（CSV/接口落地）+ 日期对齐缓存，不在策略内直接调 `jqdata.macro`。 |
+| T060 | rq_48 低代码迁移成本的实盘方案：jqtrade+one quant.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T061 | rq_48 动量ETF轮动-RSRS择时-卡尔曼滤波.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T062 | rq_48 投资回报率ROIC中等市值.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T063 | rq_48 研究 聚宽高手文章300篇列表.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T064 | rq_48 配套资料.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T065 | rq_49 【漂亮50 2.0止损版本】为了降低回撤，加入择时止损模块.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T066 | rq_49 修改成一创版本.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T067 | rq_49 动量策略年化62%.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T068 | rq_49 根据北上资金买股票的最佳持股时间探讨.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T069 | rq_50 ETF动量轮动RSRS择时-V2.1.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T070 | rq_50 【7日趋势】短线交易策略.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T071 | rq_50 分享一种K线小碎步后突破的分钟级打法.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T072 | rq_50 基本面策略，一种新思路，超额376%.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T073 | rq_50 昨日炸板股策略.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T074 | rq_51 “四大搅屎棍策略”学习笔记-有魔改.txt | jqfactor, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T075 | rq_51 北上资金持股比选股策略（北向港资外资）.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T076 | rq_51 缠论交易策略.txt | intraday | 分钟级策略统一到 `handle_bar`/调度器，确认撮合频率、滑点和成交价口径一致。 |
+| T077 | rq_51 行业反转效应（年化32%，回撤8%）.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T078 | rq_51 配套资料.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T079 | rq_52 增强型投资组合优化（EPO）方法研究.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T080 | rq_52 机器学习滚动训练价投策略.txt | jqfactor, ml_lib | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T081 | rq_52 根据北上资金买A股策略Python3版（北向港资外资）.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T082 | rq_52 龙头战法之单阳不破.txt | jqlib_ta, intraday | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；分钟级策略统一到 `handle_bar`/调度器，确认撮合频率、滑点和成交价口径一致。 |
+| T083 | rq_53 TSmall-100, 微盘三正.txt | external_data | 补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T084 | rq_53 基于大盘PE标准差偏离度的聪明基金定投策略.txt | jqlib_ta, finance_query | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T085 | rq_53 微盘股400每日轮动再平衡.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T086 | rq_53 筹码选股.txt | finance_query | 把 `finance.run_query` 改为 `get_fundamentals(query(...))` 或 `rqdatac.fundamentals`，多表查询拆为分步。 |
+| T087 | rq_53 超跌网格交易大法V1.2：稳健跑赢大盘-年化13%回撤7%.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T088 | rq_54 sales_growth今年最优版.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T089 | rq_54 价值投资策略-大盘择时.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T090 | rq_54 养花大哥 追市场热点策略.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T091 | rq_54 发一个学习策略5年70倍，思路可以学习.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T092 | rq_55_大市值价值投资加自定义邮箱推送Ahfu.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T093 | rq_56_分享券商金股组合增强.txt | jqfactor, ml_lib | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T094 | rq_56_双人工智能AI配合样本外夏普3.9.txt | jqfactor, ml_lib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T095 | rq_56_基于趋势拥挤景气的行业轮动及行业强势个股的选择.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T096 | rq_56_大盘一路向上时追总龙头2个月3倍.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T097 | rq_57_技术分析算法框架与实战之二识别圆弧底.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T098 | rq_57_配套资料.txt | external_data | 补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T099 | rq_57_韶华研究之五_ETF轮动.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T100 | rq_58_ETF动量轮动RSRS与北上择时_股债平衡_盘中止损.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T101 | rq_58_融券做空3年35倍多.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T102 | rq_58_韶华研究之四_菲阿里四阶在T+1的短线策略应用.txt | jqfactor, jqlib_ta, ml_lib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T103 | rq_59_北向RSRS与布林带择时.txt | ml_lib | 机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T104 | rq_59_年化62%的动量策略.txt | jqfactor, jqlib_ta, ml_lib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T105 | rq_59_追板策略今年收益已翻倍.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T106 | rq_60_可能是最接近实盘的基本面三角.txt | jqfactor, jqlib_ta, ml_lib | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。 |
+| T107 | rq_61_BiLSTM_for_ETF.txt | jqfactor, jqlib_ta, ml_lib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T108 | rq_61_简单ETF策略年化97.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T109 | rq_62_K线小碎步后突破的分钟级策略.txt | jqlib_ta, intraday | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；分钟级策略统一到 `handle_bar`/调度器，确认撮合频率、滑点和成交价口径一致。 |
+| T110 | rq_62_分享一个最近两年非常有效的因子.txt | jqfactor, jqlib_ta, ml_lib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T111 | rq_62_基金溢价模拟效果好.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T112 | rq_63_3年复合200收益超低回撤11以内无惧大跌.txt | talib | 移除 `talib` 依赖，使用本地指标函数（MA/EMA/MACD/RSI/BOLL）替换。 |
+| T113 | rq_63_5年12倍小市值.txt | jqfactor | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。 |
+| T114 | rq_63_怎么让龟速变奔跑首版突破一进二.txt | jqlib_ta | 把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |
+| T115 | rq_63_生猪期货CTA策略.txt | talib, futures_logic | 移除 `talib` 依赖，使用本地指标函数（MA/EMA/MACD/RSI/BOLL）替换。；期货逻辑按米筐账户重构（`stock/future` 分账户），去掉聚宽特有 `side` 语义；必要时改 ETF 代理。 |
+| T116 | rq_64_A股最强板块动量趋势最终版.txt | plain_port | 按标准模板迁移：初始化/调度/选股/交易四段式改写，替换聚宽 API 后做静态检查与回测冒烟。 |
+| T117 | rq_64_基于XGBoost_6m滚动选股全A小市值开板止盈策略.txt | jqfactor, jqlib_ta, ml_lib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；机器学习改“离线训练 + 在线推断”：训练脚本单独运行，策略端只读取模型参数/信号。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T118 | rq_64_大小外择时小市值3.0.txt | jqfactor, jqlib_ta, talib, external_data | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。；移除 `talib` 依赖，使用本地指标函数（MA/EMA/MACD/RSI/BOLL）替换。；补齐 `CSV/pickle/model` 到 `data/`，路径改相对路径并加文件存在性校验与降级分支。 |
+| T119 | rq_65_搭建量化交易模型从零开始择时选股仓位管理和因子分析.txt | jqfactor, jqlib_ta | 新增因子适配层：用 `rqdatac.get_factor`/`get_fundamentals` 重写 `get_factor_values/calc_factors`。；把 `jqlib.technical_analysis` 指标替换为 `pandas/numpy` 实现（BBI/ATR/RSRS/KD 等）并集中到 `ta_adapter.py`。 |

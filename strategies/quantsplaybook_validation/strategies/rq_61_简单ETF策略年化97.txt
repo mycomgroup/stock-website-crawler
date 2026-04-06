@@ -1,0 +1,7 @@
+# SKIP REASON: Uses jqlib.technical_analysis library (JoinQuant-specific)
+#
+# Original: 简单ETF策略，年化97%
+# URL: (from JoinQuant)
+#
+# The strategy uses "from jqlib.technical_analysis import *" which is a
+# JoinQuant-specific technical analysis library not available in RiceQuant.

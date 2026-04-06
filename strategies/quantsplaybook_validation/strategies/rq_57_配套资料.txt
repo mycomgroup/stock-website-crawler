@@ -1,0 +1,6 @@
+# SKIP REASON: This is a supplementary reference file with a URL, not a strategy file
+#
+# Original: 配套资料
+# URL: https://www.joinquant.com/view/community/detail/41114
+#
+# This file only contains a reference URL, not an actual trading strategy.

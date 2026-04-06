@@ -1,0 +1,2 @@
+# SKIP REASON
+# Not a strategy code file - only contains list of JoinQuant community articles

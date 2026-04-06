@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用sklearn.linear_model.LinearRegression和sklearn.cluster.KMeans进行机器学习聚类，
+# 以及jqlib.technical_analysis库，属于SKIP规则中的"sklearn"和"jqlib"类别。
+# 原文: https://www.joinquant.com/post/38623

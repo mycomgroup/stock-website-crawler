@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqlib.technical_analysis, finance.STK_EXCHANGE_TRADE_INFO, QuantTiming class, inout_cash()
+# Uses JQ proprietary technical analysis and PE timing APIs not available in RiceQuant

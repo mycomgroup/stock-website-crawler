@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: get_price() with JQ-specific parameters, get_fundamentals() query syntax
+# Uses JoinQuant's specific data API syntax that differs from RiceQuant

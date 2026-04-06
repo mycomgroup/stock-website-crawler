@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: attribute_history() not available in RiceQuant
+# Uses JQ-specific historical data API for RSRS (Resistance Support Relative Strength) timing indicator

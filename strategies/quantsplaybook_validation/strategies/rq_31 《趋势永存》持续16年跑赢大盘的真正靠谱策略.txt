@@ -1,0 +1,145 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - 趋势永存策略
+原文: https://www.joinquant.com/post/36489
+作者: Ahfu
+
+迁移说明:
+- initialize -> init
+- g.xxx -> context.xxx
+- log.info -> logger.info
+- attribute_history -> history
+- talib.ATR is available in RiceQuant
+- context.portfolio.available_cash -> context.portfolio.cash
+"""
+import talib
+import numpy as np
+import math
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    set_option('avoid_future_data', True)
+    set_slippage(FixedSlippage(0))
+
+    set_order_cost(OrderCost(close_tax=0.001, open_commission=0.0003,
+                             close_commission=0.0003, min_commission=5), type='stock')
+
+    initial_config()
+    run_weekly(trade, weekday=3, time='9:32')
+    run_weekly(adjust_position, weekday=3, time='9:35')
+
+
+def initial_config():
+    log.set_level('order', 'error')
+    context.index = "399300.XSHE"
+    context.stock_momentum_day = 90
+    context.stock_mean_day = 100
+    context.index_mean_day = 200
+    context.ATR_day = 20
+    context.gap_threshold = 0.15
+    context.rank_threshold = 60
+    context.risk_factor = 0.001
+    context.position_threshold = 0.1
+    context.cash_threshold = 500
+    context.two_weekly = True
+
+
+def trade(context):
+    stock_hold = set(context.portfolio.positions.keys())
+    stock_pool = get_stock_pool()
+
+    for stock in stock_hold:
+        if stock not in stock_pool or (not good_stock(stock)):
+            order_target_value(stock, 0)
+            log.info("%s 已不符合要求，平仓！" % stock)
+
+    if good_market_sentiment():
+        for stock in stock_pool:
+            cash = get_expected_position(stock, context)
+            if context.portfolio.cash > cash:
+                result = order_target_value(stock, cash)
+                if not result == None:
+                    log.info("已买入 %s，金额：%f" % (stock, cash))
+            else:
+                return
+    else:
+        log.info("当前熊市，不买入任何股票")
+        return
+
+
+def adjust_position(context):
+    if context.two_weekly:
+        stock_hold = set(context.portfolio.positions.keys())
+        for stock in stock_hold:
+            diff_value_rotio, now_value, expected_value = get_diff_position(stock, context)
+            if diff_value_rotio > context.position_threshold:
+                if context.portfolio.cash > expected_value - now_value:
+                    result = order_target_value(stock, expected_value)
+                    if not result == None:
+                        log.info("%s 已调仓，原市值 %f，现市值 %f" % (stock, now_value, expected_value))
+                else:
+                    log.info("%s 应该调仓，但无空闲资金" % stock)
+        context.two_weekly = False
+    else:
+        context.two_weekly = True
+
+
+def get_stock_pool():
+    stock_rank = sorted([(stock, get_score(stock)) for stock in get_index_stocks(context.index)], key=lambda x: x[1], reverse=True)
+    stock_pool_top = tuple(rank[0] for rank in stock_rank)[:context.rank_threshold]
+    filtered_stock_pool = list(filter(good_stock, stock_pool_top))
+    return filtered_stock_pool
+
+
+def good_market_sentiment():
+    close_data = attribute_history(
+        context.index, context.index_mean_day, '1d', ['close']).close
+    current_price = close_data[-1]
+    average_price = close_data.mean()
+    if current_price > average_price:
+        return True
+    else:
+        return False
+
+
+def get_expected_position(stock, context):
+    data = attribute_history(stock, context.ATR_day + 1, '1d', ['high', 'low', 'close'])
+    if np.any(data.isnull()):
+        ATR = 1
+    else:
+        ATR = talib.ATR(data.high, data.low, data.close, timeperiod=context.ATR_day)[-1]
+    stock_price = data.close[-1]
+    expected_position = context.portfolio.total_value * context.risk_factor * stock_price / ATR
+    return expected_position
+
+
+def get_diff_position(stock, context):
+    expected_position = get_expected_position(stock, context)
+    now_position = context.portfolio.positions[stock].value
+    return abs(now_position / expected_position - 1), now_position, expected_position
+
+
+def get_score(stock):
+    data = attribute_history(stock, context.stock_momentum_day, '1d', ['close'])
+    y = data['log'] = np.log(data.close)
+    x = data['num'] = np.arange(data.log.size)
+    slope, intercept = np.polyfit(x, y, 1)
+    annualized_returns = math.pow(math.exp(slope), 250) - 1
+    r_squared = 1 - (sum((y - (slope * x + intercept))**2) / ((len(y) - 1) * np.var(y, ddof=1)))
+    return annualized_returns * r_squared
+
+
+def good_stock(stock):
+    data = attribute_history(stock, context.stock_mean_day, '1d', ['low', 'high', 'close'])
+    data['gap'] = data.low / data.high.shift(2) - 1
+    max_gap = data.gap.max()
+    current_price = data.close[-1]
+    average_price = data.close.mean()
+    if current_price < average_price or max_gap > context.gap_threshold:
+        return False
+    else:
+        return True

@@ -61,10 +61,10 @@ def handle_bar(context, bar_dict):
     current = closes[-1]
 
     if (is_double_bottom or is_breakout) and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: double_bottom={is_double_bottom}, breakout={is_breakout}")
     elif current < support * 0.97 and context.pos:  # 跌破支撑3%
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: support_break")

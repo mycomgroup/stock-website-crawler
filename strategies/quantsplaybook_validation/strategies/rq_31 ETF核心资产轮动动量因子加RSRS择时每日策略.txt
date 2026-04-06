@@ -1,0 +1,144 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+"""
+RiceQuant策略迁移 - ETF核心资产轮动动量因子加RSRS择时策略
+原文: https://www.joinquant.com/post/42949
+作者: wentaogg
+
+迁移说明:
+- initialize -> init
+- g.xxx -> context.xxx
+- log.info -> logger.info
+- context.portfolio.available_cash -> context.portfolio.cash
+- attribute_history -> history
+- get_current_data()[security].last_price -> get_current_data().get(security).last_price
+"""
+import numpy as np
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    set_slippage(FixedSlippage(0.004))
+
+    set_order_cost(OrderCost(open_tax=0, close_tax=0, open_commission=0.0005, close_commission=0.0005, close_today_commission=0, min_commission=5), type='fund')
+
+    log.set_level('order', 'error')
+
+    context.index_pool = [
+        '518880.XSHG',
+        '513100.XSHG',
+        '159915.XSHE',
+        '510180.XSHG',
+    ]
+
+    context.stock_num = 1
+    context.momentum_day = 25
+    context.stock = '000300.XSHG'
+    context.N = 18
+    context.M = 600
+    context.mean_day = 20
+    context.mean_diff_day = 3
+    context.score_threshold = 0.7
+    context.slope_series = initial_slope_series()[:-1]
+
+    run_daily(trade, time='9:45')
+
+
+def trade(context):
+    stock_hold = set(context.portfolio.positions.keys())
+    stock_pool = get_stock_pool()
+    context.stock_number = context.stock_num if (len(stock_pool) > context.stock_num) else len(stock_pool)
+
+    set_stock_pool = set(stock_pool[:context.stock_num])
+    print(f'持仓股票{stock_hold}')
+    print(f'最后要买入股票{set_stock_pool}')
+    signal = get_signal()
+    print(signal)
+
+    if stock_pool and signal != "SELL":
+        if stock_hold == set_stock_pool and len(set_stock_pool) != 0:
+            print("当前持仓和需买入集合一致，不进行调仓")
+        else:
+            change_position(context, set_stock_pool)
+    else:
+        if signal == "SELL":
+            print("RSRS择时模型发出清仓信号！")
+        for stock in stock_hold:
+            order_target_value(stock, 0)
+
+    log.info('美好的一天结束')
+    log.info('##############################################################')
+
+
+def get_stock_pool():
+    index_rank = []
+    for index in context.index_pool:
+        score = get_socre(index)
+        index_rank.append((index, score))
+    index_rank = sorted(index_rank, key=lambda x: x[1], reverse=True)
+
+    index_dict = dict(index_rank)
+    record(黄金=round(index_dict['518880.XSHG'], 2))
+    record(纳指=round(index_dict['513100.XSHG'], 2))
+    record(成长=round(index_dict['159915.XSHE'], 2))
+    record(价值=round(index_dict['510180.XSHG'], 2))
+    return tuple(index[0] for index in index_rank)
+
+
+def get_socre(stock):
+    data = history(stock, context.momentum_day, '1d', ['close'])
+    y = data['log'] = np.log(data.close)
+    x = data['num'] = np.arange(data.log.size)
+    slope, intercept = np.polyfit(x, y, 1)
+    annualized_returns = math.pow(math.exp(slope), 250) - 1
+    r_squared = 1 - (sum((y - (slope * x + intercept))**2) / ((len(y) - 1) * np.var(y, ddof=1)))
+    return annualized_returns * r_squared
+
+
+def change_position(context, target_list):
+    hold_list = list(context.portfolio.positions)
+    for etf in hold_list:
+        order_target_value(etf, 0)
+        print('卖出' + str(etf))
+
+    if context.stock_number > 0:
+        value = context.portfolio.cash / context.stock_number
+        for etf in target_list:
+            if context.portfolio.positions[etf].total_amount == 0:
+                order_target_value(etf, value)
+                print('买入' + str(etf))
+
+
+def get_signal():
+    close_data = history(context.stock, context.mean_day + context.mean_diff_day, '1d', ['close'])
+    today_MA = close_data.close[context.mean_diff_day:].mean()
+    before_MA = close_data.close[:-context.mean_diff_day].mean()
+    data = history(context.stock, context.N, '1d', ['high', 'low'])
+    intercept, slope, r2 = get_ols(data.low, data.high)
+    context.slope_series.append(slope)
+    rsrs_score = get_zscore(context.slope_series[-context.M:]) * r2
+    if rsrs_score > context.score_threshold and today_MA > before_MA:
+        return "BUY"
+    elif rsrs_score < -context.score_threshold and today_MA < before_MA:
+        return "SELL"
+    else:
+        return "KEEP"
+
+
+def get_ols(x, y):
+    slope, intercept = np.polyfit(x, y, 1)
+    r2 = 1 - (sum((y - (slope * x + intercept))**2) / ((len(y) - 1) * np.var(y, ddof=1)))
+    return (intercept, slope, r2)
+
+
+def initial_slope_series():
+    data = history(context.stock, context.N + context.M, '1d', ['high', 'low'])
+    return [get_ols(data.low[i:i+context.N], data.high[i:i+context.N])[1] for i in range(context.M)]
+
+
+def get_zscore(slope_series):
+    mean = np.mean(slope_series)
+    std = np.std(slope_series)
+    return (slope_series[-1] - mean) / std

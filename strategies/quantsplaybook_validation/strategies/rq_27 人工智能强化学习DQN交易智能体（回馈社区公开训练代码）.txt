@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用PyTorch深度学习框架(DQN)进行强化学习交易，依赖预训练模型(pickle加载)，
+# 属于SKIP规则中的"深度学习"类别。RiceQuant不支持此类ML/DL模型。
+# 原文: https://www.joinquant.com/post/44758

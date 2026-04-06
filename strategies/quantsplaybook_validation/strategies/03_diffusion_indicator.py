@@ -17,6 +17,8 @@ def handle_bar(context, bar_dict):
     # 获取沪深300成分股
     try:
         stocks = index_components(security)
+        if not stocks:
+            return
     except Exception as e:
         print(f"获取成分股失败: {e}")
         return
@@ -45,10 +47,10 @@ def handle_bar(context, bar_dict):
 
     # 交易逻辑
     if diffusion > context.buy_threshold and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: 扩散指标={diffusion:.2%}")
     elif diffusion < context.sell_threshold and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: 扩散指标={diffusion:.2%}")

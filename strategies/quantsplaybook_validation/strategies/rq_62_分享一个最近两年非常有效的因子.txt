@@ -1,0 +1,8 @@
+# SKIP REASON: Uses alpha101 library (JoinQuant-specific technical analysis factors)
+# which is in the skip list
+#
+# Original: 分享一个最近两年非常有效的因子
+# URL: https://www.joinquant.com/post/35475
+#
+# The strategy uses "from jqlib.alpha101 import *" which is in the skip list
+# (sklearn, torch, neural networks, pickle, redis, jqfactor, XGBoost, BiLSTM, alpha101, technical_analysis)

@@ -1,0 +1,9 @@
+# SKIP_REASON: 使用了 pykalman 库（卡尔曼滤波），JoinQuant 特有库，RiceQuant 不支持
+# 原文：动量ETF轮动-RSRS择时-卡尔曼滤波
+# 作者：莫急莫急
+# 原文网址：https://www.joinquant.com/post/35416
+
+"""
+该策略使用了 pykalman 库进行卡尔曼滤波计算RSRS择时指标，
+这是 JoinQuant 平台特有的实现方式，RiceQuant 不支持 pykalman 库。
+"""

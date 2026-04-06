@@ -1,0 +1,4 @@
+# SKIP REASON
+# JQ-specific: macro.run_query for macroeconomic data
+# Uses JQ finance macro API (macro.MAC_MANUFACTURING_PMI) not available in RiceQuant
+# Depends on PMI and economic cycle data from JQ database

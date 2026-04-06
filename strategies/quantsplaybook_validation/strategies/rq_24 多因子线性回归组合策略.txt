@@ -1,0 +1,10 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values，JoinQuant 特有库，RiceQuant 不支持
+# 原文：多因子线性回归组合策略
+# 作者：Plisking
+# 原文网址：https://www.joinquant.com/post/42371
+
+"""
+该策略使用了 JoinQuant 的 jqfactor 库中的 get_factor_values 函数
+获取 ARBR, SGAI, net_profit_to_total_operate_revenue_ttm 等因子值，
+这是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

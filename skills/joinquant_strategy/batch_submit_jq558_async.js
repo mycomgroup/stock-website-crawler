@@ -11,9 +11,23 @@ import { JoinQuantStrategyClient, loadJson } from './request/joinquant-strategy-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
-const SOURCE_DIR = path.resolve(REPO_ROOT, '聚宽有价值策略558');
+
+const _rawArgs = process.argv.slice(2);
+const _sourceDirArg = (() => {
+  const idx = _rawArgs.indexOf('--source-dir');
+  return idx !== -1 ? _rawArgs[idx + 1] : null;
+})();
+const _runDirArg = (() => {
+  const idx = _rawArgs.indexOf('--dir');
+  return idx !== -1 ? _rawArgs[idx + 1] : null;
+})();
+const SOURCE_DIR = _sourceDirArg
+  ? path.resolve(_sourceDirArg)
+  : path.resolve(REPO_ROOT, '聚宽有价值策略558');
 const DATE_TAG = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-const RUN_DIR = path.resolve(__dirname, 'data', `jq558_batch_${DATE_TAG}`);
+const RUN_DIR = _runDirArg
+  ? path.resolve(_runDirArg)
+  : path.resolve(__dirname, 'data', `jq558_batch_${DATE_TAG}`);
 const JSONL_LOG = path.join(RUN_DIR, 'submissions.jsonl');
 const MD_LOG = path.join(RUN_DIR, 'submissions.md');
 const STATE_FILE = path.join(RUN_DIR, 'state.json');
@@ -84,7 +98,14 @@ function readSubmittedMap() {
     try {
       const item = JSON.parse(line);
       if (item.status === 'submitted') {
-        submitted.set(item.file, item);
+        // Key by relativePath (basename-based) to handle machine path differences
+        const key = item.relativePath || item.file;
+        submitted.set(key, item);
+        // Also key by current-machine absolute path if file exists
+        if (item.relativePath) {
+          const absPath = path.join(SOURCE_DIR, '..', item.relativePath);
+          submitted.set(absPath, item);
+        }
       }
     } catch {
       // Ignore malformed lines and continue.
@@ -124,7 +145,11 @@ function sleep(ms) {
 }
 
 function isRateLimitError(error) {
-  return String(error?.message || '').includes('当前并行编译或回测数量最多10个');
+  const msg = String(error?.message || '');
+  return msg.includes('当前并行编译或回测数量最多10个') ||
+         msg.includes('50001') ||
+         msg.includes('并发') ||
+         msg.includes('rate limit');
 }
 
 function makeStrategyName(relativePath, index) {
@@ -283,8 +308,29 @@ async function main() {
 
   const allFiles = walkStrategyFiles(SOURCE_DIR);
   const submittedMap = readSubmittedMap();
+
+  // Build a set of already-submitted relative paths for dedup across machines
+  const submittedRelPaths = new Set();
+  for (const [, item] of submittedMap) {
+    if (item.relativePath) {
+      submittedRelPaths.add(item.relativePath);
+      // Also add just the filename for cross-directory matching
+      const basename = path.basename(item.relativePath);
+      submittedRelPaths.add(basename);
+    }
+  }
+
   const pendingFiles = resume
-    ? allFiles.filter((file) => !submittedMap.has(file))
+    ? allFiles.filter((file) => {
+        if (submittedMap.has(file)) return false;
+        // Check by relative path (handles machine path differences)
+        const rel = path.relative(path.dirname(SOURCE_DIR), file);
+        if (submittedRelPaths.has(rel)) return false;
+        // Check by filename only
+        const basename = path.basename(file);
+        if (submittedRelPaths.has(basename)) return false;
+        return true;
+      })
     : allFiles;
   const finalFiles = limit ? pendingFiles.slice(0, limit) : pendingFiles;
 
@@ -331,7 +377,7 @@ async function main() {
     for (let i = 0; i < finalFiles.length; i += 1) {
       const file = finalFiles[i];
       const absoluteIndex = allFiles.indexOf(file) + 1;
-      const relativePath = path.relative(REPO_ROOT, file);
+      const relativePath = path.relative(path.dirname(SOURCE_DIR), file);
       const strategyName = makeStrategyName(relativePath, absoluteIndex);
       const debugPrefix = `item_${String(absoluteIndex).padStart(4, '0')}`;
       const code = fs.readFileSync(file, 'utf8');

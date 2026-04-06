@@ -1,0 +1,11 @@
+# SKIP REASON: Uses multiple skip-list libraries:
+# - jqfactor (get_factor_values)
+# - jqlib.technical_analysis
+#
+# Original: 搭建量化交易模型从零开始——择时，选股，仓位管理和因子分析
+# Author: Jacobb75
+# URL: https://www.joinquant.com/post/49082
+#
+# The strategy uses multiple JoinQuant-specific libraries:
+# - "from jqlib.technical_analysis import *"
+# - "from jqfactor import get_factor_values"

@@ -1,0 +1,11 @@
+# SKIP REASON: Uses multiple skip-list libraries:
+# - jqfactor (Factor, calc_factors)
+# - jqlib.optimizer (portfolio optimization)
+# - sklearn (ledoit_wolf covariance estimation)
+#
+# Original: 【分享】券商金股组合增强
+# Author: Hugo2046
+# URL: https://www.joinquant.com/post/33881
+#
+# The strategy uses JoinQuant-specific factor libraries and portfolio optimization
+# as well as sklearn for covariance estimation.

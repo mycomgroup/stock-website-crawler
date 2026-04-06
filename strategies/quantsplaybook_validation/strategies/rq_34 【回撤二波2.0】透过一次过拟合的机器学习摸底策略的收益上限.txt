@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用lightgbm机器学习库和pickle序列化模型，
+# 以及jqlib.technical_analysis库，属于SKIP规则中的"LightGBM"、"pickle"和"jqlib"类别。
+# 原文: https://www.joinquant.com/post/35253

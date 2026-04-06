@@ -1,0 +1,15 @@
+# SKIP REASON: Uses multiple skip-list libraries:
+# - jqfactor (JoinQuant-specific factor library)
+# - pickle (serialization library)
+# - talib (technical analysis library)
+# - jqlib.technical_analysis (JoinQuant-specific)
+#
+# Original: 大小外择时小市值3.0
+# Author: kautz
+# URL: https://www.joinquant.com/post/50567
+#
+# The strategy uses multiple dependencies in the skip list:
+# - "from jqfactor import *"
+# - "import pickle"
+# - "import talib"
+# - "from jqlib.technical_analysis import *"

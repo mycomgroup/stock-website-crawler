@@ -1,0 +1,13 @@
+# SKIP_REASON: 使用了 get_billboard_list (龙虎榜数据)、jqlib.technical_analysis 和 talib，RiceQuant 不支持
+# 原文：这个可入得了你们法眼
+# 作者：南山南11
+# 原文网址：https://www.joinquant.com/post/34474
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. get_billboard_list - 龙虎榜数据获取
+2. jqlib.technical_analysis - 技术分析库
+3. talib - talib 技术分析库
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

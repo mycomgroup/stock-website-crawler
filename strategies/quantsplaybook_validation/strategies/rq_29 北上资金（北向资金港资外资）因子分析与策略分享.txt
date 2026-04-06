@@ -1,0 +1,4 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用jqfactor.get_factor_values和finance.STK_HK_HOLD_INFO获取北向资金数据，
+# 属于JQ专有数据/库，SKIP规则中的"jqfactor"类别。
+# 原文: https://www.joinquant.com/post/25613

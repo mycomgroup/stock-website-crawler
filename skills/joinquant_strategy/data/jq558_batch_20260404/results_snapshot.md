@@ -1,10 +1,10 @@
 # JQ558 最近1年回测结果快照
-> 生成时间: 2026-04-04T01:21:14.778Z
-> 运行目录: /Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/data/jq558_batch_20260404
+> 生成时间: 2026-04-05T01:19:05.188Z
+> 运行目录: /Users/yuping/Downloads/git/stock-website-crawler/skills/joinquant_strategy/data/jq558_batch_20260404
 
-- 已提交: 84
+- 已提交: 210
 - 已完成: 0
-- 运行中/排队中: 84
+- 运行中/排队中: 210
 - 失败: 0
 
 ## 已完成前50名
@@ -72,7 +72,7 @@
 | 聚宽有价值策略558/07 为了挣点积分自己实盘的策略分享出来.txt | 4165d80ab6b4e1fbe3cf3b22555b0a30 | 2 |
 | 聚宽有价值策略558/07 致敬经典作品——小兵哥《一致性风险度量》——极速版.txt | af6aef8dc2e4c491687d35b3b90275c6 | 2 |
 | 聚宽有价值策略558/07 追首板涨停 过去两年年化304%.txt | c87c69ecb4c9bcb57c59fb0dd47af253 | 2 |
-| 聚宽有价值策略558/08 14个月200%，超短线实盘交易策略！无未来函数.txt | be28aa5bb19ca403ea8415d066853ef2 | 1 |
+| 聚宽有价值策略558/08 14个月200%，超短线实盘交易策略！无未来函数.txt | be28aa5bb19ca403ea8415d066853ef2 | 2 |
 | 聚宽有价值策略558/08 国九条后中小板微盘小改，年化135.40%.txt | 5bb8653f0b2049edc07ec68b7e2d297c | 2 |
 | 聚宽有价值策略558/08 科技与狠活 纯粹的数据挖掘策略.txt | 6a699a67cd49017d3e011898801d6a64 | 2 |
 | 聚宽有价值策略558/08 因子分析 营业利润TTM.txt | a617ba68f9876b856aa53bdc707a0235 | 2 |
@@ -100,3 +100,19 @@
 | 聚宽有价值策略558/12 致敬聚宽： 机器学习多因子，50只持仓，14年37倍.txt | c11b8cb4e98a9588d2e7ad50ba7e5d46 | 2 |
 | 聚宽有价值策略558/12 致敬市场--5 定投ETF之躺平赢.txt | b6e14f58792632cddd52b82a3cdd8a08 | 2 |
 | 聚宽有价值策略558/13 【涨停研究三】连板股票收益统计与回测.txt | c5b5f6fc4f56a401d84323824a834350 | 2 |
+| strategies/01 7年40倍模拟超过两年年化高回撤低.txt | 604ecfa88e8fca59c89a8a3035c09bed | 3 |
+| strategies/01 龙回头3.0回测速度优化版.txt | fd83645a95fdd25d0f954d8bd0788612 | 2 |
+| strategies/01 首板低开策略.txt | 6f1c9b73e545503001f737696a605760 | 2 |
+| strategies/04 红利搬砖_测试版.txt | 82d26532fd5a6fb90a063659bfa6abd1 | 2 |
+| strategies/04 红利搬砖_简化测试版.txt | 6ad722ad5dda66b716ed7d791e042093 | 2 |
+| strategies/13 5年15倍的收益，年化79.93%，可实盘策略，拿走不谢！.txt | f705e0d5fb3759377bd61c416b972f57 | 2 |
+| strategies/13 7年40倍模拟超过两年年化高回撤低.txt | 7f36688633a6fd76171ebb66ecea5ac5 | 3 |
+| strategies/13 不含未来宽基etf轮动8年50倍年化60%.txt | 6e53cd2af09d06a2b140dddc9b53d363 | 2 |
+| strategies/13 首板高开-低开-弱转强混合策略（今年收益1138.61%）.txt | c535c7b3208f981a60a4433c26779c00 | 2 |
+| strategies/14 安全摸狗策略.txt | d06cbfa3c2614083ee90a7222d268a84 | 2 |
+| strategies/14 胜率65%之缩量分歧反包战法.txt | c483526dc5bfb4387857531571d3d785 | 2 |
+| strategies/14 四年多翻9倍，年化73%，成长因子评分筛选.txt | 6397b2794773a3509ba1624912b562ff | 2 |
+| strategies/14 为实盘做的更新： 分钟级别和盘中止损.txt | ec670f8ac511d16c8df2ed2865bd8d08 | 2 |
+| strategies/14 FOF养老成长基金-v2.0.txt | 6bc7ae7ac1101f1c4899335a41c413af | 2 |
+| strategies/15 10年52倍，年化59%，全新因子方法超稳定.txt | 6a78ef0879f791d99d288d941778e6f2 | 2 |
+| strategies/15 2020年 267%年化 13%回撤 上涨趋势策略修改版.txt | 32aeda70b3a160d2cd4975511ebff61d | 2 |

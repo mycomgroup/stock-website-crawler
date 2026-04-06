@@ -1,0 +1,13 @@
+# SKIP_REASON: 使用了 sklearn (svm, linear_model, RandomForestClassifier) 和 statsmodels，JoinQuant 特有机器学习库，RiceQuant 不支持
+# 原文：【复现】因子择时？？？
+# 作者：Hugo2046
+# 原文网址：https://www.joinquant.com/post/37573
+
+"""
+该策略使用了以下 JoinQuant 特有库：
+1. sklearn (svm.SVC, linear_model.LogisticRegression, RandomForestClassifier)
+2. statsmodels (sm.regression.linear_model.OLS)
+3. read_file('Data/Ret_mat.csv') 等本地文件读取
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

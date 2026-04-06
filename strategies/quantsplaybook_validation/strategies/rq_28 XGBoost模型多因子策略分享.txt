@@ -1,0 +1,5 @@
+# RiceQuant策略迁移 - SKIP
+# 原因: 使用XGBoost机器学习模型(sklearn API)、sklearn.decomposition.PCA、
+# sklearn.model_selection.GridSearchCV等ML组件，以及pickle序列化模型，
+# 属于SKIP规则中的"XGBoost/sklearn/pickle"类别。
+# 原文: https://www.joinquant.com/post/25313

@@ -1,0 +1,4 @@
+# SKIP REASON
+# ML/s sklearn: SKIP - uses xgboost, random forest, machine learning
+# JQ-specific: jqlib.optimizer, jqfactor, read_file from research environment
+# Reads ML prediction results from CSV (predict.csv) - ML-based strategy

@@ -1,0 +1,121 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+# RiceQuant Python 格式迁移策略
+# 原文：带上止损的核心资产轮动才更安心，低回撤，高收益率
+# 作者：养家大哥
+# 原文网址：https://www.joinquant.com/post/47966
+
+import numpy as np
+import pandas as pd
+
+
+def init(context):
+    set_benchmark('000300.XSHG')
+    set_option('use_real_price', True)
+    set_option("avoid_future_data", True)
+    set_slippage(FixedSlippage(0.000))
+    set_order_cost(OrderCost(open_tax=0, close_tax=0, open_commission=0.0002, close_commission=0.0002, close_today_commission=0, min_commission=5), type='fund')
+    set_log_level('system', 'error')
+
+    context.etf_pool = [
+        '518880.XSHG',  # 黄金ETF
+        '513100.XSHG',  # 纳指100
+        '159915.XSHE',  # 创业板100
+        '510180.XSHG',  # 上证180
+    ]
+    context.m_days = 25
+    context.etf_info = initial_etf_info(context.etf_pool, 100)
+    context.etf_pre = None
+
+    run_daily(update_etf_table, time_rule=market_open(minute=0))
+    run_daily(trade, time_rule=market_open(minute=30))
+
+
+def initial_etf_info(etf_pool, ndays=100):
+    etf_info = {}
+    for etf in etf_pool:
+        etf_df = history_bars(etf, ndays, '1d', 'close')
+        etf_info[etf] = list(etf_df)
+    return etf_info
+
+
+def update_etf_table(context):
+    for etf in context.etf_pool:
+        etf_df = history_bars(etf, 1, '1d', 'close')
+        context.etf_info[etf].append(etf_df[-1])
+        context.etf_info[etf].pop(0)
+
+
+def evaluate_etf_worth(m_etf, is_hold=1):
+    is_worth = 0
+    if m_etf is None:
+        return is_worth
+    cur_p = context.etf_info[m_etf][-1]
+    max10_p = max(context.etf_info[m_etf][-10:])
+    max_p = max(context.etf_info[m_etf])
+    cur2max = cur_p / max_p
+    cur2max10 = cur_p / max10_p
+    cur2yes = cur_p / context.etf_info[m_etf][-2]
+    mean4 = np.mean(context.etf_info[m_etf][-4:])
+    print("%s, cur2yes=%0f, cur2max=%0f, cur2max10=%0f, cur_p=%0f, mean4=%0f" % (m_etf, cur2yes, cur2max, cur2max10, cur_p, mean4))
+    if is_hold == 1:
+        if cur2yes <= 0.96:
+            is_worth = 0
+        else:
+            is_worth = 1
+    else:
+        if cur_p >= mean4:
+            is_worth = 1
+        else:
+            is_worth = 0
+    return is_worth
+
+
+def get_rank(etf_pool):
+    score_list = []
+    for etf in etf_pool:
+        df = history_bars(etf, context.m_days, '1d', 'close')
+        y = np.log(df)
+        x = np.arange(len(y))
+        slope, intercept = np.polyfit(x, y, 1)
+        annualized_returns = np.exp(slope * 250) - 1
+        r_squared = 1 - (sum((y - (slope * x + intercept)) ** 2) / ((len(y) - 1) * np.var(y, ddof=1)))
+        score = annualized_returns * r_squared
+        score_list.append(score)
+    df = pd.DataFrame(index=etf_pool, data={'score': score_list})
+    df = df.sort_values(by='score', ascending=False)
+    rank_list = list(df.index)
+    print(df)
+    record(黄金=round(df.loc['518880.XSHG', 'score'], 2))
+    record(纳指=round(df.loc['513100.XSHG', 'score'], 2))
+    record(成长=round(df.loc['159915.XSHE', 'score'], 2))
+    record(价值=round(df.loc['510180.XSHG', 'score'], 2))
+    return rank_list
+
+
+def trade(context):
+    sel_etf = get_rank(context.etf_pool)[0]
+    hold_etf = None
+    hold_list = list(context.portfolio.positions)
+    if len(hold_list) > 0:
+        hold_etf = hold_list[0]
+    sel_worth = evaluate_etf_worth(sel_etf, 0)
+    hold_worth = evaluate_etf_worth(hold_etf, 1)
+    print("持有%s=%d, 选择%s=%d" % (hold_etf, hold_worth, sel_etf, sel_worth))
+    if hold_etf is not None:
+        context.etf_pre = hold_etf
+        if sel_etf not in hold_list:
+            order_target_value(hold_etf, 0)
+            print('调仓卖出' + str(hold_etf))
+        elif hold_worth == 0:
+            order_target_value(hold_etf, 0)
+            print('止损卖出' + str(hold_etf))
+        else:
+            print('继续持有' + str(hold_etf))
+    if sel_etf != context.etf_pre:
+        order_target_value(sel_etf, context.portfolio.cash)
+        print('调仓买入' + str(sel_etf))
+    elif (len(hold_list) == 0) and (sel_etf == context.etf_pre) and (sel_worth == 1):
+        order_target_value(sel_etf, context.portfolio.cash)
+        print('恢复买入' + str(sel_etf))

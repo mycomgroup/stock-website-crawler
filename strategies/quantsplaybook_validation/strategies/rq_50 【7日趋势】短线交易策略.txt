@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqlib.technical_analysis and jqlib.alpha101
+# Uses JoinQuant's proprietary technical analysis and alpha101 libraries not available in RiceQuant

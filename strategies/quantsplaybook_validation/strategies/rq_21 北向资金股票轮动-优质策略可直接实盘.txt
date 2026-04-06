@@ -1,0 +1,106 @@
+# CONVERTED: 已转换为对应的 .py 文件
+# 原文件已迁移，请使用对应的 rq_XX_*.py 文件
+
+# RiceQuant Python 格式迁移策略
+# 原文：北向资金股票轮动-优质策略可直接实盘
+# 作者：Funine
+# 原文网址：https://www.joinquant.com/post/30772
+
+"""
+注意：该策略使用了 finance.run_query 查询北向资金数据，
+RiceQuant 可能没有完全对应的 API，需要进一步适配。
+"""
+
+import pandas as pd
+
+
+def init(context):
+    set_params()
+    set_option("avoid_future_data", True)
+    set_option('use_real_price', True)
+    set_benchmark('000300.XSHG')
+    set_log_level('order', 'error')
+
+    run_daily(get_signal, time_rule=market_open(minute=30))
+    run_daily(trade, time_rule=market_open(minute=30))
+
+
+def set_params():
+    context.use_dynamic_target_market = True
+    context.target_market = '000300.XSHG'
+    context.empty_keep_stock = '511880.XSHG'
+    context.signal = 'BUY'
+    context.north_money = 0
+    context.max_stock_count = 15
+    context.buy = []
+
+
+def etftrade(context):
+    if context.signal == 'CLEAR':
+        for stock in context.portfolio.positions:
+            if stock == context.empty_keep_stock:
+                continue
+            logger.info("清仓: %s" % stock)
+            order_target_value(stock, 0)
+    elif context.signal == 'BUY':
+        if context.empty_keep_stock in context.portfolio.positions:
+            order_target_value(context.empty_keep_stock, 0)
+
+        holdings = set(context.portfolio.positions.keys())
+        targets = set(context.buy)
+
+        sells = holdings - targets
+        for code in sells:
+            logger.info("卖出: %s" % code)
+            order_target_value(code, 0)
+
+        ratio = len(targets)
+        if ratio > 0:
+            cash = context.portfolio.total_value / ratio
+            adjusts = holdings & targets
+            for code in adjusts:
+                if abs(cash - context.portfolio.positions[code].value) > 5000:
+                    logger.info('调仓: %s' % code)
+                    order_target_value(code, cash)
+
+            purchases = targets - holdings
+            for code in purchases:
+                logger.info('买入: %s' % code)
+                order_target_value(code, cash)
+
+            current_returns = 100 * context.portfolio.returns
+            logger.info("当前收益：%.2f%%，当前持仓: %s", current_returns, list(context.portfolio.positions.keys()))
+
+    if len(context.portfolio.positions) == 0:
+        order_target_value(context.empty_keep_stock, context.portfolio.cash)
+
+
+def trade(context):
+    today = context.current_dt
+    # 注意：finance.run_query 在 RiceQuant 中可能需要适配
+    # 这里保留原始逻辑，实际迁移时需要替换为 RiceQuant 对应的北向资金 API
+    logger.info("北向资金功能需要适配 RiceQuant API")
+
+
+def get_signal(context):
+    record(north_money=round(context.north_money, 1))
+
+    result = calc_change(context)
+
+    if context.north_money < -10:
+        logger.info("依据北向资金流入%s\n" % (round(context.north_money, 1)))
+        context.signal = 'CLEAR'
+        etftrade(context)
+        return
+
+    context.buy = result
+    logger.info("交易信号:持有 %s" % context.buy)
+    context.signal = 'BUY'
+    etftrade(context)
+
+
+def calc_change(context):
+    # 获取北向资金持股信息
+    # 注意：get_shares_st 或类似功能需要适配
+    result = []
+    return result

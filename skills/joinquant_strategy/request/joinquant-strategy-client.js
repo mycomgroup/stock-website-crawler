@@ -294,18 +294,44 @@ export class JoinQuantStrategyClient {
    * List backtests for a strategy
    */
   async getBacktests(algorithmId) {
-    const url = `/algorithm/backtest/list?algorithmId=${algorithmId}`;
-    const html = await this.request(url, { method: 'GET' });
-    
-    // Extract backtest info from the table
-    // <tr ... data-backtestid="BT_ID"> ... <a ...>NAME</a> ... <td class="time">TIME</td>
-    const matches = [...html.matchAll(/data-backtestid="([^"]+)"[\s\S]*?<a[^>]*>([^<]+)<\/a>[\s\S]*?<td class="time">([^<]+)<\/td>/g)];
-    
-    return matches.map(m => ({
-      id: m[1],
-      name: m[2].trim(),
-      time: m[3].trim()
-    }));
+    const results = [];
+    const seenIds = new Set();
+    let page = 1;
+
+    while (true) {
+      const url = `/algorithm/backtest/list?algorithmId=${algorithmId}${page > 1 ? `&page=${page}` : ''}`;
+      const html = await this.request(url, { method: 'GET' });
+
+      const trBlocks = [...html.matchAll(/<tr[^>]+class="backtest-tr"[^>]+_backtestId="([^"]+)"[^>]*_status="(\d+)"[\s\S]*?<\/tr>/g)];
+      if (trBlocks.length === 0) break;
+
+      let newOnPage = 0;
+      for (const m of trBlocks) {
+        const id = m[1];
+        if (seenIds.has(id)) continue;
+        seenIds.add(id);
+        newOnPage++;
+
+        const status = m[2];
+        const block = m[0];
+        const nameMatch = block.match(/class="backtest-name"[^>]*title="([^"]+)"/);
+        const name = nameMatch ? nameMatch[1].trim() : '';
+        const dateMatch = block.match(/(\d{4}-\d{2}-\d{2})<br\s*\/?>\s*-\s*(\d{4}-\d{2}-\d{2})/);
+        const startDate = dateMatch ? dateMatch[1] : '';
+        const endDate = dateMatch ? dateMatch[2] : '';
+        const createdMatch = block.match(/class="date-field">\s*(\d{4}-\d{2}-\d{2})/);
+        const createdAt = createdMatch ? createdMatch[1] : '';
+        results.push({ id, name, status, startDate, endDate, createdAt });
+      }
+
+      // 检查是否有下一页
+      const hasNext = html.includes(`&page=${page + 1}`) || html.includes(`page=${page + 1}`);
+      if (!hasNext || newOnPage === 0) break;
+      page++;
+      await new Promise(r => setTimeout(r, 200));
+    }
+
+    return results;
   }
 
   /**

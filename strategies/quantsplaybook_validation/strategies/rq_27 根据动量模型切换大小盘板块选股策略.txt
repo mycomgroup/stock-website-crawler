@@ -1,0 +1,11 @@
+# SKIP_REASON: 使用了 jqfactor.get_factor_values 获取因子值，RiceQuant 不支持
+# 原文：根据大小盘相对强弱选择合适的板块股票进行交易
+# 作者：Jacobb75
+# 原文网址：https://www.joinquant.com/post/43540
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqfactor.get_factor_values - 获取因子值
+
+这是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

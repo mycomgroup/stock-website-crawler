@@ -1,0 +1,11 @@
+# SKIP_REASON: 使用了 finance.run_query 查询 AH 溢价数据，RiceQuant 不支持该模块
+# 原文：低AH溢价选股
+# 作者：子鹿
+# 原文网址：https://www.joinquant.com/post/31236
+
+"""
+该策略使用了 finance.run_query 查询 AH 溢价数据：
+- finance.STK_AH_PRICE_COMP - A+H股价格比较数据
+
+RiceQuant 可能没有完全对应的 finance 模块来获取 AH 溢价数据。
+"""

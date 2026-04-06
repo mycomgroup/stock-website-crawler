@@ -1,13 +1,13 @@
 {
-  "updatedAt": "2026-04-04T01:36:15.916Z",
-  "sourceDir": "/Users/fengzhi/Downloads/git/testlixingren/聚宽有价值策略558",
-  "runDir": "/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_strategy/data/jq558_batch_20260404",
-  "totalFiles": 492,
-  "alreadySubmitted": 406,
-  "selectedThisRun": 479,
-  "completedThisRun": 393,
-  "successCount": 71,
-  "failCount": 322,
-  "activeBacktests": 84,
-  "lastFile": "聚宽有价值策略558/81 无杠杆，稳定盈利的etf轮动.txt"
+  "updatedAt": "2026-04-05T01:24:11.006Z",
+  "sourceDir": "/Users/yuping/Downloads/git/jk2bt-main/strategies",
+  "runDir": "/Users/yuping/Downloads/git/stock-website-crawler/skills/joinquant_strategy/data/jq558_batch_20260404",
+  "totalFiles": 484,
+  "alreadySubmitted": 350,
+  "selectedThisRun": 400,
+  "completedThisRun": 176,
+  "successCount": 124,
+  "failCount": 52,
+  "activeBacktests": 298,
+  "lastFile": "strategies/50 分享一种K线小碎步后突破的分钟级打法.txt"
 }

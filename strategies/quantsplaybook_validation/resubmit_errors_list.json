@@ -1,0 +1,610 @@
+[
+  {
+    "filename": "rq_05_ORGR-TPGR-NPGR-EGR-EPS.py",
+    "strategyId": 2417845
+  },
+  {
+    "filename": "rq_05_SQR-CoS-CtE.py",
+    "strategyId": 2417846
+  },
+  {
+    "filename": "rq_05_PNF-TPtCR-ITR.py",
+    "strategyId": 2417847
+  },
+  {
+    "filename": "rq_05_VSTD20-ARTR-LTDtAR-OC.py",
+    "strategyId": 2417848
+  },
+  {
+    "filename": "rq_08_国九条后中小板微盘小改_年化135.py",
+    "strategyId": 2417851
+  },
+  {
+    "filename": "rq_09_FROEC-PB-CAP-HL.py",
+    "strategyId": 2417852
+  },
+  {
+    "filename": "rq_08_科技与狠活_纯粹的数据挖掘策略.py",
+    "strategyId": 2417853
+  },
+  {
+    "filename": "rq_09_SG-MS-PEG-HL.py",
+    "strategyId": 2417854
+  },
+  {
+    "filename": "rq_09_全天候轮动.py",
+    "strategyId": 2417855
+  },
+  {
+    "filename": "rq_09_持续跑赢大盘_真蓝筹v2_资金容量千万以上.py",
+    "strategyId": 2417856
+  },
+  {
+    "filename": "rq_10_多因子宽基ETF择时轮动改进版_高收益大资金低回撤.py",
+    "strategyId": 2417858
+  },
+  {
+    "filename": "rq_10_10年52倍_年化59_全新因子方法超稳定.py",
+    "strategyId": 2417859
+  },
+  {
+    "filename": "rq_12_全市场选股_7年5倍不择时_回撤30左右.py",
+    "strategyId": 2417862
+  },
+  {
+    "filename": "rq_12_致敬聚宽_机器学习多因子_50只持仓_14年37倍.py",
+    "strategyId": 2417863
+  },
+  {
+    "filename": "rq_13_5年15倍收益_年化79.py",
+    "strategyId": 2417865
+  },
+  {
+    "filename": "rq_13_7年40倍模拟超过两年年化高回撤低.py",
+    "strategyId": 2417864
+  },
+  {
+    "filename": "rq_13_不含未来宽基etf轮动8年50倍年化60.py",
+    "strategyId": 2417866
+  },
+  {
+    "filename": "rq_14_FOF养老成长基金_v2.py",
+    "strategyId": 2417869
+  },
+  {
+    "filename": "rq_14_四年多翻9倍_年化73_成长因子评分筛选.py",
+    "strategyId": 2417870
+  },
+  {
+    "filename": "rq_14_为实盘做的更新_分钟级别和盘中止损.py",
+    "strategyId": 2417871
+  },
+  {
+    "filename": "rq_15_10年52倍_年化59_全新因子方法超稳定.py",
+    "strategyId": 2417874
+  },
+  {
+    "filename": "rq_15_2020年_267_年化_13_回撤_上涨趋势策略修改版.py",
+    "strategyId": 2417875
+  },
+  {
+    "filename": "rq_15_小市值排除3个bug版_22年至今收益506_回撤11.py",
+    "strategyId": 2417877
+  },
+  {
+    "filename": "rq_15_小市值策略之再优化_年化接近翻倍.py",
+    "strategyId": 2417876
+  },
+  {
+    "filename": "rq_15_高股息低杠杆小市值轮动策略.py",
+    "strategyId": 2417878
+  },
+  {
+    "filename": "rq_16_动量ETF轮动RSRS择时_升级.py",
+    "strategyId": 2417879
+  },
+  {
+    "filename": "rq_16_ETF轮动策略升级_多类别_低回撤.py",
+    "strategyId": 2417880
+  },
+  {
+    "filename": "rq_17_5年多因子超额收益1055_K线风险过滤_无未来函数.py",
+    "strategyId": 2417883
+  },
+  {
+    "filename": "rq_16_大市值价值投资_从2005年至今超额稳定.py",
+    "strategyId": 2417881
+  },
+  {
+    "filename": "rq_17_多品种ETF动量轮动_EPO优化.py",
+    "strategyId": 2417886
+  },
+  {
+    "filename": "rq_17_8年13倍的ETF动量轮动策略_有滑点_无未来函数_回撤小.py",
+    "strategyId": 2417884
+  },
+  {
+    "filename": "rq_18_6年17倍的etf分级b的轮动趋势策略跟随感悟.py",
+    "strategyId": 2417888
+  },
+  {
+    "filename": "rq_18_20行代码8年高胜率躲过了牛年第一场大跌.py",
+    "strategyId": 2417889
+  },
+  {
+    "filename": "rq_37 三阳三阴战法.py",
+    "strategyId": 2417895
+  },
+  {
+    "filename": "rq_36 最简强者恒强策略.py",
+    "strategyId": 2417894
+  },
+  {
+    "filename": "rq_38 ETF动量轮动RSRS择时-魔改3-北向资金择时-再优化.py",
+    "strategyId": 2417896
+  },
+  {
+    "filename": "rq_38 ETF动量轮动RSRS择时-魔改4-低通滤波.py",
+    "strategyId": 2417897
+  },
+  {
+    "filename": "rq_41 均线黏合突破选股法.py",
+    "strategyId": 2417900
+  },
+  {
+    "filename": "rq_46 八仙过海V2.py",
+    "strategyId": 2417903
+  },
+  {
+    "filename": "rq_55_ETF轮动策略-入门1.0.py",
+    "strategyId": 2417904
+  },
+  {
+    "filename": "rq_55_价值投资改进版-6年9.5倍.py",
+    "strategyId": 2417905
+  },
+  {
+    "filename": "rq_56_一创PEG_EBIT_turnover_volatility.py",
+    "strategyId": 2417907
+  },
+  {
+    "filename": "rq_57_股指期货套利这段时间都没有交易分享给大家.py",
+    "strategyId": 2417910
+  },
+  {
+    "filename": "rq_58_严格资金管理股指期货套利.py",
+    "strategyId": 2417911
+  },
+  {
+    "filename": "rq_60_深度解析_资产负债与ROA模型.py",
+    "strategyId": 2417912
+  },
+  {
+    "filename": "rq_59_基于Gyro大神的小市值策略的因子匹配研究.py",
+    "strategyId": 2417913
+  },
+  {
+    "filename": "rq_61_抄底神器2.0低回撤高成功率.py",
+    "strategyId": 2417915
+  },
+  {
+    "filename": "rq_62_北向资金交易能力一定强吗.py",
+    "strategyId": 2417916
+  },
+  {
+    "filename": "rq_65_韶华研究之七_不可多得的基本面三角.py",
+    "strategyId": 2417920
+  },
+  {
+    "filename": "rq_66_PB-POE+双均线.py",
+    "strategyId": 2417922
+  },
+  {
+    "filename": "rq_66_ETF动量轮动MA乖离择时.py",
+    "strategyId": 2417921
+  },
+  {
+    "filename": "rq_67_三因子策略.py",
+    "strategyId": 2417923
+  },
+  {
+    "filename": "rq_67_基于动量和反转效应的沪深300成分股策略.py",
+    "strategyId": 2417924
+  },
+  {
+    "filename": "rq_67_大市值价投高股息爱国者策略.py",
+    "strategyId": 2417925
+  },
+  {
+    "filename": "rq_68_胜率78%_6年36倍.py",
+    "strategyId": 2417927
+  },
+  {
+    "filename": "rq_69_场内基金定投价值平均增强策略.py",
+    "strategyId": 2417928
+  },
+  {
+    "filename": "rq_69_宽基BBI动量追涨.py",
+    "strategyId": 2417929
+  },
+  {
+    "filename": "rq_69_神虽顶底+趋势.py",
+    "strategyId": 2417930
+  },
+  {
+    "filename": "rq_70_超稳的股息率+均线选股策略.py",
+    "strategyId": 2417932
+  },
+  {
+    "filename": "rq_71_回踩均线搏反弹.py",
+    "strategyId": 2417933
+  },
+  {
+    "filename": "rq_71_乱改一版.py",
+    "strategyId": 2417934
+  },
+  {
+    "filename": "rq_72_收盘折溢价策略.py",
+    "strategyId": 2417935
+  },
+  {
+    "filename": "rq_73_净利润跳空.py",
+    "strategyId": 2417937
+  },
+  {
+    "filename": "rq_73_优化宽基etf追涨.py",
+    "strategyId": 2417936
+  },
+  {
+    "filename": "rq_73_微盘400每日再平衡.py",
+    "strategyId": 2417938
+  },
+  {
+    "filename": "rq_73_稳健趋势策略回测.py",
+    "strategyId": 2417939
+  },
+  {
+    "filename": "rq_74 【动量应用V1】12年120倍，根据研报思路调整.py",
+    "strategyId": 2417940
+  },
+  {
+    "filename": "rq_74 主观辅助_形态识别_单边上涨策略优化v3.py",
+    "strategyId": 2417941
+  },
+  {
+    "filename": "rq_74 迪马克TD趋势反转指标.py",
+    "strategyId": 2417943
+  },
+  {
+    "filename": "rq_74_MACD多周期共振.py",
+    "strategyId": 2417944
+  },
+  {
+    "filename": "rq_74_趋势筛选后相关性最小etf轮动.py",
+    "strategyId": 2417946
+  },
+  {
+    "filename": "rq_74_迪马克TD趋势反转指标.py",
+    "strategyId": 2417945
+  },
+  {
+    "filename": "rq_75 ETF轮动策略-入门2.0.py",
+    "strategyId": 2417947
+  },
+  {
+    "filename": "rq_76 ETF基金溢价高收益低回测策略 改进版.py",
+    "strategyId": 2417953
+  },
+  {
+    "filename": "rq_76 日内交易策略R-breaker.py",
+    "strategyId": 2417954
+  },
+  {
+    "filename": "rq_76 小市值止损策略【年化104.11% 最大回撤30.65%】.py",
+    "strategyId": 2417955
+  },
+  {
+    "filename": "rq_76 机器学习策略分享.py",
+    "strategyId": 2417956
+  },
+  {
+    "filename": "rq_77 研报三因子II-新规高分红小市值-年化60回撤19.py",
+    "strategyId": 2417957
+  },
+  {
+    "filename": "rq_77 致敬市场（2）——随机选股.py",
+    "strategyId": 2417958
+  },
+  {
+    "filename": "rq_77 超强单因子策略（EBITEV）.py",
+    "strategyId": 2417959
+  },
+  {
+    "filename": "rq_78 【基金增强思考2.0】优秀基金的持续性与周期的关系密不可分.py",
+    "strategyId": 2417963
+  },
+  {
+    "filename": "rq_78 ffscore选股加rsrs择时.py",
+    "strategyId": 2417962
+  },
+  {
+    "filename": "rq_78 国盛多因子系列选股体系和基于Lasso的收益预测模型策略（9大类共59个因子）.py",
+    "strategyId": 2417964
+  },
+  {
+    "filename": "rq_78 首板低开策略-终极版 最大回撤15%，年化50%.py",
+    "strategyId": 2417965
+  },
+  {
+    "filename": "rq_79 EPS+MS因子的大盘蓝筹策略.py",
+    "strategyId": 2417966
+  },
+  {
+    "filename": "rq_79 【多因子选股模型框架】(单因子各项指标评分细则).py",
+    "strategyId": 2417967
+  },
+  {
+    "filename": "rq_79 实盘一周50%的妖股探测器.py",
+    "strategyId": 2417969
+  },
+  {
+    "filename": "rq_80 【深度解析 一】经典小市值深度研究模型.py",
+    "strategyId": 2417970
+  },
+  {
+    "filename": "rq_80 短线策略-2022年两个半月收益45%-无未来函数.py",
+    "strategyId": 2417972
+  },
+  {
+    "filename": "rq_80 基本面01加RSI择时.py",
+    "strategyId": 2417973
+  },
+  {
+    "filename": "rq_81 低PB小市值低换手策略总结.py",
+    "strategyId": 2417974
+  },
+  {
+    "filename": "rq_81 搞市场最靓的仔！指数ETF动量轮动策略-2.py",
+    "strategyId": 2417976
+  },
+  {
+    "filename": "rq_82 回报社区——基于Gyro老师策略的思考.py",
+    "strategyId": 2417979
+  },
+  {
+    "filename": "rq_82 无需先验知识，动态选择的etf轮动策略，更具鲁棒性.py",
+    "strategyId": 2417978
+  },
+  {
+    "filename": "rq_83_开盘幅度决定日内方向.py",
+    "strategyId": 2417981
+  },
+  {
+    "filename": "rq_83_回测一创模拟盘2号最终改造优化年化39.py",
+    "strategyId": 2417982
+  },
+  {
+    "filename": "rq_84_ETF网格交易策略.py",
+    "strategyId": 2417983
+  },
+  {
+    "filename": "rq_84_正黄旗大妈选股改进.py",
+    "strategyId": 2417984
+  },
+  {
+    "filename": "rq_84_韶华研究之一布林突破均线金叉四年五倍.py",
+    "strategyId": 2417986
+  },
+  {
+    "filename": "rq_85_易方达中小盘魔改版.py",
+    "strategyId": 2417987
+  },
+  {
+    "filename": "rq_85_价值策略重开再次向Jqz1226致敬.py",
+    "strategyId": 2417988
+  },
+  {
+    "filename": "rq_85_深度解析七BBI指标大盘涨跌宽基轮动.py",
+    "strategyId": 2417989
+  },
+  {
+    "filename": "rq_85_致敬市场1探讨指数化策略投资.py",
+    "strategyId": 2417990
+  },
+  {
+    "filename": "rq_85_稳健型ETF策略.py",
+    "strategyId": 2417991
+  },
+  {
+    "filename": "rq_86_北上詹姆斯.py",
+    "strategyId": 2417992
+  },
+  {
+    "filename": "rq_86_手把手教你构建ETF策略候选池优化版.py",
+    "strategyId": 2417993
+  },
+  {
+    "filename": "rq_86_最新解密追涨龙头打板策略.py",
+    "strategyId": 2417994
+  },
+  {
+    "filename": "rq_86_预判st并过滤避雷代码740.py",
+    "strategyId": 2417995
+  },
+  {
+    "filename": "rq_87_基本面三角3.0.py",
+    "strategyId": 2417996
+  },
+  {
+    "filename": "rq_87_北上净买入策略.py",
+    "strategyId": 2417997
+  },
+  {
+    "filename": "rq_87_山寨每月轮动调仓的红利策略.py",
+    "strategyId": 2417998
+  },
+  {
+    "filename": "rq_87_山寨红利.py",
+    "strategyId": 2417999
+  },
+  {
+    "filename": "rq_87_穿越牛熊基业长青的价值精选策略.py",
+    "strategyId": 2418000
+  },
+  {
+    "filename": "rq_88_WY大神的龙头打板策略小改.py",
+    "strategyId": 2418001
+  },
+  {
+    "filename": "rq_88_打首板策略今年收益达到40绝无未来函数.py",
+    "strategyId": 2418002
+  },
+  {
+    "filename": "rq_88_股指期货收盘折溢价策略.py",
+    "strategyId": 2418004
+  },
+  {
+    "filename": "rq_88_韶华研究之十六指数增强.py",
+    "strategyId": 2418006
+  },
+  {
+    "filename": "rq_89_基于Gyro大神的小市值策略的因子匹配研究.py",
+    "strategyId": 2418007
+  },
+  {
+    "filename": "rq_89_年化收益55.7超高胜率.py",
+    "strategyId": 2418008
+  },
+  {
+    "filename": "rq_89_韶华研究之二顺势而为年化140.py",
+    "strategyId": 2418009
+  },
+  {
+    "filename": "rq_90_2019年到现在19倍的新策略.py",
+    "strategyId": 2418010
+  },
+  {
+    "filename": "rq_90_国债固收.py",
+    "strategyId": 2418011
+  },
+  {
+    "filename": "rq_90_大师策略柯林麦克连成长价值优势投资法.py",
+    "strategyId": 2418012
+  },
+  {
+    "filename": "rq_90_超稳翻倍贝塔值只有0.048的期指策略.py",
+    "strategyId": 2418013
+  },
+  {
+    "filename": "rq_91_ETF-T0动量策略年化18回撤3.31.py",
+    "strategyId": 2418015
+  },
+  {
+    "filename": "rq_91_一个月轮动股票换仓内日做T相对高频交易.py",
+    "strategyId": 2418016
+  },
+  {
+    "filename": "rq_91_欧奈尔RPS选股战法回测b.py",
+    "strategyId": 2418018
+  },
+  {
+    "filename": "rq_93_北向Boll带_ETF组合宝付费策略.py",
+    "strategyId": 2418021
+  },
+  {
+    "filename": "rq_94_别人_拿的住_的股票最赚钱.py",
+    "strategyId": 2418025
+  },
+  {
+    "filename": "rq_94_布林线追龙头战法.py",
+    "strategyId": 2418027
+  },
+  {
+    "filename": "rq_95_首席质量因子-Gross_Profitabilit简化版.py",
+    "strategyId": 2418031
+  },
+  {
+    "filename": "rq_96_复现_高频价量相关性_意想不到的选股因子.py",
+    "strategyId": 2418032
+  },
+  {
+    "filename": "rq_96_集合竞价量比策略V1.py",
+    "strategyId": 2418034
+  },
+  {
+    "filename": "rq_97_趋势筛选后相关性最小etf轮动-加速10倍版.py",
+    "strategyId": 2418037
+  },
+  {
+    "filename": "rq_98_追涨大师超额142.py",
+    "strategyId": 2418040
+  },
+  {
+    "filename": "rq_98_韶华研究之六_简单不一样的发现趋势_3年6倍.py",
+    "strategyId": 2418041
+  },
+  {
+    "filename": "rq_99_欧奈尔CANSLIM策略初探三.py",
+    "strategyId": 2418043
+  },
+  {
+    "filename": "rq_99_计算每日全A市场个股创新高比例改.py",
+    "strategyId": 2418045
+  },
+  {
+    "filename": "rq_04_苦咖啡上涨趋势.py",
+    "strategyId": 2418086
+  },
+  {
+    "filename": "rq_07_一致性风险度量全天候.py",
+    "strategyId": 2418088
+  },
+  {
+    "filename": "rq_07_为了积分实盘策略.py",
+    "strategyId": 2418089
+  },
+  {
+    "filename": "rq_07_股债波动平衡.py",
+    "strategyId": 2418090
+  },
+  {
+    "filename": "rq_18_白马股攻防转换.py",
+    "strategyId": 2418091
+  },
+  {
+    "filename": "rq_18_微盘股400轮动.py",
+    "strategyId": 2418092
+  },
+  {
+    "filename": "rq_19_高股息低PE价投.py",
+    "strategyId": 2418093
+  },
+  {
+    "filename": "rq_21_北向资金股票轮动.py",
+    "strategyId": 2418094
+  },
+  {
+    "filename": "rq_28_ETF动量轮动评分.py",
+    "strategyId": 2418102
+  },
+  {
+    "filename": "rq_30_超跌反弹小牛股.py",
+    "strategyId": 2418106
+  },
+  {
+    "filename": "rq_31_趋势永存ATR仓位.py",
+    "strategyId": 2418109
+  },
+  {
+    "filename": "rq_32_EPO低相关ETF组合.py",
+    "strategyId": 2418110
+  },
+  {
+    "filename": "rq_34_趋势交易5.py",
+    "strategyId": 2418112
+  },
+  {
+    "filename": "rq_42_市值研发ROE三因子.py",
+    "strategyId": 2418116
+  }
+]

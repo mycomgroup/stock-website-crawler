@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqfactor library (get_factor_values with 'roic_ttm')
+# Factor-based strategy requiring JoinQuant factor data not available in RiceQuant

@@ -1,0 +1,10 @@
+# SKIP REASON: Uses JoinQuant-specific get_name() function and email notification
+# functionality (smtplib) which are not standard in RiceQuant
+#
+# Original: 大市值价值投资加自定义邮箱推送
+# Author: 不如定投纳指
+# URL: https://www.joinquant.com/post/43159
+#
+# The strategy uses:
+# - get_name() function which is JoinQuant-specific
+# - smtplib for email notifications (not a trading dependency but makes it non-standard)

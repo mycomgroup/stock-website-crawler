@@ -38,10 +38,10 @@ def handle_bar(context, bar_dict):
     # 高波动率环境 → 卖出
 
     if vol_percentile < 0.3 and vol_change > 0 and not context.pos:
-        order_value(security, context.portfolio.total_value * 0.95)
+        order_target_value(security, context.portfolio.total_value * 0.95)
         context.pos = True
         print(f"买入: vol={realized_vol:.2f}, pct={vol_percentile:.2f}")
     elif vol_percentile > 0.7 and context.pos:
-        order_to(security, 0)
+        order_target_value(security, 0)
         context.pos = False
         print(f"卖出: vol={realized_vol:.2f}, pct={vol_percentile:.2f}")

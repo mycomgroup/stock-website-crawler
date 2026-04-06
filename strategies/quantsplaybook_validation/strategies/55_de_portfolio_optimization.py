@@ -109,7 +109,7 @@ def handle_bar(context, bar_dict):
     # 卖出不在目标中的持仓
     for etf in list(context.portfolio.positions.keys()):
         if etf not in valid_etfs:
-            order_to(etf, 0)
+            order_target_value(etf, 0)
 
     total_value = context.portfolio.total_value
     for etf, w in zip(valid_etfs, context.weights):

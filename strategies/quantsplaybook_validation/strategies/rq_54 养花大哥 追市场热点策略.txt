@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqlib.technical_analysis (DMI), get_industries(name='sw_l2'), get_industry_stocks(), attribute_history(), send_message()
+# Uses JQ proprietary technical analysis and industry classification APIs not available in RiceQuant

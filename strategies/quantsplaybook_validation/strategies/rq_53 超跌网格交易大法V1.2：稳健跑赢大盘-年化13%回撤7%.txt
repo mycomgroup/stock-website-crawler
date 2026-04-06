@@ -1,0 +1,3 @@
+# SKIP REASON
+# JQ-specific: jqlib.technical_analysis (KDJ), jqfactor, attribute_history(), get_history_fundamentals(), finance APIs
+# Uses JQ proprietary technical analysis, factor system, and historical fundamentals not available in RiceQuant

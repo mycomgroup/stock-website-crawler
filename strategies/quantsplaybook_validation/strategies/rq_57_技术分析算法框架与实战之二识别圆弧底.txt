@@ -1,0 +1,7 @@
+# SKIP REASON: This is a Jupyter notebook (.ipynb file), not a direct strategy file
+#
+# Original: 【复现】技术分析算法、框架与实战之二：识别"圆弧底"
+# URL: (from JoinQuant)
+#
+# This is a Jupyter notebook containing research and analysis code,
+# not a directly executable trading strategy in .txt format.

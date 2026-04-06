@@ -1,0 +1,16 @@
+# SKIP REASON: Uses multiple skip-list libraries:
+# - torch (PyTorch neural networks)
+# - pickle (serialization)
+# - jqfactor
+#
+# Original: 双人工智能配合，样本外夏普3.9
+# Author: MarioC
+# URL: https://www.joinquant.com/post/44982
+#
+# The strategy uses:
+# - "import torch"
+# - "import torch.nn as nn" (neural networks)
+# - "import pickle"
+# - "from jqfactor import *"
+#
+# These are explicitly in the skip list.

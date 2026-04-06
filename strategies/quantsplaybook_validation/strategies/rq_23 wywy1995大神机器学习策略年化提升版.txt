@@ -1,0 +1,12 @@
+# SKIP_REASON: 使用了 jqfactor 和 statsmodels，JoinQuant 特有库，RiceQuant 不支持
+# 原文：wywy1995大神机器学习策略年化提升版
+# 作者：斯科尔斯
+# 原文网址：https://www.joinquant.com/post/41155
+
+"""
+该策略使用了 JoinQuant 的以下特有库：
+1. jqfactor.get_factor_values - 获取因子值
+2. statsmodels.api - 统计模型
+
+这些是 JoinQuant 平台特有的，RiceQuant 不支持。
+"""

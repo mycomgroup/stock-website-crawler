@@ -1,0 +1,7 @@
+# SKIP REASON: Uses talib library for technical calculations
+#
+# Original: 3年复合200+%收益+超低回撤11%以内，无惧大跌
+# URL: (from JoinQuant)
+#
+# The strategy uses talib (technical analysis library) which may not be
+# directly available in RiceQuant's default environment.
