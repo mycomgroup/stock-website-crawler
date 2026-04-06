@@ -1,0 +1,19 @@
+# Session data (contains sensitive cookies)
+data/session.json
+data/accounts/
+
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# Chrome browser data
+Chrome/
+"/Users/

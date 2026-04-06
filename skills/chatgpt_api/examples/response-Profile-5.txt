@@ -1,0 +1,80 @@
+Profile: Profile-5
+Username: Unknown
+Timestamp: 2026-04-06T12:56:29.104Z
+
+Question:
+请解释一下 JavaScript 中的闭包（Closure）概念，并给出一个实际应用的例子。
+
+Answer:
+什么是 JavaScript 中的闭包（Closure）？
+
+闭包（Closure）是 JavaScript 中一个非常重要的概念，指的是一个函数和它的词法作用域（lexical scope）捆绑在一起的现象。简单来说，闭包允许一个函数访问并操作它外部函数的变量，即使外部函数已经执行完毕。
+
+闭包的特点：
+
+函数可以访问外部函数的变量：闭包使得内层函数能够记住并访问外层函数的变量。
+
+即使外层函数返回，内层函数依然可以访问外层的变量：闭包延长了外部函数的作用域生命周期。
+
+闭包的工作原理：
+
+当你定义一个内部函数时，它可以访问外部函数的变量。即使外部函数已经返回，内部函数仍然保持对外部函数变量的访问权限。
+
+闭包的实际应用：
+
+闭包常常用于以下场景：
+
+数据封装和私有变量：通过闭包，可以创建一个函数，并在这个函数内部创建变量，外部无法直接访问这些变量，从而达到数据隐藏的效果。
+
+延迟执行/回调函数：闭包能够存储函数执行时的上下文，使得你可以在某些事件发生时（例如定时器回调、异步操作的回调等）延迟执行特定的代码。
+
+例子：
+1. 闭包实现私有变量
+JavaScript
+function createCounter() {
+  let count = 0;  // count 是私有变量
+  
+  return {
+    increment: function() {
+      count++;
+      console.log(count);
+    },
+    decrement: function() {
+      count--;
+      console.log(count);
+    },
+    getCount: function() {
+      console.log(count);
+    }
+  };
+}
+
+const counter = createCounter();
+counter.increment();  // 1
+counter.increment();  // 2
+counter.decrement();  // 1
+counter.getCount();   // 1
+
+在这个例子中，count 变量是 createCounter 函数内部的私有变量，外部无法直接访问它。通过返回一个对象，内部的 increment、decrement 和 getCount 函数能够访问并修改 count，这就是闭包的典型应用：数据封装和私有化。
+
+2. 闭包实现延迟执行
+JavaScript
+function makeAdder(x) {
+  return function(y) {
+    return x + y;  // x 是 makeAdder 的外部变量
+  };
+}
+
+const add5 = makeAdder(5);  // 返回一个函数，x = 5
+console.log(add5(10));  // 15
+console.log(add5(20));  // 25
+
+在这个例子中，makeAdder 函数返回了一个闭包，这个闭包能够记住并访问 x 变量。当调用 add5(10) 时，它实际上是计算 5 + 10，并返回结果。即使 makeAdder 函数已经执行完毕，闭包仍然能访问到 x。
+
+总结：
+
+闭包让内层函数可以访问外层函数的变量，并且能够在外层函数执行完成后依然保持对这些变量的引用。
+
+闭包的常见应用包括封装私有变量、延迟执行、回调函数等。
+
+闭包是 JavaScript 中非常强大的特性，理解它能帮助你更好地编写高效、灵活的代码。

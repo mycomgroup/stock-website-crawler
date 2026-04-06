@@ -1,0 +1,77 @@
+Profile: Profile-7
+Username: Unknown
+Timestamp: 2026-04-06T12:58:21.363Z
+
+Question:
+请解释一下 JavaScript 中的闭包（Closure）概念，并给出一个实际应用的例子。
+
+Answer:
+当然可以！我们来仔细讲解 JavaScript 中的 闭包（Closure），然后给出一个实际应用示例。
+
+1. 闭包的概念
+
+在 JavaScript 中，闭包是指函数能够“记住”并访问它定义时的作用域（scope），即使这个函数在定义作用域之外执行。
+
+换句话说，闭包允许函数访问 外部函数的局部变量，即使外部函数已经执行结束。
+
+公式化理解：
+JavaScript
+function outer() {
+    let outerVar = '我是外部变量';
+    
+    function inner() {
+        console.log(outerVar);
+    }
+    
+    return inner;
+}
+
+const closureFunc = outer();
+closureFunc(); // 输出：'我是外部变量'
+
+这里的关键点：
+
+outer() 执行后返回 inner 函数。
+
+即使 outer() 已经执行完毕，inner 依然可以访问 outerVar。
+
+这种机制就是闭包。
+
+2. 闭包的实际应用
+
+闭包最常用的场景之一是 创建私有变量。在 JavaScript 中没有真正的私有属性，但可以利用闭包实现类似效果。
+
+示例：计数器
+JavaScript
+function createCounter() {
+    let count = 0; // 私有变量
+    
+    return {
+        increment: function() {
+            count++;
+            return count;
+        },
+        decrement: function() {
+            count--;
+            return count;
+        },
+        getValue: function() {
+            return count;
+        }
+    };
+}
+
+const counter = createCounter();
+
+console.log(counter.increment()); // 输出: 1
+console.log(counter.increment()); // 输出: 2
+console.log(counter.getValue());  // 输出: 2
+console.log(counter.decrement()); // 输出: 1
+
+解释：
+
+count 变量只能通过 increment、decrement 和 getValue 访问。
+
+外部无法直接修改 count，实现了数据封装。
+
+这是闭包在实际开发中非常常见的应用：保护数据，同时提供受控的访问接口。

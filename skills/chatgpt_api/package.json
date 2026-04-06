@@ -1,0 +1,26 @@
+{
+  "name": "chatgpt-api-skill",
+  "version": "1.0.0",
+  "description": "ChatGPT API automation with Google OAuth support",
+  "type": "module",
+  "main": "run-skill.js",
+  "scripts": {
+    "login": "node run-skill.js --login",
+    "test": "node run-skill.js --message 'Hello, ChatGPT!'",
+    "server": "node server/openai-compatible-server.js",
+    "test-server": "node server/test-openai-client.js"
+  },
+  "keywords": [
+    "chatgpt",
+    "openai",
+    "automation",
+    "google-oauth"
+  ],
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "playwright": "^1.40.0",
+    "undici": "^8.0.2"
+  },
+  "author": "",
+  "license": "MIT"
+}
