@@ -70,7 +70,8 @@ cat strategy_autoresearch_rfscore7_pb10_rq/history/iterations.tsv
 ## 评分公式
 
 ```
-score = annual_return * 0.45 - abs(max_drawdown) * 0.30 + sharpe * 0.20 + win_rate * 0.05
+calmar = annual_return / max(abs(max_drawdown), 0.01)
+score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 ```
 
 新 score 严格大于 champion score 才 keep，否则 rollback。

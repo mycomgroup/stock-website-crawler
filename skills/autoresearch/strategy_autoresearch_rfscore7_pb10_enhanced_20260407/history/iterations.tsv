@@ -27,3 +27,12 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0025	5b8c30df	7973329	normal_exit	0.4913	0.1214	2.1454	2.225411	keep	breadth计算从50只扩大到100只股票
 0026		7973332	normal_exit	0.4646	0.1214	2.0791	2.105531	rollback	breadth_extreme从0.10调宽到0.11，更早退出极端市场
 0027		7973336	normal_exit	0.3784	0.0954	1.9542	2.181046	rollback	rebalancing从每周改为每3天
+0028		7973337	normal_exit	0.4362	0.1139	2.1347	2.107200	rollback	breadth_bottom从0.20调宽到0.22，延迟恢复入市
+0029		7973339	normal_exit	0.4381	0.1087	2.0849	2.217089	rollback	breadth计算改用EMA(5日)替代SMA，更敏感
+0030		7973342	normal_exit	0.3961	0.1474	1.7673	1.477892	rollback	持仓从10只减少到9只，提高集中度
+0031		7973345	normal_exit	0.4507	0.1260	2.1719	1.966884	rollback	breadth历史窗口从10天缩短到7天
+0032		7973347	normal_exit	0.4084	0.1262	2.0065	1.780324	rollback	breadth计算扩大到200只股票
+0033		7973349	normal_exit	-0.0383	0.1995	-0.1238	-0.105649	rollback	涨停价格过滤从0.95加严到0.90
+0034		7973351	normal_exit	0.4392	0.1358	1.9754	1.779058	rollback	排除近5日涨幅超20%但仍选低价股
+0035		7973353	normal_exit	0.4830	0.1419	2.0436	1.871560	rollback	breadth_extreme从0.10调紧到0.09，更快退出极端市场
+0036		7973355	normal_exit	0.3549	0.1172	1.7742	1.666112	rollback	添加最低价格过滤，排除股价<2元的股票

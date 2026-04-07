@@ -40,10 +40,42 @@ state = json.load(open("state.json"))
 - `consecutive_failures >= 5`
 - `current_iter >= 100`（见 seed_config.json 的 loop.max_iterations）
 
-分析思路：
-- 看历史记录，找还没试过的改进方向
-- 优先改对得分影响最大的指标（年化收益权重 0.45 > 回撤 0.30 > 夏普 0.20 > 胜率 0.05）
-- 每次只改一个方向，小步迭代
+**分析要求（每轮必做）：**
+
+读取或创建 `history/search_notes.md`，按以下格式维护搜索地图：
+
+```markdown
+## 搜索地图
+
+### 已验证有效（keep）
+- [参数] base_hold_num 20→30：score +0.12，calmar 提升
+- [过滤] 新增 PE<50：score +0.08，回撤降低
+
+### 已验证无效（rollback）
+- [参数] base_hold_num 30→40：score -0.05，分散过度
+- [过滤] 新增 PB<1.5：score -0.03，股票池太小
+
+### 待探索方向
+- [ ] 调仓频率（当前月度，可试双月/季度）
+- [ ] 止损阈值（当前无止损）
+- [ ] 市场宽度过滤（熊市减仓）
+
+### 规律总结
+- 持仓数量在 20-25 之间效果最好，超过 30 开始分散过度
+- PE 过滤有效，但阈值不能太严（<30 会导致股票池过小）
+```
+
+每轮结束后更新这个文件：
+- 把本轮结果归入"有效"或"无效"
+- 从"待探索"里划掉已试过的
+- 补充新发现的规律
+
+**下一轮改什么，必须基于搜索地图来决定，不能随机试错。**
+
+优先级：
+1. 先把"待探索"里的方向系统性地跑完
+2. 对"有效"的改动做进一步细化（如 base_hold_num 已知 20-25 有效，可以试 22、23）
+3. 尝试组合已验证有效的改动
 
 ### 第 2 步：直接修改 strategy.py，提交回测
 
@@ -55,9 +87,14 @@ state = json.load(open("state.json"))
 AUTORESEARCH_DIR="/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch"
 python ${AUTORESEARCH_DIR}/run_iteration.py \
     --base . \
-    --mutation-summary "一句话描述本轮改了什么" > run.log 2>&1
+    --mutation-summary "【改动类型】具体改了什么参数/逻辑（改前→改后），预期效果" > run.log 2>&1
 echo "exit: $?"
 ```
+
+`--mutation-summary` 格式要求：
+- 写清楚**改动类型**（参数调整/选股逻辑/过滤条件/仓位管理/止盈止损）
+- 写清楚**具体改了什么**（变量名、改前值→改后值）
+- 写清楚**预期效果**（为什么这样改）
 
 脚本自动完成：预检查 → 提交回测 → 等待结果（最多 600s）→ 评分 → keep/rollback → 写 history/。
 

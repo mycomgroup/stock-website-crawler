@@ -38,7 +38,7 @@ from datetime import datetime, timedelta
 def _default_dates():
     today = datetime.today()
     end = (today - timedelta(days=7)).strftime("%Y-%m-%d")   # 上周，确保数据完整
-    start = (today - timedelta(days=365)).strftime("%Y-%m-%d")  # 最近一年
+    start = (today - timedelta(days=365 * 5)).strftime("%Y-%m-%d")  # 最近5年
     return start, end
 
 _start, _end = _default_dates()
