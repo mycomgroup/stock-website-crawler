@@ -37,9 +37,17 @@ def handle_bar(context, bar_dict):
     if context.in_cash:
         return
 
-    # 月度调仓
+    # 周度调仓（每周第一天或月初）
+    should_rebalance = False
     if today.month != context.last_month:
         context.last_month = today.month
+        context.last_week = today.isocalendar()[1]
+        should_rebalance = True
+    elif today.isocalendar()[1] != context.last_week:
+        context.last_week = today.isocalendar()[1]
+        should_rebalance = True
+
+    if should_rebalance:
         rebalance(context, bar_dict)
 
 
@@ -51,7 +59,7 @@ def rebalance(context, bar_dict):
         bar = bar_dict[s]
         if not bar.is_trading:
             continue
-        if bar.close >= bar.limit_up * 0.98:
+        if bar.close >= bar.limit_up * 0.95:
             continue
         try:
             inst = instruments(s)
@@ -91,8 +99,8 @@ def calc_breadth(bar_dict):
 
     for s in list(bar_dict.keys())[:50]:
         try:
-            hist = history_bars(s, 8, "1d", "close")
-            if hist is not None and len(hist) >= 8:
+            hist = history_bars(s, 10, "1d", "close")
+            if hist is not None and len(hist) >= 10:
                 count += 1
                 if hist[-1] > np.mean(hist):
                     above += 1
