@@ -97,7 +97,7 @@ def calc_breadth(bar_dict):
     count = 0
     above = 0
 
-    for s in list(bar_dict.keys())[:50]:
+    for s in list(bar_dict.keys())[:100]:
         try:
             hist = history_bars(s, 10, "1d", "close")
             if hist is not None and len(hist) >= 10:
