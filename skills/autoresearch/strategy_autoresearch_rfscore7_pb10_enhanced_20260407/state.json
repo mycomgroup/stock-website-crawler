@@ -1,0 +1,17 @@
+{
+  "current_iter": 20,
+  "consecutive_failures": 1,
+  "champion_iter": "0018",
+  "champion_score": 0.6722150789588879,
+  "champion_metrics": {
+    "annual_return": 0.5925518486254227,
+    "max_drawdown": 0.11979645259595884,
+    "sharpe": 2.207528414281177,
+    "win_rate": 0.0,
+    "status": "normal_exit",
+    "backtest_id": "7973300"
+  },
+  "is_baseline_done": true,
+  "strategy_id": "2418754",
+  "last_update": "2026-04-07T13:55:32.743928"
+}

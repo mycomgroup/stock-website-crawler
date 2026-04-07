@@ -1,0 +1,21 @@
+iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation
+0000_baseline	7973240	normal_exit	0.3190	0.1204	1.4590	0.399223	keep	baseline - no modification
+0001		7973240	normal_exit	0.3190	0.1204	1.4590	0.399223	rollback	increase hold_num from 10 to 12
+0002		7973240	normal_exit	0.3190	0.1204	1.4590	0.399223	rollback	breadth_extreme 0.15 -> 0.18
+0003		7973240	normal_exit	0.3190	0.1204	1.4590	0.399223	rollback	breadth_bottom 0.25 -> 0.30
+0004		7973240	normal_exit	0.3190	0.1204	1.4590	0.399223	rollback	breadth lookback 20d -> 15d
+0005	fe346b1	7973266	normal_exit	0.3309	0.1220	1.5515	0.422611	keep	breadth lookback 20d -> 15d
+0006	3bed350	7973269	normal_exit	0.4795	0.1361	1.8257	0.540082	keep	breadth_extreme 0.15 -> 0.12
+0007	1e3b9c2	7973270	normal_exit	0.4531	0.1198	1.9273	0.553421	keep	breadth_bottom 0.25 -> 0.20
+0008	7cd94ad	7973275	normal_exit	0.5531	0.1356	2.0350	0.615237	keep	breadth_extreme 0.12 -> 0.10
+0009		7973278	normal_exit	0.4238	0.1449	1.7609	0.499397	rollback	breadth_bottom 0.20 -> 0.18
+0010		7973280	normal_exit	0.3695	0.1220	1.6187	0.453408	rollback	breadth lookback 15d -> 12d
+0011		7973285	normal_exit	0.5531	0.1356	2.0350	0.615237	rollback	breadth_extreme 0.10 -> 0.08
+0012		7973288	normal_exit	0.4795	0.1361	1.8257	0.540082	rollback	breadth_extreme 0.10 -> 0.07
+0013		7973291	normal_exit	0.3626	0.1322	1.5080	0.425125	rollback	hold_num 10 -> 8
+0014		7973292	normal_exit	0.4238	0.1449	1.7609	0.499397	rollback	breadth_bottom 0.20 -> 0.22
+0015		7973294	normal_exit	0.5531	0.1356	2.0350	0.615237	rollback	lookback 15d -> 18d
+0016		7973296	normal_exit	0.3593	0.1220	1.6142	0.447943	rollback	breadth_bottom 0.20 -> 0.18
+0017		7973298	normal_exit	0.4476	0.1198	1.9100	0.547485	rollback	breadth_extreme 0.10 -> 0.09
+0018	4212cdd	7973300	normal_exit	0.5926	0.1198	2.2075	0.672215	keep	lookback 15d -> 10d
+0019		7973303	normal_exit	0.3635	0.1220	1.6304	0.453055	rollback	lookback 10d -> 8d
