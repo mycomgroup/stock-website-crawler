@@ -20,11 +20,12 @@ class ParsedMetrics:
     Attributes:
         status: 回测状态，如 "finished", "error_exit" 等
         backtest_id: 回测唯一标识符
-        total_return: 总收益率（可能为负）
+        total_return: 总收益率
         annual_return: 年化收益率
-        max_drawdown: 最大回撤（负值，如 -0.15 表示 -15% 回撤；RiceQuant 返回负值）
+        max_drawdown: 最大回撤（RiceQuant 返回正值，如 0.15 表示 -15% 回撤）
         sharpe: 夏普比率
-        win_rate: 胜率
+        sortino: Sortino 比率（只惩罚下行波动，比 sharpe 更关注亏损端）
+        information_ratio: 信息比率（超额收益/跟踪误差，衡量选股能力）
         alpha: Alpha 收益
         beta: Beta 风险系数
     """
@@ -34,7 +35,8 @@ class ParsedMetrics:
     annual_return: float
     max_drawdown: float
     sharpe: float
-    win_rate: float
+    sortino: float
+    information_ratio: float
     alpha: float
     beta: float
 
@@ -64,7 +66,8 @@ def parse_backtest_result(result_json: dict) -> ParsedMetrics:
         annual_return=_safe_float(result_json.get("annualReturn")),
         max_drawdown=_safe_float(result_json.get("maxDrawdown")),
         sharpe=_safe_float(result_json.get("sharpe")),
-        win_rate=_safe_float(result_json.get("winRate")),
+        sortino=_safe_float(result_json.get("sortino")),
+        information_ratio=_safe_float(result_json.get("informationRatio")),
         alpha=_safe_float(result_json.get("alpha")),
         beta=_safe_float(result_json.get("beta")),
     )
@@ -142,45 +145,37 @@ def calculate_score(metrics: ParsedMetrics, weights: Optional[dict] = None) -> f
     """
     计算复合目标函数得分。
 
-    默认权重分配（参考设计文档 11.3）：
-    - annual_return: 0.45 (年化收益越高越好，正向)
-    - max_drawdown: 0.30 (最大回撤越小越好，用正值，取绝对值后参与计算)
-    - sharpe: 0.20 (夏普比率越高越好，正向)
-    - win_rate: 0.05 (胜率越高越好，正向，但权重很小避免误导)
+    公式（量纲对齐版）：
+        calmar = annual_return / max(abs(max_drawdown), 0.01)
+        score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 
-    计算公式：
-        score = annual_return * 0.45 - abs(max_drawdown) * 0.30 + sharpe * 0.20 + win_rate * 0.05
+    设计原则：
+    - calmar（年化收益/最大回撤）天然量纲对齐，收益和回撤绑定在一起，
+      收益触顶后压缩回撤也能提升得分
+    - sortino 只惩罚下行波动，比 sharpe 更关注实际亏损风险
+    - information_ratio 衡量超额收益能力，三者量纲相近（均在 1~5 范围）
 
     Args:
-        metrics: ParsedMetrics 实例，包含回测指标
-        weights: 可选的权重字典，覆盖默认权重。
-                 支持的键: annual_return, max_drawdown, sharpe, win_rate
-                 如果为 None，使用上述默认权重。
+        metrics: ParsedMetrics 实例
+        weights: 可选权重字典，支持键: calmar, sortino, information_ratio
+                 如果为 None，使用默认权重。
 
     Returns:
-        float: 复合目标函数得分。数值越高表示策略越优。
-
-    Note:
-        RiceQuant 返回的 max_drawdown 是负值（如 -0.15 表示 -15% 回撤）。
-        计算时取绝对值：abs(-0.15) * 0.30 = 0.045 作为惩罚项（减分）。
-        因此回撤越小（abs 值越小），减分越少，得分越高。
+        float: 复合得分，数值越高越好。
     """
     if weights is None:
         weights = {
-            "annual_return": 0.45,
-            "max_drawdown": 0.30,
-            "sharpe": 0.20,
-            "win_rate": 0.05,
+            "calmar": 0.55,
+            "sortino": 0.25,
+            "information_ratio": 0.20,
         }
 
-    # RiceQuant 返回的 max_drawdown 是负值，计算时取绝对值作为惩罚
+    calmar = metrics.annual_return / max(abs(metrics.max_drawdown), 0.01)
     score = (
-        metrics.annual_return * weights.get("annual_return", 0.45)
-        - abs(metrics.max_drawdown) * weights.get("max_drawdown", 0.30)
-        + metrics.sharpe * weights.get("sharpe", 0.20)
-        + metrics.win_rate * weights.get("win_rate", 0.05)
+        calmar * weights.get("calmar", 0.55)
+        + metrics.sortino * weights.get("sortino", 0.25)
+        + metrics.information_ratio * weights.get("information_ratio", 0.20)
     )
-
     return score
 
 
@@ -266,12 +261,10 @@ def decide_keep_rollback(
 
 
 # 默认权重常量（供外部引用）
-# 注意：max_drawdown 为正值，表示回撤幅度的惩罚系数
 DEFAULT_WEIGHTS = {
-    "annual_return": 0.45,
-    "max_drawdown": 0.30,  # 正值，计算时用 abs(max_drawdown) * 0.30 作为惩罚
-    "sharpe": 0.20,
-    "win_rate": 0.05,
+    "calmar": 0.55,
+    "sortino": 0.25,
+    "information_ratio": 0.20,
 }
 
 # 默认硬约束（供外部引用）

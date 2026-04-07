@@ -112,8 +112,13 @@ tail -n 30 run.log
 ## 评分公式
 
 ```
-score = annual_return * 0.45 - abs(max_drawdown) * 0.30 + sharpe * 0.20 + win_rate * 0.05
+calmar = annual_return / max(abs(max_drawdown), 0.01)
+score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 ```
+
+- calmar 天然把收益和回撤绑定：收益触顶后压缩回撤同样能提升得分
+- sortino 只惩罚下行波动，比 sharpe 更关注实际亏损风险
+- information_ratio 衡量超额收益能力
 
 新 score **严格大于** champion score 才 keep，否则 rollback。
 `abs(max_drawdown) > 0.35` 直接 rollback（硬约束）。

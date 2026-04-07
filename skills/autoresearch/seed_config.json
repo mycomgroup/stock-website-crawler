@@ -16,10 +16,9 @@
   },
   "objective": {
     "weights": {
-      "annual_return": 0.45,
-      "max_drawdown": 0.30,
-      "sharpe": 0.20,
-      "win_rate": 0.05
+      "calmar": 0.55,
+      "sortino": 0.25,
+      "information_ratio": 0.20
     },
     "hard_constraints": {
       "max_drawdown_limit": 0.35

@@ -19,3 +19,11 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0017		7973298	normal_exit	0.4476	0.1198	1.9100	0.547485	rollback	breadth_extreme 0.10 -> 0.09
 0018	4212cdd	7973300	normal_exit	0.5926	0.1198	2.2075	0.672215	keep	lookback 15d -> 10d
 0019		7973303	normal_exit	0.3635	0.1220	1.6304	0.453055	rollback	lookback 10d -> 8d
+0020		7973305	normal_exit	0.5204	0.1251	2.2403	0.644719	rollback	hold_num 10 -> 11
+0021		7973307	normal_exit	0.3847	0.1220	1.7223	0.480995	rollback	lookback 10d -> 9d
+0022		7973310	normal_exit	0.0000	0.0000	0.0000	0.000000	rollback	select highest price stocks instead of lowest (momentum)
+0023	7e4919c1	7973321	normal_exit	0.4913	0.1374	2.1402	1.967099	keep	月度调仓改为周度调仓
+0024		7973326	normal_exit	0.4887	0.1388	2.1303	1.936240	rollback	添加10日涨幅>30%的动量过滤，避免追高
+0025	5b8c30df	7973329	normal_exit	0.4913	0.1214	2.1454	2.225411	keep	breadth计算从50只扩大到100只股票
+0026		7973332	normal_exit	0.4646	0.1214	2.0791	2.105531	rollback	breadth_extreme从0.10调宽到0.11，更早退出极端市场
+0027		7973336	normal_exit	0.3784	0.0954	1.9542	2.181046	rollback	rebalancing从每周改为每3天

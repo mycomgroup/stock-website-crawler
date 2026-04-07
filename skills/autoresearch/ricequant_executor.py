@@ -345,7 +345,8 @@ def fetch_results(
         "totalReturn": summary.get("total_returns"),
         "maxDrawdown": summary.get("max_drawdown"),
         "sharpe": summary.get("sharpe"),
-        "winRate": summary.get("win_rate"),
+        "sortino": summary.get("sortina") or summary.get("sortino"),
+        "informationRatio": summary.get("information_ratio"),
         "alpha": summary.get("alpha"),
         "beta": summary.get("beta"),
     }

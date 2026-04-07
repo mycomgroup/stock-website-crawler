@@ -175,7 +175,8 @@ def main():
             annual_return=champion_metrics_raw.get("annual_return", 0.0),
             max_drawdown=champion_metrics_raw.get("max_drawdown", 0.0),
             sharpe=champion_metrics_raw.get("sharpe", 0.0),
-            win_rate=champion_metrics_raw.get("win_rate", 0.0),
+            sortino=champion_metrics_raw.get("sortino", 0.0),
+            information_ratio=champion_metrics_raw.get("information_ratio", 0.0),
             alpha=0.0, beta=0.0,
         )
 
@@ -288,7 +289,8 @@ def main():
             "annual_return": metrics.annual_return,
             "max_drawdown": metrics.max_drawdown,
             "sharpe": metrics.sharpe,
-            "win_rate": metrics.win_rate,
+            "sortino": metrics.sortino,
+            "information_ratio": metrics.information_ratio,
             "status": metrics.status,
             "backtest_id": backtest_id,
         }

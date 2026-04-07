@@ -52,7 +52,7 @@ DEFAULT_BACKTEST = {
     "benchmark": "000300.XSHG",
 }
 DEFAULT_OBJECTIVE = {
-    "weights": {"annual_return": 0.45, "max_drawdown": 0.30, "sharpe": 0.20, "win_rate": 0.05},
+    "weights": {"calmar": 0.55, "sortino": 0.25, "information_ratio": 0.20},
     "hard_constraints": {"max_drawdown_limit": 0.35},
 }
 DEFAULT_LOOP = {"max_iterations": 100, "max_consecutive_failures": 5, "max_wait_seconds": 600}
@@ -209,7 +209,8 @@ def run_baseline(base: Path, cfg: dict, baseline_commit: str = "") -> None:
         "annual_return": metrics.annual_return,
         "max_drawdown": metrics.max_drawdown,
         "sharpe": metrics.sharpe,
-        "win_rate": metrics.win_rate,
+        "sortino": metrics.sortino,
+        "information_ratio": metrics.information_ratio,
         "score": score,
         "decision": "keep",
         "mutation": "baseline - no modification",
@@ -229,7 +230,8 @@ def run_baseline(base: Path, cfg: dict, baseline_commit: str = "") -> None:
             "annual_return": metrics.annual_return,
             "max_drawdown": metrics.max_drawdown,
             "sharpe": metrics.sharpe,
-            "win_rate": metrics.win_rate,
+            "sortino": metrics.sortino,
+            "information_ratio": metrics.information_ratio,
             "status": metrics.status,
             "backtest_id": backtest_id,
         },
