@@ -1,0 +1,62 @@
+{
+  "backtestId": "7973214",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": {
+      "total_returns": -0.25080392509120036,
+      "annualized_returns": -0.0685300617900737,
+      "benchmark_returns": -0.24871432728872234,
+      "benchmark_annualized_returns": -0.06789200918896199,
+      "alpha": -0.058252542361083695,
+      "beta": 0.404045634037714,
+      "max_drawdown": 0.3100073734492102,
+      "sharpe": -0.8118877397846188,
+      "information_ratio": -0.4750842718061106,
+      "sortina": -1.2104260933752824,
+      "annualized_tracking_error": 0.1402247946484058,
+      "annualized_volatility": 0.11437645829006075,
+      "annualized_downside_risk": 0.07671748379675454
+    },
+    "create_at": "2026-04-07T11:45:47.613000",
+    "start_at": "2026-04-07T11:45:51.199000",
+    "progress": 1,
+    "backtest_id": "7973214",
+    "description": "",
+    "strategy_id": 2418704,
+    "title": "autoresearch_17_point_efficiency",
+    "account_type": "stock",
+    "end_at": "2026-04-07T11:46:03.552000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1743147000000,
+    "trading_date": 20250328,
+    "alpha": -0.058252542361083695,
+    "beta": 0.404045634037714,
+    "sharpe": -0.8118877397846188,
+    "sortino": -1.2104260933752824,
+    "information_ratio": -0.4750842718061106,
+    "annual_volatility": 0.11437645829006075,
+    "max_drawdown": 0.3100073734492102,
+    "annual_tracking_error": 0.1402247946484058,
+    "annual_downside_risk": 0.07671748379675454
+  },
+  "summary": {
+    "total_returns": -0.25080392509120036,
+    "annualized_returns": -0.0685300617900737,
+    "benchmark_returns": -0.24871432728872234,
+    "benchmark_annualized_returns": -0.06789200918896199,
+    "alpha": -0.058252542361083695,
+    "beta": 0.404045634037714,
+    "max_drawdown": 0.3100073734492102,
+    "sharpe": -0.8118877397846188,
+    "information_ratio": -0.4750842718061106,
+    "sortina": -1.2104260933752824,
+    "annualized_tracking_error": 0.1402247946484058,
+    "annualized_volatility": 0.11437645829006075,
+    "annualized_downside_risk": 0.07671748379675454
+  }
+}
