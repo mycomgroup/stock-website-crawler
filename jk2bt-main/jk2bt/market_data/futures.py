@@ -17,10 +17,13 @@ import re
 import warnings
 
 try:
-    import akshare as ak
+    from jk2bt.data_access import get_adapter as _get_adapter
+    _ADAPTER_AVAILABLE = True
 except ImportError:
-    warnings.warn("AkShare 未安装，期货数据 API 将不可用")
-    ak = None
+    _ADAPTER_AVAILABLE = False
+
+# Keep ak as None for backward compat checks
+ak = None
 
 logger = logging.getLogger(__name__)
 
@@ -335,7 +338,7 @@ def get_future_contracts(product=None, exchange=None, date=None, include_expired
     >>> df = get_future_contracts(product='IF')
     >>> df = get_future_contracts(exchange='CFFEX')
     """
-    if ak is None:
+    if not _ADAPTER_AVAILABLE:
         raise ImportError("AkShare 未安装")
 
     try:
@@ -463,9 +466,9 @@ def _get_exchange_contracts(exchange, product=None, date=None, include_expired=F
         return pd.DataFrame()
 
     try:
-        df = ak.futures_zh_spot()
+        df = _get_adapter().get_futures_spot()
 
-        if df.empty:
+        if df is None or df.empty:
             return pd.DataFrame()
 
         df = df.copy()
@@ -573,7 +576,7 @@ def get_dominant_contract(product, date=None):
     >>> contract = get_dominant_contract('IF')
     >>> contract = get_dominant_contract('IC', date='2023-12-01')
     """
-    if ak is None:
+    if not _ADAPTER_AVAILABLE:
         raise ImportError("AkShare 未安装")
 
     product = product.upper()
@@ -604,7 +607,7 @@ def _get_index_future_dominant(product, date=None):
         return None
 
     try:
-        spot_df = ak.futures_zh_spot()
+        spot_df = _get_adapter().get_futures_spot()
 
         if spot_df.empty:
             trading_contracts = contracts_df[contracts_df["is_trading"]][
@@ -648,9 +651,9 @@ def _get_commodity_future_dominant(product, date=None):
     获取商品期货主力合约
     """
     try:
-        df = ak.futures_zh_spot()
+        df = _get_adapter().get_futures_spot()
 
-        if df.empty:
+        if df is None or df.empty:
             return None
 
         product = product.upper()
@@ -843,7 +846,7 @@ def get_future_daily(contract_code, start_date=None, end_date=None, adjust=True)
     -------
     >>> df = get_future_daily('IF2312', '2023-01-01', '2023-12-31')
     """
-    if ak is None:
+    if not _ADAPTER_AVAILABLE:
         raise ImportError("AkShare 未安装")
 
     try:
@@ -854,7 +857,7 @@ def get_future_daily(contract_code, start_date=None, end_date=None, adjust=True)
             end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d")
         )
 
-        df = ak.futures_zh_daily_sina(symbol=contract_code)
+        df = _get_adapter().get_futures_daily(symbol=contract_code)
 
         if df.empty:
             logger.warning(f"未找到合约 {contract_code} 的日线数据")
@@ -942,11 +945,11 @@ def get_future_spot(contract_code=None):
     >>> df = get_future_spot()
     >>> df = get_future_spot('IF2312')
     """
-    if ak is None:
+    if not _ADAPTER_AVAILABLE:
         raise ImportError("AkShare 未安装")
 
     try:
-        df = ak.futures_zh_spot()
+        df = _get_adapter().get_futures_spot()
 
         if df.empty:
             return pd.DataFrame()

@@ -88,15 +88,12 @@ def _get_margin_by_date(symbol, code_num, market, date, cache_dir, force_update)
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             if market == "sh":
-                df_all = ak.stock_margin_detail_sse(date=date)
+                df_all = get_adapter().get_margin_detail(market="sh", date=date)
             else:
-                df_all = ak.stock_margin_detail_szse(date=date)
+                df_all = get_adapter().get_margin_detail(market="sz", date=date)
 
             if df_all is not None and not df_all.empty:
                 df_all.to_pickle(cache_file)

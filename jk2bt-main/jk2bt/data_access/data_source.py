@@ -494,5 +494,174 @@ class DataSource(ABC):
             "description": f"数据源: {self.name}",
         }
 
+    # ── 新增：ST/停牌 ─────────────────────────────────────────────
+
+    def get_st_stocks(self) -> pd.DataFrame:
+        """获取 ST 股票列表。返回 DataFrame with columns [代码, 名称]"""
+        raise NotImplementedError(f"{self.name} 不支持 get_st_stocks")
+
+    def get_suspended_stocks(self) -> pd.DataFrame:
+        """获取停牌股票列表。返回 DataFrame with columns [代码, 名称]"""
+        raise NotImplementedError(f"{self.name} 不支持 get_suspended_stocks")
+
+    # ── 新增：估值 ────────────────────────────────────────────────
+
+    def get_index_valuation(self, index_code: str) -> pd.DataFrame:
+        """获取指数估值历史数据。替代 ak.index_value_hist_fina()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_index_valuation")
+
+    def get_stock_valuation(self, symbol: str) -> pd.DataFrame:
+        """获取个股估值数据。替代 ak.stock_a_lg_indicator()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_stock_valuation")
+
+    def get_stock_pe_pb(self, symbol: str) -> pd.DataFrame:
+        """获取个股 PE/PB 数据。替代 ak.stock_a_pe_and_pb()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_stock_pe_pb")
+
+    # ── 新增：融资融券 ────────────────────────────────────────────
+
+    def get_margin_detail(self, market: str, date: str) -> pd.DataFrame:
+        """获取融资融券明细。market: 'sh' | 'sz'"""
+        raise NotImplementedError(f"{self.name} 不支持 get_margin_detail")
+
+    def get_margin_underlying(self, market: str) -> pd.DataFrame:
+        """获取融资融券标的信息。market: 'sh' | 'sz'"""
+        raise NotImplementedError(f"{self.name} 不支持 get_margin_underlying")
+
+    # ── 新增：宏观数据（原始，不含缓存）─────────────────────────
+
+    def get_macro_raw(self, indicator: str) -> pd.DataFrame:
+        """获取宏观数据原始 DataFrame。indicator: pmi/cpi/ppi/gdp/m2/interest_rate/exchange_rate/rmb"""
+        raise NotImplementedError(f"{self.name} 不支持 get_macro_raw")
+
+    # ── 新增：股东数据 ────────────────────────────────────────────
+
+    def get_top10_holders(self, symbol: str) -> pd.DataFrame:
+        """获取前十大股东数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_top10_holders")
+
+    def get_top10_float_holders(self, symbol: str) -> pd.DataFrame:
+        """获取前十大流通股东数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_top10_float_holders")
+
+    def get_holder_count(self, symbol: str) -> pd.DataFrame:
+        """获取股东人数数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_holder_count")
+
+    def get_institutional_holders(self, symbol: str) -> pd.DataFrame:
+        """获取机构持股数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_institutional_holders")
+
+    # ── 新增：财务报表 ────────────────────────────────────────────
+
+    def get_financial_report(self, symbol: str, report_type: str) -> pd.DataFrame:
+        """获取财务报表。report_type: '现金流量表' | '资产负债表' | '利润表'"""
+        raise NotImplementedError(f"{self.name} 不支持 get_financial_report")
+
+    def get_financial_benefit(self, symbol: str, indicator: str) -> pd.DataFrame:
+        """获取财务效益数据。替代 ak.stock_financial_benefit_ths()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_financial_benefit")
+
+    def get_cashflow(self, symbol: str) -> pd.DataFrame:
+        """获取现金流数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_cashflow")
+
+    # ── 新增：分红/股本变动/解禁 ──────────────────────────────────
+
+    def get_dividend(self, symbol: str) -> pd.DataFrame:
+        """获取分红数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_dividend")
+
+    def get_share_change(self, symbol: str) -> pd.DataFrame:
+        """获取股本变动数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_share_change")
+
+    def get_unlock_schedule(self, symbol: str) -> pd.DataFrame:
+        """获取解禁计划数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_unlock_schedule")
+
+    # ── 新增：行情扩展 ────────────────────────────────────────────
+
+    def get_spot_em(self) -> pd.DataFrame:
+        """获取全市场实时行情。替代 ak.stock_zh_a_spot_em()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_spot_em")
+
+    def get_stock_hist(
+        self,
+        symbol: str,
+        period: str = "daily",
+        start_date: str = "",
+        end_date: str = "",
+        adjust: str = "",
+    ) -> pd.DataFrame:
+        """获取股票历史行情。替代 ak.stock_zh_a_hist()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_stock_hist")
+
+    def get_trade_dates(self) -> pd.DataFrame:
+        """获取交易日历 DataFrame。替代 ak.tool_trade_date_hist_sina()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_trade_dates")
+
+    def get_securities_code_name(self) -> pd.DataFrame:
+        """获取 A 股代码名称映射。替代 ak.stock_info_a_code_name()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_securities_code_name")
+
+    def get_bond_yield(self, symbol: str) -> pd.DataFrame:
+        """获取债券收益率数据。替代 ak.bond_china_yield()"""
+        raise NotImplementedError(f"{self.name} 不支持 get_bond_yield")
+
+    # ── 新增：行业/概念 ───────────────────────────────────────────
+
+    def get_industry_list(self, source: str = "em") -> pd.DataFrame:
+        """获取行业列表。source: 'em' (东方财富) 等"""
+        raise NotImplementedError(f"{self.name} 不支持 get_industry_list")
+
+    def get_industry_components(self, industry_name: str, source: str = "em") -> pd.DataFrame:
+        """获取行业成分股。source: 'em' 等"""
+        raise NotImplementedError(f"{self.name} 不支持 get_industry_components")
+
+    def get_concept_list(self) -> pd.DataFrame:
+        """获取概念板块列表"""
+        raise NotImplementedError(f"{self.name} 不支持 get_concept_list")
+
+    def get_concept_components(self, concept_name: str) -> pd.DataFrame:
+        """获取概念板块成分股"""
+        raise NotImplementedError(f"{self.name} 不支持 get_concept_components")
+
+    def get_sw_industry(self, level: str = "1") -> pd.DataFrame:
+        """获取申万行业数据。level: '1' | '2' | '3'"""
+        raise NotImplementedError(f"{self.name} 不支持 get_sw_industry")
+
+    # ── 新增：ETF/LOF/可转债/期货/期权 ───────────────────────────
+
+    def get_etf_hist(self, symbol: str) -> pd.DataFrame:
+        """获取 ETF 历史行情"""
+        raise NotImplementedError(f"{self.name} 不支持 get_etf_hist")
+
+    def get_lof_hist(self, symbol: str) -> pd.DataFrame:
+        """获取 LOF 历史行情"""
+        raise NotImplementedError(f"{self.name} 不支持 get_lof_hist")
+
+    def get_conversion_bond_daily(self, symbol: str) -> pd.DataFrame:
+        """获取可转债日线数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_conversion_bond_daily")
+
+    def get_futures_daily(self, contract_code: str) -> pd.DataFrame:
+        """获取期货日线数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_futures_daily")
+
+    # ── 新增：龙虎榜/公司信息/预测 ───────────────────────────────
+
+    def get_billboard_list(self, date: str) -> pd.DataFrame:
+        """获取龙虎榜数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_billboard_list")
+
+    def get_company_info(self, symbol: str) -> pd.DataFrame:
+        """获取公司基本信息"""
+        raise NotImplementedError(f"{self.name} 不支持 get_company_info")
+
+    def get_forecast(self, symbol: str) -> pd.DataFrame:
+        """获取业绩预告数据"""
+        raise NotImplementedError(f"{self.name} 不支持 get_forecast")
+
 
 __all__ = ["DataSource", "DataSourceError"]

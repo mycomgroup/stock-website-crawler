@@ -33,17 +33,7 @@ try:
 except ImportError:
     from utils.date_utils import find_date_column
 
-# =====================================================================
-# 底层数据源实现模块
-# 注意：本模块是数据源的底层实现，直接使用 akshare 作为数据获取引擎。
-# 其他上层模块（如 factors/valuation.py, factors/technical.py）应优先使用
-# market_data 或 finance_data 模块，而不是直接依赖此模块的 akshare 导入。
-# =====================================================================
-
-try:
-    import akshare as ak
-except ImportError:
-    raise ImportError("请安装 akshare: pip install akshare")
+from jk2bt.utils.symbol import normalize_symbol
 
 
 class DataSource(Enum):
@@ -257,28 +247,6 @@ def retry_on_failure(
     return decorator
 
 
-def normalize_symbol(symbol: str) -> str:
-    """
-    标准化证券代码格式。
-
-    Parameters
-    ----------
-    symbol : str
-        原始代码，如 'sh600519', '600519.XSHG'
-
-    Returns
-    -------
-    str
-        6位数字代码，如 '600519'
-    """
-    ak_sym = symbol
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        ak_sym = symbol[2:]
-    if symbol.endswith(".XSHG") or symbol.endswith(".XSHE"):
-        ak_sym = symbol[:6]
-    return ak_sym.zfill(6)
-
-
 class ValuationDataSource:
     """估值数据源管理器"""
 
@@ -320,6 +288,7 @@ class ValuationDataSource:
 
         AkShare: stock_zh_valuation_baidu
         """
+        from jk2bt.data_access import get_adapter
         ak_sym = normalize_symbol(symbol)
         dfs = []
 
@@ -331,7 +300,7 @@ class ValuationDataSource:
 
         for indicator, col_name in indicators:
             try:
-                df = ak.stock_zh_valuation_baidu(symbol=ak_sym, indicator=indicator)
+                df = get_adapter().get_stock_valuation_baidu(symbol=ak_sym, indicator=indicator)
                 if df is not None and not df.empty:
                     df = df.rename(columns={"value": col_name})
                     dfs.append(df)
@@ -353,10 +322,11 @@ class ValuationDataSource:
 
         AkShare: stock_a_lg_indicator (东财估值指标)
         """
+        from jk2bt.data_access import get_adapter
         ak_sym = normalize_symbol(symbol)
 
         try:
-            df = ak.stock_a_lg_indicator(symbol=ak_sym)
+            df = get_adapter().get_stock_valuation(symbol=ak_sym)
             if df is None or df.empty:
                 return pd.DataFrame()
 
@@ -387,12 +357,13 @@ class ValuationDataSource:
         """
         从同花顺接口获取估值数据。
 
-        AkShare: stock_zh_a_spot_em (包含部分估值字段)
+        AkShare: stock_individual_info_em (包含部分估值字段)
         """
+        from jk2bt.data_access import get_adapter
         ak_sym = normalize_symbol(symbol)
 
         try:
-            df = ak.stock_individual_info_em(symbol=ak_sym)
+            df = get_adapter().get_stock_individual_info(symbol=ak_sym)
             if df is None or df.empty:
                 return pd.DataFrame()
 
@@ -577,10 +548,11 @@ class TurnoverDataSource:
 
         使用 stock_zh_a_hist 接口获取日线数据，计算换手率。
         """
+        from jk2bt.data_access import get_adapter
         ak_sym = normalize_symbol(symbol)
 
         try:
-            df = ak.stock_zh_a_hist(symbol=ak_sym, period="daily", adjust="qfq")
+            df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
             if df is None or df.empty:
                 return pd.DataFrame()
 
@@ -606,10 +578,11 @@ class TurnoverDataSource:
 
         AkShare: stock_zh_a_spot_em
         """
+        from jk2bt.data_access import get_adapter
         ak_sym = normalize_symbol(symbol)
 
         try:
-            df = ak.stock_zh_a_spot_em()
+            df = get_adapter().get_spot_em()
             if df is None or df.empty:
                 return pd.DataFrame()
 

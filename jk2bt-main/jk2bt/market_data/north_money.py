@@ -14,13 +14,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-try:
-    import akshare as ak
-
-    AKSHARE_AVAILABLE = True
-except ImportError:
-    AKSHARE_AVAILABLE = False
-    warnings.warn("akshare未安装，北向资金数据将不可用")
+from jk2bt.data_access import get_adapter
 
 
 def get_north_money_flow(
@@ -42,11 +36,11 @@ def get_north_money_flow(
     pd.DataFrame
         北向资金净流入数据，包含日期、净流入金额等
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
+    if not start_date and not end_date:
+        pass  # no filter needed
 
     try:
-        df = ak.stock_em_hsgt_north_net_flow_in(symbol="北上")
+        df = get_adapter().get_hsgt_north_net_flow(symbol="北上")
         if df is not None and not df.empty:
             df = df.rename(
                 columns={
@@ -119,11 +113,8 @@ def get_north_money_holdings(
     pd.DataFrame
         北向资金持股数据
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     try:
-        df = ak.stock_em_hsgt_hold_stock(symbol="北向", indicator="今日")
+        df = get_adapter().get_hsgt_hold_stock(symbol="北向", indicator="今日")
         if df is not None and not df.empty:
             df = df.rename(
                 columns={
@@ -170,8 +161,8 @@ def get_north_money_stock_flow(
     pd.DataFrame
         该股票的北向资金流入数据
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
+    if not start_date and not end_date:
+        pass  # no filter needed
 
     code = (
         symbol.replace("sh", "")
@@ -182,7 +173,7 @@ def get_north_money_stock_flow(
     )
 
     try:
-        df = ak.stock_em_hsgt_individual_stock_flow(stock=code, indicator="北向资金")
+        df = get_adapter().get_hsgt_individual_stock_flow(stock=code, indicator="北向资金")
         if df is not None and not df.empty:
             df = df.rename(
                 columns={

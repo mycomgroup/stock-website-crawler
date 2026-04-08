@@ -935,8 +935,8 @@ def get_cashflow_sina(
             need_download = True
     if need_download:
         try:
-            import akshare as ak
-            df = ak.stock_financial_report_sina(stock=akshare_symbol, symbol="现金流量表")
+            from jk2bt.data_access import get_adapter
+            df = get_adapter().get_financial_report(akshare_symbol, "现金流量表")
         except ImportError:
             raise ImportError("请安装 akshare: pip install akshare")
         if df.empty:
@@ -966,8 +966,8 @@ def get_income_ths(
             need_download = True
     if need_download:
         try:
-            import akshare as ak
-            df = ak.stock_financial_benefit_ths(symbol=akshare_symbol, indicator=indicator)
+            from jk2bt.data_access import get_adapter
+            df = get_adapter().get_financial_benefit(akshare_symbol, indicator)
         except ImportError:
             raise ImportError("请安装 akshare: pip install akshare")
         if df.empty:
@@ -992,8 +992,8 @@ def get_balance_sina(
             need_download = True
     if need_download:
         try:
-            import akshare as ak
-            df = ak.stock_financial_report_sina(stock=akshare_symbol, symbol="资产负债表")
+            from jk2bt.data_access import get_adapter
+            df = get_adapter().get_financial_report(akshare_symbol, "资产负债表")
         except ImportError:
             raise ImportError("请安装 akshare: pip install akshare")
         if df.empty:
@@ -1711,8 +1711,8 @@ def get_all_securities_jq(
             need_dl = True
     if need_dl:
         try:
-            import akshare as ak
-            df = ak.stock_info_a_code_name()
+            from jk2bt.data_access import get_adapter
+            df = get_adapter().get_securities_code_name()
         except ImportError:
             raise ImportError("请安装 akshare: pip install akshare")
         df["code"] = df["code"].apply(
@@ -1873,8 +1873,8 @@ def get_all_trade_days_jq(cache_dir="meta_cache", force_update=False, use_duckdb
             need_dl = True
 
     try:
-        import akshare as ak
-        raw = ak.tool_trade_date_hist_sina()
+        from jk2bt.data_access import get_adapter
+        raw = get_adapter().get_trade_dates()
         if isinstance(raw, pd.DataFrame):
             date_col = _find_date_column(raw, category="market") or "trade_date"
             if date_col in raw.columns:
@@ -1999,8 +1999,8 @@ def get_extras_jq(
                 need_dl = True
         if need_dl:
             try:
-                import akshare as ak
-                st_df = ak.stock_zh_a_st_em()
+                from jk2bt.data_access import get_adapter
+                st_df = get_adapter().get_st_stocks()
                 st_df.to_pickle(cache_file)
             except Exception as e:
                 warnings.warn(f"获取 ST 数据失败: {e}")
@@ -2026,8 +2026,8 @@ def get_extras_jq(
                 need_dl = True
         if need_dl:
             try:
-                import akshare as ak
-                stop_df = ak.stock_zh_a_stop_em()
+                from jk2bt.data_access import get_adapter
+                stop_df = get_adapter().get_suspended_stocks()
                 stop_df.to_pickle(cache_file)
             except Exception as e:
                 warnings.warn(f"获取停牌数据失败: {e}")
@@ -2069,8 +2069,8 @@ def get_billboard_list_jq(
             need_dl = True
     if need_dl:
         try:
-            import akshare as ak
-            df = ak.stock_lhb_detail_em()
+            from jk2bt.data_access import get_adapter
+            df = get_adapter().get_billboard_list(today)
         except ImportError:
             raise ImportError("请安装 akshare: pip install akshare")
         df.to_pickle(cache_file)

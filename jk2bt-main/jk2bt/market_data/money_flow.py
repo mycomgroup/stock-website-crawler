@@ -13,13 +13,8 @@ from typing import Optional, List, Union
 import pandas as pd
 from datetime import datetime, timedelta
 
-try:
-    import akshare as ak
-
-    AKSHARE_AVAILABLE = True
-except ImportError:
-    AKSHARE_AVAILABLE = False
-    warnings.warn("akshare未安装，资金流数据将不可用")
+from jk2bt.data_access import get_adapter
+from jk2bt.utils.symbol import normalize_symbol
 
 
 COLUMN_MAP = {
@@ -80,9 +75,9 @@ def _get_empty_dataframe(fields: Optional[List[str]] = None) -> pd.DataFrame:
     return pd.DataFrame(columns=columns)
 
 
-def _normalize_symbol(symbol: str) -> tuple:
+def _get_code_and_market(symbol: str) -> tuple:
     """
-    标准化股票代码，返回 (code, market) 元组。
+    解析股票代码，返回 (code, market) 元组。
 
     参数
     ----
@@ -154,14 +149,11 @@ def _get_single_stock_flow(
     pd.DataFrame
         资金流数据，失败时返回带 schema 的空表
     """
-    code, market = _normalize_symbol(symbol)
+    code, market = _get_code_and_market(symbol)
     sec_code = f"{market}{code}"
 
-    if not AKSHARE_AVAILABLE:
-        return _get_empty_dataframe(fields)
-
     try:
-        df = ak.stock_individual_fund_flow(stock=code, market=market)
+        df = get_adapter().get_individual_fund_flow(symbol=code, market=market)
 
         if df is None or df.empty:
             return _get_empty_dataframe(fields)

@@ -60,17 +60,14 @@ def get_balance_sheet(
     返回:
         DataFrame，包含资产负债表数据
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     # 标准化代码格式
     code = symbol.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
     try:
         # 尝试获取资产负债表数据
-        df = ak.stock_financial_report_sina(stock=code, symbol="资产负债表")
+        df = get_adapter().get_financial_report(symbol=code, report_type="资产负债表")
 
         if df is None or df.empty:
             return pd.DataFrame(columns=STK_BALANCE_SHEET_SCHEMA)
@@ -144,15 +141,12 @@ def get_income_statement(
     """
     获取利润表数据
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     code = symbol.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
     try:
-        df = ak.stock_financial_report_sina(stock=code, symbol="利润表")
+        df = get_adapter().get_financial_report(symbol=code, report_type="利润表")
 
         if df is None or df.empty:
             return pd.DataFrame(columns=STK_INCOME_STATEMENT_SCHEMA)
@@ -214,15 +208,12 @@ def get_cashflow_statement(
     """
     获取现金流量表数据
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     code = symbol.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
     try:
-        df = ak.stock_financial_report_sina(stock=code, symbol="现金流量表")
+        df = get_adapter().get_financial_report(symbol=code, report_type="现金流量表")
 
         if df is None or df.empty:
             return pd.DataFrame(columns=STK_CASHFLOW_STATEMENT_SCHEMA)
@@ -284,14 +275,11 @@ def get_fund_net_value(
     返回:
         DataFrame，包含基金净值数据
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     try:
         # 获取基金历史净值
-        df = ak.fund_open_fund_info_em(fund=fund_code, indicator="单位净值走势")
+        df = get_adapter().get_fund_net_value_hist(fund_code=fund_code, indicator="单位净值走势")
 
         if df is None or df.empty:
             return pd.DataFrame(columns=FUND_NET_VALUE_SCHEMA)
@@ -352,14 +340,11 @@ def get_fund_portfolio(
     返回:
         DataFrame，包含基金持仓数据
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     try:
         # 获取基金股票持仓
-        df = ak.fund_portfolio_em(fund=fund_code)
+        df = get_adapter().get_fund_portfolio(fund_code=fund_code)
 
         if df is None or df.empty:
             return pd.DataFrame(columns=FUND_PORTFOLIO_SCHEMA)

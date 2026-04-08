@@ -15,26 +15,8 @@ import pandas as pd
 from typing import Optional, List, Union
 import warnings
 
-
-def _get_akshare():
-    """延迟导入 akshare"""
-    try:
-        import akshare as ak
-        return ak
-    except ImportError:
-        warnings.warn("akshare 未安装")
-        return None
-
-
-def _normalize_code(code: str) -> str:
-    """标准化股票代码"""
-    return (
-        code.replace(".XSHG", "")
-        .replace(".XSHE", "")
-        .replace("sh", "")
-        .replace("sz", "")
-        .zfill(6)
-    )
+from jk2bt.data_access import get_adapter, DataSourceError
+from jk2bt.utils.symbol import normalize_symbol as _normalize_code
 
 
 def _to_jq_code(code: str) -> str:
@@ -87,16 +69,12 @@ def bank_indicator(
     >>> df = bank_indicator('600036.XSHG')  # 招商银行
     >>> print(df.columns.tolist())
     """
-    ak = _get_akshare()
-    if ak is None:
-        return _get_empty_indicator_frame("bank")
-
     results = []
 
     try:
         # 方法1: 使用银行专项指标接口
         try:
-            df = ak.stock_bank_indicator_em()
+            df = get_adapter().get_finance_indicator(symbol="bank")
             if df is not None and not df.empty:
                 results.append(_process_bank_data(df, security, fields))
         except Exception:
@@ -111,7 +89,7 @@ def bank_indicator(
             for sec in securities:
                 try:
                     code = _normalize_code(sec)
-                    df = ak.stock_financial_analysis_indicator(symbol=code)
+                    df = get_adapter().get_finance_indicator(symbol=code)
                     if df is not None and not df.empty:
                         processed = _process_financial_data(df, sec, "bank", fields)
                         if not processed.empty:
@@ -240,10 +218,6 @@ def security_indicator(
     ----
     >>> df = security_indicator('600030.XSHG')  # 中信证券
     """
-    ak = _get_akshare()
-    if ak is None:
-        return _get_empty_indicator_frame("security")
-
     results = []
 
     try:
@@ -255,7 +229,7 @@ def security_indicator(
         for sec in securities:
             try:
                 code = _normalize_code(sec)
-                df = ak.stock_financial_analysis_indicator(symbol=code)
+                df = get_adapter().get_finance_indicator(symbol=code)
                 if df is not None and not df.empty:
                     processed = _process_financial_data(df, sec, "security", fields)
                     if not processed.empty:
@@ -328,10 +302,6 @@ def insurance_indicator(
     ----
     >>> df = insurance_indicator('601318.XSHG')  # 中国平安
     """
-    ak = _get_akshare()
-    if ak is None:
-        return _get_empty_indicator_frame("insurance")
-
     results = []
 
     try:
@@ -343,7 +313,7 @@ def insurance_indicator(
         for sec in securities:
             try:
                 code = _normalize_code(sec)
-                df = ak.stock_financial_analysis_indicator(symbol=code)
+                df = get_adapter().get_finance_indicator(symbol=code)
                 if df is not None and not df.empty:
                     processed = _process_financial_data(df, sec, "insurance", fields)
                     if not processed.empty:

@@ -17,28 +17,8 @@ from typing import Optional, List, Union
 import warnings
 from datetime import datetime, timedelta
 
-
-def _get_akshare():
-    """延迟导入 akshare，避免顶层依赖耦合"""
-    try:
-        import akshare as ak
-        return ak
-    except ImportError:
-        warnings.warn("AkShare未安装，龙虎榜功能将不可用")
-        return None
-
-
-def _normalize_symbol(symbol: str) -> str:
-    """
-    将聚宽格式股票代码转换为纯数字代码
-
-    支持: 600519.XSHG -> 600519, 000001.XSHE -> 000001
-    """
-    if symbol is None:
-        return None
-    if "." in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
+from jk2bt.data_access import get_adapter, DataSourceError
+from jk2bt.utils.symbol import normalize_symbol as _normalize_symbol
 
 
 def _jq_symbol(code: str) -> str:
@@ -100,13 +80,6 @@ def get_billboard_list(
         # 获取日期范围内的龙虎榜数据
         df = get_billboard_list(start_date='2024-01-01', end_date='2024-01-31')
     """
-    ak = _get_akshare()
-    if ak is None:
-        return pd.DataFrame(columns=[
-            'code', 'date', 'direction', 'broker_name', 'buy_value',
-            'sell_value', 'net_value', 'buy_ratio', 'sell_ratio', 'reason'
-        ])
-
     # 处理股票代码参数
     if isinstance(stock, str):
         stock_codes = [_normalize_symbol(stock)]
@@ -126,13 +99,10 @@ def get_billboard_list(
 
     try:
         # 尝试获取龙虎榜明细数据
-        # AkShare 接口: stock_lhb_detail_em
-        # 参数: start_date, end_date
+        start_str = start_date.replace("-", "") if start_date else "20200101"
+        end_str = end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d")
 
-        df = ak.stock_lhb_detail_em(
-            start_date=start_date.replace("-", "") if start_date else "20200101",
-            end_date=end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d"),
-        )
+        df = get_adapter().get_billboard_list(start_str)
 
         if df is None or df.empty:
             warnings.warn("龙虎榜数据为空")
@@ -251,15 +221,10 @@ def _get_billboard_detail(
 
     内部函数，获取买卖营业部明细
     """
-    ak = _get_akshare()
-    if ak is None:
-        return pd.DataFrame()
-
     all_details = []
 
     try:
         # 获取龙虎榜每日明细
-        # AkShare 接口: stock_lhb_stock_detail_em
         # 按日期遍历获取
 
         if start_date:
@@ -281,7 +246,7 @@ def _get_billboard_detail(
 
             try:
                 # 获取当日龙虎榜股票列表
-                daily_df = ak.stock_lhb_stock_detail_em(date=date_str)
+                daily_df = get_adapter().get_billboard_list(date_str)
 
                 if daily_df is not None and not daily_df.empty:
                     # 中文列名映射
@@ -373,13 +338,6 @@ def get_institutional_holdings(
         # 获取指定日期的机构持仓
         df = get_institutional_holdings('600519', date='2024-03-31')
     """
-    ak = _get_akshare()
-    if ak is None:
-        return pd.DataFrame(columns=[
-            'code', 'institution_name', 'institution_type', 'holding_shares',
-            'holding_ratio', 'holding_value', 'change_shares', 'change_ratio', 'report_date'
-        ])
-
     # 标准化股票代码
     code = _normalize_symbol(stock)
     jq_code = _jq_symbol(code)
@@ -389,7 +347,7 @@ def get_institutional_holdings(
     try:
         # 尝试获取十大股东数据
         try:
-            df_shareholders = ak.stock_zh_a_gdhs(symbol=code)
+            df_shareholders = get_adapter().get_top10_holders(symbol=code)
 
             if df_shareholders is not None and not df_shareholders.empty:
                 # 中文列名映射
@@ -419,9 +377,7 @@ def get_institutional_holdings(
 
         # 尝试获取机构持股数据
         try:
-            # 尝试不同的 AkShare 接口
-            # stock_institute_hold 接口
-            df_institute = ak.stock_institute_hold(stock=code)
+            df_institute = get_adapter().get_institutional_holders(symbol=code)
 
             if df_institute is not None and not df_institute.empty:
                 # 中文列名映射
@@ -450,7 +406,7 @@ def get_institutional_holdings(
 
         # 尝试获取基金持股数据
         try:
-            df_fund = ak.stock_fund_hold_stock(symbol=code)
+            df_fund = get_adapter().get_fund_hold_stock(symbol=code)
 
             if df_fund is not None and not df_fund.empty:
                 # 中文列名映射

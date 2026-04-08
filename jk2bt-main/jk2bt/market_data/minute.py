@@ -116,17 +116,14 @@ def get_stock_minute(
     akshare_symbol = format_stock_symbol(symbol)
 
     try:
-        import akshare as ak
-
-        raw_df = ak.stock_zh_a_hist_min_em(
+        from jk2bt.data_access import get_adapter as _get_adapter
+        raw_df = _get_adapter().get_stock_minute_raw(
             symbol=akshare_symbol,
             period=akshare_period,
             start_date=start,
             end_date=end,
             adjust=adjust,
         )
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
     except Exception as e:
         raise ValueError(f"{symbol} ({period}): akshare 获取分钟数据失败: {e}")
 
@@ -196,17 +193,14 @@ def get_etf_minute(
     logger.info(f"{symbol} ({period}): 从 akshare 下载分钟数据")
 
     try:
-        import akshare as ak
-
-        raw_df = ak.fund_etf_hist_min_em(
+        from jk2bt.data_access import get_adapter as _get_adapter
+        raw_df = _get_adapter().get_etf_minute_raw(
             symbol=symbol,
             period=akshare_period,
             start_date=start,
             end_date=end,
             adjust="qfq",
         )
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
     except Exception as e:
         raise ValueError(f"{symbol} ({period}): akshare 获取分钟数据失败: {e}")
 

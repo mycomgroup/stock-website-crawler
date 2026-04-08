@@ -16,15 +16,7 @@ import warnings
 from typing import Optional, List, Union, Dict
 from datetime import datetime
 
-
-def _get_akshare():
-    """延迟导入 akshare，避免顶层依赖耦合"""
-    try:
-        import akshare as ak
-        return ak
-    except ImportError:
-        warnings.warn("AkShare 未安装，部分财务 API 将不可用")
-        return None
+from jk2bt.data_access import get_adapter
 
 
 def get_locked_shares(
@@ -52,12 +44,6 @@ def get_locked_shares(
         - unlock_ratio: 解禁比例
         - unlock_value: 解禁市值
     """
-    ak = _get_akshare()
-    if ak is None:
-        return pd.DataFrame(
-            columns=["code", "unlock_date", "unlock_shares", "unlock_ratio", "unlock_value"]
-        )
-
     if isinstance(stock_list, str):
         securities = [stock_list]
     elif stock_list is None:
@@ -66,7 +52,7 @@ def get_locked_shares(
         securities = stock_list
 
     try:
-        df = ak.stock_restricted_release_summary_em()
+        df = get_adapter().get_unlock_summary()
 
         if df is None or df.empty:
             return pd.DataFrame(
@@ -123,12 +109,8 @@ def get_fund_info(
     返回:
         Dict，包含基金信息
     """
-    ak = _get_akshare()
-    if ak is None:
-        return {}
-
     try:
-        df = ak.fund_name_em()
+        df = get_adapter().get_fund_name_list()
 
         if df is None or df.empty:
             return {}

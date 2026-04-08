@@ -333,12 +333,8 @@ def _normalize_weights(df: pd.DataFrame) -> pd.DataFrame:
 def _fetch_from_csindex(index_num: str) -> pd.DataFrame:
     """从中证指数公司获取成分股及权重"""
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.index_stock_cons_weight_csindex(symbol=index_num)
+        from jk2bt.data_access import get_adapter
+        df = get_adapter().get_index_stock_cons_weight_csindex(symbol=index_num)
         if df is not None and not df.empty:
             logger.info(f"[csindex] 成功获取 {index_num} 成分股: {len(df)} 只")
             return df
@@ -350,12 +346,8 @@ def _fetch_from_csindex(index_num: str) -> pd.DataFrame:
 def _fetch_from_sina(index_num: str) -> pd.DataFrame:
     """从新浪财经获取成分股（无权重，使用等权重）"""
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.index_stock_cons(symbol=index_num)
+        from jk2bt.data_access import get_adapter
+        df = get_adapter().get_index_stock_cons(symbol=index_num)
         if df is not None and not df.empty:
             df = df.copy()
             df["权重"] = 100.0 / len(df)
@@ -586,12 +578,8 @@ def get_index_component_history(
 
     if need_download:
         try:
-            try:
-                import akshare as ak
-            except ImportError:
-                raise ImportError("请安装 akshare: pip install akshare")
-
-            df_current = ak.index_stock_cons_weight_csindex(symbol=index_num)
+            from jk2bt.data_access import get_adapter
+            df_current = get_adapter().get_index_stock_cons_weight_csindex(symbol=index_num)
             if df_current is not None and not df_current.empty:
                 result = _normalize_index_history(df_current, jq_index_code)
                 if not result.empty:
@@ -852,12 +840,8 @@ def get_index_info(index_code: str = None) -> pd.DataFrame:
 
     if _INDEX_INFO_CACHE is None:
         try:
-            try:
-                import akshare as ak
-            except ImportError:
-                raise ImportError("请安装 akshare: pip install akshare")
-
-            df = ak.index_stock_info()
+            from jk2bt.data_access import get_adapter
+            df = get_adapter().get_index_stock_info()
             if df is not None and not df.empty:
                 df = df.rename(
                     columns={
@@ -920,12 +904,8 @@ def get_industry_index_stocks(industry_code: str) -> List[str]:
     code_clean = code.replace(".SI", "")
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.index_component_sw(symbol=code_clean)
+        from jk2bt.data_access import get_adapter
+        df = get_adapter().get_index_component_sw(symbol=code_clean)
         if df is not None and not df.empty:
             stocks = []
             for stock_code in df["证券代码"]:

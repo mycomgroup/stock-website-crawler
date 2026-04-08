@@ -6,18 +6,7 @@
 
 from __future__ import annotations
 
-
-def normalize_symbol(symbol: str) -> str:
-    """
-    统一股票代码格式为 6 位数字
-
-    支持: sh600000, sz000001, 600000.XSHG, 000001.XSHE, 600000
-    """
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if symbol.endswith(".XSHG") or symbol.endswith(".XSHE"):
-        return symbol[:6].zfill(6)
-    return symbol.zfill(6)
+from jk2bt.utils.symbol import normalize_symbol  # noqa: F401
 
 
 def get_symbol_prefix(symbol: str) -> str:

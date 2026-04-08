@@ -153,6 +153,12 @@ class DataAccessCacheManager:
         if _UNIFIED_CACHE_AVAILABLE:
             self._backend = get_unified_cache()
             self._backend_type = "unified"
+            # 确保所有数据库域已注册
+            try:
+                from jk2bt.db.cache_config import init_default_cache
+                init_default_cache()
+            except Exception as e:
+                logger.warning(f"初始化默认缓存配置失败: {e}")
             logger.info("使用 UnifiedCacheManager 作为缓存后端")
         else:
             self._backend = SimpleMemoryCache()

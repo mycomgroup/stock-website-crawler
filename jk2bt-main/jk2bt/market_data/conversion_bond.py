@@ -293,15 +293,12 @@ def get_conversion_bond_list(
 
     if need_download:
         try:
-            try:
-                import akshare as ak
-            except ImportError:
-                raise ImportError("请安装 akshare: pip install akshare")
+            from jk2bt.data_access import get_adapter as _get_adapter_cb
 
             results = []
 
             try:
-                df_jsl = ak.bond_cb_jsl()
+                df_jsl = _get_adapter_cb().get_bond_cb_jsl()
                 if df_jsl is not None and not df_jsl.empty:
                     for _, row in df_jsl.iterrows():
                         record = _parse_jsl_row(row, date_str)
@@ -311,7 +308,7 @@ def get_conversion_bond_list(
                 logger.debug(f"bond_cb_jsl 失败: {e}")
 
             try:
-                df_cov = ak.bond_zh_cov()
+                df_cov = _get_adapter_cb().get_conversion_bond_list()
                 if df_cov is not None and not df_cov.empty:
                     for _, row in df_cov.iterrows():
                         record = _parse_cov_row(row, date_str)
@@ -755,12 +752,9 @@ def get_conversion_bond_detail(code: str, use_cache: bool = True) -> RobustResul
         return RobustResult(success=False, reason="可转债代码不能为空", source="input")
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter as _get_adapter_cb
 
-        df = ak.bond_cb_jsl()
+        df = _get_adapter_cb().get_bond_cb_jsl()
         if df is not None and not df.empty:
             df_filtered = df[df["转债代码"].astype(str).str.zfill(6) == bond_code]
             if not df_filtered.empty:
@@ -1055,13 +1049,10 @@ def get_conversion_bond_history(
         return pd.DataFrame()
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter as _get_adapter_cb
 
         symbol_format = _get_bond_symbol_format(bond_code)
-        df = ak.bond_zh_hs_daily(symbol=symbol_format)
+        df = _get_adapter_cb().get_bond_zh_hs_daily(symbol=symbol_format)
         if df is not None and not df.empty:
             df = _standardize_bond_daily(df)
             df["datetime"] = pd.to_datetime(df["datetime"])
@@ -1195,13 +1186,10 @@ def get_conversion_bond_daily(
 
     if need_download:
         try:
-            try:
-                import akshare as ak
-            except ImportError:
-                raise ImportError("请安装 akshare: pip install akshare")
+            from jk2bt.data_access import get_adapter as _get_adapter_cb
 
             symbol_format = _get_bond_symbol_format(bond_code)
-            df = ak.bond_zh_hs_daily(symbol=symbol_format)
+            df = _get_adapter_cb().get_bond_zh_hs_daily(symbol=symbol_format)
 
             if df is None or df.empty:
                 logger.warning(f"可转债 {bond_code} 日线数据为空")

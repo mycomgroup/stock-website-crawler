@@ -49,8 +49,8 @@ _CACHE_FILE_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "
 def _fetch_trading_days_from_akshare() -> List[date]:
     """从akshare获取真实A股交易日历"""
     try:
-        import akshare as ak
-        df = ak.tool_trade_date_hist_sina()
+        from jk2bt.data_access import get_adapter
+        df = get_adapter().get_trade_dates()
         if df is not None and not df.empty:
             # 列名可能是 'trade_date'
             date_col = None

@@ -11,6 +11,8 @@ import warnings
 import pandas as pd
 from datetime import datetime
 
+from jk2bt.utils.symbol import normalize_symbol, format_stock_symbol as format_stock_symbol_for_akshare
+
 # 项目根目录和缓存目录
 _PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 _CACHE_BASE_DIR = os.path.join(_PROJECT_ROOT, "cache")
@@ -61,18 +63,6 @@ def _resolve_cache_dir(cache_dir: str) -> str:
 # =====================================================================
 # 股票代码工具函数
 # =====================================================================
-
-
-def format_stock_symbol_for_akshare(symbol):
-    """
-    将各种格式的股票代码统一转为 6 位纯数字字符串，供 AkShare 使用。
-    支持: sh600000 / sz000001 / 600000.XSHG / 000001.XSHE / 600000 / 000001
-    """
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        symbol = symbol[2:]
-    if symbol.endswith(".XSHG") or symbol.endswith(".XSHE"):
-        symbol = symbol[:6]
-    return symbol.zfill(6)
 
 
 def jq_code_to_ak(code):

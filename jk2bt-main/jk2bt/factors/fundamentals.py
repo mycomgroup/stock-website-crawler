@@ -58,10 +58,7 @@ def _get_income_statement(
     """
     import os
 
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     # 标准化代码
     ak_sym = symbol
@@ -85,7 +82,7 @@ def _get_income_statement(
     if need_dl:
         try:
             # 尝试使用同花顺接口
-            df = ak.stock_financial_benefit_ths(symbol=ak_sym, indicator="按报告期")
+            df = get_adapter().get_financial_benefit(symbol=ak_sym, indicator="按报告期")
             if df is not None and not df.empty:
                 df.to_pickle(cache_file)
             else:
@@ -93,7 +90,7 @@ def _get_income_statement(
         except Exception:
             try:
                 # 回退到新浪接口
-                df = ak.stock_financial_report_sina(stock=ak_sym, symbol="利润表")
+                df = get_adapter().get_financial_report(symbol=ak_sym, report_type="利润表")
                 if df is not None and not df.empty:
                     df.to_pickle(cache_file)
                 else:
@@ -115,10 +112,7 @@ def _get_balance_sheet(
     """
     import os
 
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     ak_sym = symbol
     if symbol.startswith("sh") or symbol.startswith("sz"):
@@ -140,7 +134,7 @@ def _get_balance_sheet(
 
     if need_dl:
         try:
-            df = ak.stock_financial_report_sina(stock=ak_sym, symbol="资产负债表")
+            df = get_adapter().get_financial_report(symbol=ak_sym, report_type="资产负债表")
             if df is not None and not df.empty:
                 df.to_pickle(cache_file)
             else:

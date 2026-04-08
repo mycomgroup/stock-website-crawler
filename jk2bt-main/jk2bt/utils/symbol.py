@@ -22,30 +22,40 @@ def format_stock_symbol(symbol):
     将各种格式的股票代码统一转为 6 位纯数字字符串。
 
     支持: sh600000, sz000001, 600000.XSHG, 000001.XSHE, 600000, 000001
+    以及场外基金 (.OF) 和期货 (.CCFX) 格式
 
     参数:
         symbol: 股票代码（各种格式）
 
     返回:
-        str: 6位纯数字股票代码
+        str: 6位纯数字股票代码（期货代码保留原始格式）
 
     示例:
         format_stock_symbol('sh600000') -> '600000'
         format_stock_symbol('600519.XSHG') -> '600519'
         format_stock_symbol('000001') -> '000001'
+        format_stock_symbol('159001.OF') -> '159001'
     """
     if symbol is None:
         return None
 
-    symbol = str(symbol)
+    symbol = str(symbol).strip()
 
-    # 移除 sh/sz 前缀
-    if symbol.startswith('sh') or symbol.startswith('sz'):
+    # 移除 sh/sz/bj 前缀
+    if symbol.startswith('sh') or symbol.startswith('sz') or symbol.startswith('bj'):
         symbol = symbol[2:]
 
     # 移除 .XSHG/.XSHE 后缀
     if symbol.endswith('.XSHG') or symbol.endswith('.XSHE'):
         symbol = symbol[:6]
+
+    # 移除 .OF 后缀（场外基金）
+    if symbol.upper().endswith('.OF'):
+        symbol = symbol.split('.')[0]
+
+    # .CCFX 期货代码保留原始格式（不做 zfill）
+    if symbol.upper().endswith('.CCFX'):
+        return symbol.split('.')[0]
 
     return symbol.zfill(6)
 

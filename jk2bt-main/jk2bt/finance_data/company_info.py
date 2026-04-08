@@ -482,12 +482,9 @@ def get_security_status(
 
 def _fetch_company_profile(code_num: str) -> Optional[pd.DataFrame]:
     """从 AkShare 获取公司基本信息（带重试机制）"""
+    from jk2bt.data_access import get_adapter
     try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
-    try:
-        df = _retry_akshare_call(ak.stock_individual_info_em, symbol=code_num)
+        df = _retry_akshare_call(get_adapter().get_company_info, symbol=code_num)
         return df
     except Exception as e:
         logger.error(f"[company_profile] 获取失败 {code_num}: {e}")
@@ -496,12 +493,9 @@ def _fetch_company_profile(code_num: str) -> Optional[pd.DataFrame]:
 
 def _fetch_company_industry(code_num: str) -> Optional[pd.DataFrame]:
     """从 AkShare 获取公司行业信息（带重试机制）"""
+    from jk2bt.data_access import get_adapter
     try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
-    try:
-        df = _retry_akshare_call(ak.stock_board_industry_name_em, symbol=code_num)
+        df = _retry_akshare_call(get_adapter().get_company_industry_em, symbol=code_num)
         return df
     except Exception as e:
         logger.warning(f"[company_industry] 获取失败 {code_num}: {e}")
@@ -557,13 +551,10 @@ def _parse_profile_df(df: pd.DataFrame) -> dict:
 
 def _fetch_suspension_data(date_str: str) -> Optional[pd.DataFrame]:
     """获取停牌数据（带重试机制）"""
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
     try:
         date_num = date_str.replace("-", "")
-        df = _retry_akshare_call(ak.stock_tfp_em, date=date_num)
+        df = _retry_akshare_call(get_adapter().get_suspension_em, date=date_num)
         return df
     except Exception as e:
         logger.error(f"[suspension] 获取停牌数据失败 {date_str}: {e}")
@@ -969,13 +960,10 @@ def get_listing_info(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df_sh = ak.stock_info_sh_name_code(symbol="sh")
-            df_sz = ak.stock_info_sz_name_code(symbol="sz")
+            df_sh = get_adapter().get_stock_info_sh_name_code(symbol="sh")
+            df_sz = get_adapter().get_stock_info_sz_name_code(symbol="sz")
             df_all = pd.concat([df_sh, df_sz], ignore_index=True)
             df_all.to_pickle(cache_file)
         except Exception as e:

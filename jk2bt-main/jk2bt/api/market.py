@@ -16,15 +16,7 @@ from datetime import datetime, timedelta
 import warnings
 import logging
 
-
-def _get_akshare():
-    """延迟导入 akshare，作为备用数据源"""
-    try:
-        import akshare as ak
-        return ak
-    except ImportError:
-        warnings.warn("AkShare 未安装，行情 API 备用数据源不可用")
-        return None
+from jk2bt.data_access import get_adapter
 
 try:
     from utils.standardize import (
@@ -166,10 +158,16 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
             except Exception as stock_err:
                 logger.warning(f"{symbol}: market_data.stock 获取失败: {stock_err}，尝试备用数据源")
 
-            # 备用数据源: akshare（延迟导入）
-            ak = _get_akshare()
-            if ak is None:
-                warnings.warn(f"{symbol}: AkShare 未安装，尝试从缓存加载日线数据")
+            # 备用数据源: akshare（通过 adapter）
+            try:
+                df = get_adapter().get_stock_hist(
+                    symbol=ak_sym,
+                    period="daily",
+                    start_date=start_date.replace("-", "") if start_date else "19900101",
+                    end_date=end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d"),
+                    adjust=adjust,
+                )
+            except Exception:
                 try:
                     from .db.duckdb_manager import DuckDBManager
                 except ImportError:
@@ -182,19 +180,6 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                     adjust,
                 )
                 return df
-
-            try:
-                df = ak.stock_zh_a_hist(
-                    symbol=ak_sym,
-                    period="daily",
-                    start_date=start_date.replace("-", "") if start_date else "19900101",
-                    end_date=end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d"),
-                    adjust=adjust,
-                )
-            except ConnectionError as e:
-                raise NetworkError("股票行情网络连接失败", context={"symbol": symbol}) from e
-            except ValueError:
-                return pd.DataFrame()
 
             if df is None or df.empty:
                 return pd.DataFrame()
@@ -621,12 +606,7 @@ def _fetch_valuation_data(symbol, date=None):
     ak_sym = _normalize_symbol(symbol)
 
     try:
-        ak = _get_akshare()
-        if ak is None:
-            warnings.warn(f"{symbol}: AkShare 未安装，无法获取估值数据")
-            return pd.DataFrame()
-
-        df = ak.stock_a_lg_indicator(symbol=ak_sym)
+        df = get_adapter().get_stock_valuation(symbol=ak_sym)
 
         if df is None or df.empty:
             return pd.DataFrame()
@@ -657,11 +637,7 @@ def _fetch_realtime_quote(symbol):
     ak_sym = _normalize_symbol(symbol)
 
     try:
-        ak = _get_akshare()
-        if ak is None:
-            return {}
-
-        df = ak.stock_zh_a_spot_em()
+        df = get_adapter().get_spot_em()
 
         if df is None or df.empty:
             return {}
@@ -703,22 +679,22 @@ def _fetch_tick_data(symbol, count=1000, date=None):
     ak_sym = _normalize_symbol(symbol)
 
     try:
-        ak = _get_akshare()
-        if ak is None:
-            return pd.DataFrame()
-
         try:
-            df = ak.stock_zh_a_tick_tx_js(symbol=ak_sym)
+            df = get_adapter().get_stock_hist(
+                symbol=ak_sym,
+                period="1",
+                start_date=f"{date or datetime.now().strftime('%Y-%m-%d')} 09:30:00",
+                end_date=f"{date or datetime.now().strftime('%Y-%m-%d')} 15:00:00",
+            )
         except Exception:
             prefix = _get_symbol_prefix(symbol)
             today = date or datetime.now().strftime("%Y-%m-%d")
             try:
-                df = ak.stock_zh_a_hist_min_em(
+                df = get_adapter().get_stock_hist(
                     symbol=f"{prefix}{ak_sym}",
                     period="1",
                     start_date=f"{today} 09:30:00",
                     end_date=f"{today} 15:00:00",
-                    adjust="qfq",
                 )
             except Exception:
                 return pd.DataFrame()

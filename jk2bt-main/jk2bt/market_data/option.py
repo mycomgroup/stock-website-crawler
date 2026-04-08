@@ -453,27 +453,24 @@ def get_option_list(
     results = []
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter as _get_adapter_opt
 
         if underlying == "sse":
-            df = ak.option_current_day_sse()
+            df = _get_adapter_opt().get_option_current_day_sse()
             if df is not None and not df.empty:
                 for _, row in df.iterrows():
                     record = _parse_sse_option_row(row, date_str)
                     if record:
                         results.append(record)
         elif underlying == "szse":
-            df = ak.option_current_day_szse()
+            df = _get_adapter_opt().get_option_current_day_szse()
             if df is not None and not df.empty:
                 for _, row in df.iterrows():
                     record = _parse_szse_option_row(row, date_str)
                     if record:
                         results.append(record)
         elif underlying == "cffex":
-            df = ak.option_cffex_hs300_spot_sina()
+            df = _get_adapter_opt().get_option_cffex_hs300_spot()
             if df is not None and not df.empty:
                 for _, row in df.iterrows():
                     call_record = _parse_cffex_option_row(row, date_str, "call")
@@ -645,12 +642,9 @@ def get_option_price(
             return RobustResult(success=True, data=cached_df, source="cache")
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter as _get_adapter_opt
 
-        df_list = ak.option_current_day_sse()
+        df_list = _get_adapter_opt().get_option_current_day_sse()
         if df_list is not None and not df_list.empty:
             df_filtered = df_list[df_list["合约编码"].astype(str) == str(option_code)]
             if not df_filtered.empty:
@@ -672,7 +666,7 @@ def get_option_price(
                 _save_pickle_cache(cache_file, result_df)
                 return RobustResult(success=True, data=result_df, source="network")
 
-        df_szse = ak.option_current_day_szse()
+        df_szse = _get_adapter_opt().get_option_current_day_szse()
         if df_szse is not None and not df_szse.empty:
             df_filtered = df_szse[df_szse["合约编码"].astype(str) == str(option_code)]
             if not df_filtered.empty:
@@ -730,12 +724,9 @@ def get_option_greeks(
             return RobustResult(success=True, data=cached_df, source="cache")
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter as _get_adapter_opt
 
-        df = ak.option_sse_greeks_sina(symbol=str(option_code))
+        df = _get_adapter_opt().get_option_sse_greeks(symbol=str(option_code))
         if df is not None and not df.empty:
             greeks_dict = dict(zip(df["字段"], df["值"]))
 
@@ -869,12 +860,9 @@ def get_option_daily(
                 return RobustResult(success=True, data=cached_df, source="cache")
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter as _get_adapter_opt
 
-        df = ak.option_sse_daily_sina(symbol=str(option_code))
+        df = _get_adapter_opt().get_option_sse_daily(symbol=str(option_code))
 
         if df is not None and not df.empty:
             df = df.copy()

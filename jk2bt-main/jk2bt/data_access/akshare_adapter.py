@@ -795,5 +795,1028 @@ class AkShareAdapter(DataSource):
             "data_sources": self._data_sources,
         }
 
+    # ── ST/停牌 ───────────────────────────────────────────────────
+
+    def get_st_stocks(self) -> pd.DataFrame:
+        """获取 ST 股票列表"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_a_st_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_suspended_stocks(self) -> pd.DataFrame:
+        """获取停牌股票列表"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_a_stop_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 估值 ──────────────────────────────────────────────────────
+
+    def get_index_valuation(self, index_code: str) -> pd.DataFrame:
+        """获取指数估值历史数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.index_value_hist_fina(symbol=index_code)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_valuation(self, symbol: str) -> pd.DataFrame:
+        """获取个股估值数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_a_lg_indicator(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_pe_pb(self, symbol: str) -> pd.DataFrame:
+        """获取个股 PE/PB 数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_a_pe_and_pb(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 融资融券 ──────────────────────────────────────────────────
+
+    def get_margin_detail(self, market: str, date: str) -> pd.DataFrame:
+        """获取融资融券明细。market: 'sh' | 'sz'"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            if market == "sh":
+                return self._akshare.stock_margin_detail_sse(date=date)
+            elif market == "sz":
+                return self._akshare.stock_margin_detail_szse(date=date)
+            else:
+                raise DataSourceError(f"不支持的市场: {market}", source=self.name)
+        except DataSourceError:
+            raise
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_margin_underlying(self, market: str) -> pd.DataFrame:
+        """获取融资融券标的信息。market: 'sh' | 'sz'"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            if market == "sh":
+                return self._akshare.stock_margin_underlying_info_sse()
+            elif market == "sz":
+                return self._akshare.stock_margin_underlying_info_szse()
+            else:
+                raise DataSourceError(f"不支持的市场: {market}", source=self.name)
+        except DataSourceError:
+            raise
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 宏观数据（原始，不含缓存）────────────────────────────────
+
+    def get_macro_raw(self, indicator: str) -> pd.DataFrame:
+        """获取宏观数据原始 DataFrame，不做缓存（缓存由调用方管理）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        _indicator_map = {
+            "pmi":           self._akshare.macro_china_pmi,
+            "cpi":           self._akshare.macro_china_cpi,
+            "ppi":           self._akshare.macro_china_ppi,
+            "gdp":           self._akshare.macro_china_gdp,
+            "m2":            self._akshare.macro_china_m2_yearly,
+            "interest_rate": self._akshare.macro_bank_china_interest_rate,
+            "exchange_rate": self._akshare.macro_china_rmb,
+            "rmb":           self._akshare.macro_china_rmb,
+        }
+        fn = _indicator_map.get(indicator.lower())
+        if fn is None:
+            raise DataSourceError(f"不支持的宏观指标: {indicator}", source=self.name)
+        try:
+            return fn()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 股东数据 ──────────────────────────────────────────────────
+
+    def get_top10_holders(self, symbol: str) -> pd.DataFrame:
+        """获取前十大股东数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_a_gdhs(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_top10_holders_em(self, symbol: str) -> pd.DataFrame:
+        """获取前十大股东数据（东方财富，stock_gdfx_holding_detail_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_gdfx_holding_detail_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_top10_float_holders(self, symbol: str) -> pd.DataFrame:
+        """获取前十大流通股东数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_a_gdhs_detail_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_top10_float_holders_em(self, symbol: str) -> pd.DataFrame:
+        """获取前十大流通股东数据（东方财富，stock_gdfx_free_holding_detail_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_gdfx_free_holding_detail_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_holder_count(self, symbol: str) -> pd.DataFrame:
+        """获取股东人数数据（stock_hold_num_cninfo）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_hold_num_cninfo(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_institutional_holders(self, symbol: str) -> pd.DataFrame:
+        """获取机构持股数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_institute_hold(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 财务报表 ──────────────────────────────────────────────────
+
+    def get_financial_report(self, symbol: str, report_type: str) -> pd.DataFrame:
+        """获取财务报表。report_type: '现金流量表' | '资产负债表' | '利润表'"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_financial_report_sina(
+                stock=symbol, symbol=report_type
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_financial_benefit(self, symbol: str, indicator: str) -> pd.DataFrame:
+        """获取财务效益数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_financial_benefit_ths(
+                symbol=symbol, indicator=indicator
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_cashflow(self, symbol: str) -> pd.DataFrame:
+        """获取现金流数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_financial_report_sina(
+                stock=symbol, symbol="现金流量表"
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 分红/股本变动/解禁 ────────────────────────────────────────
+
+    def get_dividend(self, symbol: str) -> pd.DataFrame:
+        """获取分红数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_dividend_cninfo(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_dividend_fhps(self, symbol: str = None, date: str = None) -> pd.DataFrame:
+        """获取分红送股数据（stock_fhps_em）。symbol 或 date 二选一"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            if symbol is not None:
+                return self._akshare.stock_fhps_em(symbol=symbol)
+            elif date is not None:
+                return self._akshare.stock_fhps_em(date=date)
+            else:
+                return self._akshare.stock_fhps_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_dividend_all(self) -> pd.DataFrame:
+        """获取全市场分红数据（不指定股票）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_dividend_cninfo()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_share_change(self, symbol: str) -> pd.DataFrame:
+        """获取股本变动数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_share_change_cninfo(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_share_change_cninfo(self, symbol: str, start_date: str = None, end_date: str = None) -> pd.DataFrame:
+        """获取巨潮资讯股本变动数据（stock_share_change_cninfo）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            kwargs = {"symbol": symbol}
+            if start_date:
+                kwargs["start_date"] = start_date
+            if end_date:
+                kwargs["end_date"] = end_date
+            return self._akshare.stock_share_change_cninfo(**kwargs)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_shareholder_change_ths(self, symbol: str) -> pd.DataFrame:
+        """获取同花顺股东变动数据（stock_shareholder_change_ths）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_shareholder_change_ths(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_holding_change_em(self, symbol: str = None, date: str = None) -> pd.DataFrame:
+        """获取东方财富股东增减持数据（stock_gdfx_holding_change_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            if symbol is not None:
+                return self._akshare.stock_gdfx_holding_change_em(symbol=symbol)
+            elif date is not None:
+                return self._akshare.stock_gdfx_holding_change_em(date=date)
+            else:
+                return self._akshare.stock_gdfx_holding_change_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_pledge_ratio_em(self, symbol: str) -> pd.DataFrame:
+        """获取股权质押比例数据（stock_gpzy_pledge_ratio_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_gpzy_pledge_ratio_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_equity_mortgage_cninfo(self, symbol: str) -> pd.DataFrame:
+        """获取巨潮资讯股权质押数据（stock_cg_equity_mortgage_cninfo）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_cg_equity_mortgage_cninfo(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_unlock_schedule(self, symbol: str) -> pd.DataFrame:
+        """获取解禁计划数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_restricted_release_detail_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_unlock_queue_sina(self, symbol: str) -> pd.DataFrame:
+        """获取新浪限售股解禁排队数据（stock_restricted_release_queue_sina）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_restricted_release_queue_sina(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_unlock_summary_em(self, symbol: str) -> pd.DataFrame:
+        """获取东方财富限售股解禁汇总数据（stock_restricted_release_summary_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_restricted_release_summary_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_unlock_detail_em(self, start_date: str, end_date: str) -> pd.DataFrame:
+        """获取东方财富限售股解禁明细数据（stock_restricted_release_detail_em by date range）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_restricted_release_detail_em(
+                start_date=start_date, end_date=end_date
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 行情扩展 ──────────────────────────────────────────────────
+
+    def get_spot_em(self) -> pd.DataFrame:
+        """获取全市场实时行情"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_a_spot_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_hist(
+        self,
+        symbol: str,
+        period: str = "daily",
+        start_date: str = "",
+        end_date: str = "",
+        adjust: str = "",
+    ) -> pd.DataFrame:
+        """获取股票历史行情"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_a_hist(
+                symbol=symbol,
+                period=period,
+                start_date=start_date,
+                end_date=end_date,
+                adjust=adjust,
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_trade_dates(self) -> pd.DataFrame:
+        """获取交易日历 DataFrame"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.tool_trade_date_hist_sina()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_securities_code_name(self) -> pd.DataFrame:
+        """获取 A 股代码名称映射"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_info_a_code_name()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_bond_yield(self, start_date: str = "", end_date: str = "") -> pd.DataFrame:
+        """获取债券收益率数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            kwargs = {}
+            if start_date:
+                kwargs["start_date"] = start_date
+            if end_date:
+                kwargs["end_date"] = end_date
+            return self._akshare.bond_china_yield(**kwargs)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_valuation_baidu(self, symbol: str, indicator: str) -> pd.DataFrame:
+        """获取百度股票估值数据（stock_zh_valuation_baidu）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_valuation_baidu(symbol=symbol, indicator=indicator)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_individual_info(self, symbol: str) -> pd.DataFrame:
+        """获取个股基本信息（stock_individual_info_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_individual_info_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_index_daily_raw(self, symbol: str) -> pd.DataFrame:
+        """直接获取指数日线数据（返回 akshare 原始 DataFrame）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_index_daily(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_financial_analysis_indicator(self, symbol: str) -> pd.DataFrame:
+        """获取财务分析指标数据（stock_financial_analysis_indicator）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_financial_analysis_indicator(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 行业/概念 ─────────────────────────────────────────────────
+
+    def get_industry_list(self, source: str = "em") -> pd.DataFrame:
+        """获取行业列表"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            if source == "em":
+                return self._akshare.stock_board_industry_name_em()
+            else:
+                raise DataSourceError(f"不支持的行业数据源: {source}", source=self.name)
+        except DataSourceError:
+            raise
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_industry_components(self, industry_name: str, source: str = "em") -> pd.DataFrame:
+        """获取行业成分股"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            if source == "em":
+                return self._akshare.stock_board_industry_cons_em(symbol=industry_name)
+            else:
+                raise DataSourceError(f"不支持的行业数据源: {source}", source=self.name)
+        except DataSourceError:
+            raise
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_concept_list(self) -> pd.DataFrame:
+        """获取概念板块列表"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_board_concept_name_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_concept_components(self, concept_name: str) -> pd.DataFrame:
+        """获取概念板块成分股"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_board_concept_cons_em(symbol=concept_name)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_sw_industry(self, level: str = "1") -> pd.DataFrame:
+        """获取申万行业数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.sw_index_first_info()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── ETF/LOF/可转债/期货/期权 ──────────────────────────────────
+
+    def get_etf_hist(self, symbol: str) -> pd.DataFrame:
+        """获取 ETF 历史行情"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_etf_hist_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_lof_hist(self, symbol: str) -> pd.DataFrame:
+        """获取 LOF 历史行情"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_lof_hist_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_conversion_bond_list(self, **kwargs) -> pd.DataFrame:
+        """获取可转债列表"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.bond_zh_cov()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_conversion_bond_daily(self, symbol: str) -> pd.DataFrame:
+        """获取可转债日线数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.bond_zh_cov_daily(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_futures_daily(self, contract_code: str) -> pd.DataFrame:
+        """获取期货日线数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.futures_zh_daily_sina(symbol=contract_code)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_option_daily(self, option_code: str) -> pd.DataFrame:
+        """获取期权日线数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.option_finance_board(symbol=option_code)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 龙虎榜/公司信息/预测 ─────────────────────────────────────
+
+    def get_billboard_list(self, date: str) -> pd.DataFrame:
+        """获取龙虎榜数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_lhb_detail_em(start_date=date, end_date=date)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_company_info(self, symbol: str) -> pd.DataFrame:
+        """获取公司基本信息"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_individual_info_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_company_industry_em(self, symbol: str) -> pd.DataFrame:
+        """获取公司行业信息（stock_board_industry_name_em by symbol）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_board_industry_name_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_suspension_em(self, date: str) -> pd.DataFrame:
+        """获取停牌数据（stock_tfp_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_tfp_em(date=date)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_info_sh_name_code(self, symbol: str = "sh") -> pd.DataFrame:
+        """获取上交所股票代码名称（stock_info_sh_name_code）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_info_sh_name_code(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_info_sz_name_code(self, symbol: str = "sz") -> pd.DataFrame:
+        """获取深交所股票代码名称（stock_info_sz_name_code）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_info_sz_name_code(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_forecast(self, symbol: str) -> pd.DataFrame:
+        """获取业绩预告数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_profit_forecast(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_forecast_ths(self, symbol: str, indicator: str) -> pd.DataFrame:
+        """获取同花顺业绩预告数据（stock_profit_forecast_ths）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_profit_forecast_ths(symbol=symbol, indicator=indicator)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 资金流向（板块/排名）─────────────────────────────────────
+
+    def get_sector_money_flow(self, sector_type: str = "industry", indicator: str = "今日") -> pd.DataFrame:
+        """获取板块资金流向排名。sector_type: 'industry' | 'concept'"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            if sector_type == "industry":
+                return self._akshare.stock_board_industry_fund_flow_rank(indicator=indicator)
+            elif sector_type == "concept":
+                return self._akshare.stock_board_concept_fund_flow_rank(indicator=indicator)
+            else:
+                raise DataSourceError(f"不支持的板块类型: {sector_type}", source=self.name)
+        except DataSourceError:
+            raise
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_individual_fund_flow(self, symbol: str, market: str = "sh") -> pd.DataFrame:
+        """获取个股资金流向历史数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_individual_fund_flow(stock=symbol, market=market)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_individual_fund_flow_rank(self, indicator: str = "今日") -> pd.DataFrame:
+        """获取个股资金流向排名"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_individual_fund_flow_rank(indicator=indicator)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 解禁汇总/基金信息 ─────────────────────────────────────────
+
+    def get_unlock_summary(self) -> pd.DataFrame:
+        """获取全市场限售股解禁汇总数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_restricted_release_summary_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_fund_name_list(self) -> pd.DataFrame:
+        """获取基金名称列表"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_name_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_fund_hold_stock(self, symbol: str) -> pd.DataFrame:
+        """获取基金持股数据"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_fund_hold_stock(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 场外基金 ──────────────────────────────────────────────────
+
+    def get_fund_of_nav(self, symbol: str) -> pd.DataFrame:
+        """获取场外基金历史净值（fund_etf_fund_info_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_etf_fund_info_em(fund=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_fund_open_daily(self) -> pd.DataFrame:
+        """获取场外基金当日净值列表（fund_open_fund_daily_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_open_fund_daily_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_fund_open_info(self, symbol: str) -> pd.DataFrame:
+        """获取场外基金基本信息（fund_open_fund_info_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_open_fund_info_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_fund_net_value_hist(self, fund_code: str, indicator: str = "单位净值走势") -> pd.DataFrame:
+        """获取基金历史净值（fund_open_fund_info_em with indicator）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_open_fund_info_em(fund=fund_code, indicator=indicator)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_fund_portfolio(self, fund_code: str) -> pd.DataFrame:
+        """获取基金持仓数据（fund_portfolio_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_portfolio_em(fund=fund_code)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── LOF 扩展 ──────────────────────────────────────────────────
+
+    def get_lof_spot(self) -> pd.DataFrame:
+        """获取 LOF 实时行情列表（fund_lof_spot_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_lof_spot_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_lof_hist_min(
+        self,
+        symbol: str,
+        start_date: str,
+        end_date: str,
+        period: str,
+        adjust: str = "",
+    ) -> pd.DataFrame:
+        """获取 LOF 分钟行情（fund_lof_hist_min_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_lof_hist_min_em(
+                symbol=symbol,
+                start_date=start_date,
+                end_date=end_date,
+                period=period,
+                adjust=adjust,
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 期货扩展 ──────────────────────────────────────────────────
+
+    def get_futures_spot(self) -> pd.DataFrame:
+        """获取期货实时行情（futures_zh_spot）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.futures_zh_spot()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_futures_main_em(self, symbol: str) -> pd.DataFrame:
+        """获取期货主力合约行情（futures_main_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.futures_main_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_futures_sina_main(self, symbol: str) -> pd.DataFrame:
+        """获取新浪期货主力合约（futures_sina_main_sina）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.futures_sina_main_sina(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_futures_display_main(self, symbol: str) -> pd.DataFrame:
+        """获取期货合约列表（futures_display_main_sina）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.futures_display_main_sina(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 北向资金 ──────────────────────────────────────────────────
+
+    def get_hsgt_north_net_flow(self, symbol: str = "北上") -> pd.DataFrame:
+        """获取北向资金净流入（stock_em_hsgt_north_net_flow_in）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_em_hsgt_north_net_flow_in(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_hsgt_hold_stock(self, symbol: str = "北向", indicator: str = "今日") -> pd.DataFrame:
+        """获取北向资金持股统计（stock_em_hsgt_hold_stock）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_em_hsgt_hold_stock(symbol=symbol, indicator=indicator)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_hsgt_individual_stock_flow(self, stock: str, indicator: str = "北向资金") -> pd.DataFrame:
+        """获取个股北向资金流入（stock_em_hsgt_individual_stock_flow）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_em_hsgt_individual_stock_flow(stock=stock, indicator=indicator)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 分钟数据 ──────────────────────────────────────────────────
+
+    def get_stock_minute_raw(
+        self,
+        symbol: str,
+        period: str,
+        start_date: str,
+        end_date: str,
+        adjust: str = "",
+    ) -> pd.DataFrame:
+        """获取股票分钟行情（stock_zh_a_hist_min_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_zh_a_hist_min_em(
+                symbol=symbol,
+                period=period,
+                start_date=start_date,
+                end_date=end_date,
+                adjust=adjust,
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_etf_minute_raw(
+        self,
+        symbol: str,
+        period: str,
+        start_date: str,
+        end_date: str,
+        adjust: str = "qfq",
+    ) -> pd.DataFrame:
+        """获取 ETF 分钟行情（fund_etf_hist_min_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.fund_etf_hist_min_em(
+                symbol=symbol,
+                period=period,
+                start_date=start_date,
+                end_date=end_date,
+                adjust=adjust,
+            )
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 指数成分扩展 ──────────────────────────────────────────────
+
+    def get_index_stock_info(self) -> pd.DataFrame:
+        """获取指数基本信息列表（index_stock_info）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.index_stock_info()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_index_component_sw(self, symbol: str) -> pd.DataFrame:
+        """获取申万行业指数成分股（index_component_sw）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.index_component_sw(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_index_stock_cons(self, symbol: str) -> pd.DataFrame:
+        """获取指数成分股（index_stock_cons）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.index_stock_cons(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_index_stock_cons_weight_csindex(self, symbol: str) -> pd.DataFrame:
+        """获取中证指数成分股及权重（index_stock_cons_weight_csindex）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.index_stock_cons_weight_csindex(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 申万行业扩展 ──────────────────────────────────────────────
+
+    def get_sw_index_info(self) -> pd.DataFrame:
+        """获取申万行业指数信息（sw_index_info）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.sw_index_info()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_sw_index_cons(self, index_code: str) -> pd.DataFrame:
+        """获取申万行业指数成分股（sw_index_cons）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.sw_index_cons(index_code=index_code)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_sw_index_daily(self, index_code: str) -> pd.DataFrame:
+        """获取申万行业指数日线行情（sw_index_daily）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.sw_index_daily(index_code=index_code)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_sw_index_daily_spot(self) -> pd.DataFrame:
+        """获取申万行业指数实时行情（sw_index_daily_spot）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.sw_index_daily_spot()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 期权扩展 ──────────────────────────────────────────────────
+
+    def get_option_current_day_sse(self) -> pd.DataFrame:
+        """获取上交所期权当日行情（option_current_day_sse）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.option_current_day_sse()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_option_current_day_szse(self) -> pd.DataFrame:
+        """获取深交所期权当日行情（option_current_day_szse）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.option_current_day_szse()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_option_cffex_hs300_spot(self) -> pd.DataFrame:
+        """获取中金所沪深300期权行情（option_cffex_hs300_spot_sina）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.option_cffex_hs300_spot_sina()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_option_sse_greeks(self, symbol: str) -> pd.DataFrame:
+        """获取上交所期权希腊字母（option_sse_greeks_sina）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.option_sse_greeks_sina(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_option_sse_daily(self, symbol: str) -> pd.DataFrame:
+        """获取上交所期权日线数据（option_sse_daily_sina）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.option_sse_daily_sina(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    # ── 可转债扩展 ────────────────────────────────────────────────
+
+    def get_bond_cb_jsl(self) -> pd.DataFrame:
+        """获取可转债数据（bond_cb_jsl）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.bond_cb_jsl()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_bond_zh_hs_daily(self, symbol: str) -> pd.DataFrame:
+        """获取可转债历史行情（bond_zh_hs_daily）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.bond_zh_hs_daily(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
 
 __all__ = ["AkShareAdapter"]

@@ -39,15 +39,7 @@ try:
 except ImportError:
     from utils.date_utils import find_date_column
 
-
-def _normalize_symbol(symbol: str) -> str:
-    """标准化股票代码为6位数字格式。"""
-    ak_sym = symbol
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        ak_sym = symbol[2:]
-    if symbol.endswith(".XSHG") or symbol.endswith(".XSHE"):
-        ak_sym = symbol[:6]
-    return ak_sym.zfill(6)
+from jk2bt.utils.symbol import normalize_symbol as _normalize_symbol
 
 
 def _validate_valuation_data(df: pd.DataFrame, symbol: str) -> Dict:
@@ -158,13 +150,14 @@ def _clean_valuation_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _fetch_valuation_from_baidu(ak: object, ak_sym: str) -> pd.DataFrame:
+def _fetch_valuation_from_baidu(ak_sym: str) -> pd.DataFrame:
     """
     从 stock_zh_valuation_baidu 接口获取估值数据。
 
     实际可用指标：总市值、市净率
     其他指标（流通市值、市盈率、市销率）接口不支持。
     """
+    from jk2bt.data_access import get_adapter
     dfs = []
 
     # 已验证可用的指标
@@ -175,7 +168,7 @@ def _fetch_valuation_from_baidu(ak: object, ak_sym: str) -> pd.DataFrame:
 
     for indicator, col_name in available_indicators.items():
         try:
-            df_tmp = ak.stock_zh_valuation_baidu(symbol=ak_sym, indicator=indicator)
+            df_tmp = get_adapter().get_stock_valuation_baidu(symbol=ak_sym, indicator=indicator)
             if df_tmp is not None and not df_tmp.empty:
                 df_tmp = df_tmp.rename(columns={"value": col_name})
                 dfs.append(df_tmp)
@@ -239,10 +232,10 @@ def _estimate_circulating_market_cap_from_daily(
 
             # market_data 可能没有换手率，需要额外获取或使用默认值
             if "turnover_rate" not in df.columns:
-                # 尝试从 akshare 获取换手率
+                # 尝试从 adapter 获取换手率
                 try:
-                    import akshare as ak
-                    df_ak = ak.stock_zh_a_hist(symbol=ak_sym, period="daily", adjust="qfq")
+                    from jk2bt.data_access import get_adapter
+                    df_ak = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
                     if df_ak is not None and "换手率" in df_ak.columns:
                         # 合并换手率数据
                         df_ak = df_ak.rename(columns={"日期": "date"})
@@ -267,14 +260,11 @@ def _estimate_circulating_market_cap_from_daily(
     except Exception as e:
         warnings.warn(f"market_data 模块获取数据失败 {symbol}: {e}，fallback 到 akshare")
 
-    # Fallback: 使用 akshare 直接获取
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    # Fallback: 使用 adapter 直接获取
+    from jk2bt.data_access import get_adapter
 
     try:
-        df = ak.stock_zh_a_hist(symbol=ak_sym, period="daily", adjust="qfq")
+        df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
         if df is None or df.empty:
             return pd.DataFrame()
 
@@ -326,10 +316,7 @@ def _get_valuation_raw(
     """
     import os
 
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     ak_sym = _normalize_symbol(symbol)
     cache_file = os.path.join(cache_dir, f"{symbol}_valuation.pkl")
@@ -344,10 +331,9 @@ def _get_valuation_raw(
             need_dl = True
 
     if need_dl:
-        # 1. 获取估值数据（总市值、市净率）- 使用 akshare
+        # 1. 获取估值数据（总市值、市净率）- 使用 adapter
         try:
-            import akshare as ak
-            df_val = _fetch_valuation_from_baidu(ak, ak_sym)
+            df_val = _fetch_valuation_from_baidu(ak_sym)
         except Exception as e:
             warnings.warn(f"获取百度估值数据失败 {symbol}: {e}")
             df_val = pd.DataFrame()
@@ -631,10 +617,7 @@ def compute_pcf_ratio(
     近似实现：使用 AkShare 的估值数据接口
     """
     import os
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     ak_sym = _normalize_symbol(symbol)
     cache_file = os.path.join(cache_dir, f"{symbol}_pcf.pkl")
@@ -651,8 +634,9 @@ def compute_pcf_ratio(
 
     if need_dl:
         try:
-            # 尝试从百度估值接口获取市现率
-            df_tmp = ak.stock_zh_valuation_baidu(symbol=ak_sym, indicator="市现率")
+            # 尝试从百度估值接口获取市现率（通过 adapter）
+            from jk2bt.data_access import get_adapter
+            df_tmp = get_adapter().get_stock_valuation_baidu(symbol=ak_sym, indicator="市现率")
             if df_tmp is not None and not df_tmp.empty:
                 df = df_tmp.rename(columns={"value": "pcf_ratio"})
                 if "date" in df.columns:

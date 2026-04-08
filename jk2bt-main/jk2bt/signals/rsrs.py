@@ -156,10 +156,7 @@ def get_rsrs_for_index(
     pd.DataFrame
         包含 RSRS 指标和择时信号
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
 
     if end_date is None:
         end_date = datetime.now().strftime("%Y-%m-%d")
@@ -172,7 +169,7 @@ def get_rsrs_for_index(
         )
 
     try:
-        df = ak.stock_zh_index_daily(symbol=f"sh{index_code}")
+        df = get_adapter().get_index_daily_raw(symbol=f"sh{index_code}")
 
         if df is not None and not df.empty:
             df = df.rename(

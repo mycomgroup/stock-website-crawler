@@ -327,15 +327,12 @@ def get_unlock(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             results = []
 
             try:
-                df_queue = ak.stock_restricted_release_queue_sina(symbol=code_num)
+                df_queue = get_adapter().get_unlock_queue_sina(symbol=code_num)
                 if df_queue is not None and not df_queue.empty:
                     for _, row in df_queue.iterrows():
                         record = _parse_queue_row(row, jq_code)
@@ -345,7 +342,7 @@ def get_unlock(
                 logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
 
             try:
-                df_summary = ak.stock_restricted_release_summary_em(symbol=code_num)
+                df_summary = get_adapter().get_unlock_summary_em(symbol=code_num)
                 if df_summary is not None and not df_summary.empty:
                     for _, row in df_summary.iterrows():
                         record = _parse_summary_row(row, jq_code)
@@ -515,13 +512,10 @@ def get_unlock_calendar(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             date_num = date.replace("-", "")
-            df = ak.stock_restricted_release_detail_em(
+            df = get_adapter().get_unlock_detail_em(
                 start_date=date_num, end_date=date_num
             )
             if df is not None and not df.empty:
@@ -855,16 +849,13 @@ def get_unlock_info(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             results = []
             source_used = "network"
 
             try:
-                df_queue = ak.stock_restricted_release_queue_sina(symbol=code_num)
+                df_queue = get_adapter().get_unlock_queue_sina(symbol=code_num)
                 if df_queue is not None and not df_queue.empty:
                     for _, row in df_queue.iterrows():
                         record = _parse_queue_row(row, jq_code)
@@ -874,7 +865,7 @@ def get_unlock_info(
                 logger.debug(f"stock_restricted_release_queue_sina 失败: {e1}")
 
             try:
-                df_summary = ak.stock_restricted_release_summary_em(symbol=code_num)
+                df_summary = get_adapter().get_unlock_summary_em(symbol=code_num)
                 if df_summary is not None and not df_summary.empty:
                     for _, row in df_summary.iterrows():
                         record = _parse_summary_row(row, jq_code)
@@ -987,14 +978,11 @@ def get_upcoming_unlocks(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             start_num = start_date.replace("-", "")
             end_num = end_date.replace("-", "")
-            df = ak.stock_restricted_release_detail_em(
+            df = get_adapter().get_unlock_detail_em(
                 start_date=start_num, end_date=end_num
             )
             if df is not None and not df.empty:
@@ -1123,14 +1111,11 @@ def query_lock_share(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             results = []
             try:
-                df_queue = ak.stock_restricted_release_queue_sina(symbol=code_num)
+                df_queue = get_adapter().get_unlock_queue_sina(symbol=code_num)
                 if df_queue is not None and not df_queue.empty:
                     for _, row in df_queue.iterrows():
                         record = _parse_lock_share_row(row, jq_code)
@@ -1140,7 +1125,7 @@ def query_lock_share(
                 logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
 
             try:
-                df_summary = ak.stock_restricted_release_summary_em(symbol=code_num)
+                df_summary = get_adapter().get_unlock_summary_em(symbol=code_num)
                 if df_summary is not None and not df_summary.empty:
                     for _, row in df_summary.iterrows():
                         record = _parse_lock_share_summary_row(row, jq_code)

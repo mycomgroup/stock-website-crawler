@@ -53,15 +53,12 @@ def get_forecast_data(symbol, cache_dir="finance_cache", force_update=False):
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             dfs = []
 
             try:
-                df_predict = ak.stock_profit_forecast_ths(
+                df_predict = get_adapter().get_forecast_ths(
                     symbol=code_num, indicator="预测年报每股收益"
                 )
                 if df_predict is not None and not df_predict.empty:
@@ -71,7 +68,7 @@ def get_forecast_data(symbol, cache_dir="finance_cache", force_update=False):
                 print(f"[forecast] 预测每股收益获取失败: {e}")
 
             try:
-                df_forecast = ak.stock_profit_forecast_ths(
+                df_forecast = get_adapter().get_forecast_ths(
                     symbol=code_num, indicator="业绩预告"
                 )
                 if df_forecast is not None and not df_forecast.empty:
@@ -81,7 +78,7 @@ def get_forecast_data(symbol, cache_dir="finance_cache", force_update=False):
                 pass
 
             try:
-                df_quick = ak.stock_profit_forecast_ths(
+                df_quick = get_adapter().get_forecast_ths(
                     symbol=code_num, indicator="业绩快报"
                 )
                 if df_quick is not None and not df_quick.empty:
