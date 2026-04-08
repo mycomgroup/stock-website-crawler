@@ -335,12 +335,9 @@ def get_share_change(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.stock_shareholder_change_ths(symbol=code_num)
+            df = get_adapter().get_shareholder_change_ths(symbol=code_num)
             if df is not None and not df.empty:
                 result = _normalize_share_change(df, jq_code)
                 if not result.empty:
@@ -543,12 +540,9 @@ def get_pledge_info(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df_raw = ak.stock_gpzy_pledge_ratio_em(symbol=code_num)
+            df_raw = get_adapter().get_pledge_ratio_em(symbol=code_num)
             if df_raw is not None and not df_raw.empty:
                 result = pd.DataFrame()
                 result["code"] = [jq_code] * len(df_raw)
@@ -768,12 +762,9 @@ def _fetch_shareholder_changes_from_akshare(
     code_num: str, jq_code: str
 ) -> Optional[pd.DataFrame]:
     """从 akshare 获取股东增减持数据"""
+    from jk2bt.data_access import get_adapter
     try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
-    try:
-        df = ak.stock_gdfx_holding_change_em(symbol=code_num)
+        df = get_adapter().get_holding_change_em(symbol=code_num)
         if df is not None and not df.empty:
             return _normalize_shareholder_changes(df, jq_code)
     except Exception as e:
@@ -782,7 +773,7 @@ def _fetch_shareholder_changes_from_akshare(
     try:
         end_date = datetime.now().strftime("%Y%m%d")
         start_date = (datetime.now() - timedelta(days=365)).strftime("%Y%m%d")
-        df = ak.stock_share_change_cninfo(
+        df = get_adapter().get_share_change_cninfo(
             symbol=code_num, start_date=start_date, end_date=end_date
         )
         if df is not None and not df.empty:
@@ -990,14 +981,11 @@ def get_insider_trading(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             df_raw = None
             try:
-                df_raw = ak.stock_gdfx_holding_change_em(symbol=code_num)
+                df_raw = get_adapter().get_holding_change_em(symbol=code_num)
             except Exception as e1:
                 logger.warning(f"stock_gdfx_holding_change_em 失败: {e1}")
                 try:
@@ -1005,7 +993,7 @@ def get_insider_trading(
                     start_date_str = (datetime.now() - timedelta(days=365)).strftime(
                         "%Y%m%d"
                     )
-                    df_raw = ak.stock_share_change_cninfo(
+                    df_raw = get_adapter().get_share_change_cninfo(
                         symbol=code_num,
                         start_date=start_date_str,
                         end_date=end_date_str,
@@ -1387,19 +1375,16 @@ def get_freeze_info(
 
 def _fetch_freeze_data_from_akshare(code_num: str) -> Optional[pd.DataFrame]:
     """从 akshare 获取冻结数据"""
+    from jk2bt.data_access import get_adapter
     try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
-    try:
-        df = ak.stock_cg_equity_mortgage_cninfo(symbol=code_num)
+        df = get_adapter().get_equity_mortgage_cninfo(symbol=code_num)
         if df is not None and not df.empty:
             return df
     except Exception as e:
         logger.warning(f"stock_cg_equity_mortgage_cninfo 失败: {e}")
 
     try:
-        df = ak.stock_shareholder_change_ths(symbol=code_num)
+        df = get_adapter().get_shareholder_change_ths(symbol=code_num)
         if df is not None and not df.empty:
             freeze_cols = [c for c in df.columns if "冻结" in c or "质押" in c]
             if freeze_cols:
@@ -1533,16 +1518,13 @@ def _fetch_capital_change_from_akshare(
     code_num: str, start_date: str = None, end_date: str = None
 ) -> Optional[pd.DataFrame]:
     """从 akshare 获取股本变动数据"""
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    from jk2bt.data_access import get_adapter
     try:
         if start_date is None:
             start_date = (datetime.now() - timedelta(days=365 * 3)).strftime("%Y%m%d")
         if end_date is None:
             end_date = datetime.now().strftime("%Y%m%d")
-        df = ak.stock_share_change_cninfo(
+        df = get_adapter().get_share_change_cninfo(
             symbol=code_num, start_date=start_date, end_date=end_date
         )
         if df is not None and not df.empty:
@@ -1696,12 +1678,9 @@ def get_topholder_change(
 
 def _fetch_topholder_change_from_akshare(code_num: str) -> Optional[pd.DataFrame]:
     """从 akshare 获取前十大股东变动数据"""
+    from jk2bt.data_access import get_adapter
     try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
-    try:
-        df = ak.stock_gdfx_holding_change_em(date=datetime.now().strftime("%Y%m%d"))
+        df = get_adapter().get_holding_change_em(date=datetime.now().strftime("%Y%m%d"))
         if df is not None and not df.empty:
             code_filter = (
                 df[df["股票代码"] == code_num] if "股票代码" in df.columns else df
@@ -1711,7 +1690,7 @@ def _fetch_topholder_change_from_akshare(code_num: str) -> Optional[pd.DataFrame
         logger.warning(f"stock_gdfx_holding_change_em 失败: {e}")
 
     try:
-        df = ak.stock_shareholder_change_ths(symbol=code_num)
+        df = get_adapter().get_shareholder_change_ths(symbol=code_num)
         if df is not None and not df.empty:
             return df
     except Exception as e:

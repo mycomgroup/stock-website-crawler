@@ -105,13 +105,13 @@ def get_fund_of_nav(
         数据获取失败或返回空数据
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
     try:
         logger.info(f"{symbol}: 从 akshare 获取场外基金净值数据")
-        raw_df = ak.fund_etf_fund_info_em(fund=symbol)
+        raw_df = get_adapter().get_fund_of_nav(symbol=symbol)
 
         if raw_df is None or raw_df.empty:
             raise ValueError(f"{symbol}: 基金净值数据为空")
@@ -147,12 +147,12 @@ def get_fund_of_daily_list() -> pd.DataFrame:
         当日所有场外基金的净值数据
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
     try:
-        df = ak.fund_open_fund_daily_em()
+        df = get_adapter().get_fund_open_daily()
         logger.info(f"获取场外基金当日净值列表，共 {len(df)} 只基金")
         return df
     except Exception as e:
@@ -175,12 +175,12 @@ def get_fund_of_info(symbol: str) -> dict:
         基金基本信息，如基金名称、类型、管理人等
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
     try:
-        df = ak.fund_open_fund_info_em(symbol=symbol)
+        df = get_adapter().get_fund_open_info(symbol=symbol)
         if df is None or df.empty:
             return {}
 

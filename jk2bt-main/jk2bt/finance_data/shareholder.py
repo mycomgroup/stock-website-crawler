@@ -498,18 +498,15 @@ def get_top_shareholders(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             df_raw = None
             try:
-                df_raw = ak.stock_gdfx_holding_detail_em(symbol=code_num)
+                df_raw = get_adapter().get_top10_holders_em(symbol=code_num)
             except Exception as e1:
                 logger.warning(f"stock_gdfx_holding_detail_em 失败: {e1}")
                 try:
-                    df_raw = ak.stock_zh_a_gdhs(symbol=code_num)
+                    df_raw = get_adapter().get_top10_holders(symbol=code_num)
                 except Exception as e2:
                     logger.warning(f"stock_zh_a_gdhs 失败: {e2}")
 
@@ -579,14 +576,11 @@ def get_top_float_shareholders(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             df_raw = None
             try:
-                df_raw = ak.stock_gdfx_free_holding_detail_em(symbol=code_num)
+                df_raw = get_adapter().get_top10_float_holders_em(symbol=code_num)
             except Exception as e1:
                 logger.warning(f"stock_gdfx_free_holding_detail_em 失败: {e1}")
 
@@ -917,19 +911,16 @@ def get_shareholders(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             df_raw = None
             source_used = "network"
             try:
-                df_raw = ak.stock_zh_a_gdhs(symbol=code_num)
+                df_raw = get_adapter().get_top10_holders(symbol=code_num)
             except Exception as e1:
                 logger.warning(f"[get_shareholders] stock_zh_a_gdhs 失败: {e1}")
                 try:
-                    df_raw = ak.stock_share_change_cninfo(symbol=code_num)
+                    df_raw = get_adapter().get_share_change(symbol=code_num)
                 except Exception as e2:
                     logger.warning(
                         f"[get_shareholders] stock_share_change_cninfo 失败: {e2}"
@@ -1158,12 +1149,9 @@ def get_top10_shareholders(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.stock_gdfx_holding_detail_em(symbol=code_num)
+            df = get_adapter().get_top10_holders_em(symbol=code_num)
             if df is not None and not df.empty:
                 result = _normalize_top10_holders(df, jq_code)
                 result.to_pickle(cache_file)
@@ -1200,12 +1188,9 @@ def get_top10_float_shareholders(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.stock_gdfx_free_holding_detail_em(symbol=code_num)
+            df = get_adapter().get_top10_float_holders_em(symbol=code_num)
             if df is not None and not df.empty:
                 result = _normalize_top10_float_holders(df, jq_code)
                 result.to_pickle(cache_file)
@@ -1239,12 +1224,9 @@ def get_shareholder_count(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.stock_hold_num_cninfo(symbol=code_num)
+            df = get_adapter().get_holder_count(symbol=code_num)
             if df is not None and not df.empty:
                 result = _normalize_holder_count(df, jq_code)
                 result.to_pickle(cache_file)

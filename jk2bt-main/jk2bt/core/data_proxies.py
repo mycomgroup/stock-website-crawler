@@ -664,9 +664,8 @@ class _CurrentDataEntry:
         ak_code = format_stock_symbol_for_akshare(code)
 
         try:
-            # 延迟导入 akshare（data_access 暂未提供停牌查询方法）
-            import akshare as ak
-            stop_df = ak.stock_zh_a_stop_em()
+            from jk2bt.data_access import get_adapter
+            stop_df = get_adapter().get_suspended_stocks()
             if stop_df is not None and not stop_df.empty:
                 self._paused_cache = ak_code in stop_df["代码"].values
                 return self._paused_cache
@@ -695,9 +694,8 @@ class _CurrentDataEntry:
         ak_code = format_stock_symbol_for_akshare(code)
 
         try:
-            # 延迟导入 akshare（data_access 暂未提供 ST 查询方法）
-            import akshare as ak
-            st_df = ak.stock_zh_a_st_em()
+            from jk2bt.data_access import get_adapter
+            st_df = get_adapter().get_st_stocks()
             if st_df is not None and not st_df.empty:
                 self._is_st_cache = ak_code in st_df["代码"].values
                 return self._is_st_cache

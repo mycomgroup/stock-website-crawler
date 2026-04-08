@@ -365,12 +365,9 @@ def get_macro_china_pmi(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.macro_china_pmi()
+            df = get_adapter().get_macro_raw("pmi")
             if df is not None and not df.empty:
                 result = _normalize_macro_data(df, indicator, "%")
                 if not result.empty:
@@ -456,12 +453,9 @@ def get_macro_china_exchange_rate(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.macro_china_rmb()
+            df = get_adapter().get_macro_raw("exchange_rate")
             if df is not None and not df.empty:
                 result = _normalize_macro_data(df, indicator, "")
                 if not result.empty:
@@ -566,12 +560,9 @@ def get_macro_cpi(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.macro_china_cpi()
+            df = get_adapter().get_macro_raw("cpi")
             if df is not None and not df.empty:
                 result = _normalize_macro_data(df, indicator, "%")
                 if not result.empty:
@@ -619,12 +610,9 @@ def get_macro_ppi(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.macro_china_ppi()
+            df = get_adapter().get_macro_raw("ppi")
             if df is not None and not df.empty:
                 result = _normalize_macro_data(df, indicator, "%")
                 if not result.empty:
@@ -672,12 +660,9 @@ def get_macro_gdp(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.macro_china_gdp()
+            df = get_adapter().get_macro_raw("gdp")
             if df is not None and not df.empty:
                 result = _normalize_macro_data(df, indicator, "亿元")
                 if not result.empty:
@@ -790,12 +775,9 @@ def get_macro_m2(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.macro_china_m2_yearly()
+            df = get_adapter().get_macro_raw("m2")
             if df is not None and not df.empty:
                 result = _normalize_macro_data(df, indicator, "亿元")
                 if not result.empty:
@@ -853,12 +835,9 @@ def get_macro_interest_rate(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df = ak.macro_bank_china_interest_rate()
+            df = get_adapter().get_macro_raw("interest_rate")
             if df is not None and not df.empty:
                 result = _normalize_macro_data(df, indicator, "%")
                 if not result.empty:

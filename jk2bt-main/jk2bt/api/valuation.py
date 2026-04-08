@@ -13,6 +13,8 @@ import pandas as pd
 from typing import Optional, List, Union
 import warnings
 
+from jk2bt.data_access import get_adapter, DataSourceError
+
 
 def get_index_valuation(
     index_code: str,
@@ -60,18 +62,12 @@ def get_index_valuation(
     >>> df = get_index_valuation('000300.XSHG', start_date='2024-01-01', end_date='2024-01-31')
     >>> print(df.head())
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        warnings.warn("akshare 未安装")
-        return _get_empty_valuation_frame()
-
     # 标准化指数代码
     code = _normalize_index_code(index_code)
 
     try:
         # 使用指数估值接口
-        df = ak.index_value_hist_fina(symbol=code)
+        df = get_adapter().get_index_valuation(code)
 
         if df is not None and not df.empty:
             # 标准化列名
@@ -132,12 +128,17 @@ def _get_valuation_from_backup(
 ) -> pd.DataFrame:
     """备用方法获取估值数据"""
     try:
-        import akshare as ak
-
         code = _normalize_index_code(index_code)
 
         # 尝试从指数行情计算
-        df = ak.stock_zh_index_daily(symbol=f"sh{code}")
+        try:
+            df = get_adapter().get_index_daily(
+                symbol=f"sh{code}",
+                start_date=start_date or "1990-01-01",
+                end_date=end_date or pd.Timestamp.now().strftime("%Y-%m-%d"),
+            )
+        except Exception:
+            return _get_empty_valuation_frame()
 
         if df is not None and not df.empty:
             # 使用收盘价作为估值的代理变量
@@ -225,12 +226,10 @@ def _get_stock_valuation(
 ) -> pd.DataFrame:
     """获取股票估值数据"""
     try:
-        import akshare as ak
-
         code = security.replace(".XSHG", "").replace(".XSHE", "").replace("sh", "").replace("sz", "")
 
         # 使用个股估值接口
-        df = ak.stock_a_lg_indicator(symbol=code)
+        df = get_adapter().get_stock_valuation(symbol=code)
 
         if df is not None and not df.empty:
             result = pd.DataFrame()

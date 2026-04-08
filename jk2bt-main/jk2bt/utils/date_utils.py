@@ -110,15 +110,10 @@ def get_all_trade_days(cache_dir="meta_cache", force_update=False, use_duckdb=Tr
         except Exception:
             need_dl = True
 
-    # 从 AkShare 下载（延迟导入）
+    # 从 AkShare 下载（通过适配器）
     try:
-        import akshare as ak
-    except ImportError:
-        logger.warning("请安装 akshare: pip install akshare")
-        return pd.DatetimeIndex([])
-
-    try:
-        df = ak.tool_trade_date_hist_sina()
+        from jk2bt.data_access import get_adapter
+        df = get_adapter().get_trade_dates()
         df.to_pickle(cache_file)
         return pd.DatetimeIndex(pd.to_datetime(df["trade_date"]).tolist())
     except Exception as e:

@@ -60,7 +60,7 @@ def get_lof_daily(
         数据获取失败或返回空数据
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
@@ -77,13 +77,7 @@ def get_lof_daily(
             logger.info(
                 f"{symbol}: 尝试从 akshare 获取 LOF 数据 (第 {attempt + 1}/{retry_count} 次)"
             )
-            raw_df = ak.fund_lof_hist_em(
-                symbol=symbol,
-                period=period,
-                start_date=start_date,
-                end_date=end_date,
-                adjust=adjust,
-            )
+            raw_df = get_adapter().get_lof_hist(symbol=symbol)
 
             if raw_df is not None and not raw_df.empty:
                 break
@@ -147,12 +141,12 @@ def get_lof_spot() -> pd.DataFrame:
         LOF 实时行情数据，包含：代码、名称、最新价、涨跌幅等
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
     try:
-        df = ak.fund_lof_spot_em()
+        df = get_adapter().get_lof_spot()
         logger.info(f"获取 LOF 实时行情，共 {len(df)} 条")
         return df
     except Exception as e:
@@ -192,7 +186,7 @@ def get_lof_min(
         分钟级别 OHLCV 数据
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
@@ -203,7 +197,7 @@ def get_lof_min(
 
     for attempt in range(retry_count):
         try:
-            raw_df = ak.fund_lof_hist_min_em(
+            raw_df = get_adapter().get_lof_hist_min(
                 symbol=symbol,
                 start_date=start,
                 end_date=end,
@@ -271,13 +265,13 @@ def get_lof_nav(
         datetime, unit_nav, acc_nav, daily_growth_rate, purchase_status, redeem_status
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
     try:
         logger.info(f"{symbol}: 获取 LOF 净值数据")
-        raw_df = ak.fund_etf_fund_info_em(fund=symbol)
+        raw_df = get_adapter().get_fund_of_nav(symbol=symbol)
 
         if raw_df is None or raw_df.empty:
             raise ValueError(f"{symbol}: LOF 净值数据为空")

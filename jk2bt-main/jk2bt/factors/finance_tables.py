@@ -133,14 +133,11 @@ class STK_ML_QUOTA(FinanceTable):
         **kwargs,
     ) -> pd.DataFrame:
         """查询北向资金额度。"""
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
 
         try:
             # 获取沪股通/深股通额度数据
-            df = ak.stock_hsgt_north_net_flow_in_em()
+            df = get_adapter().get_north_money_flow()
             if df is None or df.empty:
                 return pd.DataFrame()
 
@@ -188,25 +185,11 @@ class STK_HK_HOLD_INFO(FinanceTable):
         **kwargs,
     ) -> pd.DataFrame:
         """查询港资持股信息。"""
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
 
         try:
             # 获取港股通持股数据
-            if code:
-                # 标准化代码
-                ak_code = code
-                if code.startswith("sh") or code.startswith("sz"):
-                    ak_code = code[2:]
-                if code.endswith(".XSHG") or code.endswith(".XSHE"):
-                    ak_code = code[:6]
-                ak_code = ak_code.zfill(6)
-
-                df = ak.stock_em_hsgt_north_net_flow_in(indicator="沪股通")
-            else:
-                df = ak.stock_em_hsgt_north_net_flow_in(indicator="沪股通")
+            df = get_adapter().get_north_money_flow()
 
             if df is None or df.empty:
                 return pd.DataFrame()
@@ -238,10 +221,7 @@ class STK_AUDIT_OPINION(FinanceTable):
         **kwargs,
     ) -> pd.DataFrame:
         """查询审计意见。"""
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
 
         if code is None:
             warnings.warn("STK_AUDIT_OPINION 查询需要指定 code 参数")
@@ -256,8 +236,8 @@ class STK_AUDIT_OPINION(FinanceTable):
                 ak_code = code[:6]
             ak_code = ak_code.zfill(6)
 
-            # 尝试获取审计意见
-            df = ak.stock_financial_abstract_ths(symbol=ak_code, indicator="审计意见")
+            # 尝试获取审计意见（通过 financial_benefit 接口）
+            df = get_adapter().get_financial_benefit(symbol=ak_code, indicator="审计意见")
 
             if df is None or df.empty:
                 # 返回默认审计意见（标准无保留意见）
@@ -462,14 +442,11 @@ class FUND_PORTFOLIO_STOCK(FinanceTable):
         **kwargs,
     ) -> pd.DataFrame:
         """查询基金持仓股票数据。"""
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
 
         try:
             if fund_code:
-                df = ak.fund_portfolio_em(fund=fund_code)
+                df = get_adapter().get_fund_portfolio(fund_code=fund_code)
             else:
                 warnings.warn("FUND_PORTFOLIO_STOCK 查询需要指定 fund_code 参数")
                 return pd.DataFrame()
@@ -508,14 +485,15 @@ class STK_AH_PRICE_COMP(FinanceTable):
         **kwargs,
     ) -> pd.DataFrame:
         """查询AH股价格对比数据。"""
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
 
         try:
             # 获取AH股数据
-            df = ak.stock_hk_ah_name_em()
+            adapter = get_adapter()
+            if not adapter._akshare_available:
+                return pd.DataFrame()
+
+            df = adapter._akshare.stock_hk_ah_name_em()
 
             if df is None or df.empty:
                 return pd.DataFrame()
@@ -530,7 +508,7 @@ class STK_AH_PRICE_COMP(FinanceTable):
 
             # 获取实时行情数据
             try:
-                ah_quote = ak.stock_hk_ah_spot_em()
+                ah_quote = adapter._akshare.stock_hk_ah_spot_em()
                 if ah_quote is not None and not ah_quote.empty:
                     # 合并行情数据
                     ah_quote = ah_quote.rename(columns={

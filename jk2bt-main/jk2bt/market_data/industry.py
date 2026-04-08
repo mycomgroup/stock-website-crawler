@@ -15,13 +15,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-try:
-    import akshare as ak
-
-    AKSHARE_AVAILABLE = True
-except ImportError:
-    AKSHARE_AVAILABLE = False
-    warnings.warn("akshare未安装，行业数据将不可用")
+from jk2bt.data_access import get_adapter
 
 
 SW_LEVEL1_NAMES = [
@@ -110,15 +104,12 @@ def get_industry_classify(
     pd.DataFrame
         行业分类表，包含行业代码、行业名称等
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     if date is None:
         date = datetime.now().strftime("%Y-%m-%d")
 
     try:
         if level == "sw_l1":
-            df = ak.sw_index_info()
+            df = get_adapter().get_sw_index_info()
             if df is not None and not df.empty:
                 df = df.rename(
                     columns={
@@ -128,7 +119,7 @@ def get_industry_classify(
                 )
                 return df[["industry_code", "industry_name"]]
         elif level in ["sw_l2", "sw_l3"]:
-            df = ak.sw_index_info()
+            df = get_adapter().get_sw_index_info()
             return df
     except Exception as e:
         warnings.warn(f"获取行业分类失败: {e}")
@@ -161,9 +152,6 @@ def get_industry_stocks(
     List[str]
         股票代码列表（聚宽格式）
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
     else:
@@ -175,7 +163,7 @@ def get_industry_stocks(
         return []
 
     try:
-        df = ak.sw_index_cons(index_code=industry_code)
+        df = get_adapter().get_sw_index_cons(industry_code)
         if df is not None and not df.empty:
             stocks = []
             for code in df["成分券代码"]:
@@ -228,9 +216,6 @@ def get_stock_industry(
     str 或 None
         行业名称
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     code = (
         symbol.replace("sh", "")
         .replace("sz", "")
@@ -240,7 +225,7 @@ def get_stock_industry(
     )
 
     try:
-        df = ak.stock_individual_info_em(symbol=code)
+        df = get_adapter().get_company_info(code)
         if df is not None and not df.empty:
             for item in df["item"]:
                 if "行业" in item or "所属" in item:
@@ -278,15 +263,12 @@ def get_industry_daily(
     pd.DataFrame
         行业指数行情数据
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     industry_code = SW_LEVEL1_CODES.get(industry_name)
     if not industry_code:
         raise ValueError(f"未找到行业 {industry_name} 的代码")
 
     try:
-        df = ak.sw_index_daily(index_code=industry_code)
+        df = get_adapter().get_sw_index_daily(industry_code)
         if df is not None and not df.empty:
             df = df.rename(
                 columns={
@@ -331,16 +313,13 @@ def get_industry_performance(
     pd.DataFrame
         行业涨跌幅排名表
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
     else:
         date = date.replace("-", "")
 
     try:
-        df = ak.sw_index_daily_spot()
+        df = get_adapter().get_sw_index_daily_spot()
         if df is not None and not df.empty:
             df = df.rename(
                 columns={
@@ -371,9 +350,6 @@ def get_industry_stocks_performance(
     pd.DataFrame
         股票涨跌幅表
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
     else:
@@ -385,7 +361,7 @@ def get_industry_stocks_performance(
 
     try:
         codes = [s.replace(".XSHG", "").replace(".XSHE", "").zfill(6) for s in stocks]
-        df = ak.stock_zh_a_spot_em()
+        df = get_adapter().get_spot_em()
 
         if df is not None and not df.empty:
             df = df[df["代码"].isin(codes)]
@@ -426,9 +402,6 @@ def get_market_breadth(
     float
         市场宽度值（百分比，如 0.45 表示 45%）
     """
-    if not AKSHARE_AVAILABLE:
-        raise ImportError("请安装 akshare: pip install akshare")
-
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
     else:
@@ -449,8 +422,8 @@ def get_market_breadth(
             for stock in stocks[:30]:
                 try:
                     code = stock.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
-                    df = ak.stock_zh_a_hist(
-                        symbol=code, period="daily", adjust="qfq", count=30
+                    df = get_adapter().get_stock_hist(
+                        symbol=code, period="daily", adjust="qfq"
                     )
 
                     if df is not None and len(df) >= 20:

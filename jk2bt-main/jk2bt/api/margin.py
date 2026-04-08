@@ -16,6 +16,8 @@ from typing import Optional, List, Union
 import warnings
 from datetime import datetime, timedelta
 
+from jk2bt.data_access import get_adapter, DataSourceError
+
 
 def get_mtss(
     security: Optional[Union[str, List[str]]] = None,
@@ -134,12 +136,6 @@ def _get_market_mtss(
     end_date: Optional[str] = None,
 ) -> pd.DataFrame:
     """获取全市场融资融券数据"""
-    try:
-        import akshare as ak
-    except ImportError:
-        warnings.warn("akshare 未安装")
-        return _get_empty_mtss_frame()
-
     results = []
 
     try:
@@ -151,7 +147,7 @@ def _get_market_mtss(
 
         # 上交所
         try:
-            df_sh = ak.stock_margin_detail_sse(date=date_str)
+            df_sh = get_adapter().get_margin_detail("sh", date_str)
             if df_sh is not None and not df_sh.empty:
                 df_sh = _normalize_sse_margin(df_sh)
                 results.append(df_sh)
@@ -160,7 +156,7 @@ def _get_market_mtss(
 
         # 深交所
         try:
-            df_sz = ak.stock_margin_detail_szse(date=date_str)
+            df_sz = get_adapter().get_margin_detail("sz", date_str)
             if df_sz is not None and not df_sz.empty:
                 df_sz = _normalize_szse_margin(df_sz)
                 results.append(df_sz)
@@ -264,18 +260,12 @@ def get_margincash_stocks(
     >>> print(len(stocks))
     1000
     """
-    try:
-        import akshare as ak
-    except ImportError:
-        warnings.warn("akshare 未安装")
-        return []
-
     stocks = []
 
     try:
         # 上交所融资标的
         try:
-            df_sh = ak.stock_margin_underlying_info_sse(date=date.replace("-", "") if date else None)
+            df_sh = get_adapter().get_margin_underlying("sh")
             if df_sh is not None and not df_sh.empty:
                 code_col = None
                 for col in ["证券代码", "代码", "标的代码"]:
@@ -292,7 +282,7 @@ def get_margincash_stocks(
 
         # 深交所融资标的
         try:
-            df_sz = ak.stock_margin_underlying_info_szse(date=date.replace("-", "") if date else None)
+            df_sz = get_adapter().get_margin_underlying("sz")
             if df_sz is not None and not df_sz.empty:
                 code_col = None
                 for col in ["证券代码", "代码", "标的代码"]:

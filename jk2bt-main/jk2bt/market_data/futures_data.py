@@ -16,12 +16,7 @@ from typing import Optional, List, Dict
 import pandas as pd
 from datetime import datetime
 
-try:
-    import akshare as ak
-    AKSHARE_AVAILABLE = True
-except ImportError:
-    AKSHARE_AVAILABLE = False
-    warnings.warn("akshare未安装，期货数据将不可用")
+from jk2bt.data_access import get_adapter
 
 
 # 期货品种代码映射
@@ -91,15 +86,12 @@ def get_dominant_contract(
     str or None
         主力合约代码，如 'IF2401'
     """
-    if not AKSHARE_AVAILABLE:
-        return None
-
     underlying = underlying_symbol.upper()
 
     try:
         # 方法1: 使用新浪主力合约接口
         try:
-            df = ak.futures_sina_main_sina(symbol=underlying)
+            df = get_adapter().get_futures_sina_main(symbol=underlying)
             if df is not None and not df.empty:
                 # 获取最新主力合约
                 latest = df.iloc[-1]
@@ -114,14 +106,15 @@ def get_dominant_contract(
             # 根据品种获取主力合约
             if underlying in ["IF", "IC", "IH", "IM"]:
                 # 中金所
-                df = ak.futures_zx_sp_500(symbol=underlying)
+                df = get_adapter().get_futures_main_em(symbol=underlying)
                 if df is not None and not df.empty:
                     # 获取成交量最大的合约
-                    df = df.sort_values("成交量", ascending=False)
+                    if "成交量" in df.columns:
+                        df = df.sort_values("成交量", ascending=False)
                     return df.iloc[0].get("合约", "")
             else:
                 # 商品期货
-                df = ak.futures_main_em(symbol=underlying)
+                df = get_adapter().get_futures_main_em(symbol=underlying)
                 if df is not None and not df.empty:
                     latest = df.iloc[-1]
                     contract = latest.get("symbol", latest.get("合约", ""))
@@ -195,16 +188,13 @@ def get_futures_info(
         - min_change: 最小变动价位
         - trading_margin: 交易保证金
     """
-    if not AKSHARE_AVAILABLE:
-        return pd.DataFrame(columns=["code", "name", "exchange", "multiplier"])
-
     try:
         # 获取期货合约信息
         results = []
 
         # 尝试从不同接口获取
         try:
-            df = ak.futures_contract_detail()
+            df = get_adapter().get_futures_daily(contract_code="IF2312")
             if df is not None and not df.empty:
                 # 标准化列名
                 column_mapping = {
@@ -297,12 +287,9 @@ def get_future_contracts(
     List[str]
         合约代码列表
     """
-    if not AKSHARE_AVAILABLE:
-        return []
-
     try:
         # 获取品种下所有合约
-        df = ak.futures_display_main_sina(symbol=underlying_symbol)
+        df = get_adapter().get_futures_display_main(symbol=underlying_symbol)
 
         if df is not None and not df.empty:
             contracts = []
@@ -345,12 +332,9 @@ def get_futures_daily(
     pd.DataFrame
         日线行情数据
     """
-    if not AKSHARE_AVAILABLE:
-        return pd.DataFrame()
-
     try:
         # 使用新浪期货数据
-        df = ak.futures_main_em(symbol=contract_code)
+        df = get_adapter().get_futures_main_em(symbol=contract_code)
 
         if df is not None and not df.empty:
             # 标准化列名

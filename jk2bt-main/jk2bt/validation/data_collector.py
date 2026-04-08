@@ -11,6 +11,9 @@ import logging
 import json
 import os
 
+from jk2bt.utils.symbol import normalize_symbol
+from jk2bt.data_access import get_adapter
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,27 +21,11 @@ class LocalDataSource:
     """本地数据源 (AkShare)"""
 
     def __init__(self):
-        self._ak = None
-
-    @property
-    def ak(self):
-        """延迟导入 AkShare"""
-        if self._ak is None:
-            import akshare as ak
-            self._ak = ak
-        return self._ak
-
-    def _normalize_code(self, code: str) -> str:
-        """将聚宽代码转换为 AkShare 代码"""
-        if ".XSHG" in code:
-            return code.replace(".XSHG", "")
-        elif ".XSHE" in code:
-            return code.replace(".XSHE", "")
-        return code
+        pass
 
     def _get_prefix(self, code: str) -> str:
         """获取股票代码前缀 (sh/sz)"""
-        pure_code = self._normalize_code(code)
+        pure_code = normalize_symbol(code)
         if pure_code.startswith("6"):
             return "sh"
         return "sz"
@@ -59,8 +46,8 @@ class LocalDataSource:
 
         for stock in stocks:
             try:
-                pure_code = self._normalize_code(stock)
-                df = self.ak.stock_a_lg_indicator(symbol=pure_code)
+                pure_code = normalize_symbol(stock)
+                df = get_adapter().get_stock_valuation(symbol=pure_code)
 
                 if df is not None and not df.empty:
                     # 标准化列名
@@ -115,7 +102,7 @@ class LocalDataSource:
         # 获取 ST 列表
         st_stocks = set()
         try:
-            st_df = self.ak.stock_zh_a_st_em()
+            st_df = get_adapter().get_st_stocks()
             if st_df is not None and not st_df.empty:
                 st_stocks = set(st_df["代码"].tolist())
         except Exception as e:
@@ -124,7 +111,7 @@ class LocalDataSource:
         # 获取停牌列表
         paused_stocks = set()
         try:
-            stop_df = self.ak.stock_zh_a_stop_em()
+            stop_df = get_adapter().get_suspended_stocks()
             if stop_df is not None and not stop_df.empty:
                 paused_stocks = set(stop_df["代码"].tolist())
         except Exception as e:
@@ -132,14 +119,13 @@ class LocalDataSource:
 
         for stock in stocks:
             try:
-                pure_code = self._normalize_code(stock)
+                pure_code = normalize_symbol(stock)
 
                 # 获取前收盘价计算涨跌停价
                 prefix = self._get_prefix(stock)
-                ak_code = f"{prefix}{pure_code}"
 
                 try:
-                    df = self.ak.stock_zh_a_hist(
+                    df = get_adapter().get_stock_hist(
                         symbol=pure_code,
                         period="daily",
                         start_date=(pd.to_datetime(date) - timedelta(days=5)).strftime("%Y%m%d"),
@@ -148,7 +134,7 @@ class LocalDataSource:
                     )
                 except Exception:
                     # 尝试东方财富
-                    df = self.ak.stock_zh_a_hist_min_em(symbol=ak_code, period="daily", adjust="")
+                    df = get_adapter().get_stock_hist(symbol=pure_code, period="daily", adjust="")
 
                 high_limit = None
                 low_limit = None
@@ -223,11 +209,11 @@ class LocalDataSource:
 
         for stock in stocks:
             try:
-                pure_code = self._normalize_code(stock)
+                pure_code = normalize_symbol(stock)
                 factor_values = {"code": stock, "date": date}
 
                 # 获取历史数据计算因子
-                df = self.ak.stock_zh_a_hist(
+                df = get_adapter().get_stock_hist(
                     symbol=pure_code,
                     period="daily",
                     start_date=(pd.to_datetime(date) - timedelta(days=60)).strftime("%Y%m%d"),

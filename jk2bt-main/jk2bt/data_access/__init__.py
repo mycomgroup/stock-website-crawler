@@ -40,6 +40,25 @@ from .mock_data_source import MockDataSource, create_mock_with_sample_data
 from .data_registry import DataRegistry, get_data_source, set_data_source, reset_data_source, get_source_health
 from .cache_manager import DataAccessCacheManager, get_cache, clear_cache, reset_cache
 
+# ── 全局单例工厂 ──────────────────────────────────────────────────
+
+_default_adapter = None
+
+
+def get_adapter() -> AkShareAdapter:
+    """获取全局默认 AkShareAdapter 单例"""
+    global _default_adapter
+    if _default_adapter is None:
+        _default_adapter = AkShareAdapter()
+    return _default_adapter
+
+
+def set_adapter(adapter) -> None:
+    """替换全局适配器（用于测试注入）"""
+    global _default_adapter
+    _default_adapter = adapter
+
+
 __all__ = [
     # 抽象基类
     "DataSource",
@@ -59,4 +78,7 @@ __all__ = [
     "get_cache",
     "clear_cache",
     "reset_cache",
+    # 单例工厂
+    "get_adapter",
+    "set_adapter",
 ]

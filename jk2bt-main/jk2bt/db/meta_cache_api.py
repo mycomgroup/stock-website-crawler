@@ -57,13 +57,8 @@ def get_trade_days_from_cache(
 
     logger.info("从 akshare 获取交易日历...")
     try:
-        import akshare as ak
-    except ImportError:
-        logger.warning("akshare 未安装，无法获取交易日历")
-        return []
-
-    try:
-        df = ak.tool_trade_date_hist_sina()
+        from jk2bt.data_access import get_adapter
+        df = get_adapter().get_trade_dates()
         df = df.rename(columns={"trade_date": "date"})
         df["date"] = pd.to_datetime(df["date"]).dt.date
 
@@ -107,13 +102,8 @@ def get_securities_from_cache(
 
     logger.info("从 akshare 获取证券列表...")
     try:
-        import akshare as ak
-    except ImportError:
-        logger.warning("akshare 未安装，无法获取证券列表")
-        return pd.DataFrame()
-
-    try:
-        df = ak.stock_info_a_code_name()
+        from jk2bt.data_access import get_adapter
+        df = get_adapter().get_securities_code_name()
 
         df["code"] = df["code"].apply(
             lambda x: (

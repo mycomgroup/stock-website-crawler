@@ -81,19 +81,11 @@ def _get_index_data(
     except Exception as e:
         warnings.warn(f"market_data 模块获取指数数据失败 {index_code}: {e}，fallback 到 akshare")
 
-    # Fallback: 使用 akshare 直接获取
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    # Fallback: 使用 adapter 直接获取
+    from jk2bt.data_access import get_adapter
 
     try:
-        df = ak.index_zh_a_hist(
-            symbol=index_code,
-            period="daily",
-            start_date=start_date.replace("-", "") if start_date else "20100101",
-            end_date=end_date.replace("-", "") if end_date else "20991231",
-        )
+        df = get_adapter().get_index_daily_raw(symbol=index_code)
         if df is None or df.empty:
             return pd.DataFrame()
 

@@ -14,18 +14,16 @@ import pandas as pd
 import warnings
 from datetime import datetime
 
-
-def _get_akshare():
-    """延迟导入 akshare，避免顶层依赖耦合"""
-    try:
-        import akshare as ak
-        return ak
-    except ImportError:
-        warnings.warn("AkShare 未安装，资金流向功能将不可用")
-        return None
+from jk2bt.data_access import get_adapter
+from jk2bt.utils.symbol import normalize_symbol as _normalize_code
 
 
-def get_money_flow(security=None, start_date=None, end_date=None, count=None):
+def get_money_flow(
+    security=None,
+    start_date=None,
+    end_date=None,
+    count=None,
+):
     """
     获取个股资金流向数据
 
@@ -39,14 +37,8 @@ def get_money_flow(security=None, start_date=None, end_date=None, count=None):
         DataFrame: 资金流向数据
             columns包含: code, date, main_net_inflow, retail_net_inflow, etc.
     """
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，get_money_flow 不可用")
-        return pd.DataFrame()
-
     try:
-        # 使用 akshare 获取个股资金流
-        # 个股资金流
+        # 使用 adapter 获取个股资金流
         if security is not None:
             # 单个股票
             if isinstance(security, str):
@@ -72,26 +64,14 @@ def get_money_flow(security=None, start_date=None, end_date=None, count=None):
         return pd.DataFrame()
 
 
-def _normalize_code(stock):
-    """将聚宽代码转换为6位数字代码"""
-    if stock.startswith('sh') or stock.startswith('sz'):
-        return stock[2:].zfill(6)
-    if stock.endswith('.XSHG') or stock.endswith('.XSHE'):
-        return stock[:6]
-    return stock.zfill(6)
-
-
 def _get_single_stock_money_flow(code, start_date=None, end_date=None, count=None):
     """获取单个股票的资金流向"""
-    ak = _get_akshare()
-    if ak is None:
-        return pd.DataFrame()
-
     try:
-        # 尝试使用 akshare 的个股资金流接口
+        # 尝试使用 adapter 的个股资金流接口
         try:
             # 个股资金流向历史数据
-            df = ak.stock_individual_fund_flow(stock=code, market='sh' if code.startswith('6') else 'sz')
+            market = 'sh' if code.startswith('6') else 'sz'
+            df = get_adapter().get_individual_fund_flow(stock=code, market=market)
             if df is not None and not df.empty:
                 # 标准化列名
                 df = _standardize_columns(df)
@@ -111,7 +91,7 @@ def _get_single_stock_money_flow(code, start_date=None, end_date=None, count=Non
 
         # 备用接口：当日资金流
         try:
-            df = ak.stock_individual_fund_flow_rank(indicator='今日')
+            df = get_adapter().get_individual_fund_flow_rank(indicator='今日')
             if df is not None and not df.empty:
                 df = _standardize_columns(df)
                 df = df[df['code'] == code]
@@ -128,13 +108,9 @@ def _get_single_stock_money_flow(code, start_date=None, end_date=None, count=Non
 
 def _get_all_stocks_money_flow():
     """获取全部股票资金流向排名"""
-    ak = _get_akshare()
-    if ak is None:
-        return pd.DataFrame()
-
     try:
         # 个股资金流排名
-        df = ak.stock_individual_fund_flow_rank(indicator='今日')
+        df = get_adapter().get_individual_fund_flow_rank(indicator='今日')
         if df is not None and not df.empty:
             df = _standardize_columns(df)
             return df
@@ -197,30 +173,29 @@ def get_sector_money_flow(sector=None, date=None):
     返回:
         DataFrame: 板块资金流向数据
     """
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，get_sector_money_flow 不可用")
-        return pd.DataFrame()
-
     try:
         # 行业资金流
         try:
-            df = ak.stock_board_industry_fund_flow_rank(indicator='今日')
+            df = get_adapter().get_sector_money_flow(sector_type="industry", indicator='今日')
             if df is not None and not df.empty:
                 df = _standardize_columns(df)
                 if sector:
-                    df = df[df['name'].str.contains(sector) | df['code'].str.contains(sector)]
+                    name_col = 'name' if 'name' in df.columns else df.columns[0]
+                    code_col = 'code' if 'code' in df.columns else df.columns[1] if len(df.columns) > 1 else df.columns[0]
+                    df = df[df[name_col].str.contains(sector, na=False) | df[code_col].str.contains(sector, na=False)]
                 return df
         except Exception:
             pass
 
         # 概念资金流
         try:
-            df = ak.stock_board_concept_fund_flow_rank(indicator='今日')
+            df = get_adapter().get_sector_money_flow(sector_type="concept", indicator='今日')
             if df is not None and not df.empty:
                 df = _standardize_columns(df)
                 if sector:
-                    df = df[df['name'].str.contains(sector) | df['code'].str.contains(sector)]
+                    name_col = 'name' if 'name' in df.columns else df.columns[0]
+                    code_col = 'code' if 'code' in df.columns else df.columns[1] if len(df.columns) > 1 else df.columns[0]
+                    df = df[df[name_col].str.contains(sector, na=False) | df[code_col].str.contains(sector, na=False)]
                 return df
         except Exception:
             pass

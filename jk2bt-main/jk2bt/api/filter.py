@@ -19,15 +19,7 @@ import pandas as pd
 import warnings
 from datetime import datetime
 
-
-def _get_akshare():
-    """延迟导入 akshare，避免顶层依赖耦合"""
-    try:
-        import akshare as ak
-        return ak
-    except ImportError:
-        warnings.warn("AkShare 未安装，部分过滤功能将不可用")
-        return None
+from jk2bt.data_access import get_adapter, DataSourceError
 
 
 def _get_code_num(stock):
@@ -54,13 +46,8 @@ def filter_st(stock_list, date=None):
     返回:
         过滤后的股票列表（排除 ST 股票）
     """
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，filter_st 不可用")
-        return stock_list
-
     try:
-        st_df = ak.stock_zh_a_st_em()
+        st_df = get_adapter().get_st_stocks()
 
         if st_df is None or st_df.empty:
             return stock_list
@@ -93,13 +80,8 @@ def filter_paused(stock_list, date=None):
     返回:
         过滤后的股票列表（排除停牌股票）
     """
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，filter_paused 不可用")
-        return stock_list
-
     try:
-        stop_df = ak.stock_zh_a_stop_em()
+        stop_df = get_adapter().get_suspended_stocks()
 
         if stop_df is None or stop_df.empty:
             return stock_list
@@ -233,14 +215,13 @@ def get_dividend_ratio_filter_list(threshold=0.03, date=None):
     返回:
         list: 符合条件的股票代码列表（6 位数字格式）
     """
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，get_dividend_ratio_filter_list 不可用")
+    try:
+        df = get_adapter().get_dividend_all()
+    except Exception:
+        warnings.warn("获取分红数据失败，get_dividend_ratio_filter_list 不可用")
         return []
 
     try:
-        df = ak.stock_dividend_cninfo()
-
         if df is None or df.empty:
             warnings.warn("获取股息率数据失败")
             return []
@@ -296,16 +277,11 @@ def get_margine_stocks(date=None):
     返回:
         list: 两融标的股票代码列表（6 位数字格式）
     """
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，get_margine_stocks 不可用")
-        return []
-
     try:
         all_stocks = []
 
         try:
-            sse_df = ak.stock_margin_underlying_info_sse()
+            sse_df = get_adapter().get_margin_underlying("sh")
             if sse_df is not None and not sse_df.empty:
                 code_col = next(
                     (c for c in sse_df.columns if "代码" in str(c) or "code" in str(c).lower()),
@@ -316,7 +292,7 @@ def get_margine_stocks(date=None):
             pass
 
         try:
-            szse_df = ak.stock_margin_underlying_info_szse()
+            szse_df = get_adapter().get_margin_underlying("sz")
             if szse_df is not None and not szse_df.empty:
                 code_col = next(
                     (c for c in szse_df.columns if "代码" in str(c) or "code" in str(c).lower()),
@@ -330,9 +306,8 @@ def get_margine_stocks(date=None):
 
         if not all_stocks:
             try:
-                margin_df = ak.stock_margin_detail(
-                    date=date if date else datetime.now().strftime("%Y%m%d")
-                )
+                date_str = date if date else datetime.now().strftime("%Y%m%d")
+                margin_df = get_adapter().get_margin_detail("sh", date_str)
                 if margin_df is not None and not margin_df.empty:
                     code_col = next(
                         (c for c in margin_df.columns if "代码" in str(c) or "code" in str(c).lower()),
@@ -426,13 +401,8 @@ def filter_st_stock(stock_list, date=None):
     if not stock_list:
         return []
 
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，filter_st_stock 不可用")
-        return stock_list
-
     try:
-        st_df = ak.stock_zh_a_st_em()
+        st_df = get_adapter().get_st_stocks()
 
         if st_df is None or st_df.empty:
             return stock_list
@@ -466,13 +436,8 @@ def filter_paused_stock(stock_list, date=None):
     if not stock_list:
         return []
 
-    ak = _get_akshare()
-    if ak is None:
-        warnings.warn("AkShare 未安装，filter_paused_stock 不可用")
-        return stock_list
-
     try:
-        stop_df = ak.stock_zh_a_stop_em()
+        stop_df = get_adapter().get_suspended_stocks()
 
         if stop_df is None or stop_df.empty:
             return stock_list

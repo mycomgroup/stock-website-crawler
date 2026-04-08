@@ -166,13 +166,8 @@ def get_indicator_data(
 
     if need_download:
         try:
-            import akshare as ak
-        except ImportError:
-            warnings.warn("akshare 未安装，无法获取 indicator 数据")
-            return pd.DataFrame()
-
-        try:
-            df = ak.stock_financial_analysis_indicator(symbol=code_num)
+            from jk2bt.data_access import get_adapter
+            df = get_adapter().get_financial_analysis_indicator(symbol=code_num)
             if df is not None and not df.empty:
                 df.to_pickle(cache_file)
         except Exception as e:

@@ -24,6 +24,8 @@ from typing import Optional, List, Union
 import logging
 import warnings
 
+from jk2bt.data_access import get_adapter
+
 logger = logging.getLogger(__name__)
 
 _DUCKDB_AVAILABLE = False
@@ -360,12 +362,7 @@ def get_sw_industry_list(level: int = 1) -> RobustResult:
                 return RobustResult(success=True, data=df_cached, source="cache")
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.stock_board_industry_name_em()
+        df = get_adapter().get_industry_list("em")
         if df is not None and not df.empty:
             result = pd.DataFrame()
             result["industry_code"] = df.get("行业代码", df.get("板块代码", ""))
@@ -430,12 +427,7 @@ def get_stock_industry(symbol: str, use_cache: bool = True) -> RobustResult:
                 return RobustResult(success=True, data=result, source="cache")
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.stock_individual_info_em(symbol=code_num)
+        df = get_adapter().get_company_info(code_num)
         if df is not None and not df.empty:
             result = DEFAULT_INDUSTRY_SCHEMA.copy()
             for _, row in df.iterrows():
@@ -499,12 +491,7 @@ def get_industry_stocks(
         _INDUSTRY_STOCKS_SCHEMA.extend(["industry_code", "level"])
 
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.stock_board_industry_cons_em(symbol=industry_name)
+        df = get_adapter().get_industry_components(industry_name, "em")
         if df is not None and not df.empty:
             result = pd.DataFrame()
             code_col = "代码" if "代码" in df.columns else "股票代码"
@@ -541,12 +528,7 @@ def get_industry_performance(industry_code: str = None) -> RobustResult:
     - pct_change: 涨跌幅
     """
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.stock_board_industry_name_em()
+        df = get_adapter().get_industry_list("em")
         if df is not None and not df.empty:
             result = pd.DataFrame()
             result["industry_code"] = df.get("行业代码", df.get("板块代码", ""))
@@ -669,12 +651,7 @@ def filter_stocks_by_industry(
     RobustResult，data 为股票代码列表
     """
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.stock_board_industry_cons_em(symbol=industry_name)
+        df = get_adapter().get_industry_components(industry_name, "em")
         if df is not None and not df.empty:
             stocks = []
             code_col = "代码" if "代码" in df.columns else "股票代码"
@@ -703,12 +680,7 @@ def get_industry_stocks_sw(industry_name: str) -> RobustResult:
     RobustResult，data 为股票代码列表（聚宽格式）
     """
     try:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-
-        df = ak.stock_board_industry_cons_em(symbol=industry_name)
+        df = get_adapter().get_industry_components(industry_name, "em")
         if df is not None and not df.empty:
             stocks = []
             code_col = "代码" if "代码" in df.columns else "股票代码"

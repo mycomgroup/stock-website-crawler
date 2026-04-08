@@ -28,8 +28,7 @@ from typing import Optional, Callable, List, Dict, Any
 from datetime import datetime
 import warnings
 
-# 底层多数据源备份模块：保留顶层 import 以便于各 fetcher 函数直接使用 akshare API
-import akshare as ak
+from jk2bt.data_access import get_adapter
 
 logger = logging.getLogger(__name__)
 
@@ -108,14 +107,12 @@ def fetch_stock_daily_sina(symbol: str, start: str, end: str, adjust: str = "qfq
     注意: Sina 数据不提供复权，返回原始价格
     """
     try:
-        import akshare as ak
-
         code = symbol.replace("sh", "").replace("sz", "").replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
         # Sina 接口格式
         sina_symbol = f"sh{code}" if code.startswith("6") else f"sz{code}"
 
-        df = ak.stock_zh_a_daily(symbol=sina_symbol)
+        df = get_adapter().get_daily_data(sina_symbol, start, end, adjust="none")
 
         if df is not None and not df.empty:
             # 确保日期列是 datetime 类型
@@ -143,13 +140,11 @@ def fetch_stock_daily_eastmoney(symbol: str, start: str, end: str, adjust: str =
     使用 akshare.stock_zh_a_hist
     支持复权
     """
-    import akshare as ak
-
     # 标准化代码格式
     code = symbol.replace("sh", "").replace("sz", "").replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
     try:
-        df = ak.stock_zh_a_hist(
+        df = get_adapter().get_stock_hist(
             symbol=code,
             period="daily",
             start_date=start.replace("-", ""),
@@ -325,13 +320,11 @@ def fetch_etf_daily_sina(symbol: str, start: str, end: str) -> pd.DataFrame:
     注意: Sina 需要带前缀的代码格式，如 sh510300, sz159915
     """
     try:
-        import akshare as ak
-
         # Sina 需要带前缀的代码格式
         code = symbol.replace("sh", "").replace("sz", "").zfill(6)
         sina_symbol = f"sh{code}" if code.startswith("51") else f"sz{code}"
 
-        df = ak.fund_etf_hist_sina(symbol=sina_symbol)
+        df = get_adapter().get_etf_hist(sina_symbol)
 
         if df is not None and not df.empty:
             # 标准化列名
@@ -372,9 +365,7 @@ def fetch_etf_daily_eastmoney(symbol: str, start: str, end: str) -> pd.DataFrame
     从东方财富获取 ETF 日线数据（备用数据源）
     """
     try:
-        import akshare as ak
-
-        df = ak.fund_etf_hist_em(symbol=symbol)
+        df = get_adapter().get_etf_hist(symbol)
         if df is not None and not df.empty:
             df = _normalize_etf_daily(df)
             df = df[(df["datetime"] >= pd.to_datetime(start)) & (df["datetime"] <= pd.to_datetime(end))]
@@ -442,16 +433,12 @@ def fetch_stock_minute_eastmoney(symbol: str, start: str, end: str, period: str 
     """
     从东方财富获取股票分钟数据
     """
-    import akshare as ak
-
     code = symbol.replace("sh", "").replace("sz", "").replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
     try:
-        df = ak.stock_zh_a_hist_min_em(
+        df = get_adapter().get_minute_data(
             symbol=code,
-            period=period,
-            start_date=start,
-            end_date=end,
+            freq=f"{period}min",
             adjust=adjust,
         )
         if df is not None and not df.empty:
@@ -504,12 +491,10 @@ def fetch_index_components_sina(index_code: str) -> pd.DataFrame:
     """
     从新浪获取成分股（优先数据源，无权重）
     """
-    import akshare as ak
-
     code = index_code.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
     try:
-        df = ak.index_stock_cons_sina(symbol=code)
+        df = get_adapter().get_index_components(index_code, include_weights=False)
         if df is not None and not df.empty:
             _update_source_status("sina", True)
             # 新浪没有权重，使用等权重
@@ -528,12 +513,10 @@ def fetch_index_components_csindex(index_code: str) -> pd.DataFrame:
     """
     从中证指数公司获取成分股及权重（备用数据源）
     """
-    import akshare as ak
-
     code = index_code.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
 
     try:
-        df = ak.index_stock_cons_weight_csindex(symbol=code)
+        df = get_adapter().get_index_components(index_code, include_weights=True)
         if df is not None and not df.empty:
             _update_source_status("csindex", True)
             logger.info(f"[csindex] 成功获取 {index_code} 成分股 {len(df)} 只")
@@ -599,10 +582,8 @@ def fetch_futures_daily_sina(contract_code: str, start: str = None, end: str = N
     从新浪获取期货日线数据（Sina 已稳定）
     """
     try:
-        import akshare as ak
-
         code = contract_code.replace(".CCFX", "")
-        df = ak.futures_zh_daily_sina(symbol=code)
+        df = get_adapter().get_futures_daily(code)
 
         if df is not None and not df.empty:
             _update_source_status("sina", True)
@@ -632,9 +613,7 @@ def fetch_option_daily_sina(option_code: str, start: str = None, end: str = None
     从新浪获取期权日线数据（Sina 已稳定）
     """
     try:
-        import akshare as ak
-
-        df = ak.option_sse_daily_sina(symbol=str(option_code))
+        df = get_adapter().get_option_daily(str(option_code))
 
         if df is not None and not df.empty:
             _update_source_status("sina", True)
@@ -664,9 +643,7 @@ def fetch_north_money_eastmoney() -> pd.DataFrame:
     从东方财富获取北向资金数据
     """
     try:
-        import akshare as ak
-
-        df = ak.stock_em_hsgt_north_net_flow_in(symbol="北上")
+        df = get_adapter().get_north_money_flow()
         if df is not None and not df.empty:
             _update_source_status("east_money", True)
             return df
@@ -711,9 +688,7 @@ def fetch_industry_list_eastmoney() -> pd.DataFrame:
     从东方财富获取行业列表
     """
     try:
-        import akshare as ak
-
-        df = ak.stock_board_industry_name_em()
+        df = get_adapter().get_industry_list("em")
         if df is not None and not df.empty:
             _update_source_status("east_money", True)
             return df
@@ -729,9 +704,7 @@ def fetch_industry_stocks_eastmoney(industry_name: str) -> pd.DataFrame:
     从东方财富获取行业内股票
     """
     try:
-        import akshare as ak
-
-        df = ak.stock_board_industry_cons_em(symbol=industry_name)
+        df = get_adapter().get_industry_components(industry_name, "em")
         if df is not None and not df.empty:
             _update_source_status("east_money", True)
             return df

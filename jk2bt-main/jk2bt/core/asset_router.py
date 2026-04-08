@@ -13,6 +13,8 @@ from enum import Enum
 from typing import Optional, Dict, Any, List
 import re
 
+from jk2bt.utils.symbol import normalize_symbol
+
 
 class AssetType(Enum):
     STOCK = "stock"
@@ -132,7 +134,7 @@ class AssetRouter:
         if code in self._code_cache:
             return self._code_cache[code]
 
-        normalized = self._normalize_code(code)
+        normalized = normalize_symbol(code)
         asset_type = self._identify_type(code, normalized)
         category = self.TYPE_TO_CATEGORY.get(asset_type, AssetCategory.UNKNOWN)
         trading_status = self.SUPPORTED_TYPES.get(
@@ -151,20 +153,6 @@ class AssetRouter:
 
         self._code_cache[code] = info
         return info
-
-    def _normalize_code(self, code: str) -> str:
-        code = code.strip()
-        if code.startswith("sh") or code.startswith("sz"):
-            return code[2:].zfill(6)
-        if ".XSHG" in code:
-            return code.split(".")[0].zfill(6)
-        if ".XSHE" in code:
-            return code.split(".")[0].zfill(6)
-        if ".OF" in code:
-            return code.split(".")[0].zfill(6)
-        if ".CCFX" in code:
-            return code.split(".")[0]
-        return code.zfill(6)
 
     def _identify_type(self, original_code: str, normalized_code: str) -> AssetType:
         if ".OF" in original_code.upper():

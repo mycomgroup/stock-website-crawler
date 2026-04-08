@@ -122,11 +122,12 @@ def get_etf_daily_legacy(symbol, start, end, force_update=False):
     logger.info(f"{symbol}: 从 akshare 下载数据")
 
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
+        raw_df = get_adapter().get_etf_hist(symbol=symbol)
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
-
-    raw_df = ak.fund_etf_hist_em(symbol=symbol)
+    except Exception as e:
+        raise ValueError(f"{symbol}: akshare 返回空数据: {e}")
 
     if raw_df is None or raw_df.empty:
         raise ValueError(f"{symbol}: akshare 返回空数据")

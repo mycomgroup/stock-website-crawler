@@ -327,15 +327,12 @@ def get_dividend_info(
             need_download = True
 
     if need_download:
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
+        from jk2bt.data_access import get_adapter
         try:
             results = []
 
             try:
-                df_fhps = ak.stock_fhps_em(symbol=code_num)
+                df_fhps = get_adapter().get_dividend_fhps(symbol=code_num)
                 if df_fhps is not None and not df_fhps.empty:
                     for _, row in df_fhps.iterrows():
                         record = _parse_fhps_row(row, jq_code)
@@ -345,7 +342,7 @@ def get_dividend_info(
                 logger.debug(f"stock_fhps_em 失败: {e}")
 
             try:
-                df_dividend = ak.stock_dividend_cninfo(symbol=code_num)
+                df_dividend = get_adapter().get_dividend(symbol=code_num)
                 if df_dividend is not None and not df_dividend.empty:
                     for _, row in df_dividend.iterrows():
                         record = _parse_dividend_row(row, jq_code)
@@ -771,12 +768,9 @@ def get_dividend_by_date(
             need_download = True
 
     if need_download:
+        from jk2bt.data_access import get_adapter
         try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        try:
-            df_raw = ak.stock_fhps_em(date=report_date)
+            df_raw = get_adapter().get_dividend_fhps(date=report_date)
             if df_raw is not None and not df_raw.empty:
                 results = []
                 for _, row in df_raw.iterrows():

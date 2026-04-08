@@ -38,9 +38,9 @@ def compute_crowding_ratio(
         {'crowding_ratio': 拥挤率百分比, 'description': 描述}
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
-        return {"crowding_ratio": 0.0, "description": "请安装 akshare: pip install akshare"}
+        return {"crowding_ratio": 0.0, "description": "请安装 jk2bt.data_access"}
 
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
@@ -48,7 +48,7 @@ def compute_crowding_ratio(
         date = date.replace("-", "")
 
     try:
-        df = ak.stock_zh_a_spot_em()
+        df = get_adapter().get_spot_em()
 
         if df is not None and not df.empty:
             df = df.rename(
@@ -110,7 +110,7 @@ def compute_gisi(
         包含 GSISI 指标和择时信号
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
         return pd.DataFrame()
 
@@ -127,7 +127,7 @@ def compute_gisi(
         )
 
     try:
-        index_df = ak.stock_zh_index_daily(symbol=f"sh{index_code}")
+        index_df = get_adapter().get_index_daily_raw(symbol=f"sh{index_code}")
         if index_df is None or index_df.empty:
             return pd.DataFrame()
 
@@ -221,15 +221,15 @@ def compute_fed_model(
         {'fed_value': FED值, 'pe': PE值, 'bond_rate': 国债收益率, 'description': 描述}
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
-        return {"fed_value": 0.0, "description": "请安装 akshare: pip install akshare"}
+        return {"fed_value": 0.0, "description": "请安装 jk2bt.data_access"}
 
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
 
     try:
-        df = ak.stock_a_pe_and_pb(symbol="沪深300")
+        df = get_adapter().get_stock_pe_pb(symbol="沪深300")
 
         if df is not None and not df.empty:
             df = df.rename(
@@ -250,7 +250,7 @@ def compute_fed_model(
 
             if bond_rate is None:
                 try:
-                    bond_df = ak.bond_china_yield(
+                    bond_df = get_adapter().get_bond_yield(
                         start_date=date.replace("-", ""), end_date=date.replace("-", "")
                     )
                     if bond_df is not None and not bond_df.empty:
@@ -331,15 +331,15 @@ def compute_below_net_ratio(
         {'below_net_ratio': 破净占比, 'below_net_count': 破净股数量, 'description': 描述}
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
-        return {"below_net_ratio": 0.0, "description": "请安装 akshare: pip install akshare"}
+        return {"below_net_ratio": 0.0, "description": "请安装 jk2bt.data_access"}
 
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
 
     try:
-        df = ak.stock_zh_a_spot_em()
+        df = get_adapter().get_spot_em()
 
         if df is not None and not df.empty:
             df = df.rename(
@@ -394,15 +394,15 @@ def compute_new_high_ratio(
         {'new_high_ratio': 创新高占比, 'description': 描述}
     """
     try:
-        import akshare as ak
+        from jk2bt.data_access import get_adapter
     except ImportError:
-        return {"new_high_ratio": 0.0, "description": "请安装 akshare: pip install akshare"}
+        return {"new_high_ratio": 0.0, "description": "请安装 jk2bt.data_access"}
 
     if date is None:
         date = datetime.now().strftime("%Y%m%d")
 
     try:
-        df = ak.stock_zh_a_spot_em()
+        df = get_adapter().get_spot_em()
 
         if df is not None and not df.empty:
             new_high_count = 0
@@ -412,8 +412,8 @@ def compute_new_high_ratio(
                 code = row["代码"]
 
                 try:
-                    hist_df = ak.stock_zh_a_hist(
-                        symbol=code, period="daily", adjust="qfq", count=window
+                    hist_df = get_adapter().get_stock_hist(
+                        symbol=code, period="daily", adjust="qfq"
                     )
 
                     if hist_df is not None and len(hist_df) >= window:

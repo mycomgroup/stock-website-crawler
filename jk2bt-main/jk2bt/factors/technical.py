@@ -163,11 +163,8 @@ def _get_daily_ohlcv(
     except Exception as e:
         warnings.warn(f"market_data 模块获取数据失败 {symbol}: {e}，fallback 到 akshare")
 
-    # Fallback: 使用 akshare 直接获取
-    try:
-        import akshare as ak
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    # Fallback: 使用 adapter 直接获取
+    from jk2bt.data_access import get_adapter
 
     cache_file = os.path.join(cache_dir, f"{symbol}_daily.pkl")
     os.makedirs(cache_dir, exist_ok=True)
@@ -182,7 +179,7 @@ def _get_daily_ohlcv(
 
     if need_dl:
         try:
-            df = ak.stock_zh_a_hist(symbol=ak_sym, period="daily", adjust="qfq")
+            df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
             if df is not None and not df.empty:
                 df.to_pickle(cache_file)
             else:

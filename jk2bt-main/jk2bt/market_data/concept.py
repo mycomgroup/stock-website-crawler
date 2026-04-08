@@ -15,12 +15,7 @@ from typing import Optional, List, Dict
 import pandas as pd
 from datetime import datetime
 
-try:
-    import akshare as ak
-    AKSHARE_AVAILABLE = True
-except ImportError:
-    AKSHARE_AVAILABLE = False
-    warnings.warn("akshare未安装，概念板块数据将不可用")
+from jk2bt.data_access import get_adapter
 
 
 # 概念板块数据缓存
@@ -51,16 +46,13 @@ def get_concept_list(
         - change_pct: 涨跌幅（可选）
         - reason: 板块原因（可选）
     """
-    if not AKSHARE_AVAILABLE:
-        return pd.DataFrame(columns=["code", "name"])
-
     cache_key = f"concepts_{date or 'latest'}"
     if use_cache and cache_key in _concept_cache:
         return _concept_cache[cache_key].copy()
 
     try:
         # 使用东方财富概念板块接口
-        df = ak.board_concept_name_em()
+        df = get_adapter().get_concept_list()
 
         if df is not None and not df.empty:
             # 标准化列名
@@ -114,16 +106,13 @@ def get_concept_stocks(
     List[str]
         股票代码列表（聚宽格式: 000001.XSHE, 600519.XSHG）
     """
-    if not AKSHARE_AVAILABLE:
-        return []
-
     cache_key = f"{concept_code}_{date or 'latest'}"
     if use_cache and cache_key in _concept_stocks_cache:
         return _concept_stocks_cache[cache_key].copy()
 
     try:
         # 使用东方财富概念板块成分股接口
-        df = ak.board_concept_cons_em(symbol=concept_code)
+        df = get_adapter().get_concept_components(concept_code)
 
         if df is not None and not df.empty:
             stocks = []
@@ -175,9 +164,6 @@ def get_stock_concepts(
     List[str]
         概念板块名称列表
     """
-    if not AKSHARE_AVAILABLE:
-        return []
-
     # 标准化股票代码
     code = (
         security.replace("sh", "")
@@ -190,7 +176,7 @@ def get_stock_concepts(
 
     try:
         # 使用个股信息接口
-        df = ak.stock_individual_info_em(symbol=code)
+        df = get_adapter().get_company_info(code)
 
         if df is not None and not df.empty:
             concepts = []
@@ -231,9 +217,6 @@ def get_all_concept_stocks(
     Dict[str, List[str]]
         {概念板块名称: 股票代码列表}
     """
-    if not AKSHARE_AVAILABLE:
-        return {}
-
     concepts = get_concept_list(date)
     if concepts.empty:
         return {}
@@ -299,11 +282,8 @@ def get_concept_performance(
     pd.DataFrame
         概念板块涨跌幅排名
     """
-    if not AKSHARE_AVAILABLE:
-        return pd.DataFrame()
-
     try:
-        df = ak.board_concept_name_em()
+        df = get_adapter().get_concept_list()
 
         if df is not None and not df.empty:
             # 查找涨跌幅列

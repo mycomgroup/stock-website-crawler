@@ -32,11 +32,8 @@ def get_cashflow(symbol, cache_dir="finance_cache", force_update=False):
     cache_file = os.path.join(cache_dir, f"{akshare_symbol}_cashflow_sina.pkl")
 
     def download_func():
-        try:
-            import akshare as ak
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        return ak.stock_financial_report_sina(stock=akshare_symbol, symbol="现金流量表")
+        from jk2bt.data_access import get_adapter
+        return get_adapter().get_cashflow(symbol=akshare_symbol)
 
     df = fetch_and_cache_data(
         symbol=symbol,
