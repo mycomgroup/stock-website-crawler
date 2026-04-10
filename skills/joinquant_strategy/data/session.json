@@ -1,9 +1,9 @@
 {
-  "capturedAt": "2026-04-04T01:27:56.219Z",
+  "capturedAt": "2026-04-10T03:58:22.167Z",
   "cookies": [
     {
       "name": "token",
-      "value": "46c9661f6e09436a20a7f528ef6acf58e42d0071",
+      "value": "c3890ba8a1b1daff873931f62165151aed02dbdb",
       "domain": "www.joinquant.com",
       "path": "/",
       "expires": -1,
@@ -13,17 +13,17 @@
     },
     {
       "name": "uid",
-      "value": "wKgyrWnQaRiArgXQO9RWAg==",
+      "value": "wKiXm2nYdVpW2QWQKkOVAg==",
       "domain": "www.joinquant.com",
       "path": "/",
-      "expires": 1809826071.952757,
+      "expires": 1810353498.538998,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "PHPSESSID",
-      "value": "1ds986hi4andlluvogqhfp1p76",
+      "value": "j0o6206lvlh8rte1cjf30dcib6",
       "domain": "www.joinquant.com",
       "path": "/",
       "expires": -1,
@@ -33,10 +33,20 @@
     },
     {
       "name": "uid",
-      "value": "wKgyrWnQaRl+wwXSPHk2Ag==",
+      "value": "wKiXm2nYdVtXUQWWKlwxAg==",
       "domain": "cdn.joinquant.com",
       "path": "/",
-      "expires": 1809826073.798579,
+      "expires": 1810353499.772299,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "finishExtInfo203164f4fb5e876ce07d8d750861522b",
+      "value": "1",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "expires": 1775879899,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
