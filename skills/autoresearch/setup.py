@@ -345,6 +345,18 @@ def main():
         )
         (base / "program.md").write_text(content, encoding="utf-8")
 
+    # 生成 program_enhance.md（增强版，含通用机制库引用）
+    src_enhance = AUTORESEARCH_DIR / "program_enhance.md"
+    if src_enhance.exists():
+        content = src_enhance.read_text(encoding="utf-8")
+        content = content.replace("STRATEGY_NAME", strategy_name)
+        content = content.replace(
+            'AUTORESEARCH_DIR="/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch"',
+            f'AUTORESEARCH_DIR="{AUTORESEARCH_DIR}"'
+        )
+        (base / "program_enhance.md").write_text(content, encoding="utf-8")
+        print(f"  生成 program_enhance.md（增强版，含通用机制库）")
+
     # 生成 README.md，替换所有占位符为真实值
     src_readme = AUTORESEARCH_DIR / "README.md"
     if src_readme.exists():

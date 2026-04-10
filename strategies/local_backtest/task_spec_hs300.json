@@ -1,0 +1,26 @@
+{
+  "task": {
+    "task_id": "hs300_equal_weight_v1",
+    "strategy_name": "hs300_equal_weight"
+  },
+  "data": {
+    "panel_type": "local_features",
+    "prediction_path": "/Users/fengzhi/Downloads/git/testlixingren/strategies/local_backtest/pool_panel_cached.csv",
+    "start_date": "2022-01-01",
+    "end_date": "2026-01-01"
+  },
+  "pipeline": {
+    "top_n": 35,
+    "weight_mode": "equal"
+  },
+  "backtest": {
+    "template": "DirectExecutionStrategy",
+    "initial_cash": 1000000,
+    "rebalance_threshold": 0.01,
+    "hold_days": 1
+  },
+  "output": {
+    "save_artifacts": true,
+    "artifact_dir": "/Users/fengzhi/Downloads/git/testlixingren/output/hs300_equal_weight_v1"
+  }
+}

@@ -55,6 +55,7 @@ python setup.py --strategy-file /path/to/your/strategy.py
 
 ```
 请阅读 program.md，然后开始迭代优化循环。
+请阅读 program_enhance.md，然后开始迭代优化循环。
 ```
 
 agent 的工作目录就是实验子目录本身，所有相对路径（`strategy.py`、`state.json`、`history/`）都正确。

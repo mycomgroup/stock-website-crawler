@@ -56,34 +56,66 @@ function isSessionValid(session) {
 }
 
 /**
- * 确保有有效的RiceQuant会话
- * @param {Object} credentials - { username, password }
- * @returns {Promise<Array>} - cookies数组
+ * 执行登录并保存 session
  */
-export async function ensureRiceQuantSession(credentials) {
-  console.log('Checking RiceQuant session...');
-  
-  // 1. 尝试加载已有会话
-  const existingSession = loadJson(SESSION_FILE);
-  
-  if (isSessionValid(existingSession)) {
-    console.log('Using existing valid session');
-    return existingSession.cookies;
-  }
-  
-  // 2. 需要重新登录
-  console.log('Session invalid or expired, need to login...');
-  
+async function doLogin(credentials) {
   if (!credentials || !credentials.username || !credentials.password) {
     throw new Error('Missing credentials. Please provide username and password.');
   }
-  
   console.log('Launching browser to capture new session...');
   const session = await captureRiceQuantSession(credentials);
-  
-  // 3. 保存会话
   saveJson(SESSION_FILE, session);
   console.log(`Session saved to ${SESSION_FILE}`);
-  
   return session.cookies;
+}
+
+/**
+ * 确保有有效的RiceQuant会话
+ * @param {Object} credentials - { username, password }
+ * @param {boolean} forceRefresh - 强制重新登录
+ * @returns {Promise<Array>} - cookies数组
+ */
+export async function ensureRiceQuantSession(credentials, forceRefresh = false) {
+  console.log('Checking RiceQuant session...');
+
+  if (!forceRefresh) {
+    const existingSession = loadJson(SESSION_FILE);
+    if (isSessionValid(existingSession)) {
+      console.log('Using existing valid session');
+      return existingSession.cookies;
+    }
+  }
+
+  console.log(forceRefresh ? 'Force refreshing session...' : 'Session invalid or expired, need to login...');
+  return doLogin(credentials);
+}
+
+/**
+ * 当 API 返回 session 失效错误时，自动重新登录并重试
+ * @param {Object} credentials - { username, password }
+ * @param {Function} fn - 使用 cookies 的异步函数 (cookies) => result
+ * @returns {Promise<*>}
+ */
+export async function withAutoRelogin(credentials, fn) {
+  // 先尝试用现有 session
+  let cookies = await ensureRiceQuantSession(credentials);
+  try {
+    return await fn(cookies);
+  } catch (err) {
+    const isSessionError = 
+      err.message.includes('No workspace found') ||
+      err.message.includes('401') ||
+      err.message.includes('403') ||
+      err.message.includes('Unauthorized') ||
+      err.message.includes('not logged in') ||
+      err.message.includes('login');
+
+    if (!isSessionError) throw err;
+
+    console.error(`Session appears invalid (${err.message}), re-logging in...`);
+    // 删除旧 session 文件，强制重新登录
+    try { fs.unlinkSync(SESSION_FILE); } catch (_) {}
+    cookies = await ensureRiceQuantSession(credentials, true);
+    return await fn(cookies);
+  }
 }

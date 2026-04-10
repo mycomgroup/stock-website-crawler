@@ -24,7 +24,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { RiceQuantClient } from './request/ricequant-client.js';
-import { ensureRiceQuantSession } from './browser/session-manager.js';
+import { withAutoRelogin } from './browser/session-manager.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -57,48 +57,50 @@ async function main() {
 
   const code = fs.readFileSync(strategyFile, 'utf8');
 
-  // 1. 确保 session 有效
-  console.error('[1/3] 确保 RiceQuant session...');
   const credentials = {
     username: process.env.RICEQUANT_USERNAME,
     password: process.env.RICEQUANT_PASSWORD,
   };
-  const cookies = await ensureRiceQuantSession(credentials);
-  const client = new RiceQuantClient({ cookies });
 
-  // 2. 查找已有同名策略
-  console.error('[2/3] 查找已有策略...');
-  let strategyId = null;
-  let action = 'created';
+  // 使用 withAutoRelogin 包装，自动处理 session 失效
+  const output = await withAutoRelogin(credentials, async (cookies) => {
+    const client = new RiceQuantClient({ cookies });
 
-  try {
-    const strategies = await client.listStrategies();
-    const existing = strategies.find(s => s.name === strategyName);
-    if (existing) {
-      strategyId = String(existing.id || existing.strategy_id);
-      action = 'reused';
-      console.error(`  找到已有策略: ${strategyName} (id=${strategyId})`);
+    // 1. 查找已有同名策略
+    console.error('[1/2] 查找已有策略...');
+    let strategyId = null;
+    let action = 'created';
+
+    try {
+      const strategies = await client.listStrategies();
+      const existing = strategies.find(s => s.name === strategyName);
+      if (existing) {
+        strategyId = String(existing.id || existing.strategy_id);
+        action = 'reused';
+        console.error(`  找到已有策略: ${strategyName} (id=${strategyId})`);
+      }
+    } catch (e) {
+      console.error(`  listStrategies 失败: ${e.message}，继续创建新策略`);
     }
-  } catch (e) {
-    console.error(`  listStrategies 失败: ${e.message}，继续创建新策略`);
-  }
 
-  // 3. 没找到则创建
-  if (!strategyId) {
-    console.error(`[3/3] 创建新策略: ${strategyName}...`);
-    const result = await client.createStrategy(strategyName, code);
-    strategyId = String(result.strategy_id || result._id || result.id || '');
+    // 2. 没找到则创建
     if (!strategyId) {
-      console.error('创建失败，返回结果:', JSON.stringify(result));
-      process.exit(1);
+      console.error(`[2/2] 创建新策略: ${strategyName}...`);
+      const result = await client.createStrategy(strategyName, code);
+      strategyId = String(result.strategy_id || result._id || result.id || '');
+      if (!strategyId) {
+        console.error('创建失败，返回结果:', JSON.stringify(result));
+        throw new Error('Failed to create strategy');
+      }
+      console.error(`  创建成功: id=${strategyId}`);
+    } else {
+      console.error('[2/2] 复用已有策略，跳过创建');
     }
-    console.error(`  创建成功: id=${strategyId}`);
-  } else {
-    console.error('[3/3] 复用已有策略，跳过创建');
-  }
+
+    return { strategy_id: strategyId, strategy_name: strategyName, action };
+  });
 
   // 输出结果到 stdout（供外部脚本解析）
-  const output = { strategy_id: strategyId, strategy_name: strategyName, action };
   console.log(JSON.stringify(output, null, 2));
 }
 

@@ -2,10 +2,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import './load-env.js';
 import { WizardClient } from './request/wizard-client.js';
 import { validateWizardConfig, normalizeConfig } from './lib/config-validator.js';
 import { EXAMPLES_DIR, DATA_DIR } from './paths.js';
 import { getAllFactorsFlat, OPERATORS, TEMPLATES, ST_OPTIONS, DEFAULT_UNIVERSES } from './lib/factor-definitions.js';
+import { withAutoRelogin } from '../ricequant_strategy/browser/session-manager.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -74,8 +76,7 @@ function loadConfig(configPath) {
   return JSON.parse(fs.readFileSync(configPath, 'utf8'));
 }
 
-async function createStrategy(args) {
-  const client = new WizardClient();
+async function createStrategy(client, args) {
   const config = loadConfig(args.config);
   
   const validation = validateWizardConfig(config);
@@ -135,8 +136,7 @@ async function createStrategy(args) {
   return result;
 }
 
-async function updateStrategy(args) {
-  const client = new WizardClient();
+async function updateStrategy(client, args) {
   const config = loadConfig(args.config);
   
   const validation = validateWizardConfig(config);
@@ -153,8 +153,7 @@ async function updateStrategy(args) {
   console.log('更新成功');
 }
 
-async function runBacktest(args) {
-  const client = new WizardClient();
+async function runBacktest(client, args) {
   
   const backtestConfig = {
     start: args.start || '2020-01-01',
@@ -201,8 +200,7 @@ async function runBacktest(args) {
   return result;
 }
 
-async function getReport(args) {
-  const client = new WizardClient();
+async function getReport(client, args) {
   
   const report = await client.getFullReport(args.id);
   const reportPath = path.join(DATA_DIR, `report-${args.id}-${Date.now()}.json`);
@@ -227,8 +225,7 @@ async function getReport(args) {
   console.log(`\n详细报告: ${reportPath}`);
 }
 
-async function listStrategies(args) {
-  const client = new WizardClient();
+async function listStrategies(client, args) {
   
   const strategies = await client.listStrategies({ type: args.type });
   
@@ -239,8 +236,7 @@ async function listStrategies(args) {
   }
 }
 
-async function deleteStrategy(args) {
-  const client = new WizardClient();
+async function deleteStrategy(client, args) {
   
   console.log(`删除策略 ${args.id}...`);
   const success = await client.deleteStrategy(args.id);
@@ -326,28 +322,37 @@ async function main() {
     showHelp();
     process.exit(0);
   }
-  
+
+  // --validate 和 --factors 不需要登录
+  if (args.validate) { validateConfig(args); return; }
+  if (args.factors) { listFactors(); return; }
+
+  const credentials = {
+    username: process.env.RICEQUANT_USERNAME,
+    password: process.env.RICEQUANT_PASSWORD,
+  };
+
   try {
-    if (args.create) {
-      await createStrategy(args);
-    } else if (args.update) {
-      await updateStrategy(args);
-    } else if (args.run) {
-      await runBacktest(args);
-    } else if (args.report) {
-      await getReport(args);
-    } else if (args.list) {
-      await listStrategies(args);
-    } else if (args.delete) {
-      await deleteStrategy(args);
-    } else if (args.validate) {
-      validateConfig(args);
-    } else if (args.factors) {
-      listFactors();
-    } else {
-      console.error('未知命令，使用 --help 查看帮助');
-      process.exit(1);
-    }
+    await withAutoRelogin(credentials, async (cookies) => {
+      const client = new WizardClient({ cookies });
+
+      if (args.create) {
+        await createStrategy(client, args);
+      } else if (args.update) {
+        await updateStrategy(client, args);
+      } else if (args.run) {
+        await runBacktest(client, args);
+      } else if (args.report) {
+        await getReport(client, args);
+      } else if (args.list) {
+        await listStrategies(client, args);
+      } else if (args.delete) {
+        await deleteStrategy(client, args);
+      } else {
+        console.error('未知命令，使用 --help 查看帮助');
+        process.exit(1);
+      }
+    });
   } catch (error) {
     console.error('执行失败:', error.message);
     process.exit(1);

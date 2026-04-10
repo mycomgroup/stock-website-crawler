@@ -16,9 +16,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
-const SELECTED_FILE = path.resolve(__dirname, 'data', 'selected_batch4_75.json');
+const SELECTED_FILE = path.resolve(__dirname, 'data', 'selected_batch5_70.json');
 const SOURCE_DIR = path.resolve(REPO_ROOT, 'jk2bt-main', 'strategies');
-const RUN_DIR = path.resolve(__dirname, 'data', 'jq558_batch4_20260407');
+const RUN_DIR = path.resolve(__dirname, 'data', 'jq558_batch5_20260408');
 const JSONL_LOG = path.join(RUN_DIR, 'submissions.jsonl');
 const MD_LOG = path.join(RUN_DIR, 'submissions.md');
 const STATE_FILE = path.join(RUN_DIR, 'state.json');
@@ -54,7 +54,7 @@ function ensureRunFiles() {
 
 function loadSelectedStrategies() {
   if (!fs.existsSync(SELECTED_FILE)) {
-    throw new Error(`筛选结果文件不存在: ${SELECTED_FILE}\n请先运行: node select_batch4_strategies.js`);
+    throw new Error(`筛选结果文件不存在: ${SELECTED_FILE}\n请先运行: node select_batch4_strategies.js (批次5)`);
   }
   return JSON.parse(fs.readFileSync(SELECTED_FILE, 'utf8')).strategies;
 }
@@ -107,7 +107,7 @@ function makeStrategyName(basename, rank) {
     .replace(/[^\p{L}\p{N}_-]+/gu, '_')
     .replace(/_+/g, '_')
     .replace(/^_+|_+$/g, '');
-  return `B4_${String(rank).padStart(3, '0')}_${base}`.slice(0, 80);
+  return `B5_${String(rank).padStart(3, '0')}_${base}`.slice(0, 80);
 }
 
 async function launchBrowserWithSession(headed = false) {
@@ -146,8 +146,8 @@ async function waitForPlatformCapacity(retrySeconds = 60) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const startDate = args.start || '2025-04-07';
-  const endDate = args.end || '2026-04-07';
+  const startDate = args.start || '2025-04-08';
+  const endDate = args.end || '2026-04-04';
   const capital = args.capital || '100000';
   const frequency = args.freq || 'day';
   const sleepMs = Number(args.sleepMs || args.sleep || 5000);
@@ -159,7 +159,7 @@ async function main() {
 
   const selectedStrategies = loadSelectedStrategies();
   console.log('='.repeat(80));
-  console.log('JoinQuant 批次4 - 75个高潜力策略批量提交');
+  console.log('JoinQuant 批次5 - 70个策略批量提交');
   console.log(`筛选文件: ${SELECTED_FILE}`);
   console.log(`策略总数: ${selectedStrategies.length}`);
   console.log(`回测区间: ${startDate} -> ${endDate}`);

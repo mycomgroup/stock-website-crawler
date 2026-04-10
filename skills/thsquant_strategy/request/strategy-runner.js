@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { THSQuantClient } from './thsquant-client.js';
-import { ensureTHSQuantSession } from '../browser/session-manager.js';
+import { withAutoRelogin } from '../browser/session-manager.js';
 
 /**
  * 完整的 THSQuant 策略回测工作流
@@ -38,17 +38,16 @@ export async function runStrategyWorkflow(options = {}) {
   const baseName = strategyName || path.basename(codeFilePath, path.extname(codeFilePath));
   const fullName = `${baseName}_${today}_${beginDate.replace(/-/g, '')}~${endDate.replace(/-/g, '')}_${ts}`;
 
-  // 1. 确保 session 有效
-  console.log('1. Ensuring session...');
   const credentials = {
     username: process.env.THSQUANT_USERNAME,
     password: process.env.THSQUANT_PASSWORD
   };
-  const cookies = await ensureTHSQuantSession(credentials);
-  const client = new THSQuantClient({ cookies });
 
-  // 2. 验证登录
-  console.log('2. Checking login...');
+  return withAutoRelogin(credentials, async (cookies) => {
+    const client = new THSQuantClient({ cookies });
+
+  // 1. 验证登录
+  console.log('1. Checking login...');
   const login = await client.checkLogin();
   if (!login.logged) throw new Error('Not logged in. Session may have expired.');
   console.log(`   Logged in as user_id=${login.userId}`);
@@ -56,15 +55,15 @@ export async function runStrategyWorkflow(options = {}) {
   let targetAlgoId = algoId;
 
   if (createNew || !algoId) {
-    // 3. 创建新策略（保留历史）
-    console.log(`3. Creating new strategy: "${fullName}"...`);
+    // 2. 创建新策略（保留历史）
+    console.log(`2. Creating new strategy: "${fullName}"...`);
     const created = await client.createStrategy(fullName, code);
     if (!created.success) throw new Error(`Failed to create strategy: ${created.message}`);
     targetAlgoId = created.algoId;
     console.log(`   Created strategy ID: ${targetAlgoId}`);
   } else {
-    // 3. 更新已有策略代码
-    console.log(`3. Updating strategy ${algoId}...`);
+    // 2. 更新已有策略代码
+    console.log(`2. Updating strategy ${algoId}...`);
     const info = await client.getStrategyInfo(algoId);
     console.log(`   Strategy: ${info.algo_name}`);
     const saved = await client.saveStrategy(algoId, info.algo_name, code);
@@ -73,14 +72,14 @@ export async function runStrategyWorkflow(options = {}) {
     targetAlgoId = algoId;
   }
 
-  // 4. 运行回测
-  console.log(`4. Starting backtest (${beginDate} ~ ${endDate}, capital=${capitalBase}, freq=${frequency})...`);
+  // 3. 运行回测
+  console.log(`3. Starting backtest (${beginDate} ~ ${endDate}, capital=${capitalBase}, freq=${frequency})...`);
   const runResult = await client.runBacktest(targetAlgoId, { beginDate, endDate, capitalBase, frequency, benchmark });
   const backtestId = runResult.backtestId;
   console.log(`   Backtest started! ID: ${backtestId}`);
 
-  // 5. 等待完成
-  console.log('5. Waiting for backtest to complete...');
+  // 4. 等待完成
+  console.log('4. Waiting for backtest to complete...');
   const waitResult = await client.waitForBacktest(backtestId, {
     maxWait: 300000,
     interval: 3000,
@@ -94,11 +93,11 @@ export async function runStrategyWorkflow(options = {}) {
   }
   console.log('   Backtest completed!');
 
-  // 6. 获取完整报告（丰富数据）
-  console.log('6. Fetching full report...');
+  // 5. 获取完整报告（丰富数据）
+  console.log('5. Fetching full report...');
   const report = await client.getFullReport(backtestId);
 
-  // 7. 构建结构化摘要
+  // 6. 构建结构化摘要
   const perf = report.detail?.performance || {};
   const perfFull = report.performance || {};
 
@@ -143,7 +142,7 @@ export async function runStrategyWorkflow(options = {}) {
     logCount: report.backtestLog?.length || 0,
   };
 
-  // 8. 保存结果
+  // 7. 保存结果
   const resultPath = client.writeArtifact(`thsquant-${baseName}-${backtestId}`, {
     summary,
     detail: report.detail,
@@ -156,4 +155,5 @@ export async function runStrategyWorkflow(options = {}) {
   console.log(`   Report saved: ${resultPath}`);
 
   return { backtestId, algoId: targetAlgoId, resultPath, summary };
+  });
 }
