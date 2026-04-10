@@ -186,21 +186,39 @@ def _extract_backtest_id(output: str) -> Optional[str]:
     """从 jq-quick-submit.js 输出里提取 backtest_id"""
     import re
 
+    # 优先级1：从 JSON 中提取
     for line in output.split("\n"):
-        # JSON 格式: {"backtest_id": "xxx", ...}
-        if "{" in line:
+        line = line.strip()
+        if line.startswith("{"):
             try:
-                data = json.loads(line[line.index("{") :])
+                data = json.loads(line)
                 bid = data.get("backtest_id") or data.get("backtestId")
-                if bid:
+                if bid and len(str(bid)) == 32:  # JoinQuant backtestId 是32位十六进制
                     return str(bid)
             except:
                 pass
 
-    # 备用：正则匹配 32位十六进制
-    m = re.search(r"([a-f0-9]{32})", output)
-    if m:
-        return m.group(1)
+    # 优先级2：从 "Backtest started! ID: xxx" 中提取
+    for line in output.split("\n"):
+        if "Backtest started" in line and "ID:" in line:
+            # 提取 ID: 后面的内容
+            parts = line.split("ID:")
+            if len(parts) >= 2:
+                bid = parts[1].strip()
+                if len(bid) == 32:
+                    return bid
+
+    # 优先级3：正则匹配32位十六进制
+    matches = re.findall(r"\b([a-f0-9]{32})\b", output)
+    # 过滤掉可能的 algorithmId（通常在 URL 或其他地方出现多次）
+    # backtestId 通常出现在 JSON 或 "ID:" 后面
+    for match in matches:
+        # 检查这个 ID 附近是否有 "backtest" 或 "ID:" 的关键词
+        idx = output.find(match)
+        if idx > 0:
+            context = output[max(0, idx - 100) : idx + len(match) + 50]
+            if "backtest" in context.lower() or "ID:" in context:
+                return match
 
     return None
 
@@ -241,8 +259,8 @@ def wait_for_completion(
     **kwargs,
 ) -> Dict[str, Any]:
     """
-    直接通过 HTTP API 轮询回测状态。
-    JoinQuant 状态: status=0 完成, status=-1 运行中, status=-2 失败
+    直接通过 API 轮询回测状态。
+    JoinQuant 状态码：0/1=运行中, 2=完成, 3/-2=失败
     """
     session = _load_session()
     xsrf_token = _extract_xsrf_token(session)
@@ -253,6 +271,7 @@ def wait_for_completion(
     while True:
         elapsed = time.time() - start
 
+        # 每 5 分钟刷新一次 session
         if time.time() - _session_refresh_at > 300:
             try:
                 session = _load_session()
@@ -261,47 +280,50 @@ def wait_for_completion(
             except Exception as e:
                 print(f"[等待回测] session 刷新失败: {e}", flush=True)
 
+        # 检查超时
         if elapsed > max_wait_seconds:
             raise BacktestTimeoutError(
                 f"回测超时（{max_wait_seconds}s），backtest_id={backtest_id}"
             )
 
         try:
-            html = _jq_get(
-                f"/algorithm/backtest/list?algorithmId={strategy_id}", session
-            )
+            # 使用 API 获取状态
+            result = _get_backtest_result(backtest_id, session, xsrf_token)
+            state = str(result.get("data", {}).get("state", "unknown"))
 
-            import re
+            # 状态码含义：0/1=运行中, 2=完成, 3/-2=失败
+            if state == "2":
+                print(
+                    f"[等待回测] backtest_id={backtest_id} 完成 elapsed={elapsed:.0f}s",
+                    flush=True,
+                )
+                return {
+                    "backtest_id": backtest_id,
+                    "status": "finished",
+                    "result": result,
+                    "elapsed_seconds": elapsed,
+                }
+            elif state in ("3", "-2"):
+                # 失败状态，尝试获取错误信息
+                error_msg = "回测失败"
+                # 检查是否有错误信息
+                if result.get("msg"):
+                    error_msg = result["msg"]
+                raise BacktestFailedError(
+                    f"{error_msg} backtest_id={backtest_id} state={state}"
+                )
+            elif state in ("0", "1"):
+                status_text = "初始化" if state == "0" else "运行中"
+                print(
+                    f"[等待回测] backtest_id={backtest_id} {status_text} elapsed={elapsed:.0f}s",
+                    flush=True,
+                )
+            else:
+                print(
+                    f"[等待回测] backtest_id={backtest_id} state={state} elapsed={elapsed:.0f}s",
+                    flush=True,
+                )
 
-            status_match = re.search(
-                r'_backtestId="{}"[^>]*_status="(\d+)"'.format(backtest_id), html
-            )
-
-            if status_match:
-                status_code = int(status_match.group(1))
-
-                # JoinQuant 状态码：-1=运行中, 0/2=完成, -2=失败
-                if status_code in (0, 2):
-                    print(
-                        f"[等待回测] backtest_id={backtest_id} 完成 elapsed={elapsed:.0f}s",
-                        flush=True,
-                    )
-                    result = _get_backtest_result(backtest_id, session, xsrf_token)
-                    return {
-                        "backtest_id": backtest_id,
-                        "status": "finished",
-                        "result": result,
-                        "elapsed_seconds": elapsed,
-                    }
-                elif status_code == -2:
-                    raise BacktestFailedError(
-                        f"回测失败 backtest_id={backtest_id} status=-2"
-                    )
-                else:
-                    print(
-                        f"[等待回测] backtest_id={backtest_id} status={status_code} elapsed={elapsed:.0f}s",
-                        flush=True,
-                    )
         except (BacktestFailedError, BacktestTimeoutError):
             raise
         except Exception as e:
@@ -344,25 +366,28 @@ def fetch_results(
     if not backtest_id:
         raise JoinQuantExecutorError(f"找不到 strategy {strategy_id} 的回测记录")
 
+    # 获取结果数据
     result_data = _get_backtest_result(backtest_id, session, xsrf_token)
+
+    # 获取统计数据（包含完整的性能指标）
     stats_data = _get_backtest_stats(backtest_id, session, xsrf_token)
 
-    stats = stats_data
-    result_dict = result_data.get("data", {}).get("result", {})
-
+    # 构建输出，使用 stats 中的数据
     output = {
         "backtest_id": backtest_id,
-        "status": "finished" if result_data.get("status") == 0 else "running",
-        "stats": stats,
-        "result": result_dict,
-        "annualReturn": stats.get("annual_return", 0),
-        "totalReturn": stats.get("total_return", 0),
-        "maxDrawdown": stats.get("max_drawdown", 0),
-        "sharpe": stats.get("sharpe", 0),
-        "alpha": stats.get("alpha", 0),
-        "beta": stats.get("beta", 0),
-        "sortino": stats.get("sortino", 0),
-        "informationRatio": stats.get("information_ratio", 0),
+        "status": "finished",
+        "stats": stats_data,
+        "result": result_data.get("data", {}).get("result", {}),
+        # 从 stats 中提取关键指标
+        "annualReturn": stats_data.get("annual_algo_return", 0),
+        "totalReturn": stats_data.get("algorithm_return", 0),
+        "maxDrawdown": stats_data.get("max_drawdown", 0),
+        "sharpe": stats_data.get("sharpe", 0),
+        "alpha": stats_data.get("alpha", 0),
+        "beta": stats_data.get("beta", 0),
+        "sortino": stats_data.get("sortino", 0),
+        "informationRatio": stats_data.get("information", 0),
+        "winRate": stats_data.get("win_ratio", 0),
     }
 
     if save_dir:
