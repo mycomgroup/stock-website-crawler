@@ -15,9 +15,10 @@ const SOURCE_DIR = path.resolve(REPO_ROOT, 'jk2bt-main', 'strategies');
 const BATCH1_DIR = path.resolve(__dirname, 'data', 'jq558_batch_20260403');
 const BATCH2_DIR = path.resolve(__dirname, 'data', 'jq558_batch_20260404');
 const BATCH3_DIR = path.resolve(__dirname, 'data', 'jq558_top100_20260405');
-const OUTPUT_FILE = path.resolve(__dirname, 'data', 'selected_batch4_75.json');
+const BATCH4_DIR = path.resolve(__dirname, 'data', 'jq558_batch4_20260407');
+const OUTPUT_FILE = path.resolve(__dirname, 'data', 'selected_batch5_70.json');
 
-const SELECT_COUNT = 75;
+const SELECT_COUNT = 70;
 
 const KEYWORD_SCORES = {
   '年化': 3, '倍': 3, '收益': 2, '超额': 2, '稳定': 2, '低回撤': 3, '胜率': 3,
@@ -93,7 +94,7 @@ function main() {
   const allFiles = walkStrategyFiles(SOURCE_DIR);
   console.log(`总策略文件数: ${allFiles.length}`);
 
-  const { submitted, failed } = readBatchRecords([BATCH1_DIR, BATCH2_DIR, BATCH3_DIR]);
+  const { submitted, failed } = readBatchRecords([BATCH1_DIR, BATCH2_DIR, BATCH3_DIR, BATCH4_DIR]);
   console.log(`所有批次已成功提交: ${submitted.size}`);
   console.log(`所有批次失败记录: ${failed.size}`);
 
@@ -124,7 +125,7 @@ function main() {
 
   const output = {
     generatedAt: new Date().toISOString(),
-    batchName: 'jq558_batch4_20260407',
+    batchName: 'jq558_batch5_20260408',
     totalCandidates: candidates.length,
     selected: selected.length,
     statistics: {

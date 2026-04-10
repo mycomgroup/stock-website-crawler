@@ -102,7 +102,9 @@ class AkshareDataFeed:
             try:
                 df = pd.read_pickle(cache_file)
                 df['date'] = pd.to_datetime(df['date'])
-                if df['date'].min().date() > start_date or df['date'].max().date() < end_date:
+                # 允许最早日期在 start_date 后 7 天内（非交易日偏移）
+                from datetime import timedelta
+                if df['date'].min().date() > (start_date + timedelta(days=7)):
                     need_download = True
             except Exception:
                 need_download = True
@@ -126,14 +128,16 @@ class AkshareDataFeed:
         df['date'] = pd.to_datetime(df['date'])
         df = df[(df['date'] >= pd.Timestamp(start_date)) & (df['date'] <= pd.Timestamp(end_date))]
 
-        df.rename(columns={
+        # 兼容中文列名（缓存可能保留原始 akshare 格式）
+        col_map = {
             'date': 'datetime',
             '开盘': 'open',
             '最高': 'high',
             '最低': 'low',
             '收盘': 'close',
-            '成交量': 'volume'
-        }, inplace=True)
+            '成交量': 'volume',
+        }
+        df.rename(columns=col_map, inplace=True)
 
         df = df[['datetime', 'open', 'high', 'low', 'close', 'volume']]
         df['openinterest'] = 0

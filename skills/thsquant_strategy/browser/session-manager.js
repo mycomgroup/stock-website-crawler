@@ -50,27 +50,53 @@ function isSessionValid(session) {
   return true;
 }
 
-export async function ensureTHSQuantSession(credentials) {
-  console.log('Checking THSQuant session...');
-  
-  const existingSession = loadJson(SESSION_FILE);
-  
-  if (isSessionValid(existingSession)) {
-    console.log('Using existing valid session');
-    return existingSession.cookies;
-  }
-  
-  console.log('Session invalid or expired, need to login...');
-  
+async function doLogin(credentials) {
   if (!credentials || !credentials.username || !credentials.password) {
     throw new Error('Missing credentials. Please provide username and password.');
   }
-  
   console.log('Launching browser to capture new session...');
   const session = await captureTHSQuantSession(credentials);
-  
   saveJson(SESSION_FILE, session);
   console.log(`Session saved to ${SESSION_FILE}`);
-  
   return session.cookies;
+}
+
+export async function ensureTHSQuantSession(credentials, forceRefresh = false) {
+  console.log('Checking THSQuant session...');
+
+  if (!forceRefresh) {
+    const existingSession = loadJson(SESSION_FILE);
+    if (isSessionValid(existingSession)) {
+      console.log('Using existing valid session');
+      return existingSession.cookies;
+    }
+  }
+
+  console.log(forceRefresh ? 'Force refreshing session...' : 'Session invalid or expired, need to login...');
+  return doLogin(credentials);
+}
+
+/**
+ * 当 API 返回 session 失效错误时，自动重新登录并重试
+ */
+export async function withAutoRelogin(credentials, fn) {
+  let cookies = await ensureTHSQuantSession(credentials);
+  try {
+    return await fn(cookies);
+  } catch (err) {
+    const isSessionError =
+      err.message.includes('Not logged in') ||
+      err.message.includes('401') ||
+      err.message.includes('403') ||
+      err.message.includes('Unauthorized') ||
+      err.message.includes('login') ||
+      err.message.includes('session');
+
+    if (!isSessionError) throw err;
+
+    console.error(`Session appears invalid (${err.message}), re-logging in...`);
+    try { fs.unlinkSync(SESSION_FILE); } catch (_) {}
+    cookies = await ensureTHSQuantSession(credentials, true);
+    return await fn(cookies);
+  }
 }
