@@ -18,6 +18,7 @@ import random
 # ---------------------------------------------------------------------------
 
 FACTOR_CANDIDATES = {
+    # ======================== fundamental ========================
     # 估值指标
     "pe_ratio": {
         "type": "fundamental",
@@ -55,6 +56,18 @@ FACTOR_CANDIDATES = {
         "range": [5e8, 1e11],
         "default_rhs": 1e9,
     },
+    "capitalization": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [1e8, 1e10],
+        "default_rhs": 1e9,
+    },
+    "circulating_cap": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [1e8, 1e10],
+        "default_rhs": 5e8,
+    },
     # 盈利能力
     "roe": {
         "type": "fundamental",
@@ -86,6 +99,18 @@ FACTOR_CANDIDATES = {
         "range": [5, 40],
         "default_rhs": 10,
     },
+    "ebit_margin": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [5, 50],
+        "default_rhs": 15,
+    },
+    "net_profit_after_tax": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [1e7, 1e10],
+        "default_rhs": 1e8,
+    },
     # 成长能力
     "revenue_growth_rate": {
         "type": "fundamental",
@@ -110,6 +135,24 @@ FACTOR_CANDIDATES = {
         "operators": ["greater_than"],
         "range": [0, 40],
         "default_rhs": 8,
+    },
+    "total_profit_growth_rate": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0, 50],
+        "default_rhs": 10,
+    },
+    "net_profit_growth_rate_1y": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0, 100],
+        "default_rhs": 20,
+    },
+    "revenue_growth_rate_1y": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0, 100],
+        "default_rhs": 15,
     },
     # 财务健康
     "debt_ratio": {
@@ -136,6 +179,37 @@ FACTOR_CANDIDATES = {
         "range": [0.5, 3],
         "default_rhs": 1.5,
     },
+    "tangible_asset_ratio": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0.3, 1.0],
+        "default_rhs": 0.6,
+    },
+    "interest_coverage_ratio": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [1, 20],
+        "default_rhs": 5,
+    },
+    # 营运能力
+    "inventory_turnover": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [1, 20],
+        "default_rhs": 5,
+    },
+    "accounts_receivable_turnover": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [1, 50],
+        "default_rhs": 10,
+    },
+    "asset_turnover": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0.2, 3],
+        "default_rhs": 0.8,
+    },
     # 现金流
     "operating_cash_flow_per_share": {
         "type": "fundamental",
@@ -148,6 +222,18 @@ FACTOR_CANDIDATES = {
         "operators": ["greater_than"],
         "range": [0.1, 5],
         "default_rhs": 0.5,
+    },
+    "cash_flow_to_debt": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0.1, 2],
+        "default_rhs": 0.5,
+    },
+    "operating_cash_flow_growth_rate": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [-20, 100],
+        "default_rhs": 10,
     },
     # 分红指标
     "dividend_yield": {
@@ -175,24 +261,238 @@ FACTOR_CANDIDATES = {
         "range": [1, 50],
         "default_rhs": 5,
     },
-    # 价格与成交量
-    "turnover_rate": {
+    "revenue_per_share": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [1, 50],
+        "default_rhs": 10,
+    },
+    "operating_profit_per_share": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0.5, 20],
+        "default_rhs": 2,
+    },
+    # 分析师预测
+    "target_price": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [5, 500],
+        "default_rhs": 50,
+    },
+    "rating": {
+        "type": "fundamental",
+        "operators": ["less_than"],
+        "range": [1, 5],
+        "default_rhs": 2,
+    },
+    "eps_forecast": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0.1, 10],
+        "default_rhs": 1,
+    },
+    "revenue_forecast_growth": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0, 50],
+        "default_rhs": 10,
+    },
+    "net_profit_forecast_growth": {
+        "type": "fundamental",
+        "operators": ["greater_than"],
+        "range": [0, 100],
+        "default_rhs": 20,
+    },
+    # ======================== pricing ========================
+    # 价格指标
+    "open": {
         "type": "pricing",
         "operators": ["greater_than", "less_than"],
-        "range": [0.5, 15],
-        "default_rhs": 3,
+        "range": [1, 500],
+        "default_rhs": 20,
     },
+    "close": {
+        "type": "pricing",
+        "operators": ["greater_than", "less_than"],
+        "range": [1, 500],
+        "default_rhs": 20,
+    },
+    "high": {
+        "type": "pricing",
+        "operators": ["greater_than"],
+        "range": [1, 500],
+        "default_rhs": 25,
+    },
+    "low": {
+        "type": "pricing",
+        "operators": ["less_than"],
+        "range": [1, 500],
+        "default_rhs": 15,
+    },
+    "last": {
+        "type": "pricing",
+        "operators": ["greater_than", "less_than"],
+        "range": [1, 500],
+        "default_rhs": 20,
+    },
+    "limit_up": {
+        "type": "pricing",
+        "operators": ["greater_than"],
+        "range": [1, 500],
+        "default_rhs": 30,
+    },
+    "limit_down": {
+        "type": "pricing",
+        "operators": ["less_than"],
+        "range": [1, 500],
+        "default_rhs": 10,
+    },
+    # 成交量指标
     "volume": {
         "type": "pricing",
         "operators": ["greater_than"],
         "range": [1e6, 1e9],
         "default_rhs": 1e7,
     },
+    "turnover": {
+        "type": "pricing",
+        "operators": ["greater_than"],
+        "range": [1e6, 1e9],
+        "default_rhs": 1e7,
+    },
+    "turnover_rate": {
+        "type": "pricing",
+        "operators": ["greater_than", "less_than"],
+        "range": [0.5, 15],
+        "default_rhs": 3,
+    },
+    # 涨跌指标
     "change_rate": {
         "type": "pricing",
         "operators": ["greater_than", "less_than"],
         "range": [-10, 10],
         "default_rhs": 0,
+    },
+    "n_day_gain_rate": {
+        "type": "pricing",
+        "operators": ["greater_than", "less_than", "in_range"],
+        "range": [-30, 30],
+        "default_rhs": 5,
+    },
+    "high_52w": {
+        "type": "pricing",
+        "operators": ["greater_than"],
+        "range": [5, 500],
+        "default_rhs": 50,
+    },
+    "low_52w": {
+        "type": "pricing",
+        "operators": ["less_than"],
+        "range": [1, 200],
+        "default_rhs": 20,
+    },
+    # ======================== technical ========================
+    # 趋势指标
+    "MA": {
+        "type": "technical",
+        "operators": ["greater_than", "less_than"],
+        "range": [1, 500],
+        "default_rhs": 20,
+    },
+    "EMA": {
+        "type": "technical",
+        "operators": ["greater_than", "less_than"],
+        "range": [1, 500],
+        "default_rhs": 20,
+    },
+    "MACD": {
+        "type": "technical",
+        "operators": ["greater_than", "less_than"],
+        "range": [-5, 5],
+        "default_rhs": 0,
+    },
+    "ADX": {
+        "type": "technical",
+        "operators": ["greater_than"],
+        "range": [0, 100],
+        "default_rhs": 25,
+    },
+    "TRIX": {
+        "type": "technical",
+        "operators": ["greater_than", "less_than"],
+        "range": [-1, 1],
+        "default_rhs": 0,
+    },
+    # 动量指标
+    "RSI": {
+        "type": "technical",
+        "operators": ["less_than", "greater_than", "in_range"],
+        "range": [0, 100],
+        "default_rhs": 30,
+    },
+    "CCI": {
+        "type": "technical",
+        "operators": ["less_than", "greater_than"],
+        "range": [-300, 300],
+        "default_rhs": -100,
+    },
+    "KDJ": {
+        "type": "technical",
+        "operators": ["less_than", "greater_than"],
+        "range": [0, 100],
+        "default_rhs": 20,
+    },
+    "WILLR": {
+        "type": "technical",
+        "operators": ["less_than", "greater_than"],
+        "range": [-100, 0],
+        "default_rhs": -80,
+    },
+    "MFI": {
+        "type": "technical",
+        "operators": ["less_than", "greater_than"],
+        "range": [0, 100],
+        "default_rhs": 20,
+    },
+    # 波动率指标
+    "ATR": {
+        "type": "technical",
+        "operators": ["less_than", "greater_than"],
+        "range": [0.5, 20],
+        "default_rhs": 3,
+    },
+    "BOLL": {
+        "type": "technical",
+        "operators": ["greater_than", "less_than"],
+        "range": [0, 100],
+        "default_rhs": 20,
+    },
+    "STDDEV": {
+        "type": "technical",
+        "operators": ["less_than", "greater_than"],
+        "range": [0.5, 10],
+        "default_rhs": 2,
+    },
+    "SAR": {
+        "type": "technical",
+        "operators": ["greater_than", "less_than"],
+        "range": [1, 500],
+        "default_rhs": 20,
+    },
+    # 成交量类指标
+    "OBV": {
+        "type": "technical",
+        "operators": ["greater_than"],
+        "range": [-1e8, 1e8],
+        "default_rhs": 0,
+    },
+    # ======================== extra ========================
+    "listed_days": {
+        "type": "extra",
+        "operators": ["greater_than"],
+        "range": [30, 3650],
+        "default_rhs": 180,
     },
 }
 
@@ -273,9 +573,7 @@ def estimate_candidate_pool_size(config: dict) -> int:
                 reduction_factor = max(0.1, min(0.95, 0.95 - normalized * 0.6))
             elif operator == "in_range":
                 if isinstance(rhs, list) and len(rhs) >= 2:
-                    range_width = (
-                        (rhs[1] - rhs[0]) / range_span if range_span > 0 else 0.2
-                    )
+                    range_width = (rhs[1] - rhs[0]) / range_span if range_span > 0 else 0.2
                     reduction_factor = max(0.1, min(0.95, 0.3 + range_width * 0.4))
 
         candidate_size *= reduction_factor

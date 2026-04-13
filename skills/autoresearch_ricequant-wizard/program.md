@@ -77,15 +77,15 @@ cat experiments/<name>/iterations.tsv
 ```bash
 SKILL_DIR="skills/autoresearch_ricequant-wizard"
 
-# 读取因子候选库（31 个因子，含类型、操作符、范围）
-head -200 ${SKILL_DIR}/wizard_mutator.py
+# 读取因子候选库（约75个因子，含类型、操作符、范围）
+head -250 ${SKILL_DIR}/wizard_mutator.py
 
 # 读取候选值列表
 grep -E "(HOLDING_NUM_OPTIONS|REBALANCE_OPTIONS|UNIVERSE_OPTIONS)" ${SKILL_DIR}/wizard_mutator.py
 ```
 
 关键信息：
-- `FACTOR_CANDIDATES`：因子候选库，每个因子含 `type`、`operators`、`range`
+- `FACTOR_CANDIDATES`：因子候选库（约75个因子），每个因子含 `type`、`operators`、`range`
 - `HOLDING_NUM_OPTIONS`：持仓数量候选值 `[5, 10, 15, 20, 25, 30]`
 - `REBALANCE_OPTIONS`：调仓间隔候选值 `[1, 3, 5, 10, 15, 20, 30]`
 - `UNIVERSE_OPTIONS`：股票池候选值 `["000300.XSHG", "000905.XSHG", "000852.XSHG", "*"]`
@@ -96,6 +96,7 @@ grep -E "(HOLDING_NUM_OPTIONS|REBALANCE_OPTIONS|UNIVERSE_OPTIONS)" ${SKILL_DIR}/
 - 成长因子（revenue_growth_rate）：越高越好，用 `greater_than`
 - 风险因子（debt_ratio）：越低越好，用 `less_than`
 - 分红因子（dividend_yield）：越高越好，用 `greater_than`
+- 技术指标（RSI<30超卖、MACD>0看涨）：根据信号方向选择操作符
 
 ---
 
@@ -205,6 +206,8 @@ score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 5. **不要问用户是否继续**，你是自主运行的
 6. **必须维护 search_notes.md**，每轮结束后更新，包括更新"未尝试因子"列表
 7. **crash 后分析原因**，调整策略后再继续，不要盲目重试
+8. **保持指标简洁**：filters ≤ 10，先探索指标组合，再微调参数阈值
+9. **验证策略稳定性**：找到最优配置后，对关键参数做±10%扰动测试，确认策略依然有效
 
 ---
 
@@ -231,4 +234,3 @@ score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 cat experiments/<name>/state.json | python -c "import json,sys; s=json.load(sys.stdin); print(f'champion_score={s[\"champion_score\"]:.4f}')"
 echo "最优配置：experiments/<name>/wizard_config.json"
 ```
-
