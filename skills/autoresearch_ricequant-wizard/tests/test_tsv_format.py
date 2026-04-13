@@ -1,25 +1,35 @@
 """
 Unit tests for TSV format of iterations.tsv in run_iteration.py
 """
+
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from run_iteration_wizard import append_tsv, TSV_HEADER
+from run_iteration import append_tsv, TSV_HEADER
 
 
 def test_tsv_header_columns():
     columns = TSV_HEADER.strip().split("\t")
-    expected = ["iter", "backtest_id", "status", "annual_return", "max_drawdown", "sharpe", "score", "decision", "mutation"]
+    expected = [
+        "iter",
+        "backtest_id",
+        "status",
+        "annual_return",
+        "max_drawdown",
+        "sharpe",
+        "score",
+        "decision",
+        "mutation",
+    ]
     assert len(columns) == 9
     assert columns == expected
 
 
 def test_append_tsv_creates_file_with_header(tmp_path):
     exp_dir = tmp_path / "exp"
-    history_dir = exp_dir / "history"
-    history_dir.mkdir(parents=True)
+    exp_dir.mkdir(parents=True)
 
     row = {
         "iter": "0001",
@@ -35,7 +45,7 @@ def test_append_tsv_creates_file_with_header(tmp_path):
 
     append_tsv(exp_dir, row)
 
-    tsv_path = history_dir / "iterations.tsv"
+    tsv_path = exp_dir / "iterations.tsv"
     assert tsv_path.exists()
 
     lines = tsv_path.read_text(encoding="utf-8").splitlines()
@@ -46,8 +56,7 @@ def test_append_tsv_creates_file_with_header(tmp_path):
 
 def test_append_tsv_multiple_rows(tmp_path):
     exp_dir = tmp_path / "exp"
-    history_dir = exp_dir / "history"
-    history_dir.mkdir(parents=True)
+    exp_dir.mkdir(parents=True)
 
     for i in range(3):
         row = {
@@ -63,16 +72,14 @@ def test_append_tsv_multiple_rows(tmp_path):
         }
         append_tsv(exp_dir, row)
 
-    content = (history_dir / "iterations.tsv").read_text(encoding="utf-8")
+    content = (exp_dir / "iterations.tsv").read_text(encoding="utf-8")
     lines = [l for l in content.splitlines() if l.strip()]
-    # 1 header + 3 data rows
     assert len(lines) == 4
 
 
 def test_tsv_row_format(tmp_path):
     exp_dir = tmp_path / "exp"
-    history_dir = exp_dir / "history"
-    history_dir.mkdir(parents=True)
+    exp_dir.mkdir(parents=True)
 
     row = {
         "iter": "0001",
@@ -88,12 +95,10 @@ def test_tsv_row_format(tmp_path):
 
     append_tsv(exp_dir, row)
 
-    lines = (history_dir / "iterations.tsv").read_text(encoding="utf-8").splitlines()
+    lines = (exp_dir / "iterations.tsv").read_text(encoding="utf-8").splitlines()
     data_line = lines[1]
     fields = data_line.split("\t")
 
     assert len(fields) == 9
-    # annual_return formatted as 4 decimal places
     assert fields[3] == "0.1500"
-    # score formatted as 6 decimal places
     assert fields[6] == "1.234000"

@@ -1,0 +1,17 @@
+{
+  "name": "现金流质量成长策略",
+  "description": "筛选经营现金流大于净利润、营收增长的健康成长股",
+  "formula": [
+    "非ST",
+    "最近两年经营活动产生的现金流量净额大于净利润",
+    "营收同比增长率大于15%"
+  ],
+  "daysForSaleStrategy": "4,8",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

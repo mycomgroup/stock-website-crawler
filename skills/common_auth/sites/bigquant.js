@@ -3,7 +3,7 @@ export default {
   name: 'BigQuant',
   domain: '.bigquant.com',
   loginUrl: 'https://bigquant.com',
-  dashboardUrl: 'https://bigquant.com/experiments',
+  dashboardUrl: 'https://bigquant.com/',
   
   async verifySession(cookies) {
     const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');

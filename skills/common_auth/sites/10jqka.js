@@ -27,7 +27,10 @@ export default {
   },
 
   async automatedLogin(page, credentials) {
-    if (!credentials.username || !credentials.password) throw new Error('未发现同花顺账号凭证');
+    const username = credentials.THSQUANT_USERNAME || credentials.THS_USER || credentials.username;
+    const password = credentials.THSQUANT_PASSWORD || credentials.THS_PASS || credentials.password;
+    
+    if (!username || !password) throw new Error('未发现同花顺账号凭证 (THSQUANT_USERNAME/PASSWORD)');
     
     console.log('🔑 正在执行 10jqka 自动填表登录...');
     
@@ -35,15 +38,15 @@ export default {
     const loginLink = await page.$('a:has-text("登录")');
     if (loginLink) await loginLink.click();
     
-    const iframeElement = await page.waitForSelector('iframe[src*="upass.10jqka.com.cn"]', { timeout: 15000 });
+    const iframeElement = await page.waitForSelector('iframe[src*="upass.10jqka.com.cn"]', { timeout: 30000 });
     const frame = await iframeElement.contentFrame();
     
     await frame.click('a:has-text("密码登录")').catch(() => {});
-    await frame.fill('input#uname', credentials.username);
-    await frame.fill('input#passwd', credentials.password);
+    await frame.fill('input#uname', username);
+    await frame.fill('input#passwd', password);
     await frame.click('#account_pannel .submit_btn');
     
     // 等待登录 Iframe 消失
-    await page.waitForFunction(() => !document.querySelector('iframe[src*="upass.10jqka.com.cn"]'), { timeout: 30000 });
+    await page.waitForFunction(() => !document.querySelector('iframe[src*="upass.10jqka.com.cn"]'), { timeout: 60000 });
   }
 };

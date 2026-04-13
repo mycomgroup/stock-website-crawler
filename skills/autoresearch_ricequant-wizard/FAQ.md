@@ -23,7 +23,7 @@ score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 
 ```bash
 # 查看迭代历史
-cat experiments/<name>/history/iterations.tsv
+cat experiments/<name>/iterations.tsv
 
 # 查看详细分析
 python analyze.py --base experiments/<name>
@@ -85,7 +85,7 @@ python run_iteration.py --base experiments/<name> \
     --mutation-type adjust_holding_num
 
 # 2. 查看历史成功的变异类型
-grep "keep" experiments/<name>/history/iterations.tsv
+grep "keep" experiments/<name>/iterations.tsv
 
 # 3. 分析失败原因
 python analyze.py --base experiments/<name>
@@ -215,7 +215,7 @@ git reset --hard <baseline_commit>
 
 1. **从小改动开始**：先做微调，验证系统正常工作
 2. **定期备份**：重要实验定期备份 `experiments/` 目录
-3. **记录笔记**：在 `history/search_notes.md` 中记录思路
+3. **记录笔记**：在 `search_notes.md` 中记录思路
 4. **监控指标**：关注 max_drawdown，避免过度优化
 5. **多样化探索**：尝试不同的变异类型，避免局部最优
 6. **版本管理**：利用 git 历史追溯每次改动

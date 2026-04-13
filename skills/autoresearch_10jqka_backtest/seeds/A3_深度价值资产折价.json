@@ -1,0 +1,19 @@
+{
+  "name": "深度价值资产折价策略",
+  "description": "筛选市值低于净资产的公司，寻找安全边际充足的重资产行业标的",
+  "formula": [
+    "非ST",
+    "市净率小于1",
+    "总市值小于净资产",
+    "流动比率大于1.5",
+    "近三年净利润为正"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

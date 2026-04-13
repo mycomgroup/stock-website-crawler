@@ -28,9 +28,10 @@ skills/autoresearch_ricequant-wizard/
 ├── SEED_TEMPLATE.md        # 种子配置模板
 ├── program.md              # agent 行动规则
 └── experiments/<name>/     # 实验子目录
-    ├── wizard_config.json  ← 当前 champion 配置
-    ├── state.json          ← 当前状态
-    └── history/            ← 迭代历史
+    ├── wizard_config.json  ← 当前最优配置
+    ├── state.json          ← 迭代状态
+    ├── iterations.tsv      ← 所有迭代记录
+    └── .git/               ← Git 历史（只保留成功版本）
 ```
 
 ---
@@ -73,7 +74,7 @@ python run_iteration.py \
 ### Step 3：查看进度
 
 ```bash
-cat experiments/my_experiment/history/iterations.tsv
+cat experiments/my_experiment/iterations.tsv
 python analyze.py --base experiments/my_experiment
 ```
 

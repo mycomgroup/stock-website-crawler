@@ -1,0 +1,18 @@
+{
+  "name": "高股息现金流价值策略",
+  "description": "筛选高股息且现金流健康的公司，适合震荡市和利率下行阶段",
+  "formula": [
+    "非ST",
+    "近两年股息率大于3%",
+    "经营活动产生的现金流量净额大于净利润",
+    "资产负债率小于60%"
+  ],
+  "daysForSaleStrategy": "5,10",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 8,
+  "dailyBuyCount": 2,
+  "takeProfit": 15,
+  "stopLoss": 8,
+  "trailingStopLoss": 5
+}

@@ -1,0 +1,17 @@
+{
+  "name": "科威特政府投资局持仓策略",
+  "description": "筛选前十大流通股东包含科威特政府投资局的公司",
+  "formula": [
+    "非ST",
+    "前十大流通股东名称包含科威特政府投资局",
+    "流通市值大于10亿元"
+  ],
+  "daysForSaleStrategy": "5,10",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

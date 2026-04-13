@@ -125,7 +125,20 @@ export class AuthManager {
   }
 
   async tryAutomatedLogin() {
-    console.log(`🤖 [${this.site.id}] 尝试执行自动化表单登录...`);
+    if (this.site.apiLogin) {
+      console.log(`🤖 [${this.site.id}] 尝试执行 API 登录...`);
+      try {
+        const cookies = await this.site.apiLogin(process.env);
+        if (cookies && cookies.length > 0) {
+          const success = await this.saveSessionWithVerify(cookies, this.site.loginUrl);
+          if (success) return cookies;
+        }
+      } catch (e) {
+        console.warn(`⚠️ API 登录失败: ${e.message}`);
+      }
+    }
+
+    console.log(`🤖 [${this.site.id}] 尝试执行浏览器自动化登录...`);
     const { browser, context } = await this.engine.launchContext();
     const page = await context.newPage();
     try {
@@ -139,7 +152,7 @@ export class AuthManager {
         if (success) return cookies;
       }
     } catch (e) {
-      console.warn(`⚠️ 自动登录失败: ${e.message}`);
+      console.warn(`⚠️ 浏览器登录失败: ${e.message}`);
     } finally {
       await browser.close();
     }

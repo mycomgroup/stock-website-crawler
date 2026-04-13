@@ -78,11 +78,11 @@ export default {
     }
 
     // 2. 处理跨域 iframe
-    const iframeElement = await page.waitForSelector('iframe[src*="upass.10jqka"]', { timeout: 10000 });
+const iframeElement = await page.waitForSelector('iframe[src*="upass.10jqka"]', { timeout: 30000 });
     const frame = await iframeElement.contentFrame();
     if (!frame) throw new Error('无法获取登录 iframe');
 
-    // 3. 点击“密码登录”标签
+    // 3. 点击"密码登录"标签
     await frame.click('a:has-text("密码登录"), :has-text("密码登录")').catch(() => {});
     await page.waitForTimeout(500);
 
@@ -99,6 +99,6 @@ export default {
     }
     
     // 等待登录成功后的调整
-    await page.waitForNavigation({ waitUntil: 'networkidle', timeout: 15000 }).catch(() => {});
+    await page.waitForNavigation({ waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
   }
 };

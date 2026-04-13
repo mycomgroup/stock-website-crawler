@@ -1,0 +1,18 @@
+{
+  "name": "业绩扭亏策略",
+  "description": "筛选业绩扭亏、营收增长大于20%、经营现金流转正的公司",
+  "formula": [
+    "非ST",
+    "业绩扭亏",
+    "营业收入同比增长率大于20%",
+    "经营现金流转正"
+  ],
+  "daysForSaleStrategy": "2,4",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 30,
+  "stopLoss": 15,
+  "trailingStopLoss": 10
+}

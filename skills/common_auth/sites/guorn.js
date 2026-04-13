@@ -3,7 +3,7 @@ export default {
   name: '果仁网',
   domain: '.guorn.com',
   loginUrl: 'https://guorn.com/user/login',
-  dashboardUrl: 'https://guorn.com/user/profile',
+  dashboardUrl: 'https://guorn.com/',
   
   async verifySession(cookies) {
     const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
@@ -45,7 +45,7 @@ export default {
     try {
       const passwordTabs = await page.locator('a, div, span, button').filter({ hasText: '密码登录' }).all();
       for (const tab of passwordTabs) {
-        if (await tab.isVisible({ timeout: 1000 }).catch(() => false)) {
+        if (await tab.isVisible({ timeout: 30000 }).catch(() => false)) {
           console.log('  切换到密码登录...');
           await tab.click();
           await page.waitForTimeout(1500);
@@ -67,7 +67,7 @@ export default {
     let filled = false;
     for (const sel of phoneSelectors) {
       const input = page.locator(sel).first();
-      if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
+      if (await input.isVisible({ timeout: 60000 }).catch(() => false)) {
         console.log(`  找到用户名输入框: ${sel}`);
         await input.fill(username);
         filled = true;
@@ -84,7 +84,7 @@ export default {
     filled = false;
     for (const sel of passwordSelectors) {
       const input = page.locator(sel).first();
-      if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
+      if (await input.isVisible({ timeout: 60000 }).catch(() => false)) {
         console.log(`  找到密码输入框: ${sel}`);
         await input.fill(password);
         filled = true;
@@ -103,7 +103,7 @@ export default {
     let clicked = false;
     for (const sel of loginSelectors) {
       const btn = page.locator(sel).first();
-      if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      if (await btn.isVisible({ timeout: 60000 }).catch(() => false)) {
         console.log(`  找到登录按钮: ${sel}`);
         await btn.click();
         clicked = true;

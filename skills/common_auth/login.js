@@ -28,7 +28,7 @@ async function main() {
   const isTest = args.includes('--test');
   
   if (!siteId || (siteId !== 'all' && !sites[siteId])) {
-    console.error('使用方法: node login.js <site_id|all> [--method auto|manual|local|import] [--test]');
+    console.error('使用方法: node login.js <site_id|all> [--method=auto|manual|local|import] [--test]');
     console.log('可用站点:', Object.keys(sites).join(', '), ', all');
     process.exit(1);
   }
