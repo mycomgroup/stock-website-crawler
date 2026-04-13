@@ -11,44 +11,57 @@ async function main() {
 
   if (!configFile) {
     configFile = 'examples/formula_strategy.json';
-    console.log(`未指定策略文件，使用默认示例: ${configFile}`);
+    console.error(`Usage: node run-skill.js <config.json>`);
+    console.error(`Example: node run-skill.js examples/formula_strategy.json`);
+    process.exit(1);
   }
 
   const cwd = process.cwd();
   const resolvedPath = path.resolve(cwd, configFile);
 
   if (!fs.existsSync(resolvedPath)) {
-    console.error(`❌ 找不到文件: ${resolvedPath}`);
+    console.error(`File not found: ${resolvedPath}`);
     process.exit(1);
   }
 
-  console.log(`📂 加载配置: ${configFile}`);
   const config = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
 
   const runner = new StrategyRunner({ verbose: true });
 
   try {
-    // 第一次尝试运行
-    await runner.run(config);
-    console.log('\n✅ 运行脚本完成。');
+    const result = await runner.run(config);
+    
+    console.log('\n' + JSON.stringify(result, null, 2));
+    
+    if (result.status === 'ok') {
+      process.exit(0);
+    } else {
+      process.exit(1);
+    }
+    
   } catch (err) {
     const isAuthError = err.message.includes('未授权') || err.message.includes('noauth') || err.message.includes('401');
     
     if (isAuthError) {
-      console.log('\n⚠️ 检测到登录失效，正在尝试自动化登录...');
       try {
         await login();
-        // 登录成功后重试一次
-        console.log('🔄 登录成功，正在重试提交策略...');
-        await runner.run(config);
-        console.log('\n✅ 运行脚本完成（重试成功）。');
+        const retryResult = await runner.run(config);
+        console.log('\n' + JSON.stringify(retryResult, null, 2));
+        process.exit(retryResult.status === 'ok' ? 0 : 1);
       } catch (retryErr) {
-        console.error(`\n❌ 自动登录或重试失败: ${retryErr.message}`);
+        console.error(JSON.stringify({
+          status: 'error',
+          error: 'auth_failed',
+          message: retryErr.message
+        }));
         process.exit(1);
       }
     } else {
-      // 非授权类错误，直接退出
-      console.error(`\n❌ 运行出错: ${err.message}`);
+      console.error(JSON.stringify({
+        status: 'error',
+        error: 'execution_failed',
+        message: err.message
+      }));
       process.exit(1);
     }
   }

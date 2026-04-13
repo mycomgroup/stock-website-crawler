@@ -1,0 +1,18 @@
+{
+  "name": "高送转预案策略",
+  "description": "筛选高送转预案、ROE大于10%、总股本小于3亿股的公司",
+  "formula": [
+    "非ST",
+    "高送转预案",
+    "净资产收益率大于10%",
+    "总股本小于3亿股"
+  ],
+  "daysForSaleStrategy": "2,3",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

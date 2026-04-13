@@ -1,0 +1,17 @@
+{
+  "name": "长期下跌修复策略",
+  "description": "筛选近三年跌幅大于60%、每股收益稳定的公司",
+  "formula": [
+    "非ST",
+    "近三年跌幅大于60%",
+    "连续两年每股收益大于0.1元"
+  ],
+  "daysForSaleStrategy": "4,8",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 50,
+  "stopLoss": 25,
+  "trailingStopLoss": 18
+}

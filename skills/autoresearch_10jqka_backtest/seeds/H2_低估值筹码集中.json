@@ -1,0 +1,18 @@
+{
+  "name": "低估值筹码集中复合策略",
+  "description": "筛选市盈率小于20、股东户数下降、机构持股上升的复合股",
+  "formula": [
+    "非ST",
+    "市盈率小于20",
+    "股东户数下降率小于-10%",
+    "机构持股比例增长值大于0"
+  ],
+  "daysForSaleStrategy": "4,8",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 22,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

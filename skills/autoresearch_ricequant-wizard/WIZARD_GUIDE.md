@@ -312,7 +312,7 @@
 │  3. 调用 wizard_executor.submit_backtest() 提交回测        │
 │  4. 轮询回测状态，获取结果                                  │
 │  5. 调用 scorer.calculate_score() 计算得分                 │
-│  6. 决策 keep/rollback，更新 state.json 和 history/        │
+│  6. 决策 keep/rollback，更新 state.json 和 iterations.tsv   │
 └─────────────────────────────────────────────────────────────┘
          │                    │                    │
          ▼                    ▼                    ▼
@@ -372,17 +372,20 @@ def calculate_score(metrics: dict) -> float:
 
 ### Q4：如何查看历史配置？
 
-所有配置快照保存在 `history/<iter>_config.json`：
+通过 Git 历史查看成功版本：
 
 ```bash
-cat history/0005_config.json
+cd experiments/<name>
+git log --oneline          # 查看所有成功版本
+git show HEAD:wizard_config.json  # 查看最新配置
 ```
 
 ### Q5：如何手动回滚到某个历史版本？
 
 ```bash
-cp history/0005_config.json wizard_config.json
-# 然后更新 state.json 中的 champion_iter 和 champion_score
+cd experiments/<name>
+git checkout <commit_hash> -- wizard_config.json
+# 然后更新 state.json 中的 champion_score
 ```
 
 ### Q6：如何验证配置合法性？

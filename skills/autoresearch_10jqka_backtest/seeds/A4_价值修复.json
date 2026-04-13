@@ -1,0 +1,18 @@
+{
+  "name": "价值修复策略",
+  "description": "筛选低估值且盈利改善、股价下跌的公司，等待估值修复催化",
+  "formula": [
+    "非ST",
+    "市盈率小于20",
+    "最近两个季度净利润同比增长率持续改善",
+    "股价近60日跌幅大于20%"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 30,
+  "stopLoss": 15,
+  "trailingStopLoss": 10
+}

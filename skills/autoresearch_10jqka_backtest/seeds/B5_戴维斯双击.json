@@ -1,0 +1,18 @@
+{
+  "name": "戴维斯双击策略",
+  "description": "筛选估值不贵、增长不差、质量够好的公司，追求盈利增长与估值抬升的双重收益",
+  "formula": [
+    "非ST",
+    "市盈率大于0小于20",
+    "最近三个季度归属母公司股东净利润同比增长率大于20%",
+    "净利润同比增速递增"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 30,
+  "stopLoss": 15,
+  "trailingStopLoss": 10
+}

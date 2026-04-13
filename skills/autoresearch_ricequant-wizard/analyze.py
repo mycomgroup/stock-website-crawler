@@ -2,60 +2,74 @@
 """
 analyze.py - Wizard 实验结果分析工具
 
-读取实验目录的 history/*.json，输出五个维度的分析报告：
-  1. 总览（keep/rollback/crash 统计，baseline vs champion 对比）
-  2. Keep 序列（改进路径，每次 keep 的 mutation 和 score 提升）
+读取 iterations.tsv，输出分析报告：
+  1. 总览（keep/rollback/crash 统计）
+  2. Keep 序列（改进路径）
   3. Top 改进（按单次 score 提升排名）
-  4. 失败模式（rollback reason 分类，反复失败的方向）
+  4. 失败模式分析
   5. 指标趋势（ASCII 折线图）
 
-报告同时写入 history/analysis_report.txt，供 agent 读取。
+报告写入 analysis_report.txt，供用户查看。
 
 Usage:
     python analyze.py --base experiments/<name>
 """
 
 import argparse
-import json
-import glob
-import os
 from pathlib import Path
 from datetime import datetime
 
 
-# ── 数据加载 ──────────────────────────────────────────────────────────────────
+def load_iterations(base: Path) -> list[dict]:
+    tsv = base / "iterations.tsv"
+    if not tsv.exists():
+        return []
 
-def load_history(base: Path) -> list[dict]:
-    """加载 history/ 下所有迭代记录，按 iter 编号排序"""
-    files = sorted(glob.glob(str(base / "history" / "*.json")))
     records = []
-    for f in files:
-        try:
-            d = json.load(open(f, encoding="utf-8"))
-            # 补充 calmar
-            ar = d.get("annual_return") or 0
-            dd = abs(d.get("max_drawdown") or 0)
-            s = d.get("fetch_result", {}).get("summary", {})
-            d["_calmar"] = ar / max(dd, 0.01)
-            d["_sortino"] = s.get("sortina") or s.get("sortino") or 0
-            d["_ir"] = s.get("information_ratio") or 0
-            records.append(d)
-        except Exception:
-            pass
+    with open(tsv, encoding="utf-8") as f:
+        lines = f.readlines()
+
+    if not lines:
+        return []
+
+    header = lines[0].strip().split("\t")
+    for line in lines[1:]:
+        if not line.strip():
+            continue
+        parts = line.strip().split("\t")
+        row = {}
+        for i, col in enumerate(header):
+            if i < len(parts):
+                val = parts[i]
+                if col in ("annual_return", "max_drawdown", "sharpe", "score"):
+                    try:
+                        row[col] = float(val)
+                    except:
+                        row[col] = 0.0
+                else:
+                    row[col] = val
+            else:
+                row[col] = ""
+        records.append(row)
+
+    for r in records:
+        ar = r.get("annual_return", 0) or 0
+        dd = abs(r.get("max_drawdown", 0) or 0)
+        r["_calmar"] = ar / max(dd, 0.01)
+
     return records
 
 
 def load_state(base: Path) -> dict:
     state_file = base / "state.json"
     if state_file.exists():
+        import json
+
         return json.load(open(state_file, encoding="utf-8"))
     return {}
 
 
-# ── ASCII 折线图 ───────────────────────────────────────────────────────────────
-
 def ascii_sparkline(values: list[float], width: int = 50, height: int = 6) -> str:
-    """生成 ASCII 折线图，返回多行字符串"""
     if not values:
         return "  (无数据)"
     valid = [v for v in values if v is not None]
@@ -96,8 +110,6 @@ def ascii_sparkline(values: list[float], width: int = 50, height: int = 6) -> st
     return "\n".join(lines)
 
 
-# ── 各 section 生成 ───────────────────────────────────────────────────────────
-
 def section_overview(records: list[dict], state: dict) -> str:
     lines = ["=" * 60, "  总览", "=" * 60]
 
@@ -105,6 +117,7 @@ def section_overview(records: list[dict], state: dict) -> str:
     keeps = [r for r in records if r.get("decision") == "keep"]
     rollbacks = [r for r in records if r.get("decision") == "rollback"]
     crashes = [r for r in records if r.get("decision") == "crash"]
+    baselines = [r for r in records if r.get("decision") == "baseline"]
     decided = len(keeps) + len(rollbacks)
     keep_rate = len(keeps) / decided if decided else 0
 
@@ -115,11 +128,8 @@ def section_overview(records: list[dict], state: dict) -> str:
     lines.append(f"keep rate: {keep_rate:.1%}  ({len(keeps)}/{decided})")
     lines.append("")
 
-    baseline = next((r for r in records if "baseline" in r.get("iter", "")), None)
-    champion_iter = state.get("champion_iter", "")
-    champion = next((r for r in records if r.get("iter") == champion_iter), None)
-    if not champion and keeps:
-        champion = keeps[-1]
+    baseline = baselines[0] if baselines else None
+    champion = keeps[-1] if keeps else baseline
 
     def fmt(r):
         if not r:
@@ -129,15 +139,15 @@ def section_overview(records: list[dict], state: dict) -> str:
         sh = r.get("sharpe", 0) or 0
         sc = r.get("score", 0) or 0
         calmar = r.get("_calmar", 0) or 0
-        so = r.get("_sortino", 0) or 0
-        ir = r.get("_ir", 0) or 0
-        return (f"annual={ar:.2%}  dd={dd:.2%}  sharpe={sh:.3f}\n"
-                f"         calmar={calmar:.2f}  sortino={so:.3f}  IR={ir:.3f}\n"
-                f"         score={sc:.4f}")
+        return (
+            f"annual={ar:.2%}  dd={dd:.2%}  sharpe={sh:.3f}\n"
+            f"         calmar={calmar:.2f}\n"
+            f"         score={sc:.4f}"
+        )
 
     lines.append(f"Baseline  [{(baseline or {}).get('iter', '?')}]")
     lines.append(f"  {fmt(baseline)}")
-    lines.append(f"Champion  [{champion_iter or '?'}]")
+    lines.append(f"Champion  [{(champion or {}).get('iter', '?')}]")
     lines.append(f"  {fmt(champion)}")
 
     if baseline and champion:
@@ -159,14 +169,17 @@ def section_overview(records: list[dict], state: dict) -> str:
 def section_keep_sequence(records: list[dict]) -> str:
     lines = ["", "=" * 60, "  Keep 序列（改进路径）", "=" * 60]
     keeps = [r for r in records if r.get("decision") == "keep"]
+    baselines = [r for r in records if r.get("decision") == "baseline"]
+
     if not keeps:
         lines.append("  (暂无 keep 记录)")
         return "\n".join(lines)
 
+    all_keeps = baselines + keeps
     prev_score = None
-    for r in keeps:
+    for r in all_keeps:
         sc = r.get("score", 0) or 0
-        delta = f"{sc - prev_score:+.4f}" if prev_score is not None else "baseline"
+        delta = f"{sc - prev_score:+.4f}" if prev_score is not None else "(baseline)"
         mutation = r.get("mutation", "")[:55]
         ar = r.get("annual_return", 0) or 0
         dd = abs(r.get("max_drawdown", 0) or 0)
@@ -182,6 +195,7 @@ def section_keep_sequence(records: list[dict]) -> str:
 def section_top_improvements(records: list[dict]) -> str:
     lines = ["", "=" * 60, "  Top 改进（按单次 score 提升排名）", "=" * 60]
     keeps = [r for r in records if r.get("decision") == "keep"]
+
     if len(keeps) < 2:
         lines.append("  (keep 次数不足，无法排名)")
         return "\n".join(lines)
@@ -210,28 +224,13 @@ def section_failure_analysis(records: list[dict]) -> str:
     rollbacks = [r for r in records if r.get("decision") == "rollback"]
     crashes = [r for r in records if r.get("decision") == "crash"]
 
-    reason_cats = {"score 不足": 0, "回撤超限": 0, "回测失败": 0, "其他": 0}
-    for r in rollbacks:
-        reason = r.get("reason", "").lower()
-        if "score" in reason or "champion" in reason:
-            reason_cats["score 不足"] += 1
-        elif "drawdown" in reason or "max_drawdown" in reason:
-            reason_cats["回撤超限"] += 1
-        elif "backtest" in reason or "failed" in reason or "error" in reason:
-            reason_cats["回测失败"] += 1
-        else:
-            reason_cats["其他"] += 1
-
-    lines.append(f"Rollback 共 {len(rollbacks)} 次:")
-    for cat, cnt in reason_cats.items():
-        if cnt:
-            lines.append(f"  {cat}: {cnt}")
+    lines.append(f"Rollback 共 {len(rollbacks)} 次")
     lines.append(f"Crash 共 {len(crashes)} 次")
     lines.append("")
 
     fail_mutations = [r.get("mutation", "") for r in rollbacks + crashes if r.get("mutation")]
     if fail_mutations:
-        word_count: dict[str, int] = {}
+        word_count = {}
         for m in fail_mutations:
             for word in m.replace("，", " ").replace(",", " ").split():
                 if len(word) >= 2:
@@ -248,9 +247,7 @@ def section_failure_analysis(records: list[dict]) -> str:
         lines.append("最近 5 次失败:")
         for r in recent_fails:
             mutation = r.get("mutation", "")[:45]
-            reason = r.get("reason", "")[:40]
             lines.append(f"  [{r.get('iter', '?')}] {r.get('decision')} | {mutation}")
-            lines.append(f"       reason: {reason}")
 
     return "\n".join(lines)
 
@@ -265,31 +262,21 @@ def section_metric_trends(records: list[dict]) -> str:
 
     scores = [r.get("score") or 0 for r in valid]
     calmars = [r.get("_calmar") or 0 for r in valid]
-    sortinos = [r.get("_sortino") or 0 for r in valid]
-    irs = [r.get("_ir") or 0 for r in valid]
 
     lines.append(f"Score 趋势  (n={len(scores)})")
     lines.append(ascii_sparkline(scores, width=50, height=5))
     lines.append("")
     lines.append(f"Calmar 趋势")
     lines.append(ascii_sparkline(calmars, width=50, height=5))
-    lines.append("")
-    lines.append(f"Sortino 趋势")
-    lines.append(ascii_sparkline(sortinos, width=50, height=5))
-    lines.append("")
-    lines.append(f"Information Ratio 趋势")
-    lines.append(ascii_sparkline(irs, width=50, height=5))
 
     return "\n".join(lines)
 
 
 def section_next_suggestions(records: list[dict], state: dict) -> str:
-    """基于历史数据给出下一步改进建议（供 agent 参考）"""
     lines = ["", "=" * 60, "  下一步建议（供 agent 参考）", "=" * 60]
 
     keeps = [r for r in records if r.get("decision") == "keep"]
     rollbacks = [r for r in records if r.get("decision") == "rollback"]
-    crashes = [r for r in records if r.get("decision") == "crash"]
     consec_fail = state.get("consecutive_failures", 0)
 
     if consec_fail >= 3:
@@ -299,11 +286,9 @@ def section_next_suggestions(records: list[dict], state: dict) -> str:
         champion = keeps[-1]
         dd = abs(champion.get("max_drawdown", 0) or 0)
         calmar = champion.get("_calmar", 0) or 0
-        ir = champion.get("_ir", 0) or 0
-        so = champion.get("_sortino", 0) or 0
 
         lines.append(f"当前 champion 指标:")
-        lines.append(f"  calmar={calmar:.2f}  sortino={so:.3f}  IR={ir:.3f}  dd={dd:.2%}")
+        lines.append(f"  calmar={calmar:.2f}  dd={dd:.2%}")
         lines.append("")
 
         weak = []
@@ -311,10 +296,6 @@ def section_next_suggestions(records: list[dict], state: dict) -> str:
             weak.append(f"回撤偏高({dd:.2%})，可尝试加筛选条件或调整持仓数量")
         if calmar < 3.0:
             weak.append(f"calmar 偏低({calmar:.2f})，可尝试优化筛选或排序规则")
-        if ir < 1.5:
-            weak.append(f"IR 偏低({ir:.3f})，可尝试优化因子组合")
-        if so < 2.0:
-            weak.append(f"sortino 偏低({so:.3f})，可尝试减少下行波动")
 
         if weak:
             lines.append("薄弱点（优先改进方向）:")
@@ -336,8 +317,6 @@ def section_next_suggestions(records: list[dict], state: dict) -> str:
     return "\n".join(lines)
 
 
-# ── 主函数 ────────────────────────────────────────────────────────────────────
-
 def main():
     parser = argparse.ArgumentParser(description="分析 wizard 实验结果")
     parser.add_argument("--base", required=True, help="实验目录路径")
@@ -354,30 +333,32 @@ def main():
         print(f"[analyze] 目录不存在: {base}")
         return
 
-    records = load_history(base)
+    records = load_iterations(base)
     state = load_state(base)
 
     if not records:
-        print(f"[analyze] history/ 下无记录: {base}")
+        print(f"[analyze] iterations.tsv 无记录: {base}")
         return
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     header = f"# Wizard Autoresearch 分析报告\n生成时间: {now}\n实验目录: {base.name}\n"
 
-    report = "\n".join([
-        header,
-        section_overview(records, state),
-        section_keep_sequence(records),
-        section_top_improvements(records),
-        section_failure_analysis(records),
-        section_metric_trends(records),
-        section_next_suggestions(records, state),
-        "",
-    ])
+    report = "\n".join(
+        [
+            header,
+            section_overview(records, state),
+            section_keep_sequence(records),
+            section_top_improvements(records),
+            section_failure_analysis(records),
+            section_metric_trends(records),
+            section_next_suggestions(records, state),
+            "",
+        ]
+    )
 
     print(report)
 
-    out_path = base / "history" / "analysis_report.txt"
+    out_path = base / "analysis_report.txt"
     out_path.write_text(report, encoding="utf-8")
     print(f"\n[analyze] 报告已写入: {out_path}")
 

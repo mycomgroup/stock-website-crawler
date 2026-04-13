@@ -1,0 +1,17 @@
+{
+  "name": "价格强度排名策略",
+  "description": "筛选近20日涨幅排名前20%、近60日涨幅为正的强势股",
+  "formula": [
+    "非ST",
+    "近20日区间涨跌幅排名前20%",
+    "近60日区间涨跌幅大于0"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 15,
+  "stopLoss": 6,
+  "trailingStopLoss": 4
+}

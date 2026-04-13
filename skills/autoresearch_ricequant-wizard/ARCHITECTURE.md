@@ -47,7 +47,7 @@
 - `experiments/<name>/` 目录
 - `wizard_config.json` - 初始配置
 - `state.json` - 初始状态
-- `history/0000.json` - baseline 结果
+- `iterations.tsv` - baseline 记录
 
 ### 2. run_iteration.py - 迭代模块
 
@@ -61,7 +61,7 @@
 **输出**：
 - 更新的 `wizard_config.json`（如果 keep）
 - 更新的 `state.json`
-- `history/<iter>.json` - 迭代结果
+- 追加的 `iterations.tsv`
 
 ### 3. wizard_executor.py - 执行器模块
 
@@ -155,36 +155,9 @@ else:
 ```json
 {
   "current_iter": 5,
-  "champion_iter": "0003",
   "champion_score": 1.2345,
   "consecutive_failures": 0,
-  "total_iterations": 5,
-  "keep_count": 2,
-  "rollback_count": 3,
-  "crash_count": 0
-}
-```
-
-### history/<iter>.json
-
-```json
-{
-  "iter": "0003",
-  "timestamp": "2026-04-12T11:15:00Z",
-  "mutation_type": "adjust_filter_threshold",
-  "mutation_summary": "调整 PE 阈值 20 → 25",
-  "backtest_id": "bt_123456",
-  "metrics": {
-    "annual_return": 0.15,
-    "max_drawdown": -0.12,
-    "sharpe": 1.5,
-    "sortino": 1.8,
-    "information_ratio": 0.5
-  },
-  "score": 1.2345,
-  "decision": "keep",
-  "reason": "得分提升",
-  "commit": "abc123f"
+  "last_update": "2026-04-12T11:15:00Z"
 }
 ```
 
@@ -207,15 +180,12 @@ skills/autoresearch_ricequant-wizard/
 ├── FAQ.md                      # 常见问题
 ├── ARCHITECTURE.md             # 本文档
 └── experiments/<name>/         # 实验目录
-    ├── wizard_config.json      # 当前配置
-    ├── state.json              # 当前状态
+    ├── wizard_config.json      # 当前最优配置
+    ├── state.json              # 迭代状态
+    ├── iterations.tsv          # 所有迭代记录
+    ├── search_notes.md         # 搜索笔记
     ├── program.md              # Agent 指南副本
-    └── history/
-        ├── iterations.tsv      # 迭代历史表格
-        ├── search_notes.md     # 搜索笔记
-        ├── 0000.json           # Baseline 结果
-        ├── 0001.json           # 第 1 次迭代
-        └── ...
+    └── .git/                   # Git 历史（只 commit 成功版本）
 ```
 
 ---
@@ -295,7 +265,7 @@ python setup.py --name test
 
 ```bash
 # 查看迭代历史
-cat experiments/<name>/history/iterations.tsv
+cat experiments/<name>/iterations.tsv
 
 # 详细分析
 python analyze.py --base experiments/<name>

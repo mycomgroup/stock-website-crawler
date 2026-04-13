@@ -1,0 +1,20 @@
+{
+  "name": "低PE低PB低PS价值策略",
+  "description": "筛选低估值股票，寻找市盈率、市净率、市销率低于行业平均的标的，适合稳定盈利的行业",
+  "formula": [
+    "非ST",
+    "非退市",
+    "非停牌",
+    "动态市盈率大于0小于20",
+    "市净率小于1.5",
+    "最近一年ROE大于8%"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

@@ -1,0 +1,17 @@
+{
+  "name": "股东户数下降筹码集中策略",
+  "description": "筛选股东户数减少大于10%、机构持股上升的筹码集中股",
+  "formula": [
+    "非ST",
+    "股东户数报告期增长率小于-10%",
+    "机构持股占流通股比例增长值大于0"
+  ],
+  "daysForSaleStrategy": "4,8",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 25,
+  "stopLoss": 12,
+  "trailingStopLoss": 8
+}

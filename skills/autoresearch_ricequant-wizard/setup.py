@@ -246,7 +246,6 @@ def _init_experiment_dir(name: str, strategy_id: str | None, args: argparse.Name
         print(f"  描述：{seed_config['description']}")
 
     exp_dir = EXPERIMENTS_DIR / name
-    history_dir = exp_dir / "history"
 
     if exp_dir.exists():
         print(f"警告：实验目录已存在：{exp_dir}")
@@ -259,7 +258,7 @@ def _init_experiment_dir(name: str, strategy_id: str | None, args: argparse.Name
             print("已取消。")
             sys.exit(0)
 
-    history_dir.mkdir(parents=True, exist_ok=True)
+    exp_dir.mkdir(parents=True, exist_ok=True)
     print(f"✓ 创建目录：{exp_dir}")
 
     wizard_config_path = exp_dir / "wizard_config.json"
@@ -267,14 +266,10 @@ def _init_experiment_dir(name: str, strategy_id: str | None, args: argparse.Name
         json.dump(seed_config, f, ensure_ascii=False, indent=2)
     print(f"✓ 写入配置：wizard_config.json")
 
-    # 创建初始 state.json
     state = {
         "current_iter": 0,
         "strategy_id": strategy_id,
         "champion_score": -1e308,
-        "champion_iter": "",
-        "champion_config": None,
-        "champion_metrics": None,
         "consecutive_failures": 0,
         "last_update": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
     }
@@ -283,38 +278,18 @@ def _init_experiment_dir(name: str, strategy_id: str | None, args: argparse.Name
         json.dump(state, f, ensure_ascii=False, indent=2)
     print(f"✓ 写入状态：state.json")
 
-    # 复制 program.md，并注入种子描述
     program_dest = exp_dir / "program.md"
     if PROGRAM_MD_PATH.exists():
         with open(PROGRAM_MD_PATH, encoding="utf-8") as src:
             content = src.read()
-
-        if "description" in seed_config:
-            desc_section = f"""## 策略优化方向
-
-**种子策略**：{seed_config["description"]}
-
-**风格约束（防止漂移）**：
-- 保持策略风格一致性，避免从大盘漂移到小盘
-- 优先在同类型股票池内优化参数，谨慎切换 universe
-- 每次变异后检查持仓风格是否偏离种子策略目标
-
-"""
-            if "## 目录结构" in content:
-                content = content.replace("## 目录结构", desc_section + "## 目录结构")
-            else:
-                lines = content.split("\n")
-                for i, line in enumerate(lines):
-                    if line.startswith("## "):
-                        lines.insert(i, desc_section.rstrip())
-                        break
-                content = "\n".join(lines)
-
+        strategy_name = seed_config.get("name", "未命名策略")
+        strategy_desc = seed_config.get("description", "无描述")
+        content = content.replace("{{STRATEGY_NAME}}", strategy_name)
+        content = content.replace("{{STRATEGY_DESCRIPTION}}", strategy_desc)
         with open(program_dest, "w", encoding="utf-8") as dst:
             dst.write(content)
-        print(f"✓ 复制指南：program.md")
+        print(f"✓ 生成指南：program.md（已注入策略目标）")
 
-    # 创建 README.md
     readme_path = exp_dir / "README.md"
     with open(readme_path, "w", encoding="utf-8") as f:
         f.write(f"# {name}\n\n")
@@ -328,19 +303,18 @@ def _init_experiment_dir(name: str, strategy_id: str | None, args: argparse.Name
         f.write("```\n")
     print(f"✓ 创建说明：README.md")
 
-    # 创建 history/iterations.tsv
-    tsv_path = history_dir / "iterations.tsv"
+    tsv_path = exp_dir / "iterations.tsv"
     with open(tsv_path, "w", encoding="utf-8") as f:
         f.write(
             "iter\tbacktest_id\tstatus\tannual_return\tmax_drawdown\tsharpe\tscore\tdecision\tmutation\n"
         )
-    print(f"✓ 创建记录：history/iterations.tsv")
+    print(f"✓ 创建记录：iterations.tsv")
 
-    # 保存初始配置快照
-    snapshot_path = history_dir / "0000_config.json"
-    with open(snapshot_path, "w", encoding="utf-8") as f:
-        json.dump(seed_config, f, ensure_ascii=False, indent=2)
-    print(f"✓ 保存快照：history/0000_config.json")
+    search_notes_path = exp_dir / "search_notes.md"
+    with open(search_notes_path, "w", encoding="utf-8") as f:
+        f.write("# 搜索笔记\n\n")
+        f.write("记录迭代过程中的观察和想法。\n\n")
+    print(f"✓ 创建笔记：search_notes.md")
 
     return exp_dir
 
@@ -445,7 +419,7 @@ def _run_baseline_backtest(
 
 
 def _update_state_with_baseline(exp_dir: Path, baseline_result: dict) -> None:
-    """更新 state.json 和 history/ 记录"""
+    """更新 state.json 和 iterations.tsv"""
     print(f"\n[4/5] 更新状态文件")
 
     state_path = exp_dir / "state.json"
@@ -454,9 +428,6 @@ def _update_state_with_baseline(exp_dir: Path, baseline_result: dict) -> None:
 
     metrics = baseline_result["metrics"]
 
-    # 计算 baseline score
-    # 注意：scorer.calculate_score 需要 ParsedMetrics 对象
-    # 这里简化处理，直接计算 score
     annual_return = metrics.get("annual_return") or 0
     max_drawdown = metrics.get("max_drawdown") or 0
     sortino = metrics.get("sortino") or 0
@@ -465,41 +436,23 @@ def _update_state_with_baseline(exp_dir: Path, baseline_result: dict) -> None:
     calmar = annual_return / max(abs(max_drawdown), 0.01)
     score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 
-    # 更新 state
     state["champion_score"] = score
-    state["champion_iter"] = "0000"
-    state["champion_config"] = None  # baseline 使用 seed config
-    state["champion_metrics"] = metrics
+    state["current_iter"] = 0
+    state["consecutive_failures"] = 0
     state["last_update"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
 
     with open(state_path, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
     print(f"✓ 更新 state.json")
 
-    # 写入 history/0000_baseline.json
-    baseline_record = {
-        "iter": "0000",
-        "backtest_id": baseline_result["backtest_id"],
-        "metrics": metrics,
-        "score": score,
-        "decision": "baseline",
-        "mutation": "initial_seed_config",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-    }
-    baseline_path = exp_dir / "history" / "0000_baseline.json"
-    with open(baseline_path, "w", encoding="utf-8") as f:
-        json.dump(baseline_record, f, ensure_ascii=False, indent=2)
-    print(f"✓ 保存记录：history/0000_baseline.json")
-
-    # 追加到 iterations.tsv
-    tsv_path = exp_dir / "history" / "iterations.tsv"
+    tsv_path = exp_dir / "iterations.tsv"
     with open(tsv_path, "a", encoding="utf-8") as f:
         f.write(f"0000\t{baseline_result['backtest_id']}\tsuccess\t")
         f.write(f"{(metrics.get('annual_return') or 0):.4f}\t")
         f.write(f"{(metrics.get('max_drawdown') or 0):.4f}\t")
         f.write(f"{(metrics.get('sharpe') or 0):.4f}\t")
         f.write(f"{score:.4f}\tbaseline\tinitial_seed_config\n")
-    print(f"✓ 追加记录：history/iterations.tsv")
+    print(f"✓ 追加记录：iterations.tsv")
 
 
 def _init_git_repo(exp_dir: Path) -> None:

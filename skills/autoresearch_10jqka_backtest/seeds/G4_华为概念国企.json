@@ -1,0 +1,18 @@
+{
+  "name": "华为概念国企策略",
+  "description": "筛选华为概念、国企、净利润增长大于20%的主题股",
+  "formula": [
+    "非ST",
+    "华为概念",
+    "国企",
+    "最近一个季度净利润同比增长率大于20%"
+  ],
+  "daysForSaleStrategy": "2,3",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 25,
+  "stopLoss": 12,
+  "trailingStopLoss": 8
+}
