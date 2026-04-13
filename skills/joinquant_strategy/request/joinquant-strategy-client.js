@@ -3,8 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import '../load-env.js';
 import { OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
-
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+import { SecureHttpClient, USER_AGENT, SEC_CH_UA } from '../../common/http-security.js';
 
 function ensureDir(filePath) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -13,27 +12,6 @@ function ensureDir(filePath) {
 export function loadJson(filePath) {
   if (!fs.existsSync(filePath)) return {};
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-}
-
-/**
- * 根据 HTTP 状态码决定重试等待时间
- * - 429 / 503 并发限制：60s / 120s / 300s
- * - 其他 5xx 服务端错误：10s / 20s / 40s
- * - 其他状态码不重试，返回 0
- */
-function retryDelay(status, retryCount) {
-  if (status === 429 || status === 503) {
-    return [60000, 120000, 300000][retryCount] ?? 300000;
-  }
-  if (status >= 500) {
-    return Math.pow(2, retryCount) * 10000;
-  }
-  return 0;
-}
-
-/** 网络/超时错误的退避：5s / 10s / 20s */
-function networkRetryDelay(retryCount) {
-  return Math.pow(2, retryCount) * 5000;
 }
 
 export class JoinQuantStrategyClient {
@@ -46,12 +24,30 @@ export class JoinQuantStrategyClient {
     
     // Extract _xsrf from cookies for general requests
     this.xsrfToken = this.cookieJar.find(item => item.name === '_xsrf')?.value?.split('|')[2] || '';
+    
+    // Initialize secure HTTP client
+    this.secureClient = new SecureHttpClient({
+      baseUrl: this.origin,
+      maxRequestsPerMinute: 10,
+      sessionValidator: async () => {
+        // Validate session by checking if cookies are still valid
+        return this.cookieJar && this.cookieJar.length > 0;
+      }
+    });
   }
 
   buildHeaders(url, overrides = {}) {
     const headers = {
       'User-Agent': USER_AGENT,
       'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, br, zstd',
+      'sec-ch-ua': SEC_CH_UA,
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"macOS"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
       'X-Requested-With': 'XMLHttpRequest',
       'Referer': url,
       'Cookie': this.cookieJar.map(c => `${c.name}=${c.value}`).join('; '),
@@ -62,59 +58,24 @@ export class JoinQuantStrategyClient {
 
   async request(url, options = {}, retryCount = 0) {
     const fullUrl = url.startsWith('http') ? url : `${this.origin}${url}`;
-    const maxRetries = 3;
-    const timeoutMs = options.timeoutMs || 30000;
+    
+    // Use secure client for the request
+    const response = await this.secureClient.request(fullUrl, {
+      method: options.method || 'GET',
+      headers: this.buildHeaders(fullUrl, options.headers),
+      body: options.body,
+      timeout: options.timeoutMs || 30000
+    });
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      const response = await fetch(fullUrl, {
-        method: options.method || 'GET',
-        headers: this.buildHeaders(fullUrl, options.headers),
-        body: options.body,
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-
-      const text = await response.text();
-      if (!response.ok) {
-        if (retryCount < maxRetries) {
-          const delay = retryDelay(response.status, retryCount);
-          if (delay > 0) {
-            console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${response.status}, waiting ${delay/1000}s...`);
-            await new Promise(r => setTimeout(r, delay));
-            return this.request(url, options, retryCount + 1);
-          }
-        }
-        throw new Error(`Request failed ${response.status} ${fullUrl}: ${text.slice(0, 500)}`);
-      }
-
-      // 自动检测：parseJson=true 强制解析；否则根据内容类型或内容特征决定
-      if (options.parseJson) {
-        try { return JSON.parse(text); } catch { return text; }
-      }
-      // GET 请求默认返回原始文本（HTML）；POST 请求尝试 JSON 解析
-      if ((options.method || 'GET') !== 'GET') {
-        try { return JSON.parse(text); } catch { return text; }
-      }
-      return text;
-    } catch (error) {
-      clearTimeout(timer);
-      const isRetryable = error.name === 'AbortError' ||
-        error.message.includes('timeout') ||
-        error.message.includes('network') ||
-        error.message.includes('ECONN') ||
-        error.message.includes('ECONNRESET');
-      if (isRetryable && retryCount < maxRetries) {
-        const delay = networkRetryDelay(retryCount);
-        const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
-        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, waiting ${delay/1000}s...`);
-        await new Promise(r => setTimeout(r, delay));
-        return this.request(url, options, retryCount + 1);
-      }
-      throw error;
+    // Auto-detect JSON parsing
+    if (options.parseJson) {
+      try { return JSON.parse(response); } catch { return response; }
     }
+    // GET requests default to raw text (HTML); POST requests try JSON parsing
+    if ((options.method || 'GET') !== 'GET') {
+      try { return JSON.parse(response); } catch { return response; }
+    }
+    return response;
   }
 
   /**

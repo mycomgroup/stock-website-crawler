@@ -16,8 +16,8 @@ import path from 'node:path';
 import '../load-env.js';
 import { OUTPUT_ROOT } from '../paths.js';
 import { extractUserId } from './bigquant-auth.js';
+import { SecureHttpClient, USER_AGENT, SEC_CH_UA } from '../../common/http-security.js';
 
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 const ORIGIN = 'https://bigquant.com';
 
 function ensureDir(p) {
@@ -43,27 +43,6 @@ function toOutputText(output) {
   return '';
 }
 
-/**
- * 根据 HTTP 状态码决定重试等待时间
- * - 429 / 503 并发限制：60s / 120s / 300s
- * - 其他 5xx 服务端错误：10s / 20s / 40s
- * - 其他状态码不重试，返回 0
- */
-function retryDelay(status, retryCount) {
-  if (status === 429 || status === 503) {
-    return [60000, 120000, 300000][retryCount] ?? 300000;
-  }
-  if (status >= 500) {
-    return Math.pow(2, retryCount) * 10000;
-  }
-  return 0;
-}
-
-/** 网络/超时错误的退避：5s / 10s / 20s */
-function networkRetryDelay(retryCount) {
-  return Math.pow(2, retryCount) * 5000;
-}
-
 export class BigQuantClient {
   constructor(session, options = {}) {
     this.session = session;
@@ -75,6 +54,15 @@ export class BigQuantClient {
     this.studioId = options.studioId || process.env.BIGQUANT_STUDIO_ID || this.userId;
     this.outputRoot = options.outputRoot || OUTPUT_ROOT;
     this._resourceSpecId = options.resourceSpecId || process.env.BIGQUANT_RESOURCE_SPEC_ID || null;
+    
+    // Initialize secure HTTP client
+    this.secureClient = new SecureHttpClient({
+      baseUrl: ORIGIN,
+      maxRequestsPerMinute: 10,
+      sessionValidator: async () => {
+        return this.cookieHeader && this.cookieHeader.length > 0;
+      }
+    });
   }
 
   // ── HTTP 基础 ────────────────────────────────────────────────────
@@ -83,7 +71,15 @@ export class BigQuantClient {
     return {
       'User-Agent': USER_AGENT,
       'Accept': 'application/json, */*',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, br, zstd',
       'Content-Type': 'application/json',
+      'sec-ch-ua': SEC_CH_UA,
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"macOS"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
       'Cookie': this.cookieHeader,
       ...extra
     };
@@ -91,47 +87,16 @@ export class BigQuantClient {
 
   async request(method, url, body = null, retryCount = 0) {
     const fullUrl = url.startsWith('http') ? url : `${ORIGIN}${url}`;
-    const maxRetries = 3;
-    const timeoutMs = 30000;
+    
+    // Use secure client for the request
+    const response = await this.secureClient.request(fullUrl, {
+      method,
+      headers: this.buildHeaders(),
+      body: body !== null ? JSON.stringify(body) : undefined,
+      timeout: 30000
+    });
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      const opts = { method, headers: this.buildHeaders(), signal: controller.signal };
-      if (body !== null) opts.body = JSON.stringify(body);
-      const resp = await fetch(fullUrl, opts);
-      clearTimeout(timer);
-
-      const text = await resp.text();
-      if (!resp.ok) {
-        if (retryCount < maxRetries) {
-          const delay = retryDelay(resp.status, retryCount);
-          if (delay > 0) {
-            console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${resp.status}, waiting ${delay/1000}s...`);
-            await new Promise(r => setTimeout(r, delay));
-            return this.request(method, url, body, retryCount + 1);
-          }
-        }
-        throw new Error(`HTTP ${resp.status} ${method} ${fullUrl}: ${text.slice(0, 300)}`);
-      }
-      try { return JSON.parse(text); } catch { return text; }
-    } catch (error) {
-      clearTimeout(timer);
-      const isRetryable = error.name === 'AbortError' ||
-        error.message.includes('timeout') ||
-        error.message.includes('network') ||
-        error.message.includes('ECONN') ||
-        error.message.includes('ECONNRESET');
-      if (isRetryable && retryCount < maxRetries) {
-        const delay = networkRetryDelay(retryCount);
-        const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
-        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, waiting ${delay/1000}s...`);
-        await new Promise(r => setTimeout(r, delay));
-        return this.request(method, url, body, retryCount + 1);
-      }
-      throw error;
-    }
+    try { return JSON.parse(response); } catch { return response; }
   }
 
   // ── 资源规格 ─────────────────────────────────────────────────────

@@ -1,0 +1,4 @@
+# file: /Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch_ricequant-wizard/wizard_mutator.py
+# hypothesis_version: 6.151.9
+
+[0.1, 0.3, 0.5, 0.8, 1.2, 1.5, 10.0, 500000000.0, 1000000000.0, 100000000000.0, '*', '000300.XSHG', '000852.XSHG', '000905.XSHG', 'add_filter', 'add_sorting', 'adjust_holding_num', 'asc', 'ascending', 'change_universe', 'debt_ratio', 'default_rhs', 'desc', 'dividend_yield', 'factor', 'filters', 'fundamental', 'greater_than', 'in_range', 'less_than', 'market_cap', 'maxHoldingNum', 'name', 'operator', 'operators', 'pb_ratio', 'pe_ratio', 'pricing', 'range', 'rebalanceInterval', 'remove_filter', 'revenue_growth_rate', 'rhs', 'roe', 'sorting', 'turnover_rate', 'type', 'universe', 'unknown', 'weight']

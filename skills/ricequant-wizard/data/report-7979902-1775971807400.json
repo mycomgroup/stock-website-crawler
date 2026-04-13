@@ -1,0 +1,67 @@
+{
+  "backtestId": "7979902",
+  "result": {
+    "code": null,
+    "config": null,
+    "metadata": null,
+    "status": "normal_exit",
+    "summary": null,
+    "create_at": "2026-04-12T13:29:06.876000",
+    "start_at": "2026-04-12T13:29:10.997000",
+    "progress": 1,
+    "backtest_id": "7979902",
+    "description": "",
+    "strategy_id": 2421275,
+    "title": "低估值高股息初始策略",
+    "account_type": "stock",
+    "end_at": "2026-04-12T13:29:55.124000",
+    "exception": ""
+  },
+  "risk": {
+    "timestamp": 1743147000000,
+    "trading_date": 20250328,
+    "alpha": 0.06773542871091486,
+    "beta": 0.5681109059783767,
+    "sharpe": 0.1573329453522559,
+    "sortino": 0.2258511608867694,
+    "information_ratio": 0.7083582358232843,
+    "annual_volatility": 0.15451854443200794,
+    "max_drawdown": 0.23785748695674933,
+    "annual_tracking_error": 0.13858067020679615,
+    "annual_downside_risk": 0.10764105710848874
+  },
+  "summary": {
+    "timestamp": 1743147000000,
+    "trading_date": 20250328,
+    "alpha": 0.06773542871091486,
+    "beta": 0.5681109059783767,
+    "sharpe": 0.1573329453522559,
+    "sortino": 0.2258511608867694,
+    "information_ratio": 0.7083582358232843,
+    "annual_volatility": 0.15451854443200794,
+    "max_drawdown": 0.23785748695674933,
+    "annual_tracking_error": 0.13858067020679615,
+    "annual_downside_risk": 0.10764105710848874
+  },
+  "logs": [
+    {
+      "timestamp": 1612162800000,
+      "level": "WARN",
+      "msg": "订单创建失败: 600340.XSHG 在 2021-02-01 时停牌",
+      "seq": 0
+    },
+    {
+      "timestamp": 1632898800000,
+      "level": "WARN",
+      "msg": "订单创建失败: 600340.XSHG 在 2021-09-29 时停牌",
+      "seq": 1
+    },
+    {
+      "timestamp": 1718089200000,
+      "level": "WARN",
+      "msg": "订单被拒单: [601919.XSHG] 已跌停。",
+      "seq": 2
+    }
+  ],
+  "exception": null
+}

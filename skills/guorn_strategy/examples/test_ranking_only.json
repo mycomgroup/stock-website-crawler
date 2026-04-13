@@ -1,0 +1,6 @@
+{
+  "pool": "",
+  "rankings": [
+    { "indicator": "市盈率", "order": "asc", "weight": 1.0 }
+  ]
+}

@@ -147,6 +147,131 @@ export class ParameterCache {
     );
   }
 
+  /**
+   * Resolves an indicator ID from a friendly name or qualified name.
+   * Supports:
+   * 1. Raw ID: 0.M...
+   * 2. UI Name: 市盈率
+   * 3. Qualified Name / Middle Name: 股票每日指标_市盈率
+   * 4. Synonyms: PE -> 市盈率
+   * 5. English names: pe_ttm -> 市盈率
+   */
+  resolveId(nameOrId) {
+    if (!nameOrId) return null;
+
+    // 1. Check if it's already a raw ID
+    if (/^0\.[M|D]\./.test(nameOrId)) {
+      return nameOrId;
+    }
+
+    // 2. English to Chinese mapping (for autoresearch configs)
+    const englishToChinese = {
+      'pe_ttm': '市盈率',
+      'pe': '市盈率',
+      'pb': '市净率',
+      'roe': '净资产收益率',
+      'roa': '总资产收益率',
+      'ps': '市销率',
+      'pcf': '市现率',
+      'gross_profit_margin': '销售毛利率',
+      'net_profit_margin': '销售净利率',
+      'debt_to_asset': '资产负债率',
+      'debt_to_equity': '负债资产率',
+      'current_ratio': '流动比率',
+      'quick_ratio': '速动比率',
+      'turnover_rate': '当日换手率',
+      'market_cap': '总市值',
+      'circulating_market_cap': '流通市值',
+      // Additional mappings for autoresearch
+      'dividend_yield': '股息率',
+      'dividend_yield_ttm': '股息率TTM',
+      'revenue_growth': '营业收入增长',
+      'profit_growth': '净利润增长',
+      'operating_profit_growth': '营业利润增长',
+      'eps': '每股收益',
+      'eps_growth': '净利润增长',
+      'net_profit_margin': '销售净利率',
+      'gross_profit_margin': '销售毛利率',
+      'operating_profit_margin': '营业利润率',
+      'roe_ex': '扣非净资产收益率',
+      'pb_ex_goodwill': '扣除商誉市净率',
+      'pe_static': '静态市盈率',
+      'pe_dynamic': '动态市盈率',
+      'pe_ex': '扣非市盈率',
+      'turnover_5d': '5日换手率',
+      'turnover_20d': '20日换手率',
+    };
+    
+    const chineseName = englishToChinese[nameOrId.toLowerCase()];
+    if (chineseName) {
+      nameOrId = chineseName;
+    }
+
+    // 3. Load mapping if not already in cache (optimized for resolution)
+    if (!this.mappingData) {
+      try {
+        const mappingPath = path.join(path.dirname(this.cacheFile), '..', 'indicator_mapping.json');
+        if (fs.existsSync(mappingPath)) {
+          this.mappingData = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
+        }
+      } catch (e) {
+        console.warn('Mapping data not available:', e.message);
+      }
+    }
+
+    if (this.mappingData && this.mappingData.indicators) {
+      const indicators = this.mappingData.indicators;
+      
+      // 3.1 Exact name match
+      let match = indicators.find(i => i.name === nameOrId);
+      if (match) return match.id;
+
+      // 3.2 Middle name match (qualified name)
+      match = indicators.find(i => i.middle_name === nameOrId);
+      if (match) return match.id;
+
+      // 3.3 Synonym match (Basic PE/ROE/etc)
+      const synonyms = {
+        'PE': '市盈率',
+        'PB': '市净率',
+        'ROE': '净资产收益率',
+        'PS': '市销率',
+        'MCAP': '总市值'
+      };
+      const resolvedName = synonyms[nameOrId.toUpperCase()];
+      if (resolvedName) {
+        match = indicators.find(i => i.name === resolvedName);
+        if (match) return match.id;
+      }
+    }
+
+    // 4. Fallback to cache.indicators
+    const cached = this.getIndicator(nameOrId);
+    if (cached && (cached.expr || cached.id)) {
+      return cached.expr || cached.id;
+    }
+
+    return nameOrId; // Return original if not resolvable
+  }
+
+  /**
+   * Resolves a stock pool ID from a name.
+   */
+  resolvePoolId(nameOrId) {
+    if (!nameOrId) return nameOrId;
+    if (nameOrId.startsWith('1.P.')) return nameOrId;
+
+    if (!this.cache || !this.cache.stockPools) return nameOrId;
+
+    const allPools = [
+      ...this.cache.stockPools.userPools,
+      ...this.cache.stockPools.systemPools
+    ];
+
+    const match = allPools.find(p => p.name === nameOrId);
+    return match ? match.id : nameOrId;
+  }
+
   getIndicatorsByCategory(category) {
     if (!this.cache) return [];
     return this.cache.indicators.categories[category] || [];

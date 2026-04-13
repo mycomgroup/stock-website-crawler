@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-03T08:08:24.553Z",
+  "timestamp": "2026-04-12T12:38:41.399Z",
   "indicators": {
     "functions": [
       {
@@ -2631,9 +2631,9 @@
     "export_acct": [],
     "cpu_limit": 1000,
     "follow": 0,
-    "favorite_count": 5,
+    "favorite_count": 6,
     "uid": 2802128,
-    "fans_count": 0,
+    "fans_count": 1,
     "sale_count": 0,
     "group": 1,
     "title": null,
@@ -2656,7 +2656,7 @@
     "favorite_post_count": 0,
     "score": 0,
     "location": null,
-    "cansell_count": 957,
+    "cansell_count": 960,
     "talkmy_count": 0,
     "week_count": 0,
     "cash_account": 0,
@@ -2683,7 +2683,7 @@
     "career": null,
     "pool_count": 0,
     "contacts": null,
-    "cpu_score": 1000,
+    "cpu_score": 743,
     "intro": null,
     "bind_remind": false,
     "avatar": null,

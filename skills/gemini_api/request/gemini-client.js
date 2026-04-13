@@ -1,5 +1,6 @@
 import { SessionManager } from '../browser/session-manager.js';
 import { ENV } from '../load-env.js';
+import { SecureHttpClient } from '../../common/http-security.js';
 
 /**
  * Google Gemini API 客户端
@@ -11,6 +12,16 @@ export class GeminiClient {
     this.baseUrl = 'https://gemini.google.com';
     this.apiUrl = 'https://gemini.google.com/api';
     this.model = options.model || ENV.DEFAULT_MODEL || 'gemini-pro';
+    
+    // Initialize secure HTTP client
+    this.secureClient = new SecureHttpClient({
+      baseUrl: this.baseUrl,
+      maxRequestsPerMinute: 10,
+      sessionValidator: async () => {
+        const cookies = this.sessionManager.getCookies();
+        return cookies && cookies.length > 0;
+      }
+    });
   }
 
   /**
@@ -40,7 +51,6 @@ export class GeminiClient {
     console.log(`📝 消息: ${message.substring(0, 100)}${message.length > 100 ? '...' : ''}`);
 
     const cookies = this.sessionManager.getCookies();
-    const userAgent = this.sessionManager.getUserAgent();
 
     // Gemini API 请求格式
     const payload = {
@@ -52,30 +62,21 @@ export class GeminiClient {
     };
 
     try {
-      // 注意：这里的 API 端点需要根据实际的 Gemini API 调整
-      const response = await fetch(`${this.apiUrl}/generate`, {
+      // Use secure client for the request
+      const response = await this.secureClient.request(`${this.apiUrl}/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Cookie': cookies,
-          'User-Agent': userAgent,
           'Accept': 'application/json',
           'Origin': this.baseUrl,
           'Referer': `${this.baseUrl}/`
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        timeout: 30000
       });
 
-      if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-          console.error('❌ 认证失败，session 可能已失效');
-          console.log('💡 请运行: node run-skill.js --login');
-          throw new Error('Authentication failed. Please login again.');
-        }
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = JSON.parse(response);
 
       console.log('✅ 收到响应');
       
@@ -88,6 +89,11 @@ export class GeminiClient {
       };
 
     } catch (error) {
+      if (error.message.includes('401') || error.message.includes('403')) {
+        console.error('❌ 认证失败，session 可能已失效');
+        console.log('💡 请运行: node run-skill.js --login');
+        throw new Error('Authentication failed. Please login again.');
+      }
       console.error('❌ 发送消息失败:', error.message);
       throw error;
     }
@@ -102,27 +108,23 @@ export class GeminiClient {
     await this.ensureAuthenticated();
 
     const cookies = this.sessionManager.getCookies();
-    const userAgent = this.sessionManager.getUserAgent();
 
     try {
-      const response = await fetch(
+      const response = await this.secureClient.request(
         `${this.apiUrl}/conversations?offset=${offset}&limit=${limit}`,
         {
+          method: 'GET',
           headers: {
             'Cookie': cookies,
-            'User-Agent': userAgent,
             'Accept': 'application/json',
             'Origin': this.baseUrl,
             'Referer': `${this.baseUrl}/`
-          }
+          },
+          timeout: 30000
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = JSON.parse(response);
       return {
         items: data.conversations || [],
         total: data.total || 0,
@@ -143,27 +145,23 @@ export class GeminiClient {
     await this.ensureAuthenticated();
 
     const cookies = this.sessionManager.getCookies();
-    const userAgent = this.sessionManager.getUserAgent();
 
     try {
-      const response = await fetch(
+      const response = await this.secureClient.request(
         `${this.apiUrl}/conversation/${conversationId}`,
         {
+          method: 'GET',
           headers: {
             'Cookie': cookies,
-            'User-Agent': userAgent,
             'Accept': 'application/json',
             'Origin': this.baseUrl,
             'Referer': `${this.baseUrl}/`
-          }
+          },
+          timeout: 30000
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
+      return JSON.parse(response);
 
     } catch (error) {
       console.error('❌ 获取对话失败:', error.message);
@@ -178,26 +176,21 @@ export class GeminiClient {
     await this.ensureAuthenticated();
 
     const cookies = this.sessionManager.getCookies();
-    const userAgent = this.sessionManager.getUserAgent();
 
     try {
-      const response = await fetch(
+      await this.secureClient.request(
         `${this.apiUrl}/conversation/${conversationId}`,
         {
           method: 'DELETE',
           headers: {
             'Cookie': cookies,
-            'User-Agent': userAgent,
             'Accept': 'application/json',
             'Origin': this.baseUrl,
             'Referer': `${this.baseUrl}/`
-          }
+          },
+          timeout: 30000
         }
       );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
 
       return { success: true, conversationId };
 
@@ -235,27 +228,23 @@ export class GeminiClient {
     await this.ensureAuthenticated();
 
     const cookies = this.sessionManager.getCookies();
-    const userAgent = this.sessionManager.getUserAgent();
 
     try {
-      const response = await fetch(
+      const response = await this.secureClient.request(
         `${this.apiUrl}/user/info`,
         {
+          method: 'GET',
           headers: {
             'Cookie': cookies,
-            'User-Agent': userAgent,
             'Accept': 'application/json',
             'Origin': this.baseUrl,
             'Referer': `${this.baseUrl}/`
-          }
+          },
+          timeout: 30000
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
+      return JSON.parse(response);
 
     } catch (error) {
       console.error('❌ 获取账户信息失败:', error.message);

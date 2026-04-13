@@ -18,20 +18,7 @@
 import './load-env.js';
 import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
-
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg.startsWith('--')) {
-      const key = arg.slice(2);
-      const next = argv[i + 1];
-      if (next && !next.startsWith('--')) { args[key] = next; i++; }
-      else args[key] = true;
-    }
-  }
-  return args;
-}
+import { parseArgs } from './utils/cli.js';
 
 function printList(backtests) {
   console.log(`\n共 ${backtests.length} 条回测记录：\n`);

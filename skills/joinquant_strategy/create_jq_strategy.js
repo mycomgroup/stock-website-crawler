@@ -18,83 +18,10 @@
 
 import './load-env.js';
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { chromium } from 'playwright';
 import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
-import { SESSION_FILE } from './paths.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const NEW_STOCK_STRATEGY_URL = 'https://www.joinquant.com/algorithm/index/new?restore=0&type=stock&baseCapital=100000';
-
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i++) {
-    if (argv[i].startsWith('--')) {
-      const key = argv[i].slice(2);
-      const val = argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[++i] : true;
-      args[key] = val;
-    }
-  }
-  return args;
-}
-
-async function launchBrowserWithSession(headed = false) {
-  const sessionPayload = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
-  const cookies = sessionPayload.cookies || [];
-  
-  const browser = await chromium.launch({ 
-    headless: !headed,
-    args: ['--disable-blink-features=AutomationControlled']
-  });
-  
-  const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-    viewport: { width: 1280, height: 720 }
-  });
-  
-  await context.addCookies(cookies);
-  const page = await context.newPage();
-  
-  return { browser, context, page };
-}
-
-async function createNewStrategy(page, strategyName, code = null) {
-  // 1. 打开新建策略页面
-  await page.goto(NEW_STOCK_STRATEGY_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  
-  // 检查是否登录
-  if (page.url().includes('/login/')) {
-    throw new Error('JoinQuant session expired or not logged in');
-  }
-  
-  // 2. 从 URL 提取 algorithmId
-  const url = page.url();
-  const match = url.match(/algorithmId=([^&]+)/);
-  
-  if (!match) {
-    throw new Error(`Failed to parse algorithmId from URL: ${url}`);
-  }
-  
-  const algorithmId = match[1];
-  console.error(`  ✓ Created strategy: algorithmId=${algorithmId}`);
-  
-  // 3. 如果提供了代码，保存到策略
-  if (code) {
-    try {
-      const client = new JoinQuantStrategyClient();
-      const context = await client.getStrategyContext(algorithmId);
-      await client.saveStrategy(algorithmId, strategyName, code, context);
-      console.error(`  ✓ Code uploaded: ${strategyName}`);
-    } catch (e) {
-      console.error(`  ⚠ Code upload failed: ${e.message}`);
-    }
-  }
-  
-  return algorithmId;
-}
+import { createNewStockStrategy, launchBrowserWithSession } from './utils/browser-session.js';
+import { parseArgs } from './utils/cli.js';
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
@@ -117,11 +44,34 @@ async function main() {
   await ensureJoinQuantSession({ headed: false, headless: true });
 
   console.error('[2/3] Launching browser...');
-  const { browser, page } = await launchBrowserWithSession(false);
+  const { browser, context, page } = await launchBrowserWithSession({
+    browserArgs: ['--disable-blink-features=AutomationControlled'],
+    contextOptions: {
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+      viewport: { width: 1280, height: 720 }
+    }
+  });
 
   try {
     console.error('[3/3] Creating new strategy...');
-    const algorithmId = await createNewStrategy(page, strategyName, code);
+    const created = await createNewStockStrategy({
+      page,
+      browserContext: context
+    });
+    const algorithmId = created.algorithmId;
+    console.error(`  ✓ Created strategy: algorithmId=${algorithmId}`);
+
+    if (code) {
+      try {
+        const client = new JoinQuantStrategyClient();
+        const jqContext = await client.getStrategyContext(algorithmId);
+        await client.saveStrategy(algorithmId, strategyName, code, jqContext);
+        console.error(`  ✓ Code uploaded: ${strategyName}`);
+      } catch (e) {
+        console.error(`  ⚠ Code upload failed: ${e.message}`);
+      }
+    }
 
     // 输出 JSON 到 stdout
     const output = {

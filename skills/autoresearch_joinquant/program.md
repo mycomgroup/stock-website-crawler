@@ -97,7 +97,7 @@ state = json.load(open("state.json"))
 改完后运行（**输出重定向到文件，不要让日志淹没 context**）：
 
 ```bash
-AUTORESEARCH_DIR="/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch"
+AUTORESEARCH_DIR="/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch_joinquant"
 python ${AUTORESEARCH_DIR}/run_iteration.py \
     --base . \
     --mutation-summary "【改动类型】具体改了什么参数/逻辑（改前→改后），预期效果" > run.log 2>&1

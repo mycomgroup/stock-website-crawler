@@ -2,7 +2,7 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
-import { DATA_ROOT } from '../paths.js';
+import { DATA_ROOT, SESSION_FILE } from '../paths.js';
 import '../load-env.js';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
@@ -107,10 +107,9 @@ export async function debugGuornLogin(options = {}) {
     capturedAt: new Date().toISOString(),
     cookies: cookies
   };
-  const sessionFile = path.join(DATA_ROOT, 'session.json');
   fs.mkdirSync(DATA_ROOT, { recursive: true });
-  fs.writeFileSync(sessionFile, JSON.stringify(sessionPayload, null, 2));
-  console.log(`\nSession saved to ${sessionFile}`);
+  fs.writeFileSync(SESSION_FILE, JSON.stringify(sessionPayload, null, 2));
+  console.log(`\nSession saved to ${SESSION_FILE}`);
 
   await browser.close();
   return { isLoggedIn: !page.url().includes('/user/login'), sessionPayload };

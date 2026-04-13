@@ -1,16 +1,15 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
 import './load-env.js';
-import { SESSION_FILE } from './paths.js';
+import { DATA_ROOT, REPO_ROOT } from './paths.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
-import { JoinQuantStrategyClient, loadJson } from './request/joinquant-strategy-client.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const REPO_ROOT = path.resolve(__dirname, '..', '..');
+import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
+import {
+  createNewStockStrategy,
+  launchBrowserWithSession as openBrowserWithSession
+} from './utils/browser-session.js';
+import { parseArgs, sleep } from './utils/cli.js';
 
 const _rawArgs = process.argv.slice(2);
 const _sourceDirArg = (() => {
@@ -27,29 +26,10 @@ const SOURCE_DIR = _sourceDirArg
 const DATE_TAG = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 const RUN_DIR = _runDirArg
   ? path.resolve(_runDirArg)
-  : path.resolve(__dirname, 'data', `jq558_batch_${DATE_TAG}`);
+  : path.resolve(DATA_ROOT, `jq558_batch_${DATE_TAG}`);
 const JSONL_LOG = path.join(RUN_DIR, 'submissions.jsonl');
 const MD_LOG = path.join(RUN_DIR, 'submissions.md');
 const STATE_FILE = path.join(RUN_DIR, 'state.json');
-const LIST_URL = 'https://www.joinquant.com/algorithm/index/list';
-const NEW_STOCK_STRATEGY_URL = 'https://www.joinquant.com/algorithm/index/new?restore=0&type=stock&baseCapital=100000';
-
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i += 1) {
-    const arg = argv[i];
-    if (!arg.startsWith('--')) continue;
-    const key = arg.slice(2);
-    const next = argv[i + 1];
-    if (next && !next.startsWith('--')) {
-      args[key] = next;
-      i += 1;
-    } else {
-      args[key] = true;
-    }
-  }
-  return args;
-}
 
 function ensureRunFiles() {
   fs.mkdirSync(RUN_DIR, { recursive: true });
@@ -140,10 +120,6 @@ function writeState(extra = {}) {
   fs.writeFileSync(STATE_FILE, JSON.stringify(payload, null, 2), 'utf8');
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 function isRateLimitError(error) {
   const msg = String(error?.message || '');
   return msg.includes('当前并行编译或回测数量最多10个') ||
@@ -161,95 +137,6 @@ function makeStrategyName(relativePath, index) {
     .replace(/^_+|_+$/g, '');
   const prefix = `JQ558_${String(index).padStart(4, '0')}_`;
   return `${prefix}${base}`.slice(0, 80);
-}
-
-async function launchBrowserWithSession(headed = false) {
-  const sessionPayload = loadJson(SESSION_FILE);
-  if (!sessionPayload.cookies || sessionPayload.cookies.length === 0) {
-    throw new Error(`No cookies found in session file: ${SESSION_FILE}`);
-  }
-  const browser = await chromium.launch({ headless: !headed });
-  const context = await browser.newContext();
-  await context.addCookies(sessionPayload.cookies);
-  const page = await context.newPage();
-  return { browser, context, page };
-}
-
-async function clickFirstVisible(page, selectors) {
-  for (const selector of selectors) {
-    const locator = page.locator(selector).first();
-    try {
-      if (await locator.count()) {
-        await locator.click({ timeout: 5000 });
-        return selector;
-      }
-    } catch {
-      // Try next selector.
-    }
-  }
-  return null;
-}
-
-async function createNewStrategy(page, browserContext, debugPrefix) {
-  // Direct entry discovered from the live JoinQuant strategy list page:
-  // /algorithm/index/new?restore=0&type=stock&baseCapital=100000
-  await page.goto(NEW_STOCK_STRATEGY_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-
-  if (page.url().includes('/login/')) {
-    throw new Error('JoinQuant session is not logged in when opening new stock strategy page');
-  }
-
-  let targetPage = page;
-  let clickedSelector = 'direct:new_stock_strategy_url';
-  let match = targetPage.url().match(/algorithmId=([^&]+)/);
-
-  if (!match) {
-    // Fallback: open strategy list, click "新建策略" dropdown, then click "股票策略".
-    await page.goto(LIST_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-
-    const popupPromise = browserContext.waitForEvent('page', { timeout: 3000 }).catch(() => null);
-    const openDropdown = await clickFirstVisible(page, [
-      '#new-algo-button',
-      'button:has-text("新建策略")',
-      'a:has-text("新建策略")',
-      'text=新建策略'
-    ]);
-
-    if (!openDropdown) {
-      const htmlFile = path.join(RUN_DIR, `${debugPrefix}_list_page.html`);
-      const pngFile = path.join(RUN_DIR, `${debugPrefix}_list_page.png`);
-      fs.writeFileSync(htmlFile, await page.content(), 'utf8');
-      await page.screenshot({ path: pngFile, fullPage: true }).catch(() => {});
-      throw new Error(`Unable to find "新建策略" dropdown on list page. Debug saved to ${htmlFile}`);
-    }
-
-    const stockLink = page.locator('#tacticsList a[href*="/algorithm/index/new?"][href*="type=stock"]').first();
-    await stockLink.waitFor({ state: 'visible', timeout: 10000 });
-    await stockLink.click({ timeout: 10000 });
-
-    const popup = await popupPromise;
-    targetPage = popup || page;
-    clickedSelector = 'fallback:#tacticsList stock link';
-    await targetPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
-    await targetPage.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-    match = targetPage.url().match(/algorithmId=([^&]+)/);
-  }
-
-  if (!match) {
-    const htmlFile = path.join(RUN_DIR, `${debugPrefix}_edit_page.html`);
-    fs.writeFileSync(htmlFile, await targetPage.content(), 'utf8');
-    const pngFile = path.join(RUN_DIR, `${debugPrefix}_edit_page.png`);
-    await targetPage.screenshot({ path: pngFile, fullPage: true }).catch(() => {});
-    throw new Error(`Failed to parse algorithmId from URL: ${targetPage.url()}`);
-  }
-
-  return {
-    algorithmId: match[1],
-    targetPage,
-    clickedSelector
-  };
 }
 
 async function getContextCached(client, algorithmId, contextCache) {
@@ -365,7 +252,7 @@ async function main() {
 
   await ensureJoinQuantSession({ headed: false, headless: true });
   const client = new JoinQuantStrategyClient();
-  const { browser, context, page } = await launchBrowserWithSession(headed);
+  const { browser, context, page } = await openBrowserWithSession({ headed });
   const contextCache = new Map();
   let activeBacktests = Array.from(submittedMap.values());
   activeBacktests = await refreshActiveBacktests(activeBacktests, client, contextCache);
@@ -404,7 +291,12 @@ async function main() {
           record.createSelector = 'reuse-existing-algorithm';
           console.log(`  复用策略: algorithmId=${reuseAlgorithmId}`);
         } else {
-          created = await createNewStrategy(page, context, debugPrefix);
+          created = await createNewStockStrategy({
+            page,
+            browserContext: context,
+            runDir: RUN_DIR,
+            debugPrefix
+          });
           record.algorithmId = created.algorithmId;
           record.createSelector = created.clickedSelector;
           console.log(`  新建成功: algorithmId=${created.algorithmId}`);

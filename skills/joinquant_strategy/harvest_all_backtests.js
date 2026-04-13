@@ -13,22 +13,10 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { DATA_ROOT } from './paths.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
 import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// ── CLI args ──────────────────────────────────────────────────────────────────
-function parseArgs(argv) {
-  const args = { top: 100 };
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a === '--out' && argv[i + 1]) { args.out = argv[++i]; }
-    else if (a === '--top' && argv[i + 1]) { args.top = parseInt(argv[++i], 10); }
-  }
-  return args;
-}
+import { parseArgs } from './utils/cli.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function pct(v) {
@@ -81,8 +69,11 @@ function isCompleted(stats) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  const args = parseArgs(process.argv.slice(2));
-  const outDir = path.resolve(args.out || path.join(__dirname, 'data', `harvest_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`));
+  const args = parseArgs(process.argv.slice(2), { top: 100 });
+  const topN = Number(args.top || 100);
+  const outDir = path.resolve(
+    args.out || path.join(DATA_ROOT, `harvest_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`)
+  );
   fs.mkdirSync(outDir, { recursive: true });
 
   console.log('确保 session 有效...');
@@ -196,7 +187,7 @@ async function main() {
   fs.writeFileSync(jsonOut, JSON.stringify({
     generatedAt: new Date().toISOString(),
     totals: { strategies: strategies.length, allBacktests: allBacktests.length, completed: completed.length, skipped: skipped.length },
-    top: completed.slice(0, args.top),
+    top: completed.slice(0, topN),
     all: completed,
     skipped,
   }, null, 2));
@@ -210,12 +201,12 @@ async function main() {
   lines.push('');
   lines.push('> 综合评分 = 年化收益 × 夏普修正系数 × 回撤惩罚系数');
   lines.push('');
-  lines.push(`## Top ${Math.min(args.top, completed.length)} 策略`);
+  lines.push(`## Top ${Math.min(topN, completed.length)} 策略`);
   lines.push('');
   lines.push('| # | 策略名 | 回测名 | 回测时间 | 时间区间 | 累计收益 | 年化收益 | 夏普 | 最大回撤 | Alpha | Beta | 胜率 | 评分 | 链接 |');
   lines.push('|---|--------|--------|----------|----------|----------|----------|------|----------|-------|------|------|------|------|');
 
-  completed.slice(0, args.top).forEach((r, idx) => {
+  completed.slice(0, topN).forEach((r, idx) => {
     lines.push(
       `| ${idx + 1} | ${r.strategyName.replace(/\|/g, '/')} | ${r.backtestName.replace(/\|/g, '/')} | ${r.createdAt || ''} | ${r.startDate || ''}~${r.endDate || ''} | ${pct(r.totalReturns)} | ${pct(r.annualizedReturns)} | ${num(r.sharpe, 2)} | ${pct(r.maxDrawdown)} | ${pct(r.alpha)} | ${num(r.beta, 2)} | ${pct(r.winRate)} | ${num(r._score, 3)} | [打开](${r.backtestUrl}) |`
     );

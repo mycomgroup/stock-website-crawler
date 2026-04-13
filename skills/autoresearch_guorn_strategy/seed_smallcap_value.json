@@ -1,0 +1,63 @@
+{
+  "name": "小盘价值策略",
+  "description": "聚焦中证1000小盘股中的低估值、高盈利能力标的，追求价值回归和成长潜力",
+  "filters": [
+    {
+      "factor": "pe_ttm",
+      "operator": "<",
+      "value": 50,
+      "description": "市盈率低于50倍"
+    },
+    {
+      "factor": "roe",
+      "operator": ">",
+      "value": 0,
+      "description": "净资产收益率大于0"
+    }
+  ],
+  "rankings": [
+    {
+      "factor": "pb",
+      "ascending": true,
+      "weight": 0.4,
+      "description": "优先选择市净率低的股票"
+    },
+    {
+      "factor": "pe_ttm",
+      "ascending": true,
+      "weight": 0.3,
+      "description": "兼顾市盈率低的股票"
+    },
+    {
+      "factor": "roe",
+      "ascending": false,
+      "weight": 0.3,
+      "description": "优先选择盈利能力强的股票"
+    }
+  ],
+  "pool": "zz1000",
+  "exclude_st": true,
+  "holding_num": 20,
+  "rebalance_interval": 15,
+  "backtest": {
+    "start": "2025-04-12",
+    "end": "2026-04-12",
+    "benchmark": "zz1000",
+    "trade_cost": 0.002
+  },
+  "objective": {
+    "weights": {
+      "calmar": 0.55,
+      "sortino": 0.25,
+      "information_ratio": 0.20
+    },
+    "hard_constraints": {
+      "max_drawdown_limit": 0.35
+    }
+  },
+  "loop": {
+    "max_iterations": 100,
+    "max_consecutive_failures": 5,
+    "max_wait_seconds": 90
+  }
+}

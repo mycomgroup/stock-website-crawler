@@ -1,31 +1,13 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { DATA_ROOT } from './paths.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
 import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
+import { parseArgs } from './utils/cli.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const DATE_TAG = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-const DEFAULT_RUN_DIR = path.resolve(__dirname, 'data', `jq558_batch_${DATE_TAG}`);
-
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i += 1) {
-    const arg = argv[i];
-    if (!arg.startsWith('--')) continue;
-    const key = arg.slice(2);
-    const next = argv[i + 1];
-    if (next && !next.startsWith('--')) {
-      args[key] = next;
-      i += 1;
-    } else {
-      args[key] = true;
-    }
-  }
-  return args;
-}
+const DEFAULT_RUN_DIR = path.resolve(DATA_ROOT, `jq558_batch_${DATE_TAG}`);
 
 function formatPct(value) {
   if (value === null || value === undefined || Number.isNaN(value)) return '';

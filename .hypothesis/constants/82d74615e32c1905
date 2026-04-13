@@ -1,0 +1,4 @@
+# file: /Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch_ricequant-wizard/init_experiment.py
+# hypothesis_version: 6.151.9
+
+[-1e+308, '%Y-%m-%dT%H:%M:%S', '--name', '--strategy-id', '0000_config.json', 'RiceQuant 策略 ID', '__main__', 'champion_config', 'champion_iter', 'champion_metrics', 'champion_score', 'consecutive_failures', 'current_iter', 'experiments', 'history', 'iterations.tsv', 'last_update', 'state.json', 'strategy_id', 'utf-8', 'w', 'wizard_config.json', 'y', 'yes', '初始化向导式策略自动研究实验目录', '实验名称（用作目录名）', '已取消。', '是否覆盖？(y/N) ', '错误：--name 不能为空']

@@ -15,24 +15,7 @@ import './load-env.js';
 import fs from 'fs';
 import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
-
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg.startsWith('--')) {
-      const key = arg.slice(2);
-      const value = argv[i + 1];
-      if (value && !value.startsWith('--')) {
-        args[key] = value;
-        i++;
-      } else {
-        args[key] = true;
-      }
-    }
-  }
-  return args;
-}
+import { parseArgs } from './utils/cli.js';
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));

@@ -2,8 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import '../load-env.js';
 import { OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
-
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36';
+import { SecureHttpClient, USER_AGENT, SEC_CH_UA } from '../../common/http-security.js';
 
 function ensureDir(filePath) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -40,26 +39,6 @@ export function loadJson(filePath) {
  *   POST /platform/backtest/queryall/      algo_id= page= num=
  *   POST /platform/backtest/cancel/        backTestId=
  */
-/**
- * 根据 HTTP 状态码决定重试等待时间
- * - 429 / 503 并发限制：60s / 120s / 300s
- * - 其他 5xx 服务端错误：10s / 20s / 40s
- * - 其他状态码不重试，返回 0
- */
-function retryDelay(status, retryCount) {
-  if (status === 429 || status === 503) {
-    return [60000, 120000, 300000][retryCount] ?? 300000;
-  }
-  if (status >= 500) {
-    return Math.pow(2, retryCount) * 10000;
-  }
-  return 0;
-}
-
-/** 网络/超时错误的退避：5s / 10s / 20s */
-function networkRetryDelay(retryCount) {
-  return Math.pow(2, retryCount) * 5000;
-}
 
 export class THSQuantClient {
   constructor(options = {}) {
@@ -68,6 +47,15 @@ export class THSQuantClient {
     this.origin = 'https://quant.10jqka.com.cn';
     const session = options.sessionPayload || loadJson(this.sessionFile);
     this.cookieJar = options.cookies || session.cookies || [];
+    
+    // Initialize secure HTTP client
+    this.secureClient = new SecureHttpClient({
+      baseUrl: this.origin,
+      maxRequestsPerMinute: 10,
+      sessionValidator: async () => {
+        return this.cookieJar && this.cookieJar.length > 0;
+      }
+    });
   }
 
   getCookieHeader() {
@@ -81,6 +69,13 @@ export class THSQuantClient {
       'User-Agent': USER_AGENT,
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'Accept-Language': 'zh-CN,zh;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br, zstd',
+      'sec-ch-ua': SEC_CH_UA,
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"macOS"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
       'Referer': referer || `${this.origin}/view/study-index.html`,
       'Origin': this.origin,
       'Cookie': this.getCookieHeader()
@@ -89,60 +84,26 @@ export class THSQuantClient {
 
   async request(endpoint, body = 'isajax=1', retryCount = 0) {
     const url = endpoint.startsWith('http') ? endpoint : `${this.origin}${endpoint}`;
-    const maxRetries = 3;
-    const timeoutMs = 30000;
+    const requestBody = body.includes('isajax') ? body : body + '&isajax=1';
+    
+    // Use secure client for the request
+    const response = await this.secureClient.request(url, {
+      method: 'POST',
+      headers: this.buildHeaders(url),
+      body: requestBody,
+      timeout: 30000
+    });
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-
+    // Parse JSONP or JSON
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: this.buildHeaders(url),
-        body: body.includes('isajax') ? body : body + '&isajax=1',
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-
-      const text = await response.text();
-      if (!response.ok) {
-        if (retryCount < maxRetries) {
-          const delay = retryDelay(response.status, retryCount);
-          if (delay > 0) {
-            console.warn(`      [Retry ${retryCount+1}/${maxRetries}] HTTP ${response.status}, waiting ${delay/1000}s...`);
-            await new Promise(r => setTimeout(r, delay));
-            return this.request(endpoint, body, retryCount + 1);
-          }
-        }
-        throw new Error(`HTTP ${response.status} ${url}: ${text.slice(0, 200)}`);
+      const trimmed = response.trim();
+      if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+        const m = trimmed.match(/\(\{.+\}\)/s);
+        if (m) return JSON.parse(m[1]);
       }
-
-      // 解析 JSONP 或 JSON
-      try {
-        const trimmed = text.trim();
-        if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-          const m = trimmed.match(/\(\{.+\}\)/s);
-          if (m) return JSON.parse(m[1]);
-        }
-        return JSON.parse(trimmed);
-      } catch (e) {
-        return { raw: text.slice(0, 500), parseError: e.message };
-      }
-    } catch (error) {
-      clearTimeout(timer);
-      const isRetryable = error.name === 'AbortError' ||
-        error.message.includes('timeout') ||
-        error.message.includes('network') ||
-        error.message.includes('ECONN') ||
-        error.message.includes('ECONNRESET');
-      if (isRetryable && retryCount < maxRetries) {
-        const delay = networkRetryDelay(retryCount);
-        const reason = error.name === 'AbortError' ? `timeout(${timeoutMs}ms)` : error.message;
-        console.warn(`      [Retry ${retryCount+1}/${maxRetries}] ${reason}, waiting ${delay/1000}s...`);
-        await new Promise(r => setTimeout(r, delay));
-        return this.request(endpoint, body, retryCount + 1);
-      }
-      throw error;
+      return JSON.parse(trimmed);
+    } catch (e) {
+      return { raw: response.slice(0, 500), parseError: e.message };
     }
   }
 

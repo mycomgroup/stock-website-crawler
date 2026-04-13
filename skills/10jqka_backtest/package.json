@@ -1,0 +1,16 @@
+{
+  "name": "10jqka_backtest",
+  "version": "1.0.0",
+  "description": "10jqka Formula Strategy Runner",
+  "type": "module",
+  "scripts": {
+    "login": "node browser/manual-login-capture.js",
+    "login:auto": "node browser/automated-login.js",
+    "login:local": "node browser/extract-local-session.js",
+    "test:session": "node test-session.js"
+  },
+  "dependencies": {
+    "playwright": "^1.42.1",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -161,25 +161,32 @@ node run-skill.js --factors
 
 ## 因子类型
 
-### 基本面因子 (fundamental)
+系统支持丰富的因子配置，涵盖基本面、量价、技术指标等。完整因子列表及其说明请参考：
 
-估值指标：`pe_ratio`, `pb_ratio`, `market_cap`
-盈利能力：`roe`, `roa`, `gross_profit_margin`
-成长能力：`revenue_growth_rate`, `net_profit_growth_rate`
-财务健康：`debt_ratio`, `current_ratio`, `quick_ratio`
-分红指标：`dividend_yield`, `dividend_payout_ratio`
+👉 **[RiceQuant 因子大全 (RICEQUANT_FACTORS_CATALOG.md)](RICEQUANT_FACTORS_CATALOG.md)**
 
-### 量价因子 (pricing)
+### 主要类别预览：
 
-`open`, `close`, `high`, `low`, `volume`, `turnover`, `turnover_rate`
+- **基本面 (fundamental)**: 
+  - 估值指标: `pe_ratio`, `pb_ratio`, `market_cap`, `ps_ratio` ...
+  - 盈利能力: `roe`, `roa`, `gross_profit_margin`, `net_profit_margin` ...
+  - 成长能力: `revenue_growth_rate`, `net_profit_growth_rate`, `net_profit_growth_rate_1y` ...
+  - 财务健康: `debt_ratio`, `current_ratio`, `interest_coverage_ratio` ...
+  - 分析师预测: `target_price`, `rating`, `eps_forecast` ...
+  - 现金流、每股指标、分红指标等
 
-### 技术指标 (technical)
+- **量价因子 (pricing)**: 
+  - 价格指标: `open`, `close`, `last`, `limit_up` ...
+  - 成交量指标: `volume`, `turnover`, `turnover_rate` ...
+  - 涨跌指标: `change_rate`, `n_day_gain_rate`, `high_52w` ...
 
-`MA`, `EMA`, `MACD`, `RSI`, `KDJ`, `BOLL`, `ATR`
+- **技术指标 (technical)**: 
+  - 趋势/动量: `MA`, `EMA`, `MACD`, `RSI`, `KDJ`, `ADX` ...
+  - 波动率/成交量类: `BOLL`, `ATR`, `SAR`, `OBV` ...
 
-### 元数据 (extra)
+- **元数据 (extra)**: 
+  - `listed_days`, `industry`, `board_type`
 
-`listed_days`, `industry`, `board_type`
 
 ## 示例策略
 
