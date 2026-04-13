@@ -3,7 +3,6 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
 import {
-  CHROME_USER_DATA_DIR,
   OUTPUT_ROOT,
   SESSION_FILE as SHARED_SESSION_FILE
 } from '../load-env.js';
@@ -21,7 +20,8 @@ import {
   mergeUnifiedInputs,
   normalizeUnifiedInput
 } from '../shared/unified-input.js';
-import LoginHandler from '../../../stock-crawler/src/login-handler.js';
+import { AuthManager } from '../../common_auth/auth-manager.js';
+import siteLixinger from '../../common_auth/sites/lixinger.js';
 
 const CATALOG = loadBrowserMetricsCatalog();
 const CONDITION_CATALOG_HINT_PATTERN = /统计值|分位点|上市日期|上市时间|上市年数|上市以来|10年|20年/;
@@ -198,56 +198,7 @@ async function resolveBrowserInput(options) {
 const SESSION_FILE = SHARED_SESSION_FILE;
 const SCREENER_URL = 'https://www.lixinger.com/analytics/screener/company-fundamental/cn';
 const PAGE_TIMEOUT = 30_000;
-const CHROME_USER_DATA = CHROME_USER_DATA_DIR;
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
-
-function buildCookieHeader(setCookies) {
-  return setCookies.map(value => value.split(';')[0]).join('; ');
-}
-
-function cookieHeaderToPlaywrightCookies(cookieHeader) {
-  return cookieHeader
-    .split(';')
-    .map(item => item.trim())
-    .filter(Boolean)
-    .map(item => {
-      const [name, ...rest] = item.split('=');
-      return {
-        name,
-        value: rest.join('='),
-        domain: '.lixinger.com',
-        path: '/',
-        secure: true,
-        sameSite: 'Lax'
-      };
-    });
-}
-
-async function loginByRequest(username, password, refererUrl) {
-  const response = await fetch('https://www.lixinger.com/api/account/sign-in/by-account', {
-    method: 'POST',
-    headers: {
-      accept: 'application/json, text/plain, */*',
-      'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-      'content-type': 'application/json;charset=UTF-8',
-      referer: refererUrl,
-      'user-agent': USER_AGENT
-    },
-    body: JSON.stringify({ accountName: username, password })
-  });
-
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`登录接口失败 ${response.status}: ${text.slice(0, 500)}`);
-  }
-
-  const setCookies = response.headers.getSetCookie ? response.headers.getSetCookie() : [];
-  const cookie = buildCookieHeader(setCookies);
-  if (!cookie) {
-    throw new Error('登录接口返回成功，但未返回 cookie');
-  }
-  return cookie;
-}
 
 async function waitForScreenerReady(page) {
   await page.waitForLoadState('networkidle', { timeout: PAGE_TIMEOUT }).catch(() => {});
@@ -295,140 +246,31 @@ async function ensureScreenerPage(page, targetUrl) {
 }
 
 /**
- * Validates login state by calling a lightweight API endpoint directly from Node.js.
- * Extracts cookies from the Playwright context and uses Node.js fetch — no browser page needed.
+ * Loads existing session or creates a new one via AuthManager.
+ * @param {import('playwright').Browser} browser
+ * @param {{ targetUrl?: string, profileDir?: string, headless?: boolean, forceRefresh?: boolean }} options
+ * @returns {Promise<import('playwright').BrowserContext>}
  */
-async function validateContext(context) {
-  const cookies = await context.cookies('https://www.lixinger.com').catch(() => []);
-  const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
-  if (!cookieHeader) return false;
+export async function loadOrCreateSession(browser, options = {}) {
+  const authManager = new AuthManager(siteLixinger);
 
-  try {
-    const res = await fetch('https://www.lixinger.com/api/company/screener/dates', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'cookie': cookieHeader,
-        'user-agent': USER_AGENT,
-        'referer': SCREENER_URL
-      },
-      body: JSON.stringify({ areaCode: 'cn' })
-    });
-    if (res.status !== 200) return false;
-    const json = await res.json().catch(() => null);
-    return json?.priceMetricsDate != null;
-  } catch {
-    return false;
-  }
-}
+  const method = options.forceRefresh ? 'all' : 'local';
+  const cookies = await authManager.getValidSession({ forceRefresh: options.forceRefresh, method });
 
-async function createAuthenticatedContext(browser, cookieHeader) {
+  const sanitizedCookies = authManager.sanitizeCookies(cookies);
+
   const context = await browser.newContext({
     locale: 'zh-CN',
     viewport: { width: 1600, height: 1400 },
     userAgent: USER_AGENT
   });
-  await context.addCookies(cookieHeaderToPlaywrightCookies(cookieHeader));
-  await context.storageState({ path: SESSION_FILE });
+
+  await context.addCookies(sanitizedCookies);
+
+  await context.storageState({ path: SESSION_FILE }).catch(() => {});
+  console.log('✓ 已通过 AuthManager 获取并注入有效会话');
+
   return context;
-}
-
-/**
- * Loads existing session or creates a new one via login.
- * @param {import('playwright').Browser} browser
- * @param {{ targetUrl?: string, profileDir?: string, headless?: boolean }} options
- * @returns {Promise<import('playwright').BrowserContext>}
- */
-export async function loadOrCreateSession(browser, options = {}) {
-  const targetUrl = options.targetUrl || SCREENER_URL;
-
-  // Try loading existing session from storage state
-  if (existsSync(SESSION_FILE)) {
-    const context = await browser.newContext({
-      storageState: SESSION_FILE,
-      locale: 'zh-CN',
-      viewport: { width: 1600, height: 1400 },
-      userAgent: USER_AGENT
-    });
-    if (await validateContext(context)) {
-      console.log('✓ 使用已保存的浏览器会话');
-      return context;
-    }
-    await context.close().catch(() => {});
-    console.log('已保存的会话已失效，重新登录...');
-  }
-
-  // Try using a specified browser profile (only when explicitly provided via --profile-dir)
-  if (options.profileDir) {
-    try {
-      console.log(`尝试使用浏览器 profile: ${options.profileDir}`);
-      const context = await chromium.launchPersistentContext(options.profileDir, {
-        viewport: null,
-        userAgent: USER_AGENT,
-        headless: false,
-        channel: 'chrome'
-      }).catch(() => chromium.launchPersistentContext(options.profileDir, {
-        viewport: null,
-        userAgent: USER_AGENT,
-        headless: false
-      }));
-
-      if (await validateContext(context)) {
-        console.log('✓ 使用指定浏览器 profile 成功，已登录状态');
-        return context;
-      }
-
-      console.log('指定 profile 未保持登录，继续尝试自动登录...');
-      await context.close().catch(() => {});
-    } catch (err) {
-      console.log('使用指定浏览器 profile 失败:', err.message);
-    }
-  }
-
-  // Fallback 1: Login via request API and inject cookies
-  const username = process.env.LIXINGER_USERNAME;
-  const password = process.env.LIXINGER_PASSWORD;
-  if (!username || !password) {
-    throw new Error('LIXINGER_USERNAME 和 LIXINGER_PASSWORD 环境变量未配置');
-  }
-
-  try {
-    console.log('尝试通过登录接口写入浏览器会话...');
-    const cookieHeader = await loginByRequest(username, password, targetUrl);
-    const context = await createAuthenticatedContext(browser, cookieHeader);
-    console.log('✓ 已通过登录接口创建浏览器会话');
-    return context;
-  } catch (error) {
-    console.log('登录接口方式失败，继续尝试 UI 自动登录:', error.message);
-  }
-
-  // Fallback 2: Fresh UI login with username/password
-  console.log('尝试通过浏览器表单自动登录...');
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  const loginHandler = new LoginHandler();
-
-  try {
-    await page.goto(targetUrl, { timeout: PAGE_TIMEOUT, waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2000);
-
-    if (await loginHandler.needsLogin(page)) {
-      const success = await loginHandler.login(page, { username, password });
-      if (!success) {
-        throw new Error('登录表单提交后仍未通过登录校验');
-      }
-    }
-
-    await openScreenerPage(page, targetUrl);
-    await context.storageState({ path: SESSION_FILE });
-    console.log('✓ 已通过浏览器表单自动登录');
-    await page.close().catch(() => {});
-    return context;
-  } catch (err) {
-    await page.close().catch(() => {});
-    await context.close().catch(() => {});
-    throw new Error(`登录失败：${err.message}`);
-  }
 }
 
 /**

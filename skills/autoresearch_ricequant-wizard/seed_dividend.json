@@ -1,0 +1,50 @@
+{
+  "name": "高股息红利策略",
+  "description": "沪深300高股息红利策略，筛选高股息率、低估值、盈利稳定股票，追求稳健分红收益",
+  "template": "single_period",
+  "universe": ["000300.XSHG"],
+  "industries": ["*"],
+  "board": ["*"],
+  "stOption": "exclude",
+  "filters": [
+    {
+      "operator": "greater_than",
+      "factor": {"type": "fundamental", "name": "dividend_yield"},
+      "rhs": 2
+    }
+  ],
+  "sorting": [
+    {
+      "factor": {"type": "fundamental", "name": "dividend_yield"},
+      "ascending": false,
+      "weight": 0.5
+    },
+    {
+      "factor": {"type": "fundamental", "name": "roe"},
+      "ascending": false,
+      "weight": 0.3
+    },
+    {
+      "factor": {"type": "fundamental", "name": "pe_ratio"},
+      "ascending": true,
+      "weight": 0.2
+    }
+  ],
+  "maxHoldingNum": 15,
+  "rebalanceInterval": 20,
+  "backtest": {
+    "start_date": "AUTO",
+    "end_date": "AUTO",
+    "capital": "100000",
+    "benchmark": "000300.XSHG"
+  },
+  "objective": {
+    "weights": {"calmar": 0.55, "sortino": 0.25, "information_ratio": 0.20},
+    "hard_constraints": {"max_drawdown_limit": 0.35}
+  },
+  "loop": {
+    "max_iterations": 100,
+    "max_consecutive_failures": 5,
+    "max_wait_seconds": 600
+  }
+}

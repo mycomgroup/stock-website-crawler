@@ -27,7 +27,8 @@ export const FUNDAMENTAL_FACTORS = {
       { name: 'gross_profit_margin', label: '毛利率', description: '毛利/营业收入' },
       { name: 'net_profit_margin', label: '净利率', description: '净利润/营业收入' },
       { name: 'operating_profit_margin', label: '营业利润率', description: '营业利润/营业收入' },
-      { name: 'ebit_margin', label: 'EBIT利润率', description: 'EBIT/营业收入' }
+      { name: 'ebit_margin', label: 'EBIT利润率', description: 'EBIT/营业收入' },
+      { name: 'net_profit_after_tax', label: '税后净利润', description: '扣除税收后的净利润' }
     ]
   },
   growth: {
@@ -37,7 +38,9 @@ export const FUNDAMENTAL_FACTORS = {
       { name: 'net_profit_growth_rate', label: '净利润增长率', description: '净利润同比增长' },
       { name: 'operating_profit_growth_rate', label: '营业利润增长率', description: '营业利润同比增长' },
       { name: 'total_profit_growth_rate', label: '利润总额增长率', description: '利润总额同比增长' },
-      { name: 'total_assets_growth_rate', label: '总资产增长率', description: '总资产同比增长' }
+      { name: 'total_assets_growth_rate', label: '总资产增长率', description: '总资产同比增长' },
+      { name: 'net_profit_growth_rate_1y', label: '净利润增长率(1年)', description: '过去一年净利润同比增长' },
+      { name: 'revenue_growth_rate_1y', label: '营收增长率(1年)', description: '过去一年营收同比增长' }
     ]
   },
   financialHealth: {
@@ -47,7 +50,16 @@ export const FUNDAMENTAL_FACTORS = {
       { name: 'current_ratio', label: '流动比率', description: '流动资产/流动负债' },
       { name: 'quick_ratio', label: '速动比率', description: '(流动资产-存货)/流动负债' },
       { name: 'equity_ratio', label: '产权比率', description: '总负债/股东权益' },
-      { name: 'tangible_asset_ratio', label: '有形资产比率', description: '有形资产/总资产' }
+      { name: 'tangible_asset_ratio', label: '有形资产比率', description: '有形资产/总资产' },
+      { name: 'interest_coverage_ratio', label: '利息保障倍数', description: '息税前利润/利息支出' }
+    ]
+  },
+  efficiency: {
+    category: '营运能力',
+    factors: [
+      { name: 'inventory_turnover', label: '存货周转率', description: '销货成本/平均存货余额' },
+      { name: 'accounts_receivable_turnover', label: '应收账款周转率', description: '营收/平均应收账款余额' },
+      { name: 'asset_turnover', label: '总资产周转率', description: '营收/平均总资产' }
     ]
   },
   cashFlow: {
@@ -55,7 +67,8 @@ export const FUNDAMENTAL_FACTORS = {
     factors: [
       { name: 'operating_cash_flow_per_share', label: '每股经营现金流', description: '经营现金流/股本' },
       { name: 'free_cash_flow_per_share', label: '每股自由现金流', description: '自由现金流/股本' },
-      { name: 'cash_flow_to_debt', label: '现金流债务比', description: '经营现金流/总负债' }
+      { name: 'cash_flow_to_debt', label: '现金流债务比', description: '经营现金流/总负债' },
+      { name: 'operating_cash_flow_growth_rate', label: '经营现金流增长率', description: '经营现金流同比增长' }
     ]
   },
   dividend: {
@@ -72,6 +85,16 @@ export const FUNDAMENTAL_FACTORS = {
       { name: 'book_value_per_share', label: '每股净资产', description: '净资产/股本' },
       { name: 'revenue_per_share', label: '每股营业收入', description: '营业收入/股本' },
       { name: 'operating_profit_per_share', label: '每股营业利润', description: '营业利润/股本' }
+    ]
+  },
+  analyst: {
+    category: '分析师预测',
+    factors: [
+      { name: 'target_price', label: '分析师目标价', description: '分析师一致预测目标价' },
+      { name: 'rating', label: '分析师评级', description: '1-买入, 2-增持, 3-持有, 4-减持, 5-卖出' },
+      { name: 'eps_forecast', label: '预测每股收益', description: '未来一年预测EPS' },
+      { name: 'revenue_forecast_growth', label: '预测营收增长率', description: '未来一年预测营收增长' },
+      { name: 'net_profit_forecast_growth', label: '预测净利润增长率', description: '未来一年预测净利润增长' }
     ]
   }
 };
@@ -101,7 +124,9 @@ export const PRICING_FACTORS = {
     category: '涨跌指标',
     factors: [
       { name: 'change_rate', label: '涨跌幅', description: '今日涨跌幅' },
-      { name: 'n_day_gain_rate', label: 'N日涨幅', description: 'N日累计涨幅', hasParameters: true, parameters: [{ name: 'days', label: '天数', default: 20 }] }
+      { name: 'n_day_gain_rate', label: 'N日涨幅', description: 'N日累计涨幅', hasParameters: true, parameters: [{ name: 'days', label: '天数', default: 20 }] },
+      { name: 'high_52w', label: '52周最高', description: '过去52周最高价' },
+      { name: 'low_52w', label: '52周最低', description: '过去52周最低价' }
     ]
   }
 };
@@ -113,7 +138,8 @@ export const TECHNICAL_FACTORS = {
       { name: 'MA', label: '移动平均线', description: '简单移动平均', hasParameters: true, parameters: [{ name: 'time_period', label: '周期', default: 20 }] },
       { name: 'EMA', label: '指数移动平均', description: '指数移动平均', hasParameters: true, parameters: [{ name: 'time_period', label: '周期', default: 20 }] },
       { name: 'MACD', label: 'MACD', description: '指数平滑异同移动平均线' },
-      { name: 'ADX', label: '平均趋向指标', description: '衡量趋势强度' }
+      { name: 'ADX', label: '平均趋向指标', description: '衡量趋势强度' },
+      { name: 'TRIX', label: '三重指数平滑平均线', description: '衡量价格动量' }
     ]
   },
   momentum: {
@@ -122,7 +148,8 @@ export const TECHNICAL_FACTORS = {
       { name: 'RSI', label: '相对强弱指标', description: '相对强弱指标', hasParameters: true, parameters: [{ name: 'time_period', label: '周期', default: 14 }] },
       { name: 'CCI', label: '顺势指标', description: '顺势指标' },
       { name: 'KDJ', label: 'KDJ指标', description: '随机指标' },
-      { name: 'WILLR', label: '威廉指标', description: '威廉指标' }
+      { name: 'WILLR', label: '威廉指标', description: '威廉指标' },
+      { name: 'MFI', label: '资金流量指标', description: '结合价格和成交量' }
     ]
   },
   volatility: {
@@ -130,7 +157,14 @@ export const TECHNICAL_FACTORS = {
     factors: [
       { name: 'ATR', label: '真实波幅', description: '平均真实波幅' },
       { name: 'BOLL', label: '布林带', description: '布林带' },
-      { name: 'STDDEV', label: '标准差', description: '标准差' }
+      { name: 'STDDEV', label: '标准差', description: '标准差' },
+      { name: 'SAR', label: '抛物线转向', description: '抛物线指标' }
+    ]
+  },
+  volume: {
+    category: '成交量类指标',
+    factors: [
+      { name: 'OBV', label: '能量潮', description: '累积成交量指标' }
     ]
   }
 };

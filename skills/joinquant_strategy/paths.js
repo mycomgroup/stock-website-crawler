@@ -8,7 +8,9 @@ export const BROWSER_ROOT = resolve(SKILL_ROOT, 'browser');
 export const REQUEST_ROOT = resolve(SKILL_ROOT, 'request');
 export const DATA_ROOT = resolve(SKILL_ROOT, 'data');
 export const REPO_ROOT = resolve(SKILL_ROOT, '..', '..');
+export const STRATEGIES_ROOT = resolve(REPO_ROOT, 'strategies');
+export const JOINQUANT_STRATEGY_ROOT = resolve(STRATEGIES_ROOT, 'joinquant_strategy');
 export const OUTPUT_ROOT = resolve(REPO_ROOT, 'output');
 
-export const SESSION_FILE = resolve(DATA_ROOT, 'session.json');
+export const SESSION_FILE = resolve(REPO_ROOT, 'skills', '.sessions', 'joinquant.json');
 export const DEFAULT_STRATEGY_URL = 'https://www.joinquant.com/algorithm/index/list';

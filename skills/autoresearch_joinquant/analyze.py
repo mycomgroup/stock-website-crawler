@@ -36,10 +36,26 @@ def load_history(base: Path) -> list[dict]:
             # 补充 calmar
             ar = d.get("annual_return") or 0
             dd = abs(d.get("max_drawdown") or 0)
-            s = d.get("fetch_result", {}).get("summary", {})
+            fetch = d.get("fetch_result", {})
+            stats = fetch.get("stats", {})
             d["_calmar"] = ar / max(dd, 0.01)
-            d["_sortino"] = s.get("sortina") or s.get("sortino") or 0
-            d["_ir"] = s.get("information_ratio") or 0
+            top_sortino = d.get("sortino")
+            top_ir = d.get("information_ratio")
+            d["_sortino"] = (
+                stats.get("sortino", 0)
+                if top_sortino in (None, 0.0)
+                else top_sortino
+            )
+            d["_ir"] = (
+                stats.get("information", fetch.get("informationRatio", 0))
+                if top_ir in (None, 0.0)
+                else top_ir
+            )
+            d["_score_effective"] = (
+                d["_calmar"] * 0.55
+                + d["_sortino"] * 0.25
+                + d["_ir"] * 0.20
+            )
             records.append(d)
         except Exception:
             pass
@@ -133,7 +149,7 @@ def section_overview(records: list[dict], state: dict) -> str:
         ar = r.get("annual_return", 0) or 0
         dd = abs(r.get("max_drawdown", 0) or 0)
         sh = r.get("sharpe", 0) or 0
-        sc = r.get("score", 0) or 0
+        sc = r.get("_score_effective", r.get("score", 0)) or 0
         calmar = r.get("_calmar", 0) or 0
         so = r.get("_sortino", 0) or 0
         ir = r.get("_ir", 0) or 0
@@ -147,8 +163,8 @@ def section_overview(records: list[dict], state: dict) -> str:
     lines.append(f"  {fmt(champion)}")
 
     if baseline and champion:
-        b_sc = baseline.get("score", 0) or 0
-        c_sc = champion.get("score", 0) or 0
+        b_sc = baseline.get("_score_effective", baseline.get("score", 0)) or 0
+        c_sc = champion.get("_score_effective", champion.get("score", 0)) or 0
         b_ar = baseline.get("annual_return", 0) or 0
         c_ar = champion.get("annual_return", 0) or 0
         b_dd = abs(baseline.get("max_drawdown", 0) or 0)
@@ -171,7 +187,7 @@ def section_keep_sequence(records: list[dict]) -> str:
 
     prev_score = None
     for r in keeps:
-        sc = r.get("score", 0) or 0
+        sc = r.get("_score_effective", r.get("score", 0)) or 0
         delta = f"{sc - prev_score:+.4f}" if prev_score is not None else "baseline"
         mutation = r.get("mutation", "")[:55]
         ar = r.get("annual_return", 0) or 0
@@ -194,8 +210,8 @@ def section_top_improvements(records: list[dict]) -> str:
 
     deltas = []
     for i in range(1, len(keeps)):
-        prev = keeps[i - 1].get("score", 0) or 0
-        curr = keeps[i].get("score", 0) or 0
+        prev = keeps[i - 1].get("_score_effective", keeps[i - 1].get("score", 0)) or 0
+        curr = keeps[i].get("_score_effective", keeps[i].get("score", 0)) or 0
         delta = curr - prev
         deltas.append((delta, keeps[i]))
 
@@ -203,7 +219,7 @@ def section_top_improvements(records: list[dict]) -> str:
     lines.append(f"{'Rank':>4}  {'Delta':>8}  {'Score':>8}  Mutation")
     lines.append("-" * 60)
     for rank, (delta, r) in enumerate(deltas, 1):
-        sc = r.get("score", 0) or 0
+        sc = r.get("_score_effective", r.get("score", 0)) or 0
         mutation = r.get("mutation", "")[:40]
         lines.append(f"{rank:4d}  {delta:+.4f}  {sc:.4f}  {mutation}")
 
@@ -273,7 +289,7 @@ def section_metric_trends(records: list[dict]) -> str:
         lines.append("  (无数据)")
         return "\n".join(lines)
 
-    scores = [r.get("score") or 0 for r in valid]
+    scores = [r.get("_score_effective", r.get("score", 0)) or 0 for r in valid]
     calmars = [r.get("_calmar") or 0 for r in valid]
     sortinos = [r.get("_sortino") or 0 for r in valid]
     irs = [r.get("_ir") or 0 for r in valid]

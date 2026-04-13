@@ -1,0 +1,34 @@
+{
+  "name": "大盘成长策略",
+  "description": "沪深300高质量成长策略，筛选高ROE、高营收增长、合理估值股票，追求成长收益",
+  "template": "single_period",
+  "universe": ["000300.XSHG"],
+  "industries": ["*"],
+  "board": ["*"],
+  "stOption": "exclude",
+  "filters": [],
+  "sorting": [
+    {
+      "factor": {"type": "fundamental", "name": "roe"},
+      "ascending": false,
+      "weight": 1.0
+    }
+  ],
+  "maxHoldingNum": 15,
+  "rebalanceInterval": 10,
+  "backtest": {
+    "start_date": "AUTO",
+    "end_date": "AUTO",
+    "capital": "100000",
+    "benchmark": "000300.XSHG"
+  },
+  "objective": {
+    "weights": {"calmar": 0.55, "sortino": 0.25, "information_ratio": 0.20},
+    "hard_constraints": {"max_drawdown_limit": 0.35}
+  },
+  "loop": {
+    "max_iterations": 100,
+    "max_consecutive_failures": 5,
+    "max_wait_seconds": 600
+  }
+}

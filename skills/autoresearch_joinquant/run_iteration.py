@@ -87,6 +87,64 @@ def save_json(path: Path, data: dict) -> None:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
+def _build_parse_input(fetch: dict, backtest_id: str, fallback_status: str) -> dict:
+    """统一把 fetch 结果转换成 scorer 可解析的结构。"""
+    return {
+        "status": fetch.get("status") or fallback_status,
+        "backtestId": backtest_id,
+        "annualReturn": fetch.get("annualReturn", 0),
+        "totalReturn": fetch.get("totalReturn", 0),
+        "maxDrawdown": fetch.get("maxDrawdown", 0),
+        "sharpe": fetch.get("sharpe", 0),
+        "sortino": fetch.get("sortino", 0),
+        "informationRatio": fetch.get("informationRatio", 0),
+        "winRate": fetch.get("winRate", 0),
+        "alpha": fetch.get("alpha", 0),
+        "beta": fetch.get("beta", 0),
+    }
+
+
+def _load_champion_metrics(base: Path, state: dict, obj_cfg: dict):
+    """优先从 history 重建 champion，避免旧 state 丢失 sortino/IR。"""
+    champion_score = float(state.get("champion_score", float("-inf")))
+    champion_metrics_raw = state.get("champion_metrics")
+    champion_iter = state.get("champion_iter", "")
+
+    if champion_iter:
+        champion_json = base / "history" / f"{champion_iter}.json"
+        if champion_json.exists():
+            record = load_json(champion_json)
+            fetch = record.get("fetch_result")
+            if fetch:
+                metrics = parse_backtest_result(
+                    _build_parse_input(
+                        fetch,
+                        record.get("backtest_id", ""),
+                        record.get("status", ""),
+                    )
+                )
+                champion_score = calculate_score(metrics, obj_cfg.get("weights"))
+                return champion_score, metrics
+
+    if champion_metrics_raw:
+        metrics = ParsedMetrics(
+            status=champion_metrics_raw.get("status", ""),
+            backtest_id=champion_metrics_raw.get("backtest_id", ""),
+            total_return=0.0,
+            annual_return=champion_metrics_raw.get("annual_return", 0.0),
+            max_drawdown=champion_metrics_raw.get("max_drawdown", 0.0),
+            sharpe=champion_metrics_raw.get("sharpe", 0.0),
+            sortino=champion_metrics_raw.get("sortino", 0.0),
+            information_ratio=champion_metrics_raw.get("information_ratio", 0.0),
+            alpha=0.0,
+            beta=0.0,
+        )
+        champion_score = calculate_score(metrics, obj_cfg.get("weights"))
+        return champion_score, metrics
+
+    return champion_score, None
+
+
 def append_tsv(base: Path, row: dict) -> None:
     tsv = base / "history" / "iterations.tsv"
     line = (
@@ -187,22 +245,7 @@ def main():
     bt_cfg = cfg["backtest"]
     obj_cfg = cfg.get("objective", {})
 
-    champion_score = float(state.get("champion_score", float("-inf")))
-    champion_metrics_raw = state.get("champion_metrics")
-    champion_metrics = None
-    if champion_metrics_raw:
-        champion_metrics = ParsedMetrics(
-            status=champion_metrics_raw.get("status", ""),
-            backtest_id=champion_metrics_raw.get("backtest_id", ""),
-            total_return=0.0,
-            annual_return=champion_metrics_raw.get("annual_return", 0.0),
-            max_drawdown=champion_metrics_raw.get("max_drawdown", 0.0),
-            sharpe=champion_metrics_raw.get("sharpe", 0.0),
-            sortino=champion_metrics_raw.get("sortino", 0.0),
-            information_ratio=champion_metrics_raw.get("information_ratio", 0.0),
-            alpha=0.0,
-            beta=0.0,
-        )
+    champion_score, champion_metrics = _load_champion_metrics(base, state, obj_cfg)
 
     start_time = datetime.now()
     decision = "crash"
@@ -298,17 +341,11 @@ def main():
 
     # ── 4. 解析指标 + 评分 ─────────────────────────────────────────────────
     fetch = fetch_results(strategy_id=strategy_id, backtest_id=backtest_id)
-    parse_input = {
-        "status": fetch.get("status") or wait_result.get("status", "normal_exit"),
-        "backtestId": backtest_id,
-        "annualReturn": fetch.get("annualReturn", 0),
-        "totalReturn": fetch.get("totalReturn", 0),
-        "maxDrawdown": fetch.get("maxDrawdown", 0),
-        "sharpe": fetch.get("sharpe", 0),
-        "winRate": fetch.get("winRate", 0),
-        "alpha": fetch.get("alpha", 0),
-        "beta": fetch.get("beta", 0),
-    }
+    parse_input = _build_parse_input(
+        fetch,
+        backtest_id,
+        wait_result.get("status", "normal_exit"),
+    )
     metrics = parse_backtest_result(parse_input)
     score = calculate_score(metrics, obj_cfg.get("weights"))
     decision, reason = decide_keep_rollback(
@@ -355,6 +392,8 @@ def main():
         end_time,
         fetch,
         commit=commit_hash,
+        sortino=metrics.sortino,
+        information_ratio=metrics.information_ratio,
     )
 
     # ── 7. 更新 state.json ─────────────────────────────────────────────────
@@ -398,6 +437,8 @@ def _write_result(
     end_time=None,
     fetch=None,
     commit="",
+    sortino=0.0,
+    information_ratio=0.0,
 ):
     record = {
         "iter": iter_id,
@@ -409,6 +450,8 @@ def _write_result(
         "annual_return": annual_return,
         "max_drawdown": max_drawdown,
         "sharpe": sharpe,
+        "sortino": sortino,
+        "information_ratio": information_ratio,
         "score": score,
         "decision": decision,
         "reason": reason,

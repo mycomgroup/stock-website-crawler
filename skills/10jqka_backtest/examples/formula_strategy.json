@@ -1,0 +1,20 @@
+{
+  "formula": [
+    "创业板",
+    "非ST",
+    "热点概念",
+    "周成交量环比增长率大于8%",
+    "近3天的涨幅大于0%小于20%",
+    "上市时间大于300天",
+    "未来5天涨跌幅从大到小",
+    "龙脊线百分比由近到远"
+  ],
+  "daysForSaleStrategy": "2,3",
+  "startDate": "2025-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 2,
+  "dailyBuyCount": 2,
+  "takeProfit": 25,
+  "stopLoss": 9,
+  "trailingStopLoss": 5
+}

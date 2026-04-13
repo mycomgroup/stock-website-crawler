@@ -227,6 +227,8 @@ def run_baseline(base: Path, cfg: dict, baseline_commit: str = "") -> None:
         "totalReturn": fetch.get("totalReturn", 0),
         "maxDrawdown": fetch.get("maxDrawdown", 0),
         "sharpe": fetch.get("sharpe", 0),
+        "sortino": fetch.get("sortino", 0),
+        "informationRatio": fetch.get("informationRatio", 0),
         "winRate": fetch.get("winRate", 0),
         "alpha": fetch.get("alpha", 0),
         "beta": fetch.get("beta", 0),

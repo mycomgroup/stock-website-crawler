@@ -9,5 +9,5 @@ export const REQUEST_ROOT = resolve(SKILL_ROOT, 'request');
 export const DATA_ROOT = resolve(SKILL_ROOT, 'data');
 export const OUTPUT_ROOT = resolve(SKILL_ROOT, 'output');
 
-export const SESSION_FILE = resolve(DATA_ROOT, 'session.json');
+export const SESSION_FILE = '/Users/fengzhi/Downloads/git/testlixingren/skills/.sessions/guorn.json';
 export const DEFAULT_STRATEGY_URL = 'https://guorn.com/stock';

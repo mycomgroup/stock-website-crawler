@@ -3,7 +3,7 @@ import path from 'node:path';
 import '../load-env.js';
 import { OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
 
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36';
 
 /**
  * 常用因子 ID（从 /stock/meta 获取）
@@ -47,6 +47,14 @@ export class GuornStrategyClient {
     const headers = {
       'User-Agent': USER_AGENT,
       'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, br, zstd',
+      'sec-ch-ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"macOS"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
       'X-Requested-With': 'XMLHttpRequest',
       'Referer': url,
       'Cookie': this.cookieJar.map(c => `${c.name}=${c.value}`).join('; '),

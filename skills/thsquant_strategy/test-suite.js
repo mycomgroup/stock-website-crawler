@@ -3,6 +3,7 @@ import './load-env.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { SESSION_FILE } from './paths.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -117,11 +118,11 @@ if (!fs.existsSync(dataDir)) {
 
 // Test 7: Session File
 console.log('\nTest 7: Session File');
-const sessionFile = path.join(dataDir, 'session.json');
-if (fs.existsSync(sessionFile)) {
+if (fs.existsSync(SESSION_FILE)) {
   try {
-    const session = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
+    const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
     console.log('  ✓ PASS: Session file exists');
+    console.log('    Path:', SESSION_FILE);
     console.log('    Cookies:', session.cookies?.length || 0);
     console.log('    Timestamp:', new Date(session.timestamp).toISOString());
   } catch (e) {

@@ -5,37 +5,19 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
 import './load-env.js';
-import { SESSION_FILE } from './paths.js';
+import { DATA_ROOT, REPO_ROOT } from './paths.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
-import { JoinQuantStrategyClient, loadJson } from './request/joinquant-strategy-client.js';
+import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
+import { createNewStockStrategy, launchBrowserWithSession } from './utils/browser-session.js';
+import { parseArgs, sleep } from './utils/cli.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const REPO_ROOT = path.resolve(__dirname, '..', '..');
-
-const SELECTED_FILE = path.resolve(__dirname, 'data', 'selected_batch5_70.json');
+const SELECTED_FILE = path.resolve(DATA_ROOT, 'selected_batch5_70.json');
 const SOURCE_DIR = path.resolve(REPO_ROOT, 'jk2bt-main', 'strategies');
-const RUN_DIR = path.resolve(__dirname, 'data', 'jq558_batch5_20260408');
+const RUN_DIR = path.resolve(DATA_ROOT, 'jq558_batch5_20260408');
 const JSONL_LOG = path.join(RUN_DIR, 'submissions.jsonl');
 const MD_LOG = path.join(RUN_DIR, 'submissions.md');
 const STATE_FILE = path.join(RUN_DIR, 'state.json');
-const NEW_STOCK_STRATEGY_URL = 'https://www.joinquant.com/algorithm/index/new?restore=0&type=stock&baseCapital=100000';
-
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i += 1) {
-    const arg = argv[i];
-    if (!arg.startsWith('--')) continue;
-    const key = arg.slice(2);
-    const next = argv[i + 1];
-    if (next && !next.startsWith('--')) { args[key] = next; i += 1; }
-    else args[key] = true;
-  }
-  return args;
-}
 
 function ensureRunFiles() {
   fs.mkdirSync(RUN_DIR, { recursive: true });
@@ -92,8 +74,6 @@ function writeState(extra = {}) {
   }, null, 2), 'utf8');
 }
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 function isRateLimitError(error) {
   const msg = String(error?.message || '');
   return msg.includes('当前并行编译或回测数量最多10个') ||
@@ -108,28 +88,6 @@ function makeStrategyName(basename, rank) {
     .replace(/_+/g, '_')
     .replace(/^_+|_+$/g, '');
   return `B5_${String(rank).padStart(3, '0')}_${base}`.slice(0, 80);
-}
-
-async function launchBrowserWithSession(headed = false) {
-  const sessionPayload = loadJson(SESSION_FILE);
-  if (!sessionPayload.cookies?.length) throw new Error(`No cookies in: ${SESSION_FILE}`);
-  const browser = await chromium.launch({ headless: !headed });
-  const context = await browser.newContext();
-  await context.addCookies(sessionPayload.cookies);
-  const page = await context.newPage();
-  return { browser, context, page };
-}
-
-async function createNewStrategy(page, browserContext, debugPrefix) {
-  await page.goto(NEW_STOCK_STRATEGY_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  if (page.url().includes('/login/')) throw new Error('JoinQuant session expired');
-  const match = page.url().match(/algorithmId=([^&]+)/);
-  if (!match) {
-    fs.writeFileSync(path.join(RUN_DIR, `${debugPrefix}_page.html`), await page.content(), 'utf8');
-    throw new Error(`Failed to parse algorithmId from URL: ${page.url()}`);
-  }
-  return { algorithmId: match[1], targetPage: page };
 }
 
 async function getContextCached(client, algorithmId, contextCache) {
@@ -186,7 +144,7 @@ async function main() {
 
   await ensureJoinQuantSession({ headed: false, headless: true });
   const client = new JoinQuantStrategyClient();
-  const { browser, context, page } = await launchBrowserWithSession(headed);
+  const { browser, context, page } = await launchBrowserWithSession({ headed });
   const contextCache = new Map();
   let successCount = 0;
   let failCount = 0;
@@ -223,7 +181,12 @@ async function main() {
           record.algorithmId = reuseAlgorithmId;
           console.log(`  复用策略: ${reuseAlgorithmId}`);
         } else {
-          created = await createNewStrategy(page, context, debugPrefix);
+          created = await createNewStockStrategy({
+            page,
+            browserContext: context,
+            runDir: RUN_DIR,
+            debugPrefix
+          });
           record.algorithmId = created.algorithmId;
           console.log(`  新建成功: ${created.algorithmId}`);
         }

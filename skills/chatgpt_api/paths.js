@@ -12,7 +12,7 @@ export const PATHS = {
   examples: join(__dirname, 'examples'),
   
   // Data files
-  sessionFile: join(__dirname, 'data', 'session.json'),
+  sessionFile: '/Users/fengzhi/Downloads/git/testlixingren/skills/.sessions/chatgpt.json',
   conversationsFile: join(__dirname, 'data', 'conversations.json'),
   
   // Browser data

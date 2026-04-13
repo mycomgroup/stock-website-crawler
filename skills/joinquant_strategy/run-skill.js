@@ -1,23 +1,6 @@
 #!/usr/bin/env node
 import { runStrategyWorkflow } from './request/strategy-runner.js';
-
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg.startsWith('--')) {
-      const key = arg.slice(2);
-      const value = argv[i + 1];
-      if (value && !value.startsWith('--')) {
-        args[key] = value;
-        i++;
-      } else {
-        args[key] = true;
-      }
-    }
-  }
-  return args;
-}
+import { parseArgs } from './utils/cli.js';
 
 const args = parseArgs(process.argv.slice(2));
 

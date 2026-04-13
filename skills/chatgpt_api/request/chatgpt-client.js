@@ -1,6 +1,7 @@
 import { SessionManager } from '../browser/session-manager.js';
 import { ENV } from '../load-env.js';
 import { proxyFetch } from './proxy-fetch.js';
+import { SecureHttpClient } from '../../common/http-security.js';
 
 /**
  * ChatGPT API 客户端
@@ -12,6 +13,16 @@ export class ChatGPTClient {
     this.baseUrl = 'https://chatgpt.com';
     this.apiUrl = 'https://chatgpt.com/backend-api';
     this.model = options.model || ENV.DEFAULT_MODEL;
+    
+    // Initialize secure HTTP client
+    this.secureClient = new SecureHttpClient({
+      baseUrl: this.baseUrl,
+      maxRequestsPerMinute: 10,
+      sessionValidator: async () => {
+        const cookies = this.sessionManager.getCookies();
+        return cookies && cookies.length > 0;
+      }
+    });
   }
 
   /**

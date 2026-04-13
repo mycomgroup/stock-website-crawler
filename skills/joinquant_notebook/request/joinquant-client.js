@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import '../load-env.js';
 import { OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
 
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36';
 const DEFAULT_ACCEPT = 'application/json, text/javascript, */*; q=0.01';
 
 function ensureDir(filePath) {
@@ -141,7 +141,14 @@ export class JoinQuantClient {
     const headers = {
       accept: DEFAULT_ACCEPT,
       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      'accept-encoding': 'gzip, deflate, br, zstd',
       'user-agent': USER_AGENT,
+      'sec-ch-ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"macOS"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
       'x-requested-with': 'XMLHttpRequest',
       'x-xsrftoken': this.xsrfToken,
       cookie: this.buildCookieHeader(requestUrl),

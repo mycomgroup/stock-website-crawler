@@ -14,6 +14,8 @@ import {
   mergeUnifiedInputs,
   normalizeUnifiedInput
 } from '../shared/unified-input.js';
+import { AuthManager } from '../../common_auth/auth-manager.js';
+import siteLixinger from '../../common_auth/sites/lixinger.js';
 
 // 默认筛选器：10年估值历史低位
 // 扣非PE-TTM过去10年分位点30%以下，PB（不含商誉）过去10年分位点30%以下，股息率2%以上
@@ -115,8 +117,8 @@ function parseScreenerUrl(urlString) {
   }
 }
 
-function buildCookieHeader(setCookies) {
-  return setCookies.map(value => value.split(';')[0]).join('; ');
+function cookiesToHeader(cookies) {
+  return cookies.map(c => `${c.name}=${c.value}`).join('; ');
 }
 
 function loadJson(filePath) {
@@ -520,11 +522,35 @@ function toMarkdownTable(rows) {
   return [head, divider, ...body].join('\n');
 }
 
+// 模拟真实浏览器指纹，防止被反爬封禁
+const BROWSER_HEADERS = {
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
+  accept: 'application/json, text/plain, */*',
+  'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'sec-ch-ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'sec-fetch-dest': 'empty',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'same-origin',
+  origin: 'https://www.lixinger.com',
+  connection: 'keep-alive',
+  'cache-control': 'no-cache',
+  pragma: 'no-cache'
+};
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function randomDelay(minMs = 300, maxMs = 900) {
+  return sleep(Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs);
+}
+
 async function lixingerFetch(url, init = {}) {
   const headers = {
-    accept: 'application/json, text/plain, */*',
-    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+    ...BROWSER_HEADERS,
     referer: DEFAULT_URL,
     ...(init.headers || {})
   };
@@ -542,24 +568,10 @@ async function lixingerFetch(url, init = {}) {
   return response;
 }
 
-async function login(username, password) {
-  const response = await lixingerFetch('https://www.lixinger.com/api/account/sign-in/by-account', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json;charset=UTF-8'
-    },
-    body: JSON.stringify({
-      accountName: username,
-      password
-    })
-  });
-
-  const setCookies = response.headers.getSetCookie ? response.headers.getSetCookie() : [];
-  const cookie = buildCookieHeader(setCookies);
-  if (!cookie) {
-    throw new Error('Login succeeded but no cookie was returned');
-  }
-  return cookie;
+async function getAuthCookies() {
+  const authManager = new AuthManager(siteLixinger);
+  const cookies = await authManager.getValidSession();
+  return cookiesToHeader(cookies);
 }
 
 async function getScreenerConfig(cookie, screenerId) {
@@ -603,21 +615,17 @@ async function fetchAllScreenerRows(cookie, body) {
     return firstPage;
   }
 
-  const remainingBodies = [];
+  // 串行拉取剩余分页，每页之间加随机延迟，避免触发限流
+  const allRows = [...(firstPage.rows || [])];
   for (let pageIndex = startPageIndex + 1; pageIndex < totalPages; pageIndex += 1) {
-    remainingBodies.push({ ...body, pageIndex });
+    await randomDelay(400, 800);
+    const page = await fetchScreenerRows(cookie, { ...body, pageIndex });
+    allRows.push(...(page.rows || []));
   }
-
-  const remainingPages = await Promise.all(
-    remainingBodies.map(nextBody => fetchScreenerRows(cookie, nextBody))
-  );
 
   return {
     ...firstPage,
-    rows: [
-      ...(firstPage.rows || []),
-      ...remainingPages.flatMap(page => page.rows || [])
-    ]
+    rows: allRows
   };
 }
 
@@ -626,13 +634,6 @@ async function main() {
   if (args.help || args.h) {
     showHelp();
     return;
-  }
-
-  const username = process.env.LIXINGER_USERNAME;
-  const password = process.env.LIXINGER_PASSWORD;
-
-  if (!username || !password) {
-    throw new Error('Missing LIXINGER_USERNAME or LIXINGER_PASSWORD');
   }
 
   const outputMode = args.output || 'table-json';
@@ -644,7 +645,7 @@ async function main() {
     ? path.resolve(process.cwd(), args['save-request-body'])
     : null;
 
-  const cookie = await login(username, password);
+  const cookie = await getAuthCookies();
 
   let requestPlan;
   let screenerConfig = null;

@@ -26,6 +26,7 @@ import {
   mergeUnifiedInputs,
   normalizeUnifiedInput
 } from '../shared/unified-input.js';
+import { SecureHttpClient, USER_AGENT, SEC_CH_UA } from '../../common/http-security.js';
 
 // ─── API 端点映射 ────────────────────────────────────────────────────────────
 
@@ -239,26 +240,49 @@ function loadProfile(profilePath, cwd = process.cwd()) {
   return loadJson(path.resolve(cwd, profilePath));
 }
 
+// Initialize secure HTTP client for lixinger
+const lixingerSecureClient = new SecureHttpClient({
+  baseUrl: 'https://www.lixinger.com',
+  maxRequestsPerMinute: 10,
+  sessionValidator: async () => true // Session validation handled by login
+});
+
 async function lixingerFetch(url, init = {}, refererUrl) {
   const headers = {
-    accept: 'application/json, text/plain, */*',
-    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-    referer: refererUrl || 'https://www.lixinger.com/',
+    'user-agent': USER_AGENT,
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+    'accept-encoding': 'gzip, deflate, br, zstd',
+    'sec-ch-ua': SEC_CH_UA,
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
+    'origin': 'https://www.lixinger.com',
+    'referer': refererUrl || 'https://www.lixinger.com/',
+    'connection': 'keep-alive',
+    'cache-control': 'no-cache',
+    'pragma': 'no-cache',
     ...(init.headers || {})
   };
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 20000);
-  try {
-    const response = await fetch(url, { ...init, headers, signal: controller.signal });
-    if (!response.ok) {
-      const text = await response.text().catch(() => '');
-      throw new Error(`Request failed ${response.status} ${url}: ${text.slice(0, 500)}`);
-    }
-    return response;
-  } finally {
-    clearTimeout(timer);
-  }
+
+  const response = await lixingerSecureClient.request(url, {
+    method: init.method || 'GET',
+    headers,
+    body: init.body,
+    timeout: 30000
+  });
+
+  // Return a response-like object for compatibility
+  return {
+    ok: true,
+    headers: {
+      getSetCookie: () => [] // Cookies are handled by SecureHttpClient
+    },
+    text: async () => response,
+    json: async () => JSON.parse(response)
+  };
 }
 
 async function login(username, password) {
@@ -266,7 +290,7 @@ async function login(username, password) {
     method: 'POST',
     headers: { 'content-type': 'application/json;charset=UTF-8' },
     body: JSON.stringify({ accountName: username, password })
-  });
+  }, 'https://www.lixinger.com/login');
   const setCookies = response.headers.getSetCookie ? response.headers.getSetCookie() : [];
   const cookie = buildCookieHeader(setCookies);
   if (!cookie) throw new Error('Login succeeded but no cookie was returned');
@@ -309,7 +333,7 @@ async function fetchAllScreenerRows(cookie, body, apiType, refererUrl) {
 
   if (totalPages <= startPageIndex + 1) return firstPage;
 
-  // 串行拉取剩余分页，避免并发过多触发限流
+  // Fetch remaining pages sequentially to avoid rate limiting
   const allRows = [...(firstPage.rows || [])];
   for (let pageIndex = startPageIndex + 1; pageIndex < totalPages; pageIndex += 1) {
     const page = await fetchScreenerRows(cookie, { ...body, pageIndex }, apiType, refererUrl);
