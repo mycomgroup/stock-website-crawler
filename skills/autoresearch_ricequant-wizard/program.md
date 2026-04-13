@@ -74,6 +74,8 @@ cat experiments/<name>/iterations.tsv
 
 在规划探索方向前，先读取 `wizard_mutator.py` 了解可用的因子和参数范围：
 
+**完整因子文档**：`skills/ricequant-wizard/RICEQUANT_FACTORS_CATALOG.md`
+
 ```bash
 SKILL_DIR="skills/autoresearch_ricequant-wizard"
 
