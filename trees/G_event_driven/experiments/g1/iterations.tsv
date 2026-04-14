@@ -37,3 +37,7 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0036	jqka_1776142688009	ok	3.0000	0.0600	0.0000	12.452281	keep	[筛选阈值] 市盈率 49.0 → 48.9
 0037	jqka_1776142698540	ok	2.0000	0.0700	0.0000	7.091690	rollback	[持仓天数] 2,4 → 2,3
 0038	jqka_1776142708557	ok	3.0000	0.0600	0.0000	12.452387	keep	[止盈] 25% → 40%
+0039		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_stop_loss】止损从12%调整到10%，收紧风险
+0040		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_max_positions】持仓数从6调整到8
+0041	jqka_1776142770746	ok	2.0000	0.0900	0.0000	5.506753	rollback	[每日买入] 3 → 1
+0042	jqka_1776142779896	ok	3.0000	0.0500	0.0000	14.950829	keep	[止损] 12% → 7%
