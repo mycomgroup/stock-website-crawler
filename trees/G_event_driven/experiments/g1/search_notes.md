@@ -14,7 +14,8 @@
 - [remove_formula_condition] 移除非ST条件：score 2.2219 → 2.2220
 - [add_formula_condition] 添加流通市值小于50亿：score 2.2220 → 3.5209 ⭐
 - [adjust_trailing_stop] 追踪止损 10% → 5%：score 3.5209 → 3.5214
-- [adjust_formula_threshold] 市盈率 30 → 38.9：score 3.5214 → 4.9519 ⭐⭐ 年化收益翻倍！
+- [adjust_formula_threshold] 市盈率 30 → 38.9：score 3.5214 → 4.9519 ⭐⭐
+- [adjust_formula_threshold] 市盈率 38 → 49：score 4.9519 → 7.0946 ⭐⭐⭐
 
 ### 已验证无效/崩溃（rollback/crash）
 - [adjust_stop_loss] 止损 12% → 9%：rollback
@@ -24,30 +25,39 @@
 - [adjust_days_for_sale] 持仓天数 2,4 → 2：rollback
 - [add_formula_condition] 营业收入增长率大于15%：crash
 - [add_formula_condition] 市盈率 30 → 22.4：crash
-- [add_formula_condition] 净利润增长率大于30%：rollback（score略降）
+- [add_formula_condition] 净利润增长率大于30%：rollback
+- [筛选阈值] 市盈率 49 → 51.8：rollback（PE 49为最优）
+- 多处crash：请求太频繁（rate limit）
 
 ### 待探索方向
-1. ~~**市盈率阈值调整**：30 → 38.9~~ ✓ 大幅提升！
-2. **进一步提升市盈率阈值**：尝试50或更高
-3. **添加其他条件**：换手率、ROE等
-4. **调整持仓参数**：maxPositions、dailyBuyCount等
+1. ~~**市盈率阈值调整**：30 → 38.9 → 49~~ ✓ 最优区间
+2. ~~**流通市值限制**：小于50亿~~ ✓ 已验证有效
+3. **调整持仓参数**：trailing stop, stop loss等
+4. **尝试添加其他条件**：需避免与现有条件冲突
 
 ### G树分支探索记录
 - G1分支（业绩预增/扭亏）：
   - iter1-10: 逐步优化到 score=2.2220
-  - iter11: crash
   - iter12: score=3.5209（+流通市值<50亿）⭐
-  - iter13-17: 多次失败后 score=3.5214
-  - iter18: rollback（+净利润增长率>30%）
+  - iter17: score=3.5214
   - iter19: score=4.9519（市盈率30→38.9）⭐⭐
+  - iter20: score=7.0946（市盈率38→49）⭐⭐⭐
+  - iter21: rollback（市盈率49→51.8）
+  - iter22-27: 多处crash（rate limit）
 - G2-G5分支：待探索
 
 ### 规律总结
-- champion_score: 4.9519（大幅提升！）
-- 关键发现：市盈率阈值提升到38.9显著提升score
-- 年化收益从100%提升到200%
-- 市盈率放宽反而有效，说明事件股成长性强，应给予更高估值容忍度
+- champion_score: 7.0946
+- 市盈率阈值49为最优
+- 流通市值小于50亿条件有效
+- trailing stop 5%最优
+- rate limiting严重，多次crash
 
-### 下一步方向
-- 尝试进一步提升市盈率阈值到50
-- 或尝试添加其他有效条件
+### 当前配置（champion）
+- formula: 中报预增, 净利润预增上限大于50%, 市盈率小于49.0, 成交额大于5000万, 流通市值小于50亿, 股价近20日涨幅小于15%
+- trailingStopLoss: 5%
+- stopLoss: 12%
+- takeProfit: 25%
+- daysForSaleStrategy: 2,4
+- maxPositions: 6
+- dailyBuyCount: 3

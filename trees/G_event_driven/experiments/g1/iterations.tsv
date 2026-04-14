@@ -19,3 +19,11 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0018	jqka_1776139173303	ok	1.0000	0.0700	0.0000	3.520772	rollback	[添加条件] 净利润增长率大于30%
 0019	jqka_1776139185130	ok	2.0000	0.1000	0.0000	4.951917	keep	[筛选阈值] 市盈率 30.0 → 38.9
 0020	jqka_1776139212140	ok	2.0000	0.0700	0.0000	7.094624	keep	[筛选阈值] 市盈率 38.0 → 49.0
+0021	jqka_1776139236155	ok	2.0000	0.0800	0.0000	6.201450	rollback	[筛选阈值] 市盈率 49.0 → 51.8
+0022		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_trailing_stop】追踪止损从5%调整到8%，给予更大波动空间，预期：避免被震荡洗出
+0023		crash	0.0000	0.0000	0.0000	-inf	crash	【add_formula_condition】添加换手率大于3%条件，增加流动性筛选，预期：提高选股质量
+0024		crash	0.0000	0.0000	0.0000	-inf	crash	【add_formula_condition】添加次新股条件，筛选新股事件催化，预期：次新股弹性更大
+0025		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_daily_buy_count】每日买入从3调整到5，增加持仓分散度，预期：降低单票权重影响
+0026		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_stop_loss】止损从12%调整到15%，给予更大波动空间
+0027		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_max_positions】持仓数量从6提升到8，分散风险
+0028	jqka_1776142558607	ok	3.0000	0.0600	0.0000	12.452158	keep	[移除条件] 股价近20日涨幅小于15%
