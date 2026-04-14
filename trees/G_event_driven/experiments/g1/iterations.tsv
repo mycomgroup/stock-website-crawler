@@ -18,3 +18,4 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0017	jqka_1776139148566	ok	1.0000	0.0700	0.0000	3.521429	keep	[追踪止损] 10% → 5%
 0018	jqka_1776139173303	ok	1.0000	0.0700	0.0000	3.520772	rollback	[添加条件] 净利润增长率大于30%
 0019	jqka_1776139185130	ok	2.0000	0.1000	0.0000	4.951917	keep	[筛选阈值] 市盈率 30.0 → 38.9
+0020	jqka_1776139212140	ok	2.0000	0.0700	0.0000	7.094624	keep	[筛选阈值] 市盈率 38.0 → 49.0
