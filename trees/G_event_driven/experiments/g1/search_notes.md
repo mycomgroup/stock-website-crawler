@@ -11,43 +11,41 @@
 - [adjust_trailing_stop] 追踪止损 8% → 10%：score 0.0 → 1.8711
 - [add_formula_condition] 添加市盈率小于30：score 1.8711 → 2.2215
 - [add_formula_condition] 添加成交额大于5000万：score 2.2215 → 2.2219
-- [remove_formula_condition] 移除非ST条件：score 2.2219 → 2.2220（简化有效！）
+- [remove_formula_condition] 移除非ST条件：score 2.2219 → 2.2220
+- [add_formula_condition] 添加流通市值小于50亿：score 2.2220 → 3.5209 ⭐ 大幅提升！回撤从11%→7%
 
-### 已验证无效（rollback）
-- [adjust_stop_loss] 止损 12% → 9%：score 2.2215 → 2.2215
-- [adjust_trailing_stop] 追踪止损 10% → 8%：score 2.2215 → 2.2215
+### 已验证无效/崩溃（rollback/crash）
+- [adjust_stop_loss] 止损 12% → 9%：rollback
+- [adjust_trailing_stop] 追踪止损 10% → 8%：rollback
 - [adjust_max_positions] 最大持仓 6 → 2：score 大幅下降到 -0.954
-- [adjust_take_profit] 止盈 25% → 20%：score 下降到 2.0328
-- [adjust_days_for_sale] 持仓天数 2,4 → 2：score 不变但降低
-- [持仓天数] 2,4 → 2：多次尝试均无效
+- [adjust_take_profit] 止盈 25% → 20%：rollback
+- [adjust_days_for_sale] 持仓天数 2,4 → 2：rollback
+- [add_formula_condition] 营业收入增长率大于15%：crash（问句回测失败）
 
 ### 待探索方向
 1. ~~**添加估值保护**：市盈率小于30~~ ✓ 已keep
 2. ~~**添加成交额条件**：成交额大于5000万~~ ✓ 已keep
 3. ~~**移除非ST条件**：简化公式~~ ✓ 已keep
-4. **添加流通市值限制**：流通市值小于100亿
+4. ~~**添加流通市值限制**：流通市值小于50亿~~ ✓ 大幅提升！
 5. **添加换手率条件**：换手率大于5%
-6. **调整超预期幅度**：净利润预增上限从50%调整
+6. **进一步缩小市值**：流通市值小于30亿
+7. **添加roe条件**：净资产收益率大于10%
 
 ### G树分支探索记录
 - G1分支（业绩预增/扭亏）：
   - iter1: score=1.8711（追踪止损8%→10%）
   - iter2: score=2.2215（+市盈率小于30）
-  - iter3: rollback（止损12%→9%）
-  - iter4: rollback（追踪止损10%→8%）
-  - iter5: score=2.2219（+成交额大于5000万）
-  - iter6: rollback（持仓天数2,4→2）
-  - iter7: rollback（最大持仓6→2）
-  - iter8: rollback（止盈25%→20%）
-  - iter9: rollback（持仓天数2,4→2）
-  - iter10: score=2.2220（-非ST，简化有效）
+  - iter3-9: 多次rollback
+  - iter10: score=2.2220（-非ST）
+  - iter11: crash（+营业收入增长率>15%）
+  - iter12: score=3.5209（+流通市值小于50亿）⭐
 - G2-G5分支：待探索
 
 ### 规律总结
-- champion_score: 2.2220
-- 简化公式（减少条件）有时比添加条件更有效
-- 降低持仓、缩短持仓、降低止盈均无效
-- 当前配置：追踪止损10%，市盈率小于30，成交额大于5000万
+- champion_score: 3.5209（大幅提升！）
+- 关键发现：流通市值小于50亿条件显著提升score，降低回撤
+- 中小市值事件股弹性更大，效果更好
+- 简化公式有效，但添加合适条件提升更显著
 
 ### 下一步方向
-- 尝试添加流通市值限制或换手率条件
+- 尝试进一步缩小市值（小于30亿）或添加ROE条件

@@ -10,3 +10,9 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0009	jqka_1776138938619	ok	1.0000	0.1100	0.0000	2.221975	keep	[移除条件] 非ST
 0010		crash	0.0000	0.0000	0.0000	-inf	crash	【add_formula_condition】添加流通市值小于100亿条件，过滤超大市值事件股，预期：中小市值事件股弹性更大
 0011	jqka_1776138979260	ok	1.0000	0.0700	0.0000	3.520885	keep	[添加条件] 流通市值小于50亿
+0012	jqka_1776139006688	ok	1.0000	0.1300	0.0000	1.877432	rollback	[添加条件] 净资产收益率大于10%
+0013		crash	0.0000	0.0000	0.0000	-inf	crash	【add_formula_condition】添加换手率大于5%条件，筛选交易活跃的事件股，预期：提高流动性
+0014	jqka_1776139036769	ok	1.0000	0.0700	0.0000	3.520885	rollback	[添加条件] 流通市值小于100亿
+0015		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_formula_threshold】净利润预增上限从50%提升到80%，聚焦更极端超预期，预期：更超预期的事件可能涨幅更大
+0016		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_daily_buy_count】每日买入从3调整到5，增加持仓分散度，预期：降低单票权重影响
+0017	jqka_1776139148566	ok	1.0000	0.0700	0.0000	3.521429	keep	[追踪止损] 10% → 5%
