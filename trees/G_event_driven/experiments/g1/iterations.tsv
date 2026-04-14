@@ -35,3 +35,5 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0034		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_days_for_sale】持仓周期从2,4调整为3,5，拉长持仓获取更多事件催化
 0035		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_take_profit】止盈从25%调整到30%
 0036	jqka_1776142688009	ok	3.0000	0.0600	0.0000	12.452281	keep	[筛选阈值] 市盈率 49.0 → 48.9
+0037	jqka_1776142698540	ok	2.0000	0.0700	0.0000	7.091690	rollback	[持仓天数] 2,4 → 2,3
+0038	jqka_1776142708557	ok	3.0000	0.0600	0.0000	12.452387	keep	[止盈] 25% → 40%

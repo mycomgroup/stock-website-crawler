@@ -13,7 +13,7 @@
   "endDate": "2026-04-10",
   "maxPositions": 6,
   "dailyBuyCount": 3,
-  "takeProfit": 25,
+  "takeProfit": 40,
   "stopLoss": 12,
   "trailingStopLoss": 5
 }
