@@ -16,3 +16,5 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0015		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_formula_threshold】净利润预增上限从50%提升到80%，聚焦更极端超预期，预期：更超预期的事件可能涨幅更大
 0016		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_daily_buy_count】每日买入从3调整到5，增加持仓分散度，预期：降低单票权重影响
 0017	jqka_1776139148566	ok	1.0000	0.0700	0.0000	3.521429	keep	[追踪止损] 10% → 5%
+0018	jqka_1776139173303	ok	1.0000	0.0700	0.0000	3.520772	rollback	[添加条件] 净利润增长率大于30%
+0019	jqka_1776139185130	ok	2.0000	0.1000	0.0000	4.951917	keep	[筛选阈值] 市盈率 30.0 → 38.9
