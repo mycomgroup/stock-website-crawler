@@ -16,5 +16,5 @@
   "dailyBuyCount": 3,
   "takeProfit": 25,
   "stopLoss": 12,
-  "trailingStopLoss": 10
+  "trailingStopLoss": 5
 }
