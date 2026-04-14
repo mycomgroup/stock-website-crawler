@@ -1,0 +1,1 @@
+iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation0000	jqka_1776138749474	ok	1.0000	0.1300	0.0000	1.871121	keep	[追踪止损] 8% → 10%
