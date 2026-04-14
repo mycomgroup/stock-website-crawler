@@ -27,3 +27,11 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0026		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_stop_loss】止损从12%调整到15%，给予更大波动空间
 0027		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_max_positions】持仓数量从6提升到8，分散风险
 0028	jqka_1776142558607	ok	3.0000	0.0600	0.0000	12.452158	keep	[移除条件] 股价近20日涨幅小于15%
+0029	jqka_1776142582549	ok	1.0000	0.0900	0.0000	2.725333	rollback	[移除条件] 流通市值小于50亿
+0030		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_trailing_stop】追踪止损从5%调整到7%，给予更大波动空间
+0031		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_take_profit】止盈从25%调整到30%，给予更多上涨空间
+0032		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_take_profit】止盈从25%调整到30%，给予更多上涨空间
+0033	jqka_1776142644216	ok	3.0000	0.0900	0.0000	8.283835	rollback	[筛选阈值] 市盈率 49.0 → 35.1
+0034		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_days_for_sale】持仓周期从2,4调整为3,5，拉长持仓获取更多事件催化
+0035		crash	0.0000	0.0000	0.0000	-inf	crash	【adjust_take_profit】止盈从25%调整到30%
+0036	jqka_1776142688009	ok	3.0000	0.0600	0.0000	12.452281	keep	[筛选阈值] 市盈率 49.0 → 48.9
