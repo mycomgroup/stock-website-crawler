@@ -1,0 +1,18 @@
+{
+  "name": "业绩预增/扭亏策略",
+  "description": "G1分支：业绩预增/扭亏。研究重点：超预期幅度、是否连续兑现、市场是否已提前交易。",
+  "formula": [
+    "非ST",
+    "中报预增",
+    "净利润预增上限大于50%",
+    "股价近20日涨幅小于15%"
+  ],
+  "daysForSaleStrategy": "2,4",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 25,
+  "stopLoss": 12,
+  "trailingStopLoss": 10
+}
