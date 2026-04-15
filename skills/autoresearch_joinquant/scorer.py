@@ -22,7 +22,7 @@ class ParsedMetrics:
         backtest_id: 回测唯一标识符
         total_return: 总收益率
         annual_return: 年化收益率
-        max_drawdown: 最大回撤（JoinQuant 返回正值，如 0.15 表示 -15% 回撤）
+        max_drawdown: 最大回撤幅度（系统内部统一为非负值，如 0.15 表示 -15% 回撤）
         sharpe: 夏普比率
         sortino: Sortino 比率（只惩罚下行波动，比 sharpe 更关注亏损端）
         information_ratio: 信息比率（超额收益/跟踪误差，衡量选股能力）
@@ -65,7 +65,7 @@ def parse_backtest_result(result_json: dict) -> ParsedMetrics:
         backtest_id=str(result_json.get("backtestId", "")),
         total_return=_safe_float(result_json.get("totalReturn")),
         annual_return=_safe_float(result_json.get("annualReturn")),
-        max_drawdown=_safe_float(result_json.get("maxDrawdown")),
+        max_drawdown=abs(_safe_float(result_json.get("maxDrawdown"))),
         sharpe=_safe_float(result_json.get("sharpe")),
         sortino=_safe_float(result_json.get("sortino")),
         information_ratio=_safe_float(result_json.get("informationRatio")),
@@ -236,7 +236,7 @@ def decide_keep_rollback(
         return "rollback", f"backtest failed: {validation_msg}"
 
     # 规则 2：可选的 max_drawdown 硬约束检查
-    # 注意：max_drawdown 是负值（如 -0.15），取绝对值与 limit 比较
+    # 注意：系统内部约定 max_drawdown 为非负幅度值；这里保留 abs 防御上游异常负值
     max_drawdown_limit = hard_constraints.get("max_drawdown_limit")
     if max_drawdown_limit is not None:
         if abs(new_metrics.max_drawdown) > max_drawdown_limit:
