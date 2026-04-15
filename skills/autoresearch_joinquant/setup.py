@@ -3,7 +3,7 @@
 setup.py - 一条命令完成全部初始化
 
 用法：
-    python setup.py --strategy-file /path/to/strategy.py [--name my_strategy]
+    python setup.py -f /path/to/strategy.py [--name my_strategy]
 
 流程：
     1. 在 JoinQuant 创建/复用专用策略，获取 strategy_id (algorithmId)
@@ -60,7 +60,7 @@ DEFAULT_OBJECTIVE = {
 DEFAULT_LOOP = {
     "max_iterations": 100,
     "max_consecutive_failures": 5,
-    "max_wait_seconds": 600,
+    "max_wait_seconds": 1200,
 }
 
 
@@ -282,6 +282,10 @@ def run_baseline(base: Path, cfg: dict, baseline_commit: str = "") -> None:
         f"[baseline] 完成 score={score:.4f} annual={metrics.annual_return:.2%} "
         f"dd={metrics.max_drawdown:.2%} sharpe={metrics.sharpe:.2f}"
     )
+    print(
+        f"[baseline] sortino={metrics.sortino:.2f} IR={metrics.information_ratio:.2f}"
+    )
+    print(f"[baseline] 状态已写入 state.json 和 history/0000_baseline.json")
 
 
 def main():
@@ -290,12 +294,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:
-  python setup.py --strategy-file /path/to/rfscore7_pb10_final_v2.py
-  python setup.py --strategy-file /path/to/strategy.py --name my_strategy
+  python setup.py -f /path/to/rfscore7_pb10_final_v2.py
+  python setup.py -f /path/to/strategy.py --name my_strategy
         """,
     )
     parser.add_argument(
-        "--strategy-file", required=True, help="seed 策略文件路径（.py）"
+        "-f",
+        "--file",
+        required=True,
+        dest="strategy_file",
+        help="seed 策略文件路径（.py）",
     )
     parser.add_argument(
         "--name", default=None, help="策略名称，用于目录命名（默认取文件名去掉 .py）"

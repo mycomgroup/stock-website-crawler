@@ -1,0 +1,18 @@
+{
+  "name": "小盘风格树",
+  "description": "探索小市值公司的收益放大机会。核心命题：小市值公司为什么更容易产生大收益，以及它们为什么也更容易产生大回撤。小盘不是一个因子，它更像一个放大器：放大成长、放大估值修复、放大情绪、放大流动性风险。",
+  "formula": [
+    "非ST",
+    "流通市值大于5亿元小于30亿元",
+    "市盈率大于0小于20",
+    "市净率小于1.5"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

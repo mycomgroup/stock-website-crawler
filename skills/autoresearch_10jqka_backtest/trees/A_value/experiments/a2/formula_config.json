@@ -1,0 +1,18 @@
+{
+  "name": "价值树",
+  "description": "探索估值低估带来的修复机会。核心命题：市场给这家公司定价是不是过低了。研究真便宜、周期底部便宜、质量好但暂时不受欢迎、价值陷阱四种情况。",
+  "formula": [
+    "非ST",
+    "非退市",
+    "市盈率大于0小于30",
+    "市净率小于2"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

@@ -3,11 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { SESSION_FILE } from './paths.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-const SESSION_FILE = path.join(__dirname, 'data', 'session.json');
 const AUTH_STATE_FILE = path.join(__dirname, 'data', 'auth-state.json');
 const SCREENSHOT_DIR = path.join(__dirname, 'data', 'screenshots');
 

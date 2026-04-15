@@ -30,6 +30,7 @@ SKILL_ROOT = Path(__file__).parent
 EXPERIMENTS_DIR = SKILL_ROOT / "experiments"
 SEED_DIR = SKILL_ROOT
 PROGRAM_MD_PATH = SKILL_ROOT / "program.md"
+TREES_DIR = SKILL_ROOT / "trees"
 
 DEFAULT_SEED = "seed_config.json"
 
@@ -37,7 +38,7 @@ DEFAULT_SEED = "seed_config.json"
 def _get_default_dates() -> tuple:
     today = datetime.now()
     end_date = today.strftime("%Y-%m-%d")
-    start_date = (today - timedelta(days=365)).strftime("%Y-%m-%d")
+    start_date = (today - timedelta(days=365 * 5)).strftime("%Y-%m-%d")
     return start_date, end_date
 
 
@@ -51,9 +52,14 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--name", required=True, help="实验名称（用作目录名）")
     parser.add_argument(
+        "--tree",
+        default=None,
+        help="指定树的目录路径（相对或绝对路径），自动使用该目录下的 seed.json 和 program.md",
+    )
+    parser.add_argument(
         "--seed",
-        default=DEFAULT_SEED,
-        help="种子配置文件路径（默认：seed_config.json）",
+        default=None,
+        help="种子配置文件路径（--tree 模式下默认使用 trees/<tree>/seed.json）",
     )
     parser.add_argument(
         "--mock",
@@ -76,6 +82,19 @@ def _parse_args() -> argparse.Namespace:
         args.start_date = default_start
     if args.end_date is None:
         args.end_date = default_end
+
+    if args.tree:
+        tree_dir = Path(args.tree)
+        if not tree_dir.is_absolute():
+            tree_dir = SKILL_ROOT / tree_dir
+        if not tree_dir.exists():
+            print(f"错误：树目录不存在：{tree_dir}", file=sys.stderr)
+            sys.exit(1)
+        if args.seed is None:
+            args.seed = str(tree_dir / "seed.json")
+
+    if args.seed is None:
+        args.seed = DEFAULT_SEED
 
     return args
 
@@ -102,14 +121,23 @@ def _load_seed_config(seed_path_str: str, start_date: str, end_date: str) -> dic
 
 
 def _init_experiment_dir(name: str, args: argparse.Namespace) -> Path:
-    print(f"\n[1/4] 初始化实验目录：experiments/{name}")
+    print(f"\n[1/4] 初始化实验目录")
 
     seed_config = _load_seed_config(args.seed, args.start_date, args.end_date)
     print(f"✓ 加载种子：{args.seed}（{seed_config.get('name', '未知策略')}）")
     if "description" in seed_config:
         print(f"  描述：{seed_config['description']}")
 
-    exp_dir = EXPERIMENTS_DIR / name
+    if args.tree:
+        tree_dir = Path(args.tree)
+        if not tree_dir.is_absolute():
+            tree_dir = SKILL_ROOT / tree_dir
+        exp_dir = tree_dir / "experiments" / name
+        program_source = tree_dir / "program.md"
+        print(f"  树模式：{args.tree}")
+    else:
+        exp_dir = EXPERIMENTS_DIR / name
+        program_source = PROGRAM_MD_PATH
 
     if exp_dir.exists():
         print(f"警告：实验目录已存在：{exp_dir}")
@@ -142,8 +170,8 @@ def _init_experiment_dir(name: str, args: argparse.Namespace) -> Path:
     print(f"✓ 写入状态：state.json")
 
     program_dest = exp_dir / "program.md"
-    if PROGRAM_MD_PATH.exists():
-        with open(PROGRAM_MD_PATH, encoding="utf-8") as src:
+    if program_source.exists():
+        with open(program_source, encoding="utf-8") as src:
             content = src.read()
         strategy_name = seed_config.get("name", "未命名策略")
         strategy_desc = seed_config.get("description", "无描述")
