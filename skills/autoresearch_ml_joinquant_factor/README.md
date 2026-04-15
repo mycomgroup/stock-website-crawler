@@ -18,6 +18,19 @@ cd skills/autoresearch_ml_joinquant_factor
 python setup.py --name demo --pool small
 ```
 
+初始化完成后，进入新生成的实验目录（`strategy_autoresearch_ml_factor_<name>_<YYYYMMDD>`），执行单轮多策略迭代：
+
+```bash
+AUTORESEARCH_DIR="/path/to/skills/autoresearch_ml_joinquant_factor"
+python ${AUTORESEARCH_DIR}/run_iteration.py --base . --batch-size 8 --top-k 5
+```
+
+产物说明：
+- `strategy_pool.json`：Top-K 多组策略因子组合
+- `search_notes.md`：Top-K 摘要和最近一轮候选结果
+- `iteration_history.jsonl`：每轮明细
+- `strategy.py`：自动同步为当前第一名因子组合
+
 ## 一键并行计算 200 个 JQ 因子
 ```bash
 python main.py \

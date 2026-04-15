@@ -327,13 +327,26 @@ def parse_seed_factors(seed_factors: str | None) -> list[list[str]]:
     return DEFAULT_SEED_FACTORS
 
 
-def generate_search_notes(seed_factors: list[list[str]], start_date: str, end_date: str, pool: str, baseline: float) -> str:
+def generate_search_notes(
+    seed_factors: list[list[str]],
+    start_date: str,
+    end_date: str,
+    pool: str,
+    baseline: float,
+    top_k: int,
+) -> str:
     top = seed_factors[0] if seed_factors else []
+    top_k_seed = seed_factors[: max(1, top_k)]
+    lines = []
+    for i, factors in enumerate(top_k_seed, start=1):
+        score = baseline if i == 1 else 0.0
+        lines.append(f"| {i} | {score:.4f} | {factors} | seed | 0 |")
+    pool_table = "\n".join(lines) if lines else "| 1 | 0.0000 | [] | seed | 0 |"
     return f"""## 当前状态
-- champion_score: {baseline:.4f}
-- champion_factors: {top}
+- best_score: {baseline:.4f}
+- best_factors: {top}
 - current_iter: 0
-- phase: explore
+- top_k: {top_k}
 
 ## 回测配置
 - 日期范围: {start_date} ~ {end_date}
@@ -345,10 +358,14 @@ def generate_search_notes(seed_factors: list[list[str]], start_date: str, end_da
 - [x] 动态缩放必须平滑
 - [x] 交易成本必须入分数
 
-## 已尝试组合
-| iter | score | factors | comment |
-|------|-------|---------|---------|
-| 0000 | {baseline:.4f} | {top} | baseline |
+## 多策略池（Top-K）
+| rank | score | factors | source | iter |
+|------|-------|---------|--------|------|
+{pool_table}
+
+## 最近一轮候选结果
+| idx | score | factors | success |
+|-----|-------|---------|---------|
 """
 
 
@@ -378,6 +395,7 @@ def main():
     parser.add_argument("--buy-cost-bps", type=float, default=15.0, help="买入成本bp")
     parser.add_argument("--sell-cost-bps", type=float, default=15.0, help="卖出成本bp")
     parser.add_argument("--slippage-bps", type=float, default=5.0, help="滑点bp")
+    parser.add_argument("--top-k", type=int, default=5, help="保留前K组策略")
     args = parser.parse_args()
 
     ts = datetime.now().strftime("%Y%m%d")
@@ -393,21 +411,18 @@ def main():
 
     seeds = parse_seed_factors(args.seed_factors)
     strategy_file = exp_dir / "strategy.py"
-    strategy_file.write_text(
-        STRATEGY_TEMPLATE.format(
-            factors=seeds[0],
-            start_date=args.start_date,
-            end_date=args.end_date,
-            pool=args.pool,
-            ic_window=args.ic_window,
-            cluster_count=args.cluster_count,
-            weight_smooth=args.weight_smooth,
-            buy_cost_bps=args.buy_cost_bps,
-            sell_cost_bps=args.sell_cost_bps,
-            slippage_bps=args.slippage_bps,
-        ),
-        encoding="utf-8",
-    )
+    strategy_content = STRATEGY_TEMPLATE
+    strategy_content = strategy_content.replace("{factors}", repr(seeds[0]))
+    strategy_content = strategy_content.replace("{start_date}", args.start_date)
+    strategy_content = strategy_content.replace("{end_date}", args.end_date)
+    strategy_content = strategy_content.replace("{pool}", args.pool)
+    strategy_content = strategy_content.replace("{ic_window}", str(args.ic_window))
+    strategy_content = strategy_content.replace("{cluster_count}", str(args.cluster_count))
+    strategy_content = strategy_content.replace("{weight_smooth}", str(args.weight_smooth))
+    strategy_content = strategy_content.replace("{buy_cost_bps}", str(args.buy_cost_bps))
+    strategy_content = strategy_content.replace("{sell_cost_bps}", str(args.sell_cost_bps))
+    strategy_content = strategy_content.replace("{slippage_bps}", str(args.slippage_bps))
+    strategy_file.write_text(strategy_content, encoding="utf-8")
 
     subprocess.run(["git", "add", "strategy.py"], cwd=str(exp_dir), capture_output=True)
     subprocess.run([
@@ -420,7 +435,14 @@ def main():
 
     baseline_score, baseline_result = run_baseline(strategy_file, args.notebook_dir)
 
-    notes = generate_search_notes(seeds, args.start_date, args.end_date, args.pool, baseline_score)
+    notes = generate_search_notes(
+        seeds,
+        args.start_date,
+        args.end_date,
+        args.pool,
+        baseline_score,
+        max(1, args.top_k),
+    )
     (exp_dir / "search_notes.md").write_text(notes, encoding="utf-8")
 
     (exp_dir / "seed_config.json").write_text(json.dumps({
@@ -434,8 +456,25 @@ def main():
         "buy_cost_bps": args.buy_cost_bps,
         "sell_cost_bps": args.sell_cost_bps,
         "slippage_bps": args.slippage_bps,
+        "top_k": max(1, args.top_k),
         "baseline_result": baseline_result,
     }, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    init_pool = []
+    for i, combo in enumerate(seeds[: max(1, args.top_k)], start=1):
+        init_pool.append(
+            {
+                "rank": i,
+                "score": baseline_score if i == 1 else 0.0,
+                "factors": combo,
+                "source": "seed",
+                "iter": 0,
+            }
+        )
+    (exp_dir / "strategy_pool.json").write_text(
+        json.dumps(init_pool, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
     print("[setup] 完成")
     print(f"[setup] 实验目录: {exp_dir}")
