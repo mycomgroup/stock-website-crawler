@@ -18,10 +18,13 @@
     - 持股2支：需要胜率≥55%
     - 持股3支：需要胜率≥50%
     - 持股4支：需要胜率≥45%
+    - 惩罚值有上限保护（MAX_OVERFIT_PENALTY）
 """
 
 from dataclasses import dataclass
 from typing import Optional
+
+MAX_OVERFIT_PENALTY = 1.5
 
 
 @dataclass
@@ -154,7 +157,7 @@ def calculate_score(
         config: 配置字典（可选，用于获取 maxPositions）
 
     Returns:
-        float: 复合得分，数值越高越好
+        float: 复合得分，数值越高越好（该分数非归一化，可能为负值）
     """
     if weights is None:
         weights = DEFAULT_WEIGHTS
@@ -320,7 +323,7 @@ def calculate_overfit_penalty(metrics: ParsedMetrics, max_positions: int) -> flo
     deficit = required_win_rate - metrics.win_rate
     penalty = deficit * (5 - max_positions) * 3.0
 
-    return penalty
+    return min(penalty, MAX_OVERFIT_PENALTY)
 
 
 def calculate_score_delta(new_score: float, champion_score: float) -> float:
