@@ -92,13 +92,7 @@ grep -E "(HOLDING_NUM_OPTIONS|REBALANCE_OPTIONS|UNIVERSE_OPTIONS)" ${SKILL_DIR}/
 - `REBALANCE_OPTIONS`：调仓间隔候选值 `[1, 3, 5, 10, 15, 20, 30]`
 - `UNIVERSE_OPTIONS`：股票池候选值 `["000300.XSHG", "000905.XSHG", "000852.XSHG", "*"]`
 
-**理解因子特性**：
-- 估值因子（pe_ratio、pb_ratio）：越低越好，用 `less_than`
-- 盈利因子（roe、roa）：越高越好，用 `greater_than`
-- 成长因子（revenue_growth_rate）：越高越好，用 `greater_than`
-- 风险因子（debt_ratio）：越低越好，用 `less_than`
-- 分红因子（dividend_yield）：越高越好，用 `greater_than`
-- 技术指标（RSI<30超卖、MACD>0看涨）：根据信号方向选择操作符
+**因子选择原则**：根据策略目标和业务逻辑选择、调优因子，参考完整因子文档理解每个因子的含义和适用场景。
 
 ---
 

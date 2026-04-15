@@ -170,15 +170,49 @@ cat iterations.tsv | tail -5
 
 ---
 
-## 评分公式
+## 评分公式（v3 - 防过拟合优化版）
 
 ```
 calmar = annual_return / max(abs(max_drawdown), 0.01)
-score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
+complexity_penalty = min((formula条件数 + 调优参数数) / 10, 1.0)
+
+# 选股数量惩罚（双边软约束）
+if maxPositions < 5:
+    position_penalty = (5 - maxPositions) ** 2 * 0.1
+elif maxPositions > 15:
+    position_penalty = (maxPositions - 15) ** 2 * 0.01
+else:
+    position_penalty = 0
+
+# 过拟合惩罚（v3新增）
+overfit_penalty = 持股少时胜率不足的惩罚
+
+score = sortino * 0.40 + calmar * 0.25 + information_ratio * 0.15 
+      + win_rate * 0.10 - complexity_penalty * 0.10 - position_penalty - overfit_penalty
 ```
 
-新 score **严格大于** champion score 才 keep。
-`abs(max_drawdown) > 0.35` 直接 rollback（硬约束，无论 score 多高）。
+**权重解读：**
+- **sortino (40%)**：只惩罚下行风险，对趋势策略最友好
+- **calmar (25%)**：收益/回撤比，衡量风险收益效率
+- **information_ratio (15%)**：超额收益稳定性
+- **win_rate (10%)**：胜率，防止低胜率高风险策略
+- **complexity_penalty (10%)**：复杂度惩罚，防止过拟合
+
+**过拟合惩罚规则（v3新增）：**
+持股少于5支时，胜率必须足够高，否则判定为过拟合：
+- 持股1支：需要胜率≥60%
+- 持股2支：需要胜率≥55%
+- 持股3支：需要胜率≥50%
+- 持股4支：需要胜率≥45%
+- 持股≥5支：无限制
+
+示例：持股2支、胜率30% → 惩罚 = (55%-30%) × 3 × 3 = 2.25分
+
+**选股数量建议**：5-15支最佳，避免过拟合。
+
+**硬约束**：
+- `abs(max_drawdown) > 0.35` 直接 rollback
+- 新 score **严格大于** champion score 才 keep
 
 ---
 
@@ -196,10 +230,11 @@ score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 
 ## 简洁性原则
 
-改动要权衡收益和复杂度：
-- 微小提升（score 提升 < 0.001）但增加了大量复杂配置 → **不值得，discard**
+评分公式已内置复杂度惩罚，但额外注意：
+
 - 删掉筛选条件后得分持平或更好 → **一定 keep，这是简化胜利**
-- 得分接近但配置更简洁 → **keep**
+- 微小提升（score 提升 < 0.02）但增加了 3+ 条件 → **需谨慎，复杂度惩罚会抵消收益**
+- 得分接近（差异 < 0.01）但配置更简洁 → **优先 keep 简洁版**
 
 每次改动前问自己：这个改动的复杂度代价值得吗？
 

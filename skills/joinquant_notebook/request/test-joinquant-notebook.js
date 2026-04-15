@@ -362,6 +362,22 @@ async function executeNotebookTest(options = {}) {
     }
   }
 
+  let deleteNotebookResult = null;
+  if (newNotebookCreated && options.autoDeleteNotebook !== false) {
+    try {
+      console.log(`Deleting notebook: ${client.notebookPath}`);
+      deleteNotebookResult = await client.deleteNotebook();
+      if (deleteNotebookResult.success) {
+        console.log(`Notebook ${client.notebookPath} deleted successfully`);
+      } else {
+        console.warn(`Failed to delete notebook: ${deleteNotebookResult.error}`);
+      }
+    } catch (error) {
+      console.warn(`Delete notebook error: ${error.message}`);
+      deleteNotebookResult = { success: false, notebookPath: client.notebookPath, error: error.message };
+    }
+  }
+
   const notebookSnapshotPath = client.writeArtifact('joinquant-notebook', notebookContent, 'ipynb');
   const resultPayload = {
     capturedAt: new Date().toISOString(),
@@ -379,7 +395,9 @@ async function executeNotebookTest(options = {}) {
     reuseNotebook,
     strategyBaseName,
     shutdownResult,
-    autoShutdown: options.autoShutdown !== false
+    deleteNotebookResult,
+    autoShutdown: options.autoShutdown !== false,
+    autoDeleteNotebook: options.autoDeleteNotebook !== false
   };
   const resultFile = client.writeArtifact(`joinquant-notebook-result-${notebookBaseName}`, resultPayload, 'json');
 
@@ -398,7 +416,9 @@ async function executeNotebookTest(options = {}) {
     reuseNotebook,
     strategyBaseName,
     shutdownResult,
-    autoShutdown: options.autoShutdown !== false
+    deleteNotebookResult,
+    autoShutdown: options.autoShutdown !== false,
+    autoDeleteNotebook: options.autoDeleteNotebook !== false
   };
 }
 

@@ -186,22 +186,36 @@ def _extract_backtest_id(output: str) -> Optional[str]:
     """从 jq-quick-submit.js 输出里提取 backtest_id"""
     import re
 
-    # 优先级1：从 JSON 中提取
-    for line in output.split("\n"):
+    # 优先级1：从多行 JSON 中提取
+    # jq-quick-submit.js 输出格式: console.log(JSON.stringify({...}, null, 2))
+    # 输出是多行 JSON，如：
+    # {
+    #   "backtest_id": "xxx",
+    #   "status": "submitted"
+    # }
+    # 需要找到完整的 JSON 对象
+    lines = output.split("\n")
+    for i, line in enumerate(lines):
         line = line.strip()
         if line.startswith("{"):
+            # 收集从 { 开始到 } 结束的所有行
+            json_lines = []
+            for j in range(i, len(lines)):
+                json_lines.append(lines[j].strip())
+                if lines[j].strip().startswith("}"):
+                    break
+            json_str = "\n".join(json_lines)
             try:
-                data = json.loads(line)
+                data = json.loads(json_str)
                 bid = data.get("backtest_id") or data.get("backtestId")
-                if bid and len(str(bid)) == 32:  # JoinQuant backtestId 是32位十六进制
+                if bid and len(str(bid)) == 32:
                     return str(bid)
             except:
                 pass
 
     # 优先级2：从 "Backtest started! ID: xxx" 中提取
-    for line in output.split("\n"):
+    for line in lines:
         if "Backtest started" in line and "ID:" in line:
-            # 提取 ID: 后面的内容
             parts = line.split("ID:")
             if len(parts) >= 2:
                 bid = parts[1].strip()
@@ -210,10 +224,7 @@ def _extract_backtest_id(output: str) -> Optional[str]:
 
     # 优先级3：正则匹配32位十六进制
     matches = re.findall(r"\b([a-f0-9]{32})\b", output)
-    # 过滤掉可能的 algorithmId（通常在 URL 或其他地方出现多次）
-    # backtestId 通常出现在 JSON 或 "ID:" 后面
     for match in matches:
-        # 检查这个 ID 附近是否有 "backtest" 或 "ID:" 的关键词
         idx = output.find(match)
         if idx > 0:
             context = output[max(0, idx - 100) : idx + len(match) + 50]
@@ -226,7 +237,7 @@ def _extract_backtest_id(output: str) -> Optional[str]:
 def _get_latest_backtest_id(
     algorithm_id: str, max_retries: int = 5, retry_interval: int = 3
 ) -> Optional[str]:
-    """通过 API 获取策略最新回测 ID"""
+    """通过 API 获取策略最新回测 ID，优先返回运行中的回测"""
     for attempt in range(max_retries):
         try:
             session = _load_session()
@@ -235,15 +246,30 @@ def _get_latest_backtest_id(
 
             import re
 
-            # 提取所有 backtestId，返回第一个（最新的）
-            matches = re.findall(r'_backtestId="([^"]+)"', html)
-            if matches:
-                # 去重，返回第一个
-                seen = set()
-                for bid in matches:
-                    if bid not in seen:
-                        seen.add(bid)
-                        return bid
+            # 提取所有 backtestId 及其状态（data-state 属性）
+            # HTML 格式: <div _backtestId="xxx" ... data-state="2" ...>
+            id_state_pairs = re.findall(r'_backtestId="([a-f0-9]{32})"[^>]*data-state="(\d)"', html)
+
+            if not id_state_pairs:
+                # 备用：只提取 ID（没有状态信息）
+                matches = re.findall(r'_backtestId="([a-f0-9]{32})"', html)
+                if matches:
+                    print(f"[_get_latest_backtest_id] 警告: 无法获取状态，返回最新 ID {matches[0]}")
+                    return matches[0]
+                continue
+
+            # 优先找运行中/初始化中的回测 (state=0 或 state=1)
+            for bid, state in id_state_pairs:
+                if state in ("0", "1"):
+                    print(f"[_get_latest_backtest_id] 找到运行中回测: {bid} state={state}")
+                    return bid
+
+            # 没有运行中的，返回最新的已完成回测 (state=2)
+            # 作为保底，说明新回测可能还在队列中
+            latest = id_state_pairs[0]
+            print(f"[_get_latest_backtest_id] 警告: 无运行中回测，返回最新已完成: {latest[0]} state={latest[1]}")
+            return latest[0]
+
         except Exception as e:
             print(f"[_get_latest_backtest_id] attempt {attempt + 1}/{max_retries}: {e}")
         if attempt < max_retries - 1:

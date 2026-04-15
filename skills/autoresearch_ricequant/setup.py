@@ -3,7 +3,7 @@
 setup.py - 一条命令完成全部初始化
 
 用法：
-    python setup.py --strategy-file /path/to/strategy.py [--name my_strategy]
+    python setup.py -f /path/to/strategy.py [--name my_strategy]
 
 流程：
     1. 在 RiceQuant 创建/复用专用策略，获取 strategy_id
@@ -35,11 +35,13 @@ TSV_HEADER = "iter\tbacktest_id\tstatus\tannual_return\tmax_drawdown\tsharpe\tsc
 
 from datetime import datetime, timedelta
 
+
 def _default_dates():
     today = datetime.today()
-    end = (today - timedelta(days=7)).strftime("%Y-%m-%d")   # 上周，确保数据完整
+    end = (today - timedelta(days=7)).strftime("%Y-%m-%d")  # 上周，确保数据完整
     start = (today - timedelta(days=365 * 5)).strftime("%Y-%m-%d")  # 最近5年
     return start, end
+
 
 _start, _end = _default_dates()
 
@@ -55,7 +57,11 @@ DEFAULT_OBJECTIVE = {
     "weights": {"calmar": 0.55, "sortino": 0.25, "information_ratio": 0.20},
     "hard_constraints": {"max_drawdown_limit": 0.35},
 }
-DEFAULT_LOOP = {"max_iterations": 100, "max_consecutive_failures": 5, "max_wait_seconds": 600}
+DEFAULT_LOOP = {
+    "max_iterations": 100,
+    "max_consecutive_failures": 5,
+    "max_wait_seconds": 600,
+}
 
 
 def save_json(path: Path, data: dict) -> None:
@@ -70,12 +76,24 @@ def create_rq_strategy(strategy_file: str, strategy_name: str) -> str:
         raise FileNotFoundError(f"create_rq_strategy.js 不存在: {CREATE_STRATEGY_JS}")
 
     result = subprocess.run(
-        ["node", str(CREATE_STRATEGY_JS), "--name", strategy_name, "--file", strategy_file],
-        capture_output=True, text=True, timeout=120, cwd=str(RQ_STRATEGY_DIR)
+        [
+            "node",
+            str(CREATE_STRATEGY_JS),
+            "--name",
+            strategy_name,
+            "--file",
+            strategy_file,
+        ],
+        capture_output=True,
+        text=True,
+        timeout=120,
+        cwd=str(RQ_STRATEGY_DIR),
     )
 
     if result.returncode != 0:
-        raise RuntimeError(f"create_rq_strategy.js 失败:\n{result.stderr}\n{result.stdout}")
+        raise RuntimeError(
+            f"create_rq_strategy.js 失败:\n{result.stderr}\n{result.stdout}"
+        )
 
     # 打印所有输出（stderr + stdout 里的非 JSON 行）作为进度日志
     for line in (result.stderr + result.stdout).split("\n"):
@@ -104,7 +122,9 @@ def create_rq_strategy(strategy_file: str, strategy_name: str) -> str:
                 pass
 
     if json_output is None:
-        raise RuntimeError(f"无法从输出中解析 JSON\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}")
+        raise RuntimeError(
+            f"无法从输出中解析 JSON\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        )
 
     strategy_id = json_output["strategy_id"]
     action = json_output.get("action", "")
@@ -113,16 +133,19 @@ def create_rq_strategy(strategy_file: str, strategy_name: str) -> str:
 
 
 def init_state(base: Path, strategy_id: str) -> None:
-    save_json(base / "state.json", {
-        "current_iter": 1,
-        "consecutive_failures": 0,
-        "champion_iter": "0000_baseline",
-        "champion_score": float("-inf"),
-        "champion_metrics": None,
-        "is_baseline_done": False,
-        "strategy_id": strategy_id,
-        "last_update": datetime.now().isoformat(),
-    })
+    save_json(
+        base / "state.json",
+        {
+            "current_iter": 1,
+            "consecutive_failures": 0,
+            "champion_iter": "0000_baseline",
+            "champion_score": float("-inf"),
+            "champion_metrics": None,
+            "is_baseline_done": False,
+            "strategy_id": strategy_id,
+            "last_update": datetime.now().isoformat(),
+        },
+    )
 
 
 def init_history(base: Path) -> None:
@@ -134,17 +157,22 @@ def init_history(base: Path) -> None:
 
 def append_tsv(base: Path, row: dict) -> None:
     tsv = base / "history" / "iterations.tsv"
-    line = "\t".join([
-        str(row.get("iter", "")),
-        str(row.get("backtest_id", "")),
-        str(row.get("status", "")),
-        f"{row.get('annual_return', 0):.4f}",
-        f"{row.get('max_drawdown', 0):.4f}",
-        f"{row.get('sharpe', 0):.4f}",
-        f"{row.get('score', 0):.6f}",
-        str(row.get("decision", "")),
-        str(row.get("mutation", "")),
-    ]) + "\n"
+    line = (
+        "\t".join(
+            [
+                str(row.get("iter", "")),
+                str(row.get("backtest_id", "")),
+                str(row.get("status", "")),
+                f"{row.get('annual_return', 0):.4f}",
+                f"{row.get('max_drawdown', 0):.4f}",
+                f"{row.get('sharpe', 0):.4f}",
+                f"{row.get('score', 0):.6f}",
+                str(row.get("decision", "")),
+                str(row.get("mutation", "")),
+            ]
+        )
+        + "\n"
+    )
     with open(tsv, "a", encoding="utf-8") as f:
         f.write(line)
 
@@ -222,25 +250,29 @@ def run_baseline(base: Path, cfg: dict, baseline_commit: str = "") -> None:
 
     # 更新 state.json
     state = json.loads((base / "state.json").read_text())
-    state.update({
-        "is_baseline_done": True,
-        "champion_iter": "0000_baseline",
-        "champion_score": score,
-        "champion_metrics": {
-            "annual_return": metrics.annual_return,
-            "max_drawdown": metrics.max_drawdown,
-            "sharpe": metrics.sharpe,
-            "sortino": metrics.sortino,
-            "information_ratio": metrics.information_ratio,
-            "status": metrics.status,
-            "backtest_id": backtest_id,
-        },
-        "last_update": datetime.now().isoformat(),
-    })
+    state.update(
+        {
+            "is_baseline_done": True,
+            "champion_iter": "0000_baseline",
+            "champion_score": score,
+            "champion_metrics": {
+                "annual_return": metrics.annual_return,
+                "max_drawdown": metrics.max_drawdown,
+                "sharpe": metrics.sharpe,
+                "sortino": metrics.sortino,
+                "information_ratio": metrics.information_ratio,
+                "status": metrics.status,
+                "backtest_id": backtest_id,
+            },
+            "last_update": datetime.now().isoformat(),
+        }
+    )
     save_json(base / "state.json", state)
 
-    print(f"[baseline] 完成 score={score:.4f} annual={metrics.annual_return:.2%} "
-          f"dd={metrics.max_drawdown:.2%} sharpe={metrics.sharpe:.2f}")
+    print(
+        f"[baseline] 完成 score={score:.4f} annual={metrics.annual_return:.2%} "
+        f"dd={metrics.max_drawdown:.2%} sharpe={metrics.sharpe:.2f}"
+    )
 
 
 def main():
@@ -249,13 +281,20 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:
-  python setup.py --strategy-file /path/to/rfscore7_pb10_final_v2.py
-  python setup.py --strategy-file /path/to/strategy.py --name my_strategy
-        """
+  python setup.py -f /path/to/rfscore7_pb10_final_v2.py
+  python setup.py -f /path/to/strategy.py --name my_strategy
+        """,
     )
-    parser.add_argument("--strategy-file", required=True, help="seed 策略文件路径（.py）")
-    parser.add_argument("--name", default=None,
-                        help="策略名称，用于目录命名（默认取文件名去掉 .py）")
+    parser.add_argument(
+        "-f",
+        "--file",
+        required=True,
+        dest="strategy_file",
+        help="seed 策略文件路径（.py）",
+    )
+    parser.add_argument(
+        "--name", default=None, help="策略名称，用于目录命名（默认取文件名去掉 .py）"
+    )
     parser.add_argument("--start-date", default=DEFAULT_BACKTEST["start_date"])
     parser.add_argument("--end-date", default=DEFAULT_BACKTEST["end_date"])
     parser.add_argument("--capital", default=DEFAULT_BACKTEST["capital"])
@@ -303,10 +342,17 @@ def main():
     subprocess.run(["git", "add", "strategy.py"], cwd=str(base), capture_output=True)
     r = subprocess.run(
         ["git", "commit", "-m", "iter_0000_baseline: initial strategy"],
-        cwd=str(base), capture_output=True, text=True
+        cwd=str(base),
+        capture_output=True,
+        text=True,
     )
     if r.returncode == 0:
-        r2 = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=str(base), capture_output=True, text=True)
+        r2 = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=str(base),
+            capture_output=True,
+            text=True,
+        )
         _baseline_commit = r2.stdout.strip()
         print(f"  git init + baseline commit {_baseline_commit}")
     else:
@@ -341,7 +387,7 @@ def main():
         content = content.replace("STRATEGY_NAME", strategy_name)
         content = content.replace(
             'AUTORESEARCH_DIR="/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch"',
-            f'AUTORESEARCH_DIR="{AUTORESEARCH_DIR}"'
+            f'AUTORESEARCH_DIR="{AUTORESEARCH_DIR}"',
         )
         (base / "program.md").write_text(content, encoding="utf-8")
 
@@ -352,7 +398,7 @@ def main():
         content = content.replace("STRATEGY_NAME", strategy_name)
         content = content.replace(
             'AUTORESEARCH_DIR="/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch"',
-            f'AUTORESEARCH_DIR="{AUTORESEARCH_DIR}"'
+            f'AUTORESEARCH_DIR="{AUTORESEARCH_DIR}"',
         )
         (base / "program_enhance.md").write_text(content, encoding="utf-8")
         print(f"  生成 program_enhance.md（增强版，含通用机制库）")
@@ -362,30 +408,41 @@ def main():
     if src_readme.exists():
         content = src_readme.read_text(encoding="utf-8")
         # 替换策略名占位符
-        content = content.replace("strategy_autoresearch_<策略名>", f"strategy_autoresearch_{strategy_name}")
-        content = content.replace("strategy_autoresearch_<name>", f"strategy_autoresearch_{strategy_name}")
-        content = content.replace("`autoresearch_<name>`", f"`autoresearch_{strategy_name}`")
-        content = content.replace("autoresearch_<name>", f"autoresearch_{strategy_name}")
+        content = content.replace(
+            "strategy_autoresearch_<策略名>", f"strategy_autoresearch_{strategy_name}"
+        )
+        content = content.replace(
+            "strategy_autoresearch_<name>", f"strategy_autoresearch_{strategy_name}"
+        )
+        content = content.replace(
+            "`autoresearch_<name>`", f"`autoresearch_{strategy_name}`"
+        )
+        content = content.replace(
+            "autoresearch_<name>", f"autoresearch_{strategy_name}"
+        )
         # 替换 Step 2 里的启动提示
         content = content.replace(
             f"请阅读 {base}/program.md，然后开始迭代优化循环。",
-            "请阅读 program.md，然后开始迭代优化循环。"
+            "请阅读 program.md，然后开始迭代优化循环。",
         )
         # 替换 Step 3 里的示例路径
         content = content.replace(
             "cat strategy_autoresearch_rfscore7_pb10_rq/history/iterations.tsv",
-            f"cat strategy_autoresearch_{strategy_name}/history/iterations.tsv"
+            f"cat strategy_autoresearch_{strategy_name}/history/iterations.tsv",
         )
         # 替换回测参数为实际值
-        content = content.replace("--start-date 2021-01-01", f"--start-date {args.start_date}")
-        content = content.replace("--end-date 2025-03-28", f"--end-date {args.end_date}")
-        content = content.replace("--capital 100000", f"--capital {args.capital}")
-        content = content.replace("--benchmark 000300.XSHG", f"--benchmark {args.benchmark}")
-        # 替换 strategy_id 信息
         content = content.replace(
-            "/path/to/your/strategy.py",
-            str(strategy_file)
+            "--start-date 2021-01-01", f"--start-date {args.start_date}"
         )
+        content = content.replace(
+            "--end-date 2025-03-28", f"--end-date {args.end_date}"
+        )
+        content = content.replace("--capital 100000", f"--capital {args.capital}")
+        content = content.replace(
+            "--benchmark 000300.XSHG", f"--benchmark {args.benchmark}"
+        )
+        # 替换 strategy_id 信息
+        content = content.replace("/path/to/your/strategy.py", str(strategy_file))
         (base / "README.md").write_text(content, encoding="utf-8")
 
     # 初始化状态和台账
@@ -398,8 +455,9 @@ def main():
     run_baseline(base, cfg, baseline_commit=_baseline_commit)
 
     print(f"\n[setup] 全部完成！")
-    print(f"  实验目录: {base}")
-    print(f"  下一步：把 {base}/program.md 发给 agent 开始迭代")
+    print(f"  实验目录: cd {base}")
+    print("  下一步：把")
+    print('  "请阅读 program_enhance.md，然后开始迭代优化循环。"')
 
 
 if __name__ == "__main__":

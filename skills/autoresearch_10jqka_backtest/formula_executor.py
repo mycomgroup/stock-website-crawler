@@ -75,94 +75,115 @@ def run_backtest(config: dict, timeout: int = 120) -> dict:
         return _run_mock_backtest(config)
 
     import tempfile
+    import re
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(config, f, ensure_ascii=False, indent=2)
         config_file = f.name
 
     try:
-        cmd = ["node", str(RUN_SKILL_JS), config_file]
+        max_retries = 5
+        for attempt in range(max_retries):
+            try:
+                cmd = ["node", str(RUN_SKILL_JS), config_file]
 
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            cwd=str(JQKA_SKILL_DIR),
-        )
-
-        output = result.stdout + result.stderr
-
-        if result.returncode != 0:
-            if "noauth" in output.lower() or "401" in output or "未授权" in output:
-                raise SessionInvalidError(
-                    f"Session 无效，请重新登录\ncd skills/10jqka_backtest && node browser/manual-login-capture.js"
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout,
+                    cwd=str(JQKA_SKILL_DIR),
                 )
-            raise BacktestFailedError(f"回测失败 (exit={result.returncode})\n{output[:1000]}")
 
-        import re
+                output = result.stdout + result.stderr
 
-        try:
-            saved_match = re.search(r"结果已保存:\s*(.+\.json)", output)
-            if saved_match:
-                result_file_path = saved_match.group(1).strip()
-                if Path(result_file_path).exists():
-                    result_data = json.loads(Path(result_file_path).read_text())
-                else:
-                    raise ValueError(f"结果文件不存在: {result_file_path}")
-            else:
-                json_start = output.rfind("\n{")
-                if json_start == -1:
-                    json_start = output.rfind("{")
-                if json_start == -1:
-                    raise ValueError("输出中未找到 JSON")
+                if result.returncode != 0:
+                    if "noauth" in output.lower() or "401" in output or "未授权" in output:
+                        raise SessionInvalidError(
+                            f"Session 无效，请重新登录\ncd skills/10jqka_backtest && node browser/manual-login-capture.js"
+                        )
+                    if "请求太频繁" in output and attempt < max_retries - 1:
+                        wait_sec = 60 * (attempt + 1)
+                        print(f"[RateLimit] 检测到请求太频繁，等待 {wait_sec} 秒后重试 ({attempt + 1}/{max_retries - 1})...")
+                        time.sleep(wait_sec)
+                        continue
+                    raise BacktestFailedError(f"回测失败 (exit={result.returncode})\n{output[:1000]}")
 
-                remaining = output[json_start:]
-                if remaining.startswith("\n"):
-                    remaining = remaining[1:]
+                try:
+                    saved_match = re.search(r"结果已保存:\s*(.+\.json)", output)
+                    if saved_match:
+                        result_file_path = saved_match.group(1).strip()
+                        if Path(result_file_path).exists():
+                            result_data = json.loads(Path(result_file_path).read_text())
+                        else:
+                            raise ValueError(f"结果文件不存在: {result_file_path}")
+                    else:
+                        json_start = output.rfind("\n{")
+                        if json_start == -1:
+                            json_start = output.rfind("{")
+                        if json_start == -1:
+                            raise ValueError("输出中未找到 JSON")
 
-                brace_count = 0
-                json_end = 0
-                for i, c in enumerate(remaining):
-                    if c == "{":
-                        brace_count += 1
-                    elif c == "}":
-                        brace_count -= 1
-                        if brace_count == 0:
-                            json_end = i + 1
-                            break
+                        remaining = output[json_start:]
+                        if remaining.startswith("\n"):
+                            remaining = remaining[1:]
 
-                if json_end == 0:
-                    raise ValueError("无法找到完整的 JSON 对象")
+                        brace_count = 0
+                        json_end = 0
+                        for i, c in enumerate(remaining):
+                            if c == "{":
+                                brace_count += 1
+                            elif c == "}":
+                                brace_count -= 1
+                                if brace_count == 0:
+                                    json_end = i + 1
+                                    break
 
-                json_str = remaining[:json_end]
-                result_data = json.loads(json_str)
+                        if json_end == 0:
+                            raise ValueError("无法找到完整的 JSON 对象")
 
-        except (json.JSONDecodeError, ValueError) as e:
-            raise BacktestFailedError(f"解析回测结果失败: {e}\n输出:\n{output[:500]}")
+                        json_str = remaining[:json_end]
+                        result_data = json.loads(json_str)
 
-        if result_data.get("status") != "ok":
-            error_msg = result_data.get("message", result_data.get("error", "Unknown error"))
-            raise BacktestFailedError(f"回测失败: {error_msg}")
+                except (json.JSONDecodeError, ValueError) as e:
+                    raise BacktestFailedError(f"解析回测结果失败: {e}\n输出:\n{output[:500]}")
 
-        metrics = result_data.get("metrics", {})
+                if result_data.get("status") != "ok":
+                    error_msg = result_data.get("message", result_data.get("error", "Unknown error"))
+                    raw_err = result_data.get("raw", {})
+                    errormsg = raw_err.get("errormsg", "")
+                    if ("请求太频繁" in error_msg or "请求太频繁" in errormsg) and attempt < max_retries - 1:
+                        wait_sec = 60 * (attempt + 1)
+                        print(f"[RateLimit] 检测到请求太频繁，等待 {wait_sec} 秒后重试 ({attempt + 1}/{max_retries - 1})...")
+                        time.sleep(wait_sec)
+                        continue
+                    raise BacktestFailedError(f"回测失败: {error_msg}")
 
-        return {
-            "status": "ok",
-            "backtest_id": result_data.get("backtest_id", ""),
-            "summary": {
-                "annualReturn": metrics.get("annualReturn", 0),
-                "maxDrawdown": metrics.get("maxDrawdown", 0),
-                "winRate": metrics.get("winRate", 0),
-                "informationRatio": metrics.get("informationRatio", 0),
-                "sharpe": metrics.get("sharpe", 0),
-                "sortino": metrics.get("sortino", metrics.get("sharpe", 0) * 1.2),
-                "avgHoldingDays": metrics.get("avgHoldingDays", 0),
-                "tradeCount": metrics.get("tradeCount", 0),
-                "totalReturn": metrics.get("totalReturn", 0),
-            },
-            "full_result": result_data,
-        }
+                metrics = result_data.get("metrics", {})
+
+                return {
+                    "status": "ok",
+                    "backtest_id": result_data.get("backtest_id", ""),
+                    "summary": {
+                        "annualReturn": metrics.get("annualReturn", 0),
+                        "maxDrawdown": metrics.get("maxDrawdown", 0),
+                        "winRate": metrics.get("winRate", 0),
+                        "informationRatio": metrics.get("informationRatio", 0),
+                        "sharpe": metrics.get("sharpe", 0),
+                        "sortino": metrics.get("sortino", metrics.get("sharpe", 0) * 1.2),
+                        "avgHoldingDays": metrics.get("avgHoldingDays", 0),
+                        "tradeCount": metrics.get("tradeCount", 0),
+                        "totalReturn": metrics.get("totalReturn", 0),
+                    },
+                    "full_result": result_data,
+                }
+
+            except BacktestFailedError:
+                raise
+            except Exception:
+                raise
+
+        raise BacktestFailedError("回测失败: 超过最大重试次数")
 
     finally:
         try:

@@ -32,12 +32,14 @@ from pathlib import Path
 from scorer import (
     parse_backtest_result,
     calculate_score,
+    calculate_complexity,
     decide_keep_rollback,
+    calculate_score_delta,
     ParsedMetrics,
     DEFAULT_WEIGHTS,
     DEFAULT_HARD_CONSTRAINTS,
 )
-from formula_mutator import mutate, validate_config, MUTATION_TYPES
+from formula_mutator import mutate, validate_config, MUTATION_TYPES, record_mutation_reward
 from formula_executor import run_backtest, JqkaExecutorError, BacktestTimeoutError
 
 
@@ -144,9 +146,8 @@ def main():
     parser.add_argument("--mutation-summary", required=True, help="本轮变异的描述（人类可读）")
     parser.add_argument(
         "--mutation-type",
-        choices=MUTATION_TYPES,
         default=None,
-        help=f"变异类型（可选），不指定时随机选择。可选值: {', '.join(MUTATION_TYPES)}",
+        help=f"变异类型（可选），不指定时随机选择。可选值: {', '.join(MUTATION_TYPES)}; 也支持 add_formula_condition:条件名",
     )
     args = parser.parse_args()
 
@@ -189,10 +190,7 @@ def main():
     actual_mutation_type = mutation_type_arg or "random"
 
     try:
-        new_config, mutation_desc = mutate(champion_config, mutation_type_arg)
-        actual_mutation_type = (
-            mutation_desc.split(":")[0].strip() if ":" in mutation_desc else (mutation_type_arg or "random")
-        )
+        new_config, mutation_desc, actual_mutation_type = mutate(champion_config, mutation_type_arg)
         print(f"[iter_{iter_id}] 变异描述: {mutation_desc}", flush=True)
 
         if not validate_config(new_config):
@@ -208,7 +206,8 @@ def main():
         print(f"[iter_{iter_id}] backtest_id={backtest_id}", flush=True)
 
         metrics = parse_backtest_result(result)
-        score = calculate_score(metrics, weights=DEFAULT_WEIGHTS)
+        complexity = calculate_complexity(new_config)
+        score = calculate_score(metrics, weights=DEFAULT_WEIGHTS, complexity=complexity, config=new_config)
 
         decision, reason = decide_keep_rollback(
             new_score=score,
@@ -218,11 +217,15 @@ def main():
             hard_constraints=DEFAULT_HARD_CONSTRAINTS,
         )
 
+        score_delta = calculate_score_delta(score, champion_score)
+        record_mutation_reward(actual_mutation_type, score_delta)
+
         end_time = datetime.now()
         print(
             f"[iter_{iter_id}] score={score:.4f} champion={champion_score:.4f} "
             f"annual={metrics.annual_return:.2%} dd={metrics.max_drawdown:.2%} "
-            f"sharpe={metrics.sharpe:.2f} sortino={metrics.sortino:.2f}",
+            f"sortino={metrics.sortino:.2f} win_rate={metrics.win_rate:.2%} "
+            f"complexity={complexity}",
             flush=True,
         )
         print(f"[iter_{iter_id}] 决策: {decision} — {reason}", flush=True)

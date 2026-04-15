@@ -20,6 +20,7 @@ import argparse
 import csv
 import json
 import os
+import urllib.parse
 from pathlib import Path
 from datetime import datetime
 
@@ -62,6 +63,65 @@ def load_state(base: Path) -> dict:
     if state_file.exists():
         return json.load(open(state_file, encoding="utf-8"))
     return {}
+
+
+def load_formula_config(base: Path) -> dict:
+    config_file = base / "formula_config.json"
+    if config_file.exists():
+        return json.load(open(config_file, encoding="utf-8"))
+    return {}
+
+
+def generate_backtest_url(config: dict) -> str:
+    """根据 formula_config.json 生成问财回测分享 URL"""
+    field_map = {
+        "formula": "query",
+        "conditions": "query",
+        "startDate": "startDate",
+        "start_date": "startDate",
+        "endDate": "endDate",
+        "end_date": "endDate",
+        "daysForSaleStrategy": "daysForSaleStrategy",
+        "period": "daysForSaleStrategy",
+        "maxPositions": "stockHoldCount",
+        "stockHoldCount": "stockHoldCount",
+        "dailyBuyCount": "dayBuyStockNum",
+        "dayBuyStockNum": "dayBuyStockNum",
+        "takeProfit": "upperIncome",
+        "upperIncome": "upperIncome",
+        "stopLoss": "lowerIncome",
+        "lowerIncome": "lowerIncome",
+        "trailingStopLoss": "fallIncome",
+        "fallIncome": "fallIncome",
+        "capital": "capital",
+        "initialCapital": "capital",
+    }
+
+    params = {}
+    for key, value in config.items():
+        if key in field_map:
+            target_key = field_map[key]
+            if target_key == "query" and isinstance(value, list):
+                params[target_key] = "，".join(value)
+            else:
+                params[target_key] = str(value)
+
+    if "query" not in params:
+        return ""
+
+    params.setdefault("daysForSaleStrategy", "2,3")
+    params.setdefault("startDate", "2024-01-01")
+    params.setdefault("endDate", "2026-12-31")
+    params.setdefault("stockHoldCount", "1")
+    params.setdefault("dayBuyStockNum", "1")
+    params.setdefault("upperIncome", "20")
+    params.setdefault("lowerIncome", "10")
+    params.setdefault("fallIncome", "5")
+    params.setdefault("engine", "online")
+    params.setdefault("capital", "10000000")
+
+    encoded = urllib.parse.urlencode(params, safe=",")
+    return f"https://backtest.10jqka.com.cn/backtest/app.html#/strategybacktest?{encoded}"
 
 
 def ascii_sparkline(values: list[float], width: int = 50, height: int = 6) -> str:
@@ -292,6 +352,38 @@ def section_metric_trends(records: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def section_backtest_url(config: dict) -> str:
+    """生成回测分享 URL 段落"""
+    lines = ["", "=" * 60, "  回测分享链接", "=" * 60]
+
+    if not config:
+        lines.append("  (未找到 formula_config.json)")
+        return "\n".join(lines)
+
+    url = generate_backtest_url(config)
+    if url:
+        lines.append(f"当前配置的回测链接:")
+        lines.append(f"  {url}")
+        lines.append("")
+        query = config.get("formula", config.get("conditions", ""))
+        if isinstance(query, list):
+            query = "，".join(query)
+        lines.append(f"选股条件: {query}")
+        lines.append(
+            f"回测区间: {config.get('startDate', config.get('start_date', ''))} ~ {config.get('endDate', config.get('end_date', ''))}"
+        )
+        lines.append(
+            f"持仓: {config.get('maxPositions', config.get('stockHoldCount', ''))}  每日买入: {config.get('dailyBuyCount', config.get('dayBuyStockNum', ''))}"
+        )
+        lines.append(
+            f"止盈: {config.get('takeProfit', config.get('upperIncome', ''))}%  止损: {config.get('stopLoss', config.get('lowerIncome', ''))}%  移动止损: {config.get('trailingStopLoss', config.get('fallIncome', ''))}%"
+        )
+    else:
+        lines.append("  (无法生成 URL，配置中缺少选股条件)")
+
+    return "\n".join(lines)
+
+
 def section_next_suggestions(records: list[dict], state: dict) -> str:
     """基于历史数据给出下一步改进建议（供 agent 参考）"""
     lines = ["", "=" * 60, "  下一步建议（供 agent 参考）", "=" * 60]
@@ -360,6 +452,7 @@ def main():
 
     records = load_iterations(base)
     state = load_state(base)
+    config = load_formula_config(base)
 
     if not records:
         print(f"[analyze] iterations.tsv 无记录或不存在: {base}")
@@ -376,6 +469,7 @@ def main():
             section_top_improvements(records),
             section_failure_analysis(records),
             section_metric_trends(records),
+            section_backtest_url(config),
             section_next_suggestions(records, state),
             "",
         ]
