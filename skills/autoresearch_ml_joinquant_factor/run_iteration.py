@@ -15,14 +15,14 @@ import ast
 import json
 import random
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
 from notebook_executor import execute_strategy
 
 try:
-    from skills.autoresearch_joinquant_factor.factor_categories import (
+    from skills.autoresearch_ml_joinquant_factor.factor_categories import (
         calculate_diversity_score,
         get_factor_category,
     )
@@ -30,10 +30,8 @@ except Exception:
     import importlib.util
     import sys
 
-    root = Path(__file__).resolve().parents[2]
-    module_path = (
-        root / "skills" / "autoresearch_joinquant_factor" / "factor_categories.py"
-    )
+    root = Path(__file__).resolve().parent
+    module_path = root / "factor_categories.py"
     spec = importlib.util.spec_from_file_location("factor_categories", module_path)
     mod = importlib.util.module_from_spec(spec)
     sys.modules["factor_categories"] = mod
@@ -51,17 +49,15 @@ HISTORY_FILE = "iteration_history.jsonl"
 def _load_factor_pool() -> list[str]:
     """复用主项目因子分类，作为候选因子全集。"""
     try:
-        from skills.autoresearch_joinquant_factor.factor_categories import (
+        from skills.autoresearch_ml_joinquant_factor.factor_categories import (
             FACTOR_CATEGORIES,
         )
     except Exception:
         import importlib.util
         import sys
 
-        root = Path(__file__).resolve().parents[2]
-        module_path = (
-            root / "skills" / "autoresearch_joinquant_factor" / "factor_categories.py"
-        )
+        root = Path(__file__).resolve().parent
+        module_path = root / "factor_categories.py"
         spec = importlib.util.spec_from_file_location("factor_categories", module_path)
         mod = importlib.util.module_from_spec(spec)
         sys.modules["factor_categories"] = mod
@@ -228,7 +224,7 @@ def _load_strategy_pool(
                 "score": baseline_score if i == 0 else 0.0,
                 "factors": c,
                 "source": "seed",
-                "updated_at": datetime.utcnow().isoformat() + "Z",
+                "updated_at": datetime.now(timezone.utc).isoformat() + "Z",
                 "iter": 0,
             }
         )
@@ -366,13 +362,13 @@ def main() -> None:
                 "score": baseline_score,
                 "factors": current_combo,
                 "source": "current",
-                "updated_at": datetime.utcnow().isoformat() + "Z",
+                "updated_at": datetime.now(timezone.utc).isoformat() + "Z",
                 "iter": 0,
             }
         )
 
     rng = random.Random(
-        args.seed if args.seed is not None else int(datetime.utcnow().timestamp())
+        args.seed if args.seed is not None else int(datetime.now(timezone.utc).timestamp())
     )
     factor_pool = _load_factor_pool()
 
@@ -457,7 +453,7 @@ def main() -> None:
                 "score": new_score,
                 "factors": item.get("factors", []),
                 "source": "iteration",
-                "updated_at": datetime.utcnow().isoformat() + "Z",
+                "updated_at": datetime.now(timezone.utc).isoformat() + "Z",
                 "iter": iter_no,
             }
 
@@ -495,7 +491,7 @@ def main() -> None:
             json.dumps(
                 {
                     "iter": iter_no,
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
                     "candidates": latest_results,
                     "top_k": sorted_pool,
                     "best": best,

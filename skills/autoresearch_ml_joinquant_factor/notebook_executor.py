@@ -32,9 +32,9 @@ DEFAULT_NOTEBOOK_URL = (
 
 def get_timeout_for_period(period="W"):
     """根据周期获取建议超时时间"""
-    base_timeout = 600000  # 10分钟
+    base_timeout = 1200000  # 20分钟（6年数据需要更长时间）
     if period == "D":
-        return base_timeout * 3  # 日频需要30分钟
+        return base_timeout * 2  # 日频需要40分钟
     elif period == "W":
         return base_timeout
     else:
@@ -56,8 +56,8 @@ def find_notebook_executor() -> Optional[str]:
     return None
 
 
-def _run_node(cmd: list, timeout: int = 120) -> Dict:
-    """运行 node 命令并解析结果文件"""
+def _run_node(cmd: list, timeout: int = 1800) -> Dict:
+    """运行 node 命令并解析结果文件（默认30分钟超时）"""
     try:
         result = subprocess.run(
             cmd,

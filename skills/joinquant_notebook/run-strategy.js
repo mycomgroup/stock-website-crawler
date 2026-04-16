@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runNotebookTest } from './request/test-joinquant-notebook.js';
+import { OUTPUT_ROOT } from './paths.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STRATEGY_ROOT = path.resolve(__dirname, '../joinquant_strategy');
@@ -167,5 +168,22 @@ async function main() {
 
 main().catch(error => {
   console.error('执行失败:', error.message);
+  
+  // 即使失败也输出结果文件路径，方便 Python 解析
+  const timestamp = Date.now();
+  const errorResult = {
+    success: false,
+    error: error.message,
+    capturedAt: new Date().toISOString()
+  };
+  const errorFile = path.join(OUTPUT_ROOT, `joinquant-notebook-result-error-${timestamp}.json`);
+  try {
+    fs.mkdirSync(OUTPUT_ROOT, { recursive: true });
+    fs.writeFileSync(errorFile, JSON.stringify(errorResult, null, 2));
+    console.log(`\n结果文件: ${errorFile}`);
+  } catch (e) {
+    console.error('写入错误结果文件失败:', e.message);
+  }
+  
   process.exit(1);
 });
