@@ -12,13 +12,33 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Optional
 
+try:
+    from config import PERIOD_CONFIG
+except ImportError:
+    PERIOD_CONFIG = {
+        "D": {"periods_per_year": 244},
+        "W": {"periods_per_year": 52},
+        "M": {"periods_per_year": 12},
+    }
+
 
 DEFAULT_SESSION_FILE = str(
-    Path(__file__).parent.parent / "joinquant_notebook" / "data" / "session.json"
+    Path(__file__).parent.parent / ".sessions" / "joinquant.json"
 )
 DEFAULT_NOTEBOOK_URL = (
     "https://www.joinquant.com/user/notebook?url=/user/21333940833/notebooks/test.ipynb"
 )
+
+
+def get_timeout_for_period(period="W"):
+    """根据周期获取建议超时时间"""
+    base_timeout = 600000  # 10分钟
+    if period == "D":
+        return base_timeout * 3  # 日频需要30分钟
+    elif period == "W":
+        return base_timeout
+    else:
+        return base_timeout // 2
 
 
 def find_notebook_executor() -> Optional[str]:
@@ -135,8 +155,9 @@ def create_notebook(
 def execute_strategy(
     strategy_file: str,
     notebook_url: str = None,
-    timeout_ms: int = 600000,
+    timeout_ms: int = None,
     notebook_dir: str = None,
+    period: str = None,
 ) -> Dict:
     """
     通过 Notebook 执行策略文件
@@ -144,8 +165,9 @@ def execute_strategy(
     Args:
         strategy_file: 策略文件路径
         notebook_url: Notebook URL（复用）
-        timeout_ms: 超时时间（毫秒）
+        timeout_ms: 超时时间（毫秒），None 则根据周期自动计算
         notebook_dir: joinquant_notebook 目录路径
+        period: 调仓周期（D/W/M），用于自动计算超时
 
     Returns:
         {
@@ -156,6 +178,24 @@ def execute_strategy(
             "error": str (if failed)
         }
     """
+    # 自动检测周期
+    if period is None:
+        try:
+            with open(strategy_file, "r") as f:
+                content = f.read()
+                if 'PERIOD = "D"' in content:
+                    period = "D"
+                elif 'PERIOD = "M"' in content:
+                    period = "M"
+                else:
+                    period = "W"
+        except:
+            period = "W"
+
+    # 根据周期计算超时
+    if timeout_ms is None:
+        timeout_ms = get_timeout_for_period(period)
+
     if notebook_dir:
         executor = Path(notebook_dir) / "run-strategy.js"
     else:

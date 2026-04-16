@@ -10,7 +10,8 @@ export async function ensureJoinQuantSession(credentials = {}) {
     try {
       const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
       // Check if session is older than 12 hours
-      const ageHours = (Date.now() - new Date(session.capturedAt).getTime()) / (1000 * 3600);
+      const timestamp = session.capturedAt || session.timestamp;
+      const ageHours = (Date.now() - new Date(timestamp).getTime()) / (1000 * 3600);
       
       if (ageHours < 12) {
         console.log('Using cached JoinQuant session.');

@@ -13,7 +13,13 @@ function ensureSessionCookies() {
   if (!sessionPayload.cookies || sessionPayload.cookies.length === 0) {
     throw new Error(`No cookies found in session file: ${SESSION_FILE}`);
   }
-  return sessionPayload.cookies;
+  return sessionPayload.cookies.map(cookie => {
+    const { expires, ...rest } = cookie;
+    if (expires == null || expires === undefined) {
+      return rest;
+    }
+    return { ...rest, expires };
+  });
 }
 
 async function writeDebugArtifacts(page, runDir, debugPrefix, suffix) {

@@ -99,8 +99,14 @@ export class AuthManager {
     const data = {
       cookies,
       timestamp: Date.now(),
+      capturedAt: new Date().toISOString(),
       url,
-      user: v.user || 'unknown'
+      user: v.user || 'unknown',
+      login: {
+        loggedIn: v.success,
+        mode: 'auth-manager',
+        message: v.message || ''
+      }
     };
     if (!fs.existsSync(SESSION_ROOT)) fs.mkdirSync(SESSION_ROOT, { recursive: true });
     fs.writeFileSync(this.sessionPath, JSON.stringify(data, null, 2));
@@ -184,8 +190,13 @@ export class AuthManager {
         const data = {
           cookies,
           timestamp: Date.now(),
+          capturedAt: new Date().toISOString(),
           url,
-          user: 'manual-login'
+          user: 'manual-login',
+          login: {
+            loggedIn: true,
+            mode: 'manual'
+          }
         };
         const fs = (await import('node:fs')).default;
         const SESSION_ROOT = this.sessionPath.replace(/\/[^/]+$/, '');
@@ -209,8 +220,13 @@ export class AuthManager {
             const data = {
               cookies,
               timestamp: Date.now(),
+              capturedAt: new Date().toISOString(),
               url: this.site.loginUrl,
-              user: 'manual-login'
+              user: 'manual-login',
+              login: {
+                loggedIn: true,
+                mode: 'manual'
+              }
             };
             const fs = (await import('node:fs')).default;
             const SESSION_ROOT = this.sessionPath.replace(/\/[^/]+$/, '');

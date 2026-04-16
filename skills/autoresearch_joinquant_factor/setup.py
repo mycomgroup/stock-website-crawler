@@ -458,12 +458,12 @@ def generate_search_notes(
 """
 
 
-def run_baseline(strategy_file, notebook_dir=None):
+def run_baseline(strategy_file, notebook_dir=None, period="W"):
     from notebook_executor import execute_strategy
 
-    print("[baseline] 执行 baseline 回测...")
+    print(f"[baseline] 执行 baseline 回测... (周期: {period})")
     result = execute_strategy(
-        str(strategy_file), timeout_ms=600000, notebook_dir=notebook_dir
+        str(strategy_file), notebook_dir=notebook_dir, period=period
     )
 
     if result["success"]:
@@ -583,7 +583,7 @@ def main():
         print("[setup] 生成 program.md")
 
     baseline_score, baseline_diversity, baseline_result = run_baseline(
-        strategy_file, args.notebook_dir
+        strategy_file, args.notebook_dir, args.period
     )
     print(f"[baseline] score={baseline_score:.4f}, diversity={baseline_diversity:.2f}")
 
