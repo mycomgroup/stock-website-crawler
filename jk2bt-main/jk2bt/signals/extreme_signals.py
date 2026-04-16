@@ -22,17 +22,40 @@ import pandas as pd
 import numpy as np
 
 try:
-    from ..factors.technical import _get_daily_ohlcv, _compute_ema, _compute_ma, safe_divide
+    from ..factors.technical import _compute_ema, _compute_ma, safe_divide
 except ImportError:
-    from jk2bt.factors.technical import _get_daily_ohlcv, _compute_ema, _compute_ma
+    from jk2bt.factors.technical import _compute_ema, _compute_ma
+
     def safe_divide(a, b, fill_value=np.nan):
         """安全除法，避免除零错误"""
-        with np.errstate(divide='ignore', invalid='ignore'):
+        with np.errstate(divide="ignore", invalid="ignore"):
             result = np.divide(a, b)
             result = np.where(np.isfinite(result), result, fill_value)
         if isinstance(a, pd.Series):
             return pd.Series(result, index=a.index)
         return result
+
+
+def _fetch_ohlcv(symbol: str, end_date: Optional[str], count: int) -> pd.DataFrame:
+    """通过 adapter 获取日线数据，返回带 date 列的 DataFrame"""
+    from jk2bt.data_access import get_adapter
+
+    if end_date is None:
+        end_date = pd.Timestamp.now().strftime("%Y-%m-%d")
+    start_date = (
+        pd.Timestamp(end_date) - pd.Timedelta(days=int(count * 1.5))
+    ).strftime("%Y-%m-%d")
+
+    df = get_adapter().get_daily_data(symbol, start_date, end_date)
+    if df.empty:
+        return df
+
+    df = df.copy()
+    if "datetime" in df.columns:
+        df["date"] = pd.to_datetime(df["datetime"]).dt.strftime("%Y-%m-%d")
+    if "amount" in df.columns and "money" not in df.columns:
+        df["money"] = df["amount"]
+    return df
 
 
 # =====================================================================
@@ -46,7 +69,6 @@ def detect_rsi_extreme(
     upper: float = 70.0,
     lower: float = 30.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -75,13 +97,7 @@ def detect_rsi_extreme(
         columns: date, signal, type, rsi_value
     """
     need_count = window + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type", "rsi_value"])
@@ -116,11 +132,13 @@ def detect_rsi_extreme(
     signal[enter_overbought] = 1
     signal[enter_oversold] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "rsi_value": rsi.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "rsi_value": rsi.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "rsi_overbought"
     result.loc[result["signal"] == -1, "type"] = "rsi_oversold"
@@ -142,7 +160,6 @@ def detect_cci_extreme(
     upper: float = 100.0,
     lower: float = -100.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -171,13 +188,7 @@ def detect_cci_extreme(
         columns: date, signal, type, cci_value
     """
     need_count = window + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type", "cci_value"])
@@ -207,11 +218,13 @@ def detect_cci_extreme(
     signal[enter_overbought] = 1
     signal[enter_oversold] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "cci_value": cci.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "cci_value": cci.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "cci_extreme_overbought"
     result.loc[result["signal"] == -1, "type"] = "cci_extreme_oversold"
@@ -232,7 +245,6 @@ def detect_bias_extreme(
     upper: float = 5.0,
     lower: float = -5.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -261,13 +273,7 @@ def detect_bias_extreme(
         columns: date, signal, type, bias_value
     """
     need_count = window + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type", "bias_value"])
@@ -291,11 +297,13 @@ def detect_bias_extreme(
     signal[enter_overbought] = 1
     signal[enter_oversold] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "bias_value": bias.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "bias_value": bias.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = f"bias_{window}_extreme_overbought"
     result.loc[result["signal"] == -1, "type"] = f"bias_{window}_extreme_oversold"
@@ -318,7 +326,6 @@ def detect_kdj_extreme(
     upper: float = 80.0,
     lower: float = 20.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -351,13 +358,7 @@ def detect_kdj_extreme(
         columns: date, signal, type, k_value, d_value
     """
     need_count = n + m1 + m2 + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -388,12 +389,14 @@ def detect_kdj_extreme(
     signal[enter_overbought] = 1
     signal[enter_oversold] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "k_value": k.values,
-        "d_value": d.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "k_value": k.values,
+            "d_value": d.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "kdj_overbought"
     result.loc[result["signal"] == -1, "type"] = "kdj_oversold"
@@ -411,7 +414,6 @@ def detect_kdj_extreme(
 def detect_all_extreme_signals(
     symbol: str,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -433,7 +435,9 @@ def detect_all_extreme_signals(
 
     # RSI极值
     try:
-        rsi_signals = detect_rsi_extreme(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        rsi_signals = detect_rsi_extreme(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not rsi_signals.empty:
             signals.append(rsi_signals)
     except Exception as e:
@@ -441,7 +445,9 @@ def detect_all_extreme_signals(
 
     # CCI极值
     try:
-        cci_signals = detect_cci_extreme(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        cci_signals = detect_cci_extreme(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not cci_signals.empty:
             signals.append(cci_signals)
     except Exception as e:
@@ -449,7 +455,9 @@ def detect_all_extreme_signals(
 
     # BIAS极值
     try:
-        bias_signals = detect_bias_extreme(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        bias_signals = detect_bias_extreme(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not bias_signals.empty:
             signals.append(bias_signals)
     except Exception as e:

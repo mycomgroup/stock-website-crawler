@@ -29,10 +29,10 @@ from .fundamentals import (
 
 
 def _get_balance_data(
-    symbol: str, cache_dir: str = "stock_cache", force_update: bool = False
+    symbol: str,
 ) -> pd.DataFrame:
     """获取并标准化资产负债表数据。"""
-    raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    raw = _get_balance_sheet(symbol)
     return _normalize_balance(raw)
 
 
@@ -40,8 +40,6 @@ def compute_debt_to_assets(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -49,7 +47,7 @@ def compute_debt_to_assets(
 
     公式：总负债 / 总资产
     """
-    df = _get_balance_data(symbol, cache_dir, force_update)
+    df = _get_balance_data(symbol)
 
     if df.empty:
         return np.nan
@@ -76,8 +74,6 @@ def compute_equity_to_asset_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -85,7 +81,7 @@ def compute_equity_to_asset_ratio(
 
     公式：所有者权益 / 总资产
     """
-    df = _get_balance_data(symbol, cache_dir, force_update)
+    df = _get_balance_data(symbol)
 
     if df.empty:
         return np.nan
@@ -112,8 +108,6 @@ def compute_leverage(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -121,7 +115,7 @@ def compute_leverage(
 
     公式：总资产 / 净资产
     """
-    df = _get_balance_data(symbol, cache_dir, force_update)
+    df = _get_balance_data(symbol)
 
     if df.empty:
         return np.nan
@@ -148,8 +142,6 @@ def compute_super_quick_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -157,7 +149,7 @@ def compute_super_quick_ratio(
 
     公式：(流动资产 - 存货) / 流动负债
     """
-    df = _get_balance_data(symbol, cache_dir, force_update)
+    df = _get_balance_data(symbol)
 
     if df.empty:
         return np.nan
@@ -190,8 +182,6 @@ def compute_current_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -199,7 +189,7 @@ def compute_current_ratio(
 
     公式：流动资产 / 流动负债
     """
-    df = _get_balance_data(symbol, cache_dir, force_update)
+    df = _get_balance_data(symbol)
 
     if df.empty:
         return np.nan
@@ -226,8 +216,6 @@ def compute_liquidity(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -235,17 +223,13 @@ def compute_liquidity(
 
     与 current_ratio 同义。
     """
-    return compute_current_ratio(
-        symbol, end_date, count, cache_dir, force_update, **kwargs
-    )
+    return compute_current_ratio(symbol, end_date, count, **kwargs)
 
 
 def compute_long_term_debt_to_asset_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -254,7 +238,7 @@ def compute_long_term_debt_to_asset_ratio(
     公式：长期负债 / 总资产
     近似实现：使用非流动负债 / 总资产
     """
-    df = _get_balance_data(symbol, cache_dir, force_update)
+    df = _get_balance_data(symbol)
 
     if df.empty or "total_assets" not in df.columns:
         return np.nan
@@ -288,8 +272,6 @@ def compute_financial_liability(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -299,7 +281,7 @@ def compute_financial_liability(
     有息负债 ≈ 短期借款 + 长期借款 + 应付债券
     简化版本使用：(总负债 - 应付账款 - 预收款项) / 总资产
     """
-    df = _get_balance_data(symbol, cache_dir, force_update)
+    df = _get_balance_data(symbol)
 
     if df.empty or "total_assets" not in df.columns:
         return np.nan

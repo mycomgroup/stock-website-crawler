@@ -1,6 +1,7 @@
 import unittest
 import pandas as pd
 import pytest
+import tempfile
 
 from jk2bt.core.strategy_base import (
     get_akshare_etf_data,
@@ -17,9 +18,7 @@ import os
 class TestDataUtils(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # 初始化测试数据和缓存目录
-        cls.cache_dir = "test_cache"
-        os.makedirs(cls.cache_dir, exist_ok=True)
+        cls.cache_dir = tempfile.mkdtemp()
 
     def test_format_stock_symbol_for_akshare(self):
         self.assertEqual(format_stock_symbol_for_akshare("sh600000"), "600000")
@@ -37,9 +36,7 @@ class TestDataUtils(unittest.TestCase):
     @pytest.mark.network
     def test_get_price(self):
         try:
-            result = get_price_jq(
-                "sh600000", "2023-01-01", "2023-01-10", cache_dir=self.cache_dir
-            )
+            result = get_price_jq("sh600000", "2023-01-01", "2023-01-10")
             self.assertIsInstance(result, pd.DataFrame)
         except Exception as e:
             self.skipTest(f"无法获取行情数据: {e}")

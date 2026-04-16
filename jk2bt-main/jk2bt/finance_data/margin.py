@@ -3,7 +3,6 @@ finance_data/margin.py
 融资融券数据获取模块。
 """
 
-import os
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -13,7 +12,7 @@ except ImportError:
     from utils.cache import fetch_and_cache_data
 
 
-def get_margin_data(symbol, date=None, cache_dir="finance_cache", force_update=False):
+def get_margin_data(symbol, date=None, force_update=False):
     """
     获取单个股票的融资融券数据。
 
@@ -21,7 +20,6 @@ def get_margin_data(symbol, date=None, cache_dir="finance_cache", force_update=F
     ----
     symbol     : 股票代码，支持 '600519.XSHG', '000001.XSHE', 'sh600519', 'sz000001', '600519' 等格式
     date       : 查询日期，格式 'YYYY-MM-DD' 或 'YYYYMMDD'，默认最近交易日
-    cache_dir  : 缓存目录
     force_update: True 时强制重新下载
 
     返回
@@ -42,15 +40,13 @@ def get_margin_data(symbol, date=None, cache_dir="finance_cache", force_update=F
     market = _get_market(symbol)
 
     if date is None:
-        return _get_margin_auto_date(symbol, code_num, market, cache_dir, force_update)
+        return _get_margin_auto_date(symbol, code_num, market, force_update)
     else:
         date = _normalize_date(date)
-        return _get_margin_by_date(
-            symbol, code_num, market, date, cache_dir, force_update
-        )
+        return _get_margin_by_date(symbol, code_num, market, date, force_update)
 
 
-def _get_margin_auto_date(symbol, code_num, market, cache_dir, force_update):
+def _get_margin_auto_date(symbol, code_num, market, force_update):
     """自动查找最近可用日期的融资融券数据"""
     max_days_back = 60
     today = datetime.now()
@@ -63,9 +59,7 @@ def _get_margin_auto_date(symbol, code_num, market, cache_dir, force_update):
         date_str = check_date.strftime("%Y%m%d")
 
         try:
-            df = _get_margin_by_date(
-                symbol, code_num, market, date_str, cache_dir, force_update
-            )
+            df = _get_margin_by_date(symbol, code_num, market, date_str, force_update)
             if not df.empty:
                 return df
         except Exception:
@@ -74,38 +68,23 @@ def _get_margin_auto_date(symbol, code_num, market, cache_dir, force_update):
     return pd.DataFrame()
 
 
-def _get_margin_by_date(symbol, code_num, market, date, cache_dir, force_update):
+def _get_margin_by_date(symbol, code_num, market, date, force_update):
     """获取指定日期的融资融券数据"""
-    cache_file = os.path.join(cache_dir, f"margin_{market}_{date}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
+    try:
+        if market == "sh":
+            df_all = get_adapter().get_margin_detail(market="sh", date=date)
+        else:
+            df_all = get_adapter().get_margin_detail(market="sz", date=date)
 
-    if not need_download:
-        try:
-            df_all = pd.read_pickle(cache_file)
-        except Exception:
-            need_download = True
+        if df_all is not None and not df_all.empty:
+            df = _filter_and_normalize(df_all, code_num, market, symbol)
+            return df
+    except Exception as e:
+        print(f"[margin] 下载失败 {date}: {e}")
 
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            if market == "sh":
-                df_all = get_adapter().get_margin_detail(market="sh", date=date)
-            else:
-                df_all = get_adapter().get_margin_detail(market="sz", date=date)
-
-            if df_all is not None and not df_all.empty:
-                df_all.to_pickle(cache_file)
-        except Exception as e:
-            print(f"[margin] 下载失败 {date}: {e}")
-            return pd.DataFrame()
-
-    if df_all is None or df_all.empty:
-        return pd.DataFrame()
-
-    df = _filter_and_normalize(df_all, code_num, market, symbol)
-    return df
+    return pd.DataFrame()
 
 
 def _extract_code_num(symbol):
@@ -195,9 +174,7 @@ def _normalize_to_jq(symbol):
     return code + ".XSHE"
 
 
-def get_margin_history(
-    symbol, start_date, end_date, cache_dir="finance_cache", force_update=False
-):
+def get_margin_history(symbol, start_date, end_date, force_update=False):
     """
     获取融资融券历史数据（多个交易日）。
 
@@ -206,7 +183,6 @@ def get_margin_history(
     symbol     : 股票代码
     start_date : 起始日期 'YYYY-MM-DD'
     end_date   : 结束日期 'YYYY-MM-DD'
-    cache_dir  : 缓存目录
     force_update: 强制更新
 
     返回
@@ -226,12 +202,7 @@ def get_margin_history(
         if current_dt.weekday() < 5:
             date_str = current_dt.strftime("%Y%m%d")
             try:
-                df = get_margin_data(
-                    symbol,
-                    date=date_str,
-                    cache_dir=cache_dir,
-                    force_update=force_update,
-                )
+                df = get_margin_data(symbol, date=date_str, force_update=force_update)
                 if not df.empty:
                     dfs.append(df)
             except Exception:

@@ -44,14 +44,6 @@ data/*.db
 data/*.db.wal
 
 # Cache directories (keep .gitkeep files)
-stock_cache/
-etf_cache/
-index_cache/
-finance_cache/
-factors_cache/
-billboard_cache/
-extras_cache/
-test_cache/
 jqdata_akshare_backtrader_utility/
 data/cache/*/
 runtime_data/

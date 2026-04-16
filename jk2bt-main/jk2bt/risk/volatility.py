@@ -14,9 +14,10 @@ try:
     from ..factors.technical import _get_daily_ohlcv, _compute_ema, safe_divide
 except ImportError:
     from jk2bt.factors.technical import _get_daily_ohlcv, _compute_ema
+
     def safe_divide(a, b, fill_value=np.nan):
         """安全除法，避免除零错误"""
-        with np.errstate(divide='ignore', invalid='ignore'):
+        with np.errstate(divide="ignore", invalid="ignore"):
             result = np.divide(a, b)
             result = np.where(np.isfinite(result), result, fill_value)
         if isinstance(a, pd.Series):
@@ -34,7 +35,6 @@ def compute_volatility(
     window: int = 20,
     annualized: bool = True,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
@@ -61,7 +61,6 @@ def compute_volatility(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
         count=need_count,
     )
@@ -97,7 +96,6 @@ def compute_volatility_adjusted_position(
     target_vol: float = 0.15,
     window: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> Dict:
@@ -134,7 +132,6 @@ def compute_volatility_adjusted_position(
         window=window,
         annualized=True,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
@@ -170,7 +167,6 @@ def compute_atr_based_stop_loss(
     atr_window: int = 14,
     atr_multiplier: float = 2.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> Dict:
@@ -202,7 +198,6 @@ def compute_atr_based_stop_loss(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
         count=need_count,
     )
@@ -255,7 +250,6 @@ def detect_volatility_regime_change(
     long_window: int = 60,
     multiplier: float = 1.5,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -287,7 +281,6 @@ def detect_volatility_regime_change(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
         count=need_count,
     )
@@ -315,13 +308,15 @@ def detect_volatility_regime_change(
     signal[vol_increase] = 1  # 波动率上升
     signal[vol_decrease] = -1  # 波动率下降
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "short_vol": short_vol.values,
-        "long_vol": long_vol.values,
-        "vol_ratio": vol_ratio.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "short_vol": short_vol.values,
+            "long_vol": long_vol.values,
+            "vol_ratio": vol_ratio.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "volatility_increase"
     result.loc[result["signal"] == -1, "type"] = "volatility_decrease"

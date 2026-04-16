@@ -284,7 +284,7 @@ class Aggregator:
             return None
 
         paths_str = ", ".join(f"'{f}'" for f in parquet_files)
-        conn = duckdb.connect(database=":memory:", read_only=True)
+        conn = duckdb.connect(database=":memory:")
         try:
             df = conn.execute(f"SELECT * FROM read_parquet([{paths_str}])").fetchdf()
             return df if not df.empty else None

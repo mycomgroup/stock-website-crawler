@@ -270,7 +270,7 @@ def get_dividend_info(
     security: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -282,7 +282,6 @@ def get_dividend_info(
     security      : 股票代码
     start_date    : 起始日期（除权除息日）
     end_date      : 结束日期
-    cache_dir     : 缓存目录
     force_update  : 强制更新
     use_duckdb    : 是否使用 DuckDB 缓存
 
@@ -307,65 +306,46 @@ def get_dividend_info(
             if not df_cached.empty:
                 return df_cached[_DIVIDEND_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, f"dividend_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
+    from jk2bt.data_access import get_adapter
+    try:
+        results = []
+
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 90:
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_dividend(cached_df)
-                if start_date is None and end_date is None:
-                    return cached_df
-                return _filter_by_date_range(cached_df, start_date, end_date)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            results = []
-
-            try:
-                df_fhps = get_adapter().get_dividend_fhps(symbol=code_num)
-                if df_fhps is not None and not df_fhps.empty:
-                    for _, row in df_fhps.iterrows():
-                        record = _parse_fhps_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"stock_fhps_em 失败: {e}")
-
-            try:
-                df_dividend = get_adapter().get_dividend(symbol=code_num)
-                if df_dividend is not None and not df_dividend.empty:
-                    for _, row in df_dividend.iterrows():
-                        record = _parse_dividend_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"stock_dividend_cninfo 失败: {e}")
-
-            if results:
-                result_df = pd.DataFrame(results)
-                result_df = result_df.drop_duplicates(
-                    subset=["code", "ex_dividend_date"], keep="first"
-                )
-                result_df = result_df.sort_values("ex_dividend_date", ascending=False)
-                result_df.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_dividend(result_df)
-                if start_date is None and end_date is None:
-                    return result_df
-                return _filter_by_date_range(result_df, start_date, end_date)
-
+            df_fhps = get_adapter().get_dividend_fhps(symbol=code_num)
+            if df_fhps is not None and not df_fhps.empty:
+                for _, row in df_fhps.iterrows():
+                    record = _parse_fhps_row(row, jq_code)
+                    if record:
+                        results.append(record)
         except Exception as e:
-            logger.warning(f"[get_dividend_info] 获取分红送股失败 {security}: {e}")
+            logger.debug(f"stock_fhps_em 失败: {e}")
+
+        try:
+            df_dividend = get_adapter().get_dividend(symbol=code_num)
+            if df_dividend is not None and not df_dividend.empty:
+                for _, row in df_dividend.iterrows():
+                    record = _parse_dividend_row(row, jq_code)
+                    if record:
+                        results.append(record)
+        except Exception as e:
+            logger.debug(f"stock_dividend_cninfo 失败: {e}")
+
+        if results:
+            result_df = pd.DataFrame(results)
+            result_df = result_df.drop_duplicates(
+                subset=["code", "ex_dividend_date"], keep="first"
+            )
+            result_df = result_df.sort_values("ex_dividend_date", ascending=False)
+            if use_duckdb and _db_manager is not None:
+                _db_manager.insert_dividend(result_df)
+            if start_date is None and end_date is None:
+                return result_df
+            return _filter_by_date_range(result_df, start_date, end_date)
+
+    except Exception as e:
+        logger.warning(f"[get_dividend_info] 获取分红送股失败 {security}: {e}")
 
     return pd.DataFrame(columns=_DIVIDEND_SCHEMA)
 
@@ -453,7 +433,7 @@ def _filter_by_date_range(
 def get_dividend_history(
     security: str,
     years: int = 5,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -463,7 +443,6 @@ def get_dividend_history(
     ----
     security      : 股票代码
     years         : 查询年数
-    cache_dir     : 缓存目录
     force_update  : 强制更新
 
     返回
@@ -484,7 +463,7 @@ def get_dividend_history(
         security,
         start_date=start_date,
         end_date=end_date,
-        cache_dir=cache_dir,
+        
         force_update=force_update,
     )
 
@@ -570,7 +549,7 @@ def calculate_ex_rights_price(
 
 def get_stock_bonus(
     security: str,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -579,7 +558,6 @@ def get_stock_bonus(
     参数
     ----
     security      : 股票代码
-    cache_dir     : 缓存目录
     force_update  : 强制更新
 
     返回
@@ -593,7 +571,7 @@ def get_stock_bonus(
     """
     df_dividend = get_dividend_info(
         security,
-        cache_dir=cache_dir,
+        
         force_update=force_update,
     )
 
@@ -659,7 +637,7 @@ def get_adjust_factor(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -671,7 +649,6 @@ def get_adjust_factor(
     symbol      : 股票代码
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -689,7 +666,7 @@ def get_adjust_factor(
         symbol,
         start_date=start_date,
         end_date=end_date,
-        cache_dir=cache_dir,
+        
         force_update=force_update,
         use_duckdb=use_duckdb,
     )
@@ -730,7 +707,7 @@ def get_adjust_factor(
 
 def get_dividend_by_date(
     report_date: str,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -739,7 +716,6 @@ def get_dividend_by_date(
     参数
     ----
     report_date   : 报告期（如 '20231231'）
-    cache_dir     : 缓存目录
     force_update  : 强制更新
 
     返回
@@ -752,65 +728,50 @@ def get_dividend_by_date(
     - bonus_share_ratio: 送股比例
     - ex_dividend_date: 除权除息日
     """
-    cache_file = os.path.join(cache_dir, f"dividend_report_{report_date}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 365:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
+    from jk2bt.data_access import get_adapter
+    try:
+        df_raw = get_adapter().get_dividend_fhps(date=report_date)
+        if df_raw is not None and not df_raw.empty:
+            results = []
+            for _, row in df_raw.iterrows():
+                code_num = _extract_code_num(str(row.get("代码", "")))
+                jq_code = _normalize_to_jq(code_num)
 
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df_raw = get_adapter().get_dividend_fhps(date=report_date)
-            if df_raw is not None and not df_raw.empty:
-                results = []
-                for _, row in df_raw.iterrows():
-                    code_num = _extract_code_num(str(row.get("代码", "")))
-                    jq_code = _normalize_to_jq(code_num)
+                bonus_ratio_rmb = _parse_ratio(row.get("现金分红-现金分红比例", 0))
+                transfer_ratio = _parse_ratio(row.get("送转股份-转股比例", 0))
+                bonus_share_ratio = _parse_ratio(row.get("送转股份-送转比例", 0))
+                adjust_factor = _calculate_adjust_factor(
+                    bonus_ratio_rmb, transfer_ratio, bonus_share_ratio
+                )
 
-                    bonus_ratio_rmb = _parse_ratio(row.get("现金分红-现金分红比例", 0))
-                    transfer_ratio = _parse_ratio(row.get("送转股份-转股比例", 0))
-                    bonus_share_ratio = _parse_ratio(row.get("送转股份-送转比例", 0))
-                    adjust_factor = _calculate_adjust_factor(
-                        bonus_ratio_rmb, transfer_ratio, bonus_share_ratio
-                    )
+                results.append(
+                    {
+                        "code": jq_code,
+                        "company_name": str(row.get("名称", "")),
+                        "bonus_ratio_rmb": bonus_ratio_rmb,
+                        "transfer_ratio": transfer_ratio,
+                        "bonus_share_ratio": bonus_share_ratio,
+                        "ex_dividend_date": _parse_date(
+                            row.get("除权除息日", None)
+                        ),
+                        "board_plan_pub_date": _parse_date(
+                            row.get("预案公告日", None)
+                        ),
+                        "record_date": _parse_date(row.get("股权登记日", None)),
+                        "report_date": report_date,
+                        "adjust_factor": adjust_factor,
+                    }
+                )
 
-                    results.append(
-                        {
-                            "code": jq_code,
-                            "company_name": str(row.get("名称", "")),
-                            "bonus_ratio_rmb": bonus_ratio_rmb,
-                            "transfer_ratio": transfer_ratio,
-                            "bonus_share_ratio": bonus_share_ratio,
-                            "ex_dividend_date": _parse_date(
-                                row.get("除权除息日", None)
-                            ),
-                            "board_plan_pub_date": _parse_date(
-                                row.get("预案公告日", None)
-                            ),
-                            "record_date": _parse_date(row.get("股权登记日", None)),
-                            "report_date": report_date,
-                            "adjust_factor": adjust_factor,
-                        }
-                    )
-
-                if results:
-                    result_df = pd.DataFrame(results)
-                    result_df.to_pickle(cache_file)
-                    return result_df
-        except Exception as e:
-            logger.warning(
-                f"[get_dividend_by_date] 获取报告期分红数据失败 {report_date}: {e}"
-            )
+            if results:
+                result_df = pd.DataFrame(results)
+                return result_df
+    except Exception as e:
+        logger.warning(
+            f"[get_dividend_by_date] 获取报告期分红数据失败 {report_date}: {e}"
+        )
 
     return pd.DataFrame(columns=_DIVIDEND_SCHEMA)
 
@@ -819,7 +780,7 @@ def query_dividend(
     symbols: List[str],
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -831,7 +792,6 @@ def query_dividend(
     symbols       : 股票代码列表
     start_date    : 起始日期
     end_date      : 结束日期
-    cache_dir     : 缓存目录
     force_update  : 强制更新
     use_duckdb    : 是否使用 DuckDB 缓存
 
@@ -849,7 +809,7 @@ def query_dividend(
                 symbol,
                 start_date=start_date,
                 end_date=end_date,
-                cache_dir=cache_dir,
+                
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -911,7 +871,7 @@ class FinanceQuery:
         bonus_amount = None
 
     def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
+        self, query_obj, force_update=False, use_duckdb=True
     ) -> pd.DataFrame:
         table_name = None
         conditions = {}
@@ -928,13 +888,13 @@ class FinanceQuery:
         if table_name in ("STK_XR_XD", "STK_DIVIDEND_INFO"):
             if "code" in conditions:
                 return get_dividend_info(
-                    conditions["code"], cache_dir=cache_dir, use_duckdb=use_duckdb
+                    conditions["code"], use_duckdb=use_duckdb
                 )
             return pd.DataFrame(columns=_DIVIDEND_SCHEMA)
         elif table_name == "STK_DIVIDEND_RIGHT":
             if "code" in conditions:
                 df = get_dividend_info(
-                    conditions["code"], cache_dir=cache_dir, use_duckdb=use_duckdb
+                    conditions["code"], use_duckdb=use_duckdb
                 )
                 return _convert_to_dividend_right(df)
             return pd.DataFrame(columns=_DIVIDEND_SCHEMA)
@@ -948,19 +908,19 @@ finance = FinanceQuery()
 def run_query_simple(
     table: str,
     code: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
     if table in ("STK_XR_XD", "STK_DIVIDEND_INFO"):
         if code:
             return get_dividend_info(
-                code, cache_dir=cache_dir, force_update=force_update
+                code, force_update=force_update
             )
         return pd.DataFrame(columns=_DIVIDEND_SCHEMA)
     elif table == "STK_DIVIDEND_RIGHT":
         if code:
-            df = get_dividend_info(code, cache_dir=cache_dir, force_update=force_update)
+            df = get_dividend_info(code, force_update=force_update)
             return _convert_to_dividend_right(df)
         return pd.DataFrame(columns=_DIVIDEND_SCHEMA)
     else:
@@ -971,7 +931,7 @@ def get_dividend(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -980,7 +940,7 @@ def get_dividend(
         symbol,
         start_date=start_date,
         end_date=end_date,
-        cache_dir=cache_dir,
+        
         force_update=force_update,
         use_duckdb=use_duckdb,
     )
@@ -988,7 +948,7 @@ def get_dividend(
 
 def get_rights_issue(
     symbol: str,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -998,7 +958,6 @@ def get_rights_issue(
     参数
     ----
     symbol      : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -1014,7 +973,7 @@ def get_rights_issue(
     - rights_issue_ratio: 配股比例（暂不支持）
     """
     df = get_dividend_info(
-        symbol, cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb
+        symbol, force_update=force_update, use_duckdb=use_duckdb
     )
 
     if df.empty:
@@ -1053,7 +1012,7 @@ def get_rights_issue(
 
 def get_next_dividend(
     symbol: str,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -1063,7 +1022,6 @@ def get_next_dividend(
     参数
     ----
     symbol      : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -1079,7 +1037,7 @@ def get_next_dividend(
     - board_plan_pub_date: 董事会预案公告日期
     """
     df = get_dividend_info(
-        symbol, cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb
+        symbol, force_update=force_update, use_duckdb=use_duckdb
     )
 
     if df.empty:
@@ -1119,7 +1077,7 @@ def query_dividend_right(
     symbols: List[str],
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -1134,7 +1092,7 @@ def query_dividend_right(
                 symbol,
                 start_date=start_date,
                 end_date=end_date,
-                cache_dir=cache_dir,
+                
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -1187,11 +1145,11 @@ def calculate_adjust_price(
     original_price: float,
     adjust_type: str = "qfq",
     date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> float:
     """计算复权价格"""
-    df = get_dividend_info(symbol, cache_dir=cache_dir, force_update=force_update)
+    df = get_dividend_info(symbol, force_update=force_update)
 
     if df.empty:
         return original_price

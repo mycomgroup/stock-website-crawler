@@ -21,7 +21,8 @@ from .base import (
     safe_divide,
 )
 
-from .technical import _get_daily_ohlcv
+from jk2bt.data_access import get_adapter
+from jk2bt.utils.symbol import normalize_symbol as _normalize_symbol
 
 
 # =====================================================================
@@ -34,8 +35,6 @@ def compute_zscore(
     window: int = 18,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -59,14 +58,21 @@ def compute_zscore(
     count : int, optional
         返回的历史数据数量
     """
-    need_count = count + window * 2 + 10 if count else window * 2 + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(columns={"日期": "date", "最高": "high", "最低": "low"})
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(count)
 
     if df.empty or "high" not in df.columns:
         return np.nan
@@ -122,8 +128,6 @@ def compute_zscore_slope(
     slope_window: int = 5,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -140,14 +144,21 @@ def compute_zscore_slope(
     slope_window : int
         斜率平滑窗口
     """
-    need_count = count + window + slope_window if count else window + slope_window + 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(columns={"日期": "date", "最高": "high", "最低": "low"})
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(count)
 
     if df.empty or "high" not in df.columns:
         return np.nan
@@ -202,8 +213,6 @@ def compute_score(
     weights: Optional[List[float]] = None,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -240,8 +249,6 @@ def compute_score(
         factors=factors,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
     # 计算综合评分
@@ -253,7 +260,9 @@ def compute_score(
         if factor_df is None or factor_df.empty:
             continue
 
-        factor_series = factor_df[symbol] if symbol in factor_df.columns else factor_df.iloc[:, 0]
+        factor_series = (
+            factor_df[symbol] if symbol in factor_df.columns else factor_df.iloc[:, 0]
+        )
 
         # 标准化因子值（Z-Score）
         mean_val = factor_series.mean()
@@ -296,8 +305,6 @@ def get_single_factor_list(
     securities: Optional[List[str]] = None,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
     """
@@ -332,8 +339,6 @@ def get_single_factor_list(
         factors=[factor_name],
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
     return result.get(factor_name, pd.DataFrame())
@@ -349,7 +354,9 @@ def _register_factors():
     registry = global_factor_registry
 
     registry.register("zscore", compute_zscore, window=36, dependencies=["daily_ohlcv"])
-    registry.register("zscore_slope", compute_zscore_slope, window=23, dependencies=["daily_ohlcv"])
+    registry.register(
+        "zscore_slope", compute_zscore_slope, window=23, dependencies=["daily_ohlcv"]
+    )
     registry.register("score", compute_score, window=1, dependencies=["multi_factor"])
 
 

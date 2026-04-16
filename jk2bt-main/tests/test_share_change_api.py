@@ -431,9 +431,7 @@ class TestCacheMechanism(unittest.TestCase):
     def test_cache_directory_creation(self):
         cache_dir = tempfile.mkdtemp() + "/test_cache"
         try:
-            get_share_change(
-                "600519", cache_dir=cache_dir, force_update=False, use_duckdb=False
-            )
+            get_share_change("600519", force_update=False, use_duckdb=False)
             self.assertTrue(os.path.exists(cache_dir))
         finally:
             shutil.rmtree(cache_dir, ignore_errors=True)

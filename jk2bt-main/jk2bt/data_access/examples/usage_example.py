@@ -14,6 +14,7 @@ from datetime import date
 
 # === 示例 1: 获取数据源 ===
 
+
 def example_get_data_source():
     """
     示例: 获取默认数据源。
@@ -34,6 +35,7 @@ def example_get_data_source():
 
 # === 示例 2: 获取日线数据 ===
 
+
 def example_get_daily_data():
     """
     示例: 获取股票日线数据。
@@ -44,10 +46,10 @@ def example_get_daily_data():
 
     # 获取日线数据
     df = source.get_daily_data(
-        symbol="sh600000",       # 浦发银行
+        symbol="sh600000",  # 浦发银行
         start_date="2020-01-01",
         end_date="2020-12-31",
-        adjust="qfq",            # 前复权
+        adjust="qfq",  # 前复权
     )
 
     print(f"获取到 {len(df)} 条日线数据")
@@ -57,6 +59,7 @@ def example_get_daily_data():
 
 
 # === 示例 3: 获取指数成分股 ===
+
 
 def example_get_index_stocks():
     """
@@ -80,6 +83,7 @@ def example_get_index_stocks():
 
 
 # === 示例 4: 获取交易日 ===
+
 
 def example_get_trading_days():
     """
@@ -105,6 +109,7 @@ def example_get_trading_days():
 
 # === 示例 5: 获取资金流向 ===
 
+
 def example_get_money_flow():
     """
     示例: 获取资金流向数据。
@@ -125,6 +130,7 @@ def example_get_money_flow():
 
 
 # === 示例 6: 使用 Mock 数据源测试 ===
+
 
 def example_use_mock_data_source():
     """
@@ -163,12 +169,14 @@ def example_use_mock_data_source():
 
     # 恢复默认数据源
     from jk2bt.data_access import reset_data_source
+
     reset_data_source()
 
     print("已恢复默认数据源")
 
 
 # === 示例 7: 注入预设 Mock 数据 ===
+
 
 def example_inject_mock_data():
     """
@@ -178,14 +186,16 @@ def example_inject_mock_data():
     import pandas as pd
 
     # 创建预设数据
-    preset_daily = pd.DataFrame({
-        "datetime": pd.to_datetime(["2020-01-02", "2020-01-03", "2020-01-06"]),
-        "open": [10.0, 10.2, 10.5],
-        "high": [10.5, 10.5, 11.0],
-        "low": [9.8, 10.0, 10.2],
-        "close": [10.2, 10.3, 10.8],
-        "volume": [1000000, 1100000, 1200000],
-    })
+    preset_daily = pd.DataFrame(
+        {
+            "datetime": pd.to_datetime(["2020-01-02", "2020-01-03", "2020-01-06"]),
+            "open": [10.0, 10.2, 10.5],
+            "high": [10.5, 10.5, 11.0],
+            "low": [9.8, 10.0, 10.2],
+            "close": [10.2, 10.3, 10.8],
+            "volume": [1000000, 1100000, 1200000],
+        }
+    )
 
     preset_data = {
         "daily": {
@@ -199,14 +209,16 @@ def example_inject_mock_data():
     mock = MockDataSource(seed=42, preset_data=preset_data)
 
     # 注入额外的数据
-    another_df = pd.DataFrame({
-        "datetime": pd.to_datetime(["2020-02-01", "2020-02-02"]),
-        "open": [15.0, 15.5],
-        "high": [15.5, 16.0],
-        "low": [14.8, 15.2],
-        "close": [15.2, 15.8],
-        "volume": [800000, 900000],
-    })
+    another_df = pd.DataFrame(
+        {
+            "datetime": pd.to_datetime(["2020-02-01", "2020-02-02"]),
+            "open": [15.0, 15.5],
+            "high": [15.5, 16.0],
+            "low": [14.8, 15.2],
+            "close": [15.2, 15.8],
+            "volume": [800000, 900000],
+        }
+    )
     mock.set_mock_data("daily", "sz000001", another_df)
 
     # 注册使用
@@ -223,10 +235,12 @@ def example_inject_mock_data():
 
     # 恢复默认
     from jk2bt.data_access import reset_data_source
+
     reset_data_source()
 
 
 # === 示例 8: 缓存管理 ===
+
 
 def example_cache_management():
     """
@@ -235,6 +249,7 @@ def example_cache_management():
     from jk2bt.data_access import get_cache, clear_cache
 
     # 获取缓存管理器
+    # 注: 推荐使用 parquet_cache 中的 get_cache_manager() 获取新版缓存管理器
     cache = get_cache()
 
     # 查看缓存状态
@@ -251,6 +266,7 @@ def example_cache_management():
 
 
 # === 示例 9: 数据源健康检查 ===
+
 
 def example_health_check():
     """
@@ -269,6 +285,7 @@ def example_health_check():
 
 
 # === 示例 10: 完整工作流 ===
+
 
 def example_complete_workflow():
     """

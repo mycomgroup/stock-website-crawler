@@ -1068,9 +1068,7 @@ class TestCacheMechanism(unittest.TestCase):
 
         cache_dir = tempfile.mkdtemp()
         try:
-            result = get_option_list(
-                underlying="sse", cache_dir=cache_dir, use_cache=False
-            )
+            result = get_option_list(underlying="sse", use_cache=False)
             self.assertIsInstance(result.data, pd.DataFrame)
         finally:
             shutil.rmtree(cache_dir, ignore_errors=True)

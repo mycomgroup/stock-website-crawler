@@ -19,8 +19,6 @@ import numpy as np
 from .base import (
     global_factor_registry,
     safe_divide,
-    load_factor_cache,
-    save_factor_cache,
 )
 
 try:
@@ -36,8 +34,6 @@ except ImportError:
 
 def _get_income_statement(
     symbol: str,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
 ) -> pd.DataFrame:
     """
     获取利润表数据。
@@ -46,18 +42,12 @@ def _get_income_statement(
     ----------
     symbol : str
         证券代码
-    cache_dir : str
-        缓存目录
-    force_update : bool
-        强制更新
 
     Returns
     -------
     pd.DataFrame
         利润表数据
     """
-    import os
-
     from jk2bt.data_access import get_adapter
 
     # 标准化代码
@@ -68,50 +58,32 @@ def _get_income_statement(
         ak_sym = symbol[:6]
     ak_sym = ak_sym.zfill(6)
 
-    cache_file = os.path.join(cache_dir, f"{symbol}_income.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-
-    need_dl = force_update or not os.path.exists(cache_file)
-
-    if not need_dl:
+    try:
+        # 尝试使用同花顺接口
+        df = get_adapter().get_financial_benefit(symbol=ak_sym, indicator="按报告期")
+        if df is not None and not df.empty:
+            return df
+        else:
+            return pd.DataFrame()
+    except Exception:
         try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_dl = True
-
-    if need_dl:
-        try:
-            # 尝试使用同花顺接口
-            df = get_adapter().get_financial_benefit(symbol=ak_sym, indicator="按报告期")
+            # 回退到新浪接口
+            df = get_adapter().get_financial_report(symbol=ak_sym, report_type="利润表")
             if df is not None and not df.empty:
-                df.to_pickle(cache_file)
+                return df
             else:
                 return pd.DataFrame()
-        except Exception:
-            try:
-                # 回退到新浪接口
-                df = get_adapter().get_financial_report(symbol=ak_sym, report_type="利润表")
-                if df is not None and not df.empty:
-                    df.to_pickle(cache_file)
-                else:
-                    return pd.DataFrame()
-            except Exception as e:
-                warnings.warn(f"获取利润表失败 {symbol}: {e}")
-                return pd.DataFrame()
-
-    return df
+        except Exception as e:
+            warnings.warn(f"获取利润表失败 {symbol}: {e}")
+            return pd.DataFrame()
 
 
 def _get_balance_sheet(
     symbol: str,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
 ) -> pd.DataFrame:
     """
     获取资产负债表数据。
     """
-    import os
-
     from jk2bt.data_access import get_adapter
 
     ak_sym = symbol
@@ -121,29 +93,15 @@ def _get_balance_sheet(
         ak_sym = symbol[:6]
     ak_sym = ak_sym.zfill(6)
 
-    cache_file = os.path.join(cache_dir, f"{symbol}_balance.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-
-    need_dl = force_update or not os.path.exists(cache_file)
-
-    if not need_dl:
-        try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_dl = True
-
-    if need_dl:
-        try:
-            df = get_adapter().get_financial_report(symbol=ak_sym, report_type="资产负债表")
-            if df is not None and not df.empty:
-                df.to_pickle(cache_file)
-            else:
-                return pd.DataFrame()
-        except Exception as e:
-            warnings.warn(f"获取资产负债表失败 {symbol}: {e}")
+    try:
+        df = get_adapter().get_financial_report(symbol=ak_sym, report_type="资产负债表")
+        if df is not None and not df.empty:
+            return df
+        else:
             return pd.DataFrame()
-
-    return df
+    except Exception as e:
+        warnings.warn(f"获取资产负债表失败 {symbol}: {e}")
+        return pd.DataFrame()
 
 
 def _normalize_income(df: pd.DataFrame) -> pd.DataFrame:
@@ -246,8 +204,6 @@ def compute_gross_income_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -255,7 +211,7 @@ def compute_gross_income_ratio(
 
     公式：(营业收入 - 营业成本) / 营业收入
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -296,8 +252,6 @@ def compute_inventory_turnover(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -305,8 +259,8 @@ def compute_inventory_turnover(
 
     公式：营业成本 / 平均存货
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)
@@ -353,8 +307,6 @@ def compute_account_receivable_turnover(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -362,8 +314,8 @@ def compute_account_receivable_turnover(
 
     公式：营业收入 / 平均应收账款
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)
@@ -378,7 +330,11 @@ def compute_account_receivable_turnover(
         revenue = income["total_revenue"]
     else:
         revenue = None
-    ar = balance.get("accounts_receivable") if "accounts_receivable" in balance.columns else None
+    ar = (
+        balance.get("accounts_receivable")
+        if "accounts_receivable" in balance.columns
+        else None
+    )
 
     if revenue is None or ar is None:
         return np.nan
@@ -416,8 +372,6 @@ def compute_total_asset_turnover(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -425,8 +379,8 @@ def compute_total_asset_turnover(
 
     公式：营业收入 / 平均总资产
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)
@@ -479,8 +433,6 @@ def compute_net_profit_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -488,7 +440,7 @@ def compute_net_profit_ratio(
 
     公式：net_profit / operating_revenue
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -521,8 +473,6 @@ def compute_roe(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -531,8 +481,8 @@ def compute_roe(
     公式：net_profit / avg_equity
     其中 avg_equity = (本期末权益 + 上期末权益) / 2
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)
@@ -579,8 +529,6 @@ def compute_roa_ttm(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -589,8 +537,8 @@ def compute_roa_ttm(
     公式：TTM 净利润 / 平均总资产
     近似实现：使用最近 4 个季度净利润之和 / 平均总资产
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)
@@ -640,8 +588,6 @@ def compute_rnoa_ttm(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -654,8 +600,8 @@ def compute_rnoa_ttm(
       ≈ (总资产 - 金融资产) - (总负债 - 金融负债)
       简化为：(总资产 - 现金) - (总负债 - 有息负债)
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)

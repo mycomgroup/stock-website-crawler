@@ -141,6 +141,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_cache_dir_parameter(self):
         """cache_dir 参数。"""
+        import tempfile
         from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
@@ -148,7 +149,6 @@ class TestGetFactorValuesJqSignature:
             factors="PE_ratio",
             end_date="2024-01-01",
             count=1,
-            cache_dir="test_cache",
         )
 
         assert isinstance(result, dict)

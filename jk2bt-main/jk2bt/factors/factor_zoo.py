@@ -39,7 +39,6 @@ def get_factor_values_jq(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "factors_cache",
     force_update: bool = False,
     **kwargs,
 ) -> Dict[str, pd.DataFrame]:
@@ -58,8 +57,6 @@ def get_factor_values_jq(
         截止日期 'YYYY-MM-DD'，默认今日
     count : int, optional
         需要的历史交易日数量，与 start_date 二选一
-    cache_dir : str
-        因子缓存目录
     force_update : bool
         是否强制重新计算（忽略缓存）
     **kwargs
@@ -138,7 +135,6 @@ def get_factor_values_jq(
                     symbol,
                     end_date,
                     count=count,
-                    cache_dir=cache_dir,
                 )
 
             if cached is not None and not cached.empty:
@@ -203,7 +199,6 @@ def get_factor_values_jq(
                             symbol,
                             end_date,
                             count=count,
-                            cache_dir=cache_dir,
                         )
 
                 except Exception as e:

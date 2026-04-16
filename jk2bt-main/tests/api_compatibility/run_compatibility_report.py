@@ -10,7 +10,9 @@ import importlib
 import inspect
 from datetime import datetime
 
-_project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_project_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
@@ -21,61 +23,104 @@ class APICompatibilityReporter:
     # 定义需要检查的API列表
     API_CHECKLIST = {
         "Market API": {
-            "get_price": {"module": "src.api.market_api", "critical": True},
-            "history": {"module": "src.api.market_api", "critical": True},
-            "attribute_history": {"module": "src.api.market_api", "critical": True},
-            "get_bars": {"module": "src.api.market_api", "critical": True},
-            "get_price_jq": {"module": "src.api.market_api", "critical": False},
-            "get_bars_jq": {"module": "src.api.market_api", "critical": False},
+            "get_price": {"module": "jk2bt.api.market", "critical": True},
+            "history": {"module": "jk2bt.api.market", "critical": True},
+            "attribute_history": {"module": "jk2bt.api.market", "critical": True},
+            "get_bars": {"module": "jk2bt.api.market", "critical": True},
+            "get_price_jq": {"module": "jk2bt.api.market", "critical": False},
+            "get_bars_jq": {"module": "jk2bt.api.market", "critical": False},
         },
         "Enhancements API": {
-            "order_shares": {"module": "src.api.enhancements", "critical": True},
-            "order_target_percent": {"module": "src.api.enhancements", "critical": True},
-            "filter_st": {"module": "src.api.enhancements", "critical": True},
-            "filter_paused": {"module": "src.api.enhancements", "critical": True},
-            "filter_limit_up": {"module": "src.api.enhancements", "critical": False},
-            "filter_limit_down": {"module": "src.api.enhancements", "critical": False},
-            "filter_new_stocks": {"module": "src.api.enhancements", "critical": True},
-            "get_open_price": {"module": "src.api.enhancements", "critical": False},
-            "get_close_price": {"module": "src.api.enhancements", "critical": False},
-            "get_high_limit": {"module": "src.api.enhancements", "critical": False},
-            "get_low_limit": {"module": "src.api.enhancements", "critical": False},
-            "LimitOrderStyle": {"module": "src.api.enhancements", "critical": False},
-            "MarketOrderStyle": {"module": "src.api.enhancements", "critical": False},
+            "order_shares": {"module": "jk2bt.api.enhancements", "critical": True},
+            "order_target_percent": {
+                "module": "jk2bt.api.enhancements",
+                "critical": True,
+            },
+            "filter_st": {"module": "jk2bt.api.enhancements", "critical": True},
+            "filter_paused": {"module": "jk2bt.api.enhancements", "critical": True},
+            "filter_limit_up": {"module": "jk2bt.api.enhancements", "critical": False},
+            "filter_limit_down": {
+                "module": "jk2bt.api.enhancements",
+                "critical": False,
+            },
+            "filter_new_stocks": {"module": "jk2bt.api.enhancements", "critical": True},
+            "get_open_price": {"module": "jk2bt.api.enhancements", "critical": False},
+            "get_close_price": {"module": "jk2bt.api.enhancements", "critical": False},
+            "get_high_limit": {"module": "jk2bt.api.enhancements", "critical": False},
+            "get_low_limit": {"module": "jk2bt.api.enhancements", "critical": False},
+            "LimitOrderStyle": {"module": "jk2bt.api.enhancements", "critical": False},
+            "MarketOrderStyle": {"module": "jk2bt.api.enhancements", "critical": False},
         },
         "Technical Indicators": {
-            "MA": {"module": "src.api.indicators", "critical": True},
-            "EMA": {"module": "src.api.indicators", "critical": True},
-            "MACD": {"module": "src.api.indicators", "critical": True},
-            "KDJ": {"module": "src.api.indicators", "critical": True},
-            "RSI": {"module": "src.api.indicators", "critical": True},
-            "BOLL": {"module": "src.api.indicators", "critical": True},
-            "ATR": {"module": "src.api.indicators", "critical": False},
+            "MA": {"module": "jk2bt.api.indicators", "critical": True},
+            "EMA": {"module": "jk2bt.api.indicators", "critical": True},
+            "MACD": {"module": "jk2bt.api.indicators", "critical": True},
+            "KDJ": {"module": "jk2bt.api.indicators", "critical": True},
+            "RSI": {"module": "jk2bt.api.indicators", "critical": True},
+            "BOLL": {"module": "jk2bt.api.indicators", "critical": True},
+            "ATR": {"module": "jk2bt.api.indicators", "critical": False},
         },
         "Missing APIs": {
-            "get_locked_shares": {"module": "src.api.missing_apis", "critical": False},
-            "get_fund_info": {"module": "src.api.missing_apis", "critical": False},
-            "get_fundamentals_continuously": {"module": "src.api.missing_apis", "critical": False},
-            "get_beta": {"module": "src.api.missing_apis", "critical": False},
+            "get_locked_shares": {
+                "module": "jk2bt.api.missing_apis",
+                "critical": False,
+            },
+            "get_fund_info": {"module": "jk2bt.api.missing_apis", "critical": False},
+            "get_fundamentals_continuously": {
+                "module": "jk2bt.api.missing_apis",
+                "critical": False,
+            },
+            "get_beta": {"module": "jk2bt.api.missing_apis", "critical": False},
         },
         "Factor API": {
-            "get_north_factor": {"module": "src.api.factor_api", "critical": False},
-            "get_comb_factor": {"module": "src.api.factor_api", "critical": False},
-            "get_factor_momentum": {"module": "src.api.factor_api", "critical": False},
+            "get_north_factor": {"module": "jk2bt.api.factor_api", "critical": False},
+            "get_comb_factor": {"module": "jk2bt.api.factor_api", "critical": False},
+            "get_factor_momentum": {
+                "module": "jk2bt.api.factor_api",
+                "critical": False,
+            },
         },
         "Optimizations": {
-            "get_current_data_cached": {"module": "src.api.optimizations", "critical": False},
-            "cached_get_security_info": {"module": "src.api.optimizations", "critical": False},
-            "cached_get_index_stocks": {"module": "src.api.optimizations", "critical": False},
-            "batch_get_fundamentals": {"module": "src.api.optimizations", "critical": False},
+            "get_current_data_cached": {
+                "module": "jk2bt.api.optimizations",
+                "critical": False,
+            },
+            "cached_get_security_info": {
+                "module": "jk2bt.api.optimizations",
+                "critical": False,
+            },
+            "cached_get_index_stocks": {
+                "module": "jk2bt.api.optimizations",
+                "critical": False,
+            },
+            "batch_get_fundamentals": {
+                "module": "jk2bt.api.optimizations",
+                "critical": False,
+            },
         },
     }
 
     # 期望的参数签名
     EXPECTED_SIGNATURES = {
-        "get_price": ["security", "start_date", "end_date", "frequency", "fields", "fq", "count"],
+        "get_price": [
+            "security",
+            "start_date",
+            "end_date",
+            "frequency",
+            "fields",
+            "fq",
+            "count",
+        ],
         "history": ["count", "unit", "field", "security_list", "df", "fq", "end_date"],
-        "attribute_history": ["security", "count", "unit", "fields", "df", "fq", "end_date"],
+        "attribute_history": [
+            "security",
+            "count",
+            "unit",
+            "fields",
+            "df",
+            "fq",
+            "end_date",
+        ],
         "get_bars": ["security", "count", "unit", "fields", "fq", "skip_paused"],
         "filter_st": ["stock_list", "date"],
         "filter_paused": ["stock_list", "date"],
@@ -197,7 +242,9 @@ class APICompatibilityReporter:
         report_lines = []
         report_lines.append("=" * 60)
         report_lines.append("API Compatibility Report")
-        report_lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        report_lines.append(
+            f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
         report_lines.append("=" * 60)
         report_lines.append("")
 
@@ -205,14 +252,22 @@ class APICompatibilityReporter:
         report_lines.append("SUMMARY")
         report_lines.append("-" * 40)
         total = self.summary["total"]
-        implemented_pct = (self.summary["implemented"] / total * 100) if total > 0 else 0
+        implemented_pct = (
+            (self.summary["implemented"] / total * 100) if total > 0 else 0
+        )
         partial_pct = (self.summary["partial"] / total * 100) if total > 0 else 0
         missing_pct = (self.summary["missing"] / total * 100) if total > 0 else 0
 
         report_lines.append(f"  Total APIs: {total}")
-        report_lines.append(f"  Implemented: {self.summary['implemented']} ({implemented_pct:.1f}%)")
-        report_lines.append(f"  Partial: {self.summary['partial']} ({partial_pct:.1f}%)")
-        report_lines.append(f"  Missing: {self.summary['missing']} ({missing_pct:.1f}%)")
+        report_lines.append(
+            f"  Implemented: {self.summary['implemented']} ({implemented_pct:.1f}%)"
+        )
+        report_lines.append(
+            f"  Partial: {self.summary['partial']} ({partial_pct:.1f}%)"
+        )
+        report_lines.append(
+            f"  Missing: {self.summary['missing']} ({missing_pct:.1f}%)"
+        )
         report_lines.append("")
 
         # 详细报告
@@ -236,7 +291,9 @@ class APICompatibilityReporter:
                     "missing": "Missing",
                 }.get(status, status)
 
-                report_lines.append(f"  {icon} {critical_mark} {api_name}: {status_text}")
+                report_lines.append(
+                    f"  {icon} {critical_mark} {api_name}: {status_text}"
+                )
                 if details and status != "implemented":
                     report_lines.append(f"      -> {details}")
 
@@ -245,7 +302,9 @@ class APICompatibilityReporter:
         report_lines.append("LEGEND")
         report_lines.append("-" * 40)
         report_lines.append("  OK = Fully implemented")
-        report_lines.append("  !   = Partially implemented (missing params or not callable)")
+        report_lines.append(
+            "  !   = Partially implemented (missing params or not callable)"
+        )
         report_lines.append("  X   = Not implemented")
         report_lines.append("  *   = Critical API (essential for strategy execution)")
         report_lines.append("")
@@ -276,7 +335,9 @@ class APICompatibilityReporter:
     def save_report(self, filename="api_compatibility_report.txt"):
         """保存报告到文件"""
         report = self.generate_report()
-        output_path = os.path.join(_project_root, "tests", "api_compatibility", filename)
+        output_path = os.path.join(
+            _project_root, "tests", "api_compatibility", filename
+        )
 
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(report)
@@ -363,7 +424,9 @@ def main():
         print("\nAll APIs are fully implemented and compatible!")
         return 0
     else:
-        print(f"\nFound {critical_issues} APIs with issues. Check the report for details.")
+        print(
+            f"\nFound {critical_issues} APIs with issues. Check the report for details."
+        )
         return 1
 
 

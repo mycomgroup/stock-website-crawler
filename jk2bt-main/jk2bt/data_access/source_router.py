@@ -37,6 +37,16 @@ class ExecutionResult:
     sources_tried: List[Dict[str, Any]] = field(default_factory=list)
 
 
+def _try_import_stats_collector():
+    """Lazily import StatsCollector to avoid circular dependency."""
+    try:
+        from .stats_collector import get_stats_collector
+
+        return get_stats_collector()
+    except (ImportError, AttributeError):
+        return None
+
+
 class MultiSourceRouter:
     """Routes data requests across multiple sources with automatic failover.
 
@@ -109,7 +119,11 @@ class MultiSourceRouter:
                     continue
 
                 self._update_stats(
-                    name, success=True, empty=False, fallback=len(sources_tried) > 0
+                    name,
+                    success=True,
+                    empty=False,
+                    fallback=len(sources_tried) > 0,
+                    duration_ms=elapsed * 1000,
                 )
                 source_info["success"] = True
                 sources_tried.append(source_info)
@@ -132,6 +146,14 @@ class MultiSourceRouter:
                 sources_tried.append(source_info)
                 error_details.append((name, str(e)))
                 logger.warning("Provider %s failed: %s", name, e)
+                self._update_stats(
+                    name,
+                    success=False,
+                    empty=False,
+                    fallback=False,
+                    duration_ms=elapsed * 1000,
+                    error_type=type(e).__name__,
+                )
 
         # No provider returned valid data
         if last_empty and self.policy == EmptyDataPolicy.BEST_EFFORT:
@@ -191,9 +213,15 @@ class MultiSourceRouter:
         return True
 
     def _update_stats(
-        self, source: str, success: bool, empty: bool, fallback: bool
+        self,
+        source: str,
+        success: bool,
+        empty: bool,
+        fallback: bool,
+        duration_ms: float = 0.0,
+        error_type: str = None,
     ) -> None:
-        """Update internal statistics."""
+        """Update internal statistics and report to global StatsCollector."""
         if success:
             self._stats["successes"] += 1
         else:
@@ -216,6 +244,11 @@ class MultiSourceRouter:
                 self._stats["source_stats"][source]["failures"] += 1
             if empty:
                 self._stats["source_stats"][source]["empty"] += 1
+
+        # Report to global StatsCollector
+        stats = _try_import_stats_collector()
+        if stats is not None:
+            stats.record_request(source, duration_ms, success, error_type=error_type)
 
     def get_stats(self) -> Dict[str, Any]:
         """Return current statistics."""

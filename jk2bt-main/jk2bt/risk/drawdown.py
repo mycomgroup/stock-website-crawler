@@ -143,7 +143,6 @@ def monitor_stock_drawdown(
     warning_level: float = 0.10,
     critical_level: float = 0.20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> Dict:
     """
@@ -170,7 +169,6 @@ def monitor_stock_drawdown(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
         count=window + 10,
     )
@@ -268,7 +266,6 @@ def compute_drawdown_statistics(
     symbol: str,
     window: int = 252,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> Dict:
     """
@@ -291,7 +288,6 @@ def compute_drawdown_statistics(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
         count=window + 10,
     )

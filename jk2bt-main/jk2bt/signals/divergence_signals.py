@@ -21,12 +21,13 @@ import pandas as pd
 import numpy as np
 
 try:
-    from ..factors.technical import _get_daily_ohlcv, _compute_ema, _compute_ma, safe_divide
+    from ..factors.technical import _compute_ema, _compute_ma, safe_divide
 except ImportError:
-    from jk2bt.factors.technical import _get_daily_ohlcv, _compute_ema, _compute_ma
+    from jk2bt.factors.technical import _compute_ema, _compute_ma
+
     def safe_divide(a, b, fill_value=np.nan):
         """安全除法，避免除零错误"""
-        with np.errstate(divide='ignore', invalid='ignore'):
+        with np.errstate(divide="ignore", invalid="ignore"):
             result = np.divide(a, b)
             result = np.where(np.isfinite(result), result, fill_value)
         if isinstance(a, pd.Series):
@@ -34,12 +35,36 @@ except ImportError:
         return result
 
 
+def _fetch_ohlcv(symbol: str, end_date: Optional[str], count: int) -> pd.DataFrame:
+    """通过 adapter 获取日线数据，返回带 date 列的 DataFrame"""
+    from jk2bt.data_access import get_adapter
+
+    if end_date is None:
+        end_date = pd.Timestamp.now().strftime("%Y-%m-%d")
+    start_date = (
+        pd.Timestamp(end_date) - pd.Timedelta(days=int(count * 1.5))
+    ).strftime("%Y-%m-%d")
+
+    df = get_adapter().get_daily_data(symbol, start_date, end_date)
+    if df.empty:
+        return df
+
+    df = df.copy()
+    if "datetime" in df.columns:
+        df["date"] = pd.to_datetime(df["datetime"]).dt.strftime("%Y-%m-%d")
+    if "amount" in df.columns and "money" not in df.columns:
+        df["money"] = df["amount"]
+    return df
+
+
 # =====================================================================
 # 辅助函数：寻找局部极值
 # =====================================================================
 
 
-def _find_local_extrema(series: pd.Series, window: int = 5) -> Tuple[pd.Series, pd.Series]:
+def _find_local_extrema(
+    series: pd.Series, window: int = 5
+) -> Tuple[pd.Series, pd.Series]:
     """
     寻找局部极大值和极小值。
 
@@ -154,7 +179,6 @@ def detect_macd_divergence(
     signal_period: int = 9,
     lookback: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -185,13 +209,7 @@ def detect_macd_divergence(
         columns: date, signal, type, macd_value
     """
     need_count = slow + signal_period + lookback + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -215,12 +233,14 @@ def detect_macd_divergence(
     # 合并信号
     signal = bottom_div + top_div
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "macd_value": macd.values,
-        "close": close.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "macd_value": macd.values,
+            "close": close.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "macd_bottom_divergence"
     result.loc[result["signal"] == -1, "type"] = "macd_top_divergence"
@@ -240,7 +260,6 @@ def detect_rsi_divergence(
     window: int = 14,
     lookback: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -267,13 +286,7 @@ def detect_rsi_divergence(
         columns: date, signal, type, rsi_value
     """
     need_count = window + lookback + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -298,12 +311,14 @@ def detect_rsi_divergence(
 
     signal = bottom_div + top_div
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "rsi_value": rsi.values,
-        "close": close.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "rsi_value": rsi.values,
+            "close": close.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "rsi_bottom_divergence"
     result.loc[result["signal"] == -1, "type"] = "rsi_top_divergence"
@@ -323,7 +338,6 @@ def detect_bear_power_divergence(
     window: int = 13,
     lookback: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -350,13 +364,7 @@ def detect_bear_power_divergence(
         columns: date, signal, type, bear_power
     """
     need_count = window + lookback + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -379,13 +387,15 @@ def detect_bear_power_divergence(
 
     signal = bottom_div + top_div
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "bear_power": bear_power.values,
-        "bull_power": bull_power.values,
-        "close": close.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "bear_power": bear_power.values,
+            "bull_power": bull_power.values,
+            "close": close.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "bear_power_bottom_divergence"
     result.loc[result["signal"] == -1, "type"] = "bull_power_top_divergence"
@@ -407,7 +417,6 @@ def detect_kdj_divergence(
     m2: int = 3,
     lookback: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -438,13 +447,7 @@ def detect_kdj_divergence(
         columns: date, signal, type, k_value, d_value
     """
     need_count = n + m1 + m2 + lookback + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -470,14 +473,16 @@ def detect_kdj_divergence(
 
     signal = bottom_div + top_div
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "k_value": k.values,
-        "d_value": d.values,
-        "j_value": j.values,
-        "close": close.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "k_value": k.values,
+            "d_value": d.values,
+            "j_value": j.values,
+            "close": close.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "kdj_bottom_divergence"
     result.loc[result["signal"] == -1, "type"] = "kdj_top_divergence"
@@ -495,7 +500,6 @@ def detect_kdj_divergence(
 def detect_all_divergence_signals(
     symbol: str,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -518,7 +522,7 @@ def detect_all_divergence_signals(
     # MACD背离
     try:
         macd_signals = detect_macd_divergence(
-            symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update
+            symbol, end_date=end_date, force_update=force_update
         )
         if not macd_signals.empty:
             signals.append(macd_signals)
@@ -528,7 +532,7 @@ def detect_all_divergence_signals(
     # RSI背离
     try:
         rsi_signals = detect_rsi_divergence(
-            symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update
+            symbol, end_date=end_date, force_update=force_update
         )
         if not rsi_signals.empty:
             signals.append(rsi_signals)
@@ -538,7 +542,7 @@ def detect_all_divergence_signals(
     # KDJ背离
     try:
         kdj_signals = detect_kdj_divergence(
-            symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update
+            symbol, end_date=end_date, force_update=force_update
         )
         if not kdj_signals.empty:
             signals.append(kdj_signals)

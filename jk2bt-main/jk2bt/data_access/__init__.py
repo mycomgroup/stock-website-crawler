@@ -45,6 +45,31 @@ from .data_registry import (
     get_source_health,
 )
 from .cache_manager import DataAccessCacheManager, get_cache, clear_cache, reset_cache
+from parquet_cache import get_cache_manager, CacheManager as ParquetCacheManager
+from .source_router import (
+    MultiSourceRouter,
+    EmptyDataPolicy,
+    ExecutionResult,
+    create_simple_router,
+)
+from .error_codes import (
+    ErrorCode,
+    DataAccessException,
+    DataSourceError as DataAccessExceptionCode,
+    SourceUnavailableError,
+    NoDataError,
+    TimeoutError,
+    RateLimitError,
+)
+from .akshare_compat import AkShareCompatAdapter, get_compat_adapter, FUNCTION_ALIASES
+from .stats_collector import (
+    StatsCollector,
+    RequestStats,
+    CacheStats,
+    get_stats_collector,
+    reset_stats_collector,
+)
+from .cache_manager import DataAccessCacheManager, get_cache, clear_cache, reset_cache
 from .source_router import (
     MultiSourceRouter,
     EmptyDataPolicy,
@@ -99,6 +124,8 @@ __all__ = [
     "get_cache",
     "clear_cache",
     "reset_cache",
+    "get_cache_manager",
+    "ParquetCacheManager",
     # 多源路由
     "MultiSourceRouter",
     "EmptyDataPolicy",
@@ -111,6 +138,16 @@ __all__ = [
     "NoDataError",
     "TimeoutError",
     "RateLimitError",
+    # AkShare 版本适配
+    "AkShareCompatAdapter",
+    "get_compat_adapter",
+    "FUNCTION_ALIASES",
+    # 统计收集
+    "StatsCollector",
+    "RequestStats",
+    "CacheStats",
+    "get_stats_collector",
+    "reset_stats_collector",
     # 单例工厂
     "get_adapter",
     "set_adapter",

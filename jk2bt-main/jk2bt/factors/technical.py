@@ -57,8 +57,6 @@ def _get_daily_ohlcv(
     symbol: str,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     count: Optional[int] = None,
 ) -> pd.DataFrame:
     """
@@ -66,7 +64,7 @@ def _get_daily_ohlcv(
 
     数据源优先级：
     1. market_data.stock.get_stock_daily（DuckDB 缓存 + 多数据源备份）
-    2. akshare.stock_zh_a_hist（直接获取）
+    2. adapter.get_stock_hist（直接获取）
 
     Parameters
     ----------
@@ -76,10 +74,6 @@ def _get_daily_ohlcv(
         起始日期
     end_date : str, optional
         截止日期
-    cache_dir : str
-        缓存目录（仅用于 akshare fallback）
-    force_update : bool
-        强制更新
     count : int, optional
         需要的交易日数量（用于估算起始日期）
 
@@ -88,8 +82,6 @@ def _get_daily_ohlcv(
     pd.DataFrame
         包含 date, open, high, low, close, volume, money 列
     """
-    import os
-
     # 标准化代码格式
     ak_sym = symbol
     if symbol.startswith("sh") or symbol.startswith("sz"):
@@ -113,7 +105,6 @@ def _get_daily_ohlcv(
                 symbol=symbol,
                 start=start_date,
                 end=end_date,
-                force_update=force_update,
                 adjust="qfq",
                 offline_mode=False,
             )
@@ -159,34 +150,20 @@ def _get_daily_ohlcv(
 
                 return df
     except ImportError:
-        pass  # market_data 模块不可用，fallback 到 akshare
+        pass  # market_data 模块不可用，fallback 到 adapter
     except Exception as e:
-        warnings.warn(f"market_data 模块获取数据失败 {symbol}: {e}，fallback 到 akshare")
+        warnings.warn(
+            f"market_data 模块获取数据失败 {symbol}: {e}，fallback 到 adapter"
+        )
 
     # Fallback: 使用 adapter 直接获取
     from jk2bt.data_access import get_adapter
 
-    cache_file = os.path.join(cache_dir, f"{symbol}_daily.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-
-    need_dl = force_update or not os.path.exists(cache_file)
-
-    if not need_dl:
-        try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_dl = True
-
-    if need_dl:
-        try:
-            df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
-            if df is not None and not df.empty:
-                df.to_pickle(cache_file)
-            else:
-                return pd.DataFrame()
-        except Exception as e:
-            warnings.warn(f"获取日线数据失败 {symbol}: {e}")
-            return pd.DataFrame()
+    try:
+        df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+    except Exception as e:
+        warnings.warn(f"获取日线数据失败 {symbol}: {e}")
+        return pd.DataFrame()
 
     if df is None or df.empty:
         return pd.DataFrame()
@@ -271,8 +248,6 @@ def compute_bias(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -284,8 +259,6 @@ def compute_bias(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -310,8 +283,6 @@ def compute_bias_5(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_bias(
@@ -319,8 +290,6 @@ def compute_bias_5(
         window=5,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -328,8 +297,6 @@ def compute_bias_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_bias(
@@ -337,8 +304,6 @@ def compute_bias_10(
         window=10,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -346,8 +311,6 @@ def compute_bias_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_bias(
@@ -355,8 +318,6 @@ def compute_bias_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -364,8 +325,6 @@ def compute_bias_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_bias(
@@ -373,8 +332,6 @@ def compute_bias_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -388,8 +345,6 @@ def compute_emac(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -401,8 +356,6 @@ def compute_emac(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -426,8 +379,6 @@ def compute_emac_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_emac(
@@ -435,8 +386,6 @@ def compute_emac_10(
         window=10,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -444,8 +393,6 @@ def compute_emac_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_emac(
@@ -453,8 +400,6 @@ def compute_emac_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -462,8 +407,6 @@ def compute_emac_26(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_emac(
@@ -471,8 +414,6 @@ def compute_emac_26(
         window=26,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -480,8 +421,6 @@ def compute_emac_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_emac(
@@ -489,8 +428,6 @@ def compute_emac_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -504,8 +441,6 @@ def compute_roc(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -517,8 +452,6 @@ def compute_roc(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -542,8 +475,6 @@ def compute_roc_6(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_roc(
@@ -551,8 +482,6 @@ def compute_roc_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -560,8 +489,6 @@ def compute_roc_12(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_roc(
@@ -569,8 +496,6 @@ def compute_roc_12(
         window=12,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -578,8 +503,6 @@ def compute_roc_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_roc(
@@ -587,8 +510,6 @@ def compute_roc_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -596,8 +517,6 @@ def compute_roc_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_roc(
@@ -605,8 +524,6 @@ def compute_roc_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -614,8 +531,6 @@ def compute_roc_120(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_roc(
@@ -623,8 +538,6 @@ def compute_roc_120(
         window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -638,8 +551,6 @@ def compute_price_nm(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -651,8 +562,6 @@ def compute_price_nm(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -677,8 +586,6 @@ def compute_price_1m(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_price_nm(
@@ -686,8 +593,6 @@ def compute_price_1m(
         window=21,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -695,8 +600,6 @@ def compute_price_3m(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_price_nm(
@@ -704,8 +607,6 @@ def compute_price_3m(
         window=61,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -713,8 +614,6 @@ def compute_price_1y(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_price_nm(
@@ -722,8 +621,6 @@ def compute_price_1y(
         window=250,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -737,8 +634,6 @@ def compute_plrc(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -750,8 +645,6 @@ def compute_plrc(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -785,8 +678,6 @@ def compute_plrc_6(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_plrc(
@@ -794,8 +685,6 @@ def compute_plrc_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -803,8 +692,6 @@ def compute_plrc_12(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_plrc(
@@ -812,8 +699,6 @@ def compute_plrc_12(
         window=12,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -821,8 +706,6 @@ def compute_plrc_24(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_plrc(
@@ -830,8 +713,6 @@ def compute_plrc_24(
         window=24,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -845,8 +726,6 @@ def compute_aroon(
     window: int = 25,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Dict[str, Union[float, pd.Series]]:
     """
@@ -858,8 +737,6 @@ def compute_aroon(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -901,8 +778,6 @@ def compute_aroon_up(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     result = compute_aroon(
@@ -910,8 +785,6 @@ def compute_aroon_up(
         window=25,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
     return result["aroon_up"]
 
@@ -920,8 +793,6 @@ def compute_aroon_down(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     result = compute_aroon(
@@ -929,8 +800,6 @@ def compute_aroon_down(
         window=25,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
     return result["aroon_down"]
 
@@ -944,8 +813,6 @@ def compute_fifty_two_week_close_rank(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -957,8 +824,6 @@ def compute_fifty_two_week_close_rank(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -990,8 +855,6 @@ def compute_bull_power(
     window: int = 13,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1003,8 +866,6 @@ def compute_bull_power(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1031,8 +892,6 @@ def compute_bear_power(
     window: int = 13,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1044,8 +903,6 @@ def compute_bear_power(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1076,8 +933,6 @@ def compute_bbic(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1089,8 +944,6 @@ def compute_bbic(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1125,8 +978,6 @@ def compute_volume_1m(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1138,8 +989,6 @@ def compute_volume_1m(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1173,8 +1022,6 @@ def compute_vpt(
     window: int = 6,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1186,8 +1033,6 @@ def compute_vpt(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1213,8 +1058,6 @@ def compute_single_day_vpt(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vpt(
@@ -1222,8 +1065,6 @@ def compute_single_day_vpt(
         window=1,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1231,8 +1072,6 @@ def compute_single_day_vpt_6(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vpt(
@@ -1240,8 +1079,6 @@ def compute_single_day_vpt_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1249,8 +1086,6 @@ def compute_single_day_vpt_12(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vpt(
@@ -1258,8 +1093,6 @@ def compute_single_day_vpt_12(
         window=12,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1273,8 +1106,6 @@ def compute_trix(
     window: int = 5,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1287,8 +1118,6 @@ def compute_trix(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1316,8 +1145,6 @@ def compute_trix_5(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_trix(
@@ -1325,8 +1152,6 @@ def compute_trix_5(
         window=5,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1334,8 +1159,6 @@ def compute_trix_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_trix(
@@ -1343,8 +1166,6 @@ def compute_trix_10(
         window=10,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1358,8 +1179,6 @@ def compute_mac(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1371,8 +1190,6 @@ def compute_mac(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1396,8 +1213,6 @@ def compute_mac_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_mac(
@@ -1405,8 +1220,6 @@ def compute_mac_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1414,8 +1227,6 @@ def compute_mac_120(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_mac(
@@ -1423,8 +1234,6 @@ def compute_mac_120(
         window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1438,8 +1247,6 @@ def compute_vol(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1451,8 +1258,6 @@ def compute_vol(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1476,8 +1281,6 @@ def compute_vol_5(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vol(
@@ -1485,8 +1288,6 @@ def compute_vol_5(
         window=5,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1494,8 +1295,6 @@ def compute_vol_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vol(
@@ -1503,8 +1302,6 @@ def compute_vol_10(
         window=10,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1512,8 +1309,6 @@ def compute_vol_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vol(
@@ -1521,8 +1316,6 @@ def compute_vol_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1530,8 +1323,6 @@ def compute_vol_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vol(
@@ -1539,8 +1330,6 @@ def compute_vol_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1548,8 +1337,6 @@ def compute_vol_120(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vol(
@@ -1557,8 +1344,6 @@ def compute_vol_120(
         window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1566,8 +1351,6 @@ def compute_vol_240(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vol(
@@ -1575,8 +1358,6 @@ def compute_vol_240(
         window=240,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1591,8 +1372,6 @@ def compute_davol(
     ref_window: int = 120,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1606,8 +1385,6 @@ def compute_davol(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1634,8 +1411,6 @@ def compute_davol_5(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_davol(
@@ -1644,8 +1419,6 @@ def compute_davol_5(
         ref_window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1653,8 +1426,6 @@ def compute_davol_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_davol(
@@ -1663,8 +1434,6 @@ def compute_davol_10(
         ref_window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1672,8 +1441,6 @@ def compute_davol_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_davol(
@@ -1682,8 +1449,6 @@ def compute_davol_20(
         ref_window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1697,8 +1462,6 @@ def compute_vstd(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 VSTD（成交量标准差）因子。"""
@@ -1706,8 +1469,6 @@ def compute_vstd(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1731,8 +1492,6 @@ def compute_vstd_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vstd(
@@ -1740,8 +1499,6 @@ def compute_vstd_10(
         window=10,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1749,8 +1506,6 @@ def compute_vstd_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vstd(
@@ -1758,8 +1513,6 @@ def compute_vstd_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1773,8 +1526,6 @@ def compute_vroc(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 VROC（成交量动量）因子。公式：(volume - volume.shift(window)) / volume.shift(window) * 100"""
@@ -1782,8 +1533,6 @@ def compute_vroc(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1807,8 +1556,6 @@ def compute_vroc_6(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vroc(
@@ -1816,8 +1563,6 @@ def compute_vroc_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1825,8 +1570,6 @@ def compute_vroc_12(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vroc(
@@ -1834,8 +1577,6 @@ def compute_vroc_12(
         window=12,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1849,8 +1590,6 @@ def compute_vema(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 VEMA（成交量EMA）因子。"""
@@ -1858,8 +1597,6 @@ def compute_vema(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -1883,8 +1620,6 @@ def compute_vema_5(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vema(
@@ -1892,8 +1627,6 @@ def compute_vema_5(
         window=5,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1901,8 +1634,6 @@ def compute_vema_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vema(
@@ -1910,8 +1641,6 @@ def compute_vema_10(
         window=10,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1919,8 +1648,6 @@ def compute_vema_12(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vema(
@@ -1928,8 +1655,6 @@ def compute_vema_12(
         window=12,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1937,8 +1662,6 @@ def compute_vema_26(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_vema(
@@ -1946,8 +1669,6 @@ def compute_vema_26(
         window=26,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -1960,8 +1681,6 @@ def compute_vosc(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -1973,8 +1692,6 @@ def compute_vosc(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2007,8 +1724,6 @@ def compute_tvma(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 TVMA（成交额均值）因子。"""
@@ -2016,8 +1731,6 @@ def compute_tvma(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2041,8 +1754,6 @@ def compute_tvma_6(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_tvma(
@@ -2050,8 +1761,6 @@ def compute_tvma_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2059,8 +1768,6 @@ def compute_tvma_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_tvma(
@@ -2068,8 +1775,6 @@ def compute_tvma_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2078,8 +1783,6 @@ def compute_tvstd(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 TVSTD（成交额标准差）因子。"""
@@ -2087,8 +1790,6 @@ def compute_tvstd(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2112,8 +1813,6 @@ def compute_tvstd_6(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_tvstd(
@@ -2121,8 +1820,6 @@ def compute_tvstd_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2130,8 +1827,6 @@ def compute_tvstd_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_tvstd(
@@ -2139,8 +1834,6 @@ def compute_tvstd_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2154,8 +1847,6 @@ def compute_cci(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2168,8 +1859,6 @@ def compute_cci(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2200,8 +1889,6 @@ def compute_cci_10(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_cci(
@@ -2209,8 +1896,6 @@ def compute_cci_10(
         window=10,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2218,8 +1903,6 @@ def compute_cci_15(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_cci(
@@ -2227,8 +1910,6 @@ def compute_cci_15(
         window=15,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2236,8 +1917,6 @@ def compute_cci_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_cci(
@@ -2245,8 +1924,6 @@ def compute_cci_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2254,8 +1931,6 @@ def compute_cci_88(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_cci(
@@ -2263,8 +1938,6 @@ def compute_cci_88(
         window=88,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2278,8 +1951,6 @@ def compute_ar(
     window: int = 26,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2291,8 +1962,6 @@ def compute_ar(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2325,8 +1994,6 @@ def compute_br(
     window: int = 26,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2338,8 +2005,6 @@ def compute_br(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2370,13 +2035,11 @@ def compute_arbr(
     window: int = 26,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 ARBR（AR-BR差值）因子。"""
-    ar = compute_ar(symbol, window, end_date, count, cache_dir, force_update)
-    br = compute_br(symbol, window, end_date, count, cache_dir, force_update)
+    ar = compute_ar(symbol, window, end_date=end_date, count=count)
+    br = compute_br(symbol, window, end_date=end_date, count=count)
 
     if isinstance(ar, pd.Series) and isinstance(br, pd.Series):
         return ar - br
@@ -2395,8 +2058,6 @@ def compute_wvad(
     window: int = 6,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2408,8 +2069,6 @@ def compute_wvad(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2441,8 +2100,6 @@ def compute_mawvad(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_wvad(
@@ -2450,8 +2107,6 @@ def compute_mawvad(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2465,8 +2120,6 @@ def compute_psy(
     window: int = 12,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2478,8 +2131,6 @@ def compute_psy(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2510,8 +2161,6 @@ def compute_vr(
     window: int = 26,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2523,8 +2172,6 @@ def compute_vr(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2559,8 +2206,6 @@ def compute_macd(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2573,8 +2218,6 @@ def compute_macd(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2610,8 +2253,6 @@ def compute_mfi(
     window: int = 14,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2624,8 +2265,6 @@ def compute_mfi(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2659,8 +2298,6 @@ def compute_mfi_14(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_mfi(
@@ -2668,8 +2305,6 @@ def compute_mfi_14(
         window=14,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2682,8 +2317,6 @@ def compute_money_flow_20(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2695,8 +2328,6 @@ def compute_money_flow_20(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2725,8 +2356,6 @@ def compute_average_share_turnover_annual(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2739,8 +2368,6 @@ def compute_average_share_turnover_annual(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2765,8 +2392,6 @@ def compute_share_turnover_monthly(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2778,8 +2403,6 @@ def compute_share_turnover_monthly(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2811,8 +2434,6 @@ def compute_boll(
     num_std: float = 2.0,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series, tuple]:
     """
@@ -2828,8 +2449,6 @@ def compute_boll(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2858,8 +2477,6 @@ def compute_boll_up(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 boll_up（布林带上轨）因子。"""
@@ -2869,8 +2486,6 @@ def compute_boll_up(
         num_std=2.0,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
     if isinstance(result, tuple):
         return result[0]
@@ -2881,8 +2496,6 @@ def compute_boll_down(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 boll_down（布林带下轨）因子。"""
@@ -2892,8 +2505,6 @@ def compute_boll_down(
         num_std=2.0,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
     if isinstance(result, tuple):
         return result[1]
@@ -2910,8 +2521,6 @@ def compute_atr(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -2924,8 +2533,6 @@ def compute_atr(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -2958,8 +2565,6 @@ def compute_atr_6(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 ATR6（6日平均真实波动幅度）因子。"""
@@ -2968,8 +2573,6 @@ def compute_atr_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -2977,8 +2580,6 @@ def compute_atr_14(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 ATR14（14日平均真实波动幅度）因子。"""
@@ -2987,8 +2588,6 @@ def compute_atr_14(
         window=14,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3002,8 +2601,6 @@ def compute_variance(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3015,8 +2612,6 @@ def compute_variance(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3041,8 +2636,6 @@ def compute_variance_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_variance(
@@ -3050,8 +2643,6 @@ def compute_variance_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3059,8 +2650,6 @@ def compute_variance_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_variance(
@@ -3068,8 +2657,6 @@ def compute_variance_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3077,8 +2664,6 @@ def compute_variance_120(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_variance(
@@ -3086,8 +2671,6 @@ def compute_variance_120(
         window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3101,8 +2684,6 @@ def compute_skewness(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3114,8 +2695,6 @@ def compute_skewness(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3140,8 +2719,6 @@ def compute_skewness_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_skewness(
@@ -3149,8 +2726,6 @@ def compute_skewness_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3158,8 +2733,6 @@ def compute_skewness_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_skewness(
@@ -3167,8 +2740,6 @@ def compute_skewness_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3176,8 +2747,6 @@ def compute_skewness_120(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_skewness(
@@ -3185,8 +2754,6 @@ def compute_skewness_120(
         window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3200,8 +2767,6 @@ def compute_kurtosis(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3213,8 +2778,6 @@ def compute_kurtosis(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3239,8 +2802,6 @@ def compute_kurtosis_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_kurtosis(
@@ -3248,8 +2809,6 @@ def compute_kurtosis_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3257,8 +2816,6 @@ def compute_kurtosis_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_kurtosis(
@@ -3266,8 +2823,6 @@ def compute_kurtosis_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3275,8 +2830,6 @@ def compute_kurtosis_120(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_kurtosis(
@@ -3284,8 +2837,6 @@ def compute_kurtosis_120(
         window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3300,8 +2851,6 @@ def compute_sharpe_ratio(
     rf: float = 0.04,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3313,8 +2862,6 @@ def compute_sharpe_ratio(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3342,8 +2889,6 @@ def compute_sharpe_ratio_20(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_sharpe_ratio(
@@ -3351,8 +2896,6 @@ def compute_sharpe_ratio_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3360,8 +2903,6 @@ def compute_sharpe_ratio_60(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_sharpe_ratio(
@@ -3369,8 +2910,6 @@ def compute_sharpe_ratio_60(
         window=60,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3378,8 +2917,6 @@ def compute_sharpe_ratio_120(
     symbol,
     end_date=None,
     count=None,
-    cache_dir="stock_cache",
-    force_update=False,
     **kwargs,
 ):
     return compute_sharpe_ratio(
@@ -3387,8 +2924,6 @@ def compute_sharpe_ratio_120(
         window=120,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3402,8 +2937,6 @@ def compute_plrc(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3415,8 +2948,6 @@ def compute_plrc(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3452,8 +2983,6 @@ def compute_plrc_6(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 PLRC6（6日价格线性回归系数）因子。"""
@@ -3462,8 +2991,6 @@ def compute_plrc_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3477,8 +3004,6 @@ def compute_cr(
     window: int,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3494,8 +3019,6 @@ def compute_cr(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3529,8 +3052,6 @@ def compute_cr_20(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 CR20（20日能量指标）因子。"""
@@ -3539,8 +3060,6 @@ def compute_cr_20(
         window=20,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3554,8 +3073,6 @@ def compute_rsi(
     window: int = 14,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3568,8 +3085,6 @@ def compute_rsi(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3606,8 +3121,6 @@ def compute_rsi_6(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 RSI6（6日相对强弱指标）因子。"""
@@ -3616,8 +3129,6 @@ def compute_rsi_6(
         window=6,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3625,8 +3136,6 @@ def compute_rsi_12(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 RSI12（12日相对强弱指标）因子。"""
@@ -3635,8 +3144,6 @@ def compute_rsi_12(
         window=12,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3644,8 +3151,6 @@ def compute_rsi_14(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 RSI14（14日相对强弱指标）因子。"""
@@ -3654,8 +3159,6 @@ def compute_rsi_14(
         window=14,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3663,8 +3166,6 @@ def compute_rsi_24(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 RSI24（24日相对强弱指标）因子。"""
@@ -3673,8 +3174,6 @@ def compute_rsi_24(
         window=24,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
 
@@ -3690,8 +3189,6 @@ def compute_kdj(
     m2: int = 3,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Dict[str, Union[float, pd.Series]]:
     """
@@ -3709,8 +3206,6 @@ def compute_kdj(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3756,8 +3251,6 @@ def compute_kdj_k(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 KDJ_K（KDJ指标中的K值）因子。"""
@@ -3768,8 +3261,6 @@ def compute_kdj_k(
         m2=3,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
     return result["K"]
 
@@ -3778,8 +3269,6 @@ def compute_kdj_d(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 KDJ_D（KDJ指标中的D值）因子。"""
@@ -3790,8 +3279,6 @@ def compute_kdj_d(
         m2=3,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
     return result["D"]
 
@@ -3800,8 +3287,6 @@ def compute_kdj_j(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 KDJ_J（KDJ指标中的J值）因子。"""
@@ -3812,8 +3297,6 @@ def compute_kdj_j(
         m2=3,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
     return result["J"]
 
@@ -3829,8 +3312,6 @@ def compute_boll_width(
     num_std: float = 2.0,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3857,8 +3338,6 @@ def compute_boll_width(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3894,8 +3373,6 @@ def compute_vol_ratio(
     window: int = 5,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3920,8 +3397,6 @@ def compute_vol_ratio(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3954,8 +3429,6 @@ def compute_vwap(
     window: int = 20,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -3980,8 +3453,6 @@ def compute_vwap(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -3996,7 +3467,7 @@ def compute_vwap(
     tp_volume = close * volume
     vwap = safe_divide(
         tp_volume.rolling(window=window, min_periods=window).sum(),
-        volume.rolling(window=window, min_periods=window).sum()
+        volume.rolling(window=window, min_periods=window).sum(),
     )
 
     if count is not None and count > 0:
@@ -4016,8 +3487,6 @@ def compute_obv(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -4040,8 +3509,6 @@ def compute_obv(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -4082,8 +3549,6 @@ def compute_amount_ratio(
     window: int = 5,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -4108,8 +3573,6 @@ def compute_amount_ratio(
     df = _get_daily_ohlcv(
         symbol,
         end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
         count=need_count,
     )
 
@@ -4447,10 +3910,14 @@ def _register_factors():
     registry.register("kdj_j", compute_kdj_j, window=9, dependencies=["daily_ohlcv"])
 
     # BOLL_WIDTH
-    registry.register("boll_width", compute_boll_width, window=20, dependencies=["daily_ohlcv"])
+    registry.register(
+        "boll_width", compute_boll_width, window=20, dependencies=["daily_ohlcv"]
+    )
 
     # VOL_RATIO
-    registry.register("vol_ratio", compute_vol_ratio, window=5, dependencies=["daily_ohlcv"])
+    registry.register(
+        "vol_ratio", compute_vol_ratio, window=5, dependencies=["daily_ohlcv"]
+    )
 
     # VWAP
     registry.register("vwap", compute_vwap, window=20, dependencies=["daily_ohlcv"])
@@ -4459,7 +3926,9 @@ def _register_factors():
     registry.register("obv", compute_obv, window=20, dependencies=["daily_ohlcv"])
 
     # AMOUNT_RATIO
-    registry.register("amount_ratio", compute_amount_ratio, window=5, dependencies=["daily_ohlcv"])
+    registry.register(
+        "amount_ratio", compute_amount_ratio, window=5, dependencies=["daily_ohlcv"]
+    )
 
 
 # 模块加载时自动注册

@@ -142,12 +142,14 @@ class STK_ML_QUOTA(FinanceTable):
                 return pd.DataFrame()
 
             # 标准化字段
-            df = df.rename(columns={
-                "日期": "date",
-                "当日成交净买额": "net_buy",
-                "当日资金流入": "inflow",
-                "当日资金流出": "outflow",
-            })
+            df = df.rename(
+                columns={
+                    "日期": "date",
+                    "当日成交净买额": "net_buy",
+                    "当日资金流入": "inflow",
+                    "当日资金流出": "outflow",
+                }
+            )
 
             if "date" in df.columns:
                 df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
@@ -237,25 +239,35 @@ class STK_AUDIT_OPINION(FinanceTable):
             ak_code = ak_code.zfill(6)
 
             # 尝试获取审计意见（通过 financial_benefit 接口）
-            df = get_adapter().get_financial_benefit(symbol=ak_code, indicator="审计意见")
+            df = get_adapter().get_financial_benefit(
+                symbol=ak_code, indicator="审计意见"
+            )
 
             if df is None or df.empty:
                 # 返回默认审计意见（标准无保留意见）
-                return pd.DataFrame({
-                    "code": [code],
-                    "audit_opinion": ["标准无保留意见"],
-                    "report_date": [end_date or pd.Timestamp.today().strftime("%Y-%m-%d")],
-                })
+                return pd.DataFrame(
+                    {
+                        "code": [code],
+                        "audit_opinion": ["标准无保留意见"],
+                        "report_date": [
+                            end_date or pd.Timestamp.today().strftime("%Y-%m-%d")
+                        ],
+                    }
+                )
 
             return df
         except Exception as e:
             warnings.warn(f"查询 STK_AUDIT_OPINION 失败: {e}")
             # 返回默认审计意见
-            return pd.DataFrame({
-                "code": [code],
-                "audit_opinion": ["标准无保留意见"],
-                "report_date": [end_date or pd.Timestamp.today().strftime("%Y-%m-%d")],
-            })
+            return pd.DataFrame(
+                {
+                    "code": [code],
+                    "audit_opinion": ["标准无保留意见"],
+                    "report_date": [
+                        end_date or pd.Timestamp.today().strftime("%Y-%m-%d")
+                    ],
+                }
+            )
 
 
 class BALANCE(FinanceTable):
@@ -290,7 +302,7 @@ class BALANCE(FinanceTable):
             return pd.DataFrame()
 
         try:
-            df_raw = _get_balance_sheet(code, force_update=False)
+            df_raw = _get_balance_sheet(code)
             df = _normalize_balance(df_raw)
 
             if df.empty:
@@ -398,7 +410,7 @@ class INCOME(FinanceTable):
             return pd.DataFrame()
 
         try:
-            df_raw = _get_income_statement(code, force_update=False)
+            df_raw = _get_income_statement(code)
             df = _normalize_income(df_raw)
 
             if df.empty:
@@ -493,33 +505,43 @@ class STK_AH_PRICE_COMP(FinanceTable):
             if not adapter._akshare_available:
                 return pd.DataFrame()
 
-            df = adapter._akshare.stock_hk_ah_name_em()
+            df = adapter.get_ah_stock_list()
 
             if df is None or df.empty:
                 return pd.DataFrame()
 
             # 标准化字段
-            df = df.rename(columns={
-                "A股代码": "code",
-                "A股简称": "name",
-                "H股代码": "hk_code",
-                "H股简称": "hk_name",
-            })
+            df = df.rename(
+                columns={
+                    "A股代码": "code",
+                    "A股简称": "name",
+                    "H股代码": "hk_code",
+                    "H股简称": "hk_name",
+                }
+            )
 
             # 获取实时行情数据
             try:
-                ah_quote = adapter._akshare.stock_hk_ah_spot_em()
+                ah_quote = adapter.get_ah_stock_spot()
                 if ah_quote is not None and not ah_quote.empty:
                     # 合并行情数据
-                    ah_quote = ah_quote.rename(columns={
-                        "A股代码": "code",
-                        "A股最新价": "a_price",
-                        "H股最新价": "h_price",
-                        "汇率": "exchange_rate",
-                        "A股溢价率": "premium_rate",
-                    })
+                    ah_quote = ah_quote.rename(
+                        columns={
+                            "A股代码": "code",
+                            "A股最新价": "a_price",
+                            "H股最新价": "h_price",
+                            "汇率": "exchange_rate",
+                            "A股溢价率": "premium_rate",
+                        }
+                    )
                     # 选择需要的列
-                    cols = ["code", "a_price", "h_price", "exchange_rate", "premium_rate"]
+                    cols = [
+                        "code",
+                        "a_price",
+                        "h_price",
+                        "exchange_rate",
+                        "premium_rate",
+                    ]
                     ah_quote = ah_quote[[c for c in cols if c in ah_quote.columns]]
                     df = df.merge(ah_quote, on="code", how="left")
             except Exception:
@@ -538,6 +560,7 @@ class STK_AH_PRICE_COMP(FinanceTable):
 
             # 添加日期
             from datetime import datetime
+
             df["date"] = end_date or datetime.now().strftime("%Y-%m-%d")
 
             # 计算H股人民币价格
@@ -621,8 +644,6 @@ def compute_retained_profit(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -633,7 +654,7 @@ def compute_retained_profit(
     """
     from ..factors.fundamentals import _get_balance_sheet, _normalize_balance
 
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    balance_raw = _get_balance_sheet(symbol)
     balance = _normalize_balance(balance_raw)
 
     if balance.empty:
@@ -667,8 +688,6 @@ def compute_net_operate_cash_flow(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -697,8 +716,15 @@ def _register_factors():
     """向全局注册表注册财务表因子。"""
     registry = global_factor_registry
 
-    registry.register("retained_profit", compute_retained_profit, window=1, dependencies=["balance"])
-    registry.register("net_operate_cash_flow", compute_net_operate_cash_flow, window=1, dependencies=["cash_flow"])
+    registry.register(
+        "retained_profit", compute_retained_profit, window=1, dependencies=["balance"]
+    )
+    registry.register(
+        "net_operate_cash_flow",
+        compute_net_operate_cash_flow,
+        window=1,
+        dependencies=["cash_flow"],
+    )
 
 
 _register_factors()

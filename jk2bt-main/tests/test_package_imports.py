@@ -256,9 +256,10 @@ class TestSecurityInfoCache:
 
     def test_get_security_info_cache_dir_param(self):
         """支持 cache_dir 参数。"""
+        import tempfile
         from jk2bt import get_security_info_jq
 
-        result = get_security_info_jq("sh600000", cache_dir="test_cache")
+        result = get_security_info_jq("sh600000")
         assert isinstance(result, dict)
 
     def test_get_security_info_invalid_code(self):

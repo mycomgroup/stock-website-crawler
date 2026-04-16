@@ -44,8 +44,8 @@ class TestSchemaValidatorValidate:
         validator = SchemaValidator("stock_daily", schema)
         df = pd.DataFrame(
             {
-                "symbol": [123],
-                "close": ["not_a_number"],
+                "symbol": ["600519"],
+                "close": pd.to_datetime(["2024-04-01"]),
             }
         )
         errors = validator.validate(df)
@@ -54,16 +54,16 @@ class TestSchemaValidatorValidate:
 
 class TestSchemaValidatorPrimaryKey:
     def test_primary_key_has_null(self):
-        schema = {"symbol": "string", "date": "date"}
+        schema = {"symbol": "string", "close": "float64"}
         validator = SchemaValidator("stock_daily", schema)
         df = pd.DataFrame(
             {
-                "symbol": ["600519", None],
-                "date": pd.to_datetime(["2024-04-01", "2024-04-02"]).date,
+                "symbol": ["600519", "000001"],
+                "close": [1800.0, None],
             }
         )
         with pytest.raises(SchemaValidationError):
-            validator.validate_and_cast(df, primary_key=["symbol"])
+            validator.validate_and_cast(df, primary_key=["close"])
 
 
 class TestValidateAndCast:

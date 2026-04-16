@@ -235,6 +235,7 @@ def _get_db_manager():
     manager._ensure_initialized()
     return manager
 
+
 _db_manager = None  # 延迟初始化，避免导入时副作用
 
 
@@ -334,6 +335,7 @@ def _fetch_from_csindex(index_num: str) -> pd.DataFrame:
     """从中证指数公司获取成分股及权重"""
     try:
         from jk2bt.data_access import get_adapter
+
         df = get_adapter().get_index_stock_cons_weight_csindex(symbol=index_num)
         if df is not None and not df.empty:
             logger.info(f"[csindex] 成功获取 {index_num} 成分股: {len(df)} 只")
@@ -347,6 +349,7 @@ def _fetch_from_sina(index_num: str) -> pd.DataFrame:
     """从新浪财经获取成分股（无权重，使用等权重）"""
     try:
         from jk2bt.data_access import get_adapter
+
         df = get_adapter().get_index_stock_cons(symbol=index_num)
         if df is not None and not df.empty:
             df = df.copy()
@@ -360,7 +363,6 @@ def _fetch_from_sina(index_num: str) -> pd.DataFrame:
 
 def get_index_components(
     symbol: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -370,7 +372,6 @@ def get_index_components(
     参数
     ----
     symbol      : 指数代码，支持 '000300.XSHG', '000905.XSHG' 等格式
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -391,56 +392,37 @@ def get_index_components(
 
     if use_duckdb and not force_update:
         db_manager = _get_db_manager()
-        if db_manager is not None and db_manager.is_cache_valid(jq_index_code, cache_days=cache_days):
+        if db_manager is not None and db_manager.is_cache_valid(
+            jq_index_code, cache_days=cache_days
+        ):
             df_cached = db_manager.get_index_components(jq_index_code)
             if not df_cached.empty:
                 return _normalize_weights(df_cached[_INDEX_COMPONENTS_SCHEMA])
 
-    cache_file = os.path.join(cache_dir, f"index_components_{index_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    source = _get_index_source(index_num)
 
-    need_download = force_update or (not os.path.exists(cache_file))
+    df = pd.DataFrame()
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < cache_days:
-                if use_duckdb:
-                    db_manager = _get_db_manager()
-                    if db_manager is not None:
-                        db_manager.insert_index_components(cached_df)
-                return _normalize_weights(cached_df)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        source = _get_index_source(index_num)
-
-        df = pd.DataFrame()
-
-        if source == "csindex":
-            df = _fetch_from_csindex(index_num)
-            if df.empty:
-                logger.info(f"[fallback] 尝试备用数据源 sina")
-                df = _fetch_from_sina(index_num)
-        else:
+    if source == "csindex":
+        df = _fetch_from_csindex(index_num)
+        if df.empty:
+            logger.info(f"[fallback] 尝试备用数据源 sina")
             df = _fetch_from_sina(index_num)
-            if df.empty:
-                logger.info(f"[fallback] 尝试备用数据源 csindex")
-                df = _fetch_from_csindex(index_num)
+    else:
+        df = _fetch_from_sina(index_num)
+        if df.empty:
+            logger.info(f"[fallback] 尝试备用数据源 csindex")
+            df = _fetch_from_csindex(index_num)
 
-        if df is not None and not df.empty:
-            result = _normalize_index_components(df, jq_index_code)
-            if not result.empty:
-                result = _normalize_weights(result)
-                result.to_pickle(cache_file)
-                if use_duckdb:
-                    db_manager = _get_db_manager()
-                    if db_manager is not None:
-                        db_manager.insert_index_components(result)
-                return result
+    if df is not None and not df.empty:
+        result = _normalize_index_components(df, jq_index_code)
+        if not result.empty:
+            result = _normalize_weights(result)
+            if use_duckdb:
+                db_manager = _get_db_manager()
+                if db_manager is not None:
+                    db_manager.insert_index_components(result)
+            return result
 
     return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)
 
@@ -498,7 +480,6 @@ def _normalize_index_components(df: pd.DataFrame, jq_index_code: str) -> pd.Data
 
 def query_index_components(
     symbols: List[str],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -513,7 +494,6 @@ def query_index_components(
         try:
             df = get_index_components(
                 symbol,
-                cache_dir=cache_dir,
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -533,7 +513,6 @@ def get_index_component_history(
     index_code: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -544,7 +523,6 @@ def get_index_component_history(
     index_code   : 指数代码
     start_date   : 起始日期 (YYYY-MM-DD)
     end_date     : 结束日期 (YYYY-MM-DD)
-    cache_dir    : 缓存目录
     force_update : 强制更新
 
     返回
@@ -561,34 +539,18 @@ def get_index_component_history(
     index_num = index_code.split(".")[0] if "." in index_code else index_code
     index_num = index_num.zfill(6)
 
-    cache_file = os.path.join(cache_dir, f"index_history_{index_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    try:
+        from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 90:
-                return _filter_history_by_date(cached_df, start_date, end_date)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            from jk2bt.data_access import get_adapter
-            df_current = get_adapter().get_index_stock_cons_weight_csindex(symbol=index_num)
-            if df_current is not None and not df_current.empty:
-                result = _normalize_index_history(df_current, jq_index_code)
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    return _filter_history_by_date(result, start_date, end_date)
-        except Exception as e:
-            logger.warning(
-                f"[get_index_component_history] 获取成分股历史失败 {index_code}: {e}"
-            )
+        df_current = get_adapter().get_index_stock_cons_weight_csindex(symbol=index_num)
+        if df_current is not None and not df_current.empty:
+            result = _normalize_index_history(df_current, jq_index_code)
+            if not result.empty:
+                return _filter_history_by_date(result, start_date, end_date)
+    except Exception as e:
+        logger.warning(
+            f"[get_index_component_history] 获取成分股历史失败 {index_code}: {e}"
+        )
 
     return pd.DataFrame(columns=_INDEX_HISTORY_SCHEMA)
 
@@ -666,7 +628,6 @@ def _filter_history_by_date(
 
 def get_index_stocks(
     symbol: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> List[str]:
@@ -676,7 +637,6 @@ def get_index_stocks(
     参数
     ----
     symbol       : 指数代码，支持 '000300.XSHG', '000905.XSHG' 等格式
-    cache_dir    : 缓存目录
     force_update : 强制更新
     use_duckdb   : 是否使用 DuckDB 缓存
 
@@ -684,9 +644,7 @@ def get_index_stocks(
     ----
     list: 股票代码列表（聚宽格式），如 ['600519.XSHG', '000858.XSHE', ...]
     """
-    df = get_index_components(
-        symbol, cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb
-    )
+    df = get_index_components(symbol, force_update=force_update, use_duckdb=use_duckdb)
 
     if df.empty:
         return []
@@ -714,9 +672,7 @@ class FinanceQuery:
         in_date = None
         out_date = None
 
-    def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
-    ) -> pd.DataFrame:
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
 
@@ -735,14 +691,13 @@ class FinanceQuery:
         if table_name == "STK_INDEX_WEIGHTS":
             if "index_code" in conditions:
                 return get_index_components(
-                    conditions["index_code"], cache_dir=cache_dir, use_duckdb=use_duckdb
+                    conditions["index_code"], use_duckdb=use_duckdb
                 )
             return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)
         elif table_name == "STK_INDEX_COMPONENTS":
             if "index_code" in conditions:
                 return get_index_components(
                     conditions["index_code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -757,21 +712,16 @@ finance = FinanceQuery()
 def run_query_simple(
     table: str,
     index_code: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
     if table == "STK_INDEX_WEIGHTS":
         if index_code:
-            return get_index_components(
-                index_code, cache_dir=cache_dir, force_update=force_update
-            )
+            return get_index_components(index_code, force_update=force_update)
         return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)
     elif table == "STK_INDEX_COMPONENTS":
         if index_code:
-            return get_index_components(
-                index_code, cache_dir=cache_dir, force_update=force_update
-            )
+            return get_index_components(index_code, force_update=force_update)
         return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)
     else:
         raise ValueError(f"不支持的表: {table}")
@@ -780,7 +730,6 @@ def run_query_simple(
 def get_index_weights(
     index_code: str,
     date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -791,7 +740,6 @@ def get_index_weights(
     ----
     index_code   : 指数代码，如 '000300'、'000905'
     date         : 查询日期 (YYYY-MM-DD)，默认最新
-    cache_dir    : 缓存目录
     force_update : 强制更新
     use_duckdb   : 是否使用 DuckDB 缓存
 
@@ -801,7 +749,6 @@ def get_index_weights(
     """
     df = get_index_components(
         index_code,
-        cache_dir=cache_dir,
         force_update=force_update,
         use_duckdb=use_duckdb,
     )
@@ -841,6 +788,7 @@ def get_index_info(index_code: str = None) -> pd.DataFrame:
     if _INDEX_INFO_CACHE is None:
         try:
             from jk2bt.data_access import get_adapter
+
             df = get_adapter().get_index_stock_info()
             if df is not None and not df.empty:
                 df = df.rename(
@@ -905,6 +853,7 @@ def get_industry_index_stocks(industry_code: str) -> List[str]:
 
     try:
         from jk2bt.data_access import get_adapter
+
         df = get_adapter().get_index_component_sw(symbol=code_clean)
         if df is not None and not df.empty:
             stocks = []

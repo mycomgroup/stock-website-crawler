@@ -272,7 +272,6 @@ def get_unlock(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -284,7 +283,6 @@ def get_unlock(
     symbol      : 股票代码
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -445,7 +443,6 @@ def query_unlock(
     symbols: List[str],
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -480,7 +477,6 @@ def query_unlock(
 
 def get_unlock_calendar(
     date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -489,7 +485,6 @@ def get_unlock_calendar(
     参数
     ----
     date        : 查询日期，默认今天
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -604,7 +599,7 @@ class FinanceQuery:
         shareholder_type = None
 
     def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
+        self, query_obj, force_update=False, use_duckdb=True
     ) -> pd.DataFrame:
         table_name = None
         conditions = {}
@@ -626,13 +621,13 @@ class FinanceQuery:
         ]:
             if "code" in conditions:
                 return get_unlock(
-                    conditions["code"], cache_dir=cache_dir, use_duckdb=use_duckdb
+                    conditions["code"], use_duckdb=use_duckdb
                 )
             return pd.DataFrame(columns=_UNLOCK_SCHEMA)
         elif table_name == "STK_LOCK_SHARE":
             if "code" in conditions:
                 return query_lock_share(
-                    conditions["code"], cache_dir=cache_dir, force_update=force_update
+                    conditions["code"], force_update=force_update
                 )
             return pd.DataFrame(columns=_LOCK_SHARE_SCHEMA)
         else:
@@ -646,7 +641,6 @@ def get_unlock_schedule(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -657,7 +651,6 @@ def get_unlock_schedule(
     symbol       : 股票代码
     start_date   : 起始日期
     end_date     : 结束日期
-    cache_dir    : 缓存目录
     force_update : 强制更新
 
     返回
@@ -676,7 +669,6 @@ def get_unlock_schedule(
 def get_unlock_pressure(
     symbol: str,
     days_ahead: int = 30,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> dict:
     """
@@ -686,7 +678,6 @@ def get_unlock_pressure(
     ----
     symbol       : 股票代码
     days_ahead   : 未来多少天
-    cache_dir    : 缓存目录
     force_update : 强制更新
 
     返回
@@ -753,13 +744,12 @@ def get_unlock_pressure(
 def run_query_simple(
     table: str,
     code: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
     if table == "STK_RESTRICTED_RELEASE":
         if code:
-            return get_unlock(code, cache_dir=cache_dir, force_update=force_update)
+            return get_unlock(code, force_update=force_update)
         return pd.DataFrame(columns=_UNLOCK_SCHEMA)
     else:
         raise ValueError(f"不支持的表: {table}")
@@ -769,7 +759,6 @@ def get_unlock_info(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> RobustResult:
     """
@@ -783,7 +772,6 @@ def get_unlock_info(
     symbol      : 股票代码，支持多种格式（600519.XSHG, sh600519, 600519 等）
     start_date  : 起始日期（可选）
     end_date    : 结束日期（可选）
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -933,7 +921,6 @@ def get_unlock_info(
 
 def get_upcoming_unlocks(
     days: int = 30,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -942,7 +929,6 @@ def get_upcoming_unlocks(
     参数
     ----
     days        : 未来天数，默认30天
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1032,7 +1018,6 @@ def get_upcoming_unlocks(
 def get_unlock_history(
     security: str,
     years: int = 3,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1042,7 +1027,6 @@ def get_unlock_history(
     ----
     security    : 股票代码
     years       : 查询年数，默认3年
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1070,7 +1054,6 @@ def get_unlock_history(
 
 def query_lock_share(
     symbol: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1079,7 +1062,6 @@ def query_lock_share(
     参数
     ----
     symbol       : 股票代码
-    cache_dir    : 缓存目录
     force_update : 强制更新
 
     返回
@@ -1180,7 +1162,6 @@ def _parse_lock_share_summary_row(row, jq_code: str) -> Optional[dict]:
 
 def analyze_unlock_impact(
     security: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> dict:
     """
@@ -1189,7 +1170,6 @@ def analyze_unlock_impact(
     参数
     ----
     security    : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1280,7 +1260,6 @@ def get_unlock_info_batch(
     codes: List[str],
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> RobustResult:
     """
@@ -1291,7 +1270,6 @@ def get_unlock_info_batch(
     codes       : 股票代码列表
     start_date  : 起始日期（可选）
     end_date    : 结束日期（可选）
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回

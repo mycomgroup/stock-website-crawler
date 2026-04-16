@@ -479,6 +479,236 @@ COMPANY_INFO = CacheTable(
     priority="P2",
 )
 
+FACTOR_CACHE = CacheTable(
+    name="factor_cache",
+    partition_by="factor_name",
+    ttl_hours=0,
+    schema={
+        "factor_name": "string",
+        "symbol": "string",
+        "date": "date",
+        "value": "float64",
+    },
+    primary_key=["factor_name", "symbol", "date"],
+    compaction_threshold=10,
+    storage_layer="daily",
+    priority="P1",
+)
+
+# 财务报表（P0）
+FINANCIAL_REPORT = CacheTable(
+    name="financial_report",
+    partition_by="report_date",
+    ttl_hours=2160,  # 90天
+    schema={
+        "symbol": "string",
+        "report_date": "date",
+        "report_type": "string",  # 现金流量表/资产负债表/利润表
+        "item_name": "string",
+        "item_value": "float64",
+    },
+    primary_key=["symbol", "report_date", "report_type", "item_name"],
+    compaction_threshold=5,
+    storage_layer="daily",
+    priority="P0",
+)
+
+# 财务效益（P0）
+FINANCIAL_BENEFIT = CacheTable(
+    name="financial_benefit",
+    partition_by="report_date",
+    ttl_hours=2160,
+    schema={
+        "symbol": "string",
+        "report_date": "date",
+        "indicator": "string",
+        "value": "float64",
+    },
+    primary_key=["symbol", "report_date", "indicator"],
+    compaction_threshold=5,
+    storage_layer="daily",
+    priority="P0",
+)
+
+# 行业映射（P1）
+INDUSTRY_MAPPING = CacheTable(
+    name="industry_mapping",
+    partition_by=None,
+    ttl_hours=720,  # 30天
+    schema={
+        "symbol": "string",
+        "industry_code": "string",
+        "industry_name": "string",
+        "level": "int64",
+    },
+    primary_key=["symbol"],
+    aggregation_enabled=False,
+    compaction_threshold=0,
+    storage_layer="meta",
+    priority="P1",
+)
+
+# 概念成分（P1）
+CONCEPT_COMPONENTS = CacheTable(
+    name="concept_components",
+    partition_by="date",
+    ttl_hours=720,
+    schema={
+        "concept_code": "string",
+        "concept_name": "string",
+        "date": "date",
+        "symbol": "string",
+    },
+    primary_key=["concept_code", "date", "symbol"],
+    storage_layer="daily",
+    priority="P1",
+)
+
+# 基金持仓（P1）
+FUND_PORTFOLIO = CacheTable(
+    name="fund_portfolio",
+    partition_by="report_date",
+    ttl_hours=2160,
+    schema={
+        "fund_code": "string",
+        "report_date": "date",
+        "symbol": "string",
+        "hold_count": "float64",
+        "hold_ratio": "float64",
+        "market_value": "float64",
+    },
+    primary_key=["fund_code", "report_date", "symbol"],
+    compaction_threshold=5,
+    storage_layer="daily",
+    priority="P1",
+)
+
+# 股本变动（P2）
+SHARE_CHANGE = CacheTable(
+    name="share_change",
+    partition_by="announce_date",
+    ttl_hours=0,
+    schema={
+        "symbol": "string",
+        "announce_date": "date",
+        "total_shares": "float64",
+        "circulating_shares": "float64",
+        "change_type": "string",
+    },
+    primary_key=["symbol", "announce_date"],
+    compaction_threshold=5,
+    storage_layer="daily",
+    priority="P2",
+)
+
+# 股东增减持（P2）
+HOLDING_CHANGE = CacheTable(
+    name="holding_change",
+    partition_by="announce_date",
+    ttl_hours=0,
+    schema={
+        "symbol": "string",
+        "announce_date": "date",
+        "holder_name": "string",
+        "change_count": "float64",
+        "change_ratio": "float64",
+        "change_type": "string",  # 增持/减持
+    },
+    primary_key=["symbol", "announce_date", "holder_name"],
+    compaction_threshold=5,
+    storage_layer="daily",
+    priority="P2",
+)
+
+# 宏观数据（P2）
+MACRO_DATA = CacheTable(
+    name="macro_data",
+    partition_by=None,
+    ttl_hours=720,
+    schema={
+        "indicator": "string",  # pmi/cpi/ppi/gdp/m2/interest_rate/exchange_rate
+        "date": "date",
+        "value": "float64",
+        "change_pct": "float64",
+    },
+    primary_key=["indicator", "date"],
+    aggregation_enabled=False,
+    compaction_threshold=0,
+    storage_layer="meta",
+    priority="P2",
+)
+
+# 融资融券明细（P2）
+MARGIN_DETAIL = CacheTable(
+    name="margin_detail",
+    partition_by="date",
+    ttl_hours=720,
+    schema={
+        "market": "string",  # sh/sz
+        "date": "date",
+        "symbol": "string",
+        "margin_balance": "float64",
+        "short_balance": "float64",
+    },
+    primary_key=["market", "date", "symbol"],
+    storage_layer="daily",
+    priority="P2",
+)
+
+# 两融标的（P2）
+MARGIN_UNDERLYING = CacheTable(
+    name="margin_underlying",
+    partition_by="date",
+    ttl_hours=720,
+    schema={
+        "market": "string",
+        "date": "date",
+        "symbol": "string",
+        "stock_name": "string",
+    },
+    primary_key=["market", "date", "symbol"],
+    storage_layer="daily",
+    priority="P2",
+)
+
+# 期权日线（P3）
+OPTION_DAILY = CacheTable(
+    name="option_daily",
+    partition_by="date",
+    ttl_hours=0,
+    schema={
+        "symbol": "string",
+        "date": "date",
+        "open": "float64",
+        "high": "float64",
+        "low": "float64",
+        "close": "float64",
+        "volume": "float64",
+        "open_interest": "float64",
+    },
+    primary_key=["symbol", "date"],
+    storage_layer="daily",
+    priority="P3",
+)
+
+# 集合竞价（P3）
+CALL_AUCTION = CacheTable(
+    name="call_auction",
+    partition_by="date",
+    ttl_hours=0,
+    schema={
+        "symbol": "string",
+        "datetime": "timestamp",
+        "price": "float64",
+        "volume": "float64",
+        "amount": "float64",
+    },
+    primary_key=["symbol", "datetime"],
+    compaction_threshold=50,
+    storage_layer="daily",
+    priority="P3",
+)
+
 
 DEFAULT_REGISTRY = TableRegistry()
 
@@ -507,6 +737,19 @@ for _table in (
     INDUSTRY_LIST,
     CONCEPT_LIST,
     COMPANY_INFO,
+    FACTOR_CACHE,
+    FINANCIAL_REPORT,
+    FINANCIAL_BENEFIT,
+    INDUSTRY_MAPPING,
+    CONCEPT_COMPONENTS,
+    FUND_PORTFOLIO,
+    SHARE_CHANGE,
+    HOLDING_CHANGE,
+    MACRO_DATA,
+    MARGIN_DETAIL,
+    MARGIN_UNDERLYING,
+    OPTION_DAILY,
+    CALL_AUCTION,
 ):
     DEFAULT_REGISTRY.register(_table)
 

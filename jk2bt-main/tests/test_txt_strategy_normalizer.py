@@ -20,7 +20,7 @@ import unittest
 from pathlib import Path
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-util_dir = os.path.join(base_dir, "src")
+util_dir = os.path.join(base_dir, "jk2bt", "strategy")
 
 spec = importlib.util.spec_from_file_location(
     "txt_strategy_normalizer", os.path.join(util_dir, "txt_strategy_normalizer.py")

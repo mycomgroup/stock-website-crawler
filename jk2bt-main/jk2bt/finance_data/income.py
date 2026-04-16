@@ -1,16 +1,10 @@
-import os
-
 try:
     from ..utils.cache import fetch_and_cache_data
 except ImportError:
     from utils.cache import fetch_and_cache_data
 
 
-def get_income(
-    symbol, indicator="按报告期", cache_dir="finance_cache", force_update=False
-):
-    cache_file = os.path.join(cache_dir, f"{symbol}_income_{indicator}.pkl")
-
+def get_income(symbol, indicator="按报告期", force_update=False):
     try:
         from jk2bt.data_access import get_adapter
     except ImportError:
@@ -25,7 +19,7 @@ def get_income(
         symbol=symbol,
         start=None,
         end=None,
-        cache_file=cache_file,
+        cache_file=None,
         download_func=download_func,
         date_col=None,
         columns_map=None,

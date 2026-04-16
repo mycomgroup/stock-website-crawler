@@ -263,9 +263,7 @@ class TestCacheMechanism:
     def test_pickle_cache_creation(self):
         """测试pickle缓存文件创建"""
         symbol = "600519"
-        df = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=True
-        )
+        df = get_company_info(symbol, use_duckdb=False, force_update=True)
 
         cache_file = os.path.join(self.temp_cache_dir, f"company_info_{symbol}.pkl")
         assert isinstance(df, pd.DataFrame)
@@ -277,13 +275,9 @@ class TestCacheMechanism:
         """测试pickle缓存命中"""
         symbol = "600519"
 
-        get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=True
-        )
+        get_company_info(symbol, use_duckdb=False, force_update=True)
 
-        df2 = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
+        df2 = get_company_info(symbol, use_duckdb=False, force_update=False)
 
         assert isinstance(df2, pd.DataFrame)
 
@@ -291,13 +285,9 @@ class TestCacheMechanism:
         """测试force_update参数强制刷新"""
         symbol = "600519"
 
-        df1 = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=True
-        )
+        df1 = get_company_info(symbol, use_duckdb=False, force_update=True)
 
-        df2 = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=True
-        )
+        df2 = get_company_info(symbol, use_duckdb=False, force_update=True)
 
         assert isinstance(df1, pd.DataFrame)
         assert isinstance(df2, pd.DataFrame)
@@ -311,9 +301,7 @@ class TestCacheMechanism:
         symbol = "600519"
         cache_file = os.path.join(self.temp_cache_dir, f"company_info_{symbol}.pkl")
 
-        df = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=True
-        )
+        df = get_company_info(symbol, use_duckdb=False, force_update=True)
 
         if not df.empty and os.path.exists(cache_file):
             file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
@@ -324,9 +312,7 @@ class TestCacheMechanism:
         """测试DuckDB禁用时Pickle缓存回退"""
         symbol = "600519"
 
-        df = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=True
-        )
+        df = get_company_info(symbol, use_duckdb=False, force_update=True)
 
         assert isinstance(df, pd.DataFrame)
         assert "code" in df.columns
@@ -353,9 +339,7 @@ class TestBatchQuery:
     )
     def test_batch_query_multiple_stocks(self, symbols):
         """测试批量查询多个股票"""
-        df = query_company_basic_info(
-            symbols, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
+        df = query_company_basic_info(symbols, use_duckdb=False, force_update=False)
 
         assert isinstance(df, pd.DataFrame)
         assert "code" in df.columns
@@ -363,9 +347,7 @@ class TestBatchQuery:
     def test_batch_query_with_invalid_codes(self):
         """测试批量查询包含无效代码"""
         symbols = ["600519.XSHG", "999999.XSHG", "000001.XSHE", "888888.XSHE"]
-        df = query_company_basic_info(
-            symbols, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
+        df = query_company_basic_info(symbols, use_duckdb=False, force_update=False)
 
         assert isinstance(df, pd.DataFrame)
         assert "code" in df.columns
@@ -390,7 +372,6 @@ class TestBatchQuery:
         securities = ["600519.XSHG", "000001.XSHE"]
         result = get_company_info_list(
             securities,
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )
@@ -405,9 +386,7 @@ class TestBatchQuery:
         symbols = ["600519.XSHG", "000001.XSHE", "600036.XSHG"]
 
         start_time = datetime.now()
-        df = query_company_basic_info(
-            symbols, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
+        df = query_company_basic_info(symbols, use_duckdb=False, force_update=False)
         elapsed_time = (datetime.now() - start_time).total_seconds()
 
         assert isinstance(df, pd.DataFrame)
@@ -507,7 +486,6 @@ class TestStatusChange:
         """测试正常交易状态查询"""
         df = get_security_status(
             "600519.XSHG",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )
@@ -522,7 +500,6 @@ class TestStatusChange:
         df = get_security_status(
             "600519.XSHG",
             date=date_format,
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )
@@ -533,7 +510,6 @@ class TestStatusChange:
         """测试单只股票状态变动查询"""
         df = query_status_change(
             ["600519.XSHG"],
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )
@@ -547,7 +523,6 @@ class TestStatusChange:
             ["600519.XSHG"],
             start_date="2025-01-01",
             end_date="2025-01-05",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )
@@ -566,7 +541,6 @@ class TestStatusChange:
         """测试稳健版状态查询成功场景"""
         result = get_security_status_robust(
             "600519.XSHG",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )
@@ -649,7 +623,6 @@ class TestRobustAPI:
         """测试稳健版单股票查询"""
         result = get_company_info_robust(
             "600519.XSHG",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )
@@ -660,9 +633,7 @@ class TestRobustAPI:
     def test_get_company_info_robust_batch(self):
         """测试稳健版批量查询"""
         symbols = ["600519.XSHG", "000001.XSHE"]
-        result = get_company_info_robust(
-            symbols, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
+        result = get_company_info_robust(symbols, use_duckdb=False, force_update=False)
 
         assert isinstance(result, RobustResult)
         assert isinstance(result.data, pd.DataFrame)
@@ -692,7 +663,7 @@ class TestRobustAPI:
         """测试稳健版批量查询接口"""
         symbols = ["600519.XSHG", "000001.XSHE", "600036.XSHG"]
         result = query_company_info_robust(
-            symbols, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
+            symbols, use_duckdb=False, force_update=False
         )
 
         assert isinstance(result, RobustResult)
@@ -711,9 +682,7 @@ class TestIndustryInfo:
 
     def test_get_industry_info_basic(self):
         """测试获取行业信息基本功能"""
-        df = get_industry_info(
-            "600519.XSHG", cache_dir=self.temp_cache_dir, force_update=False
-        )
+        df = get_industry_info("600519.XSHG", force_update=False)
 
         assert isinstance(df, pd.DataFrame)
         assert "code" in df.columns
@@ -721,9 +690,7 @@ class TestIndustryInfo:
 
     def test_get_industry_info_sz_stock(self):
         """测试深交所股票行业信息"""
-        df = get_industry_info(
-            "000001.XSHE", cache_dir=self.temp_cache_dir, force_update=False
-        )
+        df = get_industry_info("000001.XSHE", force_update=False)
 
         assert isinstance(df, pd.DataFrame)
 
@@ -749,9 +716,7 @@ class TestPrewarmCache:
     def test_prewarm_basic(self):
         """测试基本预热功能"""
         securities = ["600519.XSHG", "000001.XSHE"]
-        result = prewarm_company_info_cache(
-            securities, cache_dir=self.temp_cache_dir, use_duckdb=False
-        )
+        result = prewarm_company_info_cache(securities, use_duckdb=False)
 
         assert isinstance(result, dict)
         assert len(result) == 2
@@ -761,9 +726,7 @@ class TestPrewarmCache:
 
     def test_prewarm_single_stock(self):
         """测试单股票预热"""
-        result = prewarm_company_info_cache(
-            ["600519.XSHG"], cache_dir=self.temp_cache_dir, use_duckdb=False
-        )
+        result = prewarm_company_info_cache(["600519.XSHG"], use_duckdb=False)
 
         assert isinstance(result, dict)
         assert "600519.XSHG" in result
@@ -779,16 +742,13 @@ class TestNetworkFailureMock:
         if os.path.exists(self.temp_cache_dir):
             shutil.rmtree(self.temp_cache_dir)
 
-    @patch(
-        "src.finance_data.company_info._fetch_company_profile"
-    )
+    @patch("src.finance_data.company_info._fetch_company_profile")
     def test_fetch_profile_failure(self, mock_fetch):
         """测试获取公司信息失败"""
         mock_fetch.return_value = None
 
         df = get_company_info(
             "600519.XSHG",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=True,
         )
@@ -796,25 +756,20 @@ class TestNetworkFailureMock:
         assert isinstance(df, pd.DataFrame)
         assert "code" in df.columns
 
-    @patch(
-        "src.finance_data.company_info._fetch_company_industry"
-    )
+    @patch("src.finance_data.company_info._fetch_company_industry")
     def test_fetch_industry_failure(self, mock_fetch):
         """测试获取行业信息失败"""
         mock_fetch.return_value = None
 
         df = get_company_info(
             "600519.XSHG",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=True,
         )
 
         assert isinstance(df, pd.DataFrame)
 
-    @patch(
-        "src.finance_data.company_info._fetch_suspension_data"
-    )
+    @patch("src.finance_data.company_info._fetch_suspension_data")
     def test_fetch_suspension_failure(self, mock_fetch):
         """测试获取停牌数据失败"""
         mock_fetch.return_value = None
@@ -822,7 +777,6 @@ class TestNetworkFailureMock:
         df = get_security_status(
             "600519.XSHG",
             date="2025-01-15",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=True,
         )
@@ -845,15 +799,9 @@ class TestIntegration:
         """测试完整工作流"""
         symbol = "600519.XSHG"
 
-        df_info = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
-        df_status = get_security_status(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
-        df_industry = get_industry_info(
-            symbol, cache_dir=self.temp_cache_dir, force_update=False
-        )
+        df_info = get_company_info(symbol, use_duckdb=False, force_update=False)
+        df_status = get_security_status(symbol, use_duckdb=False, force_update=False)
+        df_industry = get_industry_info(symbol, force_update=False)
 
         assert isinstance(df_info, pd.DataFrame)
         assert isinstance(df_status, pd.DataFrame)
@@ -863,11 +811,9 @@ class TestIntegration:
         """测试稳健版与普通版一致性"""
         symbol = "600519.XSHG"
 
-        normal_df = get_company_info(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
-        )
+        normal_df = get_company_info(symbol, use_duckdb=False, force_update=False)
         robust_result = get_company_info_robust(
-            symbol, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
+            symbol, use_duckdb=False, force_update=False
         )
 
         assert isinstance(normal_df, pd.DataFrame)
@@ -879,12 +825,11 @@ class TestIntegration:
         symbols = ["600519.XSHG", "000001.XSHE"]
 
         batch_df = query_company_basic_info(
-            symbols, cache_dir=self.temp_cache_dir, use_duckdb=False, force_update=False
+            symbols, use_duckdb=False, force_update=False
         )
 
         single_df = get_company_info(
             "600519.XSHG",
-            cache_dir=self.temp_cache_dir,
             use_duckdb=False,
             force_update=False,
         )

@@ -55,7 +55,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional, List, Union
 import logging
-import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -224,7 +223,9 @@ class OptionDBManager:
                 except Exception:
                     # underlying_code 列不存在，添加它
                     try:
-                        conn.execute("ALTER TABLE option ADD COLUMN underlying_code VARCHAR")
+                        conn.execute(
+                            "ALTER TABLE option ADD COLUMN underlying_code VARCHAR"
+                        )
                     except Exception:
                         pass
                 conn.execute("""
@@ -358,6 +359,7 @@ def _get_db_manager():
     manager._ensure_initialized()
     return manager
 
+
 _db_manager = None  # 延迟初始化，避免导入时副作用
 
 
@@ -396,33 +398,8 @@ def _parse_date(date_str) -> Optional[str]:
     return None
 
 
-def _load_pickle_cache(
-    cache_file: str, max_age_hours: int = 24
-) -> Optional[pd.DataFrame]:
-    """加载 pickle 缓存"""
-    if not os.path.exists(cache_file):
-        return None
-    try:
-        file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-        if (datetime.now() - file_mtime).total_seconds() < max_age_hours * 3600:
-            return pd.read_pickle(cache_file)
-    except Exception:
-        pass
-    return None
-
-
-def _save_pickle_cache(cache_file: str, df: pd.DataFrame):
-    """保存 pickle 缓存"""
-    try:
-        os.makedirs(os.path.dirname(cache_file), exist_ok=True)
-        df.to_pickle(cache_file)
-    except Exception as e:
-        logger.warning(f"保存缓存失败: {e}")
-
-
 def get_option_list(
     underlying: str = "sse",
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
     use_cache: bool = True,
@@ -433,7 +410,6 @@ def get_option_list(
     参数
     ----
     underlying  : 标的类型 ('sse' 上交所ETF期权, 'szse' 深交所ETF期权, 'cffex' 中金所股指期权)
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
     use_cache   : 是否使用缓存
@@ -443,12 +419,6 @@ def get_option_list(
     RobustResult，data 包含期权列表信息
     """
     date_str = datetime.now().strftime("%Y-%m-%d")
-    cache_file = os.path.join(cache_dir, f"option_list_{underlying}.pkl")
-
-    if use_cache and not force_update:
-        cached_df = _load_pickle_cache(cache_file, max_age_hours=24)
-        if cached_df is not None and not cached_df.empty:
-            return RobustResult(success=True, data=cached_df, source="cache")
 
     results = []
 
@@ -483,7 +453,6 @@ def get_option_list(
             for ex in ["sse", "szse", "cffex"]:
                 result = get_option_list(
                     underlying=ex,
-                    cache_dir=cache_dir,
                     force_update=force_update,
                     use_duckdb=False,
                     use_cache=False,
@@ -499,7 +468,6 @@ def get_option_list(
         if results:
             result_df = pd.DataFrame(results)
             result_df = result_df.drop_duplicates(subset=["option_code"], keep="first")
-            _save_pickle_cache(cache_file, result_df)
             if use_duckdb:
                 db_manager = _get_db_manager()
                 if db_manager is not None:
@@ -615,7 +583,6 @@ def _parse_cffex_option_row(row, date_str: str, opt_type: str) -> Optional[dict]
 
 def get_option_price(
     option_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_cache: bool = True,
 ) -> RobustResult:
@@ -625,7 +592,6 @@ def get_option_price(
     参数
     ----
     option_code : 期权代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_cache   : 是否使用缓存
 
@@ -634,12 +600,6 @@ def get_option_price(
     RobustResult，data 包含期权行情信息
     """
     date_str = datetime.now().strftime("%Y-%m-%d")
-    cache_file = os.path.join(cache_dir, f"option_price_{option_code}.pkl")
-
-    if use_cache and not force_update:
-        cached_df = _load_pickle_cache(cache_file, max_age_hours=1)
-        if cached_df is not None and not cached_df.empty:
-            return RobustResult(success=True, data=cached_df, source="cache")
 
     try:
         from jk2bt.data_access import get_adapter as _get_adapter_opt
@@ -663,7 +623,6 @@ def get_option_price(
                     "date": date_str,
                 }
                 result_df = pd.DataFrame([result])
-                _save_pickle_cache(cache_file, result_df)
                 return RobustResult(success=True, data=result_df, source="network")
 
         df_szse = _get_adapter_opt().get_option_current_day_szse()
@@ -685,7 +644,6 @@ def get_option_price(
                     "date": date_str,
                 }
                 result_df = pd.DataFrame([result])
-                _save_pickle_cache(cache_file, result_df)
                 return RobustResult(success=True, data=result_df, source="network")
 
         return RobustResult(success=False, reason=f"未找到期权代码: {option_code}")
@@ -697,7 +655,6 @@ def get_option_price(
 
 def get_option_greeks(
     option_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_cache: bool = True,
 ) -> RobustResult:
@@ -707,7 +664,6 @@ def get_option_greeks(
     参数
     ----
     option_code : 期权代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_cache   : 是否使用缓存
 
@@ -716,12 +672,6 @@ def get_option_greeks(
     RobustResult，data 包含希腊字母信息 (Delta, Gamma, Theta, Vega, 隐含波动率)
     """
     date_str = datetime.now().strftime("%Y-%m-%d")
-    cache_file = os.path.join(cache_dir, f"option_greeks_{option_code}.pkl")
-
-    if use_cache and not force_update:
-        cached_df = _load_pickle_cache(cache_file, max_age_hours=24)
-        if cached_df is not None and not cached_df.empty:
-            return RobustResult(success=True, data=cached_df, source="cache")
 
     try:
         from jk2bt.data_access import get_adapter as _get_adapter_opt
@@ -746,7 +696,6 @@ def get_option_greeks(
             }
 
             result_df = pd.DataFrame([result])
-            _save_pickle_cache(cache_file, result_df)
 
             db_manager = _get_db_manager()
             if db_manager is not None:
@@ -765,7 +714,6 @@ def get_option_greeks(
 
 def get_option_info(
     option_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_cache: bool = True,
 ) -> RobustResult:
@@ -775,7 +723,6 @@ def get_option_info(
     参数
     ----
     option_code : 期权代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_cache   : 是否使用缓存
 
@@ -784,16 +731,10 @@ def get_option_info(
     RobustResult，data 包含期权合约详细信息
     """
     date_str = datetime.now().strftime("%Y-%m-%d")
-    cache_file = os.path.join(cache_dir, f"option_info_{option_code}.pkl")
-
-    if use_cache and not force_update:
-        cached_df = _load_pickle_cache(cache_file, max_age_hours=24)
-        if cached_df is not None and not cached_df.empty:
-            return RobustResult(success=True, data=cached_df, source="cache")
 
     try:
         list_result = get_option_list(
-            underlying="all", cache_dir=cache_dir, force_update=False, use_cache=True
+            underlying="all", force_update=False, use_cache=True
         )
         if list_result.success and not list_result.data.empty:
             df = list_result.data
@@ -812,7 +753,6 @@ def get_option_info(
                     "date": date_str,
                 }
                 result_df = pd.DataFrame([result])
-                _save_pickle_cache(cache_file, result_df)
                 return RobustResult(success=True, data=result_df, source="network")
 
         return RobustResult(success=False, reason=f"未找到期权代码: {option_code}")
@@ -826,7 +766,6 @@ def get_option_daily(
     option_code: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_cache: bool = True,
 ) -> RobustResult:
@@ -838,7 +777,6 @@ def get_option_daily(
     option_code : 期权代码
     start_date  : 起始日期 'YYYY-MM-DD'
     end_date    : 结束日期 'YYYY-MM-DD'
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_cache   : 是否使用缓存
 
@@ -850,14 +788,6 @@ def get_option_daily(
         start_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
     if end_date is None:
         end_date = datetime.now().strftime("%Y-%m-%d")
-
-    cache_file = os.path.join(cache_dir, f"option_daily_{option_code}.pkl")
-
-    if use_cache and not force_update:
-        cached_df = _load_pickle_cache(cache_file, max_age_hours=24)
-        if cached_df is not None and not cached_df.empty:
-            if "date" in cached_df.columns or "日期" in cached_df.columns:
-                return RobustResult(success=True, data=cached_df, source="cache")
 
     try:
         from jk2bt.data_access import get_adapter as _get_adapter_opt
@@ -879,8 +809,6 @@ def get_option_daily(
             df = df[(df["date"] >= start_dt) & (df["date"] <= end_dt)]
 
             df = df.sort_values("date").reset_index(drop=True)
-
-            _save_pickle_cache(cache_file, df)
 
             db_manager = _get_db_manager()
             if db_manager is not None:
@@ -908,7 +836,6 @@ def calculate_option_implied_vol(
     price: float,
     underlying_price: float = None,
     risk_free_rate: float = 0.03,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> dict:
     """
@@ -920,7 +847,6 @@ def calculate_option_implied_vol(
     price          : 期权当前价格
     underlying_price: 标的资产价格（可选，自动获取）
     risk_free_rate : 无风险利率（默认3%）
-    cache_dir      : 缓存目录
     force_update   : 强制更新
 
     返回
@@ -989,9 +915,7 @@ def calculate_option_implied_vol(
         return sigma
 
     try:
-        info_result = get_option_info(
-            option_code, cache_dir=cache_dir, force_update=force_update
-        )
+        info_result = get_option_info(option_code, force_update=force_update)
         if not info_result.success or info_result.data.empty:
             return {"success": False, "reason": "无法获取期权信息", "implied_vol": None}
 
@@ -1015,9 +939,7 @@ def calculate_option_implied_vol(
             return {"success": False, "reason": "期权已到期", "implied_vol": None}
 
         if underlying_price is None:
-            greeks_result = get_option_greeks(
-                option_code, cache_dir=cache_dir, force_update=force_update
-            )
+            greeks_result = get_option_greeks(option_code, force_update=force_update)
             if greeks_result.success and not greeks_result.data.empty:
                 greeks_row = greeks_result.data.iloc[0]
                 existing_iv = greeks_row.get("implied_vol")
@@ -1083,7 +1005,6 @@ def calculate_option_implied_vol(
 def get_option_chain(
     underlying: str,
     expiry_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> RobustResult:
     """
@@ -1093,7 +1014,6 @@ def get_option_chain(
     ----
     underlying  : 标的代码 (如 '510050', '159915')
     expiry_date : 到期日筛选 (可选)
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1102,7 +1022,6 @@ def get_option_chain(
     """
     result = get_option_list(
         underlying="sse",
-        cache_dir=cache_dir,
         force_update=force_update,
         use_cache=not force_update,
     )
@@ -1124,7 +1043,6 @@ def get_option_chain(
 
 def get_option(
     option_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -1134,7 +1052,6 @@ def get_option(
     参数
     ----
     option_code : 期权代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -1142,15 +1059,12 @@ def get_option(
     ----
     pandas DataFrame，单只期权信息
     """
-    result = get_option_price(
-        option_code, cache_dir=cache_dir, force_update=force_update
-    )
+    result = get_option_price(option_code, force_update=force_update)
     return result.data if result.success else pd.DataFrame(columns=_OPTION_SCHEMA)
 
 
 def query_option(
     option_codes: List[str],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -1162,7 +1076,7 @@ def query_option(
 
     dfs = []
     for code in option_codes:
-        df = get_option(code, cache_dir=cache_dir, force_update=force_update)
+        df = get_option(code, force_update=force_update)
         if not df.empty:
             dfs.append(df)
 
@@ -1213,9 +1127,7 @@ class FinanceQuery:
         call_code = None
         put_code = None
 
-    def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
-    ) -> pd.DataFrame:
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
 
@@ -1234,17 +1146,14 @@ class FinanceQuery:
             if "option_code" in conditions:
                 return get_option(
                     conditions["option_code"],
-                    cache_dir=cache_dir,
                     use_duckdb=use_duckdb,
                 )
-            result = get_option_list(cache_dir=cache_dir, use_duckdb=use_duckdb)
+            result = get_option_list(use_duckdb=use_duckdb)
             if result.success and not result.data.empty:
                 return result.data
             return pd.DataFrame(columns=_OPTION_DAILY_SCHEMA)
         elif table_name == "STK_OPTION_BASIC":
-            result = get_option_list(
-                cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb
-            )
+            result = get_option_list(force_update=force_update, use_duckdb=use_duckdb)
             if result.success and not result.data.empty:
                 basic_df = result.data.copy()
                 for col in _OPTION_BASIC_SCHEMA:
@@ -1265,15 +1174,12 @@ class FinanceQuery:
             if "option_code" in conditions:
                 info_result = get_option_info(
                     conditions["option_code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
                 if info_result.success and not info_result.data.empty:
                     return info_result.data
                 return pd.DataFrame(columns=_OPTION_BASIC_SCHEMA)
-            result = get_option_list(
-                cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb
-            )
+            result = get_option_list(force_update=force_update, use_duckdb=use_duckdb)
             if result.success and not result.data.empty:
                 contracts_df = result.data.copy()
                 for col in _OPTION_BASIC_SCHEMA:
@@ -1312,27 +1218,23 @@ finance = FinanceQuery()
 
 def get_option_quote(
     option_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取期权行情数据（兼容旧接口）"""
-    return get_option(option_code, cache_dir=cache_dir, force_update=force_update)
+    return get_option(option_code, force_update=force_update)
 
 
 def run_query_simple(
     table: str,
     option_code: str = None,
     underlying_code: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
     if table == "STK_OPTION_DAILY":
         if option_code:
-            return get_option(
-                option_code, cache_dir=cache_dir, force_update=force_update
-            )
-        result = get_option_list(cache_dir=cache_dir, force_update=force_update)
+            return get_option(option_code, force_update=force_update)
+        result = get_option_list(force_update=force_update)
         if result.success and not result.data.empty:
             df = result.data
             if underlying_code:
@@ -1346,7 +1248,7 @@ def run_query_simple(
             return df
         return pd.DataFrame(columns=_OPTION_DAILY_SCHEMA)
     elif table == "STK_OPTION_BASIC":
-        result = get_option_list(cache_dir=cache_dir, force_update=force_update)
+        result = get_option_list(force_update=force_update)
         if result.success and not result.data.empty:
             basic_df = result.data.copy()
             for col in _OPTION_BASIC_SCHEMA:

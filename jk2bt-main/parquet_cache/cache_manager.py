@@ -123,11 +123,28 @@ class CacheManager:
             cache_key = self._make_cache_key(table, where, None)
             self.memory_cache.invalidate(cache_key)
 
-            files = self.partition_manager.list_partition_files(
-                table,
-                table_def.storage_layer,
-                table_def.partition_by,
-            )
+            if table_def.partition_by:
+                partitions = self.partition_manager.list_all_partitions(
+                    table,
+                    table_def.storage_layer,
+                    table_def.partition_by,
+                )
+                files = []
+                for pv in partitions:
+                    files.extend(
+                        self.partition_manager.list_partition_files(
+                            table,
+                            table_def.storage_layer,
+                            table_def.partition_by,
+                            pv,
+                        )
+                    )
+            else:
+                files = self.partition_manager.list_partition_files(
+                    table,
+                    table_def.storage_layer,
+                    table_def.partition_by,
+                )
             deleted = 0
             for f in files:
                 if self.partition_manager.remove_file(f):
@@ -136,11 +153,28 @@ class CacheManager:
             return deleted
         else:
             count = self.memory_cache.invalidate()
-            files = self.partition_manager.list_partition_files(
-                table,
-                table_def.storage_layer,
-                table_def.partition_by,
-            )
+            if table_def.partition_by:
+                partitions = self.partition_manager.list_all_partitions(
+                    table,
+                    table_def.storage_layer,
+                    table_def.partition_by,
+                )
+                files = []
+                for pv in partitions:
+                    files.extend(
+                        self.partition_manager.list_partition_files(
+                            table,
+                            table_def.storage_layer,
+                            table_def.partition_by,
+                            pv,
+                        )
+                    )
+            else:
+                files = self.partition_manager.list_partition_files(
+                    table,
+                    table_def.storage_layer,
+                    table_def.partition_by,
+                )
             deleted = 0
             for f in files:
                 if self.partition_manager.remove_file(f):
@@ -171,6 +205,21 @@ class CacheManager:
             table_def.storage_layer,
             table_def.partition_by,
         )
+        if not files and table_def.partition_by:
+            partitions = self.partition_manager.list_all_partitions(
+                table,
+                table_def.storage_layer,
+                table_def.partition_by,
+            )
+            for pv in partitions:
+                files.extend(
+                    self.partition_manager.list_partition_files(
+                        table,
+                        table_def.storage_layer,
+                        table_def.partition_by,
+                        pv,
+                    )
+                )
         file_count = len(files)
         total_size_bytes = sum(f.stat().st_size for f in files) if files else 0
 
