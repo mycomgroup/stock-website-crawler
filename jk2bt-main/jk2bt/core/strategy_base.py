@@ -464,9 +464,6 @@ class JQ2BTBaseStrategy(bt.Strategy):
             self._last_date = dt
         self._bars_today.append(self._bar_count)
 
-        for func, time_str in self._scheduled_tasks:
-            func(self.context)
-
     def stop(self):
         self.trade_log_file.close()
         self.position_log_file.close()

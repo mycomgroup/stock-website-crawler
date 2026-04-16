@@ -28,12 +28,14 @@ from dataclasses import dataclass, field
 from typing import Optional, Dict, Any, List
 
 # 配置logger - 降低DuckDB相关日志级别，减少噪音
-logging.getLogger('jk2bt.db.duckdb_manager').setLevel(logging.WARNING)
-logging.getLogger('jk2bt.market_data').setLevel(logging.WARNING)
+logging.getLogger("jk2bt.db.duckdb_manager").setLevel(logging.WARNING)
+logging.getLogger("jk2bt.market_data").setLevel(logging.WARNING)
 
 # 配置logger
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # 项目根目录
 PROJECT_ROOT = Path(__file__).parent
@@ -43,6 +45,7 @@ LOGS_DIR = PROJECT_ROOT / "logs" / "strategy_runs"
 
 class RunStatus(Enum):
     """策略运行状态枚举"""
+
     SUCCESS_WITH_RETURN = "success_with_return"
     SUCCESS_ZERO_RETURN = "success_zero_return"
     SUCCESS_NO_TRADE = "success_no_trade"
@@ -62,6 +65,7 @@ class RunStatus(Enum):
 @dataclass
 class StrategyRunResult:
     """策略运行结果"""
+
     strategy: str = ""
     strategy_file: str = ""
     success: bool = False
@@ -121,19 +125,36 @@ def _classify_run_status(
         error_str = str(exception).lower()
 
         # 依赖缺失
-        if any(kw in error_str for kw in ["module", "import", "no module named", "cannot import"]):
+        if any(
+            kw in error_str
+            for kw in ["module", "import", "no module named", "cannot import"]
+        ):
             return RunStatus.MISSING_DEPENDENCY
 
         # 数据缺失
-        if any(kw in error_str for kw in ["数据", "无数据", "股票"]) or "找不到股票" in str(exception):
+        if any(
+            kw in error_str for kw in ["数据", "无数据", "股票"]
+        ) or "找不到股票" in str(exception):
             return RunStatus.DATA_MISSING
 
         # API缺失
-        if any(kw in str(exception) for kw in ["get_", "attribute", "has no attribute", "not defined", "undefined"]):
+        if any(
+            kw in str(exception)
+            for kw in [
+                "get_",
+                "attribute",
+                "has no attribute",
+                "not defined",
+                "undefined",
+            ]
+        ):
             return RunStatus.MISSING_API
 
         # 资源文件缺失
-        if any(kw in error_str for kw in ["file not found", "no such file", "文件不存在", "cannot find"]):
+        if any(
+            kw in error_str
+            for kw in ["file not found", "no such file", "文件不存在", "cannot find"]
+        ):
             return RunStatus.MISSING_RESOURCE
 
         # 其他运行异常
@@ -153,7 +174,9 @@ def _classify_run_status(
     # 检查证据；未提供时根据回测结果做兼容推断（兼容旧测试与历史调用）
     if evidence is None:
         strategy_obj = (
-            backtest_result.get("strategy") if isinstance(backtest_result, dict) else None
+            backtest_result.get("strategy")
+            if isinstance(backtest_result, dict)
+            else None
         )
         navs = getattr(strategy_obj, "navs", None)
         nav_series_length = 0
@@ -177,7 +200,11 @@ def _classify_run_status(
 
     # 成功情况（必须无runtime_errors）
     if loaded and entered_backtest_loop and has_nav_series:
-        pnl_pct = backtest_result.get("pnl_pct", 0) if isinstance(backtest_result, dict) else 0
+        pnl_pct = (
+            backtest_result.get("pnl_pct", 0)
+            if isinstance(backtest_result, dict)
+            else 0
+        )
         if pnl_pct != 0:
             return RunStatus.SUCCESS_WITH_RETURN
         else:
@@ -266,8 +293,12 @@ def run_single_strategy(
 
         if backtest_result is not None:
             result.evidence["loaded"] = True
-            result.evidence["strategy_obj_valid"] = backtest_result.get("strategy") is not None
-            result.evidence["cerebro_valid"] = backtest_result.get("cerebro") is not None
+            result.evidence["strategy_obj_valid"] = (
+                backtest_result.get("strategy") is not None
+            )
+            result.evidence["cerebro_valid"] = (
+                backtest_result.get("cerebro") is not None
+            )
             result.final_value = backtest_result.get("final_value", 0)
             result.pnl = backtest_result.get("pnl", 0)
             result.pnl_pct = backtest_result.get("pnl_pct", 0)
@@ -295,7 +326,9 @@ def run_single_strategy(
                     # 收集错误摘要
                     error_summary = []
                     for err in runtime_errors_list[:5]:  # 只取前5个
-                        error_summary.append(f"{err.get('function', 'unknown')}: {err.get('error', 'unknown')}")
+                        error_summary.append(
+                            f"{err.get('function', 'unknown')}: {err.get('error', 'unknown')}"
+                        )
                     result.evidence["runtime_errors_summary"] = error_summary
 
     except Exception as e:
@@ -336,20 +369,30 @@ def is_valid_strategy_file(filepath):
     """
     logger.warning("is_valid_strategy_file已弃用，请使用StrategyScanner")
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
 
         # 必须包含至少一个策略函数
-        strategy_funcs = ['initialize', 'handle_data', 'before_trading_start',
-                          'after_trading_end', 'before_market_open', 'after_market_close']
-        has_func = any(f'def {func}' in content for func in strategy_funcs)
+        strategy_funcs = [
+            "initialize",
+            "handle_data",
+            "before_trading_start",
+            "after_trading_end",
+            "before_market_open",
+            "after_market_close",
+        ]
+        has_func = any(f"def {func}" in content for func in strategy_funcs)
 
         # 排除纯注释/文档文件
         if not has_func:
             return False
 
         # 排除只有注释的文件
-        lines = [l.strip() for l in content.split('\n') if l.strip() and not l.strip().startswith('#')]
+        lines = [
+            l.strip()
+            for l in content.split("\n")
+            if l.strip() and not l.strip().startswith("#")
+        ]
         if len(lines) < 5:  # 太短的文件不太可能是有效策略
             return False
 
@@ -372,14 +415,18 @@ def get_all_strategy_files():
     if registry_path.exists():
         try:
             import json
+
             with open(registry_path, "r", encoding="utf-8") as f:
                 registry = json.load(f)
             in_scope_strategies = [
-                item["path"] for item in registry.get("strategies", [])
+                item["path"]
+                for item in registry.get("strategies", [])
                 if item.get("in_scope") and item.get("run_status") == "executable"
             ]
             if in_scope_strategies:
-                logger.info(f"从registry缓存读取 {len(in_scope_strategies)} 个可执行策略")
+                logger.info(
+                    f"从registry缓存读取 {len(in_scope_strategies)} 个可执行策略"
+                )
                 return sorted(in_scope_strategies)
         except Exception as e:
             logger.warning(f"读取registry缓存失败: {e}，回退到扫描模式")
@@ -421,7 +468,9 @@ def random_pick_strategies(num=10):
     return random.sample(all_strategies, num)
 
 
-def run_single_strategy_subprocess(strategy_file, start_date, end_date, initial_capital=1000000, timeout=600):
+def run_single_strategy_subprocess(
+    strategy_file, start_date, end_date, initial_capital=1000000, timeout=600
+):
     """
     使用子进程运行单个策略
 
@@ -446,9 +495,12 @@ def run_single_strategy_subprocess(strategy_file, start_date, end_date, initial_
         "-m",
         "jk2bt.core.runner",
         strategy_file,
-        "--start", start_date,
-        "--end", end_date,
-        "--capital", str(initial_capital),
+        "--start",
+        start_date,
+        "--end",
+        end_date,
+        "--capital",
+        str(initial_capital),
     ]
 
     result = {
@@ -485,7 +537,9 @@ def run_single_strategy_subprocess(strategy_file, start_date, end_date, initial_
             try:
                 for line in output.split("\n"):
                     if "最终资金:" in line:
-                        result["final_value"] = float(line.split(":")[1].strip().replace(",", ""))
+                        result["final_value"] = float(
+                            line.split(":")[1].strip().replace(",", "")
+                        )
                     if "盈亏:" in line and "%" in line:
                         parts = line.split(":")[1].strip()
                         match = re.search(r"([\d,.-]+)\s+\(([+-]?[\d.]+)%\)", parts)
@@ -510,7 +564,7 @@ def run_single_strategy_subprocess(strategy_file, start_date, end_date, initial_
 
     except subprocess.TimeoutExpired:
         proc.kill()
-        result["error"] = f"超时 (> {timeout//60}分钟)"
+        result["error"] = f"超时 (> {timeout // 60}分钟)"
         print(f"[超时] {strategy_name}")
     except Exception as e:
         result["error"] = str(e)
@@ -520,7 +574,9 @@ def run_single_strategy_subprocess(strategy_file, start_date, end_date, initial_
     return result
 
 
-def run_strategies_with_agents(strategies, start_date, end_date, initial_capital=1000000, timeout=600):
+def run_strategies_with_agents(
+    strategies, start_date, end_date, initial_capital=1000000, timeout=600
+):
     """
     使用子进程并行运行多个策略
 
@@ -540,12 +596,12 @@ def run_strategies_with_agents(strategies, start_date, end_date, initial_capital
     """
     results = []
 
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"并行运行 {len(strategies)} 个策略（使用子进程）")
     print(f"回测区间: {start_date} ~ {end_date}")
     print(f"初始资金: {initial_capital}")
-    print(f"超时时间: {timeout//60} 分钟")
-    print(f"{'='*80}\n")
+    print(f"超时时间: {timeout // 60} 分钟")
+    print(f"{'=' * 80}\n")
 
     # 确保日志目录存在
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -559,14 +615,16 @@ def run_strategies_with_agents(strategies, start_date, end_date, initial_capital
             # 添加启动间隔，错开DuckDB初始化（避免锁冲突）
             if i > 0:
                 time.sleep(0.5)
-            futures[executor.submit(
-                run_single_strategy_subprocess,
-                strategy,
-                start_date,
-                end_date,
-                initial_capital,
-                timeout,
-            )] = strategy
+            futures[
+                executor.submit(
+                    run_single_strategy_subprocess,
+                    strategy,
+                    start_date,
+                    end_date,
+                    initial_capital,
+                    timeout,
+                )
+            ] = strategy
 
         for future in concurrent.futures.as_completed(futures):
             strategy = futures[future]
@@ -575,12 +633,14 @@ def run_strategies_with_agents(strategies, start_date, end_date, initial_capital
                 results.append(result)
             except Exception as e:
                 print(f"[异常] {Path(strategy).stem} - {e}")
-                results.append({
-                    "strategy_file": strategy,
-                    "strategy_name": Path(strategy).stem,
-                    "success": False,
-                    "error": str(e),
-                })
+                results.append(
+                    {
+                        "strategy_file": strategy,
+                        "strategy_name": Path(strategy).stem,
+                        "success": False,
+                        "error": str(e),
+                    }
+                )
 
     return results
 
@@ -613,15 +673,15 @@ def generate_summary_report(results, output_file=None):
         print(f"\n报告已保存: {output_file}")
 
     # 打印摘要
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("运行汇总")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
     print(f"总数: {len(results)}, 成功: {len(successful)}, 失败: {len(failed)}")
 
     if successful:
         pnls = [r.get("pnl_pct", 0) for r in successful if r.get("pnl_pct") is not None]
         if pnls:
-            print(f"平均收益: {sum(pnls)/len(pnls):.2f}%")
+            print(f"平均收益: {sum(pnls) / len(pnls):.2f}%")
             print(f"最高收益: {max(pnls):.2f}%")
             print(f"最低收益: {min(pnls):.2f}%")
 
@@ -638,7 +698,7 @@ def generate_summary_report(results, output_file=None):
         for r in failed[:5]:
             print(f"  {r['strategy_name'][:50]}: {r.get('error', '未知错误')[:50]}")
 
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     return report
 
@@ -690,6 +750,7 @@ def _collect_metadata(
     # 获取版本信息
     try:
         from jk2bt import __version__
+
         metadata["version"] = __version__
     except ImportError:
         metadata["version"] = "unknown"
@@ -792,65 +853,76 @@ def run_strategies_parallel(
                     runnable_files.append(file_path)
                 # 扫描拒绝的文件标记为 SKIPPED 状态并记录结果
                 elif scan.status == StrategyStatus.NOT_STRATEGY:
-                    skipped_results.append(StrategyRunResult(
-                        strategy=os.path.basename(file_path),
-                        strategy_file=file_path,
-                        success=False,
-                        run_status=RunStatus.SKIPPED_NOT_STRATEGY.value,
-                        scan_result=scan.to_dict(),
-                        error=scan.error_message,
-                    ))
+                    skipped_results.append(
+                        StrategyRunResult(
+                            strategy=os.path.basename(file_path),
+                            strategy_file=file_path,
+                            success=False,
+                            run_status=RunStatus.SKIPPED_NOT_STRATEGY.value,
+                            scan_result=scan.to_dict(),
+                            error=scan.error_message,
+                        )
+                    )
                 elif scan.status == StrategyStatus.SYNTAX_ERROR:
-                    skipped_results.append(StrategyRunResult(
-                        strategy=os.path.basename(file_path),
-                        strategy_file=file_path,
-                        success=False,
-                        run_status=RunStatus.SKIPPED_SYNTAX_ERROR.value,
-                        scan_result=scan.to_dict(),
-                        error=scan.error_message,
-                    ))
+                    skipped_results.append(
+                        StrategyRunResult(
+                            strategy=os.path.basename(file_path),
+                            strategy_file=file_path,
+                            success=False,
+                            run_status=RunStatus.SKIPPED_SYNTAX_ERROR.value,
+                            scan_result=scan.to_dict(),
+                            error=scan.error_message,
+                        )
+                    )
                 elif scan.status == StrategyStatus.NO_INITIALIZE:
-                    skipped_results.append(StrategyRunResult(
-                        strategy=os.path.basename(file_path),
-                        strategy_file=file_path,
-                        success=False,
-                        run_status=RunStatus.SKIPPED_NO_INITIALIZE.value,
-                        scan_result=scan.to_dict(),
-                        error=scan.error_message,
-                    ))
+                    skipped_results.append(
+                        StrategyRunResult(
+                            strategy=os.path.basename(file_path),
+                            strategy_file=file_path,
+                            success=False,
+                            run_status=RunStatus.SKIPPED_NO_INITIALIZE.value,
+                            scan_result=scan.to_dict(),
+                            error=scan.error_message,
+                        )
+                    )
                 elif scan.status == StrategyStatus.MISSING_API:
-                    skipped_results.append(StrategyRunResult(
-                        strategy=os.path.basename(file_path),
-                        strategy_file=file_path,
-                        success=False,
-                        run_status=RunStatus.SKIPPED_MISSING_API.value,
-                        scan_result=scan.to_dict(),
-                        error=f"缺失API: {', '.join(scan.missing_apis)}",
-                    ))
+                    skipped_results.append(
+                        StrategyRunResult(
+                            strategy=os.path.basename(file_path),
+                            strategy_file=file_path,
+                            success=False,
+                            run_status=RunStatus.SKIPPED_MISSING_API.value,
+                            scan_result=scan.to_dict(),
+                            error=f"缺失API: {', '.join(scan.missing_apis)}",
+                        )
+                    )
         except Exception as e:
             # 扫描不可用时回退到直接运行，避免兼容入口不可用。
             import traceback
+
             logger.warning(f"扫描器导入失败，回退到直接运行: {e}")
             logger.warning(traceback.format_exc())
             runnable_files = list(strategy_files)
 
     results = []
     workers = max(1, min(max_workers, max(len(runnable_files), 1)))
-    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
         futures = {}
         for i, file_path in enumerate(runnable_files):
             # 添加启动间隔，错开DuckDB初始化（避免锁冲突）
             if i > 0:
                 time.sleep(0.3)
-            futures[executor.submit(
-                run_single_strategy,
-                strategy_file=file_path,
-                start_date=start_date,
-                end_date=end_date,
-                initial_capital=initial_capital,
-                timeout=timeout_per_strategy,
-                scan_result=scan_results.get(file_path),
-            )] = file_path
+            futures[
+                executor.submit(
+                    run_single_strategy,
+                    strategy_file=file_path,
+                    start_date=start_date,
+                    end_date=end_date,
+                    initial_capital=initial_capital,
+                    timeout=timeout_per_strategy,
+                    scan_result=scan_results.get(file_path),
+                )
+            ] = file_path
 
         for future in concurrent.futures.as_completed(futures):
             file_path = futures[future]
@@ -895,7 +967,9 @@ def run_strategies_parallel(
         RunStatus.TIMEOUT.value,
     }
     recoverable_failures = sum(
-        1 for item in result_dicts if (not item.get("success")) and item.get("run_status") in recoverable_statuses
+        1
+        for item in result_dicts
+        if (not item.get("success")) and item.get("run_status") in recoverable_statuses
     )
     failed_total = sum(1 for item in result_dicts if not item.get("success"))
 
@@ -905,9 +979,15 @@ def run_strategies_parallel(
     }
     for item in result_dicts:
         attr = item.get("attribution") or {}
-        root_cause = attr.get("failure_root_cause") or item.get("run_status") or "unknown"
-        bucket = "recoverable" if root_cause in recoverable_statuses else "unrecoverable"
-        attribution_summary[bucket][root_cause] = attribution_summary[bucket].get(root_cause, 0) + 1
+        root_cause = (
+            attr.get("failure_root_cause") or item.get("run_status") or "unknown"
+        )
+        bucket = (
+            "recoverable" if root_cause in recoverable_statuses else "unrecoverable"
+        )
+        attribution_summary[bucket][root_cause] = (
+            attribution_summary[bucket].get(root_cause, 0) + 1
+        )
 
     summary = {
         "run_id": run_id,
@@ -955,8 +1035,15 @@ def main():
     parser.add_argument("--start", default="2020-01-01", help="开始日期")
     parser.add_argument("--end", default="2023-12-31", help="结束日期")
     parser.add_argument("--capital", type=float, default=1000000, help="初始资金")
-    parser.add_argument("--timeout", type=int, default=3600, help="每个策略超时时间（秒），默认3600秒（60分钟）")
-    parser.add_argument("--strategies", nargs="+", help="指定策略文件路径（不使用随机选择）")
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=3600,
+        help="每个策略超时时间（秒），默认3600秒（60分钟）",
+    )
+    parser.add_argument(
+        "--strategies", nargs="+", help="指定策略文件路径（不使用随机选择）"
+    )
     parser.add_argument("--output", default=None, help="报告输出文件路径")
 
     args = parser.parse_args()

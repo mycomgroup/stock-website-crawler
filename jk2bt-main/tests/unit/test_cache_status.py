@@ -107,8 +107,8 @@ class TestCheckStockDailyCache:
         })
 
         # 写入数据库
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
 
         manager = CacheManager(db_path=str(db_path))
@@ -139,8 +139,8 @@ class TestCheckStockDailyCache:
         })
 
         # 写入数据库
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
 
         manager = CacheManager(db_path=str(db_path))
@@ -168,8 +168,8 @@ class TestCheckStockDailyCache:
         })
 
         # 写入数据库
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df_qfq, "qfq")
 
         manager = CacheManager(db_path=str(db_path))
@@ -210,8 +210,8 @@ class TestCheckETFAndIndexCache:
             "amount": [3000000.0] * len(dates),
         })
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_etf_daily("510300", df)
 
         manager = CacheManager(db_path=str(db_path))
@@ -239,8 +239,8 @@ class TestCheckETFAndIndexCache:
             "amount": [0.0] * len(dates),
         })
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_index_daily("000300", df)
 
         manager = CacheManager(db_path=str(db_path))
@@ -414,8 +414,8 @@ class TestValidateCacheForOffline:
             "amount": [1000000.0] * len(dates),
         })
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
 
         manager = CacheManager(db_path=str(db_path))
@@ -465,8 +465,8 @@ class TestValidateCacheForOffline:
         })
         df2 = df1.copy()
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df1, "qfq")
         db.insert_stock_daily("sz000858", df2, "qfq")
 
@@ -563,8 +563,8 @@ class TestGetCacheSummary:
             "amount": [1000000.0] * len(dates),
         })
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
         db.insert_stock_daily("sz000858", df, "qfq")
         db.insert_etf_daily("510300", df)
@@ -611,8 +611,8 @@ class TestSymbolConversion:
             "amount": [1000000.0] * len(dates),
         })
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
 
         manager = CacheManager(db_path=str(db_path))
@@ -654,8 +654,8 @@ class TestSymbolConversion:
             "amount": [1000000.0] * len(dates),
         })
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sz000858", df, "qfq")
 
         manager = CacheManager(db_path=str(db_path))
@@ -698,8 +698,8 @@ class TestSymbolConversion:
             "amount": [1000000.0] * len(dates),
         })
 
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(db_path=str(db_path), read_only=False)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+        db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
 
         manager = CacheManager(db_path=str(db_path))

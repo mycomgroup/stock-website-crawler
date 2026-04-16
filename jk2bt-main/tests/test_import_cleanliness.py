@@ -195,10 +195,10 @@ class TestImportNoDatabaseConnection:
             # 强制重新导入
             if 'jk2bt' in sys.modules:
                 del sys.modules['jk2bt']
-            if 'jk2bt.db.unified_cache' in sys.modules:
-                del sys.modules['jk2bt.db.unified_cache']
-            if 'jk2bt.db.duckdb_manager' in sys.modules:
-                del sys.modules['jk2bt.db.duckdb_manager']
+            if 'jk2bt.db.parquet_adapter' in sys.modules:
+                del sys.modules['jk2bt.db.parquet_adapter']
+            if 'jk2bt.db.parquet_adapter' in sys.modules:
+                del sys.modules['jk2bt.db.parquet_adapter']
 
             import jk2bt
 
@@ -234,7 +234,7 @@ class MockDuckDBAdapter:
         self._initialized = True
 
 # 在导入前替换
-import jk2bt.db.unified_cache as cache_module
+import jk2bt.db.parquet_adapter as cache_module
 original_adapter = cache_module.DuckDBAdapter
 cache_module.DuckDBAdapter = MockDuckDBAdapter
 
@@ -266,8 +266,8 @@ cache_module.DuckDBAdapter = original_adapter
             # 清除已导入的模块
             modules_to_clear = [
                 'jk2bt.db',
-                'jk2bt.db.unified_cache',
-                'jk2bt.db.duckdb_manager',
+                'jk2bt.db.parquet_adapter',
+                'jk2bt.db.parquet_adapter',
                 'jk2bt.db.cache_config',
                 'jk2bt.db.cache_status',
                 'jk2bt.db.migrate',
@@ -279,7 +279,7 @@ cache_module.DuckDBAdapter = original_adapter
                     del sys.modules[mod]
 
             # 仅导入 db 模块
-            from jk2bt.db import DuckDBManager, UnifiedCacheManager
+            from jk2bt.db import ParquetAdapter, UnifiedCacheManager
 
             # 验证没有数据库连接
             assert mock_connect.call_count == 0, \

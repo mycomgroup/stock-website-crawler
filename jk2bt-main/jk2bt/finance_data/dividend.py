@@ -40,7 +40,7 @@ try:
 
     _CACHE_AVAILABLE = True
 except ImportError:
-    logger.warning("parquet_cache 模块不可用，将使用 pickle 缓存")
+    logger.warning("parquet_cache 模块不可用")
 
 _DIVIDEND_SCHEMA = [
     "code",

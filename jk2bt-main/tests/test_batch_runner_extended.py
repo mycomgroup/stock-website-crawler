@@ -37,7 +37,7 @@ from strategy_scanner import (
     quick_scan_strategy,
     batch_scan_strategies,
 )
-from jk2bt.db.duckdb_manager import DuckDBManager, LocalCache, clear_global_cache
+from jk2bt.db.parquet_adapter import ParquetAdapter, LocalCache, clear_global_cache
 
 
 class TestStrategyScannerExtended(unittest.TestCase):
@@ -170,7 +170,7 @@ class TestDuckDBExtended(unittest.TestCase):
         clear_global_cache()
         self.temp_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.temp_dir, "test_extended.db")
-        self.manager = DuckDBManager(
+        self.manager = ParquetAdapter(
             db_path=self.db_path, read_only=False, use_cache=True
         )
 
@@ -528,7 +528,7 @@ class TestConcurrencyExtended(unittest.TestCase):
         clear_global_cache()
         self.temp_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.temp_dir, "test_concurrency_extended.db")
-        self.manager = DuckDBManager(
+        self.manager = ParquetAdapter(
             db_path=self.db_path, read_only=False, use_cache=False
         )
 
@@ -557,7 +557,7 @@ class TestConcurrencyExtended(unittest.TestCase):
 
         def read_task():
             try:
-                reader = DuckDBManager(
+                reader = ParquetAdapter(
                     db_path=self.db_path, read_only=True, use_cache=True
                 )
                 read_df = reader.get_stock_daily(
@@ -620,7 +620,7 @@ class TestConcurrencyExtended(unittest.TestCase):
 
         def write_task(idx):
             try:
-                writer = DuckDBManager(
+                writer = ParquetAdapter(
                     db_path=self.db_path, read_only=False, use_cache=False
                 )
                 df = pd.DataFrame(
@@ -642,7 +642,7 @@ class TestConcurrencyExtended(unittest.TestCase):
 
         def read_task():
             try:
-                reader = DuckDBManager(
+                reader = ParquetAdapter(
                     db_path=self.db_path, read_only=True, use_cache=True
                 )
                 symbols = reader.get_symbols("stock_daily")
@@ -763,7 +763,7 @@ def run_extended_smoke_test():
     db_path = os.path.join(temp_dir, "extended_test.db")
 
     try:
-        manager = DuckDBManager(db_path=db_path, read_only=False, use_cache=True)
+        manager = ParquetAdapter(db_path=db_path, read_only=False, use_cache=True)
 
         # 批量插入测试
         symbols = ["sh600000", "sh600001", "sh600002"]

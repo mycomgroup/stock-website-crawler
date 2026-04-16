@@ -369,27 +369,27 @@ class TestDbCompatImport:
 
     def test_db_main_import(self):
         """测试 db 主模块导入"""
-        from jk2bt.db import DuckDBManager
+        from jk2bt.db import ParquetAdapter
 
-        assert DuckDBManager is not None
+        assert ParquetAdapter is not None
 
     def test_db_duckdb_manager_import(self):
         """测试 db.duckdb_manager 导入"""
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        assert DuckDBManager is not None
+        assert ParquetAdapter is not None
 
     def test_db_duckdb_manager_functions(self):
         """测试 db.duckdb_manager 函数导入"""
-        from jk2bt.db.duckdb_manager import (
-            DuckDBManager,
+        from jk2bt.db.parquet_adapter import (
+            ParquetAdapter,
             LocalCache,
             clear_global_cache,
             get_shared_read_only_manager,
             get_writer_manager,
         )
 
-        assert DuckDBManager is not None
+        assert ParquetAdapter is not None
         assert LocalCache is not None
         assert callable(clear_global_cache)
         assert callable(get_shared_read_only_manager)
@@ -418,16 +418,16 @@ class TestDbCompatImport:
         assert callable(migrate_index_pickles)
 
     def test_db_manager_creation(self):
-        """测试 DuckDBManager 创建"""
-        from jk2bt.db import DuckDBManager
+        """测试 ParquetAdapter 创建"""
+        from jk2bt.db import ParquetAdapter
 
-        manager = DuckDBManager()
+        manager = ParquetAdapter()
         assert manager is not None
 
     def test_db_consistency_with_new_path(self):
         """测试 db 新旧导入路径一致性"""
-        from jk2bt.db import DuckDBManager as old_import
-        from jk2bt.db import DuckDBManager as new_import
+        from jk2bt.db import ParquetAdapter as old_import
+        from jk2bt.db import ParquetAdapter as new_import
 
         assert old_import is new_import
 
@@ -440,12 +440,12 @@ class TestMixedCompatImport:
         from factors import get_factor_values_jq
         from jk2bt.core.strategy_base import get_price_jq
         from subportfolios import SubportfolioManager
-        from jk2bt.db import DuckDBManager
+        from jk2bt.db import ParquetAdapter
 
         assert callable(get_factor_values_jq)
         assert callable(get_price_jq)
         assert SubportfolioManager is not None
-        assert DuckDBManager is not None
+        assert ParquetAdapter is not None
 
     def test_mixed_import_session2(self):
         """测试混合导入会话2"""

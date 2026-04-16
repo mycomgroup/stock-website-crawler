@@ -54,11 +54,11 @@ def _make_raw_df_chinese(start="2024-01-02", rows=5):
 @pytest.fixture(autouse=True)
 def reset_singletons():
     """每个测试前重置 DuckDB 单例缓存，避免状态泄漏"""
-    from jk2bt.db import duckdb_manager
+    from jk2bt.db import parquet_adapter
 
-    duckdb_manager._PROCESS_SINGLETONS.clear()
+    parquet_adapter._PROCESS_SINGLETONS.clear()
     yield
-    duckdb_manager._PROCESS_SINGLETONS.clear()
+    parquet_adapter._PROCESS_SINGLETONS.clear()
 
 
 # ============================================================================

@@ -43,13 +43,6 @@ class DataSource(Enum):
     AKSHARE_DEFAULT = "akshare"
 
 
-DATA_SOURCE_PRIORITY = [
-    DataSource.BAIDU,
-    DataSource.EASTMONEY,
-    DataSource.THS,
-]
-
-
 class DataQualityError(Exception):
     """数据质量异常"""
 
@@ -603,7 +596,6 @@ turnover_data_source = TurnoverDataSource()
 
 __all__ = [
     "DataSource",
-    "DATA_SOURCE_PRIORITY",
     "DataQualityError",
     "DataSourceError",
     "validate_valuation_data",

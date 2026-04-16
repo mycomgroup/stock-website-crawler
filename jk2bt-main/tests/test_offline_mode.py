@@ -29,7 +29,7 @@ if str(project_root) not in sys.path:
 # 导入被测模块
 try:
     from jk2bt.db.cache_status import CacheManager, get_cache_manager
-    from jk2bt.db.duckdb_manager import DuckDBManager, get_shared_read_only_manager
+    from jk2bt.db.parquet_adapter import ParquetAdapter, get_shared_read_only_manager
     from jk2bt.market_data.stock import get_stock_daily
     from jk2bt.market_data.etf import get_etf_daily
     from jk2bt.market_data.index import get_index_daily
@@ -223,7 +223,7 @@ class OfflineTestFixture:
 
         # 创建模拟的日线数据（写入DuckDB）
         try:
-            db = DuckDBManager(db_path=self.db_path, read_only=False)
+            db = ParquetAdapter(db_path=self.db_path, read_only=False)
 
             # 股票数据
             for stock in self.test_stocks:
@@ -341,12 +341,12 @@ class TestOfflineEmptyEnvironment:
     def test_offline_mode_empty_cache_error(self, empty_fixture, network_blocked):
         """测试离线模式下空缓存的错误提示"""
         # 先创建空数据库（只有表结构，无数据）
-        db_write = DuckDBManager(db_path=empty_fixture.db_path, read_only=False)
+        db_write = ParquetAdapter(db_path=empty_fixture.db_path, read_only=False)
         # 确保表结构已初始化
         db_write._init_database()
 
         # 然后以只读模式打开，验证空缓存行为
-        db_read = DuckDBManager(db_path=empty_fixture.db_path, read_only=True)
+        db_read = ParquetAdapter(db_path=empty_fixture.db_path, read_only=True)
 
         # 验证空缓存
         has_data = db_read.has_data(
@@ -607,7 +607,7 @@ class TestOfflineModeEnvironmentVariable:
             db_path = os.path.join(temp_dir, "test.db")
 
             # 写入测试数据
-            db = DuckDBManager(db_path=db_path, read_only=False)
+            db = ParquetAdapter(db_path=db_path, read_only=False)
             test_df = pd.DataFrame({
                 "datetime": pd.date_range("2023-01-01", "2023-01-10"),
                 "open": [100 + i for i in range(10)],
@@ -620,7 +620,7 @@ class TestOfflineModeEnvironmentVariable:
             db.insert_stock_daily("sh600000", test_df)
 
             # 验证数据可读取
-            db_read = DuckDBManager(db_path=db_path, read_only=True)
+            db_read = ParquetAdapter(db_path=db_path, read_only=True)
             df = db_read.get_stock_daily("sh600000", "2023-01-01", "2023-01-10")
 
             assert not df.empty

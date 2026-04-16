@@ -53,7 +53,7 @@ class TestPrewarmEndToEnd:
         # 确保可以导入必要模块
         try:
             from jk2bt.db.cache_status import get_cache_manager
-            from jk2bt.db.duckdb_manager import DuckDBManager
+            from jk2bt.db.parquet_adapter import ParquetAdapter
         except ImportError as e:
             pytest.skip(f"必要模块导入失败: {e}")
 

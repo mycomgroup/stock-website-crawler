@@ -209,12 +209,12 @@ def test_period_validation():
     print("=" * 60)
 
     try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
         db_path = os.path.join(os.path.dirname(__file__), "data", "market.db")
         if os.path.exists(db_path):
             print(f"\n✓ DuckDB 数据库存在: {db_path}")
-            db = DuckDBManager(read_only=True)
+            db = ParquetAdapter(read_only=True)
             with db._get_connection(read_only=True) as conn:
                 tables = conn.execute("SHOW TABLES").fetchall()
                 table_names = [t[0] for t in tables]
@@ -248,9 +248,9 @@ def check_duckdb_cache():
     print("=" * 60)
 
     try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        db = DuckDBManager(read_only=True)
+        db = ParquetAdapter(read_only=True)
 
         with db._get_connection(read_only=True) as conn:
             tables = conn.execute("SHOW TABLES").fetchall()

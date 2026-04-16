@@ -37,7 +37,6 @@ from jk2bt.utils.result import RobustResult
 
 logger = logging.getLogger(__name__)
 
-CACHE_EXPIRE_DAYS = 90
 _MAX_RETRY_ATTEMPTS = 3
 _RETRY_DELAY_SECONDS = 1
 
@@ -271,7 +270,6 @@ def get_company_info(symbol, force_update=False, use_duckdb=True) -> pd.DataFram
     - registered_address: 注册地址
     - company_status: 公司状态（正常、停牌、退市等）
     """
-    code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
     if use_duckdb and _db_manager is not None and not force_update:
@@ -279,47 +277,22 @@ def get_company_info(symbol, force_update=False, use_duckdb=True) -> pd.DataFram
         if not df_cached.empty:
             return df_cached[_COMPANY_BASIC_INFO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, f"company_info_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    try:
+        df_profile = _fetch_company_profile(_extract_code_num(symbol))
+        df_industry = _fetch_company_industry(_extract_code_num(symbol))
 
-    need_download = force_update or (not os.path.exists(cache_file))
+        result = _merge_and_normalize(df_profile, df_industry, jq_code)
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < CACHE_EXPIRE_DAYS:
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_company_info(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            df_profile = _fetch_company_profile(code_num)
-            df_industry = _fetch_company_industry(code_num)
-
-            result = _merge_and_normalize(df_profile, df_industry, jq_code)
-
-            if not result.empty:
-                result.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_company_info(result)
-                return result
-            else:
-                return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
-
-        except Exception as e:
-            print(f"[company_info] 获取公司信息失败 {symbol}: {e}")
+        if not result.empty:
+            if use_duckdb and _db_manager is not None:
+                _db_manager.insert_company_info(result)
+            return result
+        else:
             return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
 
-    return (
-        cached_df
-        if not cached_df.empty
-        else pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
-    )
+    except Exception as e:
+        print(f"[company_info] 获取公司信息失败 {symbol}: {e}")
+        return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
 
 
 def get_security_status(
@@ -343,7 +316,6 @@ def get_security_status(
     - status_type: 状态类型（正常交易、停牌、复牌、退市等）
     - reason: 状态变动原因
     """
-    code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
     if date is None:
@@ -355,32 +327,17 @@ def get_security_status(
         if not df_cached.empty:
             return df_cached[_STATUS_CHANGE_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, f"suspension_{date_str.replace('-', '')}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            result = _filter_status_for_symbol(cached_df, code_num, jq_code)
+    try:
+        df_all = _fetch_suspension_data(date_str)
+        if df_all is not None and not df_all.empty:
+            result = _filter_status_for_symbol(
+                df_all, _extract_code_num(symbol), jq_code
+            )
             if use_duckdb and _db_manager is not None and not result.empty:
                 _db_manager.insert_status_change(result)
             return result
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            df_all = _fetch_suspension_data(date_str)
-            if df_all is not None and not df_all.empty:
-                df_all.to_pickle(cache_file)
-                result = _filter_status_for_symbol(df_all, code_num, jq_code)
-                if use_duckdb and _db_manager is not None and not result.empty:
-                    _db_manager.insert_status_change(result)
-                return result
-        except Exception as e:
-            print(f"[security_status] 获取状态失败 {symbol}: {e}")
+    except Exception as e:
+        print(f"[security_status] 获取状态失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_STATUS_CHANGE_SCHEMA)
 
@@ -564,8 +521,7 @@ def query_company_basic_info(
 
         try:
             df = get_company_info(
-                symbol,
-                cache_dir=cache_dir,
+                symbol
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -633,7 +589,7 @@ def query_status_change(
                     df = get_security_status(
                         symbol,
                         date=date_str,
-                        cache_dir=cache_dir,
+    
                         force_update=force_update,
                         use_duckdb=use_duckdb,
                     )
@@ -643,7 +599,7 @@ def query_status_change(
             else:
                 df = get_security_status(
                     symbol,
-                    cache_dir=cache_dir,
+
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -743,7 +699,7 @@ class FinanceQuery:
             if "code" in conditions:
                 return get_company_info(
                     conditions["code"],
-                    cache_dir=cache_dir,
+
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -754,7 +710,7 @@ class FinanceQuery:
             if "code" in conditions:
                 return get_security_status(
                     conditions["code"],
-                    cache_dir=cache_dir,
+
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -842,28 +798,15 @@ def get_listing_info(
             return pd.DataFrame(columns=_LISTING_INFO_SCHEMA)
         symbols = [symbol]
 
-    cache_file = os.path.join(cache_dir, "listing_info_all.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            df_all = pd.read_pickle(cache_file)
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-
-        try:
-            df_sh = get_adapter().get_stock_info_sh_name_code(symbol="sh")
-            df_sz = get_adapter().get_stock_info_sz_name_code(symbol="sz")
-            df_all = pd.concat([df_sh, df_sz], ignore_index=True)
-            df_all.to_pickle(cache_file)
-        except Exception as e:
-            logger.warning(f"[listing_info] 获取上市信息失败: {e}")
-            return pd.DataFrame(columns=_LISTING_INFO_SCHEMA)
+    try:
+        df_sh = get_adapter().get_stock_info_sh_name_code(symbol="sh")
+        df_sz = get_adapter().get_stock_info_sz_name_code(symbol="sz")
+        df_all = pd.concat([df_sh, df_sz], ignore_index=True)
+    except Exception as e:
+        logger.warning(f"[listing_info] 获取上市信息失败: {e}")
+        return pd.DataFrame(columns=_LISTING_INFO_SCHEMA)
 
     if df_all is None or df_all.empty:
         return pd.DataFrame(columns=_LISTING_INFO_SCHEMA)
@@ -980,13 +923,12 @@ def get_company_info_robust(
                 source="input",
             )
         return _get_company_info_batch_robust(
-            symbol, cache_dir, force_update, use_duckdb
+            symbol, force_update, use_duckdb
         )
 
     try:
         df = get_company_info(
             symbol,
-            cache_dir=cache_dir,
             force_update=force_update,
             use_duckdb=use_duckdb,
         )
@@ -1023,7 +965,6 @@ def get_company_info_robust(
 
 def _get_company_info_batch_robust(
     symbols: List[str],
-    cache_dir: str,
     force_update: bool,
     use_duckdb: bool,
 ) -> RobustResult:
@@ -1034,8 +975,7 @@ def _get_company_info_batch_robust(
     for symbol in symbols:
         try:
             df = get_company_info(
-                symbol,
-                cache_dir=cache_dir,
+                symbol
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -1091,7 +1031,6 @@ def query_company_info_robust(
     """
     return get_company_info_robust(
         symbols,
-        cache_dir=cache_dir,
         force_update=force_update,
         use_duckdb=use_duckdb,
     )
@@ -1131,7 +1070,6 @@ def get_security_status_robust(
         df = get_security_status(
             symbol,
             date=date,
-            cache_dir=cache_dir,
             force_update=force_update,
             use_duckdb=use_duckdb,
         )
@@ -1205,8 +1143,7 @@ def get_company_info_list(
         jq_code = _normalize_to_jq(security)
         try:
             df = get_company_info(
-                security,
-                cache_dir=cache_dir,
+                security
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -1243,34 +1180,16 @@ def get_industry_info(
     >>> df = get_industry_info('600519.XSHG')
     >>> print(df['industry_name'])
     """
-    code_num = _extract_code_num(security)
     jq_code = _normalize_to_jq(security)
 
-    cache_file = os.path.join(cache_dir, f"industry_info_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < CACHE_EXPIRE_DAYS:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            df_raw = _fetch_company_industry(code_num)
-            if df_raw is not None and not df_raw.empty:
-                result = _normalize_industry_info(df_raw, jq_code)
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    return result
-        except Exception as e:
-            logger.warning(f"[get_industry_info] 获取 {security} 行业信息失败: {e}")
+    try:
+        df_raw = _fetch_company_industry(_extract_code_num(security))
+        if df_raw is not None and not df_raw.empty:
+            result = _normalize_industry_info(df_raw, jq_code)
+            if not result.empty:
+                return result
+    except Exception as e:
+        logger.warning(f"[get_industry_info] 获取 {security} 行业信息失败: {e}")
 
     return pd.DataFrame(columns=_INDUSTY_INFO_SCHEMA)
 
@@ -1330,8 +1249,7 @@ def prewarm_company_info_cache(
     for i, security in enumerate(securities):
         try:
             df = get_company_info(
-                security,
-                cache_dir=cache_dir,
+                security
                 force_update=True,
                 use_duckdb=use_duckdb,
             )

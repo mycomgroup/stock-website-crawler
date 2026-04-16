@@ -6,7 +6,7 @@
 覆盖:
 1. strategy_scanner.py - 策略扫描器
 2. run_strategies_parallel.py - 运行状态分类
-3. duckdb_manager.py - 缓存和并发
+3. parquet_adapter.py - 缓存和并发
 """
 
 import os
@@ -304,7 +304,7 @@ class TestLocalCache(unittest.TestCase):
     """测试本地缓存"""
 
     def setUp(self):
-        from jk2bt.db.duckdb_manager import LocalCache
+        from jk2bt.db.parquet_adapter import LocalCache
 
         self.cache = LocalCache(max_size=3)
 
@@ -442,32 +442,32 @@ class TestDuckDBManagerConcurrency(unittest.TestCase):
 
     def test_read_only_mode(self):
         """测试只读模式"""
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        writer = DuckDBManager(db_path=self.db_path, read_only=False)
+        writer = ParquetAdapter(db_path=self.db_path, read_only=False)
         writer.close()
 
-        reader = DuckDBManager(db_path=self.db_path, read_only=True)
+        reader = ParquetAdapter(db_path=self.db_path, read_only=True)
         self.assertTrue(reader.read_only)
         reader.close()
 
     def test_use_cache_option(self):
         """测试缓存选项"""
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        manager_with_cache = DuckDBManager(db_path=self.db_path, use_cache=True)
+        manager_with_cache = ParquetAdapter(db_path=self.db_path, use_cache=True)
         self.assertTrue(manager_with_cache.use_cache)
         manager_with_cache.close()
 
-        manager_no_cache = DuckDBManager(db_path=self.db_path, use_cache=False)
+        manager_no_cache = ParquetAdapter(db_path=self.db_path, use_cache=False)
         self.assertFalse(manager_no_cache.use_cache)
         manager_no_cache.close()
 
     def test_independent_connections(self):
         """测试独立连接"""
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        manager = DuckDBManager(db_path=self.db_path, read_only=False)
+        manager = ParquetAdapter(db_path=self.db_path, read_only=False)
 
         with manager._get_connection(read_only=True) as conn1:
             with manager._get_connection(read_only=True) as conn2:
@@ -477,7 +477,7 @@ class TestDuckDBManagerConcurrency(unittest.TestCase):
 
     def test_get_shared_read_only_manager(self):
         """测试工厂函数"""
-        from jk2bt.db.duckdb_manager import get_shared_read_only_manager
+        from jk2bt.db.parquet_adapter import get_shared_read_only_manager
 
         reader = get_shared_read_only_manager(db_path=self.db_path)
         self.assertTrue(reader.read_only)
@@ -485,7 +485,7 @@ class TestDuckDBManagerConcurrency(unittest.TestCase):
 
     def test_get_writer_manager(self):
         """测试写入管理器工厂函数"""
-        from jk2bt.db.duckdb_manager import get_writer_manager
+        from jk2bt.db.parquet_adapter import get_writer_manager
 
         writer = get_writer_manager(db_path=self.db_path)
         self.assertFalse(writer.read_only)
@@ -493,17 +493,17 @@ class TestDuckDBManagerConcurrency(unittest.TestCase):
 
     def test_clear_cache_method(self):
         """测试清除缓存方法"""
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        manager = DuckDBManager(db_path=self.db_path, use_cache=True)
+        manager = ParquetAdapter(db_path=self.db_path, use_cache=True)
         manager.clear_cache()
         manager.close()
 
     def test_insert_with_retry(self):
         """测试写入重试"""
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        manager = DuckDBManager(db_path=self.db_path, read_only=False)
+        manager = ParquetAdapter(db_path=self.db_path, read_only=False)
 
         df = pd.DataFrame(
             {

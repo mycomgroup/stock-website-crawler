@@ -709,9 +709,9 @@ class TestImportFromSubmodules:
 
     def test_import_from_db(self):
         """测试从 db 导入"""
-        from jk2bt.db import DuckDBManager
+        from jk2bt.db import ParquetAdapter
 
-        assert isinstance(DuckDBManager, type)
+        assert isinstance(ParquetAdapter, type)
 
 
 if __name__ == "__main__":

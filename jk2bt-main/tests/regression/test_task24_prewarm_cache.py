@@ -560,7 +560,7 @@ class TestIntegration:
     def test_cache_manager_with_readonly_db(self):
         """测试只读模式的缓存管理器"""
         from jk2bt.db.cache_status import CacheManager
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
         manager = CacheManager()
         assert manager.db.read_only is True

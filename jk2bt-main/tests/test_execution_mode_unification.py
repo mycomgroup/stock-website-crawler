@@ -61,11 +61,11 @@ class TestPackageImportMode:
         """测试子模块可以导入"""
         from jk2bt.core.runner import run_jq_strategy
         from jk2bt.strategy.scanner import StrategyScanner
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
         assert callable(run_jq_strategy)
         assert StrategyScanner is not None
-        assert DuckDBManager is not None
+        assert ParquetAdapter is not None
 
     def test_all_exported_symbols_accessible(self):
         """测试所有导出的符号都可以访问"""
