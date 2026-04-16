@@ -9,18 +9,24 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 from typing import List, Tuple, Dict
+from config import PERIOD_CONFIG
 
 
-def calculate_long_short_return(
+def calculate_cumulative_returns(
     factor_df: pd.DataFrame, ret_df: pd.DataFrame, num_layers: int = 10
-) -> float:
+) -> pd.DataFrame:
     """
-    计算分层多空收益
+    计算各层累计收益
 
     Returns:
-        多空收益累计和
+        DataFrame包含各层的累计收益序列
     """
-    backtest_results = pd.DataFrame()
+    layer_returns = {}
+
+    for layer_idx in range(num_layers):
+        layer_returns[f"Group_{layer_idx + 1}"] = []
+
+    dates = []
 
     for date in factor_df.index:
         factors = factor_df.loc[date].dropna()
@@ -40,24 +46,95 @@ def calculate_long_short_return(
         group_size = n // num_layers
         remainder = n % num_layers
 
-        group_means = []
         start = 0
-        for i in range(num_layers):
-            end = start + group_size + (1 if i < remainder else 0)
+        for layer_idx in range(num_layers):
+            end = start + group_size + (1 if layer_idx < remainder else 0)
             group = combined.iloc[start:end]
-            group_means.append(group["return"].mean())
+            layer_returns[f"Group_{layer_idx + 1}"].append(group["return"].mean())
             start = end
 
-        backtest_results.loc[date, "long_short"] = group_means[0] - group_means[-1]
+        dates.append(date)
 
-    return backtest_results["long_short"].sum()
+    result = pd.DataFrame(layer_returns, index=dates)
+    return result
 
 
-def calculate_top_sharpe(
+def calculate_annual_return(
+    factor_df: pd.DataFrame,
+    ret_df: pd.DataFrame,
+    num_layers: int = 10,
+    period: str = "W",
+) -> float:
+    """
+    计算顶层年化收益率
+
+    Args:
+        period: 周期类型，D/W/M
+
+    Returns:
+        年化收益率（基于顶层Group_1）
+    """
+    layer_returns = calculate_cumulative_returns(factor_df, ret_df, num_layers)
+
+    if layer_returns.empty:
+        return 0.0
+
+    top_returns = layer_returns["Group_1"]
+
+    if len(top_returns) < 2:
+        return 0.0
+
+    cumulative = (1 + top_returns).cumprod()
+    total_return = cumulative.iloc[-1] - 1
+
+    num_periods = len(top_returns)
+    periods_per_year = PERIOD_CONFIG[period]["periods_per_year"]
+
+    annual_return = (1 + total_return) ** (periods_per_year / num_periods) - 1
+
+    return float(annual_return)
+
+
+def calculate_max_drawdown(
     factor_df: pd.DataFrame, ret_df: pd.DataFrame, num_layers: int = 10
 ) -> float:
     """
+    计算顶层最大回撤
+
+    Returns:
+        最大回撤比例（0-1之间，越大表示回撤越严重）
+    """
+    layer_returns = calculate_cumulative_returns(factor_df, ret_df, num_layers)
+
+    if layer_returns.empty:
+        return 0.0
+
+    top_returns = layer_returns["Group_1"]
+
+    if len(top_returns) < 2:
+        return 0.0
+
+    cumulative = (1 + top_returns).cumprod()
+
+    peak = cumulative.expanding(min_periods=1).max()
+    drawdown = (cumulative - peak) / peak
+
+    max_dd = drawdown.min()
+
+    return float(abs(max_dd))
+
+
+def calculate_long_short_return(
+    factor_df: pd.DataFrame,
+    ret_df: pd.DataFrame,
+    num_layers: int = 10,
+    period: str = "W",
+) -> float:
+    """
     计算顶层夏普比率
+
+    Args:
+        period: 周期类型，D/W/M
     """
     top_returns = []
 
@@ -85,9 +162,27 @@ def calculate_top_sharpe(
         return 0.0
 
     top_returns = np.array(top_returns)
-    sharpe = np.mean(top_returns) / (np.std(top_returns) + 1e-10) * np.sqrt(252)
+    periods_per_year = PERIOD_CONFIG[period]["periods_per_year"]
+    sharpe = (
+        np.mean(top_returns) / (np.std(top_returns) + 1e-10) * np.sqrt(periods_per_year)
+    )
 
     return sharpe
+
+
+def calculate_top_sharpe(
+    factor_df: pd.DataFrame,
+    ret_df: pd.DataFrame,
+    num_layers: int = 10,
+    period: str = "W",
+) -> float:
+    """
+    计算顶层夏普比率（calculate_long_short_return的别名）
+
+    Args:
+        period: 周期类型，D/W/M
+    """
+    return calculate_long_short_return(factor_df, ret_df, num_layers, period)
 
 
 def calculate_ic_series(factor_df: pd.DataFrame, ret_df: pd.DataFrame) -> np.ndarray:
@@ -225,9 +320,13 @@ def calculate_composite_score(
     ret_df: pd.DataFrame,
     diversity: float,
     num_layers: int = 10,
+    period: str = "W",
 ) -> Dict[str, float]:
     """
-    计算综合评分及各分项指标
+    计算综合评分及各分项指标（包含annual_return和max_drawdown）
+
+    Args:
+        period: 周期类型，D/W/M
 
     Returns:
         包含所有指标的字典
@@ -235,14 +334,19 @@ def calculate_composite_score(
     ic_series = calculate_ic_series(factor_df, ret_df)
 
     metrics = {
-        "long_short_return": calculate_long_short_return(factor_df, ret_df, num_layers),
-        "top_sharpe": calculate_top_sharpe(factor_df, ret_df, num_layers),
+        "long_short_return": calculate_long_short_return(
+            factor_df, ret_df, num_layers, period
+        ),
+        "top_sharpe": calculate_top_sharpe(factor_df, ret_df, num_layers, period),
         "ic_mean": calculate_ic_mean(ic_series),
         "icir": calculate_icir(ic_series),
         "ic_win_rate": calculate_ic_win_rate(ic_series),
         "monotonicity": calculate_monotonicity(factor_df, ret_df, num_layers),
         "return_volatility": calculate_return_volatility(factor_df, ret_df, num_layers),
         "diversity": diversity,
+        "annual_return": calculate_annual_return(factor_df, ret_df, num_layers, period),
+        "max_drawdown": calculate_max_drawdown(factor_df, ret_df, num_layers),
+        "period": period,
     }
 
     weights = {
@@ -273,3 +377,20 @@ def calculate_composite_score(
     metrics["total_score"] = total_score
 
     return metrics
+
+
+def adjust_returns_for_cost(returns, period: str = "W", turnover_rate: float = 0.5):
+    """
+    交易成本扣减
+
+    Args:
+        returns: 收益率序列
+        period: 周期类型，D/W/M
+        turnover_rate: 换手率
+
+    Returns:
+        扣减后的收益率
+    """
+    config = PERIOD_CONFIG[period]
+    cost_per_period = config["trading_cost"] * turnover_rate
+    return returns - cost_per_period

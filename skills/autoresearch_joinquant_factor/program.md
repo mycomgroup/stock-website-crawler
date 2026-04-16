@@ -10,10 +10,11 @@
 strategy_autoresearch_factor_<name>/
 ├── strategy.py        ← 唯一文件，包含因子组合+评估代码，每次迭代更新
 ├── search_notes.md    ← 状态 + 历史 + 搜索地图
+├── iterations.tsv     ← 只读，由 run_iteration.py 维护
 └── program.md         ← 本文件（只读）
 ```
 
-**只读文件（不可修改）**：`search_notes.md`、`program.md`
+**只读文件（不可修改）**：`iterations.tsv`、`program.md`
 
 ---
 
@@ -25,6 +26,7 @@ strategy_autoresearch_factor_<name>/
 
 ```bash
 cat search_notes.md
+cat iterations.tsv
 ```
 
 查看 git 历史：
@@ -33,7 +35,7 @@ git log --oneline -10
 ```
 
 **停止条件（同时满足才停止）：**
-- `consecutive_failures >= 5` **且** `search_notes.md` 中"待探索方向"已全部尝试
+- `consecutive_failures >= 5` **且** `iterations.tsv` 和 `search_notes.md` 中"待探索方向"已全部尝试
 - 或 `current_iter >= 100`
 
 **连续失败但待探索方向未跑完时的处理：**
@@ -98,6 +100,9 @@ echo "exit: $?"
 
 # 查看最新状态
 cat search_notes.md
+
+# 查看完整迭代历史
+cat iterations.tsv
 ```
 
 - exit code 0 = keep（search_notes.md 已更新 champion）
