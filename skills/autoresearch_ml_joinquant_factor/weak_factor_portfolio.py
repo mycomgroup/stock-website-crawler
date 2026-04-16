@@ -23,6 +23,7 @@ def standardize_factors(
     factors_df: pd.DataFrame,
     method: str = "zscore",
     clip_value: float = 3.0,
+    group_col: str | pd.Series | dict | None = None,
 ) -> pd.DataFrame:
     """按日期截面标准化因子矩阵。"""
     if factors_df.empty:
@@ -32,31 +33,84 @@ def standardize_factors(
     if method not in {"zscore", "rank"}:
         raise ValueError("method 必须是 'zscore' 或 'rank'")
 
+    def _zscore(frame: pd.DataFrame) -> pd.DataFrame:
+        return (frame - frame.mean()) / (frame.std(ddof=0) + EPS)
+
+    def _rank(frame: pd.DataFrame) -> pd.DataFrame:
+        return frame.rank(pct=True) * 2 - 1
+
+    def _transform(frame: pd.DataFrame) -> pd.DataFrame:
+        return _zscore(frame) if method == "zscore" else _rank(frame)
+
+    def _resolve_group_series(data: pd.DataFrame) -> pd.Series | None:
+        if group_col is None:
+            return None
+
+        if isinstance(group_col, str):
+            if group_col in data.columns:
+                return data[group_col]
+            if group_col in data.index.names:
+                return pd.Series(data.index.get_level_values(group_col), index=data.index)
+            raise ValueError(f"group_col='{group_col}' 不存在于列或索引中")
+
+        if isinstance(group_col, dict):
+            if isinstance(data.index, pd.MultiIndex) and "stock" in data.index.names:
+                stock_values = data.index.get_level_values("stock")
+                mapped = pd.Series(stock_values, index=data.index).map(group_col)
+                return mapped
+            return pd.Series(data.index, index=data.index).map(group_col)
+
+        if isinstance(group_col, pd.Series):
+            if group_col.index.equals(data.index):
+                return group_col.reindex(data.index)
+            if isinstance(data.index, pd.MultiIndex) and "stock" in data.index.names:
+                stock_values = data.index.get_level_values("stock")
+                return pd.Series(stock_values, index=data.index).map(group_col)
+            return group_col.reindex(data.index)
+
+        raise TypeError("group_col 仅支持 None、str、dict 或 pd.Series")
+
+    numeric_cols = result.select_dtypes(include=[np.number]).columns.tolist()
+    if not numeric_cols:
+        return result
+    result = result.astype({col: float for col in numeric_cols}, copy=False)
+
     if isinstance(result.index, pd.MultiIndex) and "date" in result.index.names:
         group_level = result.index.names.index("date")
-        grouped = result.groupby(level=group_level)
-        if method == "zscore":
-            result = grouped.transform(lambda x: (x - x.mean()) / (x.std(ddof=0) + EPS))
+        values = result[numeric_cols]
+        group_values = _resolve_group_series(result)
+        if group_values is None:
+            grouped = values.groupby(level=group_level)
+            transformed = grouped.transform(_transform)
         else:
-            result = grouped.transform(lambda x: x.rank(pct=True) * 2 - 1)
+            filled_group = group_values.fillna("__MISSING_GROUP__")
+            grouped = values.groupby(
+                [result.index.get_level_values("date"), filled_group],
+                sort=False,
+            )
+            transformed = grouped.transform(_transform)
+        result.loc[:, numeric_cols] = transformed
     elif "date" in result.columns:
         idx = result.index
-        dates = result["date"]
-        vals = result.drop(columns=["date"])
-        if method == "zscore":
-            vals = vals.groupby(dates).transform(lambda x: (x - x.mean()) / (x.std(ddof=0) + EPS))
+        dates = result["date"].copy()
+        values = result[numeric_cols].copy()
+        group_values = _resolve_group_series(result)
+        if isinstance(group_col, str) and group_col == "date":
+            raise ValueError("group_col 不能与 date 列同名")
+        if group_values is None:
+            transformed = values.groupby(dates).transform(_transform)
         else:
-            vals = vals.groupby(dates).transform(lambda x: x.rank(pct=True) * 2 - 1)
-        vals["date"] = dates.values
-        vals.index = idx
-        result = vals
+            filled_group = group_values.fillna("__MISSING_GROUP__")
+            transformed = values.groupby([dates, filled_group], sort=False).transform(_transform)
+        result = result.copy()
+        result.loc[:, numeric_cols] = transformed
+        result["date"] = dates.values
+        result.index = idx
     else:
-        if method == "zscore":
-            result = (result - result.mean()) / (result.std(ddof=0) + EPS)
-        else:
-            result = result.rank(pct=True) * 2 - 1
+        result.loc[:, numeric_cols] = _transform(result[numeric_cols])
 
-    return result.clip(-clip_value, clip_value)
+    result.loc[:, numeric_cols] = result.loc[:, numeric_cols].clip(-clip_value, clip_value)
+    return result
 
 
 def strategy_equal_weighted(factors_df: pd.DataFrame, normalize_window: int = 252) -> pd.Series:
@@ -279,8 +333,28 @@ class RiskManager:
     target_vol: float = 0.15
     max_drawdown_stop: float = 0.03
 
-    def apply_all(self, raw_signal: pd.Series, portfolio_return: pd.Series | None = None) -> pd.Series:
-        signal = dynamic_position_sizing(raw_signal)
+    def apply_all(
+        self,
+        raw_signal: pd.Series,
+        portfolio_return: pd.Series | None = None,
+        is_cross_section_weights: bool = False,
+    ) -> pd.Series:
+        """应用风险控制到组合时间序列信号或单日截面权重。
+
+        参数
+        ----
+        raw_signal:
+            - 当 is_cross_section_weights=False（默认）时，表示组合层时间序列信号（按日期索引的一维序列）。
+            - 当 is_cross_section_weights=True 时，表示单个日期的股票层截面权重（按股票索引的一维序列）。
+        portfolio_return:
+            组合收益时间序列。仅对组合层时间序列信号生效，用于波动率目标与止损。
+        is_cross_section_weights:
+            是否将 raw_signal 视为股票层截面权重。
+        """
+        signal = raw_signal.copy()
+        if is_cross_section_weights:
+            signal = apply_position_limits(signal)
+        signal = dynamic_position_sizing(signal)
         if portfolio_return is not None:
             _, leverage = volatility_targeting(portfolio_return, target_vol=self.target_vol)
             signal = signal * leverage.shift(1).fillna(1.0)
@@ -290,6 +364,27 @@ class RiskManager:
                 monthly_dd_threshold=-abs(self.max_drawdown_stop),
             )
         return signal
+
+    def apply_all_cross_section_matrix(
+        self,
+        raw_signal_matrix: pd.DataFrame,
+        portfolio_return: pd.Series | None = None,
+    ) -> pd.DataFrame:
+        """对截面权重矩阵逐日应用风控（先头寸约束，再缩放）。"""
+        if raw_signal_matrix.empty:
+            return raw_signal_matrix.copy()
+
+        adjusted = raw_signal_matrix.apply(
+            lambda row: self.apply_all(row, is_cross_section_weights=True),
+            axis=1,
+        )
+        if portfolio_return is not None:
+            _, leverage = volatility_targeting(portfolio_return, target_vol=self.target_vol)
+            adjusted = adjusted.mul(leverage.shift(1).fillna(1.0), axis=0)
+            monthly_cum_return = portfolio_return.rolling(22, min_periods=10).sum()
+            stop_triggered = monthly_cum_return < -abs(self.max_drawdown_stop)
+            adjusted.loc[stop_triggered] = adjusted.loc[stop_triggered] * 0.5
+        return adjusted
 
 
 class WeakFactorPortfolio:
@@ -302,18 +397,64 @@ class WeakFactorPortfolio:
         target_vol: float = 0.15,
         n_active_factors: int = 120,
         retrain_freq: int = 21,
+        market_phases: dict[str, tuple[str | pd.Timestamp, str | pd.Timestamp]] | None = None,
     ):
         self.factors = factors_df.copy()
         self.target = target_return.reindex(self.factors.index)
         self.target_vol = target_vol
         self.n_active = n_active_factors
         self.retrain_freq = retrain_freq
+        self.market_phases = market_phases or {
+            "full_sample": (self.factors.index.min(), self.factors.index.max())
+        }
         self.risk_manager = RiskManager(target_vol=target_vol)
         self.valid_factors: list[str] = []
         self.prescreen_report: dict[str, dict] = {}
+        self.cyclical_factors: list[str] = []
+        self.phase_factor_ic: pd.DataFrame = pd.DataFrame()
+        self.phase_factor_ic_detail: pd.DataFrame = pd.DataFrame()
+        self.phase_summary: pd.DataFrame = pd.DataFrame()
+        self.active_factor_audit: pd.DataFrame = pd.DataFrame()
 
     def _rolling_ic(self, factor: pd.Series, target: pd.Series, window: int = 60) -> pd.Series:
-        return factor.rolling(window, min_periods=max(20, window // 2)).corr(target.shift(-1))
+        """滚动 IC（仅使用 as-of 当日及历史信息）。"""
+        # 将因子滞后一期以预测下一期收益，避免在 as-of 日期使用未来收益。
+        return factor.shift(1).rolling(window, min_periods=max(20, window // 2)).corr(target)
+
+    def _phase_slice(self, start: str | pd.Timestamp, end: str | pd.Timestamp) -> pd.Index:
+        start_ts = pd.Timestamp(start)
+        end_ts = pd.Timestamp(end)
+        return self.factors.loc[(self.factors.index >= start_ts) & (self.factors.index <= end_ts)].index
+
+    def evaluate_phase_factor_ic(self, window: int = 60) -> pd.DataFrame:
+        """分阶段评估每个因子的 IC，输出 phase_factor_ic（阶段 x 因子）。"""
+        phase_ic_values: dict[str, dict[str, float]] = {}
+        phase_detail_rows: list[dict[str, float | str]] = []
+
+        for phase_name, (start, end) in self.market_phases.items():
+            idx = self._phase_slice(start, end)
+            phase_ic_values[phase_name] = {}
+            for col in self.factors.columns:
+                ic_series = self._rolling_ic(self.factors[col], self.target, window=window).reindex(idx).dropna()
+                median_abs_ic = float(ic_series.abs().median()) if not ic_series.empty else 0.0
+                mean_ic = float(ic_series.mean()) if not ic_series.empty else 0.0
+                flip_rate = float((ic_series * ic_series.shift(1) < 0).mean()) if not ic_series.empty else 1.0
+
+                phase_ic_values[phase_name][col] = mean_ic
+                phase_detail_rows.append(
+                    {
+                        "phase": phase_name,
+                        "factor": col,
+                        "mean_ic": mean_ic,
+                        "median_abs_ic": median_abs_ic,
+                        "flip_rate": flip_rate,
+                        "sample_size": int(ic_series.shape[0]),
+                    }
+                )
+
+        self.phase_factor_ic = pd.DataFrame(phase_ic_values).T
+        self.phase_factor_ic_detail = pd.DataFrame(phase_detail_rows)
+        return self.phase_factor_ic
 
     def prescreen_factors(
         self,
@@ -331,6 +472,11 @@ class WeakFactorPortfolio:
 
         valid_factors: list[str] = []
         prescreen_report: dict[str, dict] = {}
+        self.evaluate_phase_factor_ic(window=60)
+        valid_factors: list[str] = []
+        cyclical_factors: list[str] = []
+
+        phase_detail = self.phase_factor_ic_detail
 
         for col in self.factors.columns:
             ic_series = self._rolling_ic(self.factors[col], self.target, window=ic_window)
@@ -373,6 +519,16 @@ class WeakFactorPortfolio:
             passed = len(elimination_reasons) == 0
             if passed:
                 valid_factors.append(col)
+                continue
+
+            factor_phase = phase_detail[phase_detail["factor"] == col]
+            phase_strong = (
+                not factor_phase.empty
+                and ((factor_phase["median_abs_ic"] >= min_ic) & (factor_phase["flip_rate"] <= max_flip_rate)).any()
+            )
+            if phase_strong:
+                cyclical_factors.append(col)
+                valid_factors.append(col)
 
             prescreen_report[col] = {
                 "passed": passed,
@@ -396,6 +552,25 @@ class WeakFactorPortfolio:
         self.prescreen_report = prescreen_report
         if return_report:
             return {"valid_factors": valid_factors, "factor_report": prescreen_report}
+        self.cyclical_factors = cyclical_factors
+
+        if phase_detail.empty:
+            self.phase_summary = pd.DataFrame()
+        else:
+            summary_rows: list[dict[str, float | str | int]] = []
+            for phase_name, grp in phase_detail.groupby("phase"):
+                strong_count = int(
+                    ((grp["median_abs_ic"] >= min_ic) & (grp["flip_rate"] <= max_flip_rate)).sum()
+                )
+                summary_rows.append(
+                    {
+                        "phase": phase_name,
+                        "avg_abs_ic": float(grp["median_abs_ic"].mean()),
+                        "strong_factor_count": strong_count,
+                        "sample_size_median": int(grp["sample_size"].median()),
+                    }
+                )
+            self.phase_summary = pd.DataFrame(summary_rows).set_index("phase")
         return valid_factors
 
     def _get_active_factors(self, as_of_date: pd.Timestamp) -> list[str]:
@@ -407,15 +582,121 @@ class WeakFactorPortfolio:
         recent = ic_history.loc[:as_of_date].tail(63).mean().abs().sort_values(ascending=False)
         return recent.head(min(self.n_active, len(recent))).index.tolist()
 
+    def _get_current_phase(self, as_of_date: pd.Timestamp) -> str | None:
+        for phase_name, (start, end) in self.market_phases.items():
+            if pd.Timestamp(start) <= as_of_date <= pd.Timestamp(end):
+                return phase_name
+        return None
+
+    def _get_phase_priority_factors(self, as_of_date: pd.Timestamp) -> list[str]:
+        if self.phase_factor_ic.empty:
+            return []
+        phase_name = self._get_current_phase(as_of_date)
+        if phase_name is None or phase_name not in self.phase_factor_ic.index:
+            return []
+        phase_rank = self.phase_factor_ic.loc[phase_name].abs().sort_values(ascending=False)
+        selected = [c for c in phase_rank.index if c in self.valid_factors]
+        return selected[: min(self.n_active, len(selected))]
+
     def signal_equal_weighted(self, factors_subset: pd.DataFrame) -> pd.Series:
         return strategy_equal_weighted(factors_subset)
+    def _build_rebalance_dates(self, index: pd.Index, rebalance_freq: str | int = 21) -> pd.Index:
+        """根据频率生成再平衡日期序列。支持交易日步长或时间规则。"""
+        if len(index) == 0:
+            return index
 
-    def signal_risk_parity(self, factors_subset: pd.DataFrame, window: int = 252) -> pd.Series:
-        return strategy_risk_parity(factors_subset, window=window)
+        if isinstance(rebalance_freq, int):
+            if rebalance_freq <= 0:
+                raise ValueError("rebalance_freq 为整数时必须 > 0")
+            return index[::rebalance_freq]
 
-    def signal_ml(self, factors_subset: pd.DataFrame) -> pd.Series:
+        if not isinstance(index, pd.DatetimeIndex):
+            raise TypeError("rebalance_freq 为字符串规则时，index 必须为 DatetimeIndex")
+
+        grouped = pd.Series(index=index, data=index).groupby(pd.Grouper(freq=rebalance_freq)).last().dropna()
+        return pd.Index(grouped.values)
+
+    def build_active_factor_timeline(
+        self,
+        factors_subset: pd.DataFrame,
+        rebalance_freq: str | int = 21,
+        audit_top_n: int = 10,
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """生成时变 active 因子掩码与再平衡对账表。"""
+        if factors_subset.empty:
+            empty_mask = pd.DataFrame(index=factors_subset.index, columns=factors_subset.columns, dtype=bool)
+            return empty_mask, pd.DataFrame(columns=["rebalance_date", "n_active", "top_factors"])
+
+        rebalance_dates = self._build_rebalance_dates(factors_subset.index, rebalance_freq=rebalance_freq)
+        if len(rebalance_dates) == 0 or rebalance_dates[0] != factors_subset.index[0]:
+            rebalance_dates = pd.Index([factors_subset.index[0]]).append(rebalance_dates).drop_duplicates()
+        if len(rebalance_dates) == 0 or rebalance_dates[-1] != factors_subset.index[-1]:
+            rebalance_dates = rebalance_dates.append(pd.Index([factors_subset.index[-1]])).drop_duplicates()
+
+        active_mask = pd.DataFrame(False, index=factors_subset.index, columns=factors_subset.columns)
+        audit_rows: list[dict[str, object]] = []
+
+        for i, rebalance_date in enumerate(rebalance_dates):
+            active = self._get_active_factors(pd.Timestamp(rebalance_date))
+            active = [c for c in active if c in factors_subset.columns]
+
+            start = rebalance_date
+            if i + 1 < len(rebalance_dates):
+                end = rebalance_dates[i + 1]
+                period_idx = factors_subset.index[(factors_subset.index >= start) & (factors_subset.index < end)]
+            else:
+                period_idx = factors_subset.index[factors_subset.index >= start]
+
+            if len(period_idx) and active:
+                active_mask.loc[period_idx, active] = True
+
+            audit_rows.append(
+                {
+                    "rebalance_date": pd.Timestamp(rebalance_date),
+                    "n_active": len(active),
+                    "top_factors": ", ".join(active[: max(1, audit_top_n)]),
+                }
+            )
+
+        audit_df = pd.DataFrame(audit_rows).set_index("rebalance_date")
+        return active_mask, audit_df
+
+    def _apply_active_mask(
+        self,
+        factors_subset: pd.DataFrame,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.DataFrame:
+        if active_mask is None:
+            return factors_subset
+        mask = active_mask.reindex(index=factors_subset.index, columns=factors_subset.columns).fillna(False)
+        return factors_subset.where(mask)
+
+    def signal_equal_weighted(
+        self,
+        factors_subset: pd.DataFrame,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.Series:
+        return strategy_equal_weighted(self._apply_active_mask(factors_subset, active_mask=active_mask))
+
+    def signal_risk_parity(
+        self,
+        factors_subset: pd.DataFrame,
+        window: int = 252,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.Series:
+        return strategy_risk_parity(
+            self._apply_active_mask(factors_subset, active_mask=active_mask),
+            window=window,
+        )
+
+    def signal_ml(
+        self,
+        factors_subset: pd.DataFrame,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.Series:
+        masked_factors = self._apply_active_mask(factors_subset, active_mask=active_mask)
         return strategy_ml_weighted(
-            factors_subset,
+            masked_factors,
             target_return=self.target,
             retrain_freq=self.retrain_freq,
             train_window=500,
@@ -425,26 +706,65 @@ class WeakFactorPortfolio:
     def combine_signals(self, s_eq: pd.Series, s_rp: pd.Series, s_ml: pd.Series) -> pd.Series:
         return combine_signals_fixed(s_eq, s_rp, s_ml, weights=(0.4, 0.3, 0.3))
 
-    def apply_risk_management(self, signal: pd.Series, portfolio_return: pd.Series | None = None) -> pd.Series:
-        return self.risk_manager.apply_all(signal, portfolio_return)
+    def apply_risk_management(
+        self,
+        signal: pd.Series | pd.DataFrame,
+        portfolio_return: pd.Series | None = None,
+    ) -> pd.Series | pd.DataFrame:
+        """根据信号形态路由到对应风控分支。"""
+        if isinstance(signal, pd.DataFrame):
+            return self.risk_manager.apply_all_cross_section_matrix(
+                signal,
+                portfolio_return=portfolio_return,
+            )
+        return self.risk_manager.apply_all(signal, portfolio_return=portfolio_return)
 
-    def run(self, use_dynamic_factors: bool = True, portfolio_return: pd.Series | None = None) -> pd.Series:
+    def run(
+        self,
+        use_dynamic_factors: bool = True,
+        portfolio_return: pd.Series | None = None,
+        phase_priority: bool = False,
+        rebalance_freq: str | int = 21,
+        audit_top_n: int = 10,
+        print_audit: bool = True,
+    ) -> pd.Series:
         self.prescreen_factors()
         if not self.valid_factors:
             raise ValueError("预筛选后无可用因子，请降低筛选阈值。")
 
         factors_to_use = self.factors[self.valid_factors]
+        active_mask: pd.DataFrame | None = None
         if use_dynamic_factors:
-            active = self._get_active_factors(factors_to_use.index[-1])
+            as_of_date = factors_to_use.index[-1]
+            active = self._get_phase_priority_factors(as_of_date) if phase_priority else []
+            if not active:
+                active = self._get_active_factors(as_of_date)
             if active:
                 factors_to_use = factors_to_use[active]
+            active_mask, audit_df = self.build_active_factor_timeline(
+                factors_to_use,
+                rebalance_freq=rebalance_freq,
+                audit_top_n=audit_top_n,
+            )
+            self.active_factor_audit = audit_df
+            if print_audit and not audit_df.empty:
+                print("[ActiveFactorAudit] 再平衡点 active 因子对账（数量与Top名单）")
+                print(audit_df[["n_active", "top_factors"]])
+        else:
+            self.active_factor_audit = pd.DataFrame()
 
-        s_eq = self.signal_equal_weighted(factors_to_use)
-        s_rp = self.signal_risk_parity(factors_to_use)
-        s_ml = self.signal_ml(factors_to_use)
+        s_eq = self.signal_equal_weighted(factors_to_use, active_mask=active_mask)
+        s_rp = self.signal_risk_parity(factors_to_use, active_mask=active_mask)
+        s_ml = self.signal_ml(factors_to_use, active_mask=active_mask)
 
         combined = self.combine_signals(s_eq, s_rp, s_ml)
         final = self.apply_risk_management(combined, portfolio_return=portfolio_return)
+
+        if not self.phase_summary.empty:
+            print("[Phase Evaluation Summary]")
+            print(self.phase_summary.to_string())
+            if self.cyclical_factors:
+                print(f"[Cyclical Factors Retained] {len(self.cyclical_factors)}")
         return final
 
 
