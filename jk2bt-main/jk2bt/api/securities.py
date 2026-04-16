@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def get_all_securities(types=None, date=None):
     """获取全市场证券列表。
 
-    包装 ``jk2bt.core.api_wrappers.get_all_securities_jq``，返回 JQData 风格的
+    包装 ``jk2bt.api.jq_compat.get_all_securities_jq``，返回 JQData 风格的
     证券元数据 DataFrame。
 
     Args:
@@ -34,7 +34,7 @@ def get_all_securities(types=None, date=None):
         >>> df.columns.tolist()  # 包含 display_name, name, start_date, end_date, type
         >>> df = get_all_securities(types=["stock"], date="2023-01-01")
     """
-    from jk2bt.core.api_wrappers import get_all_securities_jq as _get_all_securities_jq
+    from jk2bt.api.jq_compat import get_all_securities_jq as _get_all_securities_jq
 
     return _get_all_securities_jq(types=types, date=date)
 
@@ -42,7 +42,7 @@ def get_all_securities(types=None, date=None):
 def get_security_info(code, date=None):
     """获取单只证券的基本信息。
 
-    包装 ``jk2bt.core.api_wrappers.get_security_info_jq``，返回 SecurityInfo 对象。
+    包装 ``jk2bt.api.jq_compat.get_security_info_jq``，返回 SecurityInfo 对象。
     若传入无效代码，将返回 None 或抛出明确异常，不会静默失败。
 
     Args:
@@ -72,7 +72,7 @@ def get_security_info(code, date=None):
     if not code:
         raise ValueError("code 参数不能为空")
 
-    from jk2bt.core.api_wrappers import get_security_info_jq as _get_security_info_jq
+    from jk2bt.api.jq_compat import get_security_info_jq as _get_security_info_jq
 
     return _get_security_info_jq(code=code)
 

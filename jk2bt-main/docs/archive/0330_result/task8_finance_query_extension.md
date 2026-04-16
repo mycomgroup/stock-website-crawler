@@ -272,7 +272,7 @@ df_high_margin = finance.run_query(
 print(df_high_margin)
 
 # 直接使用底层函数
-from finance_data.margin import get_margin_data, get_margin_history
+from jk2bt.finance_data.margin import get_margin_data, get_margin_history
 
 # 获取特定日期数据
 df = get_margin_data('600519.XSHG', date='20240115')
@@ -302,7 +302,7 @@ df_filtered = finance.run_query(
 )
 
 # 直接使用底层函数
-from finance_data.forecast import get_forecast_data
+from jk2bt.finance_data.forecast import get_forecast_data
 df = get_forecast_data('600519.XSHG')
 ```
 

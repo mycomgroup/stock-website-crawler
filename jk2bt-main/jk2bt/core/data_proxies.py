@@ -312,14 +312,15 @@ class _FinanceModule:
         if finance_db is None:
             # 尝试多种方式获取finance_db实例
             import sys
+
             # 1. 从当前模块获取
             this_module = sys.modules.get(__name__)
-            if hasattr(this_module, 'finance_db'):
+            if hasattr(this_module, "finance_db"):
                 finance_db = this_module.finance_db
             # 2. 从strategy_base模块获取
-            elif 'jk2bt.core.strategy_base' in sys.modules:
-                sb_module = sys.modules['jk2bt.core.strategy_base']
-                if hasattr(sb_module, 'finance_db'):
+            elif "jk2bt.core.strategy_base" in sys.modules:
+                sb_module = sys.modules["jk2bt.core.strategy_base"]
+                if hasattr(sb_module, "finance_db"):
                     finance_db = sb_module.finance_db
             # 3. 动态导入
             else:
@@ -423,7 +424,10 @@ class PortfolioProxy:
     def starting_cash(self):
         """初始资金"""
         # 尝试从多种来源获取初始资金
-        if hasattr(self._strategy, "_initial_capital") and self._strategy._initial_capital is not None:
+        if (
+            hasattr(self._strategy, "_initial_capital")
+            and self._strategy._initial_capital is not None
+        ):
             return self._strategy._initial_capital
         # 尝试从 broker 的初始资金获取
         if hasattr(self._strategy.broker, "_initial_cash"):
@@ -489,6 +493,7 @@ class _CurrentDataEntry:
 
         try:
             from jk2bt.data_access import get_data_source
+
             source = get_data_source()
             df = source.get_daily_data(
                 symbol=ak_code,
@@ -582,11 +587,14 @@ class _CurrentDataEntry:
         if prev_close is None:
             try:
                 from jk2bt.data_access import get_data_source
+
                 source = get_data_source()
                 ak_code = format_stock_symbol_for_akshare(code)
                 df = source.get_daily_data(
                     symbol=ak_code,
-                    start_date=(datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d"),
+                    start_date=(datetime.now() - timedelta(days=5)).strftime(
+                        "%Y-%m-%d"
+                    ),
                     end_date=datetime.now().strftime("%Y-%m-%d"),
                     adjust="none",
                 )
@@ -627,11 +635,14 @@ class _CurrentDataEntry:
         if prev_close is None:
             try:
                 from jk2bt.data_access import get_data_source
+
                 source = get_data_source()
                 ak_code = format_stock_symbol_for_akshare(code)
                 df = source.get_daily_data(
                     symbol=ak_code,
-                    start_date=(datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d"),
+                    start_date=(datetime.now() - timedelta(days=5)).strftime(
+                        "%Y-%m-%d"
+                    ),
                     end_date=datetime.now().strftime("%Y-%m-%d"),
                     adjust="none",
                 )
@@ -665,6 +676,7 @@ class _CurrentDataEntry:
 
         try:
             from jk2bt.data_access import get_adapter
+
             stop_df = get_adapter().get_suspended_stocks()
             if stop_df is not None and not stop_df.empty:
                 self._paused_cache = ak_code in stop_df["代码"].values
@@ -695,6 +707,7 @@ class _CurrentDataEntry:
 
         try:
             from jk2bt.data_access import get_adapter
+
             st_df = get_adapter().get_st_stocks()
             if st_df is not None and not st_df.empty:
                 self._is_st_cache = ak_code in st_df["代码"].values
@@ -712,7 +725,8 @@ class _CurrentDataEntry:
 
         try:
             # 延迟导入避免循环依赖
-            from .api_wrappers import get_security_info_jq
+            from jk2bt.api.jq_compat import get_security_info_jq
+
             info = get_security_info_jq(code)
             if info and "display_name" in info:
                 return info["display_name"]
@@ -769,8 +783,8 @@ class _TickDataProxy:
 
         # 尝试从策略获取当前日期
         current_date = None
-        if self._bt and hasattr(self._bt, 'current_dt') and self._bt.current_dt:
-            current_date = self._bt.current_dt.strftime('%Y-%m-%d')
+        if self._bt and hasattr(self._bt, "current_dt") and self._bt.current_dt:
+            current_date = self._bt.current_dt.strftime("%Y-%m-%d")
 
         if current_date is None:
             return None
@@ -778,18 +792,19 @@ class _TickDataProxy:
         # 使用 get_price 获取数据
         try:
             from jk2bt.api.market import get_price
+
             df = get_price(
                 security=self._code,
                 end_date=current_date,
                 count=1,
-                frequency='daily',
-                fields=['close']
+                frequency="daily",
+                fields=["close"],
             )
             if df is not None and not df.empty:
                 # 根据返回格式获取价格
                 if isinstance(df, pd.DataFrame):
-                    if 'close' in df.columns and len(df) > 0:
-                        self._cached_price = df['close'].iloc[-1]
+                    if "close" in df.columns and len(df) > 0:
+                        self._cached_price = df["close"].iloc[-1]
                     elif self._code in df.columns and len(df) > 0:
                         self._cached_price = df[self._code].iloc[-1]
                 return self._cached_price
@@ -839,23 +854,23 @@ class _TickDataProxy:
 
 # 导出的表对象
 __all__ = [
-    'RobustResult',
-    'SecurityInfo',
-    '_QueryBuilder',
-    '_Expression',
-    '_FieldProxy',
-    '_TableProxy',
-    '_FinanceTableProxy',
-    '_FinanceFieldProxy',
-    '_FinanceModule',
-    'valuation',
-    'income',
-    'cash_flow',
-    'balance',
-    'indicator',
-    'PositionProxy',
-    'PortfolioProxy',
-    '_CurrentDataEntry',
-    '_CurrentDataProxy',
-    '_TickDataProxy',
+    "RobustResult",
+    "SecurityInfo",
+    "_QueryBuilder",
+    "_Expression",
+    "_FieldProxy",
+    "_TableProxy",
+    "_FinanceTableProxy",
+    "_FinanceFieldProxy",
+    "_FinanceModule",
+    "valuation",
+    "income",
+    "cash_flow",
+    "balance",
+    "indicator",
+    "PositionProxy",
+    "PortfolioProxy",
+    "_CurrentDataEntry",
+    "_CurrentDataProxy",
+    "_TickDataProxy",
 ]

@@ -12,7 +12,9 @@ warnings.filterwarnings("ignore")
 if __name__ != "__main__":
     import pytest
 
-    pytest.skip("legacy validation script, not for pytest collection", allow_module_level=True)
+    pytest.skip(
+        "legacy validation script, not for pytest collection", allow_module_level=True
+    )
 
 print("=" * 60)
 print("新增功能模块验证测试")
@@ -103,7 +105,7 @@ print("\n[3] RSRS择时指标测试")
 print("-" * 40)
 
 try:
-    from indicators.rsrs import (
+    from jk2bt.indicators.rsrs import (
         compute_rsrs,
         compute_rsrs_signal,
         get_current_rsrs_signal,
@@ -148,7 +150,7 @@ print("\n[4] 市场情绪指标测试")
 print("-" * 40)
 
 try:
-    from indicators.market_sentiment import (
+    from jk2bt.indicators.market_sentiment import (
         compute_crowding_ratio,
         compute_fed_model,
         compute_graham_index,

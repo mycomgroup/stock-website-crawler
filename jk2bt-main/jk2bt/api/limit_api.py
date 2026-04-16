@@ -31,15 +31,18 @@ def get_recent_limit_up_stock(context, stock_list, recent_days=5, date=None):
         return []
 
     try:
-        from jk2bt.core.strategy_base import get_price_jq, format_stock_symbol_for_akshare
+        from jk2bt.api.market import get_price_jq
+        from jk2bt.core.securities_utils import format_stock_symbol_for_akshare
 
         if date is None:
-            end_date = datetime.now().strftime('%Y-%m-%d')
+            end_date = datetime.now().strftime("%Y-%m-%d")
         else:
             end_date = date
 
         # 计算起始日期（多取几天以确保有足够交易日）
-        start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(days=recent_days + 10)).strftime('%Y-%m-%d')
+        start_date = (
+            datetime.strptime(end_date, "%Y-%m-%d") - timedelta(days=recent_days + 10)
+        ).strftime("%Y-%m-%d")
 
         limit_up_stocks = []
 
@@ -50,8 +53,8 @@ def get_recent_limit_up_stock(context, stock_list, recent_days=5, date=None):
                     symbols=stock,
                     start_date=start_date,
                     end_date=end_date,
-                    frequency='daily',
-                    fields=['close', 'high_limit']
+                    frequency="daily",
+                    fields=["close", "high_limit"],
                 )
 
                 if df is None or df.empty:
@@ -61,8 +64,8 @@ def get_recent_limit_up_stock(context, stock_list, recent_days=5, date=None):
                 recent_df = df.tail(recent_days + 2)  # 多取几天确保覆盖
 
                 for idx, row in recent_df.iterrows():
-                    close = row.get('close')
-                    high_limit = row.get('high_limit')
+                    close = row.get("close")
+                    high_limit = row.get("high_limit")
 
                     if close is not None and high_limit is not None:
                         # 涨停判断：收盘价等于涨停价（允许0.1%误差）
@@ -98,14 +101,16 @@ def get_recent_limit_down_stock(context, stock_list, recent_days=5, date=None):
         return []
 
     try:
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.api.market import get_price_jq
 
         if date is None:
-            end_date = datetime.now().strftime('%Y-%m-%d')
+            end_date = datetime.now().strftime("%Y-%m-%d")
         else:
             end_date = date
 
-        start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(days=recent_days + 10)).strftime('%Y-%m-%d')
+        start_date = (
+            datetime.strptime(end_date, "%Y-%m-%d") - timedelta(days=recent_days + 10)
+        ).strftime("%Y-%m-%d")
 
         limit_down_stocks = []
 
@@ -115,8 +120,8 @@ def get_recent_limit_down_stock(context, stock_list, recent_days=5, date=None):
                     symbols=stock,
                     start_date=start_date,
                     end_date=end_date,
-                    frequency='daily',
-                    fields=['close', 'low_limit']
+                    frequency="daily",
+                    fields=["close", "low_limit"],
                 )
 
                 if df is None or df.empty:
@@ -125,8 +130,8 @@ def get_recent_limit_down_stock(context, stock_list, recent_days=5, date=None):
                 recent_df = df.tail(recent_days + 2)
 
                 for idx, row in recent_df.iterrows():
-                    close = row.get('close')
-                    low_limit = row.get('low_limit')
+                    close = row.get("close")
+                    low_limit = row.get("low_limit")
 
                     if close is not None and low_limit is not None:
                         # 跌停判断
@@ -162,19 +167,21 @@ def get_hl_stock(stock_list, n_days=20, high_pct=0.8, low_pct=0.2, date=None):
         dict: {'high': [...], 'low': [...], 'normal': [...]}
     """
     if not stock_list:
-        return {'high': [], 'low': [], 'normal': []}
+        return {"high": [], "low": [], "normal": []}
 
     try:
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.api.market import get_price_jq
 
         if date is None:
-            end_date = datetime.now().strftime('%Y-%m-%d')
+            end_date = datetime.now().strftime("%Y-%m-%d")
         else:
             end_date = date
 
-        start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(days=n_days + 20)).strftime('%Y-%m-%d')
+        start_date = (
+            datetime.strptime(end_date, "%Y-%m-%d") - timedelta(days=n_days + 20)
+        ).strftime("%Y-%m-%d")
 
-        result = {'high': [], 'low': [], 'normal': []}
+        result = {"high": [], "low": [], "normal": []}
 
         for stock in stock_list:
             try:
@@ -182,20 +189,20 @@ def get_hl_stock(stock_list, n_days=20, high_pct=0.8, low_pct=0.2, date=None):
                     symbols=stock,
                     start_date=start_date,
                     end_date=end_date,
-                    frequency='daily',
-                    fields=['close']
+                    frequency="daily",
+                    fields=["close"],
                 )
 
                 if df is None or df.empty or len(df) < n_days // 2:
-                    result['normal'].append(stock)
+                    result["normal"].append(stock)
                     continue
 
                 # 取最近n_days天数据
                 recent_df = df.tail(n_days)
-                closes = recent_df['close'].values
+                closes = recent_df["close"].values
 
                 if len(closes) == 0:
-                    result['normal'].append(stock)
+                    result["normal"].append(stock)
                     continue
 
                 current_price = closes[-1]
@@ -203,20 +210,20 @@ def get_hl_stock(stock_list, n_days=20, high_pct=0.8, low_pct=0.2, date=None):
                 low_threshold = np.percentile(closes, low_pct * 100)
 
                 if current_price >= high_threshold:
-                    result['high'].append(stock)
+                    result["high"].append(stock)
                 elif current_price <= low_threshold:
-                    result['low'].append(stock)
+                    result["low"].append(stock)
                 else:
-                    result['normal'].append(stock)
+                    result["normal"].append(stock)
 
             except Exception:
-                result['normal'].append(stock)
+                result["normal"].append(stock)
 
         return result
 
     except Exception as e:
         warnings.warn(f"get_hl_stock 失败: {e}")
-        return {'high': [], 'low': [], 'normal': stock_list}
+        return {"high": [], "low": [], "normal": stock_list}
 
 
 def get_continue_count_df(stock_list, n_days=30, date=None):
@@ -237,17 +244,21 @@ def get_continue_count_df(stock_list, n_days=30, date=None):
             - last_limit_date: 最近涨停日期
     """
     if not stock_list:
-        return pd.DataFrame(columns=['code', 'continue_count', 'max_continue', 'last_limit_date'])
+        return pd.DataFrame(
+            columns=["code", "continue_count", "max_continue", "last_limit_date"]
+        )
 
     try:
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.api.market import get_price_jq
 
         if date is None:
-            end_date = datetime.now().strftime('%Y-%m-%d')
+            end_date = datetime.now().strftime("%Y-%m-%d")
         else:
             end_date = date
 
-        start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(days=n_days + 20)).strftime('%Y-%m-%d')
+        start_date = (
+            datetime.strptime(end_date, "%Y-%m-%d") - timedelta(days=n_days + 20)
+        ).strftime("%Y-%m-%d")
 
         results = []
 
@@ -257,32 +268,34 @@ def get_continue_count_df(stock_list, n_days=30, date=None):
                     symbols=stock,
                     start_date=start_date,
                     end_date=end_date,
-                    frequency='daily',
-                    fields=['close', 'high_limit', 'pre_close']
+                    frequency="daily",
+                    fields=["close", "high_limit", "pre_close"],
                 )
 
                 if df is None or df.empty:
                     continue
 
                 # 判断每日是否涨停
-                df['is_limit_up'] = False
+                df["is_limit_up"] = False
                 for idx in df.index:
-                    close = df.loc[idx, 'close']
-                    high_limit = df.loc[idx, 'high_limit']
-                    pre_close = df.loc[idx, 'pre_close'] if 'pre_close' in df.columns else None
+                    close = df.loc[idx, "close"]
+                    high_limit = df.loc[idx, "high_limit"]
+                    pre_close = (
+                        df.loc[idx, "pre_close"] if "pre_close" in df.columns else None
+                    )
 
                     if high_limit is not None and close is not None:
                         # 涨停判断：收盘价等于涨停价
                         if abs(close - high_limit) / high_limit < 0.001:
-                            df.loc[idx, 'is_limit_up'] = True
+                            df.loc[idx, "is_limit_up"] = True
                         # 备用判断：涨幅>=9.8%
                         elif pre_close is not None and pre_close > 0:
                             pct = (close - pre_close) / pre_close
                             if pct >= 0.098:
-                                df.loc[idx, 'is_limit_up'] = True
+                                df.loc[idx, "is_limit_up"] = True
 
                 # 计算连板
-                is_limit = df['is_limit_up'].values
+                is_limit = df["is_limit_up"].values
                 max_continue = 0
                 current_continue = 0
                 last_continue = 0
@@ -302,12 +315,14 @@ def get_continue_count_df(stock_list, n_days=30, date=None):
                 if current_continue > 0:
                     last_continue = current_continue
 
-                results.append({
-                    'code': stock,
-                    'continue_count': last_continue,
-                    'max_continue': max_continue,
-                    'last_limit_date': last_limit_date
-                })
+                results.append(
+                    {
+                        "code": stock,
+                        "continue_count": last_continue,
+                        "max_continue": max_continue,
+                        "last_limit_date": last_limit_date,
+                    }
+                )
 
             except Exception:
                 continue
@@ -316,7 +331,9 @@ def get_continue_count_df(stock_list, n_days=30, date=None):
 
     except Exception as e:
         warnings.warn(f"get_continue_count_df 失败: {e}")
-        return pd.DataFrame(columns=['code', 'continue_count', 'max_continue', 'last_limit_date'])
+        return pd.DataFrame(
+            columns=["code", "continue_count", "max_continue", "last_limit_date"]
+        )
 
 
 def get_hl_count_df(stock_list, n_days=20, date=None):
@@ -334,17 +351,21 @@ def get_hl_count_df(stock_list, n_days=20, date=None):
         DataFrame: columns=['code', 'high_count', 'low_count', 'high_date', 'low_date']
     """
     if not stock_list:
-        return pd.DataFrame(columns=['code', 'high_count', 'low_count', 'high_date', 'low_date'])
+        return pd.DataFrame(
+            columns=["code", "high_count", "low_count", "high_date", "low_date"]
+        )
 
     try:
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.api.market import get_price_jq
 
         if date is None:
-            end_date = datetime.now().strftime('%Y-%m-%d')
+            end_date = datetime.now().strftime("%Y-%m-%d")
         else:
             end_date = date
 
-        start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(days=n_days + 20)).strftime('%Y-%m-%d')
+        start_date = (
+            datetime.strptime(end_date, "%Y-%m-%d") - timedelta(days=n_days + 20)
+        ).strftime("%Y-%m-%d")
 
         results = []
 
@@ -354,8 +375,8 @@ def get_hl_count_df(stock_list, n_days=20, date=None):
                     symbols=stock,
                     start_date=start_date,
                     end_date=end_date,
-                    frequency='daily',
-                    fields=['high', 'low']
+                    frequency="daily",
+                    fields=["high", "low"],
                 )
 
                 if df is None or df.empty or len(df) < 5:
@@ -363,16 +384,16 @@ def get_hl_count_df(stock_list, n_days=20, date=None):
 
                 # 取最近n_days天
                 recent_df = df.tail(n_days).copy()
-                recent_df['high_count'] = 0
-                recent_df['low_count'] = 0
+                recent_df["high_count"] = 0
+                recent_df["low_count"] = 0
 
                 high_count = 0
                 low_count = 0
                 last_high_date = None
                 last_low_date = None
 
-                highs = recent_df['high'].values
-                lows = recent_df['low'].values
+                highs = recent_df["high"].values
+                lows = recent_df["low"].values
 
                 for i in range(len(highs)):
                     # 创新高：当前最高价大于之前所有最高价
@@ -385,13 +406,15 @@ def get_hl_count_df(stock_list, n_days=20, date=None):
                         low_count += 1
                         last_low_date = recent_df.index[i]
 
-                results.append({
-                    'code': stock,
-                    'high_count': high_count,
-                    'low_count': low_count,
-                    'high_date': last_high_date,
-                    'low_date': last_low_date
-                })
+                results.append(
+                    {
+                        "code": stock,
+                        "high_count": high_count,
+                        "low_count": low_count,
+                        "high_date": last_high_date,
+                        "low_date": last_low_date,
+                    }
+                )
 
             except Exception:
                 continue
@@ -400,13 +423,15 @@ def get_hl_count_df(stock_list, n_days=20, date=None):
 
     except Exception as e:
         warnings.warn(f"get_hl_count_df 失败: {e}")
-        return pd.DataFrame(columns=['code', 'high_count', 'low_count', 'high_date', 'low_date'])
+        return pd.DataFrame(
+            columns=["code", "high_count", "low_count", "high_date", "low_date"]
+        )
 
 
 __all__ = [
-    'get_recent_limit_up_stock',
-    'get_recent_limit_down_stock',
-    'get_hl_stock',
-    'get_continue_count_df',
-    'get_hl_count_df',
+    "get_recent_limit_up_stock",
+    "get_recent_limit_down_stock",
+    "get_hl_stock",
+    "get_continue_count_df",
+    "get_hl_count_df",
 ]

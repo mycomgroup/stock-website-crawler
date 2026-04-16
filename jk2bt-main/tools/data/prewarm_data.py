@@ -83,6 +83,7 @@ def prewarm_meta_data(cache_base_dir: str = None, force_update: bool = False) ->
         # 从统一配置获取缓存目录
         try:
             from jk2bt.utils.config import get_config
+
             config = get_config()
             cache_base_dir = config.cache.cache_dir
         except Exception:
@@ -103,9 +104,13 @@ def prewarm_meta_data(cache_base_dir: str = None, force_update: bool = False) ->
     else:
         try:
             logger.info("  交易日历: 从网络下载...")
-            import akshare as ak
+            from jk2bt.data_access import get_adapter
 
-            df = ak.tool_trade_date_hist_sina()
+            adapter = get_adapter()
+            df = adapter.get_trade_dates()
+            import pandas as pd
+
+            df = pd.DataFrame({"trade_date": df})
             df.to_pickle(trade_days_file)
             logger.info(f"  交易日历: 成功缓存 {len(df)} 条记录")
             result["trade_days"] = True
@@ -123,9 +128,10 @@ def prewarm_meta_data(cache_base_dir: str = None, force_update: bool = False) ->
     else:
         try:
             logger.info("  证券信息: 从网络下载...")
-            import akshare as ak
+            from jk2bt.data_access import get_adapter
 
-            df = ak.stock_info_a_code_name()
+            adapter = get_adapter()
+            df = adapter.get_securities_code_name()
             df["code"] = df["code"].apply(
                 lambda x: (
                     "sz" + x
@@ -322,6 +328,7 @@ def prewarm_index_weights(
         # 从统一配置获取缓存目录
         try:
             from jk2bt.utils.config import get_config
+
             config = get_config()
             cache_base_dir = config.cache.cache_dir
         except Exception:
@@ -348,9 +355,10 @@ def prewarm_index_weights(
                 continue
 
         try:
-            import akshare as ak
+            from jk2bt.data_access import get_adapter
 
-            df = ak.index_stock_cons_weight_csindex(symbol=index_num)
+            adapter = get_adapter()
+            df = adapter.get_index_stock_cons_weight_csindex(symbol=index_num)
             if df is not None and not df.empty:
                 df.to_pickle(cache_file)
                 logger.info(f"    成功: {len(df)} 条记录")

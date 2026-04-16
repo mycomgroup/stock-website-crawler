@@ -240,14 +240,18 @@ def get_stock_daily_legacy(
 
     logger.debug(f"{symbol} ({adjust}): 从 akshare 下载数据")
 
-    akshare_symbol = format_stock_symbol(symbol)
+    try:
+        from jk2bt.data_access import get_adapter
+    except ImportError:
+        from data_access import get_adapter
 
-    from akshare import stock_zh_a_hist
+    adapter = get_adapter()
+    akshare_symbol = format_stock_symbol(symbol)
 
     last_error = None
     for attempt in range(max_retries):
         try:
-            raw_df = stock_zh_a_hist(
+            raw_df = adapter.get_stock_hist(
                 symbol=akshare_symbol,
                 period="daily",
                 start_date=start.replace("-", ""),
@@ -262,9 +266,7 @@ def get_stock_daily_legacy(
 
         except Exception as e:
             last_error = e
-            logger.debug(
-                f"{symbol}: 下载失败 (尝试 {attempt + 1}/{max_retries}): {e}"
-            )
+            logger.debug(f"{symbol}: 下载失败 (尝试 {attempt + 1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
 

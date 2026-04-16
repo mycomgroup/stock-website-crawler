@@ -8,10 +8,7 @@ from datetime import date, datetime as dt, timedelta
 from typing import Union, Literal
 import pandas as pd
 
-try:
-    from jk2bt.core.strategy_base import get_all_trade_days_jq
-except ImportError:
-    from ..core.strategy_base import get_all_trade_days_jq
+from jk2bt.api.jq_compat import get_all_trade_days_jq
 
 
 def _get_trade_days_list() -> list:
@@ -64,7 +61,7 @@ def clear_trade_days_cache():
 
 def transform_date(
     date_input: Union[str, date, dt, pd.Timestamp],
-    output_type: Literal['date', 'datetime', 'str', 'timestamp'] = 'date'
+    output_type: Literal["date", "datetime", "str", "timestamp"] = "date",
 ) -> Union[date, dt, str, pd.Timestamp]:
     """
     日期格式转换
@@ -114,12 +111,12 @@ def transform_date(
         date_str = date_input.strip()
         try:
             # 尝试多种常见格式
-            if '-' in date_str:
-                result_date = dt.strptime(date_str, '%Y-%m-%d').date()
-            elif '/' in date_str:
-                result_date = dt.strptime(date_str, '%Y/%m/%d').date()
+            if "-" in date_str:
+                result_date = dt.strptime(date_str, "%Y-%m-%d").date()
+            elif "/" in date_str:
+                result_date = dt.strptime(date_str, "%Y/%m/%d").date()
             elif len(date_str) == 8:
-                result_date = dt.strptime(date_str, '%Y%m%d').date()
+                result_date = dt.strptime(date_str, "%Y%m%d").date()
             else:
                 # 尝试 pandas 的灵活解析
                 result_date = pd.to_datetime(date_str).date()
@@ -129,13 +126,13 @@ def transform_date(
         raise ValueError(f"不支持的日期类型: {type(date_input)}")
 
     # 根据 output_type 返回相应格式
-    if output_type == 'date':
+    if output_type == "date":
         return result_date
-    elif output_type == 'datetime':
+    elif output_type == "datetime":
         return dt.combine(result_date, dt.min.time())
-    elif output_type == 'str':
-        return result_date.strftime('%Y-%m-%d')
-    elif output_type == 'timestamp':
+    elif output_type == "str":
+        return result_date.strftime("%Y-%m-%d")
+    elif output_type == "timestamp":
         return pd.Timestamp(result_date)
     else:
         raise ValueError(f"不支持的输出类型: '{output_type}'")
@@ -144,7 +141,7 @@ def transform_date(
 def get_shifted_date(
     base_date: Union[str, date, dt, pd.Timestamp],
     days: int,
-    days_type: Literal['T', 'D'] = 'T'
+    days_type: Literal["T", "D"] = "T",
 ) -> date:
     """
     日期偏移
@@ -171,13 +168,13 @@ def get_shifted_date(
         datetime.date(2023, 1, 12)  # 假设跳过了周末
     """
     # 转换基准日期为 date 对象
-    base = transform_date(base_date, 'date')
+    base = transform_date(base_date, "date")
 
-    if days_type == 'D':
+    if days_type == "D":
         # 自然日偏移，简单加减
         return base + timedelta(days=days)
 
-    elif days_type == 'T':
+    elif days_type == "T":
         # 交易日偏移
         trade_days = _get_cached_trade_days()
 
@@ -197,7 +194,9 @@ def get_shifted_date(
                         days -= 1  # 减去一步（因为从下一个交易日开始）
                         break
                 else:
-                    raise ValueError(f"基准日期 {base} 超出交易日范围（之后没有交易日）")
+                    raise ValueError(
+                        f"基准日期 {base} 超出交易日范围（之后没有交易日）"
+                    )
             else:
                 # 向前偏移，找上一个交易日作为起点
                 for i in range(len(trade_days) - 1, -1, -1):
@@ -206,15 +205,21 @@ def get_shifted_date(
                         days += 1  # 加上一步（因为从上一个交易日开始）
                         break
                 else:
-                    raise ValueError(f"基准日期 {base} 超出交易日范围（之前没有交易日）")
+                    raise ValueError(
+                        f"基准日期 {base} 超出交易日范围（之前没有交易日）"
+                    )
 
         new_idx = idx + days
 
         # 边界检查
         if new_idx < 0:
-            raise ValueError(f"偏移后的日期超出交易日范围（向前超出 {abs(new_idx)} 个交易日）")
+            raise ValueError(
+                f"偏移后的日期超出交易日范围（向前超出 {abs(new_idx)} 个交易日）"
+            )
         if new_idx >= len(trade_days):
-            raise ValueError(f"偏移后的日期超出交易日范围（向后超出 {new_idx - len(trade_days) + 1} 个交易日）")
+            raise ValueError(
+                f"偏移后的日期超出交易日范围（向后超出 {new_idx - len(trade_days) + 1} 个交易日）"
+            )
 
         return trade_days[new_idx]
 
@@ -223,8 +228,7 @@ def get_shifted_date(
 
 
 def get_previous_trade_date(
-    base_date: Union[str, date, dt, pd.Timestamp],
-    n: int = 1
+    base_date: Union[str, date, dt, pd.Timestamp], n: int = 1
 ) -> date:
     """
     获取前n个交易日
@@ -250,7 +254,7 @@ def get_previous_trade_date(
 
     if n == 0:
         # n=0 时返回基准日期本身（如果是交易日）或最近的交易日
-        base = transform_date(base_date, 'date')
+        base = transform_date(base_date, "date")
         trade_days = _get_cached_trade_days()
         if base in trade_days:
             return base
@@ -260,12 +264,11 @@ def get_previous_trade_date(
                 return d
         return trade_days[0] if trade_days else None
 
-    return get_shifted_date(base_date, -n, 'T')
+    return get_shifted_date(base_date, -n, "T")
 
 
 def get_next_trade_date(
-    base_date: Union[str, date, dt, pd.Timestamp],
-    n: int = 1
+    base_date: Union[str, date, dt, pd.Timestamp], n: int = 1
 ) -> date:
     """
     获取后n个交易日
@@ -291,7 +294,7 @@ def get_next_trade_date(
 
     if n == 0:
         # n=0 时返回基准日期本身（如果是交易日）或最近的交易日
-        base = transform_date(base_date, 'date')
+        base = transform_date(base_date, "date")
         trade_days = _get_cached_trade_days()
         if base in trade_days:
             return base
@@ -301,12 +304,10 @@ def get_next_trade_date(
                 return trade_days[i]
         return trade_days[-1] if trade_days else None
 
-    return get_shifted_date(base_date, n, 'T')
+    return get_shifted_date(base_date, n, "T")
 
 
-def is_trade_date(
-    check_date: Union[str, date, dt, pd.Timestamp]
-) -> bool:
+def is_trade_date(check_date: Union[str, date, dt, pd.Timestamp]) -> bool:
     """
     判断是否为交易日
 
@@ -322,14 +323,14 @@ def is_trade_date(
         >>> is_trade_date('2023-01-07')  # 周六
         False
     """
-    d = transform_date(check_date, 'date')
+    d = transform_date(check_date, "date")
     trade_days = _get_cached_trade_days()
     return d in trade_days
 
 
 def get_trade_dates_between(
     start_date: Union[str, date, dt, pd.Timestamp],
-    end_date: Union[str, date, dt, pd.Timestamp]
+    end_date: Union[str, date, dt, pd.Timestamp],
 ) -> list:
     """
     获取两个日期之间的所有交易日
@@ -345,8 +346,8 @@ def get_trade_dates_between(
         >>> get_trade_dates_between('2023-01-01', '2023-01-10')
         [datetime.date(2023, 1, 2), datetime.date(2023, 1, 3), ...]
     """
-    start = transform_date(start_date, 'date')
-    end = transform_date(end_date, 'date')
+    start = transform_date(start_date, "date")
+    end = transform_date(end_date, "date")
 
     trade_days = _get_cached_trade_days()
 
@@ -360,7 +361,7 @@ def get_trade_dates_between(
 
 def count_trade_dates_between(
     start_date: Union[str, date, dt, pd.Timestamp],
-    end_date: Union[str, date, dt, pd.Timestamp]
+    end_date: Union[str, date, dt, pd.Timestamp],
 ) -> int:
     """
     计算两个日期之间的交易日数量
@@ -381,12 +382,12 @@ def count_trade_dates_between(
 
 # 模块级导出
 __all__ = [
-    'get_shifted_date',
-    'get_previous_trade_date',
-    'get_next_trade_date',
-    'transform_date',
-    'is_trade_date',
-    'get_trade_dates_between',
-    'count_trade_dates_between',
-    'clear_trade_days_cache',
+    "get_shifted_date",
+    "get_previous_trade_date",
+    "get_next_trade_date",
+    "transform_date",
+    "is_trade_date",
+    "get_trade_dates_between",
+    "count_trade_dates_between",
+    "clear_trade_days_cache",
 ]

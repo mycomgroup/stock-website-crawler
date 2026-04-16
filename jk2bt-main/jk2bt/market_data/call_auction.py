@@ -162,16 +162,20 @@ def _normalize_date(dt):
 
 
 def _fetch_realtime_auction(stock, fields):
-    from akshare import stock_zh_a_hist_pre_min_em
+    try:
+        from jk2bt.data_access import get_adapter
+    except ImportError:
+        from data_access import get_adapter
 
+    adapter = get_adapter()
     ak_code = _jq_code_to_ak(stock)
 
     try:
-        df = stock_zh_a_hist_pre_min_em(
+        df = adapter.get_call_auction_raw(
             symbol=ak_code, start_time="09:15:00", end_time="09:25:00"
         )
     except Exception as e:
-        logger.warning(f"_fetch_realtime_auction: {stock} akshare 调用失败: {e}")
+        logger.warning(f"_fetch_realtime_auction: {stock} adapter 调用失败: {e}")
         return None
 
     if df is None or df.empty:

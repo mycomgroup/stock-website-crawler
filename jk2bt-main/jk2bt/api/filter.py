@@ -35,6 +35,7 @@ def _get_code_num(stock):
 # 来自 enhancements.py 的过滤函数
 # ---------------------------------------------------------------------------
 
+
 def filter_st(stock_list, date=None):
     """
     过滤 ST 股票
@@ -54,7 +55,7 @@ def filter_st(stock_list, date=None):
 
         st_codes = set(st_df["代码"].astype(str).str.zfill(6).values)
 
-        from jk2bt.core.strategy_base import format_stock_symbol_for_akshare
+        from jk2bt.core.securities_utils import format_stock_symbol_for_akshare
 
         clean_stocks = []
         for stock in stock_list:
@@ -88,7 +89,7 @@ def filter_paused(stock_list, date=None):
 
         paused_codes = set(stop_df["代码"].astype(str).str.zfill(6).values)
 
-        from jk2bt.core.strategy_base import format_stock_symbol_for_akshare
+        from jk2bt.core.securities_utils import format_stock_symbol_for_akshare
 
         active_stocks = []
         for stock in stock_list:
@@ -114,7 +115,7 @@ def filter_limit_up(stock_list, date=None):
     返回:
         过滤后的股票列表（排除涨停股票）
     """
-    from jk2bt.core.strategy_base import get_current_data
+    from jk2bt.api.jq_compat import get_current_data
 
     current_data = get_current_data()
 
@@ -141,7 +142,7 @@ def filter_limit_down(stock_list, date=None):
     返回:
         过滤后的股票列表（排除跌停股票）
     """
-    from jk2bt.core.strategy_base import get_current_data
+    from jk2bt.api.jq_compat import get_current_data
 
     current_data = get_current_data()
 
@@ -168,7 +169,7 @@ def filter_new_stocks(stock_list, days=180):
     返回:
         过滤后的股票列表
     """
-    from jk2bt.core.strategy_base import get_all_securities_jq
+    from jk2bt.api.securities import get_all_securities_jq
 
     try:
         securities = get_all_securities_jq()
@@ -201,6 +202,7 @@ def filter_new_stocks(stock_list, days=180):
 # ---------------------------------------------------------------------------
 # 来自 filter_api.py 的过滤函数
 # ---------------------------------------------------------------------------
+
 
 def get_dividend_ratio_filter_list(threshold=0.03, date=None):
     """
@@ -248,7 +250,11 @@ def get_dividend_ratio_filter_list(threshold=0.03, date=None):
 
         if dividend_col is not None:
             dividend_values = pd.to_numeric(df[dividend_col], errors="coerce")
-            sample_val = dividend_values.dropna().iloc[0] if len(dividend_values.dropna()) > 0 else 0
+            sample_val = (
+                dividend_values.dropna().iloc[0]
+                if len(dividend_values.dropna()) > 0
+                else 0
+            )
             is_percentage = sample_val > 1
 
             if is_percentage:
@@ -284,7 +290,11 @@ def get_margine_stocks(date=None):
             sse_df = get_adapter().get_margin_underlying("sh")
             if sse_df is not None and not sse_df.empty:
                 code_col = next(
-                    (c for c in sse_df.columns if "代码" in str(c) or "code" in str(c).lower()),
+                    (
+                        c
+                        for c in sse_df.columns
+                        if "代码" in str(c) or "code" in str(c).lower()
+                    ),
                     sse_df.columns[0],
                 )
                 all_stocks.extend(sse_df[code_col].astype(str).str.zfill(6).tolist())
@@ -295,7 +305,11 @@ def get_margine_stocks(date=None):
             szse_df = get_adapter().get_margin_underlying("sz")
             if szse_df is not None and not szse_df.empty:
                 code_col = next(
-                    (c for c in szse_df.columns if "代码" in str(c) or "code" in str(c).lower()),
+                    (
+                        c
+                        for c in szse_df.columns
+                        if "代码" in str(c) or "code" in str(c).lower()
+                    ),
                     szse_df.columns[0],
                 )
                 all_stocks.extend(szse_df[code_col].astype(str).str.zfill(6).tolist())
@@ -310,7 +324,11 @@ def get_margine_stocks(date=None):
                 margin_df = get_adapter().get_margin_detail("sh", date_str)
                 if margin_df is not None and not margin_df.empty:
                     code_col = next(
-                        (c for c in margin_df.columns if "代码" in str(c) or "code" in str(c).lower()),
+                        (
+                            c
+                            for c in margin_df.columns
+                            if "代码" in str(c) or "code" in str(c).lower()
+                        ),
                         margin_df.columns[0],
                     )
                     all_stocks = margin_df[code_col].astype(str).str.zfill(6).tolist()
@@ -340,7 +358,7 @@ def filter_new_stock(stock_list, days=250, date=None):
         return []
 
     try:
-        from jk2bt.core.strategy_base import get_all_securities_jq
+        from jk2bt.api.securities import get_all_securities_jq
 
         securities = get_all_securities_jq()
 
@@ -367,8 +385,13 @@ def filter_new_stock(stock_list, days=250, date=None):
 
                 if not info.empty:
                     start_date_col = next(
-                        (c for c in info.columns
-                         if "start_date" in str(c).lower() or "上市日期" in str(c) or "start" in str(c).lower()),
+                        (
+                            c
+                            for c in info.columns
+                            if "start_date" in str(c).lower()
+                            or "上市日期" in str(c)
+                            or "start" in str(c).lower()
+                        ),
                         info.columns[1] if len(info.columns) > 1 else info.columns[0],
                     )
                     start_date = pd.to_datetime(info.iloc[0][start_date_col])
@@ -547,14 +570,18 @@ def filter_kcbj_stock(stock_list, date=None):
         code_num = _get_code_num(stock)
 
         # 科创板: 688xxx
-        if code_num.startswith('688'):
+        if code_num.startswith("688"):
             continue
 
         # 北交所: 8xxxxx (4开头或8开头)
-        if code_num.startswith('4') or code_num.startswith('8'):
+        if code_num.startswith("4") or code_num.startswith("8"):
             # 但要排除正常的沪市B股和深市股票
             # 北交所: 43xxxx, 83xxxx, 87xxxx
-            if code_num.startswith('43') or code_num.startswith('83') or code_num.startswith('87'):
+            if (
+                code_num.startswith("43")
+                or code_num.startswith("83")
+                or code_num.startswith("87")
+            ):
                 continue
 
         clean_stocks.append(stock)
@@ -581,7 +608,7 @@ def filter_kcb_stock(stock_list, date=None):
     clean_stocks = []
     for stock in stock_list:
         code_num = _get_code_num(stock)
-        if not code_num.startswith('688'):
+        if not code_num.startswith("688"):
             clean_stocks.append(stock)
 
     return clean_stocks

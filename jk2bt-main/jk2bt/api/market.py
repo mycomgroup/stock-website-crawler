@@ -26,9 +26,16 @@ try:
     )
 except ImportError:
     COLUMN_MAP_COMMON = {
-        "日期": "datetime", "时间": "datetime", "day": "datetime",
-        "开盘": "open", "最高": "high", "最低": "low", "收盘": "close",
-        "成交量": "volume", "成交额": "money", "amount": "money",
+        "日期": "datetime",
+        "时间": "datetime",
+        "day": "datetime",
+        "开盘": "open",
+        "最高": "high",
+        "最低": "low",
+        "收盘": "close",
+        "成交量": "volume",
+        "成交额": "money",
+        "amount": "money",
     }
 
     def normalize_columns(df, column_map=None):
@@ -48,15 +55,28 @@ except ImportError:
         df = df.dropna(subset=["datetime"])
         return df.sort_values("datetime").reset_index(drop=True)
 
+
 try:
     from jk2bt.core.exceptions import (
-        MarketDataError, NetworkError, DataSourceError, ValidationError,
+        MarketDataError,
+        NetworkError,
+        DataSourceError,
+        ValidationError,
     )
 except ImportError:
-    class MarketDataError(Exception): pass
-    class NetworkError(Exception): pass
-    class DataSourceError(Exception): pass
-    class ValidationError(Exception): pass
+
+    class MarketDataError(Exception):
+        pass
+
+    class NetworkError(Exception):
+        pass
+
+    class DataSourceError(Exception):
+        pass
+
+    class ValidationError(Exception):
+        pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -84,18 +104,45 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
 
     is_lof = ak_sym.startswith("16")
     is_etf = (
-        ak_sym.startswith("51") or ak_sym.startswith("15") or ak_sym.startswith("50")
-        or ak_sym.startswith("52") or ak_sym.startswith("56") or ak_sym.startswith("58")
+        ak_sym.startswith("51")
+        or ak_sym.startswith("15")
+        or ak_sym.startswith("50")
+        or ak_sym.startswith("52")
+        or ak_sym.startswith("56")
+        or ak_sym.startswith("58")
     )
     is_index = (
-        (ak_sym.startswith("000") and ak_sym in [
-            "000001", "000002", "000003", "000004", "000005", "000006", "000007",
-            "000008", "000009", "000010", "000011", "000012", "000013", "000014",
-            "000015", "000016", "000017", "000018", "000300", "000688", "000851",
-            "000852", "000903", "000905", "000906", "000978",
-        ])
-        or ak_sym.startswith("399")
-    )
+        ak_sym.startswith("000")
+        and ak_sym
+        in [
+            "000001",
+            "000002",
+            "000003",
+            "000004",
+            "000005",
+            "000006",
+            "000007",
+            "000008",
+            "000009",
+            "000010",
+            "000011",
+            "000012",
+            "000013",
+            "000014",
+            "000015",
+            "000016",
+            "000017",
+            "000018",
+            "000300",
+            "000688",
+            "000851",
+            "000852",
+            "000903",
+            "000905",
+            "000906",
+            "000978",
+        ]
+    ) or ak_sym.startswith("399")
 
     try:
         if frequency in ["1d", "daily"]:
@@ -116,9 +163,13 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                     if df is not None and not df.empty:
                         return df
                 except ConnectionError as e:
-                    raise NetworkError("指数行情网络连接失败", context={"symbol": symbol}) from e
+                    raise NetworkError(
+                        "指数行情网络连接失败", context={"symbol": symbol}
+                    ) from e
                 except Exception as e:
-                    raise MarketDataError("指数行情获取失败", context={"symbol": symbol}) from e
+                    raise MarketDataError(
+                        "指数行情获取失败", context={"symbol": symbol}
+                    ) from e
 
             if is_lof:
                 try:
@@ -156,15 +207,21 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                 if df is not None and not df.empty:
                     return df
             except Exception as stock_err:
-                logger.warning(f"{symbol}: market_data.stock 获取失败: {stock_err}，尝试备用数据源")
+                logger.warning(
+                    f"{symbol}: market_data.stock 获取失败: {stock_err}，尝试备用数据源"
+                )
 
             # 备用数据源: akshare（通过 adapter）
             try:
                 df = get_adapter().get_stock_hist(
                     symbol=ak_sym,
                     period="daily",
-                    start_date=start_date.replace("-", "") if start_date else "19900101",
-                    end_date=end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d"),
+                    start_date=start_date.replace("-", "")
+                    if start_date
+                    else "19900101",
+                    end_date=end_date.replace("-", "")
+                    if end_date
+                    else datetime.now().strftime("%Y%m%d"),
                     adjust=adjust,
                 )
             except Exception:
@@ -188,7 +245,10 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
         elif frequency in ["1m", "5m", "15m", "30m", "60m", "minute"]:
             try:
                 try:
-                    from jk2bt.market_data.minute import get_stock_minute, get_etf_minute
+                    from jk2bt.market_data.minute import (
+                        get_stock_minute,
+                        get_etf_minute,
+                    )
                 except ImportError:
                     try:
                         from .market_data.minute import get_stock_minute, get_etf_minute
@@ -198,7 +258,13 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                 warnings.warn(f"{symbol}: 分钟数据模块导入失败")
                 return pd.DataFrame()
 
-            period_map = {"1m": "1m", "5m": "5m", "15m": "15m", "30m": "30m", "60m": "60m"}
+            period_map = {
+                "1m": "1m",
+                "5m": "5m",
+                "15m": "15m",
+                "30m": "30m",
+                "60m": "60m",
+            }
             period = period_map.get(frequency, "1m")
             ak_code = ("sh" if ak_sym.startswith("6") else "sz") + ak_sym
 
@@ -213,11 +279,15 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                         from .market_data.lof import get_lof_min
                     except ImportError:
                         from market_data.lof import get_lof_min
-                    df = get_lof_min(ak_sym, start_date, end_date, period=period.replace("m", ""))
+                    df = get_lof_min(
+                        ak_sym, start_date, end_date, period=period.replace("m", "")
+                    )
                 elif is_etf:
                     df = get_etf_minute(ak_sym, start_date, end_date, period=period)
                 else:
-                    df = get_stock_minute(ak_code, start_date, end_date, period=period, adjust=adjust)
+                    df = get_stock_minute(
+                        ak_code, start_date, end_date, period=period, adjust=adjust
+                    )
 
                 if df.empty:
                     return pd.DataFrame()
@@ -238,9 +308,13 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                 return df
 
             except ConnectionError as e:
-                raise NetworkError("分钟数据网络连接失败", context={"symbol": symbol}) from e
+                raise NetworkError(
+                    "分钟数据网络连接失败", context={"symbol": symbol}
+                ) from e
             except Exception as minute_error:
-                warnings.warn(f"{symbol} ({frequency}) 分钟数据获取失败: {minute_error}")
+                warnings.warn(
+                    f"{symbol} ({frequency}) 分钟数据获取失败: {minute_error}"
+                )
                 return pd.DataFrame()
         else:
             raise ValueError(f"不支持的 frequency: {frequency}")
@@ -334,8 +408,17 @@ def get_price(
             df = df.tail(count)
 
         default_fields = [
-            "datetime", "open", "high", "low", "close", "volume", "money",
-            "paused", "pre_close", "high_limit", "low_limit",
+            "datetime",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "money",
+            "paused",
+            "pre_close",
+            "high_limit",
+            "low_limit",
         ]
         if fields:
             keep_cols = ["datetime"] + [f for f in fields if f in df.columns]
@@ -351,7 +434,9 @@ def get_price(
             if not df[df["paused"] == 1].empty:
                 for col in ["open", "high", "low", "close"]:
                     if col in df.columns:
-                        df.loc[df["paused"] == 1, col] = df.loc[df["paused"] == 1, "pre_close"]
+                        df.loc[df["paused"] == 1, col] = df.loc[
+                            df["paused"] == 1, "pre_close"
+                        ]
                 if "volume" in df.columns:
                     df.loc[df["paused"] == 1, "volume"] = 0
                 if "money" in df.columns:
@@ -409,8 +494,13 @@ def history(
     else:
         try:
             from jk2bt.core.runner import _get_current_strategy
+
             strategy = _get_current_strategy()
-            if strategy is not None and hasattr(strategy, "current_dt") and strategy.current_dt is not None:
+            if (
+                strategy is not None
+                and hasattr(strategy, "current_dt")
+                and strategy.current_dt is not None
+            ):
                 end_dt = strategy.current_dt
             else:
                 end_dt = pd.Timestamp.now()
@@ -481,8 +571,13 @@ def attribute_history(
     else:
         try:
             from jk2bt.core.runner import _get_current_strategy
+
             strategy = _get_current_strategy()
-            if strategy is not None and hasattr(strategy, "current_dt") and strategy.current_dt is not None:
+            if (
+                strategy is not None
+                and hasattr(strategy, "current_dt")
+                and strategy.current_dt is not None
+            ):
                 end_dt = strategy.current_dt
             else:
                 end_dt = pd.Timestamp.now()
@@ -561,7 +656,9 @@ def get_bars(
         security = [security]
 
     if len(security) == 1:
-        raw_df = _fetch_price_data(security[0], start_date, end_date_str, frequency, adjust)
+        raw_df = _fetch_price_data(
+            security[0], start_date, end_date_str, frequency, adjust
+        )
 
         if raw_df.empty:
             return pd.DataFrame()
@@ -583,12 +680,16 @@ def get_bars(
         else:
             keep_cols = [f for f in default_fields if f in df_temp.columns]
 
-        return df_temp[[c for c in keep_cols if c in df_temp.columns]].reset_index(drop=True)
+        return df_temp[[c for c in keep_cols if c in df_temp.columns]].reset_index(
+            drop=True
+        )
 
     else:
         result = {}
         for sym in security:
-            result[sym] = get_bars(sym, count, unit, fields, include_now, end_dt, fq, skip_paused)
+            result[sym] = get_bars(
+                sym, count, unit, fields, include_now, end_dt, fq, skip_paused
+            )
         return result
 
 
@@ -601,6 +702,7 @@ def get_bars_jq(*args, **kwargs):
 # 来自 market_api_enhanced.py 的函数
 # ---------------------------------------------------------------------------
 
+
 def _fetch_valuation_data(symbol, date=None):
     """获取估值数据（PE/PB/市值等）"""
     ak_sym = _normalize_symbol(symbol)
@@ -612,8 +714,13 @@ def _fetch_valuation_data(symbol, date=None):
             return pd.DataFrame()
 
         col_map = {
-            "日期": "datetime", "pe": "pe", "pe_ttm": "pe_ttm", "pb": "pb",
-            "ps": "ps", "dv_ratio": "dividend_ratio", "total_mv": "market_cap",
+            "日期": "datetime",
+            "pe": "pe",
+            "pe_ttm": "pe_ttm",
+            "pb": "pb",
+            "ps": "ps",
+            "dv_ratio": "dividend_ratio",
+            "total_mv": "market_cap",
             "circ_mv": "circulating_market_cap",
         }
         df = df.rename(columns=col_map)
@@ -703,10 +810,19 @@ def _fetch_tick_data(symbol, count=1000, date=None):
             return pd.DataFrame()
 
         col_map = {
-            "时间": "time", "成交时间": "time", "datetime": "time",
-            "价格": "price", "成交价": "price", "close": "price",
-            "成交量": "volume", "成交数量": "volume", "vol": "volume",
-            "成交额": "amount", "amount": "amount", "成交金额": "amount", "money": "amount",
+            "时间": "time",
+            "成交时间": "time",
+            "datetime": "time",
+            "价格": "price",
+            "成交价": "price",
+            "close": "price",
+            "成交量": "volume",
+            "成交数量": "volume",
+            "vol": "volume",
+            "成交额": "amount",
+            "amount": "amount",
+            "成交金额": "amount",
+            "money": "amount",
         }
         df = df.rename(columns={k: v for k, v in col_map.items() if k in df.columns})
 
@@ -716,7 +832,11 @@ def _fetch_tick_data(symbol, count=1000, date=None):
         if "price" not in df.columns and "close" in df.columns:
             df["price"] = df["close"]
 
-        if "amount" not in df.columns and "volume" in df.columns and "price" in df.columns:
+        if (
+            "amount" not in df.columns
+            and "volume" in df.columns
+            and "price" in df.columns
+        ):
             df["amount"] = df["volume"] * df["price"]
 
         df["time"] = pd.to_datetime(df["time"], errors="coerce")
@@ -747,7 +867,15 @@ def get_market(
     adjust = fq_map.get(fq, "qfq")
 
     default_fields = ["open", "high", "low", "close", "volume", "money"]
-    valuation_fields = ["pe", "pe_ttm", "pb", "ps", "market_cap", "circulating_market_cap", "dividend_ratio"]
+    valuation_fields = [
+        "pe",
+        "pe_ttm",
+        "pb",
+        "ps",
+        "market_cap",
+        "circulating_market_cap",
+        "dividend_ratio",
+    ]
 
     if fields is None:
         fields = default_fields
@@ -782,18 +910,25 @@ def get_market(
         df["pre_close"] = df["close"].shift(1)
         df["high_limit"] = df.apply(
             lambda row: _calculate_limit_price(row["pre_close"], symbol, "up")
-            if pd.notna(row["pre_close"]) else None, axis=1
+            if pd.notna(row["pre_close"])
+            else None,
+            axis=1,
         )
         df["low_limit"] = df.apply(
             lambda row: _calculate_limit_price(row["pre_close"], symbol, "down")
-            if pd.notna(row["pre_close"]) else None, axis=1
+            if pd.notna(row["pre_close"])
+            else None,
+            axis=1,
         )
 
         if need_valuation:
             val_df = _fetch_valuation_data(symbol, end_date)
             if not val_df.empty and "datetime" in val_df.columns:
                 df = df.merge(
-                    val_df[["datetime"] + [f for f in valuation_fields if f in val_df.columns]],
+                    val_df[
+                        ["datetime"]
+                        + [f for f in valuation_fields if f in val_df.columns]
+                    ],
                     on="datetime",
                     how="left",
                 )
@@ -824,7 +959,9 @@ def get_detailed_quote(security, date=None):
             quote = _fetch_realtime_quote(symbol)
 
             if not quote:
-                df = _fetch_price_data(symbol, None, datetime.now().strftime("%Y-%m-%d"))
+                df = _fetch_price_data(
+                    symbol, None, datetime.now().strftime("%Y-%m-%d")
+                )
                 if not df.empty:
                     df = normalize_columns(df, COLUMN_MAP_COMMON)
                     df = normalize_datetime(df)
@@ -833,17 +970,27 @@ def get_detailed_quote(security, date=None):
                         "code": symbol,
                         "display_name": "",
                         "last_price": last_row.get("close", 0),
-                        "bid_price": None, "ask_price": None,
-                        "bid_volume": None, "ask_volume": None,
-                        "high_limit": _calculate_limit_price(last_row.get("close", 0), symbol, "up"),
-                        "low_limit": _calculate_limit_price(last_row.get("close", 0), symbol, "down"),
-                        "pre_close": df.iloc[-2].get("close", 0) if len(df) > 1 else None,
+                        "bid_price": None,
+                        "ask_price": None,
+                        "bid_volume": None,
+                        "ask_volume": None,
+                        "high_limit": _calculate_limit_price(
+                            last_row.get("close", 0), symbol, "up"
+                        ),
+                        "low_limit": _calculate_limit_price(
+                            last_row.get("close", 0), symbol, "down"
+                        ),
+                        "pre_close": df.iloc[-2].get("close", 0)
+                        if len(df) > 1
+                        else None,
                         "open": last_row.get("open", 0),
                         "high": last_row.get("high", 0),
                         "low": last_row.get("low", 0),
                         "volume": last_row.get("volume", 0),
                         "money": last_row.get("money", 0),
-                        "change_pct": None, "change": None, "turnover_rate": None,
+                        "change_pct": None,
+                        "change": None,
+                        "turnover_rate": None,
                     }
         else:
             df = _fetch_price_data(symbol, date, date)
@@ -861,8 +1008,10 @@ def get_detailed_quote(security, date=None):
                 "code": symbol,
                 "display_name": "",
                 "last_price": row.get("close", 0),
-                "bid_price": None, "ask_price": None,
-                "bid_volume": None, "ask_volume": None,
+                "bid_price": None,
+                "ask_price": None,
+                "bid_volume": None,
+                "ask_volume": None,
                 "high_limit": _calculate_limit_price(prev_close, symbol, "up"),
                 "low_limit": _calculate_limit_price(prev_close, symbol, "down"),
                 "pre_close": prev_close,
@@ -871,7 +1020,9 @@ def get_detailed_quote(security, date=None):
                 "low": row.get("low", 0),
                 "volume": row.get("volume", 0),
                 "money": row.get("money", 0),
-                "change_pct": (row.get("close", 0) - prev_close) / prev_close * 100 if prev_close else None,
+                "change_pct": (row.get("close", 0) - prev_close) / prev_close * 100
+                if prev_close
+                else None,
                 "change": row.get("close", 0) - prev_close if prev_close else None,
                 "turnover_rate": None,
             }
@@ -913,7 +1064,11 @@ def get_ticks_enhanced(security, count=1000, fields=None, df=True, date=None):
                 for f in fields:
                     if f in row.index:
                         val = row[f]
-                        item[f] = val.strftime("%Y-%m-%d %H:%M:%S") if isinstance(val, pd.Timestamp) else val
+                        item[f] = (
+                            val.strftime("%Y-%m-%d %H:%M:%S")
+                            if isinstance(val, pd.Timestamp)
+                            else val
+                        )
                 tick_list.append(item)
             result[symbol] = tick_list
 
@@ -927,27 +1082,32 @@ def get_ticks_enhanced(security, count=1000, fields=None, df=True, date=None):
 # 来自 enhancements.py 的行情辅助函数
 # ---------------------------------------------------------------------------
 
+
 def get_open_price(security, date=None):
     """获取开盘价"""
-    from jk2bt.core.strategy_base import get_current_data
+    from jk2bt.api.jq_compat import get_current_data
+
     return get_current_data()[security].day_open
 
 
 def get_close_price(security, date=None):
     """获取收盘价（最新价）"""
-    from jk2bt.core.strategy_base import get_current_data
+    from jk2bt.api.jq_compat import get_current_data
+
     return get_current_data()[security].last_price
 
 
 def get_high_limit(security):
     """获取涨停价"""
-    from jk2bt.core.strategy_base import get_current_data
+    from jk2bt.api.jq_compat import get_current_data
+
     return get_current_data()[security].high_limit
 
 
 def get_low_limit(security):
     """获取跌停价"""
-    from jk2bt.core.strategy_base import get_current_data
+    from jk2bt.api.jq_compat import get_current_data
+
     return get_current_data()[security].low_limit
 
 

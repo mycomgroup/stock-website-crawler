@@ -18,7 +18,7 @@ strategy_base.py
 - data_proxies.py: 数据代理类
 - timer_manager.py: 定时器管理器
 - global_state.py: 全局状态类
-- api_wrappers.py: API 封装函数
+- jq_compat.py: API 封装函数（已移至 api/ 包）
 """
 
 # =====================================================================
@@ -32,6 +32,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 # Matplotlib 延迟初始化，避免首次导入时构建字体缓存
 _matplotlib_initialized = False
 _plt = None  # 延迟导入 matplotlib.pyplot
+
 
 def _ensure_matplotlib_init():
     """延迟初始化 matplotlib，只在首次使用时配置"""
@@ -60,6 +61,7 @@ def _ensure_matplotlib_init():
         pass
 
     _matplotlib_initialized = True
+
 
 # patch pandas fillna（保持原有代码）
 
@@ -96,12 +98,15 @@ def _df_fillna_compat(self, value=None, method=None, **kwargs):
 
 _pd.DataFrame.fillna = _df_fillna_compat
 
+
 # 延迟导入 matplotlib.pyplot，在需要时才初始化
 def _get_plt():
     """获取 matplotlib.pyplot（延迟导入）"""
     _ensure_matplotlib_init()
     import matplotlib.pyplot as plt_module
+
     return plt_module
+
 
 # =====================================================================
 # 1. 标准库和第三方库
@@ -182,7 +187,7 @@ from .global_state import (
 )
 
 # API 封装函数
-from .api_wrappers import (
+from jk2bt.api.jq_compat import (
     get_index_weights,
     get_index_weights_robust,
     get_index_stocks,
@@ -252,12 +257,26 @@ from .asset_router import (
 # 3. FinanceDBProxy 类定义
 # =====================================================================
 
+
 class FinanceDBProxy:
     """聚宽finance数据库模拟"""
 
-    _DIVIDEND_SCHEMA = ["code", "公司名称", "董事会预案公告日期", "每股派息(税前)(元)", "分红金额(万元)"]
+    _DIVIDEND_SCHEMA = [
+        "code",
+        "公司名称",
+        "董事会预案公告日期",
+        "每股派息(税前)(元)",
+        "分红金额(万元)",
+    ]
     _MARGIN_SCHEMA = ["code", "date", "margin_balance", "margin_buy", "margin_repay"]
-    _FORECAST_SCHEMA = ["code", "year", "type", "forecast_min", "forecast_mean", "forecast_max"]
+    _FORECAST_SCHEMA = [
+        "code",
+        "year",
+        "type",
+        "forecast_min",
+        "forecast_mean",
+        "forecast_max",
+    ]
     _COMPANY_BASIC_INFO_SCHEMA = ["code", "company_name", "industry", "list_date"]
 
     def run_query(self, query_obj):
@@ -273,6 +292,7 @@ finance = _FinanceModule()
 # =====================================================================
 # 4. 策略基类
 # =====================================================================
+
 
 class JQ2BTBaseStrategy(bt.Strategy):
     """聚宽策略基类。"""
@@ -328,14 +348,20 @@ class JQ2BTBaseStrategy(bt.Strategy):
 
     def notify_order(self, order):
         if order.status in [order.Completed]:
-            self.log(f"ORDER EXECUTED, {order.data._name}, {order.executed.price:.2f}", log_type="trade")
+            self.log(
+                f"ORDER EXECUTED, {order.data._name}, {order.executed.price:.2f}",
+                log_type="trade",
+            )
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
             self.log(f"ORDER FAILED, {order.data._name}", log_type="trade")
 
     def notify_trade(self, trade):
         if not trade.isclosed:
             return
-        self.log(f"TRADE PROFIT, GROSS {trade.pnl:.2f}, NET {trade.pnlcomm:.2f}", log_type="trade")
+        self.log(
+            f"TRADE PROFIT, GROSS {trade.pnl:.2f}, NET {trade.pnlcomm:.2f}",
+            log_type="trade",
+        )
 
     def run_daily(self, func, time_str=None, time=None):
         actual_time = time if time is not None else time_str
@@ -489,6 +515,7 @@ class JQ2BTBaseStrategy(bt.Strategy):
 # 5. 框架主流程入口
 # =====================================================================
 
+
 def run_bt_framework(
     strategy_class,
     ETF_POOL,
@@ -566,57 +593,58 @@ def get_all_trade_days_jq(*args, **kwargs):
 def get_all_trade_days(*args, **kwargs):
     return get_all_trade_days_jq(*args, **kwargs)
 
+
 __all__ = [
     # 证券工具函数
-    'format_stock_symbol_for_akshare',
-    'jq_code_to_ak',
-    'ak_code_to_jq',
-    'RobustResult',
+    "format_stock_symbol_for_akshare",
+    "jq_code_to_ak",
+    "ak_code_to_jq",
+    "RobustResult",
     # 类
-    'SecurityInfo',
-    'valuation',
-    'income',
-    'cash_flow',
-    'balance',
-    'indicator',
-    'TimerManager',
-    'JQLogAdapter',
-    'log',
-    'GlobalState',
-    'FundOFPosition',
-    'ContextProxy',
-    'FinanceDBProxy',
-    'finance_db',
-    'finance',
-    'JQ2BTBaseStrategy',
+    "SecurityInfo",
+    "valuation",
+    "income",
+    "cash_flow",
+    "balance",
+    "indicator",
+    "TimerManager",
+    "JQLogAdapter",
+    "log",
+    "GlobalState",
+    "FundOFPosition",
+    "ContextProxy",
+    "FinanceDBProxy",
+    "finance_db",
+    "finance",
+    "JQ2BTBaseStrategy",
     # API 函数
-    'get_index_weights',
-    'get_index_stocks',
-    'get_price',
-    'get_price_jq',
-    'get_fundamentals',
-    'get_all_securities',
-    'get_all_securities_jq',
-    'get_security_info',
-    'get_all_trade_days',
-    'get_all_trade_days_jq',
-    'get_trade_days',
-    'get_extras_jq',
-    'get_extras',
-    'get_billboard_list_jq',
-    'get_billboard_list',
-    'get_factor_values_jq',
-    'get_factor_values',
-    'winsorize',
-    'winsorize_med',
-    'standardlize',
-    'get_current_data',
-    'get_current_tick',
-    'query',
-    'run_bt_framework',
+    "get_index_weights",
+    "get_index_stocks",
+    "get_price",
+    "get_price_jq",
+    "get_fundamentals",
+    "get_all_securities",
+    "get_all_securities_jq",
+    "get_security_info",
+    "get_all_trade_days",
+    "get_all_trade_days_jq",
+    "get_trade_days",
+    "get_extras_jq",
+    "get_extras",
+    "get_billboard_list_jq",
+    "get_billboard_list",
+    "get_factor_values_jq",
+    "get_factor_values",
+    "winsorize",
+    "winsorize_med",
+    "standardlize",
+    "get_current_data",
+    "get_current_tick",
+    "query",
+    "run_bt_framework",
     # 资产路由
-    'AssetType',
-    'AssetCategory',
-    'identify_asset',
-    'is_stock',
+    "AssetType",
+    "AssetCategory",
+    "identify_asset",
+    "is_stock",
 ]

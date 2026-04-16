@@ -8,16 +8,6 @@ test_api_compatibility.py
 - 各种输入格式的兼容性
 """
 
-import sys
-import os
-
-_utility_dir = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "src",
-)
-if _utility_dir not in sys.path:
-    sys.path.insert(0, _utility_dir)
-
 import pytest
 import pandas as pd
 import numpy as np
@@ -29,7 +19,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_single_security_single_factor(self):
         """单标的单因子。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -44,7 +34,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_single_security_multiple_factors(self):
         """单标的多因子。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -60,7 +50,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_multiple_securities_single_factor(self):
         """多标单因子。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities=["sh600519", "sz000001"],
@@ -77,7 +67,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_multiple_securities_multiple_factors(self):
         """多标多因子。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities=["sh600519", "sz000001"],
@@ -94,7 +84,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_count_parameter(self):
         """count 参数测试。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -109,7 +99,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_end_date_only(self):
         """仅提供 end_date。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -122,7 +112,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_start_date_end_date(self):
         """提供 start_date 和 end_date。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -137,7 +127,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_force_update_parameter(self):
         """force_update 参数。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -151,7 +141,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_cache_dir_parameter(self):
         """cache_dir 参数。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -169,7 +159,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_return_is_dict(self):
         """返回类型为 dict。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -182,7 +172,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dict_keys_are_factor_names(self):
         """字典键为因子名。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -196,7 +186,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_values_are_dataframe(self):
         """字典值为 DataFrame。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -209,7 +199,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dataframe_index_is_dates(self):
         """DataFrame index 为日期。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -223,7 +213,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dataframe_columns_are_securities(self):
         """DataFrame columns 为证券代码。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities=["sh600519", "sz000001"],
@@ -238,7 +228,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dataframe_values_are_numeric(self):
         """DataFrame 值为数值类型。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -256,7 +246,7 @@ class TestFactorAliasCompatibility:
 
     def test_pe_ratio_aliases(self):
         """PE_ratio 别名。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         aliases = ["PE_ratio", "pe_ratio", "Pe_ratio", "pe_ratio"]
 
@@ -271,7 +261,7 @@ class TestFactorAliasCompatibility:
 
     def test_bias_aliases(self):
         """BIAS 别名。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         aliases = ["BIAS5", "bias_5"]
 
@@ -286,7 +276,7 @@ class TestFactorAliasCompatibility:
 
     def test_emac_aliases(self):
         """EMAC 别名。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         aliases = ["EMAC26", "emac_26"]
 
@@ -305,7 +295,7 @@ class TestSecurityCodeCompatibility:
 
     def test_sh_prefix(self):
         """sh 前缀格式。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -318,7 +308,7 @@ class TestSecurityCodeCompatibility:
 
     def test_sz_prefix(self):
         """sz 前缀格式。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sz000001",
@@ -331,7 +321,7 @@ class TestSecurityCodeCompatibility:
 
     def test_xshg_suffix(self):
         """XSHG 后缀格式。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="600519.XSHG",
@@ -344,7 +334,7 @@ class TestSecurityCodeCompatibility:
 
     def test_xshe_suffix(self):
         """XSHE 后缀格式。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="000001.XSHE",
@@ -357,7 +347,7 @@ class TestSecurityCodeCompatibility:
 
     def test_pure_code(self):
         """纯数字格式。"""
-        from src.factors import get_factor_values_jq
+        from jk2bt.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="600519",

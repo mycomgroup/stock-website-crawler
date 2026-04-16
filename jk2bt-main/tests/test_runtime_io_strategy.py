@@ -87,7 +87,7 @@ class TestRuntimeIOInStrategy:
             _get_runtime_dir,
             _RUNTIME_DIR,
         )
-        import src.runtime_io as runtime_io_module
+        import jk2bt.core.io as runtime_io_module
 
         original_runtime_dir = runtime_io_module._RUNTIME_DIR
         runtime_io_module._RUNTIME_DIR = None

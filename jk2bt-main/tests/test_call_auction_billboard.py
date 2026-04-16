@@ -14,7 +14,7 @@ sys.path.insert(
     os.path.join(os.path.dirname(__file__), "..", "src"),
 )
 
-from market_data.call_auction import (
+from jk2bt.market_data.call_auction import (
     get_call_auction,
     get_call_auction_jq,
     _jq_code_to_ak,
