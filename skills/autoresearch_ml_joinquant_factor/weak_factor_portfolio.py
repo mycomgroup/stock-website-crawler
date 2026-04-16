@@ -23,6 +23,7 @@ def standardize_factors(
     factors_df: pd.DataFrame,
     method: str = "zscore",
     clip_value: float = 3.0,
+    group_col: str | pd.Series | dict | None = None,
 ) -> pd.DataFrame:
     """按日期截面标准化因子矩阵。"""
     if factors_df.empty:
@@ -32,31 +33,84 @@ def standardize_factors(
     if method not in {"zscore", "rank"}:
         raise ValueError("method 必须是 'zscore' 或 'rank'")
 
+    def _zscore(frame: pd.DataFrame) -> pd.DataFrame:
+        return (frame - frame.mean()) / (frame.std(ddof=0) + EPS)
+
+    def _rank(frame: pd.DataFrame) -> pd.DataFrame:
+        return frame.rank(pct=True) * 2 - 1
+
+    def _transform(frame: pd.DataFrame) -> pd.DataFrame:
+        return _zscore(frame) if method == "zscore" else _rank(frame)
+
+    def _resolve_group_series(data: pd.DataFrame) -> pd.Series | None:
+        if group_col is None:
+            return None
+
+        if isinstance(group_col, str):
+            if group_col in data.columns:
+                return data[group_col]
+            if group_col in data.index.names:
+                return pd.Series(data.index.get_level_values(group_col), index=data.index)
+            raise ValueError(f"group_col='{group_col}' 不存在于列或索引中")
+
+        if isinstance(group_col, dict):
+            if isinstance(data.index, pd.MultiIndex) and "stock" in data.index.names:
+                stock_values = data.index.get_level_values("stock")
+                mapped = pd.Series(stock_values, index=data.index).map(group_col)
+                return mapped
+            return pd.Series(data.index, index=data.index).map(group_col)
+
+        if isinstance(group_col, pd.Series):
+            if group_col.index.equals(data.index):
+                return group_col.reindex(data.index)
+            if isinstance(data.index, pd.MultiIndex) and "stock" in data.index.names:
+                stock_values = data.index.get_level_values("stock")
+                return pd.Series(stock_values, index=data.index).map(group_col)
+            return group_col.reindex(data.index)
+
+        raise TypeError("group_col 仅支持 None、str、dict 或 pd.Series")
+
+    numeric_cols = result.select_dtypes(include=[np.number]).columns.tolist()
+    if not numeric_cols:
+        return result
+    result = result.astype({col: float for col in numeric_cols}, copy=False)
+
     if isinstance(result.index, pd.MultiIndex) and "date" in result.index.names:
         group_level = result.index.names.index("date")
-        grouped = result.groupby(level=group_level)
-        if method == "zscore":
-            result = grouped.transform(lambda x: (x - x.mean()) / (x.std(ddof=0) + EPS))
+        values = result[numeric_cols]
+        group_values = _resolve_group_series(result)
+        if group_values is None:
+            grouped = values.groupby(level=group_level)
+            transformed = grouped.transform(_transform)
         else:
-            result = grouped.transform(lambda x: x.rank(pct=True) * 2 - 1)
+            filled_group = group_values.fillna("__MISSING_GROUP__")
+            grouped = values.groupby(
+                [result.index.get_level_values("date"), filled_group],
+                sort=False,
+            )
+            transformed = grouped.transform(_transform)
+        result.loc[:, numeric_cols] = transformed
     elif "date" in result.columns:
         idx = result.index
-        dates = result["date"]
-        vals = result.drop(columns=["date"])
-        if method == "zscore":
-            vals = vals.groupby(dates).transform(lambda x: (x - x.mean()) / (x.std(ddof=0) + EPS))
+        dates = result["date"].copy()
+        values = result[numeric_cols].copy()
+        group_values = _resolve_group_series(result)
+        if isinstance(group_col, str) and group_col == "date":
+            raise ValueError("group_col 不能与 date 列同名")
+        if group_values is None:
+            transformed = values.groupby(dates).transform(_transform)
         else:
-            vals = vals.groupby(dates).transform(lambda x: x.rank(pct=True) * 2 - 1)
-        vals["date"] = dates.values
-        vals.index = idx
-        result = vals
+            filled_group = group_values.fillna("__MISSING_GROUP__")
+            transformed = values.groupby([dates, filled_group], sort=False).transform(_transform)
+        result = result.copy()
+        result.loc[:, numeric_cols] = transformed
+        result["date"] = dates.values
+        result.index = idx
     else:
-        if method == "zscore":
-            result = (result - result.mean()) / (result.std(ddof=0) + EPS)
-        else:
-            result = result.rank(pct=True) * 2 - 1
+        result.loc[:, numeric_cols] = _transform(result[numeric_cols])
 
-    return result.clip(-clip_value, clip_value)
+    result.loc[:, numeric_cols] = result.loc[:, numeric_cols].clip(-clip_value, clip_value)
+    return result
 
 
 def strategy_equal_weighted(factors_df: pd.DataFrame, normalize_window: int = 252) -> pd.Series:
