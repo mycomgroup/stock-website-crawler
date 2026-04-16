@@ -310,9 +310,12 @@ class WeakFactorPortfolio:
         self.retrain_freq = retrain_freq
         self.risk_manager = RiskManager(target_vol=target_vol)
         self.valid_factors: list[str] = []
+        self.active_factor_audit: pd.DataFrame = pd.DataFrame()
 
     def _rolling_ic(self, factor: pd.Series, target: pd.Series, window: int = 60) -> pd.Series:
-        return factor.rolling(window, min_periods=max(20, window // 2)).corr(target.shift(-1))
+        """滚动 IC（仅使用 as-of 当日及历史信息）。"""
+        # 将因子滞后一期以预测下一期收益，避免在 as-of 日期使用未来收益。
+        return factor.shift(1).rolling(window, min_periods=max(20, window // 2)).corr(target)
 
     def prescreen_factors(
         self,
@@ -339,15 +342,103 @@ class WeakFactorPortfolio:
         recent = ic_history.loc[:as_of_date].tail(63).mean().abs().sort_values(ascending=False)
         return recent.head(min(self.n_active, len(recent))).index.tolist()
 
-    def signal_equal_weighted(self, factors_subset: pd.DataFrame) -> pd.Series:
-        return strategy_equal_weighted(factors_subset)
+    def _build_rebalance_dates(self, index: pd.Index, rebalance_freq: str | int = 21) -> pd.Index:
+        """根据频率生成再平衡日期序列。支持交易日步长或时间规则。"""
+        if len(index) == 0:
+            return index
 
-    def signal_risk_parity(self, factors_subset: pd.DataFrame, window: int = 252) -> pd.Series:
-        return strategy_risk_parity(factors_subset, window=window)
+        if isinstance(rebalance_freq, int):
+            if rebalance_freq <= 0:
+                raise ValueError("rebalance_freq 为整数时必须 > 0")
+            return index[::rebalance_freq]
 
-    def signal_ml(self, factors_subset: pd.DataFrame) -> pd.Series:
+        if not isinstance(index, pd.DatetimeIndex):
+            raise TypeError("rebalance_freq 为字符串规则时，index 必须为 DatetimeIndex")
+
+        grouped = pd.Series(index=index, data=index).groupby(pd.Grouper(freq=rebalance_freq)).last().dropna()
+        return pd.Index(grouped.values)
+
+    def build_active_factor_timeline(
+        self,
+        factors_subset: pd.DataFrame,
+        rebalance_freq: str | int = 21,
+        audit_top_n: int = 10,
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """生成时变 active 因子掩码与再平衡对账表。"""
+        if factors_subset.empty:
+            empty_mask = pd.DataFrame(index=factors_subset.index, columns=factors_subset.columns, dtype=bool)
+            return empty_mask, pd.DataFrame(columns=["rebalance_date", "n_active", "top_factors"])
+
+        rebalance_dates = self._build_rebalance_dates(factors_subset.index, rebalance_freq=rebalance_freq)
+        if len(rebalance_dates) == 0 or rebalance_dates[0] != factors_subset.index[0]:
+            rebalance_dates = pd.Index([factors_subset.index[0]]).append(rebalance_dates).drop_duplicates()
+        if len(rebalance_dates) == 0 or rebalance_dates[-1] != factors_subset.index[-1]:
+            rebalance_dates = rebalance_dates.append(pd.Index([factors_subset.index[-1]])).drop_duplicates()
+
+        active_mask = pd.DataFrame(False, index=factors_subset.index, columns=factors_subset.columns)
+        audit_rows: list[dict[str, object]] = []
+
+        for i, rebalance_date in enumerate(rebalance_dates):
+            active = self._get_active_factors(pd.Timestamp(rebalance_date))
+            active = [c for c in active if c in factors_subset.columns]
+
+            start = rebalance_date
+            if i + 1 < len(rebalance_dates):
+                end = rebalance_dates[i + 1]
+                period_idx = factors_subset.index[(factors_subset.index >= start) & (factors_subset.index < end)]
+            else:
+                period_idx = factors_subset.index[factors_subset.index >= start]
+
+            if len(period_idx) and active:
+                active_mask.loc[period_idx, active] = True
+
+            audit_rows.append(
+                {
+                    "rebalance_date": pd.Timestamp(rebalance_date),
+                    "n_active": len(active),
+                    "top_factors": ", ".join(active[: max(1, audit_top_n)]),
+                }
+            )
+
+        audit_df = pd.DataFrame(audit_rows).set_index("rebalance_date")
+        return active_mask, audit_df
+
+    def _apply_active_mask(
+        self,
+        factors_subset: pd.DataFrame,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.DataFrame:
+        if active_mask is None:
+            return factors_subset
+        mask = active_mask.reindex(index=factors_subset.index, columns=factors_subset.columns).fillna(False)
+        return factors_subset.where(mask)
+
+    def signal_equal_weighted(
+        self,
+        factors_subset: pd.DataFrame,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.Series:
+        return strategy_equal_weighted(self._apply_active_mask(factors_subset, active_mask=active_mask))
+
+    def signal_risk_parity(
+        self,
+        factors_subset: pd.DataFrame,
+        window: int = 252,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.Series:
+        return strategy_risk_parity(
+            self._apply_active_mask(factors_subset, active_mask=active_mask),
+            window=window,
+        )
+
+    def signal_ml(
+        self,
+        factors_subset: pd.DataFrame,
+        active_mask: pd.DataFrame | None = None,
+    ) -> pd.Series:
+        masked_factors = self._apply_active_mask(factors_subset, active_mask=active_mask)
         return strategy_ml_weighted(
-            factors_subset,
+            masked_factors,
             target_return=self.target,
             retrain_freq=self.retrain_freq,
             train_window=500,
@@ -360,20 +451,36 @@ class WeakFactorPortfolio:
     def apply_risk_management(self, signal: pd.Series, portfolio_return: pd.Series | None = None) -> pd.Series:
         return self.risk_manager.apply_all(signal, portfolio_return)
 
-    def run(self, use_dynamic_factors: bool = True, portfolio_return: pd.Series | None = None) -> pd.Series:
+    def run(
+        self,
+        use_dynamic_factors: bool = True,
+        portfolio_return: pd.Series | None = None,
+        rebalance_freq: str | int = 21,
+        audit_top_n: int = 10,
+        print_audit: bool = True,
+    ) -> pd.Series:
         self.prescreen_factors()
         if not self.valid_factors:
             raise ValueError("预筛选后无可用因子，请降低筛选阈值。")
 
         factors_to_use = self.factors[self.valid_factors]
+        active_mask: pd.DataFrame | None = None
         if use_dynamic_factors:
-            active = self._get_active_factors(factors_to_use.index[-1])
-            if active:
-                factors_to_use = factors_to_use[active]
+            active_mask, audit_df = self.build_active_factor_timeline(
+                factors_to_use,
+                rebalance_freq=rebalance_freq,
+                audit_top_n=audit_top_n,
+            )
+            self.active_factor_audit = audit_df
+            if print_audit and not audit_df.empty:
+                print("[ActiveFactorAudit] 再平衡点 active 因子对账（数量与Top名单）")
+                print(audit_df[["n_active", "top_factors"]])
+        else:
+            self.active_factor_audit = pd.DataFrame()
 
-        s_eq = self.signal_equal_weighted(factors_to_use)
-        s_rp = self.signal_risk_parity(factors_to_use)
-        s_ml = self.signal_ml(factors_to_use)
+        s_eq = self.signal_equal_weighted(factors_to_use, active_mask=active_mask)
+        s_rp = self.signal_risk_parity(factors_to_use, active_mask=active_mask)
+        s_ml = self.signal_ml(factors_to_use, active_mask=active_mask)
 
         combined = self.combine_signals(s_eq, s_rp, s_ml)
         final = self.apply_risk_management(combined, portfolio_return=portfolio_return)
