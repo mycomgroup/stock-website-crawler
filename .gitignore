@@ -33,3 +33,5 @@ output
 QuantsPlaybook/*
 stock-backtesting-system/*
 skills/autoresearch/*jk2bt-main/data/db/*.duckdb
+
+skills/autoresearch_ml_joinquant_factor_v2/train_merged_all.csv
