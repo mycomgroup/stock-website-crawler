@@ -37,7 +37,7 @@ def handle_bar(context, bar_dict):
     buy_count, sell_count = td_setup(closes)
 
     bar = (bar_dict[context.etf] if context.etf in bar_dict else None)
-    if bar is None or not bar.is_trading:
+    if bar is not None and not bar.is_trading:
         return
 
     # TD买入信号：连续9根收盘价低于4根前（超卖）

@@ -38,16 +38,17 @@ def handle_bar(context, bar_dict):
     candidates = stocks[:200]  # 取前200只股票筛选
 
     buy_candidates = []
+    result = []
     for stock in candidates:
         if check_buy_point(stock):
-            buy_candidates.append(stock)
+            buy_result.append(stock)
         if len(buy_candidates) >= context.stock_num * 2:
             break
 
     target = []
     for stock in buy_candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break

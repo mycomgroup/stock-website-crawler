@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 山寨每月轮动调仓的红利策略 - RiceQuant版本
 # 逻辑：每月轮动，选高股息率、低PE的红利股，结合动量过滤
 
@@ -26,7 +42,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
         df = df[df['pe_ratio'] > 0.0]
@@ -47,7 +63,7 @@ def handle_bar(context, bar_dict):
                 continue
             if closes[-1] > closes[0]:  # 近期上涨
                 bar = (bar_dict[stock] if stock in bar_dict else None)
-                if bar is not None and bar.is_trading:
+                if bar is None or bar.is_trading:
                     target.append(stock)
         except Exception:
             continue

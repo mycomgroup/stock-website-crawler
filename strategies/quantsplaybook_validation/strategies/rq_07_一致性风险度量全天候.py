@@ -34,7 +34,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     vars_ = {}
     for asset in context.pools:
@@ -50,6 +49,7 @@ def handle_bar(context, bar_dict):
 
     if not vars_:
         return
+    context.month = current_month
 
     # 按VaR倒数分配权重（风险平价）
     inv_var = {a: 1.0 / v for a, v in vars_.items()}
@@ -63,6 +63,6 @@ def handle_bar(context, bar_dict):
     total_value = context.portfolio.total_value
     for asset, w in weights.items():
         bar = (bar_dict[asset] if asset in bar_dict else None)
-        if bar is None or not bar.is_trading:
+        if bar is not None and not bar.is_trading:
             continue
         order_target_value(asset, total_value * w * 0.99)

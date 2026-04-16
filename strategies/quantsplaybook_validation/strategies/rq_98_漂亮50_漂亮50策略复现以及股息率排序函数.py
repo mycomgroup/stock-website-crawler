@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 漂亮50策略 - RiceQuant版本
 # 逻辑：选沪深300中市值最大的50只股票，按股息率排序，季度调仓
 
@@ -13,7 +29,6 @@ def handle_bar(context, bar_dict):
     current_quarter = (context.now.month - 1) // 3
     if current_quarter == context.quarter:
         return
-    context.quarter = current_quarter
 
     stocks = index_components('000300.XSHG')
     if not stocks:
@@ -27,16 +42,17 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['pb_ratio'] > 0.0]
         df = df.head(context.stock_num * 3)
         candidates = df.index.tolist()
     except Exception:
         return
-    target = [s for s in candidates if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in candidates if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
 
     if not target:
         return
+    context.quarter = current_quarter
 
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:

@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # ORGR-SRFps-VSTD20-NOCFtOI 多因子策略 - RiceQuant版本
 # 因子：营收增速(ORGR) + EPS(SRFps) + 成交量稳定性(VSTD20) + 现金流质量(NOCFtOI)
 # 逻辑：选营收增速高、EPS高、成交量稳定的股票，月度调仓
@@ -27,8 +43,8 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=-1).last().dropna()
-        df = df[df['market_cap'] > 1e+09]
+        df = _normalize_factor_frame(factor_df)
+        df = df[df['market_cap'] > 10]
         df = df[df['inc_net_profit_year_on_year'] > 0.1]
         df = df.sort_values(['inc_net_profit_year_on_year', 'eps'], ascending=[False, False]).head(context.stock_num * 10)
         candidates = df.index.tolist()
@@ -52,7 +68,7 @@ def handle_bar(context, bar_dict):
         return
 
     sorted_stocks = sorted(scores, key=scores.get, reverse=True)
-    target = [s for s in sorted_stocks if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in sorted_stocks if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
     if not target:
         target = sorted_stocks[:context.stock_num]
 

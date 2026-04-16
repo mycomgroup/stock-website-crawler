@@ -6,11 +6,62 @@
 3. weekday() != 0 限制 → 去掉，改为每天运行
 4. candidates 自我 append → 用独立 result 列表
 5. peg 因子名 → peg_ratio
+6. get_factor 结果索引层级归一化，避免候选集被清空
+7. 放宽 bar_dict 缺失时的交易过滤，避免静默空跑
+8. 周期标记延后到实际调仓前，避免本月/本周提前锁死
 """
 import os
 import re
+from pathlib import Path
 
 STRATEGIES_DIR = 'strategies/quantsplaybook_validation/strategies'
+RESULTS_FILE = 'strategies/quantsplaybook_validation/NEW_STRATEGY_RESULTS.md'
+
+FACTOR_HELPER = '''
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
+'''.lstrip()
+
+
+def get_zero_return_files():
+    results_path = Path(RESULTS_FILE)
+    if not results_path.exists():
+        return None
+
+    target_files = []
+    for line in results_path.read_text(encoding='utf-8').splitlines():
+        if not line.startswith('| rq_'):
+            continue
+        cols = [col.strip() for col in line.split('|') if col.strip()]
+        if len(cols) < 9:
+            continue
+        filename = cols[0]
+        local_exists = cols[1]
+        fetch_status = cols[6]
+        total_return = cols[8]
+        if local_exists != '✅':
+            continue
+        if fetch_status != '✅ 完成':
+            continue
+        if total_return != '0.00%':
+            continue
+        target_files.append(filename)
+    return sorted(set(target_files))
+
 
 def fix_factor_len_typo(code):
     """factor_len(df) → len(df)"""
@@ -135,6 +186,127 @@ def fix_undefined_stocks_in_get_factor(code):
     
     return '\n'.join(new_lines)
 
+
+def ensure_factor_helper(code):
+    if '_normalize_factor_frame(' in code:
+        return code
+
+    lines = code.splitlines(keepends=True)
+    insert_at = 0
+    while insert_at < len(lines):
+        stripped = lines[insert_at].strip()
+        if stripped.startswith('import ') or stripped.startswith('from '):
+            insert_at += 1
+            continue
+        if stripped == '':
+            insert_at += 1
+            continue
+        break
+    lines.insert(insert_at, FACTOR_HELPER)
+    return ''.join(lines)
+
+
+def fix_factor_groupby_normalization(code):
+    pattern = re.compile(
+        r'^(?P<indent>\s*)(?P<lhs>\w+)\s*=\s*(?P<src>\w+)\.groupby\(level=(?:0|-1)\)\.last\(\)\.dropna\(\)\s*$',
+        re.MULTILINE,
+    )
+    if not pattern.search(code):
+        return code
+
+    code = ensure_factor_helper(code)
+    return pattern.sub(r'\g<indent>\g<lhs> = _normalize_factor_frame(\g<src>)', code)
+
+
+def relax_bar_dict_filters(code):
+    lines = code.splitlines()
+    for idx, line in enumerate(lines):
+        stripped = line.strip()
+        future_window = '\n'.join(lines[idx + 1: idx + 8])
+        bar_used_later = re.search(r'\bbar\.(open|close|high|low|limit_up|limit_down|last)\b', future_window)
+
+        if stripped == 'if bar is not None and bar.is_trading:' and not bar_used_later:
+            lines[idx] = line.replace('if bar is not None and bar.is_trading:', 'if bar is None or bar.is_trading:')
+            continue
+
+        if stripped == 'if bar is None or not bar.is_trading:' and not bar_used_later:
+            lines[idx] = line.replace('if bar is None or not bar.is_trading:', 'if bar is not None and not bar.is_trading:')
+
+    code = '\n'.join(lines)
+    code = re.sub(
+        r'\(bar_dict\[(?P<var>[A-Za-z_][A-Za-z0-9_]*)\] if (?P=var) in bar_dict else None\) and bar_dict\[(?P=var)\]\.is_trading',
+        r'(\g<var> not in bar_dict) or bar_dict[\g<var>].is_trading',
+        code,
+    )
+    return code
+
+
+def delay_period_markers(code):
+    lines = code.splitlines()
+    changed = False
+
+    for period in ('week', 'month', 'quarter'):
+        current_var = f'current_{period}'
+        assign_line = f'context.{period} = {current_var}'
+
+        for idx, line in enumerate(lines):
+            if line.strip() != assign_line:
+                continue
+
+            indent = line[: len(line) - len(line.lstrip())]
+            if not indent:
+                continue
+
+            guard_idx = None
+            for j in range(max(0, idx - 6), idx):
+                if lines[j].strip() == f'if {current_var} == context.{period}:':
+                    guard_idx = j
+                    break
+            if guard_idx is None:
+                continue
+
+            guard_indent = lines[guard_idx][: len(lines[guard_idx]) - len(lines[guard_idx].lstrip())]
+            if indent != guard_indent:
+                continue
+
+            return_idx = guard_idx + 1
+            while return_idx < len(lines) and lines[return_idx].strip() == '':
+                return_idx += 1
+            if return_idx >= len(lines) or lines[return_idx].strip() != 'return':
+                continue
+
+            insert_idx = None
+            for j in range(idx + 1, len(lines)):
+                stripped = lines[j].strip()
+                line_indent = lines[j][: len(lines[j]) - len(lines[j].lstrip())]
+                if line_indent == guard_indent and stripped.startswith('if not ') and j + 1 < len(lines):
+                    next_idx = j + 1
+                    while next_idx < len(lines) and lines[next_idx].strip() == '':
+                        next_idx += 1
+                    if next_idx < len(lines) and lines[next_idx].strip() == 'return':
+                        insert_idx = next_idx + 1
+                if line_indent == guard_indent and (
+                    stripped.startswith('for ') and 'context.portfolio.positions.keys()' in stripped
+                    or stripped.startswith('order_target_value(')
+                    or stripped.startswith('order_to(')
+                    or stripped.startswith('weight =')
+                ):
+                    if insert_idx is None:
+                        insert_idx = j
+                    break
+
+            if insert_idx is None or insert_idx <= idx:
+                continue
+
+            moved_line = lines.pop(idx)
+            if insert_idx > idx:
+                insert_idx -= 1
+            lines.insert(insert_idx, moved_line)
+            changed = True
+            break
+
+    return '\n'.join(lines) + ('\n' if code.endswith('\n') else '') if changed else code
+
 def fix_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         original = f.read()
@@ -163,6 +335,21 @@ def fix_file(filepath):
     if re.search(r'get_factor\(\s*stocks\s*,', code):
         code = fix_undefined_stocks_in_get_factor(code)
         changes.append('undefined_stocks_in_get_factor')
+
+    normalized = fix_factor_groupby_normalization(code)
+    if normalized != code:
+        code = normalized
+        changes.append('factor_groupby_normalization')
+
+    relaxed = relax_bar_dict_filters(code)
+    if relaxed != code:
+        code = relaxed
+        changes.append('relax_bar_dict_filters')
+
+    delayed = delay_period_markers(code)
+    if delayed != code:
+        code = delayed
+        changes.append('delay_period_markers')
     
     if code != original:
         with open(filepath, 'w', encoding='utf-8') as f:
@@ -171,10 +358,16 @@ def fix_file(filepath):
     return []
 
 def main():
-    files = sorted([f for f in os.listdir(STRATEGIES_DIR) if f.startswith('rq_') and f.endswith('.py')])
+    all_files = sorted([f for f in os.listdir(STRATEGIES_DIR) if f.startswith('rq_') and f.endswith('.py')])
+    zero_return_files = get_zero_return_files()
+    target_files = [f for f in all_files if zero_return_files is None or f in zero_return_files]
     
     total_fixed = 0
-    for fname in files:
+    print(f'扫描文件: {len(target_files)} / {len(all_files)}')
+    if zero_return_files is not None:
+        print(f'仅修复当前 0.00% 且本地存在的策略文件')
+
+    for fname in target_files:
         path = os.path.join(STRATEGIES_DIR, fname)
         changes = fix_file(path)
         if changes:

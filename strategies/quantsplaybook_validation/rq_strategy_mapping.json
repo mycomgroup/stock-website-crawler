@@ -9,27 +9,27 @@
   },
   "rq_04_高股息低PE高增长价投.py": {
     "strategyId": 2418087,
-    "backtestId": "7972098",
+    "backtestId": "7977729",
     "submittedAt": "2026-04-04T14:15:08.160Z",
-    "resubmittedAt": "2026-04-06T02:54:49.675Z",
+    "resubmittedAt": "2026-04-10T08:43:18.973Z",
     "lastFetched": "2026-04-06T12:54:35.356Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_04_红利搬砖.py": {
     "strategyId": 2418085,
-    "backtestId": "7972097",
+    "backtestId": "7977731",
     "submittedAt": "2026-04-04T14:14:46.105Z",
-    "resubmittedAt": "2026-04-06T02:54:07.941Z",
+    "resubmittedAt": "2026-04-10T08:43:21.624Z",
     "lastFetched": "2026-04-06T12:54:35.394Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_04_苦咖啡上涨趋势.py": {
     "strategyId": 2418086,
-    "backtestId": "7972112",
+    "backtestId": "7977730",
     "submittedAt": "2026-04-05T02:41:34.914Z",
-    "resubmittedAt": "2026-04-06T03:04:39.881Z",
+    "resubmittedAt": "2026-04-10T08:43:20.296Z",
     "lastFetched": "2026-04-06T12:54:35.383Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -43,18 +43,18 @@
   },
   "rq_05_ARBR-SGAI-NPTTOR-RPPS.py": {
     "strategyId": 2417839,
-    "backtestId": "7972108",
+    "backtestId": "7977750",
     "submittedAt": "2026-04-04T14:43:00.483Z",
-    "resubmittedAt": "2026-04-06T03:04:51.441Z",
+    "resubmittedAt": "2026-04-10T08:59:39.820Z",
     "lastFetched": "2026-04-06T12:54:36.133Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_05_FL-VOL240-AEttm.py": {
     "strategyId": 2417840,
-    "backtestId": "7972116",
+    "backtestId": "7977732",
     "submittedAt": "2026-04-04T14:43:00.818Z",
-    "resubmittedAt": "2026-04-06T03:22:15.813Z",
+    "resubmittedAt": "2026-04-10T08:44:38.819Z",
     "lastFetched": "2026-04-06T12:54:36.064Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -70,27 +70,27 @@
   },
   "rq_05_Liquidity-VCPttm-ROAttm.py": {
     "strategyId": 2417842,
-    "backtestId": "7972113",
+    "backtestId": "7977736",
     "submittedAt": "2026-04-04T14:43:16.723Z",
-    "resubmittedAt": "2026-04-06T03:06:48.592Z",
+    "resubmittedAt": "2026-04-10T08:46:26.439Z",
     "lastFetched": "2026-04-06T12:54:36.065Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_05_NCAR-AER-ATR6-VOL20.py": {
     "strategyId": 2417843,
-    "backtestId": "7972118",
+    "backtestId": "7977755",
     "submittedAt": "2026-04-04T14:43:17.047Z",
-    "resubmittedAt": "2026-04-06T03:22:57.571Z",
+    "resubmittedAt": "2026-04-10T09:03:59.540Z",
     "lastFetched": "2026-04-06T12:54:36.134Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_05_ORGR-SRFps-VSTD20-NOCFtOI.py": {
     "strategyId": 2417844,
-    "backtestId": "7972150",
+    "backtestId": "7977773",
     "submittedAt": "2026-04-04T14:43:32.536Z",
-    "resubmittedAt": "2026-04-06T03:56:09.189Z",
+    "resubmittedAt": "2026-04-10T09:15:42.056Z",
     "lastFetched": "2026-04-06T12:54:36.806Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -106,9 +106,9 @@
   },
   "rq_05_PNF-TPtCR-ITR.py": {
     "strategyId": 2417847,
-    "backtestId": "7972144",
+    "backtestId": "7977795",
     "submittedAt": "2026-04-05T02:31:14.970Z",
-    "resubmittedAt": "2026-04-06T03:46:02.230Z",
+    "resubmittedAt": "2026-04-10T09:26:37.934Z",
     "lastFetched": "2026-04-06T12:54:36.868Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -124,9 +124,9 @@
   },
   "rq_05_VSTD20-ARTR-LTDtAR-OC.py": {
     "strategyId": 2417848,
-    "backtestId": "7972149",
+    "backtestId": "7977759",
     "submittedAt": "2026-04-05T02:31:17.610Z",
-    "resubmittedAt": "2026-04-06T03:55:27.314Z",
+    "resubmittedAt": "2026-04-10T09:06:17.601Z",
     "lastFetched": "2026-04-06T12:54:36.785Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -142,27 +142,27 @@
   },
   "rq_07_为了积分实盘策略.py": {
     "strategyId": 2418089,
-    "backtestId": "7972165",
+    "backtestId": "7977800",
     "submittedAt": "2026-04-05T02:28:07.879Z",
-    "resubmittedAt": "2026-04-06T04:14:53.221Z",
+    "resubmittedAt": "2026-04-10T09:28:40.886Z",
     "lastFetched": "2026-04-06T12:54:37.501Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_07_一致性风险度量全天候.py": {
     "strategyId": 2418088,
-    "backtestId": "7972168",
+    "backtestId": "7977814",
     "submittedAt": "2026-04-05T02:41:36.307Z",
-    "resubmittedAt": "2026-04-06T04:18:31.105Z",
+    "resubmittedAt": "2026-04-10T09:41:39.203Z",
     "lastFetched": "2026-04-06T12:54:37.538Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_08_14个月200_超短线实盘交易策略_无未来函数.py": {
     "strategyId": 2417850,
-    "backtestId": "7972159",
+    "backtestId": "7977805",
     "submittedAt": "2026-04-04T11:35:19.130Z",
-    "resubmittedAt": "2026-04-06T04:10:19.966Z",
+    "resubmittedAt": "2026-04-10T09:30:28.583Z",
     "lastFetched": "2026-04-06T12:54:37.515Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -178,18 +178,18 @@
   },
   "rq_08_科技与狠活_纯粹的数据挖掘策略.py": {
     "strategyId": 2417853,
-    "backtestId": "7972169",
+    "backtestId": "7977821",
     "submittedAt": "2026-04-05T02:03:16.174Z",
-    "resubmittedAt": "2026-04-06T04:19:12.943Z",
+    "resubmittedAt": "2026-04-10T09:48:16.821Z",
     "lastFetched": "2026-04-06T12:54:38.189Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_09_持续跑赢大盘_真蓝筹v2_资金容量千万以上.py": {
     "strategyId": 2417856,
-    "backtestId": "7972178",
+    "backtestId": "7977815",
     "submittedAt": "2026-04-05T02:03:35.428Z",
-    "resubmittedAt": "2026-04-06T04:26:09.957Z",
+    "resubmittedAt": "2026-04-10T09:42:11.180Z",
     "lastFetched": "2026-04-06T12:54:38.175Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -204,18 +204,18 @@
   },
   "rq_09_FROEC-PB-CAP-HL.py": {
     "strategyId": 2417852,
-    "backtestId": "7972176",
+    "backtestId": "7977823",
     "submittedAt": "2026-04-05T02:32:22.453Z",
-    "resubmittedAt": "2026-04-06T04:25:28.163Z",
+    "resubmittedAt": "2026-04-10T09:52:21.124Z",
     "lastFetched": "2026-04-06T12:54:38.190Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_09_SG-MS-PEG-HL.py": {
     "strategyId": 2417854,
-    "backtestId": "7972174",
+    "backtestId": "7977817",
     "submittedAt": "2026-04-05T02:32:40.457Z",
-    "resubmittedAt": "2026-04-06T04:23:46.153Z",
+    "resubmittedAt": "2026-04-10T09:42:44.433Z",
     "lastFetched": "2026-04-06T12:54:38.179Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -249,9 +249,9 @@
   },
   "rq_10_龙头首阴战法改版二.py": {
     "strategyId": 2417860,
-    "backtestId": "7972182",
+    "backtestId": "7977830",
     "submittedAt": "2026-04-04T11:36:45.886Z",
-    "resubmittedAt": "2026-04-06T04:27:04.715Z",
+    "resubmittedAt": "2026-04-10T10:04:47.995Z",
     "lastFetched": "2026-04-06T12:54:38.857Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -267,27 +267,27 @@
   },
   "rq_12_全市场选股_7年5倍不择时_回撤30左右.py": {
     "strategyId": 2417862,
-    "backtestId": "7972193",
+    "backtestId": "7977843",
     "submittedAt": "2026-04-05T02:03:55.023Z",
-    "resubmittedAt": "2026-04-06T04:36:32.487Z",
+    "resubmittedAt": "2026-04-10T10:18:31.823Z",
     "lastFetched": "2026-04-06T12:54:39.516Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_12_致敬聚宽_机器学习多因子_50只持仓_14年37倍.py": {
     "strategyId": 2417863,
-    "backtestId": "7972194",
+    "backtestId": "7977838",
     "submittedAt": "2026-04-05T02:04:26.659Z",
-    "resubmittedAt": "2026-04-06T04:36:34.059Z",
+    "resubmittedAt": "2026-04-10T10:14:27.538Z",
     "lastFetched": "2026-04-06T12:54:39.504Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_13_5年15倍收益_年化79.py": {
     "strategyId": 2417865,
-    "backtestId": "7972198",
+    "backtestId": "7977846",
     "submittedAt": "2026-04-05T02:04:58.401Z",
-    "resubmittedAt": "2026-04-06T04:38:27.494Z",
+    "resubmittedAt": "2026-04-10T10:21:50.793Z",
     "lastFetched": "2026-04-06T12:54:39.536Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -312,9 +312,9 @@
   },
   "rq_13_首板高开_低开_弱转强混合策略.py": {
     "strategyId": 2417867,
-    "backtestId": "7972203",
+    "backtestId": "7977875",
     "submittedAt": "2026-04-04T11:37:29.664Z",
-    "resubmittedAt": "2026-04-06T04:54:35.227Z",
+    "resubmittedAt": "2026-04-10T10:42:09.455Z",
     "lastFetched": "2026-04-06T12:54:40.184Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -338,9 +338,9 @@
   },
   "rq_14_胜率65_缩量分歧反包战法.py": {
     "strategyId": 2417873,
-    "backtestId": "7972205",
+    "backtestId": "7977881",
     "submittedAt": "2026-04-04T11:38:13.601Z",
-    "resubmittedAt": "2026-04-06T04:59:08.559Z",
+    "resubmittedAt": "2026-04-10T10:44:12.322Z",
     "lastFetched": "2026-04-06T12:54:40.187Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -356,9 +356,9 @@
   },
   "rq_14_为实盘做的更新_分钟级别和盘中止损.py": {
     "strategyId": 2417871,
-    "backtestId": "7972212",
+    "backtestId": "7977920",
     "submittedAt": "2026-04-05T02:05:35.710Z",
-    "resubmittedAt": "2026-04-06T05:08:06.260Z",
+    "resubmittedAt": "2026-04-10T10:52:36.032Z",
     "lastFetched": "2026-04-06T12:54:40.851Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -373,18 +373,18 @@
   },
   "rq_15_10年52倍_年化59_全新因子方法超稳定.py": {
     "strategyId": 2417874,
-    "backtestId": "7972214",
+    "backtestId": "7977930",
     "submittedAt": "2026-04-05T02:06:07.429Z",
-    "resubmittedAt": "2026-04-06T05:11:44.053Z",
+    "resubmittedAt": "2026-04-10T10:55:25.761Z",
     "lastFetched": "2026-04-06T12:54:40.865Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_15_2020年_267_年化_13_回撤_上涨趋势策略修改版.py": {
     "strategyId": 2417875,
-    "backtestId": "7972216",
+    "backtestId": "7977924",
     "submittedAt": "2026-04-05T02:06:23.984Z",
-    "resubmittedAt": "2026-04-06T05:13:26.007Z",
+    "resubmittedAt": "2026-04-10T10:53:53.305Z",
     "lastFetched": "2026-04-06T12:54:40.852Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -400,18 +400,18 @@
   },
   "rq_15_小市值策略之再优化_年化接近翻倍.py": {
     "strategyId": 2417876,
-    "backtestId": "7972219",
+    "backtestId": "7977941",
     "submittedAt": "2026-04-05T02:06:41.929Z",
-    "resubmittedAt": "2026-04-06T05:26:46.723Z",
+    "resubmittedAt": "2026-04-10T10:57:31.457Z",
     "lastFetched": "2026-04-06T12:54:41.517Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_15_小市值排除3个bug版_22年至今收益506_回撤11.py": {
     "strategyId": 2417877,
-    "backtestId": "7972221",
+    "backtestId": "7977933",
     "submittedAt": "2026-04-05T02:06:40.549Z",
-    "resubmittedAt": "2026-04-06T05:29:35.807Z",
+    "resubmittedAt": "2026-04-10T10:56:27.913Z",
     "lastFetched": "2026-04-06T12:54:41.500Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -436,27 +436,27 @@
   },
   "rq_16_集合竞价三合一_今年收益1067_年化198.py": {
     "strategyId": 2417882,
-    "backtestId": "7972226",
+    "backtestId": "7977937",
     "submittedAt": "2026-04-04T11:39:19.819Z",
-    "resubmittedAt": "2026-04-06T05:38:42.359Z",
+    "resubmittedAt": "2026-04-10T10:56:59.647Z",
     "lastFetched": "2026-04-06T12:54:41.508Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_16_ETF轮动策略升级_多类别_低回撤.py": {
     "strategyId": 2417880,
-    "backtestId": "7972230",
+    "backtestId": "7977988",
     "submittedAt": "2026-04-05T02:33:14.952Z",
-    "resubmittedAt": "2026-04-06T05:43:01.897Z",
+    "resubmittedAt": "2026-04-10T11:15:05.681Z",
     "lastFetched": "2026-04-06T12:54:42.195Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_17_5年多因子超额收益1055_K线风险过滤_无未来函数.py": {
     "strategyId": 2417883,
-    "backtestId": "7972232",
+    "backtestId": "7977969",
     "submittedAt": "2026-04-05T02:08:03.261Z",
-    "resubmittedAt": "2026-04-06T05:44:25.447Z",
+    "resubmittedAt": "2026-04-10T11:09:12.281Z",
     "lastFetched": "2026-04-06T12:54:42.172Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -472,54 +472,54 @@
   },
   "rq_17_多品种ETF动量轮动_EPO优化.py": {
     "strategyId": 2417886,
-    "backtestId": "7972229",
+    "backtestId": "7977983",
     "submittedAt": "2026-04-05T02:33:35.730Z",
-    "resubmittedAt": "2026-04-06T05:42:20.052Z",
+    "resubmittedAt": "2026-04-10T11:14:33.899Z",
     "lastFetched": "2026-04-06T12:54:42.181Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_17_基金跟随策略_19年年化60.py": {
     "strategyId": 2417885,
-    "backtestId": "7972231",
+    "backtestId": "7977982",
     "submittedAt": "2026-04-04T11:39:41.841Z",
-    "resubmittedAt": "2026-04-06T05:43:43.692Z",
+    "resubmittedAt": "2026-04-10T11:14:02.140Z",
     "lastFetched": "2026-04-06T12:54:42.176Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_17_科技与狠活.py": {
     "strategyId": 2417887,
-    "backtestId": "7972236",
+    "backtestId": "7977994",
     "submittedAt": "2026-04-04T11:40:04.078Z",
-    "resubmittedAt": "2026-04-06T05:48:14.829Z",
+    "resubmittedAt": "2026-04-10T11:16:42.300Z",
     "lastFetched": "2026-04-06T12:54:42.864Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_18_6年17倍的etf分级b的轮动趋势策略跟随感悟.py": {
     "strategyId": 2417888,
-    "backtestId": "7972237",
+    "backtestId": "7977989",
     "submittedAt": "2026-04-05T02:33:34.354Z",
-    "resubmittedAt": "2026-04-06T05:49:56.808Z",
+    "resubmittedAt": "2026-04-10T11:15:22.246Z",
     "lastFetched": "2026-04-06T12:54:42.856Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_18_20行代码8年高胜率躲过了牛年第一场大跌.py": {
     "strategyId": 2417889,
-    "backtestId": "7972242",
+    "backtestId": "7977992",
     "submittedAt": "2026-04-05T02:33:17.834Z",
-    "resubmittedAt": "2026-04-06T05:51:31.969Z",
+    "resubmittedAt": "2026-04-10T11:15:54.001Z",
     "lastFetched": "2026-04-06T12:54:42.862Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_18_白马股攻防转换.py": {
     "strategyId": 2418091,
-    "backtestId": "7972238",
+    "backtestId": "7977993",
     "submittedAt": "2026-04-05T02:28:10.638Z",
-    "resubmittedAt": "2026-04-06T05:50:38.603Z",
+    "resubmittedAt": "2026-04-10T11:16:10.566Z",
     "lastFetched": "2026-04-06T12:54:42.863Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -535,9 +535,9 @@
   },
   "rq_19_高股息低PE价投.py": {
     "strategyId": 2418093,
-    "backtestId": "7972244",
+    "backtestId": "7977996",
     "submittedAt": "2026-04-05T02:41:37.632Z",
-    "resubmittedAt": "2026-04-06T05:52:13.737Z",
+    "resubmittedAt": "2026-04-10T11:19:30.708Z",
     "lastFetched": "2026-04-06T12:54:43.513Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -553,18 +553,18 @@
   },
   "rq_21_北向资金股票轮动.py": {
     "strategyId": 2418094,
-    "backtestId": "7972257",
+    "backtestId": "7978015",
     "submittedAt": "2026-04-05T02:41:55.544Z",
-    "resubmittedAt": "2026-04-06T06:03:59.923Z",
+    "resubmittedAt": "2026-04-10T11:30:27.598Z",
     "lastFetched": "2026-04-06T12:54:43.533Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_22_菜场大妈小市值.py": {
     "strategyId": 2418097,
-    "backtestId": "7972260",
+    "backtestId": "7978012",
     "submittedAt": "2026-04-04T14:16:14.433Z",
-    "resubmittedAt": "2026-04-06T06:04:43.108Z",
+    "resubmittedAt": "2026-04-10T11:29:10.267Z",
     "lastFetched": "2026-04-06T12:54:43.530Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -604,18 +604,18 @@
   },
   "rq_28_多个成长因子评分.py": {
     "strategyId": 2417891,
-    "backtestId": "7972263",
+    "backtestId": "7978017",
     "submittedAt": "2026-04-04T11:40:26.012Z",
-    "resubmittedAt": "2026-04-06T06:05:36.409Z",
+    "resubmittedAt": "2026-04-10T11:31:31.098Z",
     "lastFetched": "2026-04-06T12:54:44.195Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_28_经典小市值.py": {
     "strategyId": 2417893,
-    "backtestId": "7972268",
+    "backtestId": "7978016",
     "submittedAt": "2026-04-04T11:40:47.991Z",
-    "resubmittedAt": "2026-04-06T06:09:39.552Z",
+    "resubmittedAt": "2026-04-10T11:30:59.346Z",
     "lastFetched": "2026-04-06T12:54:44.191Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -631,18 +631,18 @@
   },
   "rq_28_正黄旗大妈选股.py": {
     "strategyId": 2418104,
-    "backtestId": "7972279",
+    "backtestId": "7978021",
     "submittedAt": "2026-04-04T14:17:04.891Z",
-    "resubmittedAt": "2026-04-06T06:25:48.173Z",
+    "resubmittedAt": "2026-04-10T11:36:05.697Z",
     "lastFetched": "2026-04-06T12:54:44.847Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_28_中小综指数增强.py": {
     "strategyId": 2417892,
-    "backtestId": "7972274",
+    "backtestId": "7978030",
     "submittedAt": "2026-04-04T11:40:26.054Z",
-    "resubmittedAt": "2026-04-06T06:24:51.649Z",
+    "resubmittedAt": "2026-04-10T11:48:18.236Z",
     "lastFetched": "2026-04-06T12:54:44.883Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -658,18 +658,18 @@
   },
   "rq_28_PEG-EBIT-CAP加入换手率因子.py": {
     "strategyId": 2417890,
-    "backtestId": "7972277",
+    "backtestId": "7978022",
     "submittedAt": "2026-04-04T11:40:25.922Z",
-    "resubmittedAt": "2026-04-06T06:25:34.748Z",
+    "resubmittedAt": "2026-04-10T11:36:07.095Z",
     "lastFetched": "2026-04-06T12:54:44.853Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_30_超跌反弹小牛股.py": {
     "strategyId": 2418106,
-    "backtestId": "7972281",
+    "backtestId": "7978034",
     "submittedAt": "2026-04-05T02:42:12.033Z",
-    "resubmittedAt": "2026-04-06T06:27:41.755Z",
+    "resubmittedAt": "2026-04-10T11:50:36.352Z",
     "lastFetched": "2026-04-06T12:54:45.535Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -694,9 +694,9 @@
   },
   "rq_31_蛇皮走位小市值.py": {
     "strategyId": 2418108,
-    "backtestId": "7972284",
+    "backtestId": "7978035",
     "submittedAt": "2026-04-04T14:17:49.265Z",
-    "resubmittedAt": "2026-04-06T06:29:35.313Z",
+    "resubmittedAt": "2026-04-10T11:51:08.089Z",
     "lastFetched": "2026-04-06T12:54:45.540Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -711,12 +711,12 @@
   },
   "rq_32_追高概率涨停.py": {
     "strategyId": 2418111,
-    "backtestId": "7972293",
+    "backtestId": "7978065",
     "submittedAt": "2026-04-04T14:18:17.431Z",
-    "resubmittedAt": "2026-04-06T06:41:11.157Z",
+    "resubmittedAt": "2026-04-10T12:03:54.147Z",
     "lastFetched": "2026-04-06T12:54:46.656Z",
     "localFileExists": true,
-    "lastFrequency": "day"
+    "lastFrequency": "1m"
   },
   "rq_32_EPO低相关ETF组合.py": {
     "strategyId": 2418110,
@@ -729,36 +729,36 @@
   },
   "rq_34_趋势交易5.py": {
     "strategyId": 2418112,
-    "backtestId": "7972302",
+    "backtestId": "7978064",
     "submittedAt": "2026-04-05T02:42:48.159Z",
-    "resubmittedAt": "2026-04-06T06:46:30.014Z",
+    "resubmittedAt": "2026-04-10T12:03:22.421Z",
     "lastFetched": "2026-04-06T12:54:46.475Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_35_精选价值策略.py": {
     "strategyId": 2418113,
-    "backtestId": "7972295",
+    "backtestId": "7978042",
     "submittedAt": "2026-04-04T14:18:39.517Z",
-    "resubmittedAt": "2026-04-06T06:41:53.057Z",
+    "resubmittedAt": "2026-04-10T11:55:44.151Z",
     "lastFetched": "2026-04-06T12:54:46.429Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_36 最简强者恒强策略.py": {
     "strategyId": 2417894,
-    "backtestId": "7972301",
+    "backtestId": "7978041",
     "submittedAt": "2026-04-05T02:33:54.932Z",
-    "resubmittedAt": "2026-04-06T06:46:28.615Z",
+    "resubmittedAt": "2026-04-10T11:55:27.557Z",
     "lastFetched": "2026-04-06T12:54:46.424Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_37 三阳三阴战法.py": {
     "strategyId": 2417895,
-    "backtestId": "7972304",
+    "backtestId": "7978067",
     "submittedAt": "2026-04-05T02:08:56.950Z",
-    "resubmittedAt": "2026-04-06T06:47:11.690Z",
+    "resubmittedAt": "2026-04-10T12:04:10.747Z",
     "lastFetched": "2026-04-06T12:54:47.864Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -797,9 +797,9 @@
   },
   "rq_40_穿越牛熊稳健高收益.py": {
     "strategyId": 2418115,
-    "backtestId": "7972308",
+    "backtestId": "7978068",
     "submittedAt": "2026-04-04T14:19:01.698Z",
-    "resubmittedAt": "2026-04-06T06:48:53.671Z",
+    "resubmittedAt": "2026-04-10T12:04:42.555Z",
     "lastFetched": "2026-04-06T12:54:48.693Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -814,18 +814,18 @@
   },
   "rq_41 均线黏合突破选股法.py": {
     "strategyId": 2417900,
-    "backtestId": "7972313",
+    "backtestId": "7978073",
     "submittedAt": "2026-04-05T02:34:12.794Z",
-    "resubmittedAt": "2026-04-06T06:53:13.243Z",
+    "resubmittedAt": "2026-04-10T12:07:01.944Z",
     "lastFetched": "2026-04-06T12:54:48.707Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_42_市值研发ROE三因子.py": {
     "strategyId": 2418116,
-    "backtestId": "7972311",
+    "backtestId": "7978071",
     "submittedAt": "2026-04-04T14:19:01.780Z",
-    "resubmittedAt": "2026-04-06T06:51:31.122Z",
+    "resubmittedAt": "2026-04-10T12:05:59.863Z",
     "lastFetched": "2026-04-06T12:54:48.694Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -858,9 +858,9 @@
   },
   "rq_55_价值投资改进版-6年9.5倍.py": {
     "strategyId": 2417905,
-    "backtestId": "7972316",
+    "backtestId": "7978074",
     "submittedAt": "2026-04-05T02:34:32.103Z",
-    "resubmittedAt": "2026-04-06T06:53:37.785Z",
+    "resubmittedAt": "2026-04-10T12:07:18.507Z",
     "lastFetched": "2026-04-06T12:54:49.399Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -884,9 +884,9 @@
   },
   "rq_56_一创PEG_EBIT_turnover_volatility.py": {
     "strategyId": 2417907,
-    "backtestId": "7972318",
+    "backtestId": "7978075",
     "submittedAt": "2026-04-05T02:34:48.603Z",
-    "resubmittedAt": "2026-04-06T06:54:19.756Z",
+    "resubmittedAt": "2026-04-10T12:07:19.912Z",
     "lastFetched": "2026-04-06T12:54:50.101Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -945,9 +945,9 @@
   },
   "rq_61_抄底神器2.0低回撤高成功率.py": {
     "strategyId": 2417915,
-    "backtestId": "7972323",
+    "backtestId": "7978087",
     "submittedAt": "2026-04-05T02:35:40.991Z",
-    "resubmittedAt": "2026-04-06T06:54:47.475Z",
+    "resubmittedAt": "2026-04-10T12:16:02.461Z",
     "lastFetched": "2026-04-06T12:54:50.783Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -971,27 +971,27 @@
   },
   "rq_65_低开买入小市值策略高频交易法3.0总结.py": {
     "strategyId": 2417917,
-    "backtestId": "7972336",
+    "backtestId": "7978093",
     "submittedAt": "2026-04-04T11:43:44.294Z",
-    "resubmittedAt": "2026-04-06T07:12:26.958Z",
+    "resubmittedAt": "2026-04-10T12:20:23.323Z",
     "lastFetched": "2026-04-06T12:54:51.437Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_65_多因子指数增强.py": {
     "strategyId": 2417918,
-    "backtestId": "7972339",
+    "backtestId": "7978092",
     "submittedAt": "2026-04-04T11:43:44.374Z",
-    "resubmittedAt": "2026-04-06T07:15:04.498Z",
+    "resubmittedAt": "2026-04-10T12:19:51.583Z",
     "lastFetched": "2026-04-06T12:54:51.417Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_65_韶华研究之七_不可多得的基本面三角.py": {
     "strategyId": 2417920,
-    "backtestId": "7972340",
+    "backtestId": "7978095",
     "submittedAt": "2026-04-05T02:10:33.137Z",
-    "resubmittedAt": "2026-04-06T07:15:46.307Z",
+    "resubmittedAt": "2026-04-10T12:22:56.492Z",
     "lastFetched": "2026-04-06T12:54:51.449Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1014,36 +1014,36 @@
   },
   "rq_66_PB-POE+双均线.py": {
     "strategyId": 2417922,
-    "backtestId": "7972341",
+    "backtestId": "7978109",
     "submittedAt": "2026-04-05T02:35:58.962Z",
-    "resubmittedAt": "2026-04-06T07:15:47.707Z",
+    "resubmittedAt": "2026-04-10T12:34:42.494Z",
     "lastFetched": "2026-04-06T12:54:52.133Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_67_大市值价投高股息爱国者策略.py": {
     "strategyId": 2417925,
-    "backtestId": "7972359",
+    "backtestId": "7978097",
     "submittedAt": "2026-04-05T02:11:25.391Z",
-    "resubmittedAt": "2026-04-06T07:26:36.135Z",
+    "resubmittedAt": "2026-04-10T12:24:44.149Z",
     "lastFetched": "2026-04-06T12:54:52.098Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_67_基于动量和反转效应的沪深300成分股策略.py": {
     "strategyId": 2417924,
-    "backtestId": "7972360",
+    "backtestId": "7978105",
     "submittedAt": "2026-04-05T02:36:32.025Z",
-    "resubmittedAt": "2026-04-06T07:27:17.878Z",
+    "resubmittedAt": "2026-04-10T12:33:38.836Z",
     "lastFetched": "2026-04-06T12:54:52.114Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_67_三因子策略.py": {
     "strategyId": 2417923,
-    "backtestId": "7972348",
+    "backtestId": "7978107",
     "submittedAt": "2026-04-05T02:10:52.327Z",
-    "resubmittedAt": "2026-04-06T07:21:02.693Z",
+    "resubmittedAt": "2026-04-10T12:34:10.705Z",
     "lastFetched": "2026-04-06T12:54:52.120Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1068,18 +1068,18 @@
   },
   "rq_69_场内基金定投价值平均增强策略.py": {
     "strategyId": 2417928,
-    "backtestId": "7972372",
+    "backtestId": "7978120",
     "submittedAt": "2026-04-05T02:36:15.461Z",
-    "resubmittedAt": "2026-04-06T07:35:34.309Z",
+    "resubmittedAt": "2026-04-10T12:43:36.768Z",
     "lastFetched": "2026-04-06T12:54:52.798Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_69_宽基BBI动量追涨.py": {
     "strategyId": 2417929,
-    "backtestId": "7972371",
+    "backtestId": "7978121",
     "submittedAt": "2026-04-05T02:36:51.311Z",
-    "resubmittedAt": "2026-04-06T07:34:52.426Z",
+    "resubmittedAt": "2026-04-10T12:43:53.331Z",
     "lastFetched": "2026-04-06T12:54:52.815Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1095,9 +1095,9 @@
   },
   "rq_70_超稳的股息率+均线选股策略.py": {
     "strategyId": 2417932,
-    "backtestId": "7972365",
+    "backtestId": "7978118",
     "submittedAt": "2026-04-05T02:12:17.813Z",
-    "resubmittedAt": "2026-04-06T07:28:22.869Z",
+    "resubmittedAt": "2026-04-10T12:42:04.330Z",
     "lastFetched": "2026-04-06T12:54:52.786Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1112,36 +1112,36 @@
   },
   "rq_71_回踩均线搏反弹.py": {
     "strategyId": 2417933,
-    "backtestId": "7972383",
+    "backtestId": "7978123",
     "submittedAt": "2026-04-05T02:12:19.197Z",
-    "resubmittedAt": "2026-04-06T07:48:19.609Z",
+    "resubmittedAt": "2026-04-10T12:44:11.210Z",
     "lastFetched": "2026-04-06T12:54:53.467Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_71_乱改一版.py": {
     "strategyId": 2417934,
-    "backtestId": "7972374",
+    "backtestId": "7978125",
     "submittedAt": "2026-04-05T02:12:35.698Z",
-    "resubmittedAt": "2026-04-06T07:36:16.265Z",
+    "resubmittedAt": "2026-04-10T12:44:44.365Z",
     "lastFetched": "2026-04-06T12:54:53.498Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_72_收盘折溢价策略.py": {
     "strategyId": 2417935,
-    "backtestId": "7972382",
+    "backtestId": "7978124",
     "submittedAt": "2026-04-05T02:37:09.303Z",
-    "resubmittedAt": "2026-04-06T07:47:37.791Z",
+    "resubmittedAt": "2026-04-10T12:44:27.794Z",
     "lastFetched": "2026-04-06T12:54:53.481Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_73_净利润跳空.py": {
     "strategyId": 2417937,
-    "backtestId": "7972384",
+    "backtestId": "7978122",
     "submittedAt": "2026-04-05T02:13:24.092Z",
-    "resubmittedAt": "2026-04-06T07:48:21.023Z",
+    "resubmittedAt": "2026-04-10T12:43:54.710Z",
     "lastFetched": "2026-04-06T12:54:53.467Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1210,9 +1210,9 @@
   },
   "rq_74_迪马克TD趋势反转指标.py": {
     "strategyId": 2417945,
-    "backtestId": "7972395",
+    "backtestId": "7978138",
     "submittedAt": "2026-04-05T02:37:45.243Z",
-    "resubmittedAt": "2026-04-06T07:54:01.004Z",
+    "resubmittedAt": "2026-04-10T13:01:32.420Z",
     "lastFetched": "2026-04-06T12:54:54.837Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1275,9 +1275,9 @@
   },
   "rq_76 机器学习策略分享.py": {
     "strategyId": 2417956,
-    "backtestId": "7972407",
+    "backtestId": "7978140",
     "submittedAt": "2026-04-05T02:16:15.560Z",
-    "resubmittedAt": "2026-04-06T08:07:08.959Z",
+    "resubmittedAt": "2026-04-10T13:02:04.215Z",
     "lastFetched": "2026-04-06T12:54:56.207Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1328,9 +1328,9 @@
   },
   "rq_77 龙头弱转强战法.py": {
     "strategyId": 2417960,
-    "backtestId": "7972411",
+    "backtestId": "7978141",
     "submittedAt": "2026-04-04T11:48:53.257Z",
-    "resubmittedAt": "2026-04-06T08:09:55.962Z",
+    "resubmittedAt": "2026-04-10T13:02:20.829Z",
     "lastFetched": "2026-04-06T12:54:56.851Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1370,9 +1370,9 @@
   },
   "rq_78 国盛多因子系列选股体系和基于Lasso的收益预测模型策略（9大类共59个因子）.py": {
     "strategyId": 2417964,
-    "backtestId": "7972413",
+    "backtestId": "7978147",
     "submittedAt": "2026-04-05T02:38:43.050Z",
-    "resubmittedAt": "2026-04-06T08:10:08.930Z",
+    "resubmittedAt": "2026-04-10T13:09:58.867Z",
     "lastFetched": "2026-04-06T12:54:57.557Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1456,9 +1456,9 @@
   },
   "rq_80 基本面01加RSI择时.py": {
     "strategyId": 2417973,
-    "backtestId": "7972420",
+    "backtestId": "7978151",
     "submittedAt": "2026-04-05T02:18:36.030Z",
-    "resubmittedAt": "2026-04-06T08:12:00.573Z",
+    "resubmittedAt": "2026-04-10T13:12:01.618Z",
     "lastFetched": "2026-04-06T12:54:58.894Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1522,9 +1522,9 @@
   },
   "rq_83_回测一创模拟盘2号最终改造优化年化39.py": {
     "strategyId": 2417982,
-    "backtestId": "7972422",
+    "backtestId": "7978152",
     "submittedAt": "2026-04-05T02:20:00.460Z",
-    "resubmittedAt": "2026-04-06T08:13:44.019Z",
+    "resubmittedAt": "2026-04-10T13:12:18.186Z",
     "lastFetched": "2026-04-06T12:54:59.553Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1546,9 +1546,9 @@
   },
   "rq_84_韶华研究之一布林突破均线金叉四年五倍.py": {
     "strategyId": 2417986,
-    "backtestId": "7972427",
+    "backtestId": "7978171",
     "submittedAt": "2026-04-05T02:21:05.640Z",
-    "resubmittedAt": "2026-04-06T08:19:43.249Z",
+    "resubmittedAt": "2026-04-10T13:23:13.640Z",
     "lastFetched": "2026-04-06T12:55:00.236Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1572,18 +1572,18 @@
   },
   "rq_85_价值策略重开再次向Jqz1226致敬.py": {
     "strategyId": 2417988,
-    "backtestId": "7972432",
+    "backtestId": "7978174",
     "submittedAt": "2026-04-05T02:39:21.505Z",
-    "resubmittedAt": "2026-04-06T08:31:05.603Z",
+    "resubmittedAt": "2026-04-10T13:25:01.399Z",
     "lastFetched": "2026-04-06T12:55:00.993Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_85_深度解析七BBI指标大盘涨跌宽基轮动.py": {
     "strategyId": 2417989,
-    "backtestId": "7972439",
+    "backtestId": "7978176",
     "submittedAt": "2026-04-05T02:39:40.669Z",
-    "resubmittedAt": "2026-04-06T08:34:29.619Z",
+    "resubmittedAt": "2026-04-10T13:26:18.713Z",
     "lastFetched": "2026-04-06T12:55:00.994Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1599,18 +1599,18 @@
   },
   "rq_85_易方达中小盘魔改版.py": {
     "strategyId": 2417987,
-    "backtestId": "7972435",
+    "backtestId": "7978179",
     "submittedAt": "2026-04-05T02:21:22.229Z",
-    "resubmittedAt": "2026-04-06T08:32:47.578Z",
+    "resubmittedAt": "2026-04-10T13:27:07.043Z",
     "lastFetched": "2026-04-06T12:55:00.995Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_85_致敬市场1探讨指数化策略投资.py": {
     "strategyId": 2417990,
-    "backtestId": "7972440",
+    "backtestId": "7978177",
     "submittedAt": "2026-04-05T02:21:56.732Z",
-    "resubmittedAt": "2026-04-06T08:35:11.381Z",
+    "resubmittedAt": "2026-04-10T13:26:35.287Z",
     "lastFetched": "2026-04-06T12:55:00.994Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1626,27 +1626,27 @@
   },
   "rq_86_手把手教你构建ETF策略候选池优化版.py": {
     "strategyId": 2417993,
-    "backtestId": "7972442",
+    "backtestId": "7978183",
     "submittedAt": "2026-04-05T02:39:41.988Z",
-    "resubmittedAt": "2026-04-06T08:37:35.214Z",
+    "resubmittedAt": "2026-04-10T13:30:10.616Z",
     "lastFetched": "2026-04-06T12:55:01.632Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_86_预判st并过滤避雷代码740.py": {
     "strategyId": 2417995,
-    "backtestId": "7972445",
+    "backtestId": "7978186",
     "submittedAt": "2026-04-05T02:22:34.041Z",
-    "resubmittedAt": "2026-04-06T08:38:28.591Z",
+    "resubmittedAt": "2026-04-10T13:31:44.515Z",
     "lastFetched": "2026-04-06T12:55:01.660Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_86_最新解密追涨龙头打板策略.py": {
     "strategyId": 2417994,
-    "backtestId": "7972441",
+    "backtestId": "7978185",
     "submittedAt": "2026-04-05T02:22:17.545Z",
-    "resubmittedAt": "2026-04-06T08:35:53.197Z",
+    "resubmittedAt": "2026-04-10T13:30:42.400Z",
     "lastFetched": "2026-04-06T12:55:01.653Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1662,27 +1662,27 @@
   },
   "rq_87_穿越牛熊基业长青的价值精选策略.py": {
     "strategyId": 2418000,
-    "backtestId": "7972449",
+    "backtestId": "7978204",
     "submittedAt": "2026-04-05T02:23:11.267Z",
-    "resubmittedAt": "2026-04-06T08:45:43.674Z",
+    "resubmittedAt": "2026-04-10T13:41:56.876Z",
     "lastFetched": "2026-04-06T12:55:02.322Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_87_基本面三角3.0.py": {
     "strategyId": 2417996,
-    "backtestId": "7972448",
+    "backtestId": "7978199",
     "submittedAt": "2026-04-05T02:22:35.507Z",
-    "resubmittedAt": "2026-04-06T08:44:01.670Z",
+    "resubmittedAt": "2026-04-10T13:38:53.338Z",
     "lastFetched": "2026-04-06T12:55:02.308Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_87_山寨红利.py": {
     "strategyId": 2417999,
-    "backtestId": "7972450",
+    "backtestId": "7978208",
     "submittedAt": "2026-04-05T02:22:54.776Z",
-    "resubmittedAt": "2026-04-06T08:45:55.273Z",
+    "resubmittedAt": "2026-04-10T13:42:58.972Z",
     "lastFetched": "2026-04-06T12:55:02.327Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1698,9 +1698,9 @@
   },
   "rq_88_打首板策略今年收益达到40绝无未来函数.py": {
     "strategyId": 2418002,
-    "backtestId": "7972453",
+    "backtestId": "7978187",
     "submittedAt": "2026-04-05T02:23:59.664Z",
-    "resubmittedAt": "2026-04-06T08:55:20.317Z",
+    "resubmittedAt": "2026-04-10T13:31:45.922Z",
     "lastFetched": "2026-04-06T12:55:02.307Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1733,18 +1733,18 @@
   },
   "rq_88_WY大神的龙头打板策略小改.py": {
     "strategyId": 2418001,
-    "backtestId": "7972460",
+    "backtestId": "7978233",
     "submittedAt": "2026-04-05T02:23:58.222Z",
-    "resubmittedAt": "2026-04-06T09:03:40.659Z",
+    "resubmittedAt": "2026-04-10T14:00:16.608Z",
     "lastFetched": "2026-04-06T12:55:02.991Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_89_2020年效果很好的策略龙回头策略v3.0.py": {
     "strategyId": 2418005,
-    "backtestId": "7972461",
+    "backtestId": "7978237",
     "submittedAt": "2026-04-04T11:54:24.332Z",
-    "resubmittedAt": "2026-04-06T09:04:22.430Z",
+    "resubmittedAt": "2026-04-10T14:02:49.972Z",
     "lastFetched": "2026-04-06T12:55:02.994Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1787,27 +1787,27 @@
   },
   "rq_90_超稳翻倍贝塔值只有0.048的期指策略.py": {
     "strategyId": 2418013,
-    "backtestId": "7972465",
+    "backtestId": "7978242",
     "submittedAt": "2026-04-05T02:40:20.621Z",
-    "resubmittedAt": "2026-04-06T09:08:34.880Z",
+    "resubmittedAt": "2026-04-10T14:05:38.438Z",
     "lastFetched": "2026-04-06T12:55:03.656Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_90_大师策略柯林麦克连成长价值优势投资法.py": {
     "strategyId": 2418012,
-    "backtestId": "7972468",
+    "backtestId": "7978246",
     "submittedAt": "2026-04-05T02:24:56.037Z",
-    "resubmittedAt": "2026-04-06T09:10:10.538Z",
+    "resubmittedAt": "2026-04-10T14:06:43.436Z",
     "lastFetched": "2026-04-06T12:55:04.342Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_90_国债固收.py": {
     "strategyId": 2418011,
-    "backtestId": "7972469",
+    "backtestId": "7978243",
     "submittedAt": "2026-04-05T02:40:19.303Z",
-    "resubmittedAt": "2026-04-06T09:10:52.335Z",
+    "resubmittedAt": "2026-04-10T14:05:55.012Z",
     "lastFetched": "2026-04-06T12:55:04.327Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1821,9 +1821,9 @@
   },
   "rq_91_欧奈尔RPS选股战法回测b.py": {
     "strategyId": 2418018,
-    "backtestId": "7972470",
+    "backtestId": "7978244",
     "submittedAt": "2026-04-05T02:40:39.881Z",
-    "resubmittedAt": "2026-04-06T09:11:34.088Z",
+    "resubmittedAt": "2026-04-10T14:06:11.608Z",
     "lastFetched": "2026-04-06T12:55:04.339Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1863,18 +1863,18 @@
   },
   "rq_93_234板介入-2023年14倍-无未来.py": {
     "strategyId": 2418020,
-    "backtestId": "7972473",
+    "backtestId": "7978255",
     "submittedAt": "2026-04-04T11:56:14.658Z",
-    "resubmittedAt": "2026-04-06T09:11:58.573Z",
+    "resubmittedAt": "2026-04-10T14:10:02.960Z",
     "lastFetched": "2026-04-06T12:55:05.000Z",
     "localFileExists": true,
-    "lastFrequency": "day"
+    "lastFrequency": "1m"
   },
   "rq_93_北向Boll带_ETF组合宝付费策略.py": {
     "strategyId": 2418021,
-    "backtestId": "7972474",
+    "backtestId": "7978256",
     "submittedAt": "2026-04-05T02:40:56.364Z",
-    "resubmittedAt": "2026-04-06T09:11:59.957Z",
+    "resubmittedAt": "2026-04-10T14:10:19.574Z",
     "lastFetched": "2026-04-06T12:55:05.005Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1897,18 +1897,18 @@
   },
   "rq_93_因子看板多因子模型---由量化课堂多因子模型修改.py": {
     "strategyId": 2418022,
-    "backtestId": "7972476",
+    "backtestId": "7978263",
     "submittedAt": "2026-04-04T11:56:36.679Z",
-    "resubmittedAt": "2026-04-06T09:12:53.233Z",
+    "resubmittedAt": "2026-04-10T14:12:39.248Z",
     "lastFetched": "2026-04-06T12:55:05.685Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_94_别人_拿的住_的股票最赚钱.py": {
     "strategyId": 2418025,
-    "backtestId": "7972478",
+    "backtestId": "7978259",
     "submittedAt": "2026-04-05T02:26:05.015Z",
-    "resubmittedAt": "2026-04-06T09:13:35.049Z",
+    "resubmittedAt": "2026-04-10T14:10:51.419Z",
     "lastFetched": "2026-04-06T12:55:05.680Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -1931,18 +1931,18 @@
   },
   "rq_94_小资金短线策略.py": {
     "strategyId": 2418026,
-    "backtestId": "7972488",
+    "backtestId": "7978264",
     "submittedAt": "2026-04-04T11:56:58.794Z",
-    "resubmittedAt": "2026-04-06T09:21:15.780Z",
+    "resubmittedAt": "2026-04-10T14:13:11.080Z",
     "lastFetched": "2026-04-06T12:55:06.330Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_95_冲天炮最高板策略迭代.py": {
     "strategyId": 2418030,
-    "backtestId": "7972491",
+    "backtestId": "7978266",
     "submittedAt": "2026-04-04T11:57:20.878Z",
-    "resubmittedAt": "2026-04-06T09:23:09.346Z",
+    "resubmittedAt": "2026-04-10T14:14:43.600Z",
     "lastFetched": "2026-04-06T12:55:06.344Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -2006,18 +2006,18 @@
   },
   "rq_97_趋势筛选后相关性最小etf轮动-加速10倍版.py": {
     "strategyId": 2418037,
-    "backtestId": "7972507",
+    "backtestId": "7978295",
     "submittedAt": "2026-04-05T02:41:16.978Z",
-    "resubmittedAt": "2026-04-06T09:36:35.382Z",
+    "resubmittedAt": "2026-04-10T14:28:29.120Z",
     "lastFetched": "2026-04-06T12:55:07.724Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_97_稳定高回报周期股策略2-RSRS择时.py": {
     "strategyId": 2418036,
-    "backtestId": "7972508",
+    "backtestId": "7978285",
     "submittedAt": "2026-04-04T11:58:04.929Z",
-    "resubmittedAt": "2026-04-06T09:37:17.176Z",
+    "resubmittedAt": "2026-04-10T14:24:38.691Z",
     "lastFetched": "2026-04-06T12:55:07.697Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -2031,9 +2031,9 @@
   },
   "rq_98_漂亮50_漂亮50策略复现以及股息率排序函数.py": {
     "strategyId": 2418038,
-    "backtestId": "7972511",
+    "backtestId": "7978293",
     "submittedAt": "2026-04-04T11:58:27.169Z",
-    "resubmittedAt": "2026-04-06T09:39:40.973Z",
+    "resubmittedAt": "2026-04-10T14:27:57.367Z",
     "lastFetched": "2026-04-06T12:55:07.704Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -2049,27 +2049,27 @@
   },
   "rq_98_追涨大师超额142.py": {
     "strategyId": 2418040,
-    "backtestId": "7972513",
+    "backtestId": "7978300",
     "submittedAt": "2026-04-05T02:27:14.021Z",
-    "resubmittedAt": "2026-04-06T09:40:22.815Z",
+    "resubmittedAt": "2026-04-10T14:29:18.996Z",
     "lastFetched": "2026-04-06T12:55:08.390Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_99_计算每日全A市场个股创新高比例改.py": {
     "strategyId": 2418045,
-    "backtestId": "7972525",
+    "backtestId": "7978296",
     "submittedAt": "2026-04-05T02:41:18.298Z",
-    "resubmittedAt": "2026-04-06T09:47:39.702Z",
+    "resubmittedAt": "2026-04-10T14:28:45.666Z",
     "lastFetched": "2026-04-06T12:55:08.380Z",
     "localFileExists": true,
     "lastFrequency": "day"
   },
   "rq_99_欧奈尔CANSLIM策略初探三.py": {
     "strategyId": 2418043,
-    "backtestId": "7972520",
+    "backtestId": "7978302",
     "submittedAt": "2026-04-05T02:27:16.832Z",
-    "resubmittedAt": "2026-04-06T09:45:57.739Z",
+    "resubmittedAt": "2026-04-10T14:29:20.410Z",
     "lastFetched": "2026-04-06T12:55:08.402Z",
     "localFileExists": true,
     "lastFrequency": "day"
@@ -2083,11 +2083,11 @@
   },
   "rq_99_韶华研究之二十_竞价异动.py": {
     "strategyId": 2418046,
-    "backtestId": "7972516",
+    "backtestId": "7978299",
     "submittedAt": "2026-04-04T11:59:33.650Z",
-    "resubmittedAt": "2026-04-06T09:42:20.028Z",
+    "resubmittedAt": "2026-04-10T14:29:17.575Z",
     "lastFetched": "2026-04-06T12:55:08.383Z",
     "localFileExists": true,
-    "lastFrequency": "day"
+    "lastFrequency": "1m"
   }
 }

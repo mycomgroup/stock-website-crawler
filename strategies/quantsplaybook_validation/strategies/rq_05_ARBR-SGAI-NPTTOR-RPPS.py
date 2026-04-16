@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # ARBR-SGAI-NPTTOR-RPPS 多因子策略 - RiceQuant版本
 # 因子：价格动量(ARBR) + 营收增速(SGAI) + 净利润率(NPTTOR) + EPS(RPPS)
 # 逻辑：综合动量、成长、盈利质量、每股收益多因子选股，月度调仓
@@ -27,10 +43,10 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=-1).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['pe_ratio'] > 0.0]
-        df = df[df['market_cap'] > 1e+09]
-        df = df[df['market_cap'] < 3e+10]
+        df = df[df['market_cap'] > 10]
+        df = df[df['market_cap'] < 300]
         df = df[df['net_profit_margin'] > 0.05]
         df = df[df['inc_net_profit_year_on_year'] > 0.05]
         df = df.sort_values(['inc_net_profit_year_on_year', 'net_profit_margin', 'eps'], ascending=[False, False, False]).head(context.stock_num * 10)
@@ -55,7 +71,7 @@ def handle_bar(context, bar_dict):
         return
 
     sorted_stocks = sorted(scores, key=scores.get, reverse=True)
-    target = [s for s in sorted_stocks if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in sorted_stocks if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
     if not target:
         target = sorted_stocks[:context.stock_num]
 

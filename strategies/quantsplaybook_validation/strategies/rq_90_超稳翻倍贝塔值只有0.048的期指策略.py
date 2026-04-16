@@ -46,5 +46,5 @@ def handle_bar(context, bar_dict):
 
     for etf, pct in [(context.stock_etf, stock_pct), (context.bond_etf, bond_pct)]:
         bar = (bar_dict[etf] if etf in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             order_target_value(etf, context.portfolio.total_value * pct)

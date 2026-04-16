@@ -29,7 +29,7 @@ def handle_bar(context, bar_dict):
             sell_count = 0
 
     bar = (bar_dict[context.etf] if context.etf in bar_dict else None)
-    if bar is None or not bar.is_trading:
+    if bar is not None and not bar.is_trading:
         return
 
     if buy_count >= 9 and not context.pos:

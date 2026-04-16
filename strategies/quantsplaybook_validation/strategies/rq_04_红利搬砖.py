@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 红利搬砖策略 - RiceQuant版本
 # 原文：红利搬砖，年化29%
 # 逻辑：选沪深300中低PB、低PE、高股息的股票，月度调仓
@@ -31,13 +47,19 @@ def handle_trader(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['pb_ratio'] > 0]
         df = df[df['pb_ratio'] < 3]
         df = df[df['pe_ratio'] > 0]
         df = df[df['pe_ratio'] < 20]
-        df = df[df['dividend_ratio'] > 0.0100]  # RQ dividend_ratio 是小数
         df = df[df['market_cap'] > 20]
+        strict_df = df[df['dividend_ratio'] > 0.0100]
+        if len(strict_df) >= context.top_n:
+            df = strict_df
+        else:
+            relaxed_df = df[df['dividend_ratio'] > 0]
+            if len(relaxed_df) >= context.top_n:
+                df = relaxed_df
         df = df.sort_values(['dividend_ratio', 'pb_ratio', 'pe_ratio'], ascending=[False, True, True])
         df = df.head(context.top_n * 3)
         candidates = df.index.tolist()
@@ -46,7 +68,7 @@ def handle_trader(context, bar_dict):
     target = []
     for stock in candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.top_n:
             break
