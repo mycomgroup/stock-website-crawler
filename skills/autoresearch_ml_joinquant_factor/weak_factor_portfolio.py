@@ -279,8 +279,28 @@ class RiskManager:
     target_vol: float = 0.15
     max_drawdown_stop: float = 0.03
 
-    def apply_all(self, raw_signal: pd.Series, portfolio_return: pd.Series | None = None) -> pd.Series:
-        signal = dynamic_position_sizing(raw_signal)
+    def apply_all(
+        self,
+        raw_signal: pd.Series,
+        portfolio_return: pd.Series | None = None,
+        is_cross_section_weights: bool = False,
+    ) -> pd.Series:
+        """应用风险控制到组合时间序列信号或单日截面权重。
+
+        参数
+        ----
+        raw_signal:
+            - 当 is_cross_section_weights=False（默认）时，表示组合层时间序列信号（按日期索引的一维序列）。
+            - 当 is_cross_section_weights=True 时，表示单个日期的股票层截面权重（按股票索引的一维序列）。
+        portfolio_return:
+            组合收益时间序列。仅对组合层时间序列信号生效，用于波动率目标与止损。
+        is_cross_section_weights:
+            是否将 raw_signal 视为股票层截面权重。
+        """
+        signal = raw_signal.copy()
+        if is_cross_section_weights:
+            signal = apply_position_limits(signal)
+        signal = dynamic_position_sizing(signal)
         if portfolio_return is not None:
             _, leverage = volatility_targeting(portfolio_return, target_vol=self.target_vol)
             signal = signal * leverage.shift(1).fillna(1.0)
@@ -290,6 +310,27 @@ class RiskManager:
                 monthly_dd_threshold=-abs(self.max_drawdown_stop),
             )
         return signal
+
+    def apply_all_cross_section_matrix(
+        self,
+        raw_signal_matrix: pd.DataFrame,
+        portfolio_return: pd.Series | None = None,
+    ) -> pd.DataFrame:
+        """对截面权重矩阵逐日应用风控（先头寸约束，再缩放）。"""
+        if raw_signal_matrix.empty:
+            return raw_signal_matrix.copy()
+
+        adjusted = raw_signal_matrix.apply(
+            lambda row: self.apply_all(row, is_cross_section_weights=True),
+            axis=1,
+        )
+        if portfolio_return is not None:
+            _, leverage = volatility_targeting(portfolio_return, target_vol=self.target_vol)
+            adjusted = adjusted.mul(leverage.shift(1).fillna(1.0), axis=0)
+            monthly_cum_return = portfolio_return.rolling(22, min_periods=10).sum()
+            stop_triggered = monthly_cum_return < -abs(self.max_drawdown_stop)
+            adjusted.loc[stop_triggered] = adjusted.loc[stop_triggered] * 0.5
+        return adjusted
 
 
 class WeakFactorPortfolio:
@@ -543,8 +584,18 @@ class WeakFactorPortfolio:
     def combine_signals(self, s_eq: pd.Series, s_rp: pd.Series, s_ml: pd.Series) -> pd.Series:
         return combine_signals_fixed(s_eq, s_rp, s_ml, weights=(0.4, 0.3, 0.3))
 
-    def apply_risk_management(self, signal: pd.Series, portfolio_return: pd.Series | None = None) -> pd.Series:
-        return self.risk_manager.apply_all(signal, portfolio_return)
+    def apply_risk_management(
+        self,
+        signal: pd.Series | pd.DataFrame,
+        portfolio_return: pd.Series | None = None,
+    ) -> pd.Series | pd.DataFrame:
+        """根据信号形态路由到对应风控分支。"""
+        if isinstance(signal, pd.DataFrame):
+            return self.risk_manager.apply_all_cross_section_matrix(
+                signal,
+                portfolio_return=portfolio_return,
+            )
+        return self.risk_manager.apply_all(signal, portfolio_return=portfolio_return)
 
     def run(
         self,
