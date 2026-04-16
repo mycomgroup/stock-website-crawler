@@ -3,24 +3,16 @@ finance_data/forecast.py
 业绩预告数据获取模块。
 """
 
-import os
 import pandas as pd
-from datetime import datetime
-
-try:
-    from ..utils.cache import fetch_and_cache_data
-except ImportError:
-    from utils.cache import fetch_and_cache_data
 
 
-def get_forecast_data(symbol, cache_dir="finance_cache", force_update=False):
+def get_forecast_data(symbol, force_update=False):
     """
     获取业绩预告数据。
 
     参数
     ----
     symbol     : 股票代码，支持 '600519.XSHG', '000001.XSHE', 'sh600519', '600519' 等格式
-    cache_dir  : 缓存目录
     force_update: True 时强制重新下载
 
     返回
@@ -37,68 +29,50 @@ def get_forecast_data(symbol, cache_dir="finance_cache", force_update=False):
     """
     code_num = _extract_code_num(symbol)
 
-    cache_file = os.path.join(cache_dir, f"forecast_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
+    try:
+        dfs = []
 
-    if not need_download:
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 7:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            dfs = []
-
-            try:
-                df_predict = get_adapter().get_forecast_ths(
-                    symbol=code_num, indicator="预测年报每股收益"
-                )
-                if df_predict is not None and not df_predict.empty:
-                    df_norm = _normalize_predict_data(df_predict, symbol)
-                    dfs.append(df_norm)
-            except Exception as e:
-                print(f"[forecast] 预测每股收益获取失败: {e}")
-
-            try:
-                df_forecast = get_adapter().get_forecast_ths(
-                    symbol=code_num, indicator="业绩预告"
-                )
-                if df_forecast is not None and not df_forecast.empty:
-                    df_norm = _normalize_forecast_data(df_forecast, symbol)
-                    dfs.append(df_norm)
-            except Exception:
-                pass
-
-            try:
-                df_quick = get_adapter().get_forecast_ths(
-                    symbol=code_num, indicator="业绩快报"
-                )
-                if df_quick is not None and not df_quick.empty:
-                    df_norm = _normalize_quick_data(df_quick, symbol)
-                    dfs.append(df_norm)
-            except Exception:
-                pass
-
-            if dfs:
-                result = pd.concat(dfs, ignore_index=True)
-                result.to_pickle(cache_file)
-                return result
-            else:
-                return pd.DataFrame()
-
+            df_predict = get_adapter().get_forecast_ths(
+                symbol=code_num, indicator="预测年报每股收益"
+            )
+            if df_predict is not None and not df_predict.empty:
+                df_norm = _normalize_predict_data(df_predict, symbol)
+                dfs.append(df_norm)
         except Exception as e:
-            print(f"[forecast] 下载失败: {e}")
+            print(f"[forecast] 预测每股收益获取失败: {e}")
+
+        try:
+            df_forecast = get_adapter().get_forecast_ths(
+                symbol=code_num, indicator="业绩预告"
+            )
+            if df_forecast is not None and not df_forecast.empty:
+                df_norm = _normalize_forecast_data(df_forecast, symbol)
+                dfs.append(df_norm)
+        except Exception:
+            pass
+
+        try:
+            df_quick = get_adapter().get_forecast_ths(
+                symbol=code_num, indicator="业绩快报"
+            )
+            if df_quick is not None and not df_quick.empty:
+                df_norm = _normalize_quick_data(df_quick, symbol)
+                dfs.append(df_norm)
+        except Exception:
+            pass
+
+        if dfs:
+            result = pd.concat(dfs, ignore_index=True)
+            return result
+        else:
             return pd.DataFrame()
 
-    return cached_df if not cached_df.empty else pd.DataFrame()
+    except Exception as e:
+        print(f"[forecast] 下载失败: {e}")
+        return pd.DataFrame()
 
 
 def _extract_code_num(symbol):

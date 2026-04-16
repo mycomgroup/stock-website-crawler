@@ -30,8 +30,6 @@ import numpy as np
 from .base import (
     global_factor_registry,
     safe_divide,
-    load_factor_cache,
-    save_factor_cache,
 )
 
 try:
@@ -158,6 +156,7 @@ def _fetch_valuation_from_baidu(ak_sym: str) -> pd.DataFrame:
     其他指标（流通市值、市盈率、市销率）接口不支持。
     """
     from jk2bt.data_access import get_adapter
+
     dfs = []
 
     # 已验证可用的指标
@@ -168,7 +167,9 @@ def _fetch_valuation_from_baidu(ak_sym: str) -> pd.DataFrame:
 
     for indicator, col_name in available_indicators.items():
         try:
-            df_tmp = get_adapter().get_stock_valuation_baidu(symbol=ak_sym, indicator=indicator)
+            df_tmp = get_adapter().get_stock_valuation_baidu(
+                symbol=ak_sym, indicator=indicator
+            )
             if df_tmp is not None and not df_tmp.empty:
                 df_tmp = df_tmp.rename(columns={"value": col_name})
                 dfs.append(df_tmp)
@@ -235,13 +236,20 @@ def _estimate_circulating_market_cap_from_daily(
                 # 尝试从 adapter 获取换手率
                 try:
                     from jk2bt.data_access import get_adapter
-                    df_ak = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+
+                    df_ak = get_adapter().get_stock_hist(
+                        symbol=ak_sym, period="daily", adjust="qfq"
+                    )
                     if df_ak is not None and "换手率" in df_ak.columns:
                         # 合并换手率数据
                         df_ak = df_ak.rename(columns={"日期": "date"})
-                        df_ak["date"] = pd.to_datetime(df_ak["date"]).dt.strftime("%Y-%m-%d")
+                        df_ak["date"] = pd.to_datetime(df_ak["date"]).dt.strftime(
+                            "%Y-%m-%d"
+                        )
                         df_ak["turnover_rate"] = df_ak["换手率"]  # 百分比形式
-                        df = df.merge(df_ak[["date", "turnover_rate"]], on="date", how="left")
+                        df = df.merge(
+                            df_ak[["date", "turnover_rate"]], on="date", how="left"
+                        )
                 except Exception:
                     df["turnover_rate"] = np.nan
 
@@ -250,7 +258,8 @@ def _estimate_circulating_market_cap_from_daily(
                 # 流通股本(股) = 成交量(手) * 100 / (换手率% / 100) = 成交量(手) * 10000 / 换手率%
                 # 流通市值(亿) = 流通股本(股) * 收盘价 / 1e8 = 成交量(手) * 100 * 收盘价 / 换手率% / 1e8
                 df["circulating_market_cap"] = (
-                    safe_divide(df["volume"] * 100 * df["close"], df["turnover_rate"]) / 1e8
+                    safe_divide(df["volume"] * 100 * df["close"], df["turnover_rate"])
+                    / 1e8
                 )
 
                 return df[["date", "circulating_market_cap"]]
@@ -258,7 +267,9 @@ def _estimate_circulating_market_cap_from_daily(
     except ImportError:
         pass  # market_data 模块不可用，fallback 到 akshare
     except Exception as e:
-        warnings.warn(f"market_data 模块获取数据失败 {symbol}: {e}，fallback 到 akshare")
+        warnings.warn(
+            f"market_data 模块获取数据失败 {symbol}: {e}，fallback 到 akshare"
+        )
 
     # Fallback: 使用 adapter 直接获取
     from jk2bt.data_access import get_adapter
@@ -291,7 +302,7 @@ def _estimate_circulating_market_cap_from_daily(
 
 
 def _get_valuation_raw(
-    symbol: str, cache_dir: str = "stock_cache", force_update: bool = False
+    symbol: str,
 ) -> pd.DataFrame:
     """
     获取估值原始数据。
@@ -304,64 +315,46 @@ def _get_valuation_raw(
     ----------
     symbol : str
         证券代码，如 'sh600519'
-    cache_dir : str
-        缓存目录
-    force_update : bool
-        是否强制更新
 
     Returns
     -------
     pd.DataFrame
         估值数据表，包含 market_cap, pb_ratio, circulating_market_cap 等字段
     """
-    import os
-
     from jk2bt.data_access import get_adapter
 
     ak_sym = _normalize_symbol(symbol)
-    cache_file = os.path.join(cache_dir, f"{symbol}_valuation.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_dl = force_update or not os.path.exists(cache_file)
-    if not need_dl:
-        try:
-            df = pd.read_pickle(cache_file)
-            return df
-        except Exception:
-            need_dl = True
+    # 1. 获取估值数据（总市值、市净率）- 使用 adapter
+    try:
+        df_val = _fetch_valuation_from_baidu(ak_sym)
+    except Exception as e:
+        warnings.warn(f"获取百度估值数据失败 {symbol}: {e}")
+        df_val = pd.DataFrame()
 
-    if need_dl:
-        # 1. 获取估值数据（总市值、市净率）- 使用 adapter
-        try:
-            df_val = _fetch_valuation_from_baidu(ak_sym)
-        except Exception as e:
-            warnings.warn(f"获取百度估值数据失败 {symbol}: {e}")
-            df_val = pd.DataFrame()
+    # 2. 推算流通市值 - 优先使用 market_data 模块
+    df_circ = _estimate_circulating_market_cap_from_daily(symbol)
 
-        # 2. 推算流通市值 - 优先使用 market_data 模块
-        df_circ = _estimate_circulating_market_cap_from_daily(symbol)
+    # 3. 合并数据
+    if df_val.empty and df_circ.empty:
+        warnings.warn(f"获取估值数据失败 {symbol}: 所有数据源均不可用")
+        return pd.DataFrame()
 
-        # 3. 合并数据
-        if df_val.empty and df_circ.empty:
-            warnings.warn(f"获取估值数据失败 {symbol}: 所有数据源均不可用")
-            return pd.DataFrame()
+    if df_val.empty:
+        df = df_circ
+    elif df_circ.empty:
+        df = df_val
+    else:
+        df = pd.merge(df_val, df_circ, on="date", how="outer")
 
-        if df_val.empty:
-            df = df_circ
-        elif df_circ.empty:
-            df = df_val
-        else:
-            df = pd.merge(df_val, df_circ, on="date", how="outer")
+    if not df.empty:
+        # 数据质量检查
+        validation = _validate_valuation_data(df, symbol)
 
-        if not df.empty:
-            # 数据质量检查
-            validation = _validate_valuation_data(df, symbol)
+        # 数据清理
+        df = _clean_valuation_data(df)
 
-            # 数据清理
-            df = _clean_valuation_data(df)
-
-            df.to_pickle(cache_file)
-            return df
+        return df
 
     return pd.DataFrame()
 
@@ -430,8 +423,6 @@ def compute_market_cap(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -445,17 +436,13 @@ def compute_market_cap(
         截止日期
     count : int, optional
         窗口长度
-    cache_dir : str
-        缓存目录
-    force_update : bool
-        强制更新
 
     Returns
     -------
     float or pd.Series
         单值或日期序列
     """
-    raw = _get_valuation_raw(symbol, cache_dir, force_update)
+    raw = _get_valuation_raw(symbol)
     df = _normalize_valuation_df(raw)
 
     if df.empty or "market_cap" not in df.columns:
@@ -482,12 +469,10 @@ def compute_circulating_market_cap(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 circulating_market_cap（流通市值）因子。"""
-    raw = _get_valuation_raw(symbol, cache_dir, force_update)
+    raw = _get_valuation_raw(symbol)
     df = _normalize_valuation_df(raw)
 
     if df.empty or "circulating_market_cap" not in df.columns:
@@ -513,12 +498,10 @@ def compute_pe_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 pe_ratio（市盈率）因子。"""
-    raw = _get_valuation_raw(symbol, cache_dir, force_update)
+    raw = _get_valuation_raw(symbol)
     df = _normalize_valuation_df(raw)
 
     if df.empty or "pe_ratio" not in df.columns:
@@ -544,12 +527,10 @@ def compute_pb_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 pb_ratio（市净率）因子。"""
-    raw = _get_valuation_raw(symbol, cache_dir, force_update)
+    raw = _get_valuation_raw(symbol)
     df = _normalize_valuation_df(raw)
 
     if df.empty or "pb_ratio" not in df.columns:
@@ -575,12 +556,10 @@ def compute_ps_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """计算 ps_ratio（市销率）因子。"""
-    raw = _get_valuation_raw(symbol, cache_dir, force_update)
+    raw = _get_valuation_raw(symbol)
     df = _normalize_valuation_df(raw)
 
     if df.empty or "ps_ratio" not in df.columns:
@@ -606,8 +585,6 @@ def compute_pcf_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -616,35 +593,23 @@ def compute_pcf_ratio(
     公式：总市值 / 经营活动现金流量
     近似实现：使用 AkShare 的估值数据接口
     """
-    import os
     from jk2bt.data_access import get_adapter
 
     ak_sym = _normalize_symbol(symbol)
-    cache_file = os.path.join(cache_dir, f"{symbol}_pcf.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_dl = force_update or not os.path.exists(cache_file)
-    df = pd.DataFrame()
-
-    if not need_dl:
-        try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_dl = True
-
-    if need_dl:
-        try:
-            # 尝试从百度估值接口获取市现率（通过 adapter）
-            from jk2bt.data_access import get_adapter
-            df_tmp = get_adapter().get_stock_valuation_baidu(symbol=ak_sym, indicator="市现率")
-            if df_tmp is not None and not df_tmp.empty:
-                df = df_tmp.rename(columns={"value": "pcf_ratio"})
-                if "date" in df.columns:
-                    df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
-                df.to_pickle(cache_file)
-        except Exception as e:
-            warnings.warn(f"获取市现率数据失败 {symbol}: {e}")
+    try:
+        # 尝试从百度估值接口获取市现率（通过 adapter）
+        df_tmp = get_adapter().get_stock_valuation_baidu(
+            symbol=ak_sym, indicator="市现率"
+        )
+        if df_tmp is None or df_tmp.empty:
             return np.nan
+        df = df_tmp.rename(columns={"value": "pcf_ratio"})
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+    except Exception as e:
+        warnings.warn(f"获取市现率数据失败 {symbol}: {e}")
+        return np.nan
 
     if df.empty or "pcf_ratio" not in df.columns:
         return np.nan
@@ -669,8 +634,6 @@ def compute_turnover_ratio(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -678,17 +641,29 @@ def compute_turnover_ratio(
 
     数据来源：日线行情中的换手率字段
     """
-    # 复用 technical 模块的日线数据获取
-    from .technical import _get_daily_ohlcv
+    from jk2bt.data_access import get_adapter
 
-    need_count = count + 1 if count else 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(
+        columns={
+            "日期": "date",
+            "换手率": "turnover_rate",
+        }
     )
+
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(count)
 
     if df.empty or "turnover_rate" not in df.columns:
         return np.nan
@@ -711,8 +686,6 @@ def compute_capitalization(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -721,18 +694,25 @@ def compute_capitalization(
     单位：亿股
     近似实现：总市值 / 收盘价
     """
-    from .technical import _get_daily_ohlcv
+    from jk2bt.data_access import get_adapter
 
-    mc = compute_market_cap(symbol, end_date, count, cache_dir, force_update)
+    mc = compute_market_cap(symbol, end_date, count)
 
-    need_count = count + 1 if count else 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(columns={"日期": "date", "收盘": "close"})
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(count)
 
     if df.empty:
         return np.nan
@@ -765,8 +745,6 @@ def compute_circulating_cap(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -775,18 +753,25 @@ def compute_circulating_cap(
     单位：亿股
     近似实现：流通市值 / 收盘价
     """
-    from .technical import _get_daily_ohlcv
+    from jk2bt.data_access import get_adapter
 
-    cmc = compute_circulating_market_cap(symbol, end_date, count, cache_dir, force_update)
+    cmc = compute_circulating_market_cap(symbol, end_date, count)
 
-    need_count = count + 1 if count else 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(columns={"日期": "date", "收盘": "close"})
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(count)
 
     if df.empty:
         return np.nan
@@ -819,8 +804,6 @@ def compute_natural_log_of_market_cap(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -828,7 +811,7 @@ def compute_natural_log_of_market_cap(
 
     公式：log(market_cap)
     """
-    result = compute_market_cap(symbol, end_date, count, cache_dir, force_update)
+    result = compute_market_cap(symbol, end_date, count)
 
     if isinstance(result, (int, float, np.floating)):
         return np.log(result) if result > 0 else np.nan
@@ -846,8 +829,6 @@ def compute_cube_of_size(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -855,9 +836,7 @@ def compute_cube_of_size(
 
     公式：(natural_log_of_market_cap) ** 3
     """
-    result = compute_natural_log_of_market_cap(
-        symbol, end_date, count, cache_dir, force_update
-    )
+    result = compute_natural_log_of_market_cap(symbol, end_date, count)
 
     if isinstance(result, (int, float, np.floating)):
         return result**3 if not np.isnan(result) else np.nan
@@ -900,10 +879,16 @@ def _register_factors():
         "turnover_ratio", compute_turnover_ratio, window=1, dependencies=["daily_ohlcv"]
     )
     registry.register(
-        "capitalization", compute_capitalization, window=1, dependencies=["market_cap", "daily_ohlcv"]
+        "capitalization",
+        compute_capitalization,
+        window=1,
+        dependencies=["market_cap", "daily_ohlcv"],
     )
     registry.register(
-        "circulating_cap", compute_circulating_cap, window=1, dependencies=["circulating_market_cap", "daily_ohlcv"]
+        "circulating_cap",
+        compute_circulating_cap,
+        window=1,
+        dependencies=["circulating_market_cap", "daily_ohlcv"],
     )
     registry.register(
         "natural_log_of_market_cap",

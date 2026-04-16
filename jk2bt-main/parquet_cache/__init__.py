@@ -50,6 +50,7 @@ from parquet_cache.table_registry import (
     INDUSTRY_LIST,
     CONCEPT_LIST,
     COMPANY_INFO,
+    FACTOR_CACHE,
 )
 from parquet_cache.cache_manager import (
     CacheManager,
@@ -102,6 +103,7 @@ __all__ = [
     "INDUSTRY_LIST",
     "CONCEPT_LIST",
     "COMPANY_INFO",
+    "FACTOR_CACHE",
     "CacheManager",
     "get_cache_manager",
     "reset_cache_manager",

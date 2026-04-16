@@ -171,7 +171,6 @@ class SignalDetector:
         self,
         symbol: str,
         end_date: Optional[str] = None,
-        cache_dir: str = "stock_cache",
         force_update: bool = False,
     ) -> pd.DataFrame:
         """
@@ -183,8 +182,6 @@ class SignalDetector:
             股票代码
         end_date : str, optional
             截止日期
-        cache_dir : str
-            缓存目录
         force_update : bool
             是否强制更新
 
@@ -201,7 +198,6 @@ class SignalDetector:
                 df = detector(
                     symbol,
                     end_date=end_date,
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
                 if not df.empty:
@@ -209,6 +205,7 @@ class SignalDetector:
                     all_signals.append(df)
             except Exception as e:
                 import warnings
+
                 warnings.warn(f"{signal_type} 检测失败: {e}")
 
         if not all_signals:
@@ -224,7 +221,6 @@ class SignalDetector:
         symbol: str,
         end_date: Optional[str] = None,
         method: str = "vote",
-        cache_dir: str = "stock_cache",
         force_update: bool = False,
     ) -> Dict[str, Union[int, float, pd.DataFrame]]:
         """
@@ -242,8 +238,6 @@ class SignalDetector:
             - 'weighted': 加权平均（可自定义权重）
             - 'any': 任一信号触发即返回
             - 'latest': 最近一次信号的值
-        cache_dir : str
-            缓存目录
         force_update : bool
             是否强制更新
 
@@ -261,7 +255,6 @@ class SignalDetector:
         signals = self.detect(
             symbol,
             end_date=end_date,
-            cache_dir=cache_dir,
             force_update=force_update,
         )
 
@@ -329,7 +322,6 @@ class SignalDetector:
         symbol: str,
         n: int = 5,
         end_date: Optional[str] = None,
-        cache_dir: str = "stock_cache",
         force_update: bool = False,
     ) -> pd.DataFrame:
         """
@@ -352,7 +344,6 @@ class SignalDetector:
         signals = self.detect(
             symbol,
             end_date=end_date,
-            cache_dir=cache_dir,
             force_update=force_update,
         )
 
@@ -365,7 +356,6 @@ class SignalDetector:
 def get_all_signals(
     symbol: str,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -384,13 +374,12 @@ def get_all_signals(
         所有信号汇总
     """
     detector = SignalDetector()
-    return detector.detect(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+    return detector.detect(symbol, end_date=end_date, force_update=force_update)
 
 
 def get_signal_summary(
     symbol: str,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> Dict:
     """
@@ -408,7 +397,7 @@ def get_signal_summary(
     dict
         信号摘要统计
     """
-    signals = get_all_signals(symbol, end_date, cache_dir, force_update)
+    signals = get_all_signals(symbol, end_date, force_update)
 
     if signals.empty:
         return {
@@ -421,7 +410,9 @@ def get_signal_summary(
         }
 
     # 按信号类型统计
-    type_counts = signals.groupby("signal_type")["signal"].agg(["sum", "count"]).to_dict()
+    type_counts = (
+        signals.groupby("signal_type")["signal"].agg(["sum", "count"]).to_dict()
+    )
 
     # 最近信号
     latest = signals.iloc[-1]

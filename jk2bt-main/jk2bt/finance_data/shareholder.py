@@ -12,8 +12,8 @@ finance_data/shareholder.py
 
 缓存策略：
 - DuckDB 缓存（优先）：按周缓存，存储在 data/shareholder.db 中
-- Pickle 缓存（备用）：7天缓存
-- 网络失败时使用缓存兜底
+- adapter 内置缓存
+- 网络失败时使用 DuckDB 缓存兜底
 """
 
 import os
@@ -440,7 +440,6 @@ _db_manager = ShareholderDBManager() if _DUCKDB_AVAILABLE else None
 def get_top_shareholders(
     security: str,
     count: int = 10,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -451,7 +450,6 @@ def get_top_shareholders(
     ----
     security    : 股票代码，支持多种格式（600519.XSHG, sh600519, 600519 等）
     count       : 返回数量，默认10
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -479,47 +477,28 @@ def get_top_shareholders(
             if not df_cached.empty:
                 return df_cached.head(count)
 
-    cache_file = os.path.join(cache_dir, f"top10_holder_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
+    try:
+        df_raw = None
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHAREHOLDER_CACHE_DAYS:
-                df = cached_df.head(count)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_top10_shareholders(cached_df)
-                return df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df_raw = None
+            df_raw = get_adapter().get_top10_holders_em(symbol=code_num)
+        except Exception as e1:
+            logger.warning(f"stock_gdfx_holding_detail_em 失败: {e1}")
             try:
-                df_raw = get_adapter().get_top10_holders_em(symbol=code_num)
-            except Exception as e1:
-                logger.warning(f"stock_gdfx_holding_detail_em 失败: {e1}")
-                try:
-                    df_raw = get_adapter().get_top10_holders(symbol=code_num)
-                except Exception as e2:
-                    logger.warning(f"stock_zh_a_gdhs 失败: {e2}")
+                df_raw = get_adapter().get_top10_holders(symbol=code_num)
+            except Exception as e2:
+                logger.warning(f"stock_zh_a_gdhs 失败: {e2}")
 
-            if df_raw is not None and not df_raw.empty:
-                df = _normalize_top10_holders(df_raw, jq_code)
-                df = standardize_financial(df)
-                df.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_top10_shareholders(df)
-                return df.head(count)
-        except Exception as e:
-            logger.warning(f"十大股东获取失败 {security}: {e}")
-            raise ValueError(f"无法获取股东信息，数据缺失: {security}")
+        if df_raw is not None and not df_raw.empty:
+            df = _normalize_top10_holders(df_raw, jq_code)
+            df = standardize_financial(df)
+            if use_duckdb and _db_manager is not None:
+                _db_manager.insert_top10_shareholders(df)
+            return df.head(count)
+    except Exception as e:
+        logger.warning(f"十大股东获取失败 {security}: {e}")
+        raise ValueError(f"无法获取股东信息，数据缺失: {security}")
 
     return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
 
@@ -527,7 +506,6 @@ def get_top_shareholders(
 def get_top_float_shareholders(
     security: str,
     count: int = 10,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -538,7 +516,6 @@ def get_top_float_shareholders(
     ----
     security    : 股票代码
     count       : 返回数量，默认10
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -557,50 +534,30 @@ def get_top_float_shareholders(
             if not df_cached.empty:
                 return df_cached.head(count)
 
-    cache_file = os.path.join(cache_dir, f"top10_float_holder_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
+    try:
+        df_raw = None
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHAREHOLDER_CACHE_DAYS:
-                df = cached_df.head(count)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_top10_float_shareholders(cached_df)
-                return df
-            need_download = True
-        except Exception:
-            need_download = True
+            df_raw = get_adapter().get_top10_float_holders_em(symbol=code_num)
+        except Exception as e1:
+            logger.warning(f"stock_gdfx_free_holding_detail_em 失败: {e1}")
 
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df_raw = None
-            try:
-                df_raw = get_adapter().get_top10_float_holders_em(symbol=code_num)
-            except Exception as e1:
-                logger.warning(f"stock_gdfx_free_holding_detail_em 失败: {e1}")
-
-            if df_raw is not None and not df_raw.empty:
-                df = _normalize_top10_float_holders(df_raw, jq_code)
-                df = standardize_financial(df)
-                df.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_top10_float_shareholders(df)
-                return df.head(count)
-        except Exception as e:
-            logger.warning(f"十大流通股东获取失败 {security}: {e}")
-            raise ValueError(f"无法获取流通股东信息，数据缺失: {security}")
+        if df_raw is not None and not df_raw.empty:
+            df = _normalize_top10_float_holders(df_raw, jq_code)
+            df = standardize_financial(df)
+            if use_duckdb and _db_manager is not None:
+                _db_manager.insert_top10_float_shareholders(df)
+            return df.head(count)
+    except Exception as e:
+        logger.warning(f"十大流通股东获取失败 {security}: {e}")
+        raise ValueError(f"无法获取流通股东信息，数据缺失: {security}")
 
     return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
 
 
 def get_shareholder_structure(
     security: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -610,7 +567,6 @@ def get_shareholder_structure(
     参数
     ----
     security    : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -679,7 +635,6 @@ def get_shareholder_structure(
 
 def get_shareholder_concentration(
     security: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> Dict:
     """
@@ -688,7 +643,6 @@ def get_shareholder_concentration(
     参数
     ----
     security    : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -702,11 +656,9 @@ def get_shareholder_concentration(
     - holder_count: 股东户数（如有）
     """
     try:
-        df_top = get_top_shareholders(
-            security, count=10, cache_dir=cache_dir, force_update=force_update
-        )
+        df_top = get_top_shareholders(security, count=10, force_update=force_update)
         df_float = get_top_float_shareholders(
-            security, count=10, cache_dir=cache_dir, force_update=force_update
+            security, count=10, force_update=force_update
         )
 
         result = {
@@ -753,9 +705,7 @@ def get_shareholder_concentration(
                 )
 
         try:
-            df_count = get_shareholder_count(
-                security, cache_dir=cache_dir, force_update=force_update
-            )
+            df_count = get_shareholder_count(security, force_update=force_update)
             if not df_count.empty and "holder_num" in df_count.columns:
                 result["holder_count"] = int(df_count.iloc[0]["holder_num"])
         except Exception:
@@ -784,7 +734,6 @@ def get_shareholder_concentration(
 
 def prewarm_shareholder_cache(
     codes: List[str],
-    cache_dir: str = "finance_cache",
 ) -> Dict[str, bool]:
     """
     缓存预热：批量获取股东信息并缓存到 DuckDB。
@@ -792,7 +741,6 @@ def prewarm_shareholder_cache(
     参数
     ----
     codes   : 股票代码列表
-    cache_dir: 缓存目录
 
     返回
     ----
@@ -803,12 +751,8 @@ def prewarm_shareholder_cache(
 
     for i, code in enumerate(codes):
         try:
-            get_top_shareholders(
-                code, use_duckdb=True, force_update=True, cache_dir=cache_dir
-            )
-            get_top_float_shareholders(
-                code, use_duckdb=True, force_update=True, cache_dir=cache_dir
-            )
+            get_top_shareholders(code, use_duckdb=True, force_update=True)
+            get_top_float_shareholders(code, use_duckdb=True, force_update=True)
             results[code] = True
             logger.info(f"缓存预热 [{i + 1}/{total}] {code} 成功")
         except Exception as e:
@@ -823,7 +767,6 @@ def prewarm_shareholder_cache(
 def get_shareholders(
     symbol: str,
     date: Union[str, datetime] = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> RobustResult:
     """
@@ -836,7 +779,6 @@ def get_shareholders(
     ----
     symbol      : 股票代码，支持多种格式（600519.XSHG, sh600519, 600519 等）
     date        : 查询日期，默认最近报告期
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -858,8 +800,8 @@ def get_shareholders(
 
     缓存策略
     --------
-    - 7天缓存（动态数据按周缓存）
-    - 网络失败时使用缓存兜底
+    - DuckDB 缓存（优先）
+    - 网络失败时使用 DuckDB 缓存兜底
 
     示例
     ----
@@ -873,98 +815,89 @@ def get_shareholders(
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"shareholder_robust_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-
-    need_download = force_update or (not os.path.exists(cache_file))
-    cached_df = None
-    cache_valid = False
-    cache_age_days = 0
-
-    if os.path.exists(cache_file):
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            cache_age_days = (datetime.now() - file_mtime).days
-            if cache_age_days < SHAREHOLDER_CACHE_DAYS:
-                cache_valid = True
-                if not need_download:
-                    if date is None:
+    if _db_manager is not None and not force_update:
+        if _db_manager.is_cache_valid(
+            jq_code, "top10_shareholders", SHAREHOLDER_CACHE_DAYS
+        ):
+            cached_df = _db_manager.get_top10_shareholders(jq_code)
+            if not cached_df.empty:
+                if date is None:
+                    return RobustResult(
+                        success=True,
+                        data=cached_df,
+                        reason="从 DuckDB 缓存获取股东信息",
+                        source="cache",
+                    )
+                else:
+                    df_filtered = _filter_by_date(cached_df, date)
+                    if not df_filtered.empty:
                         return RobustResult(
                             success=True,
-                            data=cached_df,
-                            reason=f"从缓存获取股东信息（缓存有效期: {cache_age_days}天）",
+                            data=df_filtered,
+                            reason="从 DuckDB 缓存获取股东信息",
                             source="cache",
                         )
-                    else:
-                        df_filtered = _filter_by_date(cached_df, date)
-                        if not df_filtered.empty:
-                            return RobustResult(
-                                success=True,
-                                data=df_filtered,
-                                reason=f"从缓存获取股东信息（缓存有效期: {cache_age_days}天）",
-                                source="cache",
-                            )
-            need_download = True
-        except Exception as e:
-            logger.warning(f"[get_shareholders] 读取缓存失败: {e}")
-            need_download = True
 
-    if need_download:
-        from jk2bt.data_access import get_adapter
+    from jk2bt.data_access import get_adapter
+
+    try:
+        df_raw = None
+        source_used = "network"
         try:
-            df_raw = None
-            source_used = "network"
+            df_raw = get_adapter().get_top10_holders(symbol=code_num)
+        except Exception as e1:
+            logger.warning(f"[get_shareholders] stock_zh_a_gdhs 失败: {e1}")
             try:
-                df_raw = get_adapter().get_top10_holders(symbol=code_num)
-            except Exception as e1:
-                logger.warning(f"[get_shareholders] stock_zh_a_gdhs 失败: {e1}")
-                try:
-                    df_raw = get_adapter().get_share_change(symbol=code_num)
-                except Exception as e2:
-                    logger.warning(
-                        f"[get_shareholders] stock_share_change_cninfo 失败: {e2}"
-                    )
+                df_raw = get_adapter().get_share_change(symbol=code_num)
+            except Exception as e2:
+                logger.warning(
+                    f"[get_shareholders] stock_share_change_cninfo 失败: {e2}"
+                )
+                if _db_manager is not None:
+                    cached_df = _db_manager.get_top10_shareholders(jq_code)
                     if cached_df is not None and not cached_df.empty:
                         df_raw = cached_df
                         source_used = "fallback"
-                        logger.info(f"[get_shareholders] 使用缓存兜底")
+                        logger.info(f"[get_shareholders] 使用 DuckDB 缓存兜底")
 
-            if df_raw is not None and not df_raw.empty:
-                df = _normalize_shareholders_robust(df_raw, jq_code)
-                if not df.empty:
-                    df.to_pickle(cache_file)
-                    if date is None:
+        if df_raw is not None and not df_raw.empty:
+            df = _normalize_shareholders_robust(df_raw, jq_code)
+            if not df.empty:
+                if _db_manager is not None:
+                    _db_manager.insert_top10_shareholders(df)
+                if date is None:
+                    return RobustResult(
+                        success=True,
+                        data=df,
+                        reason=f"成功获取 {len(df)} 条股东记录",
+                        source=source_used,
+                    )
+                else:
+                    df_filtered = _filter_by_date(df, date)
+                    if not df_filtered.empty:
                         return RobustResult(
                             success=True,
-                            data=df,
-                            reason=f"成功获取 {len(df)} 条股东记录",
+                            data=df_filtered,
+                            reason=f"成功获取 {len(df_filtered)} 条股东记录",
                             source=source_used,
                         )
                     else:
-                        df_filtered = _filter_by_date(df, date)
-                        if not df_filtered.empty:
-                            return RobustResult(
-                                success=True,
-                                data=df_filtered,
-                                reason=f"成功获取 {len(df_filtered)} 条股东记录",
-                                source=source_used,
-                            )
-                        else:
-                            return RobustResult(
-                                success=False,
-                                data=pd.DataFrame(columns=_SHAREHOLDER_SCHEMA),
-                                reason=f"指定日期 {date} 无股东记录",
-                                source=source_used,
-                            )
-        except Exception as e:
-            logger.warning(f"[get_shareholders] 网络获取失败: {e}")
+                        return RobustResult(
+                            success=False,
+                            data=pd.DataFrame(columns=_SHAREHOLDER_SCHEMA),
+                            reason=f"指定日期 {date} 无股东记录",
+                            source=source_used,
+                        )
+    except Exception as e:
+        logger.warning(f"[get_shareholders] 网络获取失败: {e}")
+        if _db_manager is not None:
+            cached_df = _db_manager.get_top10_shareholders(jq_code)
             if cached_df is not None and not cached_df.empty:
                 if date is None:
                     return RobustResult(
                         success=True,
                         data=cached_df,
-                        reason=f"网络失败，使用缓存兜底（缓存已过期 {cache_age_days} 天）",
+                        reason="网络失败，使用 DuckDB 缓存兜底",
                         source="fallback",
                     )
                 else:
@@ -973,7 +906,7 @@ def get_shareholders(
                         return RobustResult(
                             success=True,
                             data=df_filtered,
-                            reason=f"网络失败，使用缓存兜底",
+                            reason="网络失败，使用 DuckDB 缓存兜底",
                             source="fallback",
                         )
 
@@ -1126,38 +1059,31 @@ def _filter_by_date(df: pd.DataFrame, date: Union[str, datetime]) -> pd.DataFram
 def get_top10_shareholders(
     symbol: str,
     date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取十大股东快照"""
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"top10_holder_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    if _db_manager is not None and not force_update:
+        if _db_manager.is_cache_valid(
+            jq_code, "top10_shareholders", SHAREHOLDER_CACHE_DAYS
+        ):
+            df_cached = _db_manager.get_top10_shareholders(jq_code)
+            if not df_cached.empty:
+                return df_cached
 
-    need_download = force_update or (not os.path.exists(cache_file))
+    from jk2bt.data_access import get_adapter
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHAREHOLDER_CACHE_DAYS:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_top10_holders_em(symbol=code_num)
-            if df is not None and not df.empty:
-                result = _normalize_top10_holders(df, jq_code)
-                result.to_pickle(cache_file)
-                return result
-        except Exception as e:
-            logger.warning(f"十大股东获取失败 {symbol}: {e}")
+    try:
+        df = get_adapter().get_top10_holders_em(symbol=code_num)
+        if df is not None and not df.empty:
+            result = _normalize_top10_holders(df, jq_code)
+            if _db_manager is not None:
+                _db_manager.insert_top10_shareholders(result)
+            return result
+    except Exception as e:
+        logger.warning(f"十大股东获取失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
 
@@ -1165,74 +1091,59 @@ def get_top10_shareholders(
 def get_top10_float_shareholders(
     symbol: str,
     date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取十大流通股东快照"""
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"top10_float_holder_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    if _db_manager is not None and not force_update:
+        if _db_manager.is_cache_valid(
+            jq_code, "top10_float_shareholders", SHAREHOLDER_CACHE_DAYS
+        ):
+            df_cached = _db_manager.get_top10_float_shareholders(jq_code)
+            if not df_cached.empty:
+                return df_cached
 
-    need_download = force_update or (not os.path.exists(cache_file))
+    from jk2bt.data_access import get_adapter
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHAREHOLDER_CACHE_DAYS:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_top10_float_holders_em(symbol=code_num)
-            if df is not None and not df.empty:
-                result = _normalize_top10_float_holders(df, jq_code)
-                result.to_pickle(cache_file)
-                return result
-        except Exception as e:
-            logger.warning(f"十大流通股东获取失败 {symbol}: {e}")
+    try:
+        df = get_adapter().get_top10_float_holders_em(symbol=code_num)
+        if df is not None and not df.empty:
+            result = _normalize_top10_float_holders(df, jq_code)
+            if _db_manager is not None:
+                _db_manager.insert_top10_float_shareholders(result)
+            return result
+    except Exception as e:
+        logger.warning(f"十大流通股东获取失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
 
 
-def get_shareholder_count(
-    symbol: str, cache_dir: str = "finance_cache", force_update: bool = False
-) -> pd.DataFrame:
+def get_shareholder_count(symbol: str, force_update: bool = False) -> pd.DataFrame:
     """获取股东户数时间序列"""
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"holder_count_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    if _db_manager is not None and not force_update:
+        if _db_manager.is_cache_valid(
+            jq_code, "shareholder_num", SHAREHOLDER_CACHE_DAYS
+        ):
+            df_cached = _db_manager.get_shareholder_structure(jq_code)
+            if not df_cached.empty:
+                return df_cached
 
-    need_download = force_update or (not os.path.exists(cache_file))
+    from jk2bt.data_access import get_adapter
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHAREHOLDER_CACHE_DAYS:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_holder_count(symbol=code_num)
-            if df is not None and not df.empty:
-                result = _normalize_holder_count(df, jq_code)
-                result.to_pickle(cache_file)
-                return result
-        except Exception as e:
-            logger.warning(f"股东户数获取失败 {symbol}: {e}")
+    try:
+        df = get_adapter().get_holder_count(symbol=code_num)
+        if df is not None and not df.empty:
+            result = _normalize_holder_count(df, jq_code)
+            if _db_manager is not None:
+                _db_manager.insert_shareholder_structure(result)
+            return result
+    except Exception as e:
+        logger.warning(f"股东户数获取失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_SHAREHOLDER_NUM_SCHEMA)
 
@@ -1358,9 +1269,7 @@ def _normalize_holder_count(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
     return result
 
 
-def query_shareholder_top10(
-    symbols: list, cache_dir: str = "finance_cache", force_update: bool = False
-) -> pd.DataFrame:
+def query_shareholder_top10(symbols: list, force_update: bool = False) -> pd.DataFrame:
     """批量查询十大股东（finance.STK_SHAREHOLDER_TOP10）"""
     if symbols is None or len(symbols) == 0:
         return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
@@ -1368,9 +1277,7 @@ def query_shareholder_top10(
     dfs = []
     for symbol in symbols:
         try:
-            df = get_top10_shareholders(
-                symbol, cache_dir=cache_dir, force_update=force_update
-            )
+            df = get_top10_shareholders(symbol, force_update=force_update)
             if not df.empty:
                 dfs.append(df)
         except Exception as e:
@@ -1384,7 +1291,7 @@ def query_shareholder_top10(
 
 
 def query_shareholder_float_top10(
-    symbols: list, cache_dir: str = "finance_cache", force_update: bool = False
+    symbols: list, force_update: bool = False
 ) -> pd.DataFrame:
     """批量查询十大流通股东（finance.STK_SHAREHOLDER_FLOAT_TOP10）"""
     if symbols is None or len(symbols) == 0:
@@ -1393,9 +1300,7 @@ def query_shareholder_float_top10(
     dfs = []
     for symbol in symbols:
         try:
-            df = get_top10_float_shareholders(
-                symbol, cache_dir=cache_dir, force_update=force_update
-            )
+            df = get_top10_float_shareholders(symbol, force_update=force_update)
             if not df.empty:
                 dfs.append(df)
         except Exception as e:
@@ -1408,9 +1313,7 @@ def query_shareholder_float_top10(
     return pd.concat(dfs, ignore_index=True)
 
 
-def query_shareholder_num(
-    symbols: list, cache_dir: str = "finance_cache", force_update: bool = False
-) -> pd.DataFrame:
+def query_shareholder_num(symbols: list, force_update: bool = False) -> pd.DataFrame:
     """批量查询股东户数（finance.STK_SHAREHOLDER_NUM）"""
     if symbols is None or len(symbols) == 0:
         return pd.DataFrame(columns=_SHAREHOLDER_NUM_SCHEMA)
@@ -1418,9 +1321,7 @@ def query_shareholder_num(
     dfs = []
     for symbol in symbols:
         try:
-            df = get_shareholder_count(
-                symbol, cache_dir=cache_dir, force_update=force_update
-            )
+            df = get_shareholder_count(symbol, force_update=force_update)
             if not df.empty:
                 dfs.append(df)
         except Exception as e:
@@ -1532,7 +1433,6 @@ class FinanceQuery:
     def run_query(
         self,
         query_obj,
-        cache_dir: str = "finance_cache",
         force_update: bool = False,
         robust: bool = False,
     ) -> Union[pd.DataFrame, RobustResult]:
@@ -1542,7 +1442,6 @@ class FinanceQuery:
         参数
         ----
         query_obj    : 查询对象（表对象或查询表达式）
-        cache_dir    : 缓存目录
         force_update : 强制更新
         robust       : 是否返回 RobustResult
 
@@ -1593,7 +1492,6 @@ class FinanceQuery:
             if "code" in conditions:
                 return get_shareholders(
                     conditions["code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
             else:
@@ -1609,7 +1507,6 @@ class FinanceQuery:
             if "code" in conditions:
                 df = get_top10_shareholders(
                     conditions["code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
                 if robust:
@@ -1642,7 +1539,6 @@ class FinanceQuery:
             if "code" in conditions:
                 df = get_top10_float_shareholders(
                     conditions["code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
                 if robust:
@@ -1675,7 +1571,6 @@ class FinanceQuery:
             if "code" in conditions:
                 df = get_shareholder_count(
                     conditions["code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
                 if robust:
@@ -1708,7 +1603,6 @@ class FinanceQuery:
             if "code" in conditions:
                 df = get_top_shareholders(
                     conditions["code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
                 if robust:
@@ -1741,7 +1635,6 @@ class FinanceQuery:
             if "code" in conditions:
                 df = get_top_float_shareholders(
                     conditions["code"],
-                    cache_dir=cache_dir,
                     force_update=force_update,
                 )
                 if robust:
@@ -1780,7 +1673,6 @@ finance = FinanceQuery()
 def run_query_simple(
     table: str,
     code: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     robust: bool = False,
 ) -> Union[pd.DataFrame, RobustResult]:
@@ -1791,7 +1683,6 @@ def run_query_simple(
     ----
     table       : 表名 ('STK_SHAREHOLDER', 'STK_SHAREHOLDER_TOP10', 'STK_SHAREHOLDER_FLOAT_TOP10', 'STK_SHAREHOLDER_NUM')
     code        : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     robust      : 是否返回 RobustResult
 
@@ -1806,9 +1697,7 @@ def run_query_simple(
     """
     if table == "STK_SHAREHOLDER":
         if code:
-            return get_shareholders(
-                code, cache_dir=cache_dir, force_update=force_update
-            )
+            return get_shareholders(code, force_update=force_update)
         else:
             empty_df = pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
             return RobustResult(
@@ -1820,9 +1709,7 @@ def run_query_simple(
 
     elif table == "STK_SHAREHOLDER_TOP10":
         if code:
-            df = get_top10_shareholders(
-                code, cache_dir=cache_dir, force_update=force_update
-            )
+            df = get_top10_shareholders(code, force_update=force_update)
             if robust:
                 if df.empty:
                     return RobustResult(
@@ -1851,9 +1738,7 @@ def run_query_simple(
 
     elif table == "STK_SHAREHOLDER_FLOAT_TOP10":
         if code:
-            df = get_top10_float_shareholders(
-                code, cache_dir=cache_dir, force_update=force_update
-            )
+            df = get_top10_float_shareholders(code, force_update=force_update)
             if robust:
                 if df.empty:
                     return RobustResult(
@@ -1882,9 +1767,7 @@ def run_query_simple(
 
     elif table == "STK_SHAREHOLDER_NUM":
         if code:
-            df = get_shareholder_count(
-                code, cache_dir=cache_dir, force_update=force_update
-            )
+            df = get_shareholder_count(code, force_update=force_update)
             if robust:
                 if df.empty:
                     return RobustResult(

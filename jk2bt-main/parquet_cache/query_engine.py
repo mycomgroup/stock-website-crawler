@@ -212,7 +212,7 @@ class QueryEngine:
 
     def _get_connection(self) -> duckdb.DuckDBPyConnection:
         if self._conn is None:
-            self._conn = duckdb.connect(database=":memory:", read_only=True)
+            self._conn = duckdb.connect(database=":memory:")
             self._conn.execute(f"SET threads={self.threads}")
             self._conn.execute(f"SET memory_limit='{self.memory_limit}'")
         return self._conn
@@ -224,6 +224,7 @@ class QueryEngine:
                 isinstance(value, (list, tuple))
                 and len(value) == 2
                 and not isinstance(value, str)
+                and all(isinstance(v, (int, float)) for v in value)
             ):
                 conditions.append(
                     f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"

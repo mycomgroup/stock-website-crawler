@@ -16,6 +16,7 @@ finance_data/macro.py
 
 缓存策略:
 - DuckDB 缓存（优先）：存储在 data/macro.db 中
+- adapter 内置缓存
 - 按发布周期缓存（30天）
 """
 
@@ -338,7 +339,6 @@ def get_macro_china_pmi(
     ----
     DataFrame
     """
-    cache_dir = "finance_cache"
     indicator = "PMI"
 
     if _db_manager is not None and not force_update:
@@ -347,36 +347,18 @@ def get_macro_china_pmi(
             if not df_cached.empty:
                 return df_cached[_MACRO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, "macro_pmi.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 30:
+    try:
+        df = get_adapter().get_macro_raw("pmi")
+        if df is not None and not df.empty:
+            result = _normalize_macro_data(df, indicator, "%")
+            if not result.empty:
                 if _db_manager is not None:
-                    _db_manager.insert_macro(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_macro_raw("pmi")
-            if df is not None and not df.empty:
-                result = _normalize_macro_data(df, indicator, "%")
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if _db_manager is not None:
-                        _db_manager.insert_macro(result)
-                    return result
-        except Exception as e:
-            logger.warning(f"[macro_pmi] 获取PMI数据失败: {e}")
+                    _db_manager.insert_macro(result)
+                return result
+    except Exception as e:
+        logger.warning(f"[macro_pmi] 获取PMI数据失败: {e}")
 
     return pd.DataFrame(columns=_MACRO_SCHEMA)
 
@@ -426,7 +408,6 @@ def get_macro_china_exchange_rate(
     ----
     DataFrame，包含人民币汇率数据
     """
-    cache_dir = "finance_cache"
     indicator = "EXCHANGE_RATE"
 
     if _db_manager is not None and not force_update:
@@ -435,36 +416,18 @@ def get_macro_china_exchange_rate(
             if not df_cached.empty:
                 return df_cached[_MACRO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, "macro_exchange_rate.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 7:
+    try:
+        df = get_adapter().get_macro_raw("exchange_rate")
+        if df is not None and not df.empty:
+            result = _normalize_macro_data(df, indicator, "")
+            if not result.empty:
                 if _db_manager is not None:
-                    _db_manager.insert_macro(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_macro_raw("exchange_rate")
-            if df is not None and not df.empty:
-                result = _normalize_macro_data(df, indicator, "")
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if _db_manager is not None:
-                        _db_manager.insert_macro(result)
-                    return result
-        except Exception as e:
-            logger.warning(f"[macro_exchange_rate] 获取汇率数据失败: {e}")
+                    _db_manager.insert_macro(result)
+                return result
+    except Exception as e:
+        logger.warning(f"[macro_exchange_rate] 获取汇率数据失败: {e}")
 
     return pd.DataFrame(columns=_MACRO_SCHEMA)
 
@@ -517,7 +480,6 @@ def query_macro_data(
 
 
 def get_macro_cpi(
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -526,7 +488,6 @@ def get_macro_cpi(
 
     参数
     ----
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -542,42 +503,23 @@ def get_macro_cpi(
             if not df_cached.empty:
                 return df_cached[_MACRO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, "macro_cpi.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 30:
+    try:
+        df = get_adapter().get_macro_raw("cpi")
+        if df is not None and not df.empty:
+            result = _normalize_macro_data(df, indicator, "%")
+            if not result.empty:
                 if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_macro(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_macro_raw("cpi")
-            if df is not None and not df.empty:
-                result = _normalize_macro_data(df, indicator, "%")
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if use_duckdb and _db_manager is not None:
-                        _db_manager.insert_macro(result)
-                    return result
-        except Exception as e:
-            logger.warning(f"[macro_cpi] 获取CPI数据失败: {e}")
+                    _db_manager.insert_macro(result)
+                return result
+    except Exception as e:
+        logger.warning(f"[macro_cpi] 获取CPI数据失败: {e}")
 
     return pd.DataFrame(columns=_MACRO_SCHEMA)
 
 
 def get_macro_ppi(
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -592,42 +534,23 @@ def get_macro_ppi(
             if not df_cached.empty:
                 return df_cached[_MACRO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, "macro_ppi.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 30:
+    try:
+        df = get_adapter().get_macro_raw("ppi")
+        if df is not None and not df.empty:
+            result = _normalize_macro_data(df, indicator, "%")
+            if not result.empty:
                 if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_macro(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_macro_raw("ppi")
-            if df is not None and not df.empty:
-                result = _normalize_macro_data(df, indicator, "%")
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if use_duckdb and _db_manager is not None:
-                        _db_manager.insert_macro(result)
-                    return result
-        except Exception as e:
-            logger.warning(f"[macro_ppi] 获取PPI数据失败: {e}")
+                    _db_manager.insert_macro(result)
+                return result
+    except Exception as e:
+        logger.warning(f"[macro_ppi] 获取PPI数据失败: {e}")
 
     return pd.DataFrame(columns=_MACRO_SCHEMA)
 
 
 def get_macro_gdp(
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -642,36 +565,18 @@ def get_macro_gdp(
             if not df_cached.empty:
                 return df_cached[_MACRO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, "macro_gdp.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 90:
+    try:
+        df = get_adapter().get_macro_raw("gdp")
+        if df is not None and not df.empty:
+            result = _normalize_macro_data(df, indicator, "亿元")
+            if not result.empty:
                 if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_macro(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_macro_raw("gdp")
-            if df is not None and not df.empty:
-                result = _normalize_macro_data(df, indicator, "亿元")
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if use_duckdb and _db_manager is not None:
-                        _db_manager.insert_macro(result)
-                    return result
-        except Exception as e:
-            logger.warning(f"[macro_gdp] 获取GDP数据失败: {e}")
+                    _db_manager.insert_macro(result)
+                return result
+    except Exception as e:
+        logger.warning(f"[macro_gdp] 获取GDP数据失败: {e}")
 
     return pd.DataFrame(columns=_MACRO_SCHEMA)
 
@@ -732,7 +637,6 @@ def _normalize_macro_data(df: pd.DataFrame, indicator: str, unit: str) -> pd.Dat
 
 
 def get_macro_m2(
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -741,7 +645,6 @@ def get_macro_m2(
 
     参数
     ----
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -757,42 +660,23 @@ def get_macro_m2(
             if not df_cached.empty:
                 return df_cached[_MACRO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, "macro_m2.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 30:
+    try:
+        df = get_adapter().get_macro_raw("m2")
+        if df is not None and not df.empty:
+            result = _normalize_macro_data(df, indicator, "亿元")
+            if not result.empty:
                 if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_macro(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_macro_raw("m2")
-            if df is not None and not df.empty:
-                result = _normalize_macro_data(df, indicator, "亿元")
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if use_duckdb and _db_manager is not None:
-                        _db_manager.insert_macro(result)
-                    return result
-        except Exception as e:
-            logger.warning(f"[macro_m2] 获取M2数据失败: {e}")
+                    _db_manager.insert_macro(result)
+                return result
+    except Exception as e:
+        logger.warning(f"[macro_m2] 获取M2数据失败: {e}")
 
     return pd.DataFrame(columns=_MACRO_SCHEMA)
 
 
 def get_macro_interest_rate(
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -801,7 +685,6 @@ def get_macro_interest_rate(
 
     参数
     ----
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -817,43 +700,24 @@ def get_macro_interest_rate(
             if not df_cached.empty:
                 return df_cached[_MACRO_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, "macro_interest_rate.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 30:
+    try:
+        df = get_adapter().get_macro_raw("interest_rate")
+        if df is not None and not df.empty:
+            result = _normalize_macro_data(df, indicator, "%")
+            if not result.empty:
                 if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_macro(cached_df)
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_macro_raw("interest_rate")
-            if df is not None and not df.empty:
-                result = _normalize_macro_data(df, indicator, "%")
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if use_duckdb and _db_manager is not None:
-                        _db_manager.insert_macro(result)
-                    return result
-        except Exception as e:
-            logger.warning(f"[macro_interest_rate] 获取利率数据失败: {e}")
+                    _db_manager.insert_macro(result)
+                return result
+    except Exception as e:
+        logger.warning(f"[macro_interest_rate] 获取利率数据失败: {e}")
 
     return pd.DataFrame(columns=_MACRO_SCHEMA)
 
 
 def query_macro(
     indicators: List[str],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -863,7 +727,6 @@ def query_macro(
     参数
     ----
     indicators  : 指标列表 ['CPI', 'PPI', 'GDP', 'M2', 'INTEREST_RATE']
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -880,7 +743,6 @@ def query_macro(
         try:
             result = get_macro_indicator_robust(
                 indicator,
-                cache_dir=cache_dir,
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -898,7 +760,6 @@ def query_macro(
 
 def get_macro_indicator_robust(
     indicator_name: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> RobustResult:
@@ -908,7 +769,6 @@ def get_macro_indicator_robust(
     参数
     ----
     indicator_name: 指标名称，支持: 'GDP', 'CPI', 'PPI', 'M2', 'INTEREST_RATE'
-    cache_dir     : 缓存目录
     force_update  : 强制更新
     use_duckdb    : 是否使用 DuckDB 缓存
 
@@ -948,7 +808,7 @@ def get_macro_indicator_robust(
     func, unit = indicator_map[indicator_upper]
 
     try:
-        df = func(cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb)
+        df = func(force_update=force_update, use_duckdb=use_duckdb)
         if df is not None and not df.empty:
             return RobustResult(
                 success=True,
@@ -1011,7 +871,6 @@ class FinanceQuery:
     def run_query(
         self,
         query_obj,
-        cache_dir="finance_cache",
         force_update=False,
         use_duckdb=True,
         start_date=None,
@@ -1051,7 +910,6 @@ def get_macro_data(
     indicator_type: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1062,14 +920,13 @@ def get_macro_data(
     indicator_type : 指标类型，支持 cpi, ppi, gdp, m2, interest_rate
     start_date     : 起始日期
     end_date       : 结束日期
-    cache_dir      : 缓存目录
     force_update   : 强制更新
 
     返回
     ----
     DataFrame
     """
-    result = get_macro_indicator_robust(indicator_type, cache_dir, force_update)
+    result = get_macro_indicator_robust(indicator_type, force_update)
     df = result.data
     if not df.empty and "date" in df.columns:
         if start_date:
@@ -1083,11 +940,10 @@ def get_macro_series(
     indicator_type: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取宏观时间序列数据"""
-    df = get_macro_data(indicator_type, cache_dir, force_update)
+    df = get_macro_data(indicator_type, force_update=force_update)
     if df.empty or "date" not in df.columns:
         return df
 
@@ -1200,7 +1056,6 @@ def get_interest_rate(start_date: str = None, end_date: str = None) -> pd.DataFr
 
 def get_macro_indicator(
     indicator_name: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> RobustResult:
     """
@@ -1209,7 +1064,6 @@ def get_macro_indicator(
     参数
     ----
     indicator_name: 指标名称，支持: 'GDP', 'CPI', 'PPI', 'M2', 'INTEREST_RATE'
-    cache_dir     : 缓存目录
     force_update  : 强制更新
 
     返回
@@ -1220,14 +1074,11 @@ def get_macro_indicator(
         - reason: str - 失败原因或成功说明
         - source: str - 数据来源
     """
-    return get_macro_indicator_robust(
-        indicator_name, cache_dir, force_update, use_duckdb=True
-    )
+    return get_macro_indicator_robust(indicator_name, force_update, use_duckdb=True)
 
 
 def run_query_simple(
     table: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     start_date: str = None,
     end_date: str = None,
@@ -1244,8 +1095,8 @@ def run_query_simple(
     elif table == "MACRO_CHINA_PMI":
         return get_macro_china_pmi(start_date, end_date, force_update)
     elif table == "MACRO_CHINA_M2":
-        return get_macro_m2(cache_dir=cache_dir, force_update=force_update)
+        return get_macro_m2(force_update=force_update)
     elif table == "MACRO_CHINA_INTEREST_RATE":
-        return get_macro_interest_rate(cache_dir=cache_dir, force_update=force_update)
+        return get_macro_interest_rate(force_update=force_update)
     else:
         raise ValueError(f"不支持的表: {table}")

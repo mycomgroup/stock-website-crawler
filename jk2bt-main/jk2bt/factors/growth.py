@@ -18,8 +18,6 @@ import numpy as np
 from .base import (
     global_factor_registry,
     safe_divide,
-    load_factor_cache,
-    save_factor_cache,
 )
 
 from .fundamentals import (
@@ -37,8 +35,6 @@ def compute_np_parent_company_owners_growth_rate(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -47,7 +43,7 @@ def compute_np_parent_company_owners_growth_rate(
     公式：(本期归母净利润 - 去年同期归母净利润) / abs(去年同期归母净利润)
     注意：需要同比数据，因此至少需要 5 个报告期（假设为季度）
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -88,8 +84,6 @@ def compute_operating_revenue_growth_rate(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -97,7 +91,7 @@ def compute_operating_revenue_growth_rate(
 
     公式：(本期营业收入 - 去年同期营业收入) / abs(去年同期营业收入)
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -137,8 +131,6 @@ def compute_earnings_growth(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -150,8 +142,6 @@ def compute_earnings_growth(
         symbol,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
         **kwargs,
     )
 

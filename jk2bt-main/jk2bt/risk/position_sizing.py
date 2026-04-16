@@ -123,7 +123,6 @@ def risk_parity_position(
 def equal_risk_contribution(
     symbols: List[str],
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> Dict[str, float]:
     """
@@ -155,7 +154,6 @@ def equal_risk_contribution(
                 window=20,
                 annualized=True,
                 end_date=end_date,
-                cache_dir=cache_dir,
                 force_update=force_update,
             )
             if not np.isnan(vol) and vol > 0:
@@ -180,7 +178,6 @@ def volatility_target_position(
     base_position: float = 1.0,
     window: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> Dict:
     """
@@ -214,7 +211,6 @@ def volatility_target_position(
         target_vol=target_vol,
         window=window,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
@@ -231,7 +227,6 @@ def atr_based_position_size(
     atr_window: int = 14,
     atr_multiplier: float = 2.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> Dict:
     """
@@ -266,7 +261,6 @@ def atr_based_position_size(
         atr_window=atr_window,
         atr_multiplier=atr_multiplier,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
@@ -309,7 +303,6 @@ def optimize_portfolio_positions(
     total_capital: float,
     method: str = "risk_parity",
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> Dict:
     """
@@ -343,7 +336,6 @@ def optimize_portfolio_positions(
         positions = equal_risk_contribution(
             symbols,
             end_date=end_date,
-            cache_dir=cache_dir,
             force_update=force_update,
         )
     else:

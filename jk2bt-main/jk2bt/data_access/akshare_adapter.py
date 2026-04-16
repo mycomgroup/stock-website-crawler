@@ -21,6 +21,15 @@ from .error_codes import (
     SourceUnavailableError,
     NoDataError,
 )
+from .akshare_compat import get_compat_adapter, AkShareCompatAdapter
+from .stats_collector import get_stats_collector, StatsCollector
+
+try:
+    from parquet_cache import get_cache_manager
+
+    _PARQUET_CACHE_AVAILABLE = True
+except ImportError:
+    _PARQUET_CACHE_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +101,20 @@ class AkShareAdapter(DataSource):
         # Source router for multi-source failover (Phase 1: infrastructure only)
         self._source_router = None
 
+        # AkShare version compatibility adapter (Phase 2)
+        self._compat_adapter = None
+
+        # Stats collector (Phase 2)
+        self._stats = get_stats_collector()
+
+        # Parquet cache layer
+        self._parquet_cache = None
+        if _PARQUET_CACHE_AVAILABLE:
+            try:
+                self._parquet_cache = get_cache_manager()
+            except Exception as e:
+                logger.warning(f"parquet_cache 初始化失败: {e}")
+
     def _load_market_data(self):
         """延迟加载 market_data 模块"""
         if self._market_data_loaded:
@@ -158,6 +181,79 @@ class AkShareAdapter(DataSource):
                 policy=policy,
             )
         return self._source_router
+
+    def _get_compat_adapter(self) -> AkShareCompatAdapter:
+        """Lazily create and return the AkShareCompatAdapter."""
+        if self._compat_adapter is None:
+            self._compat_adapter = get_compat_adapter()
+        return self._compat_adapter
+
+    def _record_request(
+        self, source, duration_ms, success, error_type=None, endpoint=None
+    ):
+        """Record a request to the stats collector."""
+        self._stats.record_request(source, duration_ms, success, error_type, endpoint)
+
+    def _record_cache_hit(self, cache_name):
+        """Record a cache hit."""
+        self._stats.record_cache_hit(cache_name)
+
+    def _record_cache_miss(self, cache_name):
+        """Record a cache miss."""
+        self._stats.record_cache_miss(cache_name)
+
+    def _parquet_get(
+        self,
+        table: str,
+        where: dict = None,
+        columns: list = None,
+        order_by: list = None,
+        limit: int = None,
+    ) -> Optional[pd.DataFrame]:
+        """从 parquet_cache 获取数据"""
+        if not self._use_cache or self._parquet_cache is None:
+            return None
+        try:
+            return self._parquet_cache.get(
+                table,
+                where=where,
+                columns=columns,
+                order_by=order_by,
+                limit=limit,
+            )
+        except Exception as e:
+            logger.warning(f"parquet_cache get 失败 table={table}: {e}")
+            return None
+
+    def _parquet_put(
+        self,
+        table: str,
+        df: pd.DataFrame,
+        partition_value: str = None,
+    ) -> bool:
+        """写入 parquet_cache"""
+        if not self._use_cache or self._parquet_cache is None or df is None or df.empty:
+            return False
+        try:
+            self._parquet_cache.put(table, df, partition_value=partition_value)
+            return True
+        except Exception as e:
+            logger.warning(f"parquet_cache put 失败 table={table}: {e}")
+            return False
+
+    def _parquet_exists(
+        self,
+        table: str,
+        where: dict = None,
+    ) -> bool:
+        """检查 parquet_cache 中是否存在数据"""
+        if not self._use_cache or self._parquet_cache is None:
+            return False
+        try:
+            return self._parquet_cache.exists(table, where=where)
+        except Exception as e:
+            logger.warning(f"parquet_cache exists 失败 table={table}: {e}")
+            return False
 
     def _normalize_date(self, d: Union[str, date, datetime]) -> str:
         """标准化日期格式"""
@@ -233,6 +329,7 @@ class AkShareAdapter(DataSource):
         cache_key = {"symbol": symbol, "adjust": adjust}
         cached = self._get_from_cache("market", "stock_daily", **cache_key)
         if cached is not None and not cached.empty:
+            self._record_cache_hit("stock_daily")
             # 过滤日期范围
             cached = cached.copy()
             if "datetime" in cached.columns:
@@ -285,19 +382,38 @@ class AkShareAdapter(DataSource):
 
                 # 转换代码格式
                 ak_symbol = symbol.replace("sh", "").replace("sz", "")
+                compat = self._get_compat_adapter()
 
                 for attempt in range(self._max_retries):
                     try:
-                        raw_df = self._akshare.stock_zh_a_hist(
+                        start_time = time.time()
+                        raw_df = compat.call(
+                            "stock_zh_a_hist",
                             symbol=ak_symbol,
                             period="daily",
                             start_date=start.replace("-", ""),
                             end_date=end.replace("-", ""),
                             adjust=adjust,
                         )
+                        duration_ms = (time.time() - start_time) * 1000
+                        self._record_request(
+                            "akshare", duration_ms, True, endpoint="stock_zh_a_hist"
+                        )
                         if raw_df is not None and not raw_df.empty:
                             break
                     except Exception as e:
+                        duration_ms = (
+                            (time.time() - start_time) * 1000
+                            if "start_time" in dir()
+                            else 0
+                        )
+                        self._record_request(
+                            "akshare",
+                            duration_ms,
+                            False,
+                            error_type=type(e).__name__,
+                            endpoint="stock_zh_a_hist",
+                        )
                         if attempt < self._max_retries - 1:
                             time.sleep(self._retry_delay)
                         else:
@@ -356,9 +472,13 @@ class AkShareAdapter(DataSource):
         """获取指数成分股列表"""
         self._load_market_data()
 
-        # 检查缓存
-        cached = self._get_from_cache("meta", "index_components", index_code=index_code)
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get(
+            "index_components",
+            where={"index_code": index_code},
+        )
         if cached is not None and not cached.empty:
+            logger.debug(f"[parquet_cache] {index_code}: 使用缓存成分股列表")
             if "code" in cached.columns:
                 return cached["code"].dropna().tolist()
 
@@ -390,6 +510,11 @@ class AkShareAdapter(DataSource):
                             stocks.append(f"{code_str}.XSHG")
                         else:
                             stocks.append(f"{code_str}.XSHE")
+                    # 写入 parquet_cache
+                    result_df = pd.DataFrame(
+                        {"index_code": [index_code] * len(stocks), "code": stocks}
+                    )
+                    self._parquet_put("index_components", result_df)
                     return stocks
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name, symbol=index_code)
@@ -404,6 +529,15 @@ class AkShareAdapter(DataSource):
     ) -> pd.DataFrame:
         """获取指数成分股详情"""
         self._load_market_data()
+
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get(
+            "index_components",
+            where={"index_code": index_code},
+        )
+        if cached is not None and not cached.empty:
+            logger.debug(f"[parquet_cache] {index_code}: 使用缓存成分股")
+            return cached
 
         if hasattr(self, "_get_index_components"):
             try:
@@ -463,6 +597,9 @@ class AkShareAdapter(DataSource):
                         if weight_col:
                             result["weight"] = df[weight_col]
 
+                        # 写入 parquet_cache
+                        if not result.empty:
+                            self._parquet_put("index_components", result)
                         return result
                 except Exception:
                     pass
@@ -483,6 +620,9 @@ class AkShareAdapter(DataSource):
                     result["stock_name"] = df.get("成分股名称", df.get("品种名称", ""))
                     if include_weights:
                         result["weight"] = 100.0 / len(df)  # 等权重
+                    # 写入 parquet_cache
+                    if not result.empty:
+                        self._parquet_put("index_components", result)
                     return result
 
             except Exception as e:
@@ -553,12 +693,31 @@ class AkShareAdapter(DataSource):
         # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         if self._akshare_available:
             try:
+                import time
+
+                compat = self._get_compat_adapter()
+
                 if security_type == "stock":
-                    df = self._akshare.stock_info_a_code_name()
+                    start_time = time.time()
+                    df = compat.call("stock_info_a_code_name")
+                    duration_ms = (time.time() - start_time) * 1000
+                    self._record_request(
+                        "akshare", duration_ms, True, endpoint="stock_info_a_code_name"
+                    )
                 elif security_type == "etf":
-                    df = self._akshare.fund_etf_category_sina(symbol="ETF基金")
+                    start_time = time.time()
+                    df = compat.call("fund_etf_category_sina", symbol="ETF基金")
+                    duration_ms = (time.time() - start_time) * 1000
+                    self._record_request(
+                        "akshare", duration_ms, True, endpoint="fund_etf_category_sina"
+                    )
                 elif security_type == "index":
-                    df = self._akshare.index_stock_info()
+                    start_time = time.time()
+                    df = compat.call("index_stock_info")
+                    duration_ms = (time.time() - start_time) * 1000
+                    self._record_request(
+                        "akshare", duration_ms, True, endpoint="index_stock_info"
+                    )
                 else:
                     raise DataSourceError(
                         f"不支持类型: {security_type}", source=self.name
@@ -674,11 +833,28 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> pd.DataFrame:
         """获取资金流向数据"""
+        symbol = self._normalize_symbol(symbol)
+
+        # 尝试从 parquet_cache 获取
+        where = {"symbol": symbol}
+        if start_date:
+            where["date"] = [
+                self._normalize_date(start_date),
+                self._normalize_date(end_date or datetime.now()),
+            ]
+
+        cached = self._parquet_get("money_flow", where=where)
+        if cached is not None and not cached.empty:
+            logger.debug(f"[parquet_cache] {symbol}: 使用缓存资金流")
+            return cached
+
         self._load_market_data()
 
         if hasattr(self, "_get_money_flow"):
             try:
                 df = self._get_money_flow(symbol)
+                if not df.empty:
+                    self._parquet_put("money_flow", df)
                 return df
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name, symbol=symbol)
@@ -694,6 +870,8 @@ class AkShareAdapter(DataSource):
                 df = self._akshare.stock_individual_fund_flow(
                     stock=code, market="sh" if code.startswith("6") else "sz"
                 )
+                if df is not None and not df.empty:
+                    self._parquet_put("money_flow", df)
                 return df
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name, symbol=symbol)
@@ -707,11 +885,26 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> pd.DataFrame:
         """获取北向资金流向"""
+        # 尝试从 parquet_cache 获取
+        where = {}
+        if start_date:
+            where["date"] = [
+                self._normalize_date(start_date),
+                self._normalize_date(end_date or datetime.now()),
+            ]
+
+        cached = self._parquet_get("north_flow", where=where)
+        if cached is not None and not cached.empty:
+            logger.debug(f"[parquet_cache] 使用缓存北向资金流")
+            return cached
+
         self._load_market_data()
 
         if hasattr(self, "_get_north_money_flow"):
             try:
                 df = self._get_north_money_flow()
+                if not df.empty:
+                    self._parquet_put("north_flow", df)
                 return df
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name)
@@ -719,6 +912,8 @@ class AkShareAdapter(DataSource):
         if self._akshare_available:
             try:
                 df = self._akshare.stock_hsgt_north_net_flow_in_em()
+                if df is not None and not df.empty:
+                    self._parquet_put("north_flow", df)
                 return df
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name)
@@ -732,11 +927,25 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> List[str]:
         """获取行业成分股"""
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get(
+            "industry_components",
+            where={"industry_code": industry_code},
+        )
+        if cached is not None and not cached.empty:
+            if "symbol" in cached.columns:
+                return cached["symbol"].dropna().tolist()
+
         self._load_market_data()
 
         if hasattr(self, "_get_industry_stocks_sw"):
             try:
                 stocks = self._get_industry_stocks_sw(industry_code)
+                if stocks:
+                    df = pd.DataFrame(
+                        {"industry_code": industry_code, "symbol": stocks}
+                    )
+                    self._parquet_put("industry_components", df)
                 return stocks
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name, symbol=industry_code)
@@ -753,6 +962,10 @@ class AkShareAdapter(DataSource):
                             stocks.append(f"{code_str}.XSHG")
                         else:
                             stocks.append(f"{code_str}.XSHE")
+                    df_cache = pd.DataFrame(
+                        {"industry_code": industry_code, "symbol": stocks}
+                    )
+                    self._parquet_put("industry_components", df_cache)
                     return stocks
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name, symbol=industry_code)
@@ -766,13 +979,28 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> str:
         """获取股票所属行业"""
+        symbol = (
+            self._normalize_symbol(symbol)
+            if "." in symbol or symbol.startswith(("sh", "sz"))
+            else self._to_jq_format(symbol)
+        )
+
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get("industry_mapping", where={"symbol": symbol})
+        if cached is not None and not cached.empty:
+            if "industry_code" in cached.columns:
+                return cached["industry_code"].iloc[0]
+
         self._load_market_data()
 
         if hasattr(self, "_get_all_industry_mapping"):
             try:
                 mapping = self._get_all_industry_mapping()
-                jq_code = symbol if "." in symbol else self._to_jq_format(symbol)
-                return mapping.get(jq_code, "")
+                result = mapping.get(symbol, "")
+                if result:
+                    df = pd.DataFrame({"symbol": symbol, "industry_code": result})
+                    self._parquet_put("industry_mapping", df)
+                return result
             except Exception as e:
                 logger.warning(f"获取行业映射失败: {e}")
                 return ""
@@ -788,11 +1016,33 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> pd.DataFrame:
         """获取财务指标数据"""
+        symbol = (
+            self._normalize_symbol(symbol)
+            if "." in symbol or symbol.startswith(("sh", "sz"))
+            else symbol
+        )
+
+        # 尝试从 parquet_cache 获取
+        where = {"symbol": symbol}
+        if start_date:
+            where["report_date"] = [
+                self._normalize_date(start_date),
+                self._normalize_date(end_date or datetime.now()),
+            ]
+
+        cached = self._parquet_get("finance_indicator", where=where)
+        if cached is not None and not cached.empty:
+            logger.debug(f"[parquet_cache] {symbol}: 使用缓存财务指标")
+            return cached
+
         # 尝试从 finance_data 模块获取
         try:
             from jk2bt.finance_data.finance import get_finance_indicator
 
-            return get_finance_indicator(symbol, fields, start_date, end_date)
+            result = get_finance_indicator(symbol, fields, start_date, end_date)
+            if not result.empty:
+                self._parquet_put("finance_indicator", result)
+            return result
         except ImportError:
             pass
 
@@ -805,6 +1055,8 @@ class AkShareAdapter(DataSource):
                     .replace(".XSHE", "")
                 )
                 df = self._akshare.stock_financial_analysis_indicator(symbol=code)
+                if not df.empty:
+                    self._parquet_put("finance_indicator", df)
                 return df
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name, symbol=symbol)
@@ -840,14 +1092,46 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> pd.DataFrame:
         """获取 ETF 日线数据"""
+        symbol = self._normalize_symbol(symbol)
+        start = self._normalize_date(start_date)
+        end = self._normalize_date(end_date)
+
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get(
+            "etf_daily",
+            where={"symbol": symbol, "date": [start, end]},
+        )
+        if cached is not None and not cached.empty:
+            cached = cached.copy()
+            if "date" in cached.columns or "datetime" in cached.columns:
+                date_col = "date" if "date" in cached.columns else "datetime"
+                cached[date_col] = pd.to_datetime(cached[date_col])
+                cached = cached[
+                    (cached[date_col] >= pd.to_datetime(start))
+                    & (cached[date_col] <= pd.to_datetime(end))
+                ]
+            if not cached.empty:
+                logger.debug(f"[parquet_cache] {symbol}: 使用缓存数据")
+                return cached
+
+        # 离线模式检查
+        if self._offline_mode:
+            raise SourceUnavailableError(
+                "离线模式下无缓存数据",
+                error_code=ErrorCode.SOURCE_UNAVAILABLE,
+                source=self.name,
+                symbol=symbol,
+            )
+
         # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         self._load_market_data()
 
         if hasattr(self, "_get_etf_daily"):
             try:
-                start = self._normalize_date(start_date)
-                end = self._normalize_date(end_date)
-                return self._get_etf_daily(symbol, start, end)
+                df = self._get_etf_daily(symbol, start, end)
+                if not df.empty:
+                    self._parquet_put("etf_daily", df)
+                return df
             except Exception as e:
                 logger.warning(f"ETF 数据获取失败: {e}")
 
@@ -863,14 +1147,46 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> pd.DataFrame:
         """获取指数日线数据"""
+        symbol = self._normalize_symbol(symbol)
+        start = self._normalize_date(start_date)
+        end = self._normalize_date(end_date)
+
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get(
+            "index_daily",
+            where={"symbol": symbol, "date": [start, end]},
+        )
+        if cached is not None and not cached.empty:
+            cached = cached.copy()
+            if "date" in cached.columns or "datetime" in cached.columns:
+                date_col = "date" if "date" in cached.columns else "datetime"
+                cached[date_col] = pd.to_datetime(cached[date_col])
+                cached = cached[
+                    (cached[date_col] >= pd.to_datetime(start))
+                    & (cached[date_col] <= pd.to_datetime(end))
+                ]
+            if not cached.empty:
+                logger.debug(f"[parquet_cache] {symbol}: 使用缓存数据")
+                return cached
+
+        # 离线模式检查
+        if self._offline_mode:
+            raise SourceUnavailableError(
+                "离线模式下无缓存数据",
+                error_code=ErrorCode.SOURCE_UNAVAILABLE,
+                source=self.name,
+                symbol=symbol,
+            )
+
         # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         self._load_market_data()
 
         if hasattr(self, "_get_index_daily"):
             try:
-                start = self._normalize_date(start_date)
-                end = self._normalize_date(end_date)
-                return self._get_index_daily(symbol, start, end)
+                df = self._get_index_daily(symbol, start, end)
+                if not df.empty:
+                    self._parquet_put("index_daily", df)
+                return df
             except Exception as e:
                 logger.warning(f"指数数据获取失败: {e}")
 
@@ -914,28 +1230,53 @@ class AkShareAdapter(DataSource):
 
     def get_index_valuation(self, index_code: str) -> pd.DataFrame:
         """获取指数估值历史数据"""
+        cached = self._parquet_get("valuation", where={"symbol": index_code})
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.index_value_hist_fina(symbol=index_code)
+            result = self._akshare.index_value_hist_fina(symbol=index_code)
+            if not result.empty:
+                self._parquet_put("valuation", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
     def get_stock_valuation(self, symbol: str) -> pd.DataFrame:
         """获取个股估值数据"""
+        symbol = self._normalize_symbol(symbol)
+
+        cached = self._parquet_get("valuation", where={"symbol": symbol})
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.stock_a_lg_indicator(symbol=symbol)
+            result = self._akshare.stock_a_lg_indicator(symbol=symbol)
+            if not result.empty:
+                self._parquet_put("valuation", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
     def get_stock_pe_pb(self, symbol: str) -> pd.DataFrame:
         """获取个股 PE/PB 数据"""
+        symbol = self._normalize_symbol(symbol)
+
+        cached = self._parquet_get("valuation", where={"symbol": symbol})
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.stock_a_pe_and_pb(symbol=symbol)
+            result = self._akshare.stock_a_pe_and_pb(symbol=symbol)
+            if not result.empty:
+                self._parquet_put("valuation", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -943,15 +1284,27 @@ class AkShareAdapter(DataSource):
 
     def get_margin_detail(self, market: str, date: str) -> pd.DataFrame:
         """获取融资融券明细。market: 'sh' | 'sz'"""
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get(
+            "margin_detail", where={"market": market, "date": date}
+        )
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
             if market == "sh":
-                return self._akshare.stock_margin_detail_sse(date=date)
+                result = self._akshare.stock_margin_detail_sse(date=date)
             elif market == "sz":
-                return self._akshare.stock_margin_detail_szse(date=date)
+                result = self._akshare.stock_margin_detail_szse(date=date)
             else:
                 raise DataSourceError(f"不支持的市场: {market}", source=self.name)
+            if not result.empty:
+                result["market"] = market
+                result["date"] = date
+                self._parquet_put("margin_detail", result)
+            return result
         except DataSourceError:
             raise
         except Exception as e:
@@ -976,7 +1329,12 @@ class AkShareAdapter(DataSource):
     # ── 宏观数据（原始，不含缓存）────────────────────────────────
 
     def get_macro_raw(self, indicator: str) -> pd.DataFrame:
-        """获取宏观数据原始 DataFrame，不做缓存（缓存由调用方管理）"""
+        """获取宏观数据原始 DataFrame"""
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get("macro_data", where={"indicator": indicator})
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         _indicator_map = {
@@ -993,7 +1351,11 @@ class AkShareAdapter(DataSource):
         if fn is None:
             raise DataSourceError(f"不支持的宏观指标: {indicator}", source=self.name)
         try:
-            return fn()
+            result = fn()
+            if not result.empty:
+                result["indicator"] = indicator
+                self._parquet_put("macro_data", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1079,12 +1441,28 @@ class AkShareAdapter(DataSource):
 
     def get_cashflow(self, symbol: str) -> pd.DataFrame:
         """获取现金流数据"""
+        symbol = (
+            self._normalize_symbol(symbol)
+            if "." in symbol or symbol.startswith(("sh", "sz"))
+            else symbol
+        )
+
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get(
+            "financial_report", where={"symbol": symbol, "report_type": "现金流量表"}
+        )
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.stock_financial_report_sina(
+            result = self._akshare.stock_financial_report_sina(
                 stock=symbol, symbol="现金流量表"
             )
+            if not result.empty:
+                self._parquet_put("financial_report", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1101,15 +1479,29 @@ class AkShareAdapter(DataSource):
 
     def get_dividend_fhps(self, symbol: str = None, date: str = None) -> pd.DataFrame:
         """获取分红送股数据（stock_fhps_em）。symbol 或 date 二选一"""
+        # 尝试从 parquet_cache 获取
+        where = {}
+        if symbol:
+            where["symbol"] = symbol
+        if date:
+            where["announce_date"] = date
+
+        cached = self._parquet_get("dividend", where=where)
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
             if symbol is not None:
-                return self._akshare.stock_fhps_em(symbol=symbol)
+                result = self._akshare.stock_fhps_em(symbol=symbol)
             elif date is not None:
-                return self._akshare.stock_fhps_em(date=date)
+                result = self._akshare.stock_fhps_em(date=date)
             else:
-                return self._akshare.stock_fhps_em()
+                result = self._akshare.stock_fhps_em()
+            if not result.empty:
+                self._parquet_put("dividend", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1174,10 +1566,20 @@ class AkShareAdapter(DataSource):
 
     def get_pledge_ratio_em(self, symbol: str) -> pd.DataFrame:
         """获取股权质押比例数据（stock_gpzy_pledge_ratio_em）"""
+        symbol = self._normalize_symbol(symbol)
+
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get("share_change", where={"symbol": symbol})
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.stock_gpzy_pledge_ratio_em(symbol=symbol)
+            result = self._akshare.stock_gpzy_pledge_ratio_em(symbol=symbol)
+            if not result.empty:
+                self._parquet_put("share_change", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1192,10 +1594,20 @@ class AkShareAdapter(DataSource):
 
     def get_unlock_schedule(self, symbol: str) -> pd.DataFrame:
         """获取解禁计划数据"""
+        symbol = self._normalize_symbol(symbol)
+
+        # 尝试从 parquet_cache 获取
+        cached = self._parquet_get("unlock", where={"symbol": symbol})
+        if cached is not None and not cached.empty:
+            return cached
+
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.stock_restricted_release_detail_em(symbol=symbol)
+            result = self._akshare.stock_restricted_release_detail_em(symbol=symbol)
+            if not result.empty:
+                self._parquet_put("unlock", result)
+            return result
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1232,7 +1644,6 @@ class AkShareAdapter(DataSource):
 
     def get_spot_em(self) -> pd.DataFrame:
         """获取全市场实时行情"""
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         if not self._akshare_available:
             raise SourceUnavailableError(
                 "akshare 不可用",
@@ -1240,8 +1651,24 @@ class AkShareAdapter(DataSource):
                 source=self.name,
             )
         try:
-            return self._akshare.stock_zh_a_spot_em()
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call("stock_zh_a_spot_em")
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="stock_zh_a_spot_em"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="stock_zh_a_spot_em",
+            )
             raise SourceUnavailableError(
                 str(e), error_code=ErrorCode.SOURCE_TIMEOUT, source=self.name
             )
@@ -1255,7 +1682,6 @@ class AkShareAdapter(DataSource):
         adjust: str = "",
     ) -> pd.DataFrame:
         """获取股票历史行情"""
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         if not self._akshare_available:
             raise SourceUnavailableError(
                 "akshare 不可用",
@@ -1263,21 +1689,37 @@ class AkShareAdapter(DataSource):
                 source=self.name,
             )
         try:
-            return self._akshare.stock_zh_a_hist(
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call(
+                "stock_zh_a_hist",
                 symbol=symbol,
                 period=period,
                 start_date=start_date,
                 end_date=end_date,
                 adjust=adjust,
             )
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="stock_zh_a_hist"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="stock_zh_a_hist",
+            )
             raise SourceUnavailableError(
                 str(e), error_code=ErrorCode.SOURCE_TIMEOUT, source=self.name
             )
 
     def get_trade_dates(self) -> pd.DataFrame:
         """获取交易日历 DataFrame"""
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         if not self._akshare_available:
             raise SourceUnavailableError(
                 "akshare 不可用",
@@ -1285,8 +1727,24 @@ class AkShareAdapter(DataSource):
                 source=self.name,
             )
         try:
-            return self._akshare.tool_trade_date_hist_sina()
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call("tool_trade_date_hist_sina")
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="tool_trade_date_hist_sina"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="tool_trade_date_hist_sina",
+            )
             raise SourceUnavailableError(
                 str(e), error_code=ErrorCode.SOURCE_TIMEOUT, source=self.name
             )
@@ -1296,8 +1754,24 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.stock_info_a_code_name()
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call("stock_info_a_code_name")
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="stock_info_a_code_name"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="stock_info_a_code_name",
+            )
             raise DataSourceError(str(e), source=self.name)
 
     def get_bond_yield(self, start_date: str = "", end_date: str = "") -> pd.DataFrame:
@@ -1336,7 +1810,6 @@ class AkShareAdapter(DataSource):
 
     def get_index_daily_raw(self, symbol: str) -> pd.DataFrame:
         """直接获取指数日线数据（返回 akshare 原始 DataFrame）"""
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         if not self._akshare_available:
             raise SourceUnavailableError(
                 "akshare 不可用",
@@ -1344,8 +1817,24 @@ class AkShareAdapter(DataSource):
                 source=self.name,
             )
         try:
-            return self._akshare.stock_zh_index_daily(symbol=symbol)
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call("stock_zh_index_daily", symbol=symbol)
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="stock_zh_index_daily"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="stock_zh_index_daily",
+            )
             raise SourceUnavailableError(
                 str(e), error_code=ErrorCode.SOURCE_TIMEOUT, source=self.name
             )
@@ -1355,8 +1844,24 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.index_zh_a_hist(symbol=symbol, period=period)
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call("index_zh_a_hist", symbol=symbol, period=period)
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="index_zh_a_hist"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="index_zh_a_hist",
+            )
             raise DataSourceError(str(e), source=self.name)
 
     def get_financial_analysis_indicator(self, symbol: str) -> pd.DataFrame:
@@ -1802,7 +2307,6 @@ class AkShareAdapter(DataSource):
         adjust: str = "",
     ) -> pd.DataFrame:
         """获取股票分钟行情（stock_zh_a_hist_min_em）"""
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         if not self._akshare_available:
             raise SourceUnavailableError(
                 "akshare 不可用",
@@ -1810,14 +2314,31 @@ class AkShareAdapter(DataSource):
                 source=self.name,
             )
         try:
-            return self._akshare.stock_zh_a_hist_min_em(
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call(
+                "stock_zh_a_hist_min_em",
                 symbol=symbol,
                 period=period,
                 start_date=start_date,
                 end_date=end_date,
                 adjust=adjust,
             )
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="stock_zh_a_hist_min_em"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="stock_zh_a_hist_min_em",
+            )
             raise SourceUnavailableError(
                 str(e), error_code=ErrorCode.SOURCE_TIMEOUT, source=self.name
             )
@@ -1834,14 +2355,31 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            return self._akshare.fund_etf_hist_min_em(
+            import time
+
+            compat = self._get_compat_adapter()
+            start_time = time.time()
+            result = compat.call(
+                "fund_etf_hist_min_em",
                 symbol=symbol,
                 period=period,
                 start_date=start_date,
                 end_date=end_date,
                 adjust=adjust,
             )
+            duration_ms = (time.time() - start_time) * 1000
+            self._record_request(
+                "akshare", duration_ms, True, endpoint="fund_etf_hist_min_em"
+            )
+            return result
         except Exception as e:
+            self._record_request(
+                "akshare",
+                0,
+                False,
+                error_type=type(e).__name__,
+                endpoint="fund_etf_hist_min_em",
+            )
             raise DataSourceError(str(e), source=self.name)
 
     # ── 指数成分扩展 ──────────────────────────────────────────────
@@ -2008,6 +2546,24 @@ class AkShareAdapter(DataSource):
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
             return self._akshare.bond_zh_hs_daily(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_ah_stock_list(self) -> pd.DataFrame:
+        """获取AH股对照列表（stock_hk_ah_name_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_hk_ah_name_em()
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_ah_stock_spot(self) -> pd.DataFrame:
+        """获取AH股实时行情（stock_hk_ah_spot_em）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.stock_hk_ah_spot_em()
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 

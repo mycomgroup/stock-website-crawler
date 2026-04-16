@@ -21,18 +21,40 @@ import pandas as pd
 import numpy as np
 
 try:
-    from ..factors.technical import _get_daily_ohlcv, _compute_ma, _compute_ema, safe_divide
+    from ..factors.technical import _compute_ma, _compute_ema, safe_divide
 except ImportError:
-    from jk2bt.factors.technical import _get_daily_ohlcv, _compute_ma, _compute_ema
-    # 定义safe_divide的本地版本
+    from jk2bt.factors.technical import _compute_ma, _compute_ema
+
     def safe_divide(a, b, fill_value=np.nan):
         """安全除法，避免除零错误"""
-        with np.errstate(divide='ignore', invalid='ignore'):
+        with np.errstate(divide="ignore", invalid="ignore"):
             result = np.divide(a, b)
             result = np.where(np.isfinite(result), result, fill_value)
         if isinstance(a, pd.Series):
             return pd.Series(result, index=a.index)
         return result
+
+
+def _fetch_ohlcv(symbol: str, end_date: Optional[str], count: int) -> pd.DataFrame:
+    """通过 adapter 获取日线数据，返回带 date 列的 DataFrame"""
+    from jk2bt.data_access import get_adapter
+
+    if end_date is None:
+        end_date = pd.Timestamp.now().strftime("%Y-%m-%d")
+    start_date = (
+        pd.Timestamp(end_date) - pd.Timedelta(days=int(count * 1.5))
+    ).strftime("%Y-%m-%d")
+
+    df = get_adapter().get_daily_data(symbol, start_date, end_date)
+    if df.empty:
+        return df
+
+    df = df.copy()
+    if "datetime" in df.columns:
+        df["date"] = pd.to_datetime(df["datetime"]).dt.strftime("%Y-%m-%d")
+    if "amount" in df.columns and "money" not in df.columns:
+        df["money"] = df["amount"]
+    return df
 
 
 # =====================================================================
@@ -45,7 +67,6 @@ def detect_ma_cross(
     fast: int = 5,
     slow: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -73,13 +94,7 @@ def detect_ma_cross(
         signal: 1 (金叉), -1 (死叉), 0 (无交叉)
     """
     need_count = slow + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -104,10 +119,12 @@ def detect_ma_cross(
     signal[golden_cross] = 1
     signal[dead_cross] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+        }
+    )
 
     # 添加信号类型
     result.loc[result["signal"] == 1, "type"] = f"ma_{fast}_{slow}_golden_cross"
@@ -131,7 +148,6 @@ def detect_macd_cross(
     slow: int = 26,
     signal_period: int = 9,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -160,13 +176,7 @@ def detect_macd_cross(
         columns: date, signal, type, macd_value
     """
     need_count = slow + signal_period + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -194,11 +204,13 @@ def detect_macd_cross(
     signal[golden_cross] = 1
     signal[dead_cross] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "macd_value": macd.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "macd_value": macd.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "macd_golden_cross"
     result.loc[result["signal"] == -1, "type"] = "macd_dead_cross"
@@ -219,7 +231,6 @@ def detect_kdj_cross(
     m1: int = 3,
     m2: int = 3,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -248,13 +259,7 @@ def detect_kdj_cross(
         columns: date, signal, type, k_value, d_value
     """
     need_count = n + m1 + m2 + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -287,12 +292,14 @@ def detect_kdj_cross(
     signal[golden_cross] = 1
     signal[dead_cross] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "k_value": k.values,
-        "d_value": d.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "k_value": k.values,
+            "d_value": d.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "kdj_golden_cross"
     result.loc[result["signal"] == -1, "type"] = "kdj_dead_cross"
@@ -312,7 +319,6 @@ def detect_ema_cross(
     fast: int = 10,
     slow: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -339,13 +345,7 @@ def detect_ema_cross(
         columns: date, signal, type
     """
     need_count = slow + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -368,10 +368,12 @@ def detect_ema_cross(
     signal[golden_cross] = 1
     signal[dead_cross] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = f"ema_{fast}_{slow}_golden_cross"
     result.loc[result["signal"] == -1, "type"] = f"ema_{fast}_{slow}_dead_cross"
@@ -392,7 +394,6 @@ def detect_vmacd_cross(
     slow: int = 26,
     signal_period: int = 9,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -421,13 +422,7 @@ def detect_vmacd_cross(
         columns: date, signal, type
     """
     need_count = slow + signal_period + 20
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "volume" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -454,11 +449,13 @@ def detect_vmacd_cross(
     signal[turn_red] = 1
     signal[turn_green] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "vmacd_value": vmacd.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "vmacd_value": vmacd.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "vmacd_turn_red"
     result.loc[result["signal"] == -1, "type"] = "vmacd_turn_green"
@@ -476,7 +473,6 @@ def detect_vmacd_cross(
 def detect_all_cross_signals(
     symbol: str,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -498,7 +494,9 @@ def detect_all_cross_signals(
 
     # MA交叉
     try:
-        ma_signals = detect_ma_cross(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        ma_signals = detect_ma_cross(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not ma_signals.empty:
             signals.append(ma_signals)
     except Exception as e:
@@ -506,7 +504,9 @@ def detect_all_cross_signals(
 
     # MACD交叉
     try:
-        macd_signals = detect_macd_cross(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        macd_signals = detect_macd_cross(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not macd_signals.empty:
             signals.append(macd_signals)
     except Exception as e:
@@ -514,7 +514,9 @@ def detect_all_cross_signals(
 
     # KDJ交叉
     try:
-        kdj_signals = detect_kdj_cross(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        kdj_signals = detect_kdj_cross(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not kdj_signals.empty:
             signals.append(kdj_signals)
     except Exception as e:

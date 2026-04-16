@@ -296,6 +296,7 @@ def _get_db_manager():
     manager._ensure_initialized()
     return manager
 
+
 _db_manager = None  # 延迟初始化，避免导入时副作用
 
 
@@ -743,9 +744,7 @@ class FinanceQuery:
         code = None
         level = None
 
-    def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
-    ) -> pd.DataFrame:
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
 
@@ -789,7 +788,6 @@ def run_query_simple(
     code: str = None,
     industry_code: str = None,
     industry_name: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
@@ -812,7 +810,6 @@ def run_query_simple(
 
 def query_industry_sw(
     symbols: List[str],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:

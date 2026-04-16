@@ -341,7 +341,7 @@ _db_manager = CompanyInfoDBManager() if _DUCKDB_AVAILABLE else None
 
 
 def get_company_info(
-    symbol, cache_dir="finance_cache", force_update=False, use_duckdb=True
+    symbol, force_update=False, use_duckdb=True
 ) -> pd.DataFrame:
     """
     获取上市公司基本信息。
@@ -349,7 +349,6 @@ def get_company_info(
     参数
     ----
     symbol     : 股票代码，支持 '600519.XSHG', '000001.XSHE', 'sh600519', 'sz000001', '600519' 等格式
-    cache_dir  : pickle 缓存目录（备用）
     force_update: True 时强制重新下载
     use_duckdb : 是否使用 DuckDB 缓存（优先）
 
@@ -417,7 +416,7 @@ def get_company_info(
 
 
 def get_security_status(
-    symbol, date=None, cache_dir="finance_cache", force_update=False, use_duckdb=True
+    symbol, date=None, force_update=False, use_duckdb=True
 ) -> pd.DataFrame:
     """
     获取指定日期的证券状态（停牌、复牌、退市等）。
@@ -426,7 +425,6 @@ def get_security_status(
     ----
     symbol     : 股票代码
     date       : 查询日期，格式 'YYYY-MM-DD' 或 'YYYYMMDD'，默认最近交易日
-    cache_dir  : pickle 缓存目录（备用）
     force_update: True 时强制重新下载
     use_duckdb : 是否使用 DuckDB 缓存（优先）
 
@@ -626,7 +624,7 @@ def _normalize_date(date_str: str) -> str:
 
 
 def query_company_basic_info(
-    symbols, cache_dir="finance_cache", force_update=False, use_duckdb=True
+    symbols, force_update=False, use_duckdb=True
 ) -> pd.DataFrame:
     """
     批量查询公司基本信息（finance.STK_COMPANY_BASIC_INFO）。
@@ -634,7 +632,6 @@ def query_company_basic_info(
     参数
     ----
     symbols    : 股票代码列表
-    cache_dir  : pickle 缓存目录（备用）
     force_update: 强制更新
     use_duckdb : 是否使用 DuckDB 缓存（优先）
 
@@ -679,7 +676,6 @@ def query_status_change(
     symbols,
     start_date=None,
     end_date=None,
-    cache_dir="finance_cache",
     force_update=False,
     use_duckdb=True,
 ) -> pd.DataFrame:
@@ -691,7 +687,6 @@ def query_status_change(
     symbols    : 股票代码列表
     start_date : 起始日期 'YYYY-MM-DD'
     end_date   : 结束日期 'YYYY-MM-DD'
-    cache_dir  : pickle 缓存目录（备用）
     force_update: 强制更新
     use_duckdb : 是否使用 DuckDB 缓存（优先）
 
@@ -789,7 +784,7 @@ class FinanceQuery:
         reason = None
 
     def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
+        self, query_obj, force_update=False, use_duckdb=True
     ) -> pd.DataFrame:
         """
         执行查询（模拟聚宽 finance.run_query）。
@@ -797,7 +792,6 @@ class FinanceQuery:
         参数
         ----
         query_obj    : 查询对象（表对象或查询表达式）
-        cache_dir    : pickle 缓存目录
         force_update : 强制更新
         use_duckdb   : 是否使用 DuckDB 缓存
 
@@ -869,7 +863,6 @@ finance = FinanceQuery()
 def run_query_simple(
     table: str,
     code: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -879,7 +872,6 @@ def run_query_simple(
     ----
     table       : 表名 ('STK_COMPANY_BASIC_INFO' 或 'STK_STATUS_CHANGE')
     code        : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -894,14 +886,14 @@ def run_query_simple(
     if table == "STK_COMPANY_BASIC_INFO":
         if code:
             return get_company_info(
-                code, cache_dir=cache_dir, force_update=force_update
+                code, force_update=force_update
             )
         else:
             return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
     elif table == "STK_STATUS_CHANGE":
         if code:
             return get_security_status(
-                code, cache_dir=cache_dir, force_update=force_update
+                code, force_update=force_update
             )
         else:
             return pd.DataFrame(columns=_STATUS_CHANGE_SCHEMA)
@@ -921,7 +913,6 @@ _LISTING_INFO_SCHEMA = [
 def get_listing_info(
     symbol=None,
     symbols=None,
-    cache_dir="finance_cache",
     force_update=False,
 ) -> pd.DataFrame:
     """
@@ -931,7 +922,6 @@ def get_listing_info(
     ----
     symbol      : 单个股票代码
     symbols     : 多个股票代码列表
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1048,7 +1038,6 @@ def _create_empty_company_info_df() -> pd.DataFrame:
 
 def get_company_info_robust(
     symbol: Union[str, List[str]],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> RobustResult:
@@ -1058,7 +1047,6 @@ def get_company_info_robust(
     参数
     ----
     symbol      : 股票代码（单个或列表）
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -1180,7 +1168,6 @@ def _get_company_info_batch_robust(
 
 def query_company_info_robust(
     symbols: List[str],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> RobustResult:
@@ -1190,7 +1177,6 @@ def query_company_info_robust(
     参数
     ----
     symbols     : 股票代码列表
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -1209,7 +1195,6 @@ def query_company_info_robust(
 def get_security_status_robust(
     symbol: Union[str, List[str]],
     date: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> RobustResult:
@@ -1220,7 +1205,6 @@ def get_security_status_robust(
     ----
     symbol      : 股票代码
     date        : 查询日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB
 
@@ -1286,7 +1270,6 @@ _INDUSTY_INFO_SCHEMA = [
 
 def get_company_info_list(
     securities: List[str],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> Dict[str, pd.DataFrame]:
@@ -1296,7 +1279,6 @@ def get_company_info_list(
     参数
     ----
     securities  : 股票代码列表，如 ['600000.XSHG', '000001.XSHE']
-    cache_dir   : pickle 缓存目录（备用）
     force_update: True 时强制重新下载
     use_duckdb  : 是否使用 DuckDB 缓存（优先）
 
@@ -1333,7 +1315,6 @@ def get_company_info_list(
 
 def get_industry_info(
     security: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1342,7 +1323,6 @@ def get_industry_info(
     参数
     ----
     security    : 股票代码，如 '600000.XSHG'
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1413,7 +1393,6 @@ def _normalize_industry_info(df_raw: pd.DataFrame, jq_code: str) -> pd.DataFrame
 
 def prewarm_company_info_cache(
     securities: List[str] = None,
-    cache_dir: str = "finance_cache",
     max_workers: int = 5,
     use_duckdb: bool = True,
 ) -> Dict[str, bool]:
@@ -1423,7 +1402,6 @@ def prewarm_company_info_cache(
     参数
     ----
     securities  : 需要预热的股票代码列表，默认预热沪深300主要成分股
-    cache_dir   : 缓存目录
     max_workers : 并发下载的最大线程数（暂不支持并发，预留）
     use_duckdb  : 是否写入 DuckDB 缓存
 

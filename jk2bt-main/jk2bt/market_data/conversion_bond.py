@@ -219,6 +219,7 @@ def _get_db_manager():
     manager._ensure_initialized()
     return manager
 
+
 _db_manager = None  # 延迟初始化，避免导入时副作用
 
 
@@ -257,7 +258,6 @@ def _parse_date(date_str) -> Optional[str]:
 
 
 def get_conversion_bond_list(
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -266,7 +266,6 @@ def get_conversion_bond_list(
 
     参数
     ----
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -276,61 +275,42 @@ def get_conversion_bond_list(
     """
     date_str = datetime.now().strftime("%Y-%m-%d")
 
-    cache_file = os.path.join(cache_dir, "conversion_bond_list.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    try:
+        from jk2bt.data_access import get_adapter as _get_adapter_cb
 
-    need_download = force_update or (not os.path.exists(cache_file))
+        results = []
 
-    if not need_download:
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 1:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            from jk2bt.data_access import get_adapter as _get_adapter_cb
-
-            results = []
-
-            try:
-                df_jsl = _get_adapter_cb().get_bond_cb_jsl()
-                if df_jsl is not None and not df_jsl.empty:
-                    for _, row in df_jsl.iterrows():
-                        record = _parse_jsl_row(row, date_str)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"bond_cb_jsl 失败: {e}")
-
-            try:
-                df_cov = _get_adapter_cb().get_conversion_bond_list()
-                if df_cov is not None and not df_cov.empty:
-                    for _, row in df_cov.iterrows():
-                        record = _parse_cov_row(row, date_str)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"bond_zh_cov 失败: {e}")
-
-            if results:
-                result_df = pd.DataFrame(results)
-                result_df = result_df.drop_duplicates(
-                    subset=["bond_code"], keep="first"
-                )
-                result_df.to_pickle(cache_file)
-                if use_duckdb:
-                    db_manager = _get_db_manager()
-                    if db_manager is not None:
-                        db_manager.insert_cb(result_df)
-                return result_df
-
+            df_jsl = _get_adapter_cb().get_bond_cb_jsl()
+            if df_jsl is not None and not df_jsl.empty:
+                for _, row in df_jsl.iterrows():
+                    record = _parse_jsl_row(row, date_str)
+                    if record:
+                        results.append(record)
         except Exception as e:
-            logger.warning(f"[conversion_bond] 获取可转债列表失败: {e}")
+            logger.debug(f"bond_cb_jsl 失败: {e}")
+
+        try:
+            df_cov = _get_adapter_cb().get_conversion_bond_list()
+            if df_cov is not None and not df_cov.empty:
+                for _, row in df_cov.iterrows():
+                    record = _parse_cov_row(row, date_str)
+                    if record:
+                        results.append(record)
+        except Exception as e:
+            logger.debug(f"bond_zh_cov 失败: {e}")
+
+        if results:
+            result_df = pd.DataFrame(results)
+            result_df = result_df.drop_duplicates(subset=["bond_code"], keep="first")
+            if use_duckdb:
+                db_manager = _get_db_manager()
+                if db_manager is not None:
+                    db_manager.insert_cb(result_df)
+            return result_df
+
+    except Exception as e:
+        logger.warning(f"[conversion_bond] 获取可转债列表失败: {e}")
 
     return pd.DataFrame(columns=_CB_SCHEMA)
 
@@ -379,7 +359,6 @@ def _parse_cov_row(row, date_str: str) -> Optional[dict]:
 
 def get_conversion_bond(
     bond_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -389,7 +368,6 @@ def get_conversion_bond(
     参数
     ----
     bond_code   : 可转债代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -397,9 +375,7 @@ def get_conversion_bond(
     ----
     pandas DataFrame，单只可转债信息
     """
-    df_list = get_conversion_bond_list(
-        cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb
-    )
+    df_list = get_conversion_bond_list(force_update=force_update, use_duckdb=use_duckdb)
 
     if df_list.empty:
         return pd.DataFrame(columns=_CB_SCHEMA)
@@ -411,7 +387,6 @@ def get_conversion_bond(
 
 def query_conversion_bond(
     bond_codes: List[str],
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -421,9 +396,7 @@ def query_conversion_bond(
     if bond_codes is None or len(bond_codes) == 0:
         return pd.DataFrame(columns=_CB_SCHEMA)
 
-    df_list = get_conversion_bond_list(
-        cache_dir=cache_dir, force_update=force_update, use_duckdb=use_duckdb
-    )
+    df_list = get_conversion_bond_list(force_update=force_update, use_duckdb=use_duckdb)
 
     if df_list.empty:
         return pd.DataFrame(columns=_CB_SCHEMA)
@@ -465,9 +438,7 @@ class FinanceQuery:
         volume = None
         amount = None
 
-    def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
-    ) -> pd.DataFrame:
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
 
@@ -487,9 +458,9 @@ class FinanceQuery:
         if table_name == "STK_CB_DAILY":
             if "bond_code" in conditions:
                 return get_conversion_bond(
-                    conditions["bond_code"], cache_dir=cache_dir, use_duckdb=use_duckdb
+                    conditions["bond_code"], use_duckdb=use_duckdb
                 )
-            return get_conversion_bond_list(cache_dir=cache_dir, use_duckdb=use_duckdb)
+            return get_conversion_bond_list(use_duckdb=use_duckdb)
         elif table_name == "STK_CONVERSION_BOND_BASIC":
             bond_code = conditions.get("bond_code")
             if bond_code:
@@ -507,7 +478,7 @@ class FinanceQuery:
                 use_cache=use_duckdb,
             )
         elif table_name == "CONVERSION_BOND":
-            return get_conversion_bond_list(cache_dir=cache_dir, use_duckdb=use_duckdb)
+            return get_conversion_bond_list(use_duckdb=use_duckdb)
         else:
             logger.warning(f"[FinanceQuery] 不支持的表: {table_name}")
             return pd.DataFrame()
@@ -518,22 +489,18 @@ finance = FinanceQuery()
 
 def get_conversion_bond_quote(
     bond_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取可转债行情数据"""
-    return get_conversion_bond(
-        bond_code, cache_dir=cache_dir, force_update=force_update
-    )
+    return get_conversion_bond(bond_code, force_update=force_update)
 
 
 def get_conversion_info(
     bond_code: str,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> dict:
     """获取可转债基本信息"""
-    df = get_conversion_bond(bond_code, cache_dir=cache_dir, force_update=force_update)
+    df = get_conversion_bond(bond_code, force_update=force_update)
     if df.empty:
         return {}
     return df.iloc[0].to_dict() if len(df) > 0 else {}
@@ -562,16 +529,13 @@ def calculate_premium_rate(
 def run_query_simple(
     table: str,
     bond_code: str = None,
-    cache_dir: str = "finance_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
     if table == "STK_CB_DAILY":
         if bond_code:
-            return get_conversion_bond(
-                bond_code, cache_dir=cache_dir, force_update=force_update
-            )
-        return get_conversion_bond_list(cache_dir=cache_dir, force_update=force_update)
+            return get_conversion_bond(bond_code, force_update=force_update)
+        return get_conversion_bond_list(force_update=force_update)
     else:
         raise ValueError(f"不支持的表: {table}")
 

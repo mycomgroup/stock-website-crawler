@@ -46,9 +46,9 @@ if str(project_root) not in sys.path:
 # 预先 mock jk2bt.core.strategy_base 模块以避免导入问题
 mock_strategy_base = MagicMock()
 mock_strategy_base.get_all_trade_days_jq = MagicMock(return_value=pd.DatetimeIndex([]))
-sys.modules['jk2bt.core.strategy_base'] = mock_strategy_base
-sys.modules['jk2bt.core'] = MagicMock()
-sys.modules['jk2bt'] = MagicMock()
+sys.modules["jk2bt.core.strategy_base"] = mock_strategy_base
+sys.modules["jk2bt.core"] = MagicMock()
+sys.modules["jk2bt"] = MagicMock()
 
 # 执行模块加载
 spec.loader.exec_module(base_module)
@@ -66,8 +66,7 @@ slice_window = base_module.slice_window
 align_to_trade_days = base_module.align_to_trade_days
 load_factor_cache = base_module.load_factor_cache
 save_factor_cache = base_module.save_factor_cache
-_cache_key = base_module._cache_key
-_ensure_cache_dir = base_module._ensure_cache_dir
+invalidate_factor_cache = base_module.invalidate_factor_cache
 
 
 # =====================================================================
@@ -184,6 +183,7 @@ class TestFactorRegistry:
 
     def test_register_and_get(self):
         """测试注册和获取因子。"""
+
         def dummy_factor(symbol, end_date, count, **kwargs):
             return 1.0
 
@@ -192,6 +192,7 @@ class TestFactorRegistry:
 
     def test_register_with_metadata(self):
         """测试带元数据注册因子。"""
+
         def dummy_factor(symbol, end_date, count, **kwargs):
             return 1.0
 
@@ -200,7 +201,7 @@ class TestFactorRegistry:
             dummy_factor,
             window=20,
             dependencies=["daily_ohlcv"],
-            description="测试因子"
+            description="测试因子",
         )
 
         meta = self.registry.get_metadata("test_factor")
@@ -210,6 +211,7 @@ class TestFactorRegistry:
 
     def test_register_normalizes_name(self):
         """测试注册时自动标准化因子名。"""
+
         def dummy_factor(symbol, end_date, count, **kwargs):
             return 1.0
 
@@ -234,6 +236,7 @@ class TestFactorRegistry:
 
     def test_list_factors_multiple(self):
         """测试列出多个已注册因子。"""
+
         def factor1(*args, **kwargs):
             return 1.0
 
@@ -255,6 +258,7 @@ class TestFactorRegistry:
 
     def test_is_registered_true(self):
         """测试检查已注册因子。"""
+
         def dummy_factor(*args, **kwargs):
             return 1.0
 
@@ -267,6 +271,7 @@ class TestFactorRegistry:
 
     def test_is_registered_with_alias(self):
         """测试使用别名检查注册状态。"""
+
         def dummy_factor(*args, **kwargs):
             return 1.0
 
@@ -278,6 +283,7 @@ class TestFactorRegistry:
 
     def test_overwrite_registration(self):
         """测试覆盖注册因子。"""
+
         def factor_v1(*args, **kwargs):
             return 1.0
 
@@ -291,11 +297,14 @@ class TestFactorRegistry:
 
     def test_multiple_registrations_preserve_metadata(self):
         """测试多次注册更新元信息。"""
+
         def dummy_factor(*args, **kwargs):
             return 1.0
 
         self.registry.register("test_factor", dummy_factor, window=10)
-        self.registry.register("test_factor", dummy_factor, window=20, description="新描述")
+        self.registry.register(
+            "test_factor", dummy_factor, window=20, description="新描述"
+        )
 
         meta = self.registry.get_metadata("test_factor")
         assert meta["window"] == 20
@@ -529,20 +538,24 @@ class TestSliceWindow:
 
     def test_basic_slice(self):
         """测试基本切片功能。"""
-        df = pd.DataFrame({
-            "date": pd.date_range("2024-01-01", periods=10).strftime("%Y-%m-%d"),
-            "value": range(10)
-        })
+        df = pd.DataFrame(
+            {
+                "date": pd.date_range("2024-01-01", periods=10).strftime("%Y-%m-%d"),
+                "value": range(10),
+            }
+        )
         result = slice_window(df, "2024-01-05", 3)
         assert len(result) == 3
         assert result["date"].tolist() == ["2024-01-03", "2024-01-04", "2024-01-05"]
 
     def test_slice_with_larger_count_than_data(self):
         """测试窗口大于数据量。"""
-        df = pd.DataFrame({
-            "date": pd.date_range("2024-01-01", periods=3).strftime("%Y-%m-%d"),
-            "value": range(3)
-        })
+        df = pd.DataFrame(
+            {
+                "date": pd.date_range("2024-01-01", periods=3).strftime("%Y-%m-%d"),
+                "value": range(3),
+            }
+        )
         result = slice_window(df, "2024-01-03", 10)
         assert len(result) == 3
 
@@ -559,28 +572,32 @@ class TestSliceWindow:
 
     def test_custom_date_column(self):
         """测试自定义日期列名。"""
-        df = pd.DataFrame({
-            "trade_date": pd.date_range("2024-01-01", periods=10).strftime("%Y-%m-%d"),
-            "value": range(10)
-        })
+        df = pd.DataFrame(
+            {
+                "trade_date": pd.date_range("2024-01-01", periods=10).strftime(
+                    "%Y-%m-%d"
+                ),
+                "value": range(10),
+            }
+        )
         result = slice_window(df, "2024-01-05", 3, date_col="trade_date")
         assert len(result) == 3
 
     def test_no_date_column(self):
         """测试无日期列时按行数切片。"""
-        df = pd.DataFrame({
-            "value": range(10)
-        })
+        df = pd.DataFrame({"value": range(10)})
         result = slice_window(df, "2024-01-05", 3)
         assert len(result) == 3
         assert result["value"].tolist() == [7, 8, 9]
 
     def test_end_date_filter(self):
         """测试截止日期过滤。"""
-        df = pd.DataFrame({
-            "date": pd.date_range("2024-01-01", periods=10).strftime("%Y-%m-%d"),
-            "value": range(10)
-        })
+        df = pd.DataFrame(
+            {
+                "date": pd.date_range("2024-01-01", periods=10).strftime("%Y-%m-%d"),
+                "value": range(10),
+            }
+        )
         result = slice_window(df, "2024-01-05", 10)
         # 只保留 <= 2024-01-05 的数据，然后取最后 10 条
         assert all(d <= "2024-01-05" for d in result["date"])
@@ -596,11 +613,15 @@ class TestAlignToTradeDays:
 
     def test_basic_alignment(self):
         """测试基本对齐功能。"""
-        df = pd.DataFrame({
-            "date": ["2024-01-02", "2024-01-04", "2024-01-06"],  # 跳过了周末
-            "value": [1, 2, 3]
-        })
-        result = align_to_trade_days(df, date_col="date", start_date="2024-01-01", end_date="2024-01-07")
+        df = pd.DataFrame(
+            {
+                "date": ["2024-01-02", "2024-01-04", "2024-01-06"],  # 跳过了周末
+                "value": [1, 2, 3],
+            }
+        )
+        result = align_to_trade_days(
+            df, date_col="date", start_date="2024-01-01", end_date="2024-01-07"
+        )
         # 结果应包含日期列
         assert "date" in result.columns
         assert "value" in result.columns
@@ -618,36 +639,25 @@ class TestAlignToTradeDays:
 
     def test_missing_date_column(self):
         """测试缺少日期列时返回原数据。"""
-        df = pd.DataFrame({
-            "value": [1, 2, 3]
-        })
+        df = pd.DataFrame({"value": [1, 2, 3]})
         result = align_to_trade_days(df)
         pd.testing.assert_frame_equal(result, df)
 
     def test_ffill_method(self):
         """测试前向填充方法。"""
-        df = pd.DataFrame({
-            "date": ["2024-01-02", "2024-01-04"],
-            "value": [1.0, 2.0]
-        })
+        df = pd.DataFrame({"date": ["2024-01-02", "2024-01-04"], "value": [1.0, 2.0]})
         result = align_to_trade_days(df, fill_method="ffill")
         assert "date" in result.columns
 
     def test_bfill_method(self):
         """测试后向填充方法。"""
-        df = pd.DataFrame({
-            "date": ["2024-01-02", "2024-01-04"],
-            "value": [1.0, 2.0]
-        })
+        df = pd.DataFrame({"date": ["2024-01-02", "2024-01-04"], "value": [1.0, 2.0]})
         result = align_to_trade_days(df, fill_method="bfill")
         assert "date" in result.columns
 
     def test_auto_date_range(self):
         """测试自动确定日期范围。"""
-        df = pd.DataFrame({
-            "date": ["2024-01-05", "2024-01-10"],
-            "value": [1.0, 2.0]
-        })
+        df = pd.DataFrame({"date": ["2024-01-05", "2024-01-10"], "value": [1.0, 2.0]})
         # 不指定 start_date 和 end_date，应自动使用数据范围
         result = align_to_trade_days(df)
         assert "date" in result.columns
@@ -658,93 +668,120 @@ class TestAlignToTradeDays:
 # =====================================================================
 
 
-class TestCacheUtils:
-    """测试缓存工具函数。"""
+# =====================================================================
+# 因子缓存测试 (基于 parquet_cache)
+# =====================================================================
 
-    def test_ensure_cache_dir(self):
-        """测试创建缓存目录。"""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            cache_dir = os.path.join(tmpdir, "test_cache")
-            _ensure_cache_dir(cache_dir)
-            assert os.path.exists(cache_dir)
 
-    def test_ensure_cache_dir_already_exists(self):
-        """测试已存在的缓存目录。"""
-        with tempfile.TemporaryDirectory() as cache_dir:
-            # 不应抛出异常
-            _ensure_cache_dir(cache_dir)
-            assert os.path.exists(cache_dir)
-
-    def test_cache_key_basic(self):
-        """测试基本缓存键生成。"""
-        key = _cache_key("pe_ratio", "sh600519", "2024-01-01")
-        assert "pe_ratio" in key
-        assert "sh600519" in key
-        assert "2024-01-01" in key
-        assert key.endswith(".pkl")
-
-    def test_cache_key_with_count(self):
-        """测试带窗口长度的缓存键。"""
-        key = _cache_key("pe_ratio", "sh600519", "2024-01-01", count=20)
-        assert "_20" in key
-
-    def test_cache_key_special_chars(self):
-        """测试特殊字符处理。"""
-        # 冒号和斜杠应被替换
-        key = _cache_key("factor", "symbol:test/path", "2024-01-01")
-        assert ":" not in key
-        assert "/" not in key
+class TestFactorCache:
+    """测试基于 parquet_cache 的因子缓存。"""
 
     def test_save_and_load_factor_cache(self):
         """测试保存和加载因子缓存。"""
-        with tempfile.TemporaryDirectory() as cache_dir:
-            df = pd.DataFrame({
-                "date": ["2024-01-01", "2024-01-02"],
-                "value": [1.0, 2.0]
-            })
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_cache = MagicMock()
+            mock_get_manager.return_value = mock_cache
+
+            df = pd.DataFrame(
+                {"value": [1.0, 2.0]},
+                index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
+            )
 
             # 保存缓存
-            save_factor_cache(df, "test_factor", "sh600519", "2024-01-02", cache_dir=cache_dir)
+            save_factor_cache(df, "test_factor", "sh600519", "2024-01-02")
 
-            # 加载缓存
-            loaded = load_factor_cache("test_factor", "sh600519", "2024-01-02", cache_dir=cache_dir)
+            # 验证 put 被正确调用
+            mock_cache.put.assert_called_once()
+            call_args = mock_cache.put.call_args
+            assert call_args[0][0] == "factor_cache"
+            put_df = call_args[0][1]
+            assert "factor_name" in put_df.columns
+            assert "symbol" in put_df.columns
+            assert "date" in put_df.columns
+            assert "value" in put_df.columns
 
-            assert loaded is not None
-            pd.testing.assert_frame_equal(loaded, df)
+    def test_load_factor_cache_returns_data(self):
+        """测试加载缓存返回数据。"""
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_cache = MagicMock()
+            mock_get_manager.return_value = mock_cache
+
+            # 模拟缓存返回数据
+            mock_result = pd.DataFrame(
+                {
+                    "factor_name": ["test_factor", "test_factor"],
+                    "symbol": ["sh600519", "sh600519"],
+                    "date": pd.to_datetime(["2024-01-01", "2024-01-02"]).date,
+                    "value": [1.0, 2.0],
+                }
+            )
+            mock_cache.get.return_value = mock_result
+
+            result = load_factor_cache("test_factor", "sh600519", "2024-01-02", count=2)
+
+            assert result is not None
+            assert len(result) == 2
+            assert "test_factor" in result.columns
 
     def test_load_factor_cache_not_found(self):
         """测试加载不存在的缓存。"""
-        with tempfile.TemporaryDirectory() as cache_dir:
-            result = load_factor_cache("nonexistent", "sh600519", "2024-01-01", cache_dir=cache_dir)
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_cache = MagicMock()
+            mock_get_manager.return_value = mock_cache
+            mock_cache.get.return_value = None
+
+            result = load_factor_cache("nonexistent", "sh600519", "2024-01-01")
             assert result is None
 
-    def test_load_factor_cache_corrupted(self):
-        """测试加载损坏的缓存文件。"""
-        with tempfile.TemporaryDirectory() as cache_dir:
-            # 创建损坏的缓存文件
-            _ensure_cache_dir(cache_dir)
-            fname = _cache_key("corrupted", "sh600519", "2024-01-01")
-            fpath = os.path.join(cache_dir, fname)
-            with open(fpath, "w") as f:
-                f.write("not a valid pickle file")
+    def test_load_factor_cache_empty_result(self):
+        """测试加载空结果。"""
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_cache = MagicMock()
+            mock_get_manager.return_value = mock_cache
+            mock_cache.get.return_value = pd.DataFrame()
 
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("always")
-                result = load_factor_cache("corrupted", "sh600519", "2024-01-01", cache_dir=cache_dir)
-                assert result is None
-                assert len(w) == 1
-                assert "读取因子缓存失败" in str(w[0].message)
+            result = load_factor_cache("nonexistent", "sh600519", "2024-01-01")
+            assert result is None
 
-    def test_save_factor_cache_with_count(self):
-        """测试带窗口长度的缓存保存。"""
-        with tempfile.TemporaryDirectory() as cache_dir:
-            df = pd.DataFrame({"value": [1.0, 2.0]})
+    def test_save_factor_cache_exception(self):
+        """测试保存缓存异常时静默处理。"""
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_get_manager.side_effect = Exception("cache error")
 
-            save_factor_cache(df, "test_factor", "sh600519", "2024-01-01", count=20, cache_dir=cache_dir)
+            df = pd.DataFrame({"value": [1.0]}, index=pd.to_datetime(["2024-01-01"]))
+            # 不应抛出异常
+            save_factor_cache(df, "test_factor", "sh600519", "2024-01-01")
 
-            # 验证文件名包含 count
-            expected_fname = _cache_key("test_factor", "sh600519", "2024-01-01", count=20)
-            assert os.path.exists(os.path.join(cache_dir, expected_fname))
+    def test_load_factor_cache_exception(self):
+        """测试加载缓存异常时返回 None。"""
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_get_manager.side_effect = Exception("cache error")
+
+            result = load_factor_cache("test_factor", "sh600519", "2024-01-01")
+            assert result is None
+
+    def test_invalidate_factor_cache(self):
+        """测试清除因子缓存。"""
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_cache = MagicMock()
+            mock_get_manager.return_value = mock_cache
+
+            invalidate_factor_cache(factor_name="test_factor")
+
+            mock_cache.invalidate.assert_called_once()
+            call_args = mock_cache.invalidate.call_args
+            assert call_args[0][0] == "factor_cache"
+            assert call_args[1]["where"] == {"factor_name": "test_factor"}
+
+    def test_invalidate_factor_cache_all(self):
+        """测试清除所有因子缓存。"""
+        with patch.object(base_module, "_get_factor_cache_manager") as mock_get_manager:
+            mock_cache = MagicMock()
+            mock_get_manager.return_value = mock_cache
+
+            invalidate_factor_cache()
+
+            mock_cache.invalidate.assert_called_once_with("factor_cache")
 
 
 # =====================================================================
@@ -800,10 +837,7 @@ class TestTypeAnnotations:
 
     def test_slice_window_returns_dataframe(self):
         """测试 slice_window 返回 DataFrame。"""
-        df = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02"],
-            "value": [1, 2]
-        })
+        df = pd.DataFrame({"date": ["2024-01-01", "2024-01-02"], "value": [1, 2]})
         result = slice_window(df, "2024-01-02", 1)
         assert isinstance(result, pd.DataFrame)
 
@@ -848,19 +882,13 @@ class TestEdgeCases:
 
     def test_slice_window_count_zero(self):
         """测试窗口长度为零。"""
-        df = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02"],
-            "value": [1, 2]
-        })
+        df = pd.DataFrame({"date": ["2024-01-01", "2024-01-02"], "value": [1, 2]})
         result = slice_window(df, "2024-01-02", 0)
         assert len(result) == 0
 
     def test_slice_window_count_negative(self):
         """测试窗口长度为负数时 DataFrame.tail 的实际行为。"""
-        df = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02"],
-            "value": [1, 2]
-        })
+        df = pd.DataFrame({"date": ["2024-01-01", "2024-01-02"], "value": [1, 2]})
         result = slice_window(df, "2024-01-02", -1)
         # DataFrame.tail(-n) 返回除前 n 行外的所有行
         # tail(-1) 返回除第一行外的所有行，即最后一行

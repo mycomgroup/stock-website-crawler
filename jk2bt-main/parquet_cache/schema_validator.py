@@ -112,6 +112,8 @@ class SchemaValidator:
             return True
         if from_normalized in numeric_types and to_normalized == "string":
             return True
+        if from_normalized in ("object",) and to_normalized == "string":
+            return True
         if from_normalized == "bool" and to_normalized in ("string", "int64", "int32"):
             return True
         return False

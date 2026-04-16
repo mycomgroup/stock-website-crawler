@@ -10,7 +10,9 @@ import inspect
 from typing import get_type_hints
 
 # 添加项目路径
-_project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_project_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
@@ -24,131 +26,215 @@ class TestAPISignatureValidator:
     EXPECTED_API_SIGNATURES = {
         # Market API
         "get_price": {
-            "module": "src.api.market_api",
-            "params": ["security", "start_date", "end_date", "frequency", "fields", "skip_paused", "fq", "count", "panel", "fill_paused"],
+            "module": "jk2bt.api.market",
+            "params": [
+                "security",
+                "start_date",
+                "end_date",
+                "frequency",
+                "fields",
+                "skip_paused",
+                "fq",
+                "count",
+                "panel",
+                "fill_paused",
+            ],
             "required": ["security"],
         },
         "history": {
-            "module": "src.api.market_api",
-            "params": ["count", "unit", "field", "security_list", "df", "skip_paused", "fq", "end_date"],
+            "module": "jk2bt.api.market",
+            "params": [
+                "count",
+                "unit",
+                "field",
+                "security_list",
+                "df",
+                "skip_paused",
+                "fq",
+                "end_date",
+            ],
             "required": ["count"],
         },
         "attribute_history": {
-            "module": "src.api.market_api",
-            "params": ["security", "count", "unit", "fields", "skip_paused", "df", "fq", "end_date"],
+            "module": "jk2bt.api.market",
+            "params": [
+                "security",
+                "count",
+                "unit",
+                "fields",
+                "skip_paused",
+                "df",
+                "fq",
+                "end_date",
+            ],
             "required": ["security", "count"],
         },
         "get_bars": {
-            "module": "src.api.market_api",
-            "params": ["security", "count", "unit", "fields", "include_now", "end_dt", "fq", "skip_paused"],
+            "module": "jk2bt.api.market",
+            "params": [
+                "security",
+                "count",
+                "unit",
+                "fields",
+                "include_now",
+                "end_dt",
+                "fq",
+                "skip_paused",
+            ],
             "required": ["security", "count"],
         },
         # Enhancements API
         "order_shares": {
-            "module": "src.api.enhancements",
+            "module": "jk2bt.api.enhancements",
             "params": ["security", "amount", "style"],
             "required": ["security", "amount"],
         },
         "order_target_percent": {
-            "module": "src.api.enhancements",
+            "module": "jk2bt.api.enhancements",
             "params": ["security", "percent"],
             "required": ["security", "percent"],
         },
         "filter_st": {
-            "module": "src.api.enhancements",
+            "module": "jk2bt.api.enhancements",
             "params": ["stock_list", "date"],
             "required": ["stock_list"],
         },
         "filter_paused": {
-            "module": "src.api.enhancements",
+            "module": "jk2bt.api.enhancements",
             "params": ["stock_list", "date"],
             "required": ["stock_list"],
         },
         "filter_limit_up": {
-            "module": "src.api.enhancements",
+            "module": "jk2bt.api.enhancements",
             "params": ["stock_list", "date"],
             "required": ["stock_list"],
         },
         "filter_limit_down": {
-            "module": "src.api.enhancements",
+            "module": "jk2bt.api.enhancements",
             "params": ["stock_list", "date"],
             "required": ["stock_list"],
         },
         "filter_new_stocks": {
-            "module": "src.api.enhancements",
+            "module": "jk2bt.api.enhancements",
             "params": ["stock_list", "days"],
             "required": ["stock_list"],
         },
         # Indicators API
         "MA": {
-            "module": "src.api.indicators",
+            "module": "jk2bt.api.indicators",
             "params": ["closeArray", "timeperiod"],
             "required": ["closeArray"],
         },
         "EMA": {
-            "module": "src.api.indicators",
+            "module": "jk2bt.api.indicators",
             "params": ["closeArray", "timeperiod"],
             "required": ["closeArray"],
         },
         "MACD": {
-            "module": "src.api.indicators",
-            "params": ["security_list", "check_date", "SHORT", "LONG", "MID", "unit", "include_now"],
+            "module": "jk2bt.api.indicators",
+            "params": [
+                "security_list",
+                "check_date",
+                "SHORT",
+                "LONG",
+                "MID",
+                "unit",
+                "include_now",
+            ],
             "required": ["security_list"],
         },
         "KDJ": {
-            "module": "src.api.indicators",
-            "params": ["security", "check_date", "unit", "N", "M1", "M2", "include_now"],
+            "module": "jk2bt.api.indicators",
+            "params": [
+                "security",
+                "check_date",
+                "unit",
+                "N",
+                "M1",
+                "M2",
+                "include_now",
+            ],
             "required": ["security"],
         },
         "RSI": {
-            "module": "src.api.indicators",
+            "module": "jk2bt.api.indicators",
             "params": ["price", "timeperiod", "check_date"],
             "required": ["price"],
         },
         "BOLL": {
-            "module": "src.api.indicators",
-            "params": ["security", "check_date", "timeperiod", "nbdevup", "nbdevdn", "unit", "include_now"],
+            "module": "jk2bt.api.indicators",
+            "params": [
+                "security",
+                "check_date",
+                "timeperiod",
+                "nbdevup",
+                "nbdevdn",
+                "unit",
+                "include_now",
+            ],
             "required": ["security"],
         },
         "ATR": {
-            "module": "src.api.indicators",
+            "module": "jk2bt.api.indicators",
             "params": ["security", "check_date", "timeperiod", "unit", "include_now"],
             "required": ["security"],
         },
         # Missing APIs
         "get_locked_shares": {
-            "module": "src.api.missing_apis",
+            "module": "jk2bt.api.missing_apis",
             "params": ["stock_list", "start_date", "end_date", "forward_count"],
             "required": [],
         },
         "get_fund_info": {
-            "module": "src.api.missing_apis",
+            "module": "jk2bt.api.missing_apis",
             "params": ["fund_code", "fields"],
             "required": ["fund_code"],
         },
         "get_fundamentals_continuously": {
-            "module": "src.api.missing_apis",
-            "params": ["query_obj", "start_date", "end_date", "frequency", "count", "fields"],
+            "module": "jk2bt.api.missing_apis",
+            "params": [
+                "query_obj",
+                "start_date",
+                "end_date",
+                "frequency",
+                "count",
+                "fields",
+            ],
             "required": ["query_obj", "start_date"],
         },
         "get_beta": {
-            "module": "src.api.missing_apis",
-            "params": ["security", "benchmark", "start_date", "end_date", "window", "frequency"],
+            "module": "jk2bt.api.missing_apis",
+            "params": [
+                "security",
+                "benchmark",
+                "start_date",
+                "end_date",
+                "window",
+                "frequency",
+            ],
             "required": ["security"],
         },
         # Factor API
         "get_north_factor": {
-            "module": "src.api.factor_api",
+            "module": "jk2bt.api.factor_api",
             "params": ["security", "end_date", "count", "window", "factor_type"],
             "required": [],
         },
         "get_comb_factor": {
-            "module": "src.api.factor_api",
-            "params": ["securities", "factors", "end_date", "count", "method", "weights", "normalize"],
+            "module": "jk2bt.api.factor_api",
+            "params": [
+                "securities",
+                "factors",
+                "end_date",
+                "count",
+                "method",
+                "weights",
+                "normalize",
+            ],
             "required": ["securities", "factors"],
         },
         "get_factor_momentum": {
-            "module": "src.api.factor_api",
+            "module": "jk2bt.api.factor_api",
             "params": ["securities", "factor", "window", "end_date"],
             "required": ["securities", "factor"],
         },
@@ -205,7 +291,9 @@ class TestAPISignatureValidator:
             except Exception as e:
                 signature_errors.append(f"{api_name}: signature check failed - {e}")
 
-        assert len(signature_errors) == 0, f"Signature errors:\n" + "\n".join(signature_errors)
+        assert len(signature_errors) == 0, f"Signature errors:\n" + "\n".join(
+            signature_errors
+        )
 
     def test_api_callable(self):
         """测试API是否可调用"""
@@ -222,7 +310,9 @@ class TestAPISignatureValidator:
             except Exception as e:
                 callable_errors.append(f"{api_name}: callable check failed - {e}")
 
-        assert len(callable_errors) == 0, f"Callable errors:\n" + "\n".join(callable_errors)
+        assert len(callable_errors) == 0, f"Callable errors:\n" + "\n".join(
+            callable_errors
+        )
 
     def test_api_return_types(self):
         """测试API返回类型标注"""
@@ -252,12 +342,12 @@ class TestModuleImport:
     def test_api_module_import(self):
         """测试API模块可以导入"""
         modules_to_test = [
-            "src.api",
-            "src.api.market_api",
-            "src.api.enhancements",
-            "src.api.indicators",
-            "src.api.missing_apis",
-            "src.api.factor_api",
+            "jk2bt.api",
+            "jk2bt.api.market",
+            "jk2bt.api.enhancements",
+            "jk2bt.api.indicators",
+            "jk2bt.api.missing_apis",
+            "jk2bt.api.factor_api",
         ]
 
         import_errors = []
@@ -273,16 +363,48 @@ class TestModuleImport:
     def test_api_module_all_exports(self):
         """测试模块__all__导出"""
         module_exports = {
-            "src.api": [
-                "get_price", "history", "attribute_history", "get_bars",
-                "MA", "EMA", "MACD", "KDJ", "RSI", "BOLL", "ATR",
-                "filter_st", "filter_paused", "filter_new_stocks",
+            "jk2bt.api": [
+                "get_price",
+                "history",
+                "attribute_history",
+                "get_bars",
+                "MA",
+                "EMA",
+                "MACD",
+                "KDJ",
+                "RSI",
+                "BOLL",
+                "ATR",
+                "filter_st",
+                "filter_paused",
+                "filter_new_stocks",
             ],
-            "src.api.market_api": ["get_price", "history", "attribute_history", "get_bars", "get_price_jq", "get_bars_jq"],
-            "src.api.indicators": ["MA", "EMA", "MACD", "KDJ", "RSI", "BOLL", "ATR"],
-            "src.api.enhancements": ["order_shares", "order_target_percent", "filter_st", "filter_paused"],
-            "src.api.missing_apis": ["get_locked_shares", "get_fund_info", "get_fundamentals_continuously", "get_beta"],
-            "src.api.factor_api": ["get_north_factor", "get_comb_factor", "get_factor_momentum"],
+            "jk2bt.api.market": [
+                "get_price",
+                "history",
+                "attribute_history",
+                "get_bars",
+                "get_price_jq",
+                "get_bars_jq",
+            ],
+            "jk2bt.api.indicators": ["MA", "EMA", "MACD", "KDJ", "RSI", "BOLL", "ATR"],
+            "jk2bt.api.enhancements": [
+                "order_shares",
+                "order_target_percent",
+                "filter_st",
+                "filter_paused",
+            ],
+            "jk2bt.api.missing_apis": [
+                "get_locked_shares",
+                "get_fund_info",
+                "get_fundamentals_continuously",
+                "get_beta",
+            ],
+            "jk2bt.api.factor_api": [
+                "get_north_factor",
+                "get_comb_factor",
+                "get_factor_momentum",
+            ],
         }
 
         export_errors = []
@@ -297,12 +419,16 @@ class TestModuleImport:
                 if actual_exports is not None:
                     for export in expected_exports:
                         if export not in actual_exports:
-                            export_errors.append(f"{module_name}: '{export}' not in __all__")
+                            export_errors.append(
+                                f"{module_name}: '{export}' not in __all__"
+                            )
                 else:
                     # 没有__all__时，检查是否可以通过getattr获取
                     for export in expected_exports:
                         if not hasattr(module, export):
-                            export_errors.append(f"{module_name}: '{export}' not found in module")
+                            export_errors.append(
+                                f"{module_name}: '{export}' not found in module"
+                            )
 
             except ImportError as e:
                 export_errors.append(f"{module_name}: import failed - {e}")

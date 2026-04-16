@@ -10,7 +10,7 @@ factors/base.py
 """
 
 import os
-import pickle
+
 import hashlib
 import warnings
 from typing import Callable, Dict, List, Optional, Tuple, Union
@@ -324,44 +324,21 @@ def normalize_factor_names(names: Union[str, List[str]]) -> List[str]:
 
 
 # =====================================================================
-# 缓存工具
+# 缓存工具 (基于 parquet_cache)
 # =====================================================================
 
 
-def _ensure_cache_dir(cache_dir: str) -> None:
-    """确保缓存目录存在。"""
-    if cache_dir and not os.path.exists(cache_dir):
-        os.makedirs(cache_dir, exist_ok=True)
-
-
-def _cache_key(
-    factor_name: str, symbol: str, end_date: str, count: Optional[int] = None
-) -> str:
+def _get_factor_cache_manager():
     """
-    生成缓存文件名。
-
-    Parameters
-    ----------
-    factor_name : str
-        因子规范名
-    symbol : str
-        证券代码（如 'sh600519'）
-    end_date : str
-        截止日期 'YYYY-MM-DD'
-    count : int, optional
-        窗口长度
-
-    Returns
-    -------
-    str
-        缓存文件名（不含目录）
+    获取因子缓存的 CacheManager 实例。
+    使用延迟导入避免循环依赖。
     """
-    key = f"{factor_name}_{symbol}_{end_date}"
-    if count is not None:
-        key += f"_{count}"
-    # 避免路径中出现非法字符
-    key = key.replace(":", "-").replace("/", "_")
-    return key + ".pkl"
+    from parquet_cache import CacheManager, get_cache_manager
+
+    try:
+        return get_cache_manager()
+    except Exception:
+        return CacheManager()
 
 
 def load_factor_cache(
@@ -369,39 +346,38 @@ def load_factor_cache(
     symbol: str,
     end_date: str,
     count: Optional[int] = None,
-    cache_dir: str = "factors_cache",
 ) -> Optional[pd.DataFrame]:
     """
-    尝试从缓存读取因子结果。
+    从 parquet_cache 读取因子结果。
 
-    Parameters
-    ----------
-    factor_name : str
-        因子规范名
-    symbol : str
-        证券代码
-    end_date : str
-        截止日期
-    count : int, optional
-        窗口长度
-    cache_dir : str
-        缓存目录
-
-    Returns
-    -------
-    pd.DataFrame or None
-        缓存命中时返回 DataFrame，否则返回 None
+    返回格式与原来一致: DataFrame(index=dates, columns=[factor_name])
     """
-    _ensure_cache_dir(cache_dir)
-    fname = _cache_key(factor_name, symbol, end_date, count)
-    fpath = os.path.join(cache_dir, fname)
-    if os.path.exists(fpath):
-        try:
-            with open(fpath, "rb") as f:
-                return pickle.load(f)
-        except Exception as e:
-            warnings.warn(f"读取因子缓存失败 {fpath}: {e}")
-    return None
+    try:
+        cache = _get_factor_cache_manager()
+
+        where = {"factor_name": factor_name, "symbol": symbol}
+        if count is not None:
+            # 需要获取最近 count 个交易日的数据
+            # 先获取所有该 symbol+factor 的数据，再按日期截取
+            result = cache.get("factor_cache", where=where, order_by=["date"])
+        else:
+            result = cache.get("factor_cache", where=where, order_by=["date"])
+
+        if result is None or result.empty:
+            return None
+
+        # 转换为原来的返回格式: DataFrame(index=date, columns=[factor_name])
+        result = result[result["date"] <= pd.to_datetime(end_date).date()]
+        if count is not None:
+            result = result.tail(count)
+
+        df = result[["date", "value"]].copy()
+        df = df.set_index("date")
+        df.columns = [factor_name]
+        df.index = pd.to_datetime(df.index)
+        return df
+    except Exception:
+        return None
 
 
 def save_factor_cache(
@@ -410,34 +386,50 @@ def save_factor_cache(
     symbol: str,
     end_date: str,
     count: Optional[int] = None,
-    cache_dir: str = "factors_cache",
 ) -> None:
     """
-    将因子结果写入缓存。
+    将因子结果写入 parquet_cache。
 
-    Parameters
-    ----------
-    df : pd.DataFrame
-        因子结果
-    factor_name : str
-        因子规范名
-    symbol : str
-        证券代码
-    end_date : str
-        截止日期
-    count : int, optional
-        窗口长度
-    cache_dir : str
-        缓存目录
+    输入格式: DataFrame(index=dates, columns=[factor_name])
     """
-    _ensure_cache_dir(cache_dir)
-    fname = _cache_key(factor_name, symbol, end_date, count)
-    fpath = os.path.join(cache_dir, fname)
     try:
-        with open(fpath, "wb") as f:
-            pickle.dump(df, f)
-    except Exception as e:
-        warnings.warn(f"写入因子缓存失败 {fpath}: {e}")
+        cache = _get_factor_cache_manager()
+
+        # 转换为 parquet_cache 需要的格式
+        cache_df = pd.DataFrame(
+            {
+                "factor_name": factor_name,
+                "symbol": symbol,
+                "date": pd.to_datetime(df.index).date,
+                "value": df.iloc[:, 0].values,
+            }
+        )
+
+        cache.put("factor_cache", cache_df, partition_value=factor_name)
+    except Exception:
+        pass
+
+
+def invalidate_factor_cache(
+    factor_name: Optional[str] = None,
+    symbol: Optional[str] = None,
+) -> None:
+    """
+    清除因子缓存。
+    """
+    try:
+        cache = _get_factor_cache_manager()
+        where = {}
+        if factor_name:
+            where["factor_name"] = factor_name
+        if symbol:
+            where["symbol"] = symbol
+        if where:
+            cache.invalidate("factor_cache", where=where)
+        else:
+            cache.invalidate("factor_cache")
+    except Exception:
+        pass
 
 
 # =====================================================================

@@ -52,7 +52,7 @@ date_range:
 # ============================================================
 cache:
   duckdb_dir: "data"
-  pickle_dir: "finance_cache"
+  # pickle_dir: "finance_cache"  # deprecated
 
 # ============================================================
 # 预热选项

@@ -353,7 +353,7 @@ class TestGetBillboardList:
         import tempfile
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            result = get_billboard_list_jq(cache_dir=tmpdir, count=1)
+            result = get_billboard_list_jq(count=1)
             assert isinstance(result, pd.DataFrame)
 
     def test_force_update_parameter(self):
@@ -511,7 +511,7 @@ class TestPerformanceAndStability:
         import tempfile
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            result = get_billboard_list_jq(cache_dir=tmpdir, force_update=True, count=1)
+            result = get_billboard_list_jq(force_update=True, count=1)
             assert isinstance(result, pd.DataFrame)
 
     def test_repeated_calls_stability(self):

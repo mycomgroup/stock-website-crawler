@@ -21,17 +21,40 @@ import pandas as pd
 import numpy as np
 
 try:
-    from ..factors.technical import _get_daily_ohlcv, _compute_ma, _compute_std, safe_divide
+    from ..factors.technical import _compute_ma, _compute_std, safe_divide
 except ImportError:
-    from jk2bt.factors.technical import _get_daily_ohlcv, _compute_ma, _compute_std
+    from jk2bt.factors.technical import _compute_ma, _compute_std
+
     def safe_divide(a, b, fill_value=np.nan):
         """安全除法，避免除零错误"""
-        with np.errstate(divide='ignore', invalid='ignore'):
+        with np.errstate(divide="ignore", invalid="ignore"):
             result = np.divide(a, b)
             result = np.where(np.isfinite(result), result, fill_value)
         if isinstance(a, pd.Series):
             return pd.Series(result, index=a.index)
         return result
+
+
+def _fetch_ohlcv(symbol: str, end_date: Optional[str], count: int) -> pd.DataFrame:
+    """通过 adapter 获取日线数据，返回带 date 列的 DataFrame"""
+    from jk2bt.data_access import get_adapter
+
+    if end_date is None:
+        end_date = pd.Timestamp.now().strftime("%Y-%m-%d")
+    start_date = (
+        pd.Timestamp(end_date) - pd.Timedelta(days=int(count * 1.5))
+    ).strftime("%Y-%m-%d")
+
+    df = get_adapter().get_daily_data(symbol, start_date, end_date)
+    if df.empty:
+        return df
+
+    df = df.copy()
+    if "datetime" in df.columns:
+        df["date"] = pd.to_datetime(df["datetime"]).dt.strftime("%Y-%m-%d")
+    if "amount" in df.columns and "money" not in df.columns:
+        df["money"] = df["amount"]
+    return df
 
 
 # =====================================================================
@@ -43,7 +66,6 @@ def detect_price_breakout(
     symbol: str,
     window: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -68,13 +90,7 @@ def detect_price_breakout(
         columns: date, signal, type, close, high_n, low_n
     """
     need_count = window + 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -96,13 +112,15 @@ def detect_price_breakout(
     signal[break_high] = 1
     signal[break_low] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "close": close.values,
-        "high_n": high_n.values,
-        "low_n": low_n.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "close": close.values,
+            "high_n": high_n.values,
+            "low_n": low_n.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = f"price_breakout_high_{window}d"
     result.loc[result["signal"] == -1, "type"] = f"price_breakout_low_{window}d"
@@ -122,7 +140,6 @@ def detect_volume_breakout(
     window: int = 20,
     multiplier: float = 2.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -149,13 +166,7 @@ def detect_volume_breakout(
         columns: date, signal, type, volume, avg_volume
     """
     need_count = window + 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "volume" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -174,13 +185,15 @@ def detect_volume_breakout(
     signal[volume_high] = 1
     signal[volume_low] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "volume": volume.values,
-        "avg_volume": avg_volume.values,
-        "volume_ratio": safe_divide(volume, avg_volume).values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "volume": volume.values,
+            "avg_volume": avg_volume.values,
+            "volume_ratio": safe_divide(volume, avg_volume).values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = f"volume_breakout_high_{multiplier}x"
     result.loc[result["signal"] == -1, "type"] = f"volume_breakout_low_{multiplier}x"
@@ -200,7 +213,6 @@ def detect_boll_breakout(
     window: int = 20,
     num_std: float = 2.0,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -227,13 +239,7 @@ def detect_boll_breakout(
         columns: date, signal, type, close, boll_up, boll_down
     """
     need_count = window + 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -262,14 +268,16 @@ def detect_boll_breakout(
     signal[break_up] = 1
     signal[break_down] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "close": close.values,
-        "boll_up": boll_up.values,
-        "boll_down": boll_down.values,
-        "boll_ma": ma.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "close": close.values,
+            "boll_up": boll_up.values,
+            "boll_down": boll_down.values,
+            "boll_ma": ma.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = "boll_breakout_up"
     result.loc[result["signal"] == -1, "type"] = "boll_breakout_down"
@@ -288,7 +296,6 @@ def detect_ma_breakout(
     symbol: str,
     window: int = 20,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
@@ -313,13 +320,7 @@ def detect_ma_breakout(
         columns: date, signal, type, close, ma
     """
     need_count = window + 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    df = _fetch_ohlcv(symbol, end_date=end_date, count=need_count)
 
     if df.empty or "close" not in df.columns:
         return pd.DataFrame(columns=["date", "signal", "type"])
@@ -343,12 +344,14 @@ def detect_ma_breakout(
     signal[break_up] = 1
     signal[break_down] = -1
 
-    result = pd.DataFrame({
-        "date": df["date"],
-        "signal": signal.values,
-        "close": close.values,
-        f"ma_{window}": ma.values,
-    })
+    result = pd.DataFrame(
+        {
+            "date": df["date"],
+            "signal": signal.values,
+            "close": close.values,
+            f"ma_{window}": ma.values,
+        }
+    )
 
     result.loc[result["signal"] == 1, "type"] = f"ma_{window}_breakout_up"
     result.loc[result["signal"] == -1, "type"] = f"ma_{window}_breakout_down"
@@ -366,7 +369,6 @@ def detect_ma_breakout(
 def detect_all_breakthrough_signals(
     symbol: str,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -388,7 +390,9 @@ def detect_all_breakthrough_signals(
 
     # 价格突破
     try:
-        price_signals = detect_price_breakout(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        price_signals = detect_price_breakout(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not price_signals.empty:
             signals.append(price_signals)
     except Exception as e:
@@ -396,7 +400,9 @@ def detect_all_breakthrough_signals(
 
     # 成交量突破
     try:
-        volume_signals = detect_volume_breakout(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        volume_signals = detect_volume_breakout(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not volume_signals.empty:
             signals.append(volume_signals)
     except Exception as e:
@@ -404,7 +410,9 @@ def detect_all_breakthrough_signals(
 
     # 布林带突破
     try:
-        boll_signals = detect_boll_breakout(symbol, end_date=end_date, cache_dir=cache_dir, force_update=force_update)
+        boll_signals = detect_boll_breakout(
+            symbol, end_date=end_date, force_update=force_update
+        )
         if not boll_signals.empty:
             signals.append(boll_signals)
     except Exception as e:

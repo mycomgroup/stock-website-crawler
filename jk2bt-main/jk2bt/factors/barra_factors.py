@@ -23,7 +23,8 @@ from .base import (
     safe_divide,
 )
 
-from .technical import _get_daily_ohlcv
+from jk2bt.data_access import get_adapter
+from jk2bt.utils.symbol import normalize_symbol as _normalize_symbol
 
 
 # =====================================================================
@@ -35,8 +36,6 @@ def _get_index_data(
     index_code: str = "000300",
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     count: Optional[int] = None,
 ) -> pd.DataFrame:
     """
@@ -60,7 +59,6 @@ def _get_index_data(
             symbol=index_code,
             start=start_date,
             end=end_date,
-            force_update=force_update,
         )
 
         if df is not None and not df.empty:
@@ -79,7 +77,9 @@ def _get_index_data(
     except ImportError:
         pass  # market_data 模块不可用，fallback 到 akshare
     except Exception as e:
-        warnings.warn(f"market_data 模块获取指数数据失败 {index_code}: {e}，fallback 到 akshare")
+        warnings.warn(
+            f"market_data 模块获取指数数据失败 {index_code}: {e}，fallback 到 akshare"
+        )
 
     # Fallback: 使用 adapter 直接获取
     from jk2bt.data_access import get_adapter
@@ -116,8 +116,6 @@ def compute_beta(
     index_code: str = "000300",
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -128,13 +126,23 @@ def compute_beta(
     """
     need_count = count + window if count else window + 10
 
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(columns={"日期": "date", "收盘": "close"})
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(need_count)
+    else:
+        df = df.tail(need_count)
+
     if df.empty:
         return np.nan
 
@@ -198,8 +206,6 @@ def compute_momentum(
     halflife: int = 126,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -209,13 +215,23 @@ def compute_momentum(
     """
     need_count = count + window + lag if count else window + lag + 10
 
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(columns={"日期": "date", "收盘": "close"})
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(need_count)
+    else:
+        df = df.tail(need_count)
+
     if df.empty:
         return np.nan
 
@@ -267,8 +283,6 @@ def compute_residual_volatility(
     index_code: str = "000300",
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -278,13 +292,25 @@ def compute_residual_volatility(
     """
     need_count = count + window if count else window + 10
 
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(
+        columns={"日期": "date", "收盘": "close", "最高": "high", "最低": "low"}
     )
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(need_count)
+    else:
+        df = df.tail(need_count)
+
     if df.empty:
         return np.nan
 
@@ -380,8 +406,6 @@ def compute_liquidity_barra(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -391,13 +415,23 @@ def compute_liquidity_barra(
     """
     need_count = count + 252 if count else 260
 
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        cache_dir=cache_dir,
-        force_update=force_update,
-        count=need_count,
-    )
+    ak_sym = _normalize_symbol(symbol)
+    df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+    if df is None or df.empty:
+        return np.nan
+
+    df = df.rename(columns={"日期": "date", "换手率": "turnover_rate"})
+    if "date" in df.columns:
+        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+        df = df.sort_values("date")
+
+    if end_date:
+        df = df[df["date"] <= end_date]
+    if count is not None and count > 0:
+        df = df.tail(need_count)
+    else:
+        df = df.tail(need_count)
+
     if df.empty or "turnover_rate" not in df.columns:
         return np.nan
 
@@ -452,8 +486,6 @@ def compute_earnings_yield(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -468,11 +500,9 @@ def compute_earnings_yield(
         symbol,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -509,8 +539,6 @@ def compute_book_to_price(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -525,11 +553,9 @@ def compute_book_to_price(
         symbol,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    balance_raw = _get_balance_sheet(symbol)
     balance = _normalize_balance(balance_raw)
 
     if balance.empty:
@@ -566,8 +592,6 @@ def compute_size(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -581,8 +605,6 @@ def compute_size(
         symbol,
         end_date=end_date,
         count=count,
-        cache_dir=cache_dir,
-        force_update=force_update,
     )
 
     if isinstance(mc, pd.Series):

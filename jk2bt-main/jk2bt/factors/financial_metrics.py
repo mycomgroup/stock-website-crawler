@@ -55,8 +55,6 @@ def compute_eps(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -64,7 +62,7 @@ def compute_eps(
 
     数据来源：利润表中的每股收益字段
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -99,8 +97,6 @@ def compute_net_assets(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -109,7 +105,7 @@ def compute_net_assets(
     公式：净资产 / 总股本
     近似实现：直接使用资产负债表中的每股净资产字段
     """
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    balance_raw = _get_balance_sheet(symbol)
     balance = _normalize_balance(balance_raw)
 
     if balance.empty:
@@ -146,7 +142,7 @@ def compute_net_assets(
     balance = balance.set_index("date")
     equity = balance["total_equity"].astype(float)
 
-    cap = compute_capitalization(symbol, end_date, count, cache_dir, force_update)
+    cap = compute_capitalization(symbol, end_date, count)
 
     if isinstance(cap, pd.Series):
         cap.index = pd.to_datetime(cap.index)
@@ -177,8 +173,6 @@ def compute_roe_indicator(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -186,8 +180,8 @@ def compute_roe_indicator(
 
     公式：净利润 / 净资产
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)
@@ -230,8 +224,6 @@ def compute_roa_indicator(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -239,8 +231,8 @@ def compute_roa_indicator(
 
     公式：净利润 / 总资产
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
-    balance_raw = _get_balance_sheet(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
+    balance_raw = _get_balance_sheet(symbol)
 
     income = _normalize_income(income_raw)
     balance = _normalize_balance(balance_raw)
@@ -283,8 +275,6 @@ def compute_net_profit_margin(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -292,7 +282,7 @@ def compute_net_profit_margin(
 
     公式：净利润 / 营业收入
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -324,8 +314,6 @@ def compute_gross_profit_margin(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -333,7 +321,7 @@ def compute_gross_profit_margin(
 
     公式：(营业收入 - 营业成本) / 营业收入
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -370,8 +358,6 @@ def compute_inc_net_profit_year_on_year(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -379,7 +365,7 @@ def compute_inc_net_profit_year_on_year(
 
     公式：(本期净利润 - 去年同期净利润) / abs(去年同期净利润)
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -394,7 +380,9 @@ def compute_inc_net_profit_year_on_year(
     net_profit = net_profit.astype(float)
 
     # 同比增长：假设季度数据，shift(4)
-    growth = safe_divide(net_profit - net_profit.shift(4), np.abs(net_profit.shift(4))) * 100
+    growth = (
+        safe_divide(net_profit - net_profit.shift(4), np.abs(net_profit.shift(4))) * 100
+    )
 
     if end_date:
         growth = growth[growth.index <= pd.to_datetime(end_date)]
@@ -412,8 +400,6 @@ def compute_inc_revenue_year_on_year(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -421,7 +407,7 @@ def compute_inc_revenue_year_on_year(
 
     公式：(本期营业收入 - 去年同期营业收入) / abs(去年同期营业收入)
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -453,14 +439,12 @@ def compute_inc_total_revenue_year_on_year(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
     计算 inc_total_revenue_year_on_year（营业总收入同比增长率）因子。
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -474,7 +458,12 @@ def compute_inc_total_revenue_year_on_year(
 
     total_revenue = total_revenue.astype(float)
 
-    growth = safe_divide(total_revenue - total_revenue.shift(4), np.abs(total_revenue.shift(4))) * 100
+    growth = (
+        safe_divide(
+            total_revenue - total_revenue.shift(4), np.abs(total_revenue.shift(4))
+        )
+        * 100
+    )
 
     if end_date:
         growth = growth[growth.index <= pd.to_datetime(end_date)]
@@ -492,14 +481,12 @@ def compute_inc_operation_profit_year_on_year(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
     计算 inc_operation_profit_year_on_year（营业利润同比增长率）因子。
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -513,7 +500,9 @@ def compute_inc_operation_profit_year_on_year(
 
     op_profit = op_profit.astype(float)
 
-    growth = safe_divide(op_profit - op_profit.shift(4), np.abs(op_profit.shift(4))) * 100
+    growth = (
+        safe_divide(op_profit - op_profit.shift(4), np.abs(op_profit.shift(4))) * 100
+    )
 
     if end_date:
         growth = growth[growth.index <= pd.to_datetime(end_date)]
@@ -531,8 +520,6 @@ def compute_inc_return(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -540,7 +527,11 @@ def compute_inc_return(
 
     公式：本期ROE - 去年同期ROE
     """
-    roe = compute_roe_indicator(symbol, end_date=None, count=None, cache_dir=cache_dir, force_update=force_update)
+    roe = compute_roe_indicator(
+        symbol,
+        end_date=None,
+        count=None,
+    )
 
     if isinstance(roe, pd.Series):
         roe.index = pd.to_datetime(roe.index)
@@ -570,8 +561,6 @@ def compute_ocf_to_operating_profit(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -580,7 +569,7 @@ def compute_ocf_to_operating_profit(
     公式：经营活动现金流量净额 / 营业利润
     """
     # 简化实现：从利润表估算
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -614,8 +603,6 @@ def compute_ocf_to_revenue(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -623,7 +610,7 @@ def compute_ocf_to_revenue(
 
     公式：经营活动现金流量净额 / 营业收入
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -662,8 +649,6 @@ def compute_adjusted_profit(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
-    cache_dir: str = "stock_cache",
-    force_update: bool = False,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
@@ -672,7 +657,7 @@ def compute_adjusted_profit(
     公式：扣除非经常性损益后的净利润
     近似实现：使用净利润 * 0.95 近似
     """
-    income_raw = _get_income_statement(symbol, cache_dir, force_update)
+    income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
     if income.empty:
@@ -710,13 +695,29 @@ def _register_factors():
 
     # 每股指标
     registry.register("eps", compute_eps, window=1, dependencies=["income"])
-    registry.register("net_assets", compute_net_assets, window=1, dependencies=["balance"])
+    registry.register(
+        "net_assets", compute_net_assets, window=1, dependencies=["balance"]
+    )
 
     # 盈利能力
-    registry.register("roe", compute_roe_indicator, window=1, dependencies=["income", "balance"])
-    registry.register("roa", compute_roa_indicator, window=1, dependencies=["income", "balance"])
-    registry.register("net_profit_margin", compute_net_profit_margin, window=1, dependencies=["income"])
-    registry.register("gross_profit_margin", compute_gross_profit_margin, window=1, dependencies=["income"])
+    registry.register(
+        "roe", compute_roe_indicator, window=1, dependencies=["income", "balance"]
+    )
+    registry.register(
+        "roa", compute_roa_indicator, window=1, dependencies=["income", "balance"]
+    )
+    registry.register(
+        "net_profit_margin",
+        compute_net_profit_margin,
+        window=1,
+        dependencies=["income"],
+    )
+    registry.register(
+        "gross_profit_margin",
+        compute_gross_profit_margin,
+        window=1,
+        dependencies=["income"],
+    )
 
     # 成长能力
     registry.register(
@@ -743,7 +744,9 @@ def _register_factors():
         window=5,
         dependencies=["income"],
     )
-    registry.register("inc_return", compute_inc_return, window=5, dependencies=["income", "balance"])
+    registry.register(
+        "inc_return", compute_inc_return, window=5, dependencies=["income", "balance"]
+    )
 
     # 现金流
     registry.register(
@@ -752,10 +755,14 @@ def _register_factors():
         window=1,
         dependencies=["income"],
     )
-    registry.register("ocf_to_revenue", compute_ocf_to_revenue, window=1, dependencies=["income"])
+    registry.register(
+        "ocf_to_revenue", compute_ocf_to_revenue, window=1, dependencies=["income"]
+    )
 
     # 调整后利润
-    registry.register("adjusted_profit", compute_adjusted_profit, window=1, dependencies=["income"])
+    registry.register(
+        "adjusted_profit", compute_adjusted_profit, window=1, dependencies=["income"]
+    )
 
 
 # 模块加载时自动注册

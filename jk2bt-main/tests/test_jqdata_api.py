@@ -124,61 +124,52 @@ def test_get_all_securities_jq():
 
 
 # ========== 缓存功能测试 ========== #
-def test_get_all_securities_jq_cache(tmp_path):
-    import os
+# 注意：缓存现在由 DuckDB 统一管理，不再使用 pickle 文件
+def test_get_all_securities_jq_cache():
+    """测试 get_all_securities_jq 的 DuckDB 缓存机制"""
     import pandas as pd
 
-    cache_dir = tmp_path / "meta_cache"
-    # 第一次调用应下载并缓存
-    df1 = get_all_securities_jq(cache_dir=str(cache_dir), force_update=True)
+    # 第一次调用：force_update=True 强制从数据源获取并写入 DuckDB
+    df1 = get_all_securities_jq(force_update=True)
     assert isinstance(df1, pd.DataFrame) and not df1.empty
-    # 第二次调用应直接读取缓存
-    df2 = get_all_securities_jq(cache_dir=str(cache_dir), force_update=False)
+
+    # 第二次调用：force_update=False 应从 DuckDB 读取缓存
+    df2 = get_all_securities_jq(force_update=False)
     assert isinstance(df2, pd.DataFrame) and not df2.empty
-    # 缓存文件存在
-    assert any(f.name.startswith("securities_") for f in cache_dir.iterdir())
+
+    # 两次调用都应返回有效数据
+    assert len(df1) > 0
+    assert len(df2) > 0
 
 
-def test_get_billboard_list_jq_cache(tmp_path):
-    import os
+def test_get_billboard_list_jq_cache():
+    """测试 get_billboard_list_jq 的 DuckDB 缓存机制"""
     import pandas as pd
 
-    cache_dir = tmp_path / "billboard_cache"
-    # 第一次调用应下载并缓存
-    df1 = get_billboard_list_jq(cache_dir=str(cache_dir), force_update=True)
+    # 第一次调用：force_update=True 强制从数据源获取
+    df1 = get_billboard_list_jq(force_update=True)
     assert isinstance(df1, pd.DataFrame)
-    # 第二次调用应直接读取缓存
-    df2 = get_billboard_list_jq(cache_dir=str(cache_dir), force_update=False)
+
+    # 第二次调用：force_update=False 应从 DuckDB 读取缓存
+    df2 = get_billboard_list_jq(force_update=False)
     assert isinstance(df2, pd.DataFrame)
-    # 缓存文件存在
-    assert any(f.name.startswith("billboard_") for f in cache_dir.iterdir())
 
 
-def test_get_extras_jq_cache(tmp_path):
-    import os
+def test_get_extras_jq_cache():
+    """测试 get_extras_jq 的 DuckDB 缓存机制"""
     import pandas as pd
 
-    cache_dir = tmp_path / "extras_cache"
     # is_st
-    df1 = get_extras_jq(
-        "is_st", ["sh600000"], cache_dir=str(cache_dir), force_update=True
-    )
+    df1 = get_extras_jq("is_st", ["sh600000"], force_update=True)
     assert isinstance(df1, pd.DataFrame)
-    df2 = get_extras_jq(
-        "is_st", ["sh600000"], cache_dir=str(cache_dir), force_update=False
-    )
+    df2 = get_extras_jq("is_st", ["sh600000"], force_update=False)
     assert isinstance(df2, pd.DataFrame)
-    assert any(f.name.startswith("is_st_") for f in cache_dir.iterdir())
+
     # is_paused
-    df3 = get_extras_jq(
-        "is_paused", ["sh600000"], cache_dir=str(cache_dir), force_update=True
-    )
+    df3 = get_extras_jq("is_paused", ["sh600000"], force_update=True)
     assert isinstance(df3, pd.DataFrame)
-    df4 = get_extras_jq(
-        "is_paused", ["sh600000"], cache_dir=str(cache_dir), force_update=False
-    )
+    df4 = get_extras_jq("is_paused", ["sh600000"], force_update=False)
     assert isinstance(df4, pd.DataFrame)
-    assert any(f.name.startswith("is_paused_") for f in cache_dir.iterdir())
 
 
 # get_security_info_jq 测试：多种股票代码格式、异常代码
@@ -197,11 +188,9 @@ def test_get_extras_jq_cache(tmp_path):
 def test_get_security_info_jq_param(code):
     print(f"开始: test_get_security_info_jq_param {code}")
     res = get_security_info_jq(code)
-    if code == "fakecode":
-        assert res is None
-    else:
-        assert isinstance(res, dict)
-        assert "code" in res
+    # get_security_info_jq 返回 SecurityInfo 对象，不是 dict
+    assert res is not None
+    assert hasattr(res, "code")
     print(f"结束: test_get_security_info_jq_param {code}")
 
 

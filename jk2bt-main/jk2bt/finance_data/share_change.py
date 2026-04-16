@@ -278,7 +278,7 @@ def get_share_change(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -290,7 +290,6 @@ def get_share_change(
     symbol      : 股票代码
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -315,40 +314,21 @@ def get_share_change(
             if not df_cached.empty:
                 return df_cached[_SHARE_CHANGE_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, f"share_change_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 7:
+    from jk2bt.data_access import get_adapter
+    try:
+        df = get_adapter().get_shareholder_change_ths(symbol=code_num)
+        if df is not None and not df.empty:
+            result = _normalize_share_change(df, jq_code)
+            if not result.empty:
                 if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_share_change(cached_df)
+                    _db_manager.insert_share_change(result)
                 if start_date is None and end_date is None:
-                    return cached_df
-                return _filter_by_date_range(cached_df, start_date, end_date)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df = get_adapter().get_shareholder_change_ths(symbol=code_num)
-            if df is not None and not df.empty:
-                result = _normalize_share_change(df, jq_code)
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if use_duckdb and _db_manager is not None:
-                        _db_manager.insert_share_change(result)
-                    if start_date is None and end_date is None:
-                        return result
-                    return _filter_by_date_range(result, start_date, end_date)
-        except Exception as e:
-            logger.warning(f"[share_change] 获取股东变动失败 {symbol}: {e}")
+                    return result
+                return _filter_by_date_range(result, start_date, end_date)
+    except Exception as e:
+        logger.warning(f"[share_change] 获取股东变动失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
 
@@ -416,7 +396,7 @@ def query_share_change(
     symbols: List[str],
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -433,7 +413,7 @@ def query_share_change(
                 symbol,
                 start_date=start_date,
                 end_date=end_date,
-                cache_dir=cache_dir,
+                
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -461,7 +441,7 @@ class FinanceQuery:
         change_ratio = None
 
     def run_query(
-        self, query_obj, cache_dir="finance_cache", force_update=False, use_duckdb=True
+        self, query_obj, force_update=False, use_duckdb=True
     ) -> pd.DataFrame:
         table_name = None
         conditions = {}
@@ -478,7 +458,7 @@ class FinanceQuery:
         if table_name == "STK_SHAREHOLDER_CHANGE":
             if "code" in conditions:
                 return get_share_change(
-                    conditions["code"], cache_dir=cache_dir, use_duckdb=use_duckdb
+                    conditions["code"], use_duckdb=use_duckdb
                 )
             return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
         else:
@@ -491,14 +471,14 @@ finance = FinanceQuery()
 def run_query_simple(
     table: str,
     code: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
     if table == "STK_SHAREHOLDER_CHANGE":
         if code:
             return get_share_change(
-                code, cache_dir=cache_dir, force_update=force_update
+                code, force_update=force_update
             )
         return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
     else:
@@ -517,59 +497,44 @@ _PLEDGE_SCHEMA = [
 
 def get_pledge_info(
     symbol: str,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取股权质押信息"""
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"pledge_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 7:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df_raw = get_adapter().get_pledge_ratio_em(symbol=code_num)
-            if df_raw is not None and not df_raw.empty:
-                result = pd.DataFrame()
-                result["code"] = [jq_code] * len(df_raw)
-                for col in ["质押日期", "日期"]:
-                    if col in df_raw.columns:
-                        result["pledge_date"] = df_raw[col]
-                        break
-                for col in ["股东名称", "出质人"]:
-                    if col in df_raw.columns:
-                        result["pledgor"] = df_raw[col]
-                        break
-                for col in ["质权人"]:
-                    if col in df_raw.columns:
-                        result["pledgee"] = df_raw[col]
-                        break
-                for col in ["质押数量", "质押股数"]:
-                    if col in df_raw.columns:
-                        result["pledge_amount"] = df_raw[col]
-                        break
-                for col in ["质押比例", "占股比"]:
-                    if col in df_raw.columns:
-                        result["pledge_ratio"] = df_raw[col]
-                        break
-                result.to_pickle(cache_file)
-                return result
-        except Exception as e:
-            logger.warning(f"[get_pledge_info] 获取失败 {symbol}: {e}")
+    from jk2bt.data_access import get_adapter
+    try:
+        df_raw = get_adapter().get_pledge_ratio_em(symbol=code_num)
+        if df_raw is not None and not df_raw.empty:
+            result = pd.DataFrame()
+            result["code"] = [jq_code] * len(df_raw)
+            for col in ["质押日期", "日期"]:
+                if col in df_raw.columns:
+                    result["pledge_date"] = df_raw[col]
+                    break
+            for col in ["股东名称", "出质人"]:
+                if col in df_raw.columns:
+                    result["pledgor"] = df_raw[col]
+                    break
+            for col in ["质权人"]:
+                if col in df_raw.columns:
+                    result["pledgee"] = df_raw[col]
+                    break
+            for col in ["质押数量", "质押股数"]:
+                if col in df_raw.columns:
+                    result["pledge_amount"] = df_raw[col]
+                    break
+            for col in ["质押比例", "占股比"]:
+                if col in df_raw.columns:
+                    result["pledge_ratio"] = df_raw[col]
+                    break
+            return result
+    except Exception as e:
+        logger.warning(f"[get_pledge_info] 获取失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_PLEDGE_SCHEMA)
 
@@ -585,11 +550,11 @@ _HOLDER_TRADE_SCHEMA = [
 
 def get_major_holder_trade(
     symbol: str,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取重要股东交易信息"""
-    return get_share_change(symbol, cache_dir=cache_dir, force_update=force_update)
+    return get_share_change(symbol, force_update=force_update)
 
 
 _SHAREHOLDER_CHANGES_SCHEMA = [
@@ -609,7 +574,7 @@ def get_shareholder_changes(
     code: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> RobustResult:
@@ -621,7 +586,6 @@ def get_shareholder_changes(
     code         : 股票代码
     start_date   : 起始日期
     end_date     : 结束日期
-    cache_dir    : 缓存目录
     force_update : 强制更新
     use_duckdb   : 是否使用 DuckDB 缓存
 
@@ -668,75 +632,38 @@ def get_shareholder_changes(
                     source="cache",
                 )
 
-    cache_file = os.path.join(cache_dir, f"shareholder_changes_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHARE_CHANGE_CACHE_DAYS:
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_share_change(cached_df)
-                if start_date is None and end_date is None:
-                    df_result = cached_df.copy()
-                    if "change_reason" not in df_result.columns:
-                        df_result["change_reason"] = None
-                    return RobustResult(
-                        success=True,
-                        data=df_result[_SHAREHOLDER_CHANGES_SCHEMA],
-                        reason=f"从缓存获取{len(df_result)}条股东变动记录",
-                        source="cache",
-                    )
-                df_filtered = _filter_by_date_range(cached_df, start_date, end_date)
-                if "change_reason" not in df_filtered.columns:
-                    df_filtered["change_reason"] = None
-                return RobustResult(
-                    success=True,
-                    data=df_filtered[_SHAREHOLDER_CHANGES_SCHEMA],
-                    reason=f"从缓存获取{len(df_filtered)}条股东变动记录",
-                    source="cache",
-                )
-            need_download = True
-        except Exception as e:
-            logger.warning(f"读取缓存失败: {e}")
-            need_download = True
+    try:
+        df = _fetch_shareholder_changes_from_akshare(code_num, jq_code)
+        if df is not None and not df.empty:
+            df_result = df.copy()
+            if "change_reason" not in df_result.columns:
+                df_result["change_reason"] = None
+            df_to_cache = df_result[_SHAREHOLDER_CHANGES_SCHEMA].copy()
+            if use_duckdb and _db_manager is not None:
+                cache_df = df_to_cache.copy()
+                cache_df = cache_df[
+                    [c for c in cache_df.columns if c != "change_reason"]
+                ]
+                _db_manager.insert_share_change(cache_df)
 
-    if need_download:
-        try:
-            df = _fetch_shareholder_changes_from_akshare(code_num, jq_code)
-            if df is not None and not df.empty:
-                df_result = df.copy()
+            if start_date or end_date:
+                df_result = _filter_by_date_range(df_result, start_date, end_date)
                 if "change_reason" not in df_result.columns:
                     df_result["change_reason"] = None
-                df_to_cache = df_result[_SHAREHOLDER_CHANGES_SCHEMA].copy()
-                df_to_cache.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    cache_df = df_to_cache.copy()
-                    cache_df = cache_df[
-                        [c for c in cache_df.columns if c != "change_reason"]
-                    ]
-                    _db_manager.insert_share_change(cache_df)
 
-                if start_date or end_date:
-                    df_result = _filter_by_date_range(df_result, start_date, end_date)
-                    if "change_reason" not in df_result.columns:
-                        df_result["change_reason"] = None
-
-                return RobustResult(
-                    success=True,
-                    data=df_result[_SHAREHOLDER_CHANGES_SCHEMA],
-                    reason=f"成功获取{len(df_result)}条股东变动记录",
-                    source="network",
-                )
-        except Exception as e:
-            logger.warning(f"[get_shareholder_changes] 获取股东变动失败 {code}: {e}")
+            return RobustResult(
+                success=True,
+                data=df_result[_SHAREHOLDER_CHANGES_SCHEMA],
+                reason=f"成功获取{len(df_result)}条股东变动记录",
+                source="network",
+            )
+    except Exception as e:
+        logger.warning(f"[get_shareholder_changes] 获取股东变动失败 {code}: {e}")
 
     if os.path.exists(cache_file):
         try:
-            cached_df = pd.read_pickle(cache_file)
             if "change_reason" not in cached_df.columns:
                 cached_df["change_reason"] = None
             if start_date or end_date:
@@ -879,7 +806,7 @@ class FinanceQueryEnhanced:
     def run_query(
         self,
         query_obj,
-        cache_dir: str = "finance_cache",
+        
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> Union[pd.DataFrame, RobustResult]:
@@ -901,7 +828,7 @@ class FinanceQueryEnhanced:
             if "code" in conditions:
                 return get_shareholder_changes(
                     conditions["code"],
-                    cache_dir=cache_dir,
+                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -934,7 +861,7 @@ def get_insider_trading(
     security: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -945,7 +872,6 @@ def get_insider_trading(
     security    : 股票代码
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -963,53 +889,36 @@ def get_insider_trading(
     code_num = _extract_code_num(security)
     jq_code = _normalize_to_jq(security)
 
-    cache_file = os.path.join(cache_dir, f"insider_trading_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
+    from jk2bt.data_access import get_adapter
+    try:
+        df_raw = None
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHARE_CHANGE_CACHE_DAYS:
-                if start_date is None and end_date is None:
-                    return cached_df
-                return _filter_by_date_range(cached_df, start_date, end_date)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            df_raw = None
+            df_raw = get_adapter().get_holding_change_em(symbol=code_num)
+        except Exception as e1:
+            logger.warning(f"stock_gdfx_holding_change_em 失败: {e1}")
             try:
-                df_raw = get_adapter().get_holding_change_em(symbol=code_num)
-            except Exception as e1:
-                logger.warning(f"stock_gdfx_holding_change_em 失败: {e1}")
-                try:
-                    end_date_str = datetime.now().strftime("%Y%m%d")
-                    start_date_str = (datetime.now() - timedelta(days=365)).strftime(
-                        "%Y%m%d"
-                    )
-                    df_raw = get_adapter().get_share_change_cninfo(
-                        symbol=code_num,
-                        start_date=start_date_str,
-                        end_date=end_date_str,
-                    )
-                except Exception as e2:
-                    logger.warning(f"stock_share_change_cninfo 失败: {e2}")
+                end_date_str = datetime.now().strftime("%Y%m%d")
+                start_date_str = (datetime.now() - timedelta(days=365)).strftime(
+                    "%Y%m%d"
+                )
+                df_raw = get_adapter().get_share_change_cninfo(
+                    symbol=code_num,
+                    start_date=start_date_str,
+                    end_date=end_date_str,
+                )
+            except Exception as e2:
+                logger.warning(f"stock_share_change_cninfo 失败: {e2}")
 
-            if df_raw is not None and not df_raw.empty:
-                result = _normalize_insider_trading(df_raw, jq_code)
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if start_date is None and end_date is None:
-                        return result
-                    return _filter_by_date_range(result, start_date, end_date)
-        except Exception as e:
-            logger.warning(f"[get_insider_trading] 获取高管增减持失败 {security}: {e}")
+        if df_raw is not None and not df_raw.empty:
+            result = _normalize_insider_trading(df_raw, jq_code)
+            if not result.empty:
+                if start_date is None and end_date is None:
+                    return result
+                return _filter_by_date_range(result, start_date, end_date)
+    except Exception as e:
+        logger.warning(f"[get_insider_trading] 获取高管增减持失败 {security}: {e}")
 
     return pd.DataFrame(columns=_INSIDER_TRADING_SCHEMA)
 
@@ -1061,7 +970,7 @@ def get_major_shareholder_change(
     security: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -1073,7 +982,6 @@ def get_major_shareholder_change(
     security    : 股票代码
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -1085,7 +993,7 @@ def get_major_shareholder_change(
         security,
         start_date=start_date,
         end_date=end_date,
-        cache_dir=cache_dir,
+        
         force_update=force_update,
         use_duckdb=use_duckdb,
     )
@@ -1094,7 +1002,7 @@ def get_major_shareholder_change(
 def analyze_share_change_trend(
     security: str,
     period_days: int = 90,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> Dict:
     """
@@ -1104,7 +1012,6 @@ def analyze_share_change_trend(
     ----
     security    : 股票代码
     period_days : 分析周期（天数），默认90天
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1143,7 +1050,7 @@ def analyze_share_change_trend(
             security,
             start_date=start_date,
             end_date=end_date,
-            cache_dir=cache_dir,
+            
             force_update=force_update,
         )
 
@@ -1182,7 +1089,7 @@ def analyze_share_change_trend(
             security,
             start_date=start_date,
             end_date=end_date,
-            cache_dir=cache_dir,
+            
             force_update=force_update,
         )
 
@@ -1258,7 +1165,7 @@ class FinanceQueryV2:
     def run_query(
         self,
         query_obj,
-        cache_dir: str = "finance_cache",
+        
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
@@ -1282,7 +1189,7 @@ class FinanceQueryV2:
             if "code" in conditions:
                 return get_share_change(
                     conditions["code"],
-                    cache_dir=cache_dir,
+                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -1291,7 +1198,7 @@ class FinanceQueryV2:
             if "code" in conditions:
                 return get_shareholder_changes(
                     conditions["code"],
-                    cache_dir=cache_dir,
+                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 ).data
@@ -1317,7 +1224,7 @@ _FREEZE_SCHEMA = [
 
 def get_freeze_info(
     symbol: str,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1326,7 +1233,6 @@ def get_freeze_info(
     参数
     ----
     symbol      : 股票代码
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1344,31 +1250,16 @@ def get_freeze_info(
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"freeze_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHARE_CHANGE_CACHE_DAYS:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            df_raw = _fetch_freeze_data_from_akshare(code_num)
-            if df_raw is not None and not df_raw.empty:
-                result = _normalize_freeze_data(df_raw, jq_code)
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    return result
-        except Exception as e:
-            logger.warning(f"[get_freeze_info] 获取冻结信息失败 {symbol}: {e}")
+    try:
+        df_raw = _fetch_freeze_data_from_akshare(code_num)
+        if df_raw is not None and not df_raw.empty:
+            result = _normalize_freeze_data(df_raw, jq_code)
+            if not result.empty:
+                return result
+    except Exception as e:
+        logger.warning(f"[get_freeze_info] 获取冻结信息失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_FREEZE_SCHEMA)
 
@@ -1449,7 +1340,7 @@ def get_capital_change(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -1461,7 +1352,6 @@ def get_capital_change(
     symbol      : 股票代码
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
     use_duckdb  : 是否使用 DuckDB 缓存
 
@@ -1481,35 +1371,18 @@ def get_capital_change(
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"capital_change_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHARE_CHANGE_CACHE_DAYS:
+    try:
+        df_raw = _fetch_capital_change_from_akshare(code_num, start_date, end_date)
+        if df_raw is not None and not df_raw.empty:
+            result = _normalize_capital_change(df_raw, jq_code)
+            if not result.empty:
                 if start_date is None and end_date is None:
-                    return cached_df
-                return _filter_capital_by_date(cached_df, start_date, end_date)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            df_raw = _fetch_capital_change_from_akshare(code_num, start_date, end_date)
-            if df_raw is not None and not df_raw.empty:
-                result = _normalize_capital_change(df_raw, jq_code)
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if start_date is None and end_date is None:
-                        return result
-                    return _filter_capital_by_date(result, start_date, end_date)
-        except Exception as e:
-            logger.warning(f"[get_capital_change] 获取股本变动失败 {symbol}: {e}")
+                    return result
+                return _filter_capital_by_date(result, start_date, end_date)
+    except Exception as e:
+        logger.warning(f"[get_capital_change] 获取股本变动失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_CAPITAL_CHANGE_SCHEMA)
 
@@ -1620,7 +1493,7 @@ def get_topholder_change(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1631,7 +1504,6 @@ def get_topholder_change(
     symbol      : 股票代码
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1641,37 +1513,20 @@ def get_topholder_change(
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"topholder_change_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
 
-    need_download = force_update or (not os.path.exists(cache_file))
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < SHARE_CHANGE_CACHE_DAYS:
+    try:
+        df_raw = _fetch_topholder_change_from_akshare(code_num)
+        if df_raw is not None and not df_raw.empty:
+            result = _normalize_topholder_change(df_raw, jq_code)
+            if not result.empty:
                 if start_date is None and end_date is None:
-                    return cached_df
-                return _filter_by_date_range(cached_df, start_date, end_date)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            df_raw = _fetch_topholder_change_from_akshare(code_num)
-            if df_raw is not None and not df_raw.empty:
-                result = _normalize_topholder_change(df_raw, jq_code)
-                if not result.empty:
-                    result.to_pickle(cache_file)
-                    if start_date is None and end_date is None:
-                        return result
-                    return _filter_by_date_range(result, start_date, end_date)
-        except Exception as e:
-            logger.warning(
-                f"[get_topholder_change] 获取前十大股东变动失败 {symbol}: {e}"
-            )
+                    return result
+                return _filter_by_date_range(result, start_date, end_date)
+    except Exception as e:
+        logger.warning(
+            f"[get_topholder_change] 获取前十大股东变动失败 {symbol}: {e}"
+        )
 
     return pd.DataFrame(columns=_TOPHOLDER_CHANGE_SCHEMA)
 
@@ -1742,7 +1597,7 @@ def _normalize_topholder_change(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
 
 def query_pledge_data(
     symbols: List[str],
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1751,7 +1606,6 @@ def query_pledge_data(
     参数
     ----
     symbols     : 股票代码列表
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1764,7 +1618,7 @@ def query_pledge_data(
     dfs = []
     for symbol in symbols:
         try:
-            df = get_pledge_info(symbol, cache_dir=cache_dir, force_update=force_update)
+            df = get_pledge_info(symbol, force_update=force_update)
             if not df.empty:
                 dfs.append(df)
         except Exception as e:
@@ -1779,7 +1633,7 @@ def query_pledge_data(
 
 def query_freeze_data(
     symbols: List[str],
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1788,7 +1642,6 @@ def query_freeze_data(
     参数
     ----
     symbols     : 股票代码列表
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1801,7 +1654,7 @@ def query_freeze_data(
     dfs = []
     for symbol in symbols:
         try:
-            df = get_freeze_info(symbol, cache_dir=cache_dir, force_update=force_update)
+            df = get_freeze_info(symbol, force_update=force_update)
             if not df.empty:
                 dfs.append(df)
         except Exception as e:
@@ -1818,7 +1671,7 @@ def query_capital_change(
     symbols: List[str],
     start_date: str = None,
     end_date: str = None,
-    cache_dir: str = "finance_cache",
+    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1829,7 +1682,6 @@ def query_capital_change(
     symbols     : 股票代码列表
     start_date  : 起始日期
     end_date    : 结束日期
-    cache_dir   : 缓存目录
     force_update: 强制更新
 
     返回
@@ -1846,7 +1698,7 @@ def query_capital_change(
                 symbol,
                 start_date=start_date,
                 end_date=end_date,
-                cache_dir=cache_dir,
+                
                 force_update=force_update,
             )
             if not df.empty:
@@ -1917,7 +1769,7 @@ class FinanceQueryV3:
     def run_query(
         self,
         query_obj,
-        cache_dir: str = "finance_cache",
+        
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
@@ -1940,32 +1792,32 @@ class FinanceQueryV3:
         if table_name == "STK_SHARE_PLEDGE":
             if "code" in conditions:
                 return get_pledge_info(
-                    conditions["code"], cache_dir=cache_dir, force_update=force_update
+                    conditions["code"], force_update=force_update
                 )
             return pd.DataFrame(columns=_PLEDGE_SCHEMA)
         elif table_name == "STK_SHARE_FREEZE":
             if "code" in conditions:
                 return get_freeze_info(
-                    conditions["code"], cache_dir=cache_dir, force_update=force_update
+                    conditions["code"], force_update=force_update
                 )
             return pd.DataFrame(columns=_FREEZE_SCHEMA)
         elif table_name == "STK_TOPHOLDER_CHANGE":
             if "code" in conditions:
                 return get_topholder_change(
-                    conditions["code"], cache_dir=cache_dir, force_update=force_update
+                    conditions["code"], force_update=force_update
                 )
             return pd.DataFrame(columns=_TOPHOLDER_CHANGE_SCHEMA)
         elif table_name == "STK_CAPITAL_CHANGE":
             if "code" in conditions:
                 return get_capital_change(
-                    conditions["code"], cache_dir=cache_dir, force_update=force_update
+                    conditions["code"], force_update=force_update
                 )
             return pd.DataFrame(columns=_CAPITAL_CHANGE_SCHEMA)
         elif table_name == "STK_SHARE_CHANGE":
             if "code" in conditions:
                 return get_share_change(
                     conditions["code"],
-                    cache_dir=cache_dir,
+                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -1974,7 +1826,7 @@ class FinanceQueryV3:
             if "code" in conditions:
                 return get_shareholder_changes(
                     conditions["code"],
-                    cache_dir=cache_dir,
+                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 ).data

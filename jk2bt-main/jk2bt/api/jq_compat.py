@@ -81,14 +81,13 @@ from jk2bt.core.global_state import (
 # =====================================================================
 
 
-def get_index_weights(index_code, date=None, cache_dir="index_cache", robust=False):
+def get_index_weights(index_code, date=None, robust=False):
     """
     获取指数成分股权重
 
     参数:
         index_code: 指数代码，支持 '000300.XSHG', '000300' 等格式
         date: 查询日期，默认最新
-        cache_dir: 缓存目录
         robust: bool - 是否返回 RobustResult 对象（包含成功状态和原因）
 
     返回:
@@ -102,22 +101,12 @@ def get_index_weights(index_code, date=None, cache_dir="index_cache", robust=Fal
             log.warn(f"获取失败: {result.reason}")
     """
     try:
-        from jk2bt.market_data.index_components import (
-            get_index_weights as _get_index_weights_impl,
-        )
+        from jk2bt.data_access import get_adapter
     except ImportError:
-        from jk2bt.market_data.index_components import (
-            get_index_weights as _get_index_weights_impl,
-        )
+        raise ImportError("请安装 akshare: pip install akshare")
 
     try:
-        use_duckdb = True
-        df = _get_index_weights_impl(
-            index_code,
-            date=date,
-            cache_dir=cache_dir,
-            use_duckdb=use_duckdb,
-        )
+        df = get_adapter().get_index_components(index_code, include_weights=True)
 
         # 转换为预期的 DataFrame 格式
         if df.empty:
@@ -164,19 +153,18 @@ def get_index_weights(index_code, date=None, cache_dir="index_cache", robust=Fal
         return pd.DataFrame(columns=["weight", "display_name"])
 
 
-def get_index_weights_robust(index_code, date=None, cache_dir="index_cache"):
+def get_index_weights_robust(index_code, date=None):
     """稳健版获取指数权重，返回 RobustResult 对象"""
-    return get_index_weights(index_code, date, cache_dir, robust=True)
+    return get_index_weights(index_code, date, robust=True)
 
 
-def get_index_stocks(index_code, date=None, cache_dir="index_cache", robust=False):
+def get_index_stocks(index_code, date=None, robust=False):
     """
     获取指数成分股列表
 
     参数:
         index_code: 指数代码，支持 '000300.XSHG', '000300' 等格式
         date: 查询日期，默认最新
-        cache_dir: 缓存目录
         robust: bool - 是否返回 RobustResult 对象
 
     返回:
@@ -193,21 +181,12 @@ def get_index_stocks(index_code, date=None, cache_dir="index_cache", robust=Fals
     使用 robust=True 可明确区分成功/失败状态。
     """
     try:
-        from jk2bt.market_data.index_components import (
-            get_index_stocks as _get_index_stocks_impl,
-        )
+        from jk2bt.data_access import get_adapter
     except ImportError:
-        from jk2bt.market_data.index_components import (
-            get_index_stocks as _get_index_stocks_impl,
-        )
+        raise ImportError("请安装 akshare: pip install akshare")
 
     try:
-        use_duckdb = True
-        stocks = _get_index_stocks_impl(
-            index_code,
-            cache_dir=cache_dir,
-            use_duckdb=use_duckdb,
-        )
+        stocks = get_adapter().get_index_stocks(index_code)
 
         # 预运行模式下记录请求的股票
         if _prerun_mode_active and stocks:
@@ -235,9 +214,9 @@ def get_index_stocks(index_code, date=None, cache_dir="index_cache", robust=Fals
         return []
 
 
-def get_index_stocks_robust(index_code, date=None, cache_dir="index_cache"):
+def get_index_stocks_robust(index_code, date=None):
     """稳健版获取指数成分股，返回 RobustResult 对象"""
-    return get_index_stocks(index_code, date, cache_dir, robust=True)
+    return get_index_stocks(index_code, date, robust=True)
 
 
 # =====================================================================
@@ -408,7 +387,6 @@ def get_price_jq(
     panel=True,
     fill_paused=True,
     skip_paused=True,
-    cache_dir="stock_cache",
     force_update=False,
     fq=None,
     skip_paused_flag=None,
@@ -577,7 +555,6 @@ def history(
     df=True,
     skip_paused=False,
     fq="pre",
-    cache_dir="stock_cache",
     end_date=None,
 ):
     """
@@ -643,7 +620,6 @@ def attribute_history(
     skip_paused=True,
     df=True,
     fq="pre",
-    cache_dir="stock_cache",
     end_date=None,
 ):
     """
@@ -950,30 +926,17 @@ _FUNDAMENTALS_SCHEMA = {
 }
 
 
-def get_cashflow_sina(
-    symbol, stat_date=None, cache_dir="stock_cache", force_update=False
-):
-    """获取现金流量表（新浪接口），支持缓存和 stat_date 筛选。"""
-    cache_dir = _resolve_cache_dir(cache_dir)
-    akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
-    cache_file = os.path.join(cache_dir, f"{akshare_symbol}_cashflow_sina.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-    need_download = force_update or (not os.path.exists(cache_file))
-    if not need_download:
-        try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_download = True
-    if need_download:
-        try:
-            from jk2bt.data_access import get_adapter
+def get_cashflow_sina(symbol, stat_date=None, force_update=False):
+    """获取现金流量表（新浪接口），支持 stat_date 筛选。"""
+    try:
+        from jk2bt.data_access import get_adapter
 
-            df = get_adapter().get_financial_report(akshare_symbol, "现金流量表")
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        if df.empty:
-            raise ValueError(f"No cashflow data for {symbol}")
-        df.to_pickle(cache_file)
+        akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
+        df = get_adapter().get_cashflow(akshare_symbol)
+    except ImportError:
+        raise ImportError("请安装 akshare: pip install akshare")
+    if df.empty:
+        raise ValueError(f"No cashflow data for {symbol}")
     if stat_date:
         date_col = _find_date_column(df, "financial")
         if date_col is None:
@@ -982,57 +945,31 @@ def get_cashflow_sina(
     return df.reset_index(drop=True)
 
 
-def get_income_ths(
-    symbol, indicator="按报告期", cache_dir="stock_cache", force_update=False
-):
-    """获取利润表（同花顺接口），支持缓存和 indicator 筛选。"""
-    cache_dir = _resolve_cache_dir(cache_dir)
-    akshare_symbol = symbol[2:] if symbol.startswith(("sh", "sz")) else symbol
-    cache_file = os.path.join(cache_dir, f"{akshare_symbol}_income_ths_{indicator}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-    need_download = force_update or (not os.path.exists(cache_file))
-    if not need_download:
-        try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_download = True
-    if need_download:
-        try:
-            from jk2bt.data_access import get_adapter
+def get_income_ths(symbol, indicator="按报告期", force_update=False):
+    """获取利润表（同花顺接口），支持 indicator 筛选。"""
+    try:
+        from jk2bt.data_access import get_adapter
 
-            df = get_adapter().get_financial_benefit(akshare_symbol, indicator)
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        if df.empty:
-            raise ValueError(f"No income data for {symbol}")
-        df.to_pickle(cache_file)
+        akshare_symbol = symbol[2:] if symbol.startswith(("sh", "sz")) else symbol
+        df = get_adapter().get_financial_benefit(akshare_symbol, indicator)
+    except ImportError:
+        raise ImportError("请安装 akshare: pip install akshare")
+    if df.empty:
+        raise ValueError(f"No income data for {symbol}")
     return df.reset_index(drop=True)
 
 
-def get_balance_sina(
-    symbol, stat_date=None, cache_dir="stock_cache", force_update=False
-):
-    """获取资产负债表（新浪接口），支持缓存和 stat_date 筛选。"""
-    cache_dir = _resolve_cache_dir(cache_dir)
-    akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
-    cache_file = os.path.join(cache_dir, f"{akshare_symbol}_balance_sina.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
-    need_download = force_update or (not os.path.exists(cache_file))
-    if not need_download:
-        try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_download = True
-    if need_download:
-        try:
-            from jk2bt.data_access import get_adapter
+def get_balance_sina(symbol, stat_date=None, force_update=False):
+    """获取资产负债表（新浪接口），支持 stat_date 筛选。"""
+    try:
+        from jk2bt.data_access import get_adapter
 
-            df = get_adapter().get_financial_report(akshare_symbol, "资产负债表")
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        if df.empty:
-            raise ValueError(f"No balance data for {symbol}")
-        df.to_pickle(cache_file)
+        akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
+        df = get_adapter().get_financial_report(akshare_symbol, "资产负债表")
+    except ImportError:
+        raise ImportError("请安装 akshare: pip install akshare")
+    if df.empty:
+        raise ValueError(f"No balance data for {symbol}")
     if stat_date:
         date_col = _find_date_column(df, "financial")
         if date_col is None:
@@ -1045,7 +982,6 @@ def get_fundamentals(
     query_obj,
     date=None,
     statDate=None,
-    cache_dir="stock_cache",
     force_update=False,
     robust=False,
 ):
@@ -1062,7 +998,6 @@ def get_fundamentals(
         query_obj: query对象或dict
         date: 估值查询日期
         statDate: 财报季度（如 '2020q1'）
-        cache_dir: 缓存目录
         force_update: 强制更新缓存
         robust: bool - 是否返回 RobustResult 对象
 
@@ -1146,15 +1081,13 @@ def get_fundamentals(
         schema_cols = _FUNDAMENTALS_SCHEMA[table_name]
 
         if table_name == "valuation":
-            df = _get_valuation_fundamentals(
-                symbols, date, filters, cache_dir, force_update
-            )
+            df = _get_valuation_fundamentals(symbols, date, filters, force_update)
         elif table_name == "income":
-            df = _get_income_fundamentals(symbols, statDate, cache_dir, force_update)
+            df = _get_income_fundamentals(symbols, statDate, force_update)
         elif table_name == "balance":
-            df = _get_balance_fundamentals(symbols, statDate, cache_dir, force_update)
+            df = _get_balance_fundamentals(symbols, statDate, force_update)
         elif table_name == "cash_flow":
-            df = _get_cashflow_fundamentals(symbols, statDate, cache_dir, force_update)
+            df = _get_cashflow_fundamentals(symbols, statDate, force_update)
         else:
             df = pd.DataFrame(columns=schema_cols)
 
@@ -1192,18 +1125,12 @@ def get_fundamentals(
         return empty_df
 
 
-def get_fundamentals_robust(
-    query_obj, date=None, statDate=None, cache_dir="stock_cache", force_update=False
-):
+def get_fundamentals_robust(query_obj, date=None, statDate=None, force_update=False):
     """稳健版基本面查询，返回 RobustResult 对象"""
-    return get_fundamentals(
-        query_obj, date, statDate, cache_dir, force_update, robust=True
-    )
+    return get_fundamentals(query_obj, date, statDate, force_update, robust=True)
 
 
-def _get_valuation_fundamentals(
-    symbols, date=None, filters=None, cache_dir="stock_cache", force_update=False
-):
+def _get_valuation_fundamentals(symbols, date=None, filters=None, force_update=False):
     """获取估值数据"""
     try:
         try:
@@ -1234,7 +1161,6 @@ def _get_valuation_fundamentals(
             factors=factor_names,
             end_date=date,
             count=1,
-            cache_dir=cache_dir,
             force_update=force_update,
         )
 
@@ -1294,15 +1220,13 @@ def _apply_filter(df, filter_expr):
     return df
 
 
-def _get_income_fundamentals(
-    symbols, statDate=None, cache_dir="stock_cache", force_update=False
-):
+def _get_income_fundamentals(symbols, statDate=None, force_update=False):
     """获取利润表数据"""
     dfs = []
     for symbol in symbols:
         try:
             ak_code = jq_code_to_ak(symbol)
-            df = get_income_ths(ak_code, cache_dir=cache_dir, force_update=force_update)
+            df = get_income_ths(ak_code, force_update=force_update)
             if df is not None and not df.empty:
                 df["code"] = symbol
                 dfs.append(df)
@@ -1313,9 +1237,7 @@ def _get_income_fundamentals(
     return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
 
 
-def _get_balance_fundamentals(
-    symbols, statDate=None, cache_dir="stock_cache", force_update=False
-):
+def _get_balance_fundamentals(symbols, statDate=None, force_update=False):
     """获取资产负债表数据"""
     dfs = []
     for symbol in symbols:
@@ -1324,7 +1246,6 @@ def _get_balance_fundamentals(
             df = get_balance_sina(
                 ak_code,
                 stat_date=statDate,
-                cache_dir=cache_dir,
                 force_update=force_update,
             )
             if df is not None and not df.empty:
@@ -1337,9 +1258,7 @@ def _get_balance_fundamentals(
     return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
 
 
-def _get_cashflow_fundamentals(
-    symbols, statDate=None, cache_dir="stock_cache", force_update=False
-):
+def _get_cashflow_fundamentals(symbols, statDate=None, force_update=False):
     """获取现金流量表数据"""
     dfs = []
     for symbol in symbols:
@@ -1348,7 +1267,6 @@ def _get_cashflow_fundamentals(
             df = get_cashflow_sina(
                 ak_code,
                 stat_date=statDate,
-                cache_dir=cache_dir,
                 force_update=force_update,
             )
             if df is not None and not df.empty:
@@ -1369,7 +1287,6 @@ def get_history_fundamentals(
     count=1,
     interval="1q",
     stat_by_year=False,
-    cache_dir="stock_cache",
     force_update=False,
     entity=None,
     robust=False,
@@ -1393,8 +1310,6 @@ def get_history_fundamentals(
         间隔（暂未实现）
     stat_by_year : bool
         按年统计（暂未实现）
-    cache_dir : str
-        缓存目录
     force_update : bool
         强制更新缓存
     robust : bool
@@ -1516,9 +1431,7 @@ def get_history_fundamentals(
         try:
             if cash_fields:
                 try:
-                    df = get_cashflow_sina(
-                        ak_code, cache_dir=cache_dir, force_update=force_update
-                    )
+                    df = get_cashflow_sina(ak_code, force_update=force_update)
                     if df.empty:
                         stock_failed = True
                         stock_errors.append("现金流量表返回空数据")
@@ -1549,9 +1462,7 @@ def get_history_fundamentals(
 
             if income_fields:
                 try:
-                    df = get_income_ths(
-                        ak_code, cache_dir=cache_dir, force_update=force_update
-                    )
+                    df = get_income_ths(ak_code, force_update=force_update)
                     if df.empty:
                         stock_failed = True
                         stock_errors.append("利润表返回空数据")
@@ -1586,7 +1497,6 @@ def get_history_fundamentals(
                     df = get_balance_sina(
                         ak_code,
                         stat_date=statDate,
-                        cache_dir=cache_dir,
                         force_update=force_update,
                     )
                     if df.empty:
@@ -1679,7 +1589,6 @@ def get_history_fundamentals_robust(
     count=1,
     interval="1q",
     stat_by_year=False,
-    cache_dir="stock_cache",
     force_update=False,
 ):
     """稳健版财报获取接口，返回 RobustResult 对象"""
@@ -1691,7 +1600,6 @@ def get_history_fundamentals_robust(
         count=count,
         interval=interval,
         stat_by_year=stat_by_year,
-        cache_dir=cache_dir,
         force_update=force_update,
         robust=True,
     )
@@ -1707,15 +1615,12 @@ get_history_fundamentals_jq = get_history_fundamentals
 # =====================================================================
 
 
-def get_all_securities_jq(
-    types=None, date=None, cache_dir="meta_cache", force_update=False, use_duckdb=True
-):
+def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=True):
     """JQData 风格 get_all_securities，返回全市场 A 股元数据 DataFrame。
 
     Args:
         types: 证券类型列表，默认 ["stock"]
         date: 指定日期（暂未使用）
-        cache_dir: pickle 缓存目录（作为 fallback）
         force_update: 是否强制更新
         use_duckdb: 是否优先使用 DuckDB 缓存
     """
@@ -1729,47 +1634,31 @@ def get_all_securities_jq(
             if not df.empty:
                 return df
         except Exception as e:
-            logger.warning(f"DuckDB 缓存获取失败，fallback 到 pickle: {e}")
+            logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
 
-    cache_dir = _resolve_cache_dir(cache_dir)
     if types is None:
         types = ["stock"]
-    os.makedirs(cache_dir, exist_ok=True)
-    today = datetime.now().strftime("%Y%m%d")
-    cache_file = os.path.join(cache_dir, f"securities_{today}.pkl")
-    need_dl = force_update or not os.path.exists(cache_file)
-    if not need_dl:
-        try:
-            df = pd.read_pickle(cache_file)
-        except Exception:
-            need_dl = True
-    if need_dl:
-        try:
-            from jk2bt.data_access import get_adapter
 
-            df = get_adapter().get_securities_code_name()
-        except ImportError:
-            raise ImportError("请安装 akshare: pip install akshare")
-        df["code"] = df["code"].apply(
-            lambda x: (
-                "sz" + x
-                if x.startswith(("0", "3"))
-                else ("sh" + x if x.startswith("6") else x)
-            )
+    try:
+        from jk2bt.data_access import get_adapter
+
+        df = get_adapter().get_securities_list()
+    except ImportError:
+        raise ImportError("请安装 akshare: pip install akshare")
+
+    df["code"] = df["code"].apply(
+        lambda x: (
+            "sz" + x
+            if x.startswith(("0", "3"))
+            else ("sh" + x if x.startswith("6") else x)
         )
-        df["jq_code"] = df["code"].apply(
-            lambda x: (
-                x[2:]
-                + (
-                    ".XSHE"
-                    if x.startswith("sz")
-                    else ".XSHG"
-                    if x.startswith("sh")
-                    else ""
-                )
-            )
+    )
+    df["jq_code"] = df["code"].apply(
+        lambda x: (
+            x[2:]
+            + (".XSHE" if x.startswith("sz") else ".XSHG" if x.startswith("sh") else "")
         )
-        df.to_pickle(cache_file)
+    )
     # 设置 index 为 jq_code（聚宽 API 风格）
     if "jq_code" in df.columns and df.index.dtype != object:
         df = df.set_index("jq_code")
@@ -1787,16 +1676,13 @@ def get_all_securities_jq(
 get_all_securities = get_all_securities_jq
 
 
-def get_security_info_jq(
-    code, cache_dir="meta_cache", force_update=False, use_duckdb=True
-):
+def get_security_info_jq(code, force_update=False, use_duckdb=True):
     """JQData 风格 get_security_info，返回单只股票元数据对象。
 
     支持缓存和离线兜底。网络失败时返回默认结构。
 
     Args:
         code: 证券代码
-        cache_dir: pickle 缓存目录（作为 fallback）
         force_update: 是否强制更新
         use_duckdb: 是否优先使用 DuckDB 缓存
 
@@ -1813,39 +1699,13 @@ def get_security_info_jq(
             if info:
                 return SecurityInfo(info)
         except Exception as e:
-            logger.warning(f"DuckDB 缓存获取失败，fallback 到 pickle: {e}")
-
-    cache_dir = _resolve_cache_dir(cache_dir)
-    os.makedirs(cache_dir, exist_ok=True)
-    cache_file = os.path.join(cache_dir, f"security_info_{code}.pkl")
-
-    if not force_update and os.path.exists(cache_file):
-        try:
-            cached = pd.read_pickle(cache_file)
-            return SecurityInfo(cached)
-        except Exception:
-            pass
+            logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
 
     try:
-        df = get_all_securities_jq(cache_dir=cache_dir, force_update=force_update)
-        code_num = format_stock_symbol_for_akshare(code)
-        code_with_prefix = ("sh" if code_num.startswith("6") else "sz") + code_num
-        row = df[df["code"] == code_with_prefix]
-        if row.empty:
-            row = df[df["code"] == code_num]
-        if row.empty:
-            result = {
-                "code": code_with_prefix,
-                "display_name": code_num,
-                "name": code_num,
-                "start_date": None,
-                "end_date": None,
-                "type": "stock",
-            }
-        else:
-            result = row.iloc[0].to_dict()
-        pd.to_pickle(result, cache_file)
-        return SecurityInfo(result)
+        from jk2bt.data_access import get_adapter
+
+        info = get_adapter().get_security_info(code)
+        return SecurityInfo(info)
     except Exception as e:
         warnings.warn(f"获取股票信息失败: {e}，返回默认结构")
         code_num = format_stock_symbol_for_akshare(code)
@@ -1865,11 +1725,10 @@ def get_security_info_jq(
 get_security_info = get_security_info_jq
 
 
-def get_all_trade_days_jq(cache_dir="meta_cache", force_update=False, use_duckdb=True):
+def get_all_trade_days_jq(force_update=False, use_duckdb=True):
     """JQData 风格 get_all_trade_days，返回所有交易日 Timestamp 列表。支持缓存。
 
     Args:
-        cache_dir: pickle 缓存目录（作为 fallback）
         force_update: 是否强制更新
         use_duckdb: 是否优先使用 DuckDB 缓存
     """
@@ -1886,44 +1745,20 @@ def get_all_trade_days_jq(cache_dir="meta_cache", force_update=False, use_duckdb
             if days is not None and len(days) > 0:
                 return list(pd.to_datetime(days))
         except Exception as e:
-            logger.warning(f"DuckDB 缓存获取失败，fallback 到 pickle: {e}")
-
-    cache_dir = _resolve_cache_dir(cache_dir)
-    os.makedirs(cache_dir, exist_ok=True)
-    cache_file = os.path.join(cache_dir, "trade_days.pkl")
-
-    need_dl = force_update or not os.path.exists(cache_file)
-    if not need_dl:
-        try:
-            cached = pd.read_pickle(cache_file)
-            if isinstance(cached, pd.DataFrame):
-                date_col = _find_date_column(cached, category="market") or "trade_date"
-                if date_col in cached.columns:
-                    days = pd.to_datetime(cached[date_col]).tolist()
-                else:
-                    days = pd.to_datetime(cached.index).tolist()
-            else:
-                days = pd.to_datetime(cached).tolist()
-
-            if days:
-                return list(days)
-        except Exception:
-            need_dl = True
+            logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
 
     try:
         from jk2bt.data_access import get_adapter
 
-        raw = get_adapter().get_trade_dates()
+        raw = get_adapter().get_trading_days()
         if isinstance(raw, pd.DataFrame):
             date_col = _find_date_column(raw, category="market") or "trade_date"
             if date_col in raw.columns:
                 days = pd.to_datetime(raw[date_col]).tolist()
             else:
                 days = pd.to_datetime(raw.index).tolist()
-            raw.to_pickle(cache_file)
         else:
             days = pd.to_datetime(raw).tolist()
-            pd.Series(days, name="trade_date").to_pickle(cache_file)
 
         if days:
             return list(days)
@@ -1948,15 +1783,14 @@ def get_factor_values_jq(
     factors,
     end_date=None,
     count=1,
-    cache_dir="factors_cache",
     force_update=False,
 ):
     """
     JQData 风格 get_factor_values。
 
     已实现本地因子计算，支持估值、技术、财务、成长类因子。
+    因子缓存使用 parquet_cache 系统管理。
     """
-    cache_dir = _resolve_cache_dir(cache_dir)
     try:
         try:
             from jk2bt.factors.factor_zoo import (
@@ -1976,7 +1810,6 @@ def get_factor_values_jq(
             factors=factors,
             end_date=end_date,
             count=count,
-            cache_dir=cache_dir,
             force_update=force_update,
         )
     except ImportError as e:
@@ -1995,13 +1828,9 @@ def get_extras_jq(
     end_date=None,
     count=None,
     df=True,
-    cache_dir="extras_cache",
     force_update=False,
 ):
     """JQData 风格 get_extras，支持 is_st / is_paused。"""
-    cache_dir = _resolve_cache_dir(cache_dir)
-    os.makedirs(cache_dir, exist_ok=True)
-    today = datetime.now().strftime("%Y%m%d")
     if isinstance(securities, str):
         securities = [securities]
 
@@ -2028,23 +1857,14 @@ def get_extras_jq(
         result_data[sec] = False
 
     if field == "is_st":
-        cache_file = os.path.join(cache_dir, f"is_st_{today}.pkl")
-        need_dl = force_update or not os.path.exists(cache_file)
         st_df = None
-        if not need_dl:
-            try:
-                st_df = pd.read_pickle(cache_file)
-            except Exception:
-                need_dl = True
-        if need_dl:
-            try:
-                from jk2bt.data_access import get_adapter
+        try:
+            from jk2bt.data_access import get_adapter
 
-                st_df = get_adapter().get_st_stocks()
-                st_df.to_pickle(cache_file)
-            except Exception as e:
-                warnings.warn(f"获取 ST 数据失败: {e}")
-                st_df = None
+            st_df = get_adapter().get_st_stocks()
+        except Exception as e:
+            warnings.warn(f"获取 ST 数据失败: {e}")
+            st_df = None
 
         if st_df is not None and "代码" in st_df.columns:
             st_codes = set(st_df["代码"].tolist())
@@ -2056,23 +1876,14 @@ def get_extras_jq(
         return result_df
 
     elif field == "is_paused":
-        cache_file = os.path.join(cache_dir, f"is_paused_{today}.pkl")
-        need_dl = force_update or not os.path.exists(cache_file)
         stop_df = None
-        if not need_dl:
-            try:
-                stop_df = pd.read_pickle(cache_file)
-            except Exception:
-                need_dl = True
-        if need_dl:
-            try:
-                from jk2bt.data_access import get_adapter
+        try:
+            from jk2bt.data_access import get_adapter
 
-                stop_df = get_adapter().get_suspended_stocks()
-                stop_df.to_pickle(cache_file)
-            except Exception as e:
-                warnings.warn(f"获取停牌数据失败: {e}")
-                stop_df = None
+            stop_df = get_adapter().get_suspended_stocks()
+        except Exception as e:
+            warnings.warn(f"获取停牌数据失败: {e}")
+            stop_df = None
 
         if stop_df is not None and "代码" in stop_df.columns:
             paused_codes = set(stop_df["代码"].tolist())

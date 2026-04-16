@@ -23,10 +23,12 @@ logger = logging.getLogger(__name__)
 _DUCKDB_AVAILABLE = False
 try:
     from ..db.meta_cache_api import get_trade_days_from_cache
+
     _DUCKDB_AVAILABLE = True
 except ImportError:
     try:
         from jk2bt.db.meta_cache_api import get_trade_days_from_cache
+
         _DUCKDB_AVAILABLE = True
     except ImportError:
         logger.warning("DuckDB meta_cache_api 不可用，将使用 pickle 缓存")
@@ -67,15 +69,13 @@ def find_date_column(df: pd.DataFrame, category: str = "market") -> str:
     return None
 
 
-def get_all_trade_days(cache_dir="meta_cache", force_update=False, use_duckdb=True):
+def get_all_trade_days(use_duckdb=True):
     """
     获取所有交易日列表（聚宽风格）。
 
     返回 pd.DatetimeIndex 或 Timestamp 列表。
 
     参数:
-        cache_dir: pickle 缓存目录（作为 fallback）
-        force_update: 是否强制更新
         use_duckdb: 是否优先使用 DuckDB 缓存
 
     返回:
@@ -88,36 +88,22 @@ def get_all_trade_days(cache_dir="meta_cache", force_update=False, use_duckdb=Tr
     # 优先使用 DuckDB 缓存
     if use_duckdb and _DUCKDB_AVAILABLE:
         try:
-            days = get_trade_days_from_cache(force_update=force_update, use_duckdb=True)
+            days = get_trade_days_from_cache(use_duckdb=True)
             if days:
                 if isinstance(days, list):
                     return pd.DatetimeIndex(days)
                 return days
         except Exception as e:
-            logger.warning(f"DuckDB 缓存获取失败，fallback 到 pickle: {e}")
+            logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
 
-    # Fallback: 使用 pickle 缓存
-    cache_dir = _resolve_cache_dir(cache_dir)
-    os.makedirs(cache_dir, exist_ok=True)
-    cache_file = os.path.join(cache_dir, "trade_days.pkl")
-
-    need_dl = force_update or not os.path.exists(cache_file)
-
-    if not need_dl:
-        try:
-            df = pd.read_pickle(cache_file)
-            return pd.DatetimeIndex(pd.to_datetime(df["trade_date"]).tolist())
-        except Exception:
-            need_dl = True
-
-    # 从 AkShare 下载（通过适配器）
+    # 通过适配器获取
     try:
         from jk2bt.data_access import get_adapter
+
         df = get_adapter().get_trade_dates()
-        df.to_pickle(cache_file)
         return pd.DatetimeIndex(pd.to_datetime(df["trade_date"]).tolist())
     except Exception as e:
-        logger.error(f"AkShare 获取交易日失败: {e}")
+        logger.error(f"获取交易日失败: {e}")
 
     # 最后 fallback: 返回空列表
     logger.warning("无法获取交易日数据，返回空列表")
@@ -196,7 +182,9 @@ def _resolve_cache_dir(cache_dir):
         return cache_dir
 
     # 相对路径转为绝对路径
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    base_dir = os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    )
     return os.path.join(base_dir, cache_dir)
 
 
@@ -290,10 +278,8 @@ def count_trade_days_between(start_date, end_date):
 
 
 # 兼容别名：聚宽风格接口返回 list
-def get_all_trade_days_jq(cache_dir="meta_cache", force_update=False, use_duckdb=True):
+def get_all_trade_days_jq(use_duckdb=True):
     days = get_all_trade_days(
-        cache_dir=cache_dir,
-        force_update=force_update,
         use_duckdb=use_duckdb,
     )
     if days is None:
@@ -312,13 +298,13 @@ get_trading_days = get_all_trade_days  # 常用别名
 
 
 __all__ = [
-    'find_date_column',
-    'get_all_trade_days',
-    'get_all_trade_days_jq',  # 兼容别名
-    'get_trading_days',  # 常用别名
-    'get_trade_days',
-    'is_trade_date',
-    'get_previous_trade_date',
-    'get_next_trade_date',
-    'count_trade_days_between',
+    "find_date_column",
+    "get_all_trade_days",
+    "get_all_trade_days_jq",  # 兼容别名
+    "get_trading_days",  # 常用别名
+    "get_trade_days",
+    "is_trade_date",
+    "get_previous_trade_date",
+    "get_next_trade_date",
+    "count_trade_days_between",
 ]

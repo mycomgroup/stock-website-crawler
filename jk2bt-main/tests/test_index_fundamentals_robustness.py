@@ -794,24 +794,22 @@ class TestCacheMechanism(unittest.TestCase):
     def test_cache_directory_creation(self):
         """测试缓存目录创建"""
         with tempfile.TemporaryDirectory() as tmpdir:
-            result = get_index_weights_robust("000300", cache_dir=tmpdir)
+            result = get_index_weights_robust("000300")
             self.assertIsInstance(result, RobustResult)
 
     def test_cache_hit_on_second_call(self):
         """测试缓存命中"""
         with tempfile.TemporaryDirectory() as tmpdir:
-            result1 = get_index_weights_robust("000300", cache_dir=tmpdir)
+            result1 = get_index_weights_robust("000300")
             if result1.success:
-                result2 = get_index_weights_robust("000300", cache_dir=tmpdir)
+                result2 = get_index_weights_robust("000300")
                 self.assertEqual(result2.source, "cache")
 
     def test_force_update_parameter(self):
         """测试force_update参数"""
         with tempfile.TemporaryDirectory() as tmpdir:
-            result1 = get_index_weights_robust("000300", cache_dir=tmpdir)
-            result2 = get_index_weights_robust(
-                "000300", cache_dir=tmpdir, force_update=True
-            )
+            result1 = get_index_weights_robust("000300")
+            result2 = get_index_weights_robust("000300", force_update=True)
             self.assertIsInstance(result2, RobustResult)
 
 

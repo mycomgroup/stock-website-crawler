@@ -250,36 +250,24 @@ def retry_on_failure(
 class ValuationDataSource:
     """估值数据源管理器"""
 
-    def __init__(self, cache_dir: str = "stock_cache"):
-        self.cache_dir = cache_dir
+    def __init__(self):
         self._cache_dir_created = False  # 延迟创建目录，避免导入副作用
 
     def _ensure_cache_dir(self):
         """确保缓存目录存在（延迟创建）"""
-        if not self._cache_dir_created:
-            os.makedirs(self.cache_dir, exist_ok=True)
-            self._cache_dir_created = True
+        pass  # No longer used, kept for backward compatibility
 
     def _get_cache_path(self, symbol: str, source: DataSource) -> str:
         """获取缓存文件路径"""
-        return os.path.join(self.cache_dir, f"{symbol}_valuation_{source.value}.pkl")
+        return f"{symbol}_valuation_{source.value}"
 
     def _load_cache(self, symbol: str, source: DataSource) -> Optional[pd.DataFrame]:
         """加载缓存"""
-        cache_path = self._get_cache_path(symbol, source)
-        if os.path.exists(cache_path):
-            try:
-                return pd.read_pickle(cache_path)
-            except Exception:
-                return None
-        return None
+        return None  # No longer used
 
     def _save_cache(self, df: pd.DataFrame, symbol: str, source: DataSource) -> None:
         """保存缓存"""
-        if df is not None and not df.empty:
-            self._ensure_cache_dir()  # 确保目录存在后再保存
-            cache_path = self._get_cache_path(symbol, source)
-            df.to_pickle(cache_path)
+        pass  # No longer used
 
     @retry_on_failure(max_retries=2, retry_delay=1.0)
     def fetch_from_baidu(self, symbol: str) -> pd.DataFrame:
@@ -289,6 +277,7 @@ class ValuationDataSource:
         AkShare: stock_zh_valuation_baidu
         """
         from jk2bt.data_access import get_adapter
+
         ak_sym = normalize_symbol(symbol)
         dfs = []
 
@@ -300,7 +289,9 @@ class ValuationDataSource:
 
         for indicator, col_name in indicators:
             try:
-                df = get_adapter().get_stock_valuation_baidu(symbol=ak_sym, indicator=indicator)
+                df = get_adapter().get_stock_valuation_baidu(
+                    symbol=ak_sym, indicator=indicator
+                )
                 if df is not None and not df.empty:
                     df = df.rename(columns={"value": col_name})
                     dfs.append(df)
@@ -323,6 +314,7 @@ class ValuationDataSource:
         AkShare: stock_a_lg_indicator (东财估值指标)
         """
         from jk2bt.data_access import get_adapter
+
         ak_sym = normalize_symbol(symbol)
 
         try:
@@ -360,6 +352,7 @@ class ValuationDataSource:
         AkShare: stock_individual_info_em (包含部分估值字段)
         """
         from jk2bt.data_access import get_adapter
+
         ak_sym = normalize_symbol(symbol)
 
         try:
@@ -391,7 +384,6 @@ class ValuationDataSource:
     def fetch_with_fallback(
         self,
         symbol: str,
-        force_update: bool = False,
         validate: bool = True,
     ) -> pd.DataFrame:
         """
@@ -401,8 +393,6 @@ class ValuationDataSource:
         ----------
         symbol : str
             证券代码
-        force_update : bool
-            是否强制更新（忽略缓存）
         validate : bool
             是否进行数据质量验证
 
@@ -418,18 +408,6 @@ class ValuationDataSource:
         }
 
         for source in DATA_SOURCE_PRIORITY:
-            if not force_update:
-                cached = self._load_cache(symbol, source)
-                if cached is not None and not cached.empty:
-                    if validate:
-                        validation = validate_valuation_data(
-                            cached, symbol, strict=False
-                        )
-                        if validation["is_valid"]:
-                            return cached
-                    else:
-                        return cached
-
             try:
                 df = fetch_methods[source](symbol)
                 if df is not None and not df.empty:
@@ -440,14 +418,12 @@ class ValuationDataSource:
                     if validate:
                         validation = validate_valuation_data(df, symbol, strict=False)
                         if validation["is_valid"]:
-                            self._save_cache(df, symbol, source)
                             return df
                         else:
                             warnings.warn(
                                 f"{source.value} 数据源质量检查未通过: {validation['message']}"
                             )
                     else:
-                        self._save_cache(df, symbol, source)
                         return df
             except DataSourceError as e:
                 warnings.warn(f"{source.value} 数据源失败: {e}")
@@ -459,7 +435,6 @@ class ValuationDataSource:
     def merge_from_sources(
         self,
         symbol: str,
-        force_update: bool = False,
     ) -> pd.DataFrame:
         """
         从多个数据源合并数据，取最优值。
@@ -468,8 +443,6 @@ class ValuationDataSource:
         ----------
         symbol : str
             证券代码
-        force_update : bool
-            是否强制更新
 
         Returns
         -------
@@ -528,18 +501,15 @@ class ValuationDataSource:
 class TurnoverDataSource:
     """换手率数据源管理器"""
 
-    def __init__(self, cache_dir: str = "stock_cache"):
-        self.cache_dir = cache_dir
+    def __init__(self):
         self._cache_dir_created = False  # 延迟创建目录，避免导入副作用
 
     def _ensure_cache_dir(self):
         """确保缓存目录存在（延迟创建）"""
-        if not self._cache_dir_created:
-            os.makedirs(self.cache_dir, exist_ok=True)
-            self._cache_dir_created = True
+        pass  # No longer used
 
     def _get_cache_path(self, symbol: str) -> str:
-        return os.path.join(self.cache_dir, f"{symbol}_turnover.pkl")
+        return f"{symbol}_turnover"
 
     @retry_on_failure(max_retries=2, retry_delay=1.0)
     def fetch_from_akshare(self, symbol: str) -> pd.DataFrame:
@@ -549,10 +519,13 @@ class TurnoverDataSource:
         使用 stock_zh_a_hist 接口获取日线数据，计算换手率。
         """
         from jk2bt.data_access import get_adapter
+
         ak_sym = normalize_symbol(symbol)
 
         try:
-            df = get_adapter().get_stock_hist(symbol=ak_sym, period="daily", adjust="qfq")
+            df = get_adapter().get_stock_hist(
+                symbol=ak_sym, period="daily", adjust="qfq"
+            )
             if df is None or df.empty:
                 return pd.DataFrame()
 
@@ -579,6 +552,7 @@ class TurnoverDataSource:
         AkShare: stock_zh_a_spot_em
         """
         from jk2bt.data_access import get_adapter
+
         ak_sym = normalize_symbol(symbol)
 
         try:
@@ -605,7 +579,6 @@ class TurnoverDataSource:
     def fetch_turnover(
         self,
         symbol: str,
-        force_update: bool = False,
     ) -> pd.DataFrame:
         """
         获取换手率数据。
@@ -614,33 +587,17 @@ class TurnoverDataSource:
         ----------
         symbol : str
             证券代码
-        force_update : bool
-            是否强制更新
 
         Returns
         -------
         pd.DataFrame
             换手率数据表
         """
-        cache_path = self._get_cache_path(symbol)
-
-        if not force_update and os.path.exists(cache_path):
-            try:
-                cached = pd.read_pickle(cache_path)
-                if cached is not None and not cached.empty:
-                    validation = validate_turnover_data(cached, symbol, strict=False)
-                    if validation["is_valid"]:
-                        return cached
-            except Exception:
-                pass
-
         df = self.fetch_from_akshare(symbol)
 
         if df is not None and not df.empty:
             validation = validate_turnover_data(df, symbol, strict=False)
             if validation["is_valid"]:
-                self._ensure_cache_dir()  # 确保目录存在后再保存
-                df.to_pickle(cache_path)
                 return df
 
         return pd.DataFrame()

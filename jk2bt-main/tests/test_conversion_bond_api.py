@@ -982,9 +982,10 @@ class TestCacheAndPerformance:
         缓存策略正确判断数据新鲜度。
         """
         import os
+        import tempfile
         from datetime import datetime
 
-        cache_dir = "finance_cache"
+        cache_dir = tempfile.mkdtemp()
         cache_file = os.path.join(cache_dir, "conversion_bond_list.pkl")
 
         result = get_conversion_bond_list_robust(force_update=True, use_cache=False)
