@@ -15,11 +15,6 @@ import json
 import tempfile
 from datetime import datetime
 
-sys.path.insert(
-    0,
-    os.path.join(os.path.dirname(__file__), "..", "src"),
-)
-
 try:
     import jk2bt.core.runner as runner
 
@@ -322,7 +317,7 @@ class TestDataAPIValidation:
     def test_get_index_stocks(self):
         """测试get_index_stocks"""
         try:
-            import src.backtrader_base_strategy as base
+            import jk2bt.core.strategy_base as base
 
             stocks = base.get_index_stocks("000300.XSHG")
 
@@ -336,7 +331,7 @@ class TestDataAPIValidation:
     def test_get_current_data(self):
         """测试get_current_data"""
         try:
-            import src.backtrader_base_strategy as base
+            import jk2bt.core.strategy_base as base
 
             data = base.get_current_data()
 

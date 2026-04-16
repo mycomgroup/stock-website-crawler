@@ -24,8 +24,8 @@
 - 当数据抓取失败时，返回带稳定列名的空 DataFrame，而不是完全无列的 DataFrame
 
 ### 4. 修复导入路径问题
-- 将 `from finance_data.margin import get_margin_data` 改为相对导入 `from .finance_data.margin import get_margin_data`
-- 将 `from finance_data.forecast import get_forecast_data` 改为相对导入 `from .finance_data.forecast import get_forecast_data`
+- 将 `from jk2bt.finance_data.margin import get_margin_data` 改为相对导入 `from .finance_data.margin import get_margin_data`
+- 将 `from jk2bt.finance_data.forecast import get_forecast_data` 改为相对导入 `from .finance_data.forecast import get_forecast_data`
 - 确保在不同运行环境下都能正确导入 finance_data 模块
 
 ### 5. 保持 query builder 调用方式不变

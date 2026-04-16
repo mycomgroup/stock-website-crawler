@@ -59,9 +59,13 @@ def get_index_daily(symbol, start, end, force_update=False):
 
     logger.info(f"{symbol}: 从 akshare 下载数据")
 
-    from akshare import index_zh_a_hist
+    try:
+        from jk2bt.data_access import get_adapter
+    except ImportError:
+        from data_access import get_adapter
 
-    raw_df = index_zh_a_hist(symbol=symbol, period="daily")
+    adapter = get_adapter()
+    raw_df = adapter.get_index_zh_a_hist(symbol=symbol, period="daily")
 
     if raw_df is None or raw_df.empty:
         raise ValueError(f"{symbol}: akshare 返回空数据")

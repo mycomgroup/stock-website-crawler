@@ -46,6 +46,7 @@ try:
         _discover_strategy_stocks,
         _static_analyze_stock_pool,
     )
+    from jk2bt.api.valuation import get_valuation
 except ImportError:
     from jk2bt.core.strategy_wrapper import (
         JQStrategyWrapper,
@@ -58,6 +59,7 @@ except ImportError:
         _discover_strategy_stocks,
         _static_analyze_stock_pool,
     )
+    from jk2bt.api.valuation import get_valuation
 
 
 # 导入统一配置
@@ -106,7 +108,15 @@ try:
     )
 
     # Wrapper function to support JoinQuant's positional argument style
-    def get_price_wrapper(security=None, start_date=None, end_date=None, frequency='daily', fields=None, symbols=None, **kwargs):
+    def get_price_wrapper(
+        security=None,
+        start_date=None,
+        end_date=None,
+        frequency="daily",
+        fields=None,
+        symbols=None,
+        **kwargs,
+    ):
         """Wrapper for get_price_jq that accepts JoinQuant API style positional arguments
 
         JoinQuant signature: get_price(security, start_date, end_date, frequency='daily', fields=None)
@@ -117,7 +127,7 @@ try:
 
         # Handle fields parameter
         if fields is not None:
-            kwargs['fields'] = fields
+            kwargs["fields"] = fields
 
         # Call get_price_jq with the correct parameters
         return get_price_jq(
@@ -125,7 +135,7 @@ try:
             start_date=start_date,
             end_date=end_date,
             frequency=frequency,
-            **kwargs
+            **kwargs,
         )
 
     get_price = get_price_wrapper
@@ -174,7 +184,15 @@ except ImportError:
     )
 
     # Wrapper function to support JoinQuant's positional argument style (重复定义用于fallback)
-    def get_price_wrapper(security=None, start_date=None, end_date=None, frequency='daily', fields=None, symbols=None, **kwargs):
+    def get_price_wrapper(
+        security=None,
+        start_date=None,
+        end_date=None,
+        frequency="daily",
+        fields=None,
+        symbols=None,
+        **kwargs,
+    ):
         """Wrapper for get_price_jq that accepts JoinQuant API style positional arguments
 
         JoinQuant signature: get_price(security, start_date, end_date, frequency='daily', fields=None)
@@ -185,7 +203,7 @@ except ImportError:
 
         # Handle fields parameter
         if fields is not None:
-            kwargs['fields'] = fields
+            kwargs["fields"] = fields
 
         # Call get_price_jq with the correct parameters
         return get_price_jq(
@@ -193,7 +211,7 @@ except ImportError:
             start_date=start_date,
             end_date=end_date,
             frequency=frequency,
-            **kwargs
+            **kwargs,
         )
 
     get_price = get_price_wrapper
@@ -351,11 +369,29 @@ try:
         filter_limit_up,
         filter_limit_down,
     )
-    from jk2bt.api.stats_api import get_ols, get_zscore, get_rank, get_factor_filter_list, get_num
-    from jk2bt.api.billboard_api import get_institutional_holdings, get_billboard_hot_stocks, get_broker_statistics
-    from jk2bt.api.missing_apis import get_beta, get_fund_info, get_fundamentals_continuously
+    from jk2bt.api.stats_api import (
+        get_ols,
+        get_zscore,
+        get_rank,
+        get_factor_filter_list,
+        get_num,
+    )
+    from jk2bt.api.billboard_api import (
+        get_institutional_holdings,
+        get_billboard_hot_stocks,
+        get_broker_statistics,
+    )
+    from jk2bt.api.missing_apis import (
+        get_beta,
+        get_fund_info,
+        get_fundamentals_continuously,
+    )
     from jk2bt.api.indicators import MA, EMA, MACD, KDJ, RSI, BOLL, ATR
-    from jk2bt.api.factor_api import get_north_factor, get_comb_factor, get_factor_momentum
+    from jk2bt.api.factor_api import (
+        get_north_factor,
+        get_comb_factor,
+        get_factor_momentum,
+    )
     from jk2bt.api.limit_api import (
         get_recent_limit_up_stock,
         get_recent_limit_down_stock,
@@ -363,17 +399,28 @@ try:
         get_continue_count_df,
         get_hl_count_df,
     )
-    from jk2bt.api.money_flow_api import get_money_flow, get_sector_money_flow, get_money_flow_rank
+    from jk2bt.api.money_flow_api import (
+        get_money_flow,
+        get_sector_money_flow,
+        get_money_flow_rank,
+    )
 except ImportError as e:
     # 如果导入失败，定义占位函数
     import warnings
+
     warnings.warn(f"部分API模块导入失败: {e}")
     get_market = get_detailed_quote = get_ticks_enhanced = None
     get_shifted_date = get_previous_trade_date = get_next_trade_date = None
-    transform_date = is_trade_date = get_trade_dates_between = count_trade_dates_between = None
+    transform_date = is_trade_date = get_trade_dates_between = (
+        count_trade_dates_between
+    ) = None
     get_dividend_ratio_filter_list = get_margine_stocks = None
-    filter_new_stock = filter_st_stock = filter_paused_stock = apply_common_filters = None
-    filter_limitup_stock = filter_limitdown_stock = filter_kcbj_stock = filter_kcb_stock = None
+    filter_new_stock = filter_st_stock = filter_paused_stock = apply_common_filters = (
+        None
+    )
+    filter_limitup_stock = filter_limitdown_stock = filter_kcbj_stock = (
+        filter_kcb_stock
+    ) = None
     filter_limit_up = filter_limit_down = None
     get_ols = get_zscore = get_rank = get_factor_filter_list = get_num = None
     get_institutional_holdings = get_billboard_hot_stocks = get_broker_statistics = None
@@ -422,6 +469,7 @@ _jqdata.finance = finance
 # pandas.stats.api 兼容层（该模块在 pandas 0.20+ 已移除）
 # =====================================================================
 
+
 class _PandasStatsApiModule:
     """
     模拟 pandas.stats.api 模块（pandas 0.20+ 已移除）
@@ -444,12 +492,12 @@ class _PandasStatsApiModule:
         import numpy as np
 
         # 转换为 numpy 数组
-        if hasattr(y, 'values'):
+        if hasattr(y, "values"):
             y_arr = y.values.astype(float)
         else:
             y_arr = np.array(y, dtype=float)
 
-        if hasattr(x, 'values'):
+        if hasattr(x, "values"):
             x_arr = x.values.astype(float)
         else:
             x_arr = np.array(x, dtype=float)
@@ -479,7 +527,7 @@ class _PandasStatsApiModule:
             residuals = y_clean - y_pred
 
             # 计算 R²
-            ss_res = np.sum(residuals ** 2)
+            ss_res = np.sum(residuals**2)
             ss_tot = np.sum((y_clean - y_clean.mean()) ** 2)
             r2 = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
 
@@ -490,7 +538,7 @@ class _PandasStatsApiModule:
                 nobs=len(y_clean),
                 params=beta.flatten() if intercept else beta.flatten(),
                 x=x_clean,
-                y=y_clean
+                y=y_clean,
             )
         except Exception as e:
             return _OLSResultsStub(beta=None, resid=None, r2=None, nobs=0, error=str(e))
@@ -499,7 +547,17 @@ class _PandasStatsApiModule:
 class _OLSResultsStub:
     """OLS 回归结果存根"""
 
-    def __init__(self, beta=None, resid=None, r2=None, nobs=0, params=None, x=None, y=None, error=None):
+    def __init__(
+        self,
+        beta=None,
+        resid=None,
+        r2=None,
+        nobs=0,
+        params=None,
+        x=None,
+        y=None,
+        error=None,
+    ):
         self._beta = beta
         self._resid = resid
         self._r2 = r2
@@ -583,13 +641,15 @@ class _JQLibModule:
             result = {}
             try:
                 strategy = _get_current_strategy()
-                if strategy and hasattr(strategy, 'datas'):
+                if strategy and hasattr(strategy, "datas"):
                     for data in strategy.datas:
                         sec = data._name
                         if sec in security_list or security_list is None:
                             try:
                                 # 计算N日平均成交量
-                                volumes = [data.volume[i] for i in range(min(N, len(data)))]
+                                volumes = [
+                                    data.volume[i] for i in range(min(N, len(data)))
+                                ]
                                 if volumes and volumes[0] > 0:
                                     avg_vol = sum(volumes) / len(volumes)
                                     current_vol = data.volume[0]
@@ -616,12 +676,14 @@ class _JQLibModule:
             result = {}
             try:
                 strategy = _get_current_strategy()
-                if strategy and hasattr(strategy, 'datas'):
+                if strategy and hasattr(strategy, "datas"):
                     for data in strategy.datas:
                         sec = data._name
                         if sec in security_list or security_list is None:
                             try:
-                                closes = [data.close[i] for i in range(min(N, len(data)))]
+                                closes = [
+                                    data.close[i] for i in range(min(N, len(data)))
+                                ]
                                 result[sec] = sum(closes) / len(closes) if closes else 0
                             except:
                                 result[sec] = 0
@@ -649,17 +711,29 @@ class _JQLibModule:
             MAVOL_M2 = {}
             try:
                 strategy = _get_current_strategy()
-                if strategy and hasattr(strategy, 'datas'):
+                if strategy and hasattr(strategy, "datas"):
                     for data in strategy.datas:
                         sec = data._name
                         if sec in security_list or security_list is None:
                             try:
                                 current_vol = data.volume[0]
                                 VOLT[sec] = current_vol
-                                vols_m1 = [data.volume[i] for i in range(min(M1, len(data)))]
-                                MAVOL_M1[sec] = sum(vols_m1) / len(vols_m1) if vols_m1 else current_vol
-                                vols_m2 = [data.volume[i] for i in range(min(M2, len(data)))]
-                                MAVOL_M2[sec] = sum(vols_m2) / len(vols_m2) if vols_m2 else current_vol
+                                vols_m1 = [
+                                    data.volume[i] for i in range(min(M1, len(data)))
+                                ]
+                                MAVOL_M1[sec] = (
+                                    sum(vols_m1) / len(vols_m1)
+                                    if vols_m1
+                                    else current_vol
+                                )
+                                vols_m2 = [
+                                    data.volume[i] for i in range(min(M2, len(data)))
+                                ]
+                                MAVOL_M2[sec] = (
+                                    sum(vols_m2) / len(vols_m2)
+                                    if vols_m2
+                                    else current_vol
+                                )
                             except:
                                 VOLT[sec] = 0
                                 MAVOL_M1[sec] = 0
@@ -681,7 +755,7 @@ class _JQLibModule:
             D = {}
             try:
                 strategy = _get_current_strategy()
-                if strategy and hasattr(strategy, 'datas'):
+                if strategy and hasattr(strategy, "datas"):
                     for data in strategy.datas:
                         sec = data._name
                         if sec in security_list or security_list is None:
@@ -698,8 +772,8 @@ class _JQLibModule:
                                     rsv = (close - lowest) / (highest - lowest) * 100
                                 prev_k = 50
                                 prev_d = 50
-                                k_value = (2/3) * prev_k + (1/3) * rsv
-                                d_value = (2/3) * prev_d + (1/3) * k_value
+                                k_value = (2 / 3) * prev_k + (1 / 3) * rsv
+                                d_value = (2 / 3) * prev_d + (1 / 3) * k_value
                                 K[sec] = k_value
                                 D[sec] = d_value
                             except:
@@ -719,6 +793,7 @@ class _JQLibModule:
 
     class finance:
         """财务分析模块"""
+
         pass
 
 
@@ -740,8 +815,9 @@ def get_ticks(security, date=None, count=1000, fields=None, skip=False, df=True)
     # 当前系统主要是日线数据，tick数据暂时返回模拟数据
     try:
         import pandas as pd
+
         strategy = _get_current_strategy()
-        if strategy and hasattr(strategy, 'datas'):
+        if strategy and hasattr(strategy, "datas"):
             for data in strategy.datas:
                 if data._name == security:
                     # 返回当日模拟tick数据
@@ -749,12 +825,14 @@ def get_ticks(security, date=None, count=1000, fields=None, skip=False, df=True)
                     base_price = data.close[0]
                     base_vol = data.volume[0]
                     for i in range(min(count, 240)):  # 一天约240个tick
-                        tick_data.append({
-                            'time': f"{9 + i // 60}:{30 + i % 60}",
-                            'price': base_price * (1 + (i % 10 - 5) * 0.001),
-                            'volume': base_vol // 240,
-                            'amount': base_price * base_vol // 240,
-                        })
+                        tick_data.append(
+                            {
+                                "time": f"{9 + i // 60}:{30 + i % 60}",
+                                "price": base_price * (1 + (i % 10 - 5) * 0.001),
+                                "volume": base_vol // 240,
+                                "amount": base_price * base_vol // 240,
+                            }
+                        )
                     if df:
                         return pd.DataFrame(tick_data)
                     return tick_data
@@ -763,53 +841,9 @@ def get_ticks(security, date=None, count=1000, fields=None, skip=False, df=True)
 
     if df:
         import pandas as pd
-        return pd.DataFrame(columns=['time', 'price', 'volume', 'amount'])
+
+        return pd.DataFrame(columns=["time", "price", "volume", "amount"])
     return []
-
-
-def get_valuation(security_list, end_date=None, fields=None, count=1):
-    """
-    获取股票估值数据
-
-    参数:
-        security_list: 股票代码列表
-        end_date: 结束日期
-        fields: 字段列表，如 ['market_cap', 'pe_ratio', 'pb_ratio']
-        count: 返回条数
-
-    返回:
-        DataFrame
-    """
-    import pandas as pd
-
-    try:
-        from jk2bt.core.strategy_base import get_fundamentals_jq
-        # 使用 get_fundamentals 获取估值数据
-        if fields is None:
-            fields = ['market_cap', 'circulating_market_cap', 'pe_ratio', 'pb_ratio', 'turnover_ratio']
-
-        result_data = []
-        for sec in security_list:
-            row = {'code': sec}
-            for field in fields:
-                if field in ['market_cap', 'circulating_market_cap']:
-                    # 尝试从 finance.valuation 获取
-                    row[field] = 100000000  # 默认100亿市值
-                elif field in ['pe_ratio']:
-                    row[field] = 15.0  # 默认PE
-                elif field in ['pb_ratio']:
-                    row[field] = 1.5  # 默认PB
-                elif field in ['turnover_ratio']:
-                    row[field] = 2.0  # 默认换手率
-                else:
-                    row[field] = 0
-            result_data.append(row)
-
-        return pd.DataFrame(result_data)
-    except:
-        pass
-
-    return pd.DataFrame(columns=['code'])
 
 
 def get_call_auction(security_list, date=None):
@@ -827,22 +861,26 @@ def get_call_auction(security_list, date=None):
 
     try:
         strategy = _get_current_strategy()
-        if strategy and hasattr(strategy, 'datas'):
+        if strategy and hasattr(strategy, "datas"):
             result_data = []
             for data in strategy.datas:
                 sec = data._name
                 if sec in security_list:
-                    result_data.append({
-                        'code': sec,
-                        'auction_price': data.open[0],
-                        'auction_volume': data.volume[0] // 10,  # 集合竞价约占10%
-                        'auction_amount': data.open[0] * data.volume[0] // 10,
-                    })
+                    result_data.append(
+                        {
+                            "code": sec,
+                            "auction_price": data.open[0],
+                            "auction_volume": data.volume[0] // 10,  # 集合竞价约占10%
+                            "auction_amount": data.open[0] * data.volume[0] // 10,
+                        }
+                    )
             return pd.DataFrame(result_data)
     except:
         pass
 
-    return pd.DataFrame(columns=['code', 'auction_price', 'auction_volume', 'auction_amount'])
+    return pd.DataFrame(
+        columns=["code", "auction_price", "auction_volume", "auction_amount"]
+    )
 
 
 # 创建 jqlib 模块实例
@@ -870,8 +908,12 @@ class _JQFactorModule:
         return get_factor_values_jq(securities, factors, end_date, count)
 
     @staticmethod
-    def winsorize(factor_data, qrange=[0.05, 0.95], inclusive=True, inf2nan=True, axis=0):
-        return winsorize(factor_data, qrange=qrange, inclusive=inclusive, inf2nan=inf2nan, axis=axis)
+    def winsorize(
+        factor_data, qrange=[0.05, 0.95], inclusive=True, inf2nan=True, axis=0
+    ):
+        return winsorize(
+            factor_data, qrange=qrange, inclusive=inclusive, inf2nan=inf2nan, axis=axis
+        )
 
     @staticmethod
     def standardlize(factor_data, inf2nan=True, axis=0):
@@ -894,24 +936,32 @@ class _XGBoostModule:
 # 聚宽 Wizard 帮助函数 stub 实现
 # =====================================================================
 
+
 def disable_cache():
     """禁用缓存 - stub实现"""
     pass
+
 
 def set_commission(commission_obj):
     """设置交易成本 - stub实现"""
     pass
 
+
 def PerTrade(buy_cost=0, sell_cost=0, min_cost=0):
     """按笔收费类 - stub实现"""
+
     class _PerTrade:
         def __init__(self, buy_cost=0, sell_cost=0, min_cost=0):
             self.buy_cost = buy_cost
             self.sell_cost = sell_cost
             self.min_cost = min_cost
+
     return _PerTrade(buy_cost, sell_cost, min_cost)
 
-def neutralize(factor_data, target=None, date=None, industry_type='sw_l1', score_type='zscore'):
+
+def neutralize(
+    factor_data, target=None, date=None, industry_type="sw_l1", score_type="zscore"
+):
     """
     因子中性化 - 使用官方SDK或本地实现
 
@@ -925,7 +975,12 @@ def neutralize(factor_data, target=None, date=None, industry_type='sw_l1', score
     # 尝试使用官方SDK
     try:
         from jqfactor_analyzer import neutralize as _jq_neutralize
-        how = target if isinstance(target, list) else ([target] if target else [industry_type])
+
+        how = (
+            target
+            if isinstance(target, list)
+            else ([target] if target else [industry_type])
+        )
         return _jq_neutralize(factor_data, how=how, date=date)
     except ImportError:
         pass
@@ -935,6 +990,7 @@ def neutralize(factor_data, target=None, date=None, industry_type='sw_l1', score
     # Fallback 到本地实现
     try:
         from .strategy_base import neutralize as _local_neutralize
+
         how = target if isinstance(target, list) else ([target] if target else None)
         return _local_neutralize(factor_data, how=how, date=date)
     except ImportError:
@@ -943,40 +999,52 @@ def neutralize(factor_data, target=None, date=None, industry_type='sw_l1', score
     # 最后 fallback: 返回原数据
     return factor_data
 
+
 def security_stoploss(context, stoploss_pct, open_sell_securities=None):
     """个股止损函数 - stub实现"""
     pass
+
 
 def portfolio_stoploss(context, stoploss_pct, open_sell_securities=None):
     """组合止损函数 - stub实现"""
     pass
 
+
 def portfolio_stopprofit(context, stopprofit_pct, open_sell_securities=None):
     """组合止盈函数 - stub实现"""
     pass
+
 
 def security_stopprofit(context, stopprofit_pct, open_sell_securities=None):
     """个股止盈函数 - stub实现"""
     pass
 
+
 def index_stoploss_sicha(context, days, open_sell_securities=None, index_symbol=None):
     """指数止损死叉函数 - stub实现"""
     pass
+
 
 def MA_judge_duotou(security, short_period, long_period):
     """判断均线多头排列 - stub实现，默认返回True"""
     return True
 
+
 def financial_data_filter_dayu(security_list, factor_func, threshold):
     """财务数据筛选 - stub实现"""
     return security_list
 
+
 def get_sort_dataframe(security_list, factor_func, factor_config):
     """获取排序数据框 - stub实现"""
     import pandas as pd
+
     return pd.DataFrame(index=security_list)
 
-def order_style(context, buy_lists, max_hold_stocknum, order_style_str, order_style_value):
+
+def order_style(
+    context, buy_lists, max_hold_stocknum, order_style_str, order_style_value
+):
     """下单风格 - 返回等权重分配"""
     result = {}
     if len(buy_lists) > 0:
@@ -985,7 +1053,10 @@ def order_style(context, buy_lists, max_hold_stocknum, order_style_str, order_st
             result[stock] = cash_per_stock
     return result
 
-def sell_by_amount_or_percent_or_none(context, stock, sell_amount, sell_percent, open_sell_securities):
+
+def sell_by_amount_or_percent_or_none(
+    context, stock, sell_amount, sell_percent, open_sell_securities
+):
     """按数量或百分比卖出 - stub实现"""
     strategy = _get_current_strategy()
     if strategy:
@@ -993,19 +1064,23 @@ def sell_by_amount_or_percent_or_none(context, stock, sell_amount, sell_percent,
     if open_sell_securities is not None:
         open_sell_securities.append(stock)
 
+
 def judge_security_max_proportion(context, stock, cash, max_proportion):
     """判断个股最大持仓比重"""
     return cash
+
 
 def max_buy_value_or_amount(stock, value, max_buy_value, max_buy_amount):
     """单只最大买入股数或金额"""
     return value
 
+
 def get_concept_stocks(concept_code, date=None):
     """获取概念股票 - stub实现"""
     return []
 
-def get_all_securities(types=['stock'], date=None):
+
+def get_all_securities(types=["stock"], date=None):
     """获取所有证券 - 使用jq兼容版本"""
     return get_all_securities_jq(types, date)
 
@@ -1016,6 +1091,7 @@ def get_all_securities(types=['stock'], date=None):
 
 # 注意：_get_current_strategy 从 strategy_wrapper.py 导入，不要在此重新定义
 # 策略实例的设置/获取统一由 strategy_wrapper.py 管理
+
 
 # Wrapper for get_current_data to automatically pass the current strategy
 def get_current_data_wrapper():
@@ -1067,21 +1143,21 @@ class _GlobalLogProxy:
     def info(self, *args, **kwargs):
         strategy = _get_current_strategy()
         # Use explicit None check to avoid backtrader's __nonzero__ override
-        if strategy is not None and hasattr(strategy, '_log_adapter'):
+        if strategy is not None and hasattr(strategy, "_log_adapter"):
             strategy._log_adapter.info(*args, **kwargs)
         else:
             print("[INFO]", *args)
 
     def warn(self, *args, **kwargs):
         strategy = _get_current_strategy()
-        if strategy is not None and hasattr(strategy, '_log_adapter'):
+        if strategy is not None and hasattr(strategy, "_log_adapter"):
             strategy._log_adapter.warn(*args, **kwargs)
         else:
             print("[WARN]", *args)
 
     def error(self, *args, **kwargs):
         strategy = _get_current_strategy()
-        if strategy is not None and hasattr(strategy, '_log_adapter'):
+        if strategy is not None and hasattr(strategy, "_log_adapter"):
             strategy._log_adapter.error(*args, **kwargs)
         else:
             print("[ERROR]", *args)
@@ -1089,7 +1165,7 @@ class _GlobalLogProxy:
     def set_level(self, module, level):
         """设置日志级别"""
         strategy = _get_current_strategy()
-        if strategy is not None and hasattr(strategy, '_log_adapter'):
+        if strategy is not None and hasattr(strategy, "_log_adapter"):
             strategy._log_adapter.set_level(module, level)
 
 
@@ -1101,7 +1177,9 @@ log = _GlobalLogProxy()
 # =====================================================================
 
 
-def run_monthly(func, day=1, time="before_open", reference_security=None, force=False, monthday=None):
+def run_monthly(
+    func, day=1, time="before_open", reference_security=None, force=False, monthday=None
+):
     """聚宽run_monthly全局函数
 
     参数:
@@ -1154,7 +1232,7 @@ def order_target(security, amount, style=None, side=None):
     注意: 期货参数 side/style 在股票回测中被忽略
     """
     strategy = _get_current_strategy()
-    if strategy is not None and hasattr(strategy, 'order_target'):
+    if strategy is not None and hasattr(strategy, "order_target"):
         return strategy.order_target(security, amount)
     return None
 
@@ -1162,7 +1240,7 @@ def order_target(security, amount, style=None, side=None):
 def order_value(security, value):
     """按市值下单"""
     strategy = _get_current_strategy()
-    if strategy is not None and hasattr(strategy, 'order_value'):
+    if strategy is not None and hasattr(strategy, "order_value"):
         return strategy.order_value(security, value)
     return None
 
@@ -1180,7 +1258,7 @@ def order(security, amount, style=None, side=None):
     注意: 期货参数 side/style 在股票回测中被忽略
     """
     strategy = _get_current_strategy()
-    if strategy is not None and hasattr(strategy, 'order'):
+    if strategy is not None and hasattr(strategy, "order"):
         return strategy.order(security, amount)
     return None
 
@@ -1284,6 +1362,7 @@ def set_subportfolios(configs):
 
 class OrderStatus:
     """订单状态"""
+
     held = 1
     canceled = 2
     rejected = 3
@@ -1296,7 +1375,7 @@ def get_trades():
 
 def get_locked_shares(stock_list=None, start_date=None, forward_count=0):
     """获取锁定股份信息"""
-    return pd.DataFrame(columns=['code', 'rate1'])
+    return pd.DataFrame(columns=["code", "rate1"])
 
 
 def get_future_contracts(future_type, date=None):
@@ -1330,7 +1409,6 @@ def _get_strategy_trade_days():
             trading_days.append(dt)
         return trading_days
     return []
-
 
 
 # get_trade_days 已从 strategy_base 导入，无需重复定义
@@ -1822,7 +1900,9 @@ def run_jq_strategy(
 
     if stock_pool is None and auto_discover_stocks:
         logger.info("[阶段1] 预运行 - 发现策略需要的股票...")
-        discovered, prerun_failure = _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy_source)
+        discovered, prerun_failure = _discover_strategy_stocks(
+            strategy_functions, start_date, end_date, strategy_source
+        )
         if discovered:
             stock_pool = list(discovered)
             logger.info(
@@ -1831,7 +1911,9 @@ def run_jq_strategy(
         else:
             # 预运行失败，使用默认股票池
             logger.warning("  未发现股票需求，使用默认股票池")
-            logger.warning("  ℹ️  预运行失败不影响真实回测统计，以下默认股票仅用于预运行测试")
+            logger.warning(
+                "  ℹ️  预运行失败不影响真实回测统计，以下默认股票仅用于预运行测试"
+            )
             if prerun_failure["warnings"]:
                 logger.warning("  失败原因:")
                 for warning in prerun_failure["warnings"]:
@@ -1845,7 +1927,9 @@ def run_jq_strategy(
             ]
             logger.warning(f"  默认股票池: {stock_pool}")
             # 标记使用了fallback，但不影响后续真实回测
-            logger.warning("  说明: 默认股票池仅用于预运行测试，真实回测将从策略代码动态获取股票池")
+            logger.warning(
+                "  说明: 默认股票池仅用于预运行测试，真实回测将从策略代码动态获取股票池"
+            )
 
     if stock_pool is None:
         logger.error("错误: 未指定股票池")
@@ -1917,7 +2001,11 @@ def run_jq_strategy(
             if use_cache_only:
                 failure_reasons["cache_empty"].append(stock)
                 print(f" ✗ (缓存不存在)")
-            elif "network" in error_msg or "connection" in error_msg or "timeout" in error_msg:
+            elif (
+                "network" in error_msg
+                or "connection" in error_msg
+                or "timeout" in error_msg
+            ):
                 failure_reasons["network_unavailable"].append(stock)
                 print(f" ✗ (网络连接失败)")
             elif "no data" in error_msg or "empty" in error_msg:
@@ -1936,21 +2024,33 @@ def run_jq_strategy(
         logger.error(f"  失败股票数: {len(failed_stocks)}")
         logger.error("")
         if failure_reasons["cache_empty"]:
-            logger.error(f"  【缓存问题】{len(failure_reasons['cache_empty'])} 只股票无缓存数据:")
+            logger.error(
+                f"  【缓存问题】{len(failure_reasons['cache_empty'])} 只股票无缓存数据:"
+            )
             logger.error(f"    示例: {failure_reasons['cache_empty'][:5]}")
             logger.error("  → 解决方案: 请先运行数据预热脚本")
-            logger.error("    python prewarm_data.py --stocks {}".join(failure_reasons['cache_empty'][:10]))
+            logger.error(
+                "    python prewarm_data.py --stocks {}".join(
+                    failure_reasons["cache_empty"][:10]
+                )
+            )
         if failure_reasons["network_unavailable"]:
-            logger.error(f"  【网络问题】{len(failure_reasons['network_unavailable'])} 只股票网络下载失败:")
+            logger.error(
+                f"  【网络问题】{len(failure_reasons['network_unavailable'])} 只股票网络下载失败:"
+            )
             logger.error(f"    示例: {failure_reasons['network_unavailable'][:5]}")
             logger.error("  → 解决方案: 请检查网络连接，或使用离线模式:")
             logger.error("    run_jq_strategy(..., use_cache_only=True)")
         if failure_reasons["no_data_source"]:
-            logger.error(f"  【数据源问题】{len(failure_reasons['no_data_source'])} 只股票在数据源中不存在:")
+            logger.error(
+                f"  【数据源问题】{len(failure_reasons['no_data_source'])} 只股票在数据源中不存在:"
+            )
             logger.error(f"    示例: {failure_reasons['no_data_source'][:5]}")
             logger.error("  → 解决方案: 请检查股票代码是否正确，或该股票已退市/未上市")
         if failure_reasons["other_errors"]:
-            logger.error(f"  【其他异常】{len(failure_reasons['other_errors'])} 只股票加载出错:")
+            logger.error(
+                f"  【其他异常】{len(failure_reasons['other_errors'])} 只股票加载出错:"
+            )
             logger.error(f"    示例: {failure_reasons['other_errors'][:5]}")
         logger.error("=" * 80)
         return None
@@ -1963,7 +2063,9 @@ def run_jq_strategy(
         if failure_reasons["cache_empty"]:
             brief_reasons.append(f"无缓存{len(failure_reasons['cache_empty'])}只")
         if failure_reasons["network_unavailable"]:
-            brief_reasons.append(f"网络失败{len(failure_reasons['network_unavailable'])}只")
+            brief_reasons.append(
+                f"网络失败{len(failure_reasons['network_unavailable'])}只"
+            )
         if failure_reasons["no_data_source"]:
             brief_reasons.append(f"无数据源{len(failure_reasons['no_data_source'])}只")
         if failure_reasons["other_errors"]:
@@ -2043,14 +2145,16 @@ def run_jq_strategy(
 
     # 收集运行时错误（GATE-2修复：runtime_errors作为验收必要条件）
     runtime_errors = []
-    if hasattr(strategy, 'runtime_errors'):
+    if hasattr(strategy, "runtime_errors"):
         runtime_errors = strategy.runtime_errors
 
     # 如果有运行时错误，打印警告
     if runtime_errors:
         logger.warning(f"检测到 {len(runtime_errors)} 个运行时错误:")
         for err in runtime_errors[:5]:  # 只显示前5个
-            logger.warning(f"  - {err['function']}: {err['error_type']} - {err['error'][:50]}")
+            logger.warning(
+                f"  - {err['function']}: {err['error_type']} - {err['error'][:50]}"
+            )
         if len(runtime_errors) > 5:
             logger.warning(f"  ... 还有 {len(runtime_errors) - 5} 个错误")
 

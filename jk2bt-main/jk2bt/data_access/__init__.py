@@ -37,8 +37,29 @@ src/data_access/__init__.py
 from .data_source import DataSource, DataSourceError
 from .akshare_adapter import AkShareAdapter
 from .mock_data_source import MockDataSource, create_mock_with_sample_data
-from .data_registry import DataRegistry, get_data_source, set_data_source, reset_data_source, get_source_health
+from .data_registry import (
+    DataRegistry,
+    get_data_source,
+    set_data_source,
+    reset_data_source,
+    get_source_health,
+)
 from .cache_manager import DataAccessCacheManager, get_cache, clear_cache, reset_cache
+from .source_router import (
+    MultiSourceRouter,
+    EmptyDataPolicy,
+    ExecutionResult,
+    create_simple_router,
+)
+from .error_codes import (
+    ErrorCode,
+    DataAccessException,
+    DataSourceError as DataAccessExceptionCode,
+    SourceUnavailableError,
+    NoDataError,
+    TimeoutError,
+    RateLimitError,
+)
 
 # ── 全局单例工厂 ──────────────────────────────────────────────────
 
@@ -78,6 +99,18 @@ __all__ = [
     "get_cache",
     "clear_cache",
     "reset_cache",
+    # 多源路由
+    "MultiSourceRouter",
+    "EmptyDataPolicy",
+    "ExecutionResult",
+    "create_simple_router",
+    # 错误码
+    "ErrorCode",
+    "DataAccessException",
+    "SourceUnavailableError",
+    "NoDataError",
+    "TimeoutError",
+    "RateLimitError",
     # 单例工厂
     "get_adapter",
     "set_adapter",

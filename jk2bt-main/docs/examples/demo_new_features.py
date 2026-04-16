@@ -18,7 +18,7 @@ print("=" * 70)
 print("\n【示例1】RSRS择时信号 - 沪深300指数")
 print("-" * 70)
 
-from indicators.rsrs import get_current_rsrs_signal
+from jk2bt.indicators.rsrs import get_current_rsrs_signal
 
 rsrs_signal = get_current_rsrs_signal(index_code="000300", N=18, M=600)
 print(f"信号值: {rsrs_signal['signal']}")
@@ -31,7 +31,10 @@ print(f"描述: {rsrs_signal['description']}")
 print("\n【示例2】北向资金分析")
 print("-" * 70)
 
-from market_data.north_money import compute_north_money_signal, get_north_money_holdings
+from jk2bt.market_data.north_money import (
+    compute_north_money_signal,
+    get_north_money_holdings,
+)
 
 # 获取北向资金择时信号
 nm_signal = compute_north_money_signal(window=20, threshold=30.0)
@@ -51,7 +54,7 @@ if not holdings.empty:
 print("\n【示例3】市场情绪指标汇总")
 print("-" * 70)
 
-from indicators.market_sentiment import (
+from jk2bt.indicators.market_sentiment import (
     compute_crowding_ratio,
     compute_fed_model,
     compute_graham_index,
@@ -87,7 +90,7 @@ print(f"  → {below['description']}")
 print("\n【示例4】行业数据分析")
 print("-" * 70)
 
-from market_data.industry import (
+from jk2bt.market_data.industry import (
     get_industry_stocks,
     get_industry_performance,
     get_market_breadth,

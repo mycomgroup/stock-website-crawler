@@ -42,7 +42,7 @@ class CurrentDataCache:
             if cached_time and (now - cached_time).total_seconds() < self._ttl_seconds:
                 return self._cache[code]
 
-        from jk2bt.core.strategy_base import get_current_data
+        from jk2bt.api.jq_compat import get_current_data
 
         entry = get_current_data(bt_strategy)[code]
 
@@ -96,7 +96,7 @@ def get_current_data_batch(codes, bt_strategy=None, use_cache=True):
         cache = CurrentDataCache()
         return {code: cache.get(code, bt_strategy) for code in codes}
     else:
-        from jk2bt.core.strategy_base import get_current_data
+        from jk2bt.api.jq_compat import get_current_data
 
         current_data = get_current_data(bt_strategy)
         return {code: current_data[code] for code in codes}
@@ -111,7 +111,7 @@ class BatchDataLoader:
 
     def load_stocks(self, symbols, start_date, end_date, fields=None, adjust="qfq"):
         """批量加载股票历史数据"""
-        from jk2bt.core.strategy_base import get_price
+        from jk2bt.api.market import get_price
 
         result = {}
         for symbol in symbols:
@@ -132,7 +132,7 @@ class BatchDataLoader:
 
     def preload_index_stocks(self, index_code, start_date, end_date):
         """预加载指数成分股数据"""
-        from jk2bt.core.strategy_base import get_index_stocks
+        from jk2bt.api.jq_compat import get_index_stocks
 
         stocks = get_index_stocks(index_code)
         return self.load_stocks(stocks, start_date, end_date)
@@ -151,7 +151,7 @@ def preload_data_for_strategy(stock_pool, start_date, end_date):
 @lru_cache(maxsize=1000)
 def cached_get_security_info(code):
     """带缓存的证券信息查询"""
-    from jk2bt.core.strategy_base import get_security_info_jq
+    from jk2bt.api.securities import get_security_info_jq
 
     return get_security_info_jq(code)
 
@@ -159,7 +159,7 @@ def cached_get_security_info(code):
 @lru_cache(maxsize=100)
 def cached_get_index_stocks(index_code, date=None):
     """带缓存的指数成分股查询"""
-    from jk2bt.core.strategy_base import get_index_stocks
+    from jk2bt.api.jq_compat import get_index_stocks
 
     return tuple(get_index_stocks(index_code, date))
 
@@ -182,7 +182,7 @@ def optimize_dataframe_memory(df):
 
 def batch_get_fundamentals(query_obj, symbols, date=None):
     """批量获取财务数据"""
-    from jk2bt.core.strategy_base import get_fundamentals
+    from jk2bt.api.jq_compat import get_fundamentals
 
     if hasattr(query_obj, "_symbols"):
         query_obj._symbols = symbols
@@ -203,7 +203,8 @@ class DataPreloader:
 
     def preload_fundamentals(self, symbols, fields):
         """预加载财务数据"""
-        from jk2bt.core.strategy_base import get_fundamentals, query, valuation
+        from jk2bt.api.jq_compat import get_fundamentals
+        from jk2bt.core.data_proxies import query, valuation
 
         if "valuation" in fields:
             q = query(valuation).filter(valuation.code.in_(symbols))

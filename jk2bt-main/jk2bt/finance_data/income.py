@@ -10,10 +10,16 @@ def get_income(
     symbol, indicator="按报告期", cache_dir="finance_cache", force_update=False
 ):
     cache_file = os.path.join(cache_dir, f"{symbol}_income_{indicator}.pkl")
-    from akshare import stock_financial_benefit_ths
+
+    try:
+        from jk2bt.data_access import get_adapter
+    except ImportError:
+        from data_access import get_adapter
+
+    adapter = get_adapter()
 
     def download_func():
-        return stock_financial_benefit_ths(symbol=symbol, indicator=indicator)
+        return adapter.get_financial_benefit(symbol=symbol, indicator=indicator)
 
     df = fetch_and_cache_data(
         symbol=symbol,
