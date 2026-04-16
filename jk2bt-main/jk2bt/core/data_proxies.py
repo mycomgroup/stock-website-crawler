@@ -303,6 +303,28 @@ class _FinanceModule:
     STK_ML_QUOTA = _FinanceTableProxy("STK_ML_QUOTA")
     STK_HK_HOLD_INFO = _FinanceTableProxy("STK_HK_HOLD_INFO")
 
+    # 基金相关表
+    FUND_SHARE_DAILY = _FinanceTableProxy("FUND_SHARE_DAILY")
+    FUND_INVEST_TARGET = _FinanceTableProxy("FUND_INVEST_TARGET")
+    FUND_FIN_INDICATOR = _FinanceTableProxy("FUND_FIN_INDICATOR")
+    FUND_MAIN_INFO = _FinanceTableProxy("FUND_MAIN_INFO")
+    FUND_PORTFOLIO_BOND = _FinanceTableProxy("FUND_PORTFOLIO_BOND")
+    FUND_DIVIDEND = _FinanceTableProxy("FUND_DIVIDEND")
+
+    # 业绩快报与披露时间表
+    STK_PERFORMANCE_LETTERS = _FinanceTableProxy("STK_PERFORMANCE_LETTERS")
+    STK_REPORT_DISCLOSURE = _FinanceTableProxy("STK_REPORT_DISCLOSURE")
+
+    # 金融类财务报表
+    FINANCE_INCOME_STATEMENT = _FinanceTableProxy("FINANCE_INCOME_STATEMENT")
+    FINANCE_CASHFLOW_STATEMENT = _FinanceTableProxy("FINANCE_CASHFLOW_STATEMENT")
+    FINANCE_BALANCE_SHEET_PARENT = _FinanceTableProxy("FINANCE_BALANCE_SHEET_PARENT")
+
+    FUT_MARGIN = _FinanceTableProxy("FUT_MARGIN")
+    FUT_CHARGE = _FinanceTableProxy("FUT_CHARGE")
+    FUT_WAREHOUSE_RECEIPT = _FinanceTableProxy("FUT_WAREHOUSE_RECEIPT")
+    FUT_MEMBER_POSITION_RANK = _FinanceTableProxy("FUT_MEMBER_POSITION_RANK")
+
     def run_query(self, query_obj, finance_db=None):
         """执行finance查询 - 聚宽风格 API
 

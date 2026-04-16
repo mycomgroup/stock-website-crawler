@@ -244,9 +244,9 @@ def _simulate_call_auction(stock_list, start_date, end_date, fields, volume_rati
         模拟的竞价数据
     """
     try:
-        from ..db.duckdb_manager import DuckDBManager
+        from ..db.parquet_adapter import ParquetAdapter
     except ImportError:
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
     if fields is None:
         fields = CALL_AUCTION_COLUMNS
@@ -254,7 +254,7 @@ def _simulate_call_auction(stock_list, start_date, end_date, fields, volume_rati
     start_str = start_date.strftime("%Y-%m-%d")
     end_str = end_date.strftime("%Y-%m-%d")
 
-    db = DuckDBManager(read_only=True)
+    db = ParquetAdapter(read_only=True)
 
     df_list = []
 

@@ -459,48 +459,44 @@ class TestNormalizationResult(unittest.TestCase):
     def test_result_dataclass(self):
         """结果数据结构"""
         result = NormalizationResult(
-            original_path="/path/to/file.txt",
-            normalized_path="/path/to/normalized.txt",
+            original_file="/path/to/file.txt",
+            normalized_file="/path/to/normalized.txt",
             detected_encoding="utf-8",
-            original_size=100,
-            normalized_size=120,
             success=True,
         )
 
-        self.assertEqual(result.original_path, "/path/to/file.txt")
+        self.assertEqual(result.original_file, "/path/to/file.txt")
         self.assertEqual(result.detected_encoding, "utf-8")
         self.assertTrue(result.success)
 
     def test_result_default_values(self):
         """结果默认值"""
         result = NormalizationResult(
-            original_path="/path/to/file.txt",
-            normalized_path=None,
+            original_file="/path/to/file.txt",
+            normalized_file=None,
             detected_encoding="unknown",
-            original_size=0,
-            normalized_size=0,
             success=False,
         )
 
-        self.assertEqual(len(result.issues_found), 0)
-        self.assertEqual(len(result.issues_fixed), 0)
-        self.assertEqual(len(result.warnings), 0)
+        self.assertEqual(len(result.issues), 0)
+        self.assertEqual(len(result.fixed_issues), 0)
 
     def test_result_issues_list(self):
         """问题列表"""
         result = NormalizationResult(
-            original_path="/path",
-            normalized_path=None,
+            original_file="/path",
+            normalized_file=None,
             detected_encoding="utf-8",
-            original_size=100,
-            normalized_size=100,
             success=True,
         )
 
-        result.issues_found.append(NormalizationIssue.TAB_INDENT)
-        result.issues_fixed.append(NormalizationIssue.TAB_INDENT)
+        issue = NormalizationIssue(
+            issue_type=IssueType.INDENTATION, severity=Severity.WARNING
+        )
+        result.issues.append(issue)
+        result.fixed_issues.append(issue)
 
-        self.assertIn(NormalizationIssue.TAB_INDENT, result.issues_found)
+        self.assertIn(issue, result.issues)
 
 
 class TestCacheMechanism(unittest.TestCase):
@@ -524,7 +520,7 @@ class TestCacheMechanism(unittest.TestCase):
         result1 = self.normalizer.normalize_file(test_file)
         result2 = self.normalizer.normalize_file(test_file)
 
-        self.assertEqual(result1.original_path, result2.original_path)
+        self.assertEqual(result1.original_file, result2.original_file)
         self.assertEqual(result1.detected_encoding, result2.detected_encoding)
 
     def test_cache_different_files(self):
@@ -540,7 +536,7 @@ class TestCacheMechanism(unittest.TestCase):
         result1 = self.normalizer.normalize_file(test_file1)
         result2 = self.normalizer.normalize_file(test_file2)
 
-        self.assertNotEqual(result1.original_path, result2.original_path)
+        self.assertNotEqual(result1.original_file, result2.original_file)
 
 
 class TestNormalizationIssueEnum(unittest.TestCase):
@@ -548,9 +544,9 @@ class TestNormalizationIssueEnum(unittest.TestCase):
 
     def test_issue_enum_values(self):
         """枚举值测试"""
-        self.assertEqual(NormalizationIssue.ENCODING.value, "encoding")
-        self.assertEqual(NormalizationIssue.TAB_INDENT.value, "tab_indent")
-        self.assertEqual(NormalizationIssue.PRINT_STMT.value, "print_statement")
+        self.assertEqual(IssueType.ENCODING.value, "encoding")
+        self.assertEqual(IssueType.INDENTATION.value, "indentation")
+        self.assertEqual(IssueType.PYTHON2_PRINT.value, "python2_print")
         self.assertEqual(NormalizationIssue.EXCEPT_SYNTAX.value, "except_syntax")
 
     def test_issue_enum_members(self):

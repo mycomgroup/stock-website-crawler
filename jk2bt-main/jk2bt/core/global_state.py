@@ -11,90 +11,13 @@ global_state.py
 """
 
 import logging
-import pandas as pd
 
+from jk2bt.logging.adapters import JQLogAdapter
 from .data_proxies import PositionProxy, PortfolioProxy
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
-
-
-# =====================================================================
-# JQLogAdapter - 聚宽 log 对象模拟
-# =====================================================================
-
-
-class JQLogAdapter:
-    """
-    聚宽log对象模拟
-
-    支持方法:
-        log.info(*args) - 信息日志
-        log.warn(*args) - 警告日志
-        log.error(*args) - 错误日志
-        log.debug(*args) - 调试日志
-        log.set_level(module, level) - 设置日志级别
-    """
-
-    def __init__(self, strategy=None):
-        self._strategy = strategy
-        self._log_levels = {
-            "order": "info",
-            "trade": "info",
-            "debug": "info",
-        }
-
-    def info(self, *args, **kwargs):
-        msg = self._format_message(args, kwargs)
-        if self._strategy is not None:
-            self._strategy.log(msg)
-        else:
-            print(f"[INFO] {msg}")
-
-    def warn(self, *args, **kwargs):
-        msg = self._format_message(args, kwargs)
-        if self._strategy is not None:
-            self._strategy.log(f"[WARN] {msg}")
-        else:
-            print(f"[WARN] {msg}")
-
-    def error(self, *args, **kwargs):
-        msg = self._format_message(args, kwargs)
-        if self._strategy is not None:
-            self._strategy.log(f"[ERROR] {msg}")
-        else:
-            print(f"[ERROR] {msg}")
-
-    def debug(self, *args, **kwargs):
-        level = self._log_levels.get("debug", "info")
-        if level == "debug":
-            msg = self._format_message(args, kwargs)
-            if self._strategy is not None:
-                self._strategy.log(f"[DEBUG] {msg}")
-            else:
-                print(f"[DEBUG] {msg}")
-
-    def set_level(self, module, level):
-        self._log_levels[module] = level
-
-    def _format_message(self, args, kwargs):
-        parts = []
-        for arg in args:
-            if isinstance(arg, pd.DataFrame):
-                parts.append("\n" + str(arg))
-            elif isinstance(arg, pd.Series):
-                parts.append("\n" + str(arg))
-            else:
-                parts.append(str(arg))
-        msg = " ".join(parts)
-        if kwargs:
-            kwargs_str = ", ".join([f"{k}={v}" for k, v in kwargs.items()])
-            if msg:
-                msg += " " + kwargs_str
-            else:
-                msg = kwargs_str
-        return msg
 
 
 # 全局 log 对象
@@ -512,9 +435,11 @@ class ContextProxy:
     @property
     def run_params(self):
         """运行参数对象（兼容聚宽）"""
+
         # 返回一个模拟的 run_params 对象
         class RunParams:
-            type = 'backtest'  # 模拟回测模式
+            type = "backtest"  # 模拟回测模式
+
         return RunParams()
 
     @property
@@ -589,17 +514,17 @@ def clear_prerun_stocks():
 
 
 __all__ = [
-    'JQLogAdapter',
-    'log',
-    'set_current_strategy',
-    'order_target',
-    'order_value',
-    'order',
-    'GlobalState',
-    'FundOFPosition',
-    'ContextProxy',
-    'PortfolioCompat',
-    'set_prerun_mode',
-    'get_prerun_stocks',
-    'clear_prerun_stocks',
+    "JQLogAdapter",
+    "log",
+    "set_current_strategy",
+    "order_target",
+    "order_value",
+    "order",
+    "GlobalState",
+    "FundOFPosition",
+    "ContextProxy",
+    "PortfolioCompat",
+    "set_prerun_mode",
+    "get_prerun_stocks",
+    "clear_prerun_stocks",
 ]

@@ -547,6 +547,67 @@ def get_price_jq(
 get_price = get_price_jq
 
 
+def get_ticks(security, count=1000, fields=None, df=True, date=None):
+    """
+    聚宽风格 get_ticks：获取 tick 级数据。
+
+    参数
+    ----
+    security : str or list
+        股票代码
+    count : int
+        获取条数
+    fields : list
+        字段列表
+    df : bool
+        是否返回 DataFrame
+    date : str
+        查询日期
+
+    返回
+    ----
+    DataFrame 或 list
+    """
+    try:
+        from jk2bt.api.market import get_ticks as _get_ticks_impl
+    except ImportError:
+        from market import get_ticks as _get_ticks_impl
+
+    return _get_ticks_impl(
+        security=security,
+        count=count,
+        fields=fields,
+        df=df,
+        date=date,
+    )
+
+
+def get_call_auction(security, date=None):
+    """
+    聚宽风格 get_call_auction：获取集合竞价数据。
+
+    参数
+    ----
+    security : str or list
+        股票代码
+    date : str
+        查询日期
+
+    返回
+    ----
+    DataFrame
+    """
+    try:
+        from jk2bt.api.market import get_call_auction as _get_call_auction_impl
+    except ImportError:
+        from market import get_call_auction as _get_call_auction_impl
+
+    return _get_call_auction_impl(
+        security=security,
+        date=date,
+    )
+
+
 def history(
     count,
     unit="1d",
@@ -1639,29 +1700,150 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
     if types is None:
         types = ["stock"]
 
-    try:
-        from jk2bt.data_access import get_adapter
+    all_dfs = []
 
-        df = get_adapter().get_securities_list()
-    except ImportError:
-        raise ImportError("请安装 akshare: pip install akshare")
+    for t in types:
+        if t == "stock":
+            try:
+                from jk2bt.data_access import get_adapter
 
-    df["code"] = df["code"].apply(
-        lambda x: (
-            "sz" + x
-            if x.startswith(("0", "3"))
-            else ("sh" + x if x.startswith("6") else x)
-        )
-    )
-    df["jq_code"] = df["code"].apply(
-        lambda x: (
-            x[2:]
-            + (".XSHE" if x.startswith("sz") else ".XSHG" if x.startswith("sh") else "")
-        )
-    )
+                df = get_adapter().get_securities_list()
+            except ImportError:
+                raise ImportError("请安装 akshare: pip install akshare")
+
+            df["code"] = df["code"].apply(
+                lambda x: (
+                    "sz" + x
+                    if x.startswith(("0", "3"))
+                    else ("sh" + x if x.startswith("6") else x)
+                )
+            )
+            df["jq_code"] = df["code"].apply(
+                lambda x: (
+                    x[2:]
+                    + (
+                        ".XSHE"
+                        if x.startswith("sz")
+                        else ".XSHG"
+                        if x.startswith("sh")
+                        else ""
+                    )
+                )
+            )
+            df["type"] = "stock"
+            all_dfs.append(df)
+
+        elif t == "etf":
+            try:
+                import akshare as ak
+
+                df = ak.fund_etf_spot_em()
+                if df is not None and not df.empty:
+                    code_col = None
+                    for c in ["代码", "symbol", "code"]:
+                        if c in df.columns:
+                            code_col = c
+                            break
+                    name_col = None
+                    for c in ["名称", "name"]:
+                        if c in df.columns:
+                            name_col = c
+                            break
+                    if code_col and name_col:
+                        df = df[[code_col, name_col]].copy()
+                        df.columns = ["code", "name"]
+                        df["code"] = df["code"].astype(str)
+                        df["jq_code"] = df["code"].apply(
+                            lambda x: (
+                                x
+                                + (
+                                    ".XSHG"
+                                    if x.startswith(("51", "56", "58"))
+                                    else ".XSHE"
+                                )
+                                if len(x) == 6
+                                else x
+                            )
+                        )
+                        df["type"] = "etf"
+                        df["start_date"] = None
+                        df["end_date"] = None
+                        all_dfs.append(df)
+            except Exception as e:
+                logger.warning(f"获取ETF列表失败: {e}")
+
+        elif t == "index":
+            try:
+                import akshare as ak
+
+                df = ak.stock_info_index_name_sina()
+                if df is not None and not df.empty:
+                    code_col = None
+                    for c in ["代码", "symbol", "code"]:
+                        if c in df.columns:
+                            code_col = c
+                            break
+                    name_col = None
+                    for c in ["名称", "name"]:
+                        if c in df.columns:
+                            name_col = c
+                            break
+                    if code_col and name_col:
+                        df = df[[code_col, name_col]].copy()
+                        df.columns = ["code", "name"]
+                        df["code"] = df["code"].astype(str)
+                        df["jq_code"] = df["code"].apply(
+                            lambda x: (
+                                x
+                                + (".XSHG" if x.startswith(("000", "880")) else ".XSHE")
+                                if len(x) == 6
+                                else x
+                            )
+                        )
+                        df["type"] = "index"
+                        df["start_date"] = None
+                        df["end_date"] = None
+                        all_dfs.append(df)
+            except Exception as e:
+                logger.warning(f"获取指数列表失败: {e}")
+
+        elif t == "fund":
+            try:
+                import akshare as ak
+
+                df = ak.fund_open_fund_info_em(symbol="全部", indicator="单位净值走势")
+                if df is not None and not df.empty:
+                    code_col = None
+                    for c in ["基金代码", "code"]:
+                        if c in df.columns:
+                            code_col = c
+                            break
+                    name_col = None
+                    for c in ["基金简称", "基金名称", "name"]:
+                        if c in df.columns:
+                            name_col = c
+                            break
+                    if code_col and name_col:
+                        df = df[[code_col, name_col]].copy()
+                        df.columns = ["code", "name"]
+                        df["code"] = df["code"].astype(str).str.zfill(6)
+                        df["jq_code"] = df["code"].apply(lambda x: x + ".XSHG")
+                        df["type"] = "fund"
+                        df["start_date"] = None
+                        df["end_date"] = None
+                        all_dfs.append(df)
+            except Exception as e:
+                logger.warning(f"获取基金列表失败: {e}")
+
+    if not all_dfs:
+        return pd.DataFrame(columns=["code", "name", "type", "start_date", "end_date"])
+
+    df = pd.concat(all_dfs, ignore_index=True)
+
     # 设置 index 为 jq_code（聚宽 API 风格）
-    if "jq_code" in df.columns and df.index.dtype != object:
+    if "jq_code" in df.columns:
         df = df.set_index("jq_code")
+
     # 预运行模式下记录请求的股票
     if _prerun_mode_active and not df.empty:
         if "jq_code" in df.columns:
@@ -1674,6 +1856,23 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
 
 # 兼容不带 _jq 后缀的聚宽原始调用
 get_all_securities = get_all_securities_jq
+
+
+def _is_fund_code(code):
+    """判断是否为基金代码（以51/15/50/52/56/58/16开头的6位代码）"""
+    code_num = code.split(".")[0] if "." in code else code
+    code_num = code_num[2:] if code_num.startswith(("sh", "sz")) else code_num
+    if len(code_num) == 6 and code_num[:2] in (
+        "51",
+        "15",
+        "50",
+        "52",
+        "56",
+        "58",
+        "16",
+    ):
+        return True
+    return False
 
 
 def get_security_info_jq(code, force_update=False, use_duckdb=True):
@@ -1689,6 +1888,47 @@ def get_security_info_jq(code, force_update=False, use_duckdb=True):
     Returns:
         SecurityInfo: 兼容聚宽的对象风格访问（.code, .display_name, .start_date 等）
     """
+    # 基金代码处理
+    if _is_fund_code(code):
+        code_num = code.split(".")[0] if "." in code else code
+        code_num = code_num[2:] if code_num.startswith(("sh", "sz")) else code_num
+        try:
+            import akshare as ak
+
+            fund_info = ak.fund_open_fund_info_em(
+                symbol=code_num, indicator="单位净值走势"
+            )
+            name = None
+            if fund_info is not None and not fund_info.empty:
+                for c in ["基金简称", "基金名称", "name"]:
+                    if c in fund_info.columns:
+                        name = fund_info[c].iloc[0] if len(fund_info) > 0 else None
+                        break
+            if name is None:
+                name = code_num
+            return SecurityInfo(
+                {
+                    "code": code,
+                    "display_name": name,
+                    "name": name,
+                    "start_date": None,
+                    "end_date": None,
+                    "type": "fund",
+                }
+            )
+        except Exception as e:
+            logger.warning(f"获取基金信息失败: {e}，返回默认结构")
+            return SecurityInfo(
+                {
+                    "code": code,
+                    "display_name": code_num,
+                    "name": code_num,
+                    "start_date": None,
+                    "end_date": None,
+                    "type": "fund",
+                }
+            )
+
     if use_duckdb:
         try:
             from jk2bt.db.meta_cache_api import get_security_info_from_cache
@@ -1894,6 +2134,72 @@ def get_extras_jq(
         result_df = pd.DataFrame(result_data, index=[pd.Timestamp(end_date)])
         return result_df
 
+    elif field in ("acc_net_value", "unit_net_value"):
+        result_data = {}
+        for sec, code in zip(securities_str, code_nums):
+            result_data[sec] = pd.Series(dtype=float)
+
+        for sec, code in zip(securities_str, code_nums):
+            try:
+                import akshare as ak
+
+                fund_code = code.split(".")[0] if "." in code else code
+                fund_code = (
+                    fund_code[2:] if fund_code.startswith(("sh", "sz")) else fund_code
+                )
+
+                nav_df = ak.fund_open_fund_info_em(
+                    symbol=fund_code, indicator="单位净值走势"
+                )
+                if nav_df is not None and not nav_df.empty:
+                    date_col = None
+                    for c in ["净值日期", "date", "日期"]:
+                        if c in nav_df.columns:
+                            date_col = c
+                            break
+                    nav_col = None
+                    for c in ["单位净值", "unit_nav"]:
+                        if c in nav_df.columns:
+                            nav_col = c
+                            break
+                    acc_nav_col = None
+                    for c in ["累计净值", "acc_nav"]:
+                        if c in nav_df.columns:
+                            acc_nav_col = c
+                            break
+
+                    if date_col:
+                        nav_df[date_col] = pd.to_datetime(nav_df[date_col])
+                        nav_df = nav_df.sort_values(date_col)
+
+                        if start_date:
+                            nav_df = nav_df[
+                                nav_df[date_col] >= pd.Timestamp(start_date)
+                            ]
+                        if end_date:
+                            nav_df = nav_df[nav_df[date_col] <= pd.Timestamp(end_date)]
+
+                        if count and len(nav_df) > count:
+                            nav_df = nav_df.tail(count)
+
+                        if field == "unit_net_value" and nav_col:
+                            result_data[sec] = pd.Series(
+                                nav_df[nav_col].values,
+                                index=nav_df[date_col].values,
+                            )
+                        elif field == "acc_net_value" and acc_nav_col:
+                            result_data[sec] = pd.Series(
+                                nav_df[acc_nav_col].values,
+                                index=nav_df[date_col].values,
+                            )
+            except Exception as e:
+                logger.warning(f"获取基金净值失败 {sec}: {e}")
+
+        if df:
+            result_df = pd.DataFrame(result_data)
+            return result_df
+        return result_data
+
     else:
         raise NotImplementedError(f"暂不支持的 extras 字段: {field}")
 
@@ -2045,6 +2351,237 @@ get_trade_days = get_all_trade_days_jq
 
 
 # =====================================================================
+# Alpha101 / Alpha191 因子 API
+# =====================================================================
+
+
+def get_all_alpha_101(date, code=None, alpha=None):
+    """
+    批量获取 Alpha101 因子值（JQData 风格）。
+
+    参数:
+        date: 查询日期，如 '2023-01-01'
+        code: 股票代码或列表，如 '600519.XSHG' 或 ['600519.XSHG', ...]
+              None 表示全市场
+        alpha: 因子名称或列表，如 'alpha001' 或 ['alpha001', 'alpha002']
+               None 表示所有因子
+
+    返回:
+        DataFrame, index=日期, columns=股票代码（单因子）
+        或 dict{factor_name: DataFrame}（多因子）
+    """
+    try:
+        from jk2bt.factors.qlib_alpha import compute_alpha101
+    except ImportError:
+        raise ImportError("请安装 qlib: pip install pyqlib")
+
+    if code is None:
+        try:
+            code = get_index_stocks("000300.XSHG", date=date)
+        except Exception:
+            code = ["600519.XSHG", "000858.XSHE", "000333.XSHE"]
+
+    if isinstance(code, str):
+        code = [code]
+
+    symbols = [jq_code_to_ak(c) if "." in c else c for c in code]
+
+    factors = None
+    if alpha is not None:
+        if isinstance(alpha, str):
+            factors = [alpha]
+        else:
+            factors = list(alpha)
+
+    try:
+        result = compute_alpha101(symbols, factors=factors, end_date=date, count=1)
+        return result
+    except Exception as e:
+        logger.warning(f"Alpha101 计算失败: {e}")
+        return pd.DataFrame()
+
+
+def get_all_alpha_191(date, code=None, alpha=None):
+    """
+    批量获取 Alpha191 因子值（JQData 风格）。
+
+    参数:
+        date: 查询日期，如 '2023-01-01'
+        code: 股票代码或列表
+        alpha: 因子名称或列表
+
+    返回:
+        DataFrame 或 dict{factor_name: DataFrame}
+    """
+    try:
+        from jk2bt.factors.qlib_alpha import compute_alpha191
+    except ImportError:
+        raise ImportError("请安装 qlib: pip install pyqlib")
+
+    if code is None:
+        try:
+            code = get_index_stocks("000300.XSHG", date=date)
+        except Exception:
+            code = ["600519.XSHG", "000858.XSHE", "000333.XSHE"]
+
+    if isinstance(code, str):
+        code = [code]
+
+    symbols = [jq_code_to_ak(c) if "." in c else c for c in code]
+
+    factors = None
+    if alpha is not None:
+        if isinstance(alpha, str):
+            factors = [alpha]
+        else:
+            factors = list(alpha)
+
+    try:
+        result = compute_alpha191(symbols, factors=factors, end_date=date, count=1)
+        return result
+    except Exception as e:
+        logger.warning(f"Alpha191 计算失败: {e}")
+        return pd.DataFrame()
+
+
+# =====================================================================
+# 聚宽因子名称列表
+# =====================================================================
+
+_JQ_FACTOR_NAMES = [
+    # 估值类
+    "PE_ratio",
+    "PE_ratio_dynamic",
+    "PB_ratio",
+    "PS_ratio",
+    "market_cap",
+    "circulating_market_cap",
+    "dividend_ratio",
+    # 技术类
+    "ATR",
+    "BETA",
+    "momentum",
+    "volatility",
+    "volume_ratio",
+    "price_change",
+    "turnover_rate",
+    "liquidity",
+    # 财务类
+    "ROE",
+    "ROA",
+    "gross_profit_margin",
+    "net_profit_margin",
+    "debt_to_asset",
+    "current_ratio",
+    "quick_ratio",
+    "revenue_growth",
+    "net_profit_growth",
+    "operating_cash_flow",
+    # 成长类
+    "inc_revenue_year_on_year",
+    "inc_net_profit_year_on_year",
+    "inc_operating_cash_flow_year_on_year",
+    # 质量类
+    "quality_score",
+    "earnings_quality",
+    "accruals",
+    # 波动类
+    "volatility_20d",
+    "volatility_60d",
+    "volatility_120d",
+    "beta_20d",
+    "beta_60d",
+    "beta_120d",
+    # 动量类
+    "momentum_5d",
+    "momentum_10d",
+    "momentum_20d",
+    "momentum_60d",
+    # 换手率类
+    "turnover_rate_5d",
+    "turnover_rate_20d",
+    "turnover_rate_60d",
+    # 市值类
+    "log_market_cap",
+    "log_circulating_market_cap",
+    # Alpha101/191 因子（常用）
+    "alpha101_001",
+    "alpha101_002",
+    "alpha101_003",
+    "alpha191_001",
+    "alpha191_002",
+    "alpha191_003",
+]
+
+
+def get_factor_names():
+    """
+    获取聚宽因子名称列表。
+
+    返回:
+        list: 可用的因子名称列表
+    """
+    return list(_JQ_FACTOR_NAMES)
+
+
+# =====================================================================
+# 风格因子收益率 / 特异收益率 / 协方差矩阵
+# =====================================================================
+
+
+def get_style_factor_returns(date):
+    """
+    获取风格因子收益率（JQData 风格）。
+
+    参数:
+        date: 查询日期
+
+    返回:
+        DataFrame: 风格因子收益率表
+    """
+    # TODO: akshare 没有直接的风格因子收益率接口
+    # 需要接入 Barra CNE5/CNE6 模型或自建风格因子计算
+    logger.warning(
+        f"get_style_factor_returns: 暂未实现，akshare 无对应接口 (date={date})"
+    )
+    return pd.DataFrame()
+
+
+def get_specific_returns(date):
+    """
+    获取特异收益率（JQData 风格）。
+
+    参数:
+        date: 查询日期
+
+    返回:
+        DataFrame: 特异收益率表
+    """
+    # TODO: akshare 没有直接的特异收益率接口
+    # 需要通过多因子模型回归计算残差收益率
+    logger.warning(f"get_specific_returns: 暂未实现，akshare 无对应接口 (date={date})")
+    return pd.DataFrame()
+
+
+def get_style_factor_covariance(date):
+    """
+    获取风格因子协方差矩阵（JQData 风格）。
+
+    参数:
+        date: 查询日期
+
+    返回:
+        DataFrame: 风格因子协方差矩阵
+    """
+    # TODO: akshare 没有直接的风格因子协方差接口
+    # 需要基于历史风格因子收益率计算协方差矩阵
+    logger.warning(
+        f"get_style_factor_covariance: 暂未实现，akshare 无对应接口 (date={date})"
+    )
+    return pd.DataFrame()
+
+
+# =====================================================================
 # 导出列表
 # =====================================================================
 
@@ -2101,4 +2638,15 @@ __all__ = [
     "analyze_performance",
     # Query
     "query",
+    # Alpha101/191 因子
+    "get_all_alpha_101",
+    "get_all_alpha_191",
+    # 因子名称
+    "get_factor_names",
+    # 风格因子相关
+    "get_style_factor_returns",
+    "get_specific_returns",
+    "get_style_factor_covariance",
+    # 基金相关
+    "_is_fund_code",
 ]

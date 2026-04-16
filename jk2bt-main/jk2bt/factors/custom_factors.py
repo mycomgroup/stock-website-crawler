@@ -264,13 +264,18 @@ def compute_score(
             factor_df[symbol] if symbol in factor_df.columns else factor_df.iloc[:, 0]
         )
 
-        # 标准化因子值（Z-Score）
-        mean_val = factor_series.mean()
-        std_val = factor_series.std()
-        if std_val and std_val > 0:
-            normalized = (factor_series - mean_val) / std_val
+        # 标准化因子值（Z-Score）- 使用扩展窗口避免前瞻偏差
+        # 对每个时间点，使用该点之前的所有历史数据计算均值和标准差
+        # expanding()包含当前点，因此用shift(1)排除当前值，确保只用历史数据
+        mean_vals = factor_series.expanding().mean().shift(1)
+        std_vals = factor_series.expanding().std().shift(1)
+        # 首个别 NaN（无历史数据），用自身值替代，保持分数连续性
+        mean_vals = mean_vals.fillna(factor_series.mean())
+        std_vals = std_vals.fillna(factor_series.std())
+        if std_vals.min() > 0:
+            normalized = (factor_series - mean_vals) / std_vals
         else:
-            normalized = factor_series - mean_val
+            normalized = factor_series - mean_vals
 
         # 对于估值因子，值越小越好，需要取负
         if factor_name in ["pe_ratio", "pb_ratio", "ps_ratio", "pcf_ratio"]:

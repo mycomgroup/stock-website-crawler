@@ -26,9 +26,11 @@ def _get_strategy_wrapper():
     if _JQStrategyWrapper is None:
         try:
             from .strategy_wrapper import JQStrategyWrapper
+
             _JQStrategyWrapper = JQStrategyWrapper
         except ImportError:
             from jk2bt.core.strategy_wrapper import JQStrategyWrapper
+
             _JQStrategyWrapper = JQStrategyWrapper
     return _JQStrategyWrapper
 
@@ -48,12 +50,14 @@ def _load_stock_data_from_cache(stock, start_date, end_date, adjust="qfq"):
         ak_code = ("sh" if stock.startswith("6") else "sz") + stock.zfill(6)
 
     try:
-        from ..db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(read_only=True, use_cache=True)
+        from ..db.parquet_adapter import ParquetAdapter
+
+        db = ParquetAdapter(read_only=True, use_cache=True)
         df = db.get_stock_daily(ak_code, start_date, end_date, adjust)
     except ImportError:
-        from jk2bt.db.duckdb_manager import DuckDBManager
-        db = DuckDBManager(read_only=True, use_cache=True)
+        from jk2bt.db.parquet_adapter import ParquetAdapter
+
+        db = ParquetAdapter(read_only=True, use_cache=True)
         df = db.get_stock_daily(ak_code, start_date, end_date, adjust)
 
     if df is None or df.empty:
@@ -100,9 +104,11 @@ def _load_minute_data(stock, start_date, end_date, frequency="5m"):
 
     try:
         from ..market_data.minute import get_stock_minute
+
         df = get_stock_minute(ak_code, start_date, end_date, period=frequency)
     except ImportError:
         from jk2bt.market_data.minute import get_stock_minute
+
         df = get_stock_minute(ak_code, start_date, end_date, period=frequency)
 
     if df is None or df.empty:
@@ -210,26 +216,42 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                             if stocks:
                                 discovered_stocks.update(stocks)
                                 failure_report["total_successful"] += 1
-                                logger.info(f"    发现指数调用: {key} ({_COMMON_INDICES.get(key, key)}) -> {len(stocks)}只")
+                                logger.info(
+                                    f"    发现指数调用: {key} ({_COMMON_INDICES.get(key, key)}) -> {len(stocks)}只"
+                                )
                             else:
                                 # 获取到空结果
-                                failure_report["index_weight_failures"].append({
-                                    "index": key,
-                                    "reason": "指数权重数据为空（可能未缓存或网络失败）"
-                                })
-                                logger.warning(f"    获取指数{key}失败: 指数权重数据为空")
+                                failure_report["index_weight_failures"].append(
+                                    {
+                                        "index": key,
+                                        "reason": "指数权重数据为空（可能未缓存或网络失败）",
+                                    }
+                                )
+                                logger.warning(
+                                    f"    获取指数{key}失败: 指数权重数据为空"
+                                )
                         except Exception as e:
                             error_msg = str(e).lower()
-                            failure_report["index_weight_failures"].append({
-                                "index": key,
-                                "reason": str(e),
-                                "is_network": "network" in error_msg or "connection" in error_msg or "timeout" in error_msg
-                            })
-                            if "network" in error_msg or "connection" in error_msg or "timeout" in error_msg:
+                            failure_report["index_weight_failures"].append(
+                                {
+                                    "index": key,
+                                    "reason": str(e),
+                                    "is_network": "network" in error_msg
+                                    or "connection" in error_msg
+                                    or "timeout" in error_msg,
+                                }
+                            )
+                            if (
+                                "network" in error_msg
+                                or "connection" in error_msg
+                                or "timeout" in error_msg
+                            ):
                                 failure_report["network_failures"].append(key)
                                 logger.warning(f"    获取指数{key}失败 (网络问题): {e}")
                             else:
-                                logger.warning(f"    获取指数{key}失败 (指数权重未缓存): {e}")
+                                logger.warning(
+                                    f"    获取指数{key}失败 (指数权重未缓存): {e}"
+                                )
                         break
 
         # 识别 get_all_securities 调用
@@ -247,40 +269,50 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                     sample_stocks = list(all_secs.keys())[:100]
                     discovered_stocks.update(sample_stocks)
                     failure_report["total_successful"] += 1
-                    logger.info(f"    发现全市场调用: 获取 {len(sample_stocks)} 只样本股票")
+                    logger.info(
+                        f"    发现全市场调用: 获取 {len(sample_stocks)} 只样本股票"
+                    )
                 else:
                     failure_report["all_securities_failure"] = True
-                    logger.warning(f"    获取全市场股票失败: 证券数据为空（可能未缓存）")
+                    logger.warning(
+                        f"    获取全市场股票失败: 证券数据为空（可能未缓存）"
+                    )
             except Exception as e:
                 failure_report["all_securities_failure"] = True
                 error_msg = str(e).lower()
-                if "network" in error_msg or "connection" in error_msg or "timeout" in error_msg:
+                if (
+                    "network" in error_msg
+                    or "connection" in error_msg
+                    or "timeout" in error_msg
+                ):
                     logger.warning(f"    获取全市场股票失败 (网络问题): {e}")
                 else:
                     logger.warning(f"    获取全市场股票失败 (数据未缓存): {e}")
 
         # 识别ETF代码 (51xxxx.XSHG, 159xxx.XSHE)
         etf_patterns = [
-            r'["\']51[0-9]{4}\.[A-Z]{4}["\']',   # 沪市ETF: 510xxx, 511xxx, 512xxx...
+            r'["\']51[0-9]{4}\.[A-Z]{4}["\']',  # 沪市ETF: 510xxx, 511xxx, 512xxx...
             r'["\']159[0-9]{3}\.[A-Z]{4}["\']',  # 深市ETF: 159xxx
-            r'["\']50[0-9]{4}\.[A-Z]{4}["\']',   # 沪市ETF: 50xxxx
-            r'["\']51[0-9]{4}["\']',             # 不带后缀的ETF代码
-            r'["\']159[0-9]{3}["\']',            # 不带后缀的深市ETF
+            r'["\']50[0-9]{4}\.[A-Z]{4}["\']',  # 沪市ETF: 50xxxx
+            r'["\']51[0-9]{4}["\']',  # 不带后缀的ETF代码
+            r'["\']159[0-9]{3}["\']',  # 不带后缀的深市ETF
         ]
         for pattern in etf_patterns:
             matches = re.findall(pattern, source)
             for match in matches:
                 match = match.strip("'\"")
                 # 补全后缀（如果需要）
-                if '.' not in match:
-                    if match.startswith('6') or match.startswith('5'):
-                        match = match + '.XSHG'
+                if "." not in match:
+                    if match.startswith("6") or match.startswith("5"):
+                        match = match + ".XSHG"
                     else:
-                        match = match + '.XSHE'
+                        match = match + ".XSHE"
                 # ETF代码直接加入股票池
                 if match not in discovered_stocks:
                     discovered_stocks.add(match)
-                    logger.info(f"    发现ETF代码: {match} ({_COMMON_ETFS.get(match, '未知ETF')})")
+                    logger.info(
+                        f"    发现ETF代码: {match} ({_COMMON_ETFS.get(match, '未知ETF')})"
+                    )
 
         # 识别指数代码 (000xxx.XSHG, 399xxx.XSHE)
         index_code_patterns = [
@@ -302,7 +334,9 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                         stocks = get_index_stocks(index_key, robust=False)
                         if stocks:
                             discovered_stocks.update(stocks)
-                            logger.info(f"    发现指数代码: {match} -> {len(stocks)}只成分股")
+                            logger.info(
+                                f"    发现指数代码: {match} -> {len(stocks)}只成分股"
+                            )
                     except Exception as e:
                         logger.warning(f"    获取指数{match}失败: {e}")
 
@@ -315,9 +349,13 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
             matches = re.findall(pattern, source)
             for match in matches:
                 # 跳过ETF和指数代码
-                if match.startswith('51') or match.startswith('159') or match.startswith('50'):
+                if (
+                    match.startswith("51")
+                    or match.startswith("159")
+                    or match.startswith("50")
+                ):
                     continue
-                if match.startswith('000') or match.startswith('399'):
+                if match.startswith("000") or match.startswith("399"):
                     continue
                 if len(match) == 6:
                     # 补全股票代码
@@ -337,6 +375,7 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
 
     # 如果没有提供源代码，尝试使用 inspect.getsource（用于兼容旧调用方式）
     import inspect
+
     for name, func in strategy_functions.items():
         try:
             source = inspect.getsource(func)
@@ -359,25 +398,34 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                                 try:
                                     from .strategy_base import get_index_stocks
                                 except ImportError:
-                                    from jk2bt.core.strategy_base import get_index_stocks
+                                    from jk2bt.core.strategy_base import (
+                                        get_index_stocks,
+                                    )
                                 stocks = get_index_stocks(key, robust=False)
                                 if stocks:
                                     discovered_stocks.update(stocks)
                                     failure_report["total_successful"] += 1
-                                    logger.info(f"    发现指数调用: {key} ({_COMMON_INDICES.get(key, key)}) -> {len(stocks)}只")
+                                    logger.info(
+                                        f"    发现指数调用: {key} ({_COMMON_INDICES.get(key, key)}) -> {len(stocks)}只"
+                                    )
                                 else:
-                                    failure_report["index_weight_failures"].append({
-                                        "index": key,
-                                        "reason": "指数权重数据为空"
-                                    })
-                                    logger.warning(f"    获取指数{key}失败: 指数权重数据为空")
+                                    failure_report["index_weight_failures"].append(
+                                        {"index": key, "reason": "指数权重数据为空"}
+                                    )
+                                    logger.warning(
+                                        f"    获取指数{key}失败: 指数权重数据为空"
+                                    )
                             except Exception as e:
                                 error_msg = str(e).lower()
-                                failure_report["index_weight_failures"].append({
-                                    "index": key,
-                                    "reason": str(e),
-                                    "is_network": "network" in error_msg or "connection" in error_msg or "timeout" in error_msg
-                                })
+                                failure_report["index_weight_failures"].append(
+                                    {
+                                        "index": key,
+                                        "reason": str(e),
+                                        "is_network": "network" in error_msg
+                                        or "connection" in error_msg
+                                        or "timeout" in error_msg,
+                                    }
+                                )
                                 logger.warning(f"    获取指数{key}失败: {e}")
                             break
 
@@ -396,7 +444,9 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                         sample_stocks = list(all_secs.keys())[:100]
                         discovered_stocks.update(sample_stocks)
                         failure_report["total_successful"] += 1
-                        logger.info(f"    发现全市场调用: 获取 {len(sample_stocks)} 只样本股票")
+                        logger.info(
+                            f"    发现全市场调用: 获取 {len(sample_stocks)} 只样本股票"
+                        )
                     else:
                         failure_report["all_securities_failure"] = True
                         logger.warning(f"    获取全市场股票失败: 证券数据为空")
@@ -424,9 +474,9 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
 
             # 识别ETF代码 (51xxxx.XSHG, 159xxx.XSHE)
             etf_patterns = [
-                r'["\']51[0-9]{4}\.[A-Z]{4}["\']',   # 沪市ETF: 510xxx, 511xxx, 512xxx...
+                r'["\']51[0-9]{4}\.[A-Z]{4}["\']',  # 沪市ETF: 510xxx, 511xxx, 512xxx...
                 r'["\']159[0-9]{3}\.[A-Z]{4}["\']',  # 深市ETF: 159xxx
-                r'["\']50[0-9]{4}\.[A-Z]{4}["\']',   # 沪市ETF: 50xxxx
+                r'["\']50[0-9]{4}\.[A-Z]{4}["\']',  # 沪市ETF: 50xxxx
             ]
             for pattern in etf_patterns:
                 matches = re.findall(pattern, source)
@@ -435,7 +485,9 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                     # ETF代码直接加入股票池
                     if match not in discovered_stocks:
                         discovered_stocks.add(match)
-                        logger.info(f"    发现ETF代码: {match} ({_COMMON_ETFS.get(match, '未知ETF')})")
+                        logger.info(
+                            f"    发现ETF代码: {match} ({_COMMON_ETFS.get(match, '未知ETF')})"
+                        )
 
             # 识别指数代码 (000xxx.XSHG, 399xxx.XSHE)
             index_code_patterns = [
@@ -459,18 +511,20 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                             if stocks:
                                 discovered_stocks.update(stocks)
                                 failure_report["total_successful"] += 1
-                                logger.info(f"    发现指数代码: {match} -> {len(stocks)}只成分股")
+                                logger.info(
+                                    f"    发现指数代码: {match} -> {len(stocks)}只成分股"
+                                )
                             else:
-                                failure_report["index_weight_failures"].append({
-                                    "index": match,
-                                    "reason": "指数权重数据为空"
-                                })
-                                logger.warning(f"    获取指数{match}失败: 指数权重数据为空")
+                                failure_report["index_weight_failures"].append(
+                                    {"index": match, "reason": "指数权重数据为空"}
+                                )
+                                logger.warning(
+                                    f"    获取指数{match}失败: 指数权重数据为空"
+                                )
                         except Exception as e:
-                            failure_report["index_weight_failures"].append({
-                                "index": match,
-                                "reason": str(e)
-                            })
+                            failure_report["index_weight_failures"].append(
+                                {"index": match, "reason": str(e)}
+                            )
                             logger.warning(f"    获取指数{match}失败: {e}")
 
         except Exception as e:
@@ -479,7 +533,9 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
     return discovered_stocks, failure_report
 
 
-def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy_source=None):
+def _discover_strategy_stocks(
+    strategy_functions, start_date, end_date, strategy_source=None
+):
     """
     发现策略需要的股票池
 
@@ -499,13 +555,15 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
     discovered_stocks = set()
     prerun_failure_report = {
         "static_analysis": None,  # 静态分析的失败报告
-        "dynamic_prerun": None,   # 动态预运行的失败报告
-        "fallback_used": False,   # 是否使用了默认股票池
-        "warnings": [],           # 收集的所有警告信息
+        "dynamic_prerun": None,  # 动态预运行的失败报告
+        "fallback_used": False,  # 是否使用了默认股票池
+        "warnings": [],  # 收集的所有警告信息
     }
 
     # 1. 首先进行静态分析，识别策略代码中的股票池调用
-    static_discovered, static_failure = _static_analyze_stock_pool(strategy_functions, strategy_source)
+    static_discovered, static_failure = _static_analyze_stock_pool(
+        strategy_functions, strategy_source
+    )
     prerun_failure_report["static_analysis"] = static_failure
 
     if static_discovered:
@@ -519,10 +577,15 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
             prerun_failure_report["warnings"].append(warning_msg)
 
     if static_failure["all_securities_failure"]:
-        prerun_failure_report["warnings"].append("全市场证券数据获取失败（可能未缓存或网络问题）")
+        prerun_failure_report["warnings"].append(
+            "全市场证券数据获取失败（可能未缓存或网络问题）"
+        )
 
     # 检查是否所有股票池调用都失败了
-    if static_failure["total_attempted"] > 0 and static_failure["total_successful"] == 0:
+    if (
+        static_failure["total_attempted"] > 0
+        and static_failure["total_successful"] == 0
+    ):
         logger.warning("  [静态分析警告] 所有股票池调用均失败:")
         for failure in static_failure["index_weight_failures"]:
             is_network = failure.get("is_network", False)
@@ -535,9 +598,17 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
 
     # 2. 动态预运行 - 设置预运行模式
     try:
-        from .strategy_base import set_prerun_mode, get_prerun_stocks, clear_prerun_stocks
+        from .strategy_base import (
+            set_prerun_mode,
+            get_prerun_stocks,
+            clear_prerun_stocks,
+        )
     except ImportError:
-        from jk2bt.core.strategy_base import set_prerun_mode, get_prerun_stocks, clear_prerun_stocks
+        from jk2bt.core.strategy_base import (
+            set_prerun_mode,
+            get_prerun_stocks,
+            clear_prerun_stocks,
+        )
 
     clear_prerun_stocks()
     set_prerun_mode(True)
@@ -598,11 +669,15 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
     if prerun_failure_report["warnings"]:
         logger.warning("=" * 80)
         logger.warning("【预运行阶段警告汇总】")
-        logger.warning(f"  预运行期间出现 {len(prerun_failure_report['warnings'])} 个警告:")
+        logger.warning(
+            f"  预运行期间出现 {len(prerun_failure_report['warnings'])} 个警告:"
+        )
         for i, warning in enumerate(prerun_failure_report["warnings"], 1):
             logger.warning(f"  {i}. {warning}")
         if not discovered_stocks:
-            logger.warning("  ⚠️  预运行未发现任何股票，后续将使用默认股票池（不影响真实回测统计）")
+            logger.warning(
+                "  ⚠️  预运行未发现任何股票，后续将使用默认股票池（不影响真实回测统计）"
+            )
             prerun_failure_report["fallback_used"] = True
         else:
             logger.warning("  ℹ️  已发现部分股票，预运行失败不影响真实回测统计")
@@ -612,10 +687,10 @@ def _discover_strategy_stocks(strategy_functions, start_date, end_date, strategy
 
 
 __all__ = [
-    '_load_stock_data_from_cache',
-    '_load_minute_data',
-    '_static_analyze_stock_pool',
-    '_discover_strategy_stocks',
-    '_COMMON_INDICES',
-    '_COMMON_ETFS',
+    "_load_stock_data_from_cache",
+    "_load_minute_data",
+    "_static_analyze_stock_pool",
+    "_discover_strategy_stocks",
+    "_COMMON_INDICES",
+    "_COMMON_ETFS",
 ]

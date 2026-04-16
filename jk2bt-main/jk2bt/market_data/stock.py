@@ -20,11 +20,10 @@ import pandas as pd
 import time
 
 try:
-    from ..db.duckdb_manager import (
-        DuckDBManager,
+    from ..db.parquet_adapter import (
+        ParquetAdapter,
         get_shared_read_only_manager,
         get_writer_manager,
-        clear_global_cache,
     )
     from ..utils.symbol import format_stock_symbol
     from ..utils.standardize import standardize_ohlcv
@@ -37,11 +36,10 @@ try:
         set_tushare_token,
     )
 except ImportError:
-    from jk2bt.db.duckdb_manager import (
-        DuckDBManager,
+    from jk2bt.db.parquet_adapter import (
+        ParquetAdapter,
         get_shared_read_only_manager,
         get_writer_manager,
-        clear_global_cache,
     )
     from utils.symbol import format_stock_symbol
     from utils.standardize import standardize_ohlcv

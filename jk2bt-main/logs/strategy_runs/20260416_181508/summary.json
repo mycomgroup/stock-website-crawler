@@ -1,0 +1,66 @@
+{
+  "run_id": "20260416_181508",
+  "metadata": {
+    "version": "unknown",
+    "run_timestamp": "2026-04-16T18:15:08.349199",
+    "run_params": {
+      "start_date": "2022-01-01",
+      "end_date": "2022-03-31",
+      "initial_capital": 100000,
+      "timeout_per_strategy": 60,
+      "max_workers": 2
+    },
+    "data_timestamp": {
+      "backtest_start": "2022-01-01",
+      "backtest_end": "2022-03-31"
+    },
+    "cache_summary": {
+      "stock_count": 0,
+      "etf_count": 0,
+      "index_count": 0,
+      "total_records": 0,
+      "symbols": []
+    },
+    "cache_meta": {
+      "trade_days": true,
+      "securities": true,
+      "securities_date": "20260404",
+      "index_weights": {
+        "000905": true,
+        "000016": true,
+        "000300": true
+      },
+      "trade_days_date": "2026-04-04"
+    },
+    "network_mode": "online",
+    "cache_only": false,
+    "environment": {
+      "python_version": "3.12.0",
+      "python_implementation": "CPython",
+      "os_platform": "macOS-15.7.4-arm64-arm-64bit",
+      "hostname": "fengzhideMacBook-Pro-6.local"
+    },
+    "config_snapshot": {
+      "cache_enabled": true,
+      "cache_dir": "data/cache",
+      "duckdb_path": "data/jk2bt.duckdb",
+      "data_source": "akshare",
+      "benchmark": "000300.XSHG"
+    },
+    "run_id": "20260416_181508"
+  },
+  "results": [],
+  "summary": {
+    "total": 0,
+    "success_total": 0,
+    "failed_total": 0,
+    "recoverable_failures": 0,
+    "unrecoverable_failures": 0,
+    "status_counts": {}
+  },
+  "attribution_summary": {
+    "recoverable": {},
+    "unrecoverable": {}
+  },
+  "scan_results": {}
+}

@@ -38,47 +38,16 @@ except ImportError:
             return df
 
 
+from jk2bt.utils.result import RobustResult
+
+
+_CACHE_AVAILABLE = False
 try:
-    from ..index_fundamentals_robust import RobustResult
+    from parquet_cache import get_cache_manager
+
+    _CACHE_AVAILABLE = True
 except ImportError:
-    try:
-        from index_fundamentals_robust import RobustResult
-    except ImportError:
-
-        class RobustResult:
-            def __init__(self, success=True, data=None, reason="", source="network"):
-                self.success = success
-                self.data = data if data is not None else pd.DataFrame()
-                self.reason = reason
-                self.source = source
-
-            def __bool__(self):
-                return self.success
-
-            def __repr__(self):
-                status = "SUCCESS" if self.success else "FAILED"
-                return f"<RobustResult[{status}] source={self.source} reason='{self.reason}' data_type={type(self.data).__name__}>"
-
-            def is_empty(self):
-                if isinstance(self.data, pd.DataFrame):
-                    return self.data.empty
-                elif isinstance(self.data, (list, tuple)):
-                    return len(self.data) == 0
-                return self.data is None
-
-
-_DUCKDB_AVAILABLE = False
-try:
-    from ..db.duckdb_manager import DuckDBManager
-
-    _DUCKDB_AVAILABLE = True
-except ImportError:
-    try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
-
-        _DUCKDB_AVAILABLE = True
-    except ImportError:
-        pass
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -174,229 +143,133 @@ def _normalize_change_type(change_str: str) -> str:
     return change_str if change_str else "不变"
 
 
-class ShareholderDBManager:
-    """股东信息 DuckDB 管理器（按周缓存）"""
+class ShareholderCacheManager:
+    """股东信息 parquet_cache 管理器（按周缓存）"""
 
     _instance = None
 
-    def __new__(cls, db_path: str = None):
+    def __new__(cls, base_dir: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._init_manager(base_dir)
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
-        if not _DUCKDB_AVAILABLE:
-            self._manager = None
+    def _init_manager(self, base_dir: str = None):
+        if not _CACHE_AVAILABLE:
+            self._cache = None
             return
 
-        if db_path is None:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if base_dir is None:
+            base_dir = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                ),
+                "data",
+                "cache",
             )
-            db_path = os.path.join(base_dir, "data", "shareholder.db")
 
-        self.db_path = db_path
-        self._manager = None
-
-        try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
-            self._init_tables()
-        except Exception as e:
-            logger.warning(f"DuckDB 初始化失败: {e}")
-            self._manager = None
-
-    def _init_tables(self):
-        if self._manager is None:
-            return
+        self.base_dir = base_dir
+        self._cache = None
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS top10_shareholders (
-                        code VARCHAR NOT NULL,
-                        report_date DATE,
-                        ann_date DATE,
-                        shareholder_name VARCHAR,
-                        shareholder_code VARCHAR,
-                        shareholder_type VARCHAR,
-                        hold_amount DOUBLE,
-                        hold_ratio DOUBLE,
-                        change_type VARCHAR,
-                        change_amount DOUBLE,
-                        rank INTEGER,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code, rank, report_date)
-                    )
-                """)
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS top10_float_shareholders (
-                        code VARCHAR NOT NULL,
-                        report_date DATE,
-                        ann_date DATE,
-                        shareholder_name VARCHAR,
-                        shareholder_code VARCHAR,
-                        shareholder_type VARCHAR,
-                        hold_amount DOUBLE,
-                        hold_ratio DOUBLE,
-                        change_type VARCHAR,
-                        change_amount DOUBLE,
-                        rank INTEGER,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code, rank, report_date)
-                    )
-                """)
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS shareholder_num (
-                        code VARCHAR NOT NULL,
-                        report_date DATE,
-                        ann_date DATE,
-                        holder_num INTEGER,
-                        holder_num_change INTEGER,
-                        holder_num_change_ratio DOUBLE,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code, report_date)
-                    )
-                """)
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS shareholder_structure (
-                        code VARCHAR NOT NULL,
-                        shareholder_type VARCHAR,
-                        hold_ratio DOUBLE,
-                        report_date DATE,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code, shareholder_type, report_date)
-                    )
-                """)
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_sh_code ON top10_shareholders(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_sh_float_code ON top10_float_shareholders(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_sh_num_code ON shareholder_num(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_sh_struct_code ON shareholder_structure(code)"
-                )
-                logger.info("股东信息表结构初始化完成")
+            self._cache = get_cache_manager(base_dir=base_dir)
         except Exception as e:
-            logger.warning(f"初始化表结构失败: {e}")
+            logger.warning(f"parquet_cache 初始化失败: {e}")
+            self._cache = None
 
     def insert_top10_shareholders(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
+        if self._cache is None or df.empty:
             return
 
         df = df.copy()
-        for col in _SHAREHOLDER_SCHEMA:
+        rename_map = {
+            "code": "symbol",
+            "shareholder_name": "holder_name",
+            "hold_amount": "hold_count",
+            "shareholder_type": "holder_type",
+        }
+        df = df.rename(columns=rename_map)
+
+        for col in [
+            "symbol",
+            "report_date",
+            "holder_name",
+            "hold_count",
+            "hold_ratio",
+            "holder_type",
+        ]:
             if col not in df.columns:
                 df[col] = None
 
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
-
-        cols = _SHAREHOLDER_SCHEMA + ["update_time"]
+        cols = [
+            "symbol",
+            "report_date",
+            "holder_name",
+            "hold_count",
+            "hold_ratio",
+            "holder_type",
+        ]
         df = df[cols]
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute(
-                    "INSERT OR REPLACE INTO top10_shareholders SELECT * FROM df"
-                )
-                logger.info(f"插入/更新 {len(df)} 条十大股东信息")
+            if "report_date" in df.columns:
+                for value, group in df.groupby("report_date"):
+                    self._cache.put("holder", group, partition_value=str(value))
+            else:
+                self._cache.put("holder", df)
+            logger.info(f"插入/更新 {len(df)} 条十大股东信息")
         except Exception as e:
             logger.warning(f"插入十大股东信息失败: {e}")
 
     def insert_top10_float_shareholders(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
-            return
-
-        df = df.copy()
-        for col in _SHAREHOLDER_SCHEMA:
-            if col not in df.columns:
-                df[col] = None
-
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
-
-        cols = _SHAREHOLDER_SCHEMA + ["update_time"]
-        df = df[cols]
-
-        try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute(
-                    "INSERT OR REPLACE INTO top10_float_shareholders SELECT * FROM df"
-                )
-                logger.info(f"插入/更新 {len(df)} 条十大流通股东信息")
-        except Exception as e:
-            logger.warning(f"插入十大流通股东信息失败: {e}")
+        self.insert_top10_shareholders(df)
 
     def insert_shareholder_structure(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
-            return
-
-        df = df.copy()
-        for col in _SHAREHOLDER_STRUCTURE_SCHEMA:
-            if col not in df.columns:
-                df[col] = None
-
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
-
-        cols = _SHAREHOLDER_STRUCTURE_SCHEMA + ["update_time"]
-        df = df[cols]
-
-        try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute(
-                    "INSERT OR REPLACE INTO shareholder_structure SELECT * FROM df"
-                )
-                logger.info(f"插入/更新 {len(df)} 条股东结构信息")
-        except Exception as e:
-            logger.warning(f"插入股东结构信息失败: {e}")
+        self.insert_top10_shareholders(df)
 
     def get_top10_shareholders(self, code: str) -> pd.DataFrame:
-        if self._manager is None:
+        if self._cache is None:
             return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                df = conn.execute(
-                    "SELECT * FROM top10_shareholders WHERE code = ? ORDER BY rank",
-                    [code],
-                ).fetchdf()
-                return df
+            result = self._cache.get("holder", where={"symbol": code})
+            if result is not None and not result.empty:
+                rename_map = {
+                    "symbol": "code",
+                    "holder_name": "shareholder_name",
+                    "hold_count": "hold_amount",
+                    "holder_type": "shareholder_type",
+                }
+                result = result.rename(columns=rename_map)
+                for col in _SHAREHOLDER_SCHEMA:
+                    if col not in result.columns:
+                        result[col] = None
+                return result.sort_values("rank")
+            return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
         except Exception as e:
             logger.warning(f"查询十大股东信息失败: {e}")
             return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
 
     def get_top10_float_shareholders(self, code: str) -> pd.DataFrame:
-        if self._manager is None:
-            return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
-
-        try:
-            with self._manager._get_connection(read_only=True) as conn:
-                df = conn.execute(
-                    "SELECT * FROM top10_float_shareholders WHERE code = ? ORDER BY rank",
-                    [code],
-                ).fetchdf()
-                return df
-        except Exception as e:
-            logger.warning(f"查询十大流通股东信息失败: {e}")
-            return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
+        return self.get_top10_shareholders(code)
 
     def get_shareholder_structure(self, code: str) -> pd.DataFrame:
-        if self._manager is None:
+        if self._cache is None:
             return pd.DataFrame(columns=_SHAREHOLDER_STRUCTURE_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                df = conn.execute(
-                    "SELECT * FROM shareholder_structure WHERE code = ? ORDER BY report_date DESC",
-                    [code],
-                ).fetchdf()
-                return df
+            result = self._cache.get("holder", where={"symbol": code})
+            if result is not None and not result.empty:
+                rename_map = {
+                    "symbol": "code",
+                    "holder_type": "shareholder_type",
+                }
+                result = result.rename(columns=rename_map)
+                for col in _SHAREHOLDER_STRUCTURE_SCHEMA:
+                    if col not in result.columns:
+                        result[col] = None
+                return result.sort_values("report_date", ascending=False)
+            return pd.DataFrame(columns=_SHAREHOLDER_STRUCTURE_SCHEMA)
         except Exception as e:
             logger.warning(f"查询股东结构信息失败: {e}")
             return pd.DataFrame(columns=_SHAREHOLDER_STRUCTURE_SCHEMA)
@@ -404,19 +277,11 @@ class ShareholderDBManager:
     def is_cache_valid(
         self, code: str, table: str = "top10_shareholders", cache_days: int = 7
     ) -> bool:
-        if self._manager is None:
+        if self._cache is None:
             return False
-
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                result = conn.execute(
-                    f"SELECT MAX(update_time) FROM {table} WHERE code = ?",
-                    [code],
-                ).fetchone()
-                if result and result[0]:
-                    update_time = pd.to_datetime(result[0])
-                    return (datetime.now() - update_time).days < cache_days
-                return False
+            result = self._cache.get("holder", where={"symbol": code})
+            return result is not None and not result.empty
         except Exception:
             return False
 
@@ -434,7 +299,7 @@ class ShareholderDBManager:
         return results
 
 
-_db_manager = ShareholderDBManager() if _DUCKDB_AVAILABLE else None
+_db_manager = ShareholderCacheManager() if _CACHE_AVAILABLE else None
 
 
 def get_top_shareholders(

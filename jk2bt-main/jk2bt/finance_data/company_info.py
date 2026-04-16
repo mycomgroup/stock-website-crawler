@@ -33,6 +33,8 @@ from typing import Optional, List, Dict, Any, Union
 import logging
 import time
 
+from jk2bt.utils.result import RobustResult
+
 logger = logging.getLogger(__name__)
 
 CACHE_EXPIRE_DAYS = 90
@@ -75,63 +77,15 @@ def _retry_akshare_call(func, *args, max_attempts=_MAX_RETRY_ATTEMPTS, **kwargs)
     return None
 
 
-class RobustResult:
-    """
-    稳健结果封装类，用于统一处理API返回结果。
-
-    属性:
-        success: bool - 是否成功获取数据
-        data: Any - 返回的数据（DataFrame等）
-        reason: str - 失败原因或成功说明
-        source: str - 数据来源（'cache'/'network'/'fallback'）
-
-    用法:
-        result = get_company_info_robust('600519.XSHG')
-        if result.success:
-            df = result.data
-        else:
-            log.warn(f"获取失败: {result.reason}")
-    """
-
-    def __init__(self, success=True, data=None, reason="", source="network"):
-        self.success = success
-        self.data = data if data is not None else pd.DataFrame()
-        self.reason = reason
-        self.source = source
-
-    def __bool__(self):
-        return self.success
-
-    def __repr__(self):
-        status = "SUCCESS" if self.success else "FAILED"
-        return f"<RobustResult[{status}] source={self.source} reason='{self.reason}' data_type={type(self.data).__name__}>"
-
-    def is_empty(self):
-        if isinstance(self.data, pd.DataFrame):
-            return self.data.empty
-        elif isinstance(self.data, (list, tuple)):
-            return len(self.data) == 0
-        return self.data is None
-
-
-_DUCKDB_AVAILABLE = False
-_DUCKDB_ERROR_MSG = ""
+_CACHE_AVAILABLE = False
+_CACHE_ERROR_MSG = ""
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from parquet_cache import get_cache_manager
 
-    _DUCKDB_AVAILABLE = True
+    _CACHE_AVAILABLE = True
 except ImportError as e:
-    _DUCKDB_ERROR_MSG = str(e)
-    try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
-
-        _DUCKDB_AVAILABLE = True
-    except ImportError as e2:
-        _DUCKDB_ERROR_MSG = str(e2)
-        logger.warning(
-            f"DuckDB 模块不可用（{e2}），将使用 pickle 缓存。"
-            "安装 DuckDB 可提升性能: pip install duckdb"
-        )
+    _CACHE_ERROR_MSG = str(e)
+    logger.warning(f"parquet_cache 模块不可用（{e}）")
 
 
 _COMPANY_BASIC_INFO_SCHEMA = [
@@ -155,194 +109,147 @@ _STATUS_CHANGE_SCHEMA = [
 ]
 
 
-class CompanyInfoDBManager:
-    """公司信息 DuckDB 管理器"""
+class CompanyInfoCacheManager:
+    """公司信息 parquet_cache 管理器"""
 
     _instance = None
     _lock = None
 
-    def __new__(cls, db_path: str = None):
+    def __new__(cls, base_dir: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._lock = cls._instance._init_manager(db_path)
+            cls._lock = cls._instance._init_manager(base_dir)
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
-        if not _DUCKDB_AVAILABLE:
-            logger.info(
-                "DuckDB 不可用，使用 pickle 缓存（性能较低）。"
-                f"原因: {_DUCKDB_ERROR_MSG}"
-            )
+    def _init_manager(self, base_dir: str = None):
+        if not _CACHE_AVAILABLE:
+            self._cache = None
             return None
 
-        if db_path is None:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if base_dir is None:
+            base_dir = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                ),
+                "data",
+                "cache",
             )
-            db_path = os.path.join(base_dir, "data", "company_info.db")
 
-        self.db_path = db_path
-        self._manager = None
+        self.base_dir = base_dir
+        self._cache = None
 
         try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
-            self._init_tables()
-            logger.info(f"DuckDB 初始化成功: {db_path}")
+            self._cache = get_cache_manager(base_dir=base_dir)
+            logger.info(f"parquet_cache 初始化成功: {base_dir}")
         except Exception as e:
-            logger.warning(
-                f"DuckDB 初始化失败: {e}, 将使用 pickle 缓存。检查路径权限: {db_path}"
-            )
-            self._manager = None
+            logger.warning(f"parquet_cache 初始化失败: {e}")
+            self._cache = None
 
-        return self._manager
+        return self._cache
 
-    def _init_tables(self):
-        if self._manager is None:
-            return
-
-        try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS company_info (
-                        code VARCHAR NOT NULL,
-                        company_name VARCHAR,
-                        establish_date DATE,
-                        list_date DATE,
-                        main_business VARCHAR,
-                        industry VARCHAR,
-                        registered_address VARCHAR,
-                        company_status VARCHAR,
-                        status_change_date DATE,
-                        change_type VARCHAR,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code)
-                    )
-                """)
-
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS status_change (
-                        code VARCHAR NOT NULL,
-                        status_date DATE NOT NULL,
-                        status_type VARCHAR,
-                        reason VARCHAR,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code, status_date)
-                    )
-                """)
-
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_company_code ON company_info(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_status_code ON status_change(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_status_date ON status_change(status_date)"
-                )
-
-                logger.info("公司信息表结构初始化完成")
-        except Exception as e:
-            logger.warning(f"初始化表结构失败: {e}")
-
-    def get_manager(self):
-        return self._manager
+    def get_cache(self):
+        return self._cache
 
     def insert_company_info(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
+        if self._cache is None or df.empty:
             return
 
         df = df.copy()
+        rename_map = {
+            "code": "symbol",
+            "company_name": "name",
+            "establish_date": "list_date",
+        }
+        df = df.rename(columns=rename_map)
 
-        # 确保所有必需字段都存在，缺失的用None填充
-        for col in _COMPANY_BASIC_INFO_SCHEMA:
+        for col in ["symbol", "name", "industry", "area", "list_date", "market"]:
             if col not in df.columns:
                 df[col] = None
 
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
-
-        # 按照表结构顺序选择列
-        cols = _COMPANY_BASIC_INFO_SCHEMA + ["update_time"]
+        cols = ["symbol", "name", "industry", "area", "list_date", "market"]
         df = df[cols]
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    INSERT OR REPLACE INTO company_info 
-                    (code, company_name, establish_date, list_date, main_business, 
-                     industry, registered_address, company_status, status_change_date, 
-                     change_type, update_time)
-                    SELECT * FROM df
-                """)
-                logger.info(f"插入/更新 {len(df)} 条公司信息")
+            self._cache.put("company_info", df)
+            logger.info(f"插入/更新 {len(df)} 条公司信息")
         except Exception as e:
             logger.warning(f"插入公司信息失败: {e}")
 
     def get_company_info(self, code: str) -> pd.DataFrame:
-        if self._manager is None:
+        if self._cache is None:
             return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                df = conn.execute(
-                    "SELECT * FROM company_info WHERE code = ?", [code]
-                ).fetchdf()
-                return df
+            result = self._cache.get("company_info", where={"symbol": code})
+            if result is not None and not result.empty:
+                rename_map = {
+                    "symbol": "code",
+                    "name": "company_name",
+                    "list_date": "establish_date",
+                }
+                result = result.rename(columns=rename_map)
+                for col in _COMPANY_BASIC_INFO_SCHEMA:
+                    if col not in result.columns:
+                        result[col] = None
+                return result[_COMPANY_BASIC_INFO_SCHEMA]
+            return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
         except Exception as e:
             logger.warning(f"查询公司信息失败: {e}")
             return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
 
     def insert_status_change(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
+        if self._cache is None or df.empty:
             return
 
         df = df.copy()
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
+        if "symbol" not in df.columns and "code" in df.columns:
+            df = df.rename(columns={"code": "symbol"})
 
-        cols = [c for c in _STATUS_CHANGE_SCHEMA if c in df.columns] + ["update_time"]
+        for col in ["symbol", "status_date", "status_type", "reason"]:
+            if col not in df.columns:
+                df[col] = None
+
+        cols = ["symbol", "status_date", "status_type", "reason"]
         df = df[cols]
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    INSERT OR REPLACE INTO status_change
-                    SELECT * FROM df
-                """)
-                logger.info(f"插入/更新 {len(df)} 条状态变动")
+            self._cache.put("status_change", df)
+            logger.info(f"插入/更新 {len(df)} 条状态变动")
         except Exception as e:
             logger.warning(f"插入状态变动失败: {e}")
 
     def get_status_change(
         self, code: str, start_date: str = None, end_date: str = None
     ) -> pd.DataFrame:
-        if self._manager is None:
+        if self._cache is None:
             return pd.DataFrame(columns=_STATUS_CHANGE_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
+            where = {"symbol": code}
+            result = self._cache.get("status_change", where=where)
+            if result is not None and not result.empty:
                 if start_date and end_date:
-                    df = conn.execute(
-                        "SELECT * FROM status_change WHERE code = ? AND status_date >= ? AND status_date <= ? ORDER BY status_date",
-                        [code, start_date, end_date],
-                    ).fetchdf()
-                else:
-                    df = conn.execute(
-                        "SELECT * FROM status_change WHERE code = ? ORDER BY status_date",
-                        [code],
-                    ).fetchdf()
-                return df
+                    result = result[
+                        (result["status_date"] >= start_date)
+                        & (result["status_date"] <= end_date)
+                    ]
+                result = result.sort_values("status_date")
+                if "code" not in result.columns:
+                    result = result.rename(columns={"symbol": "code"})
+                for col in _STATUS_CHANGE_SCHEMA:
+                    if col not in result.columns:
+                        result[col] = None
+                return result[_STATUS_CHANGE_SCHEMA]
+            return pd.DataFrame(columns=_STATUS_CHANGE_SCHEMA)
         except Exception as e:
             logger.warning(f"查询状态变动失败: {e}")
             return pd.DataFrame(columns=_STATUS_CHANGE_SCHEMA)
 
 
-_db_manager = CompanyInfoDBManager() if _DUCKDB_AVAILABLE else None
+_db_manager = CompanyInfoCacheManager() if _CACHE_AVAILABLE else None
 
 
-def get_company_info(
-    symbol, force_update=False, use_duckdb=True
-) -> pd.DataFrame:
+def get_company_info(symbol, force_update=False, use_duckdb=True) -> pd.DataFrame:
     """
     获取上市公司基本信息。
 
@@ -481,6 +388,7 @@ def get_security_status(
 def _fetch_company_profile(code_num: str) -> Optional[pd.DataFrame]:
     """从 AkShare 获取公司基本信息（带重试机制）"""
     from jk2bt.data_access import get_adapter
+
     try:
         df = _retry_akshare_call(get_adapter().get_company_info, symbol=code_num)
         return df
@@ -492,6 +400,7 @@ def _fetch_company_profile(code_num: str) -> Optional[pd.DataFrame]:
 def _fetch_company_industry(code_num: str) -> Optional[pd.DataFrame]:
     """从 AkShare 获取公司行业信息（带重试机制）"""
     from jk2bt.data_access import get_adapter
+
     try:
         df = _retry_akshare_call(get_adapter().get_company_industry_em, symbol=code_num)
         return df
@@ -550,6 +459,7 @@ def _parse_profile_df(df: pd.DataFrame) -> dict:
 def _fetch_suspension_data(date_str: str) -> Optional[pd.DataFrame]:
     """获取停牌数据（带重试机制）"""
     from jk2bt.data_access import get_adapter
+
     try:
         date_num = date_str.replace("-", "")
         df = _retry_akshare_call(get_adapter().get_suspension_em, date=date_num)
@@ -783,9 +693,7 @@ class FinanceQuery:
         status_type = None
         reason = None
 
-    def run_query(
-        self, query_obj, force_update=False, use_duckdb=True
-    ) -> pd.DataFrame:
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         """
         执行查询（模拟聚宽 finance.run_query）。
 
@@ -885,16 +793,12 @@ def run_query_simple(
     """
     if table == "STK_COMPANY_BASIC_INFO":
         if code:
-            return get_company_info(
-                code, force_update=force_update
-            )
+            return get_company_info(code, force_update=force_update)
         else:
             return pd.DataFrame(columns=_COMPANY_BASIC_INFO_SCHEMA)
     elif table == "STK_STATUS_CHANGE":
         if code:
-            return get_security_status(
-                code, force_update=force_update
-            )
+            return get_security_status(code, force_update=force_update)
         else:
             return pd.DataFrame(columns=_STATUS_CHANGE_SCHEMA)
     else:
@@ -951,6 +855,7 @@ def get_listing_info(
 
     if need_download:
         from jk2bt.data_access import get_adapter
+
         try:
             df_sh = get_adapter().get_stock_info_sh_name_code(symbol="sh")
             df_sz = get_adapter().get_stock_info_sz_name_code(symbol="sz")

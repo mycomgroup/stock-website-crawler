@@ -688,8 +688,8 @@ class TestImportFromSubmodules:
         assert callable(get_factor_values_jq)
 
     def test_import_from_indicators(self):
-        """测试从 indicators 导入"""
-        from jk2bt.indicators import (
+        """测试从 signals 导入 (indicators 已废弃)"""
+        from jk2bt.signals import (
             compute_rsrs,
             compute_crowding_ratio,
         )

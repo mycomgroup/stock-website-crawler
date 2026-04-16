@@ -1,8 +1,12 @@
+import logging
+import threading
 from pathlib import Path
 from typing import Any
 
 import duckdb
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 from .partition_manager import PartitionManager
 
@@ -18,7 +22,7 @@ class QueryEngine:
         self.threads = threads
         self.memory_limit = memory_limit
         self.partition_manager = PartitionManager(self.base_dir)
-        self._conn: duckdb.DuckDBPyConnection | None = None
+        self._local = threading.local()
 
     def query(
         self,
@@ -66,7 +70,7 @@ class QueryEngine:
         if raw_paths:
             return self.query_by_paths(raw_paths, where, columns, order_by, limit)
 
-        return None
+        return pd.DataFrame()
 
     def query_by_paths(
         self,
@@ -77,7 +81,7 @@ class QueryEngine:
         limit: int | None = None,
     ) -> pd.DataFrame | None:
         if not paths:
-            return None
+            return pd.DataFrame()
 
         where_clause = self._build_where_clause(where) if where else ""
         sql = self._build_sql(
@@ -91,11 +95,12 @@ class QueryEngine:
         conn = self._get_connection()
         try:
             df = conn.execute(sql).fetchdf()
-            if df.empty:
-                return None
             return df
-        except Exception:
-            return None
+        except Exception as e:
+            logger.error(f"Query failed for paths {paths}: {e}")
+            df = pd.DataFrame()
+            df["_query_error"] = True
+            return df
 
     def exists(
         self,
@@ -211,11 +216,11 @@ class QueryEngine:
         return total
 
     def _get_connection(self) -> duckdb.DuckDBPyConnection:
-        if self._conn is None:
-            self._conn = duckdb.connect(database=":memory:")
-            self._conn.execute(f"SET threads={self.threads}")
-            self._conn.execute(f"SET memory_limit='{self.memory_limit}'")
-        return self._conn
+        if not hasattr(self._local, "conn") or self._local.conn is None:
+            self._local.conn = duckdb.connect(database=":memory:")
+            self._local.conn.execute(f"SET threads={self.threads}")
+            self._local.conn.execute(f"SET memory_limit='{self.memory_limit}'")
+        return self._local.conn
 
     def _build_where_clause(self, where: dict[str, Any]) -> str:
         conditions = []
@@ -224,11 +229,21 @@ class QueryEngine:
                 isinstance(value, (list, tuple))
                 and len(value) == 2
                 and not isinstance(value, str)
-                and all(isinstance(v, (int, float)) for v in value)
             ):
-                conditions.append(
-                    f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
-                )
+                if all(isinstance(v, (int, float)) for v in value):
+                    conditions.append(
+                        f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
+                    )
+                elif all(hasattr(v, "strftime") for v in value):
+                    conditions.append(
+                        f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
+                    )
+                elif all(isinstance(v, str) for v in value):
+                    conditions.append(
+                        f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
+                    )
+                else:
+                    conditions.append(f"{key} = {self._format_value(value)}")
             elif isinstance(value, list):
                 formatted_values = ", ".join(self._format_value(v) for v in value)
                 conditions.append(f"{key} IN ({formatted_values})")
@@ -275,6 +290,6 @@ class QueryEngine:
         return str(value)
 
     def _close(self):
-        if self._conn is not None:
-            self._conn.close()
-            self._conn = None
+        if hasattr(self._local, "conn") and self._local.conn is not None:
+            self._local.conn.close()
+            self._local.conn = None

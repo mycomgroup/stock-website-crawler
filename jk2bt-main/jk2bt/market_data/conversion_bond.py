@@ -27,47 +27,23 @@ from datetime import datetime
 from typing import Optional, List, Union
 import logging
 
+from jk2bt.utils.result import RobustResult
+
 logger = logging.getLogger(__name__)
 
 
-class RobustResult:
-    """稳健结果封装类"""
-
-    def __init__(
-        self, success: bool = True, data=None, reason: str = "", source: str = "network"
-    ):
-        self.success = success
-        self.data = data if data is not None else pd.DataFrame()
-        self.reason = reason
-        self.source = source
-
-    def __bool__(self):
-        return self.success
-
-    def __repr__(self):
-        status = "SUCCESS" if self.success else "FAILED"
-        return f"<RobustResult[{status}] source={self.source} reason='{self.reason}' data_type={type(self.data).__name__}>"
-
-    def is_empty(self):
-        if isinstance(self.data, pd.DataFrame):
-            return self.data.empty
-        elif isinstance(self.data, (list, tuple)):
-            return len(self.data) == 0
-        return self.data is None
-
-
-_DUCKDB_AVAILABLE = False
+_PARQUET_AVAILABLE = False
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from ..db.parquet_adapter import ParquetAdapter
 
-    _DUCKDB_AVAILABLE = True
+    _PARQUET_AVAILABLE = True
 except ImportError:
     try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        _DUCKDB_AVAILABLE = True
+        _PARQUET_AVAILABLE = True
     except ImportError:
-        logger.warning("DuckDB 模块不可用，将使用 pickle 缓存")
+        logger.warning("ParquetAdapter 模块不可用，将使用 pickle 缓存")
 
 
 _CB_SCHEMA = [
@@ -115,7 +91,7 @@ class ConversionBondDBManager:
         self._manager = None
 
         try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
+            self._manager = ParquetAdapter(db_path=db_path, read_only=False)
             self._init_tables()
         except Exception as e:
             logger.warning(f"DuckDB 初始化失败: {e}")

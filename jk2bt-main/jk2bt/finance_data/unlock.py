@@ -30,49 +30,16 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 logger = logging.getLogger(__name__)
 
+from jk2bt.utils.result import RobustResult
+
+
+_CACHE_AVAILABLE = False
 try:
-    from ..index_fundamentals_robust import RobustResult
+    from parquet_cache import get_cache_manager
+
+    _CACHE_AVAILABLE = True
 except ImportError:
-    try:
-        from index_fundamentals_robust import RobustResult
-    except ImportError:
-
-        class RobustResult:
-            def __init__(self, success=True, data=None, reason="", source="network"):
-                self.success = success
-                self.data = data if data is not None else pd.DataFrame()
-                self.reason = reason
-                self.source = source
-
-            def __bool__(self):
-                return self.success
-
-            def __repr__(self):
-                status = "SUCCESS" if self.success else "FAILED"
-                return f"<RobustResult[{status}] source={self.source} reason='{self.reason}' data_type={type(self.data).__name__}>"
-
-            def is_empty(self):
-                if isinstance(self.data, pd.DataFrame):
-                    return self.data.empty
-                elif isinstance(self.data, (list, tuple)):
-                    return len(self.data) == 0
-                return self.data is None
-
-
-UNLOCK_CACHE_DAYS = 7
-
-_DUCKDB_AVAILABLE = False
-try:
-    from ..db.duckdb_manager import DuckDBManager
-
-    _DUCKDB_AVAILABLE = True
-except ImportError:
-    try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
-
-        _DUCKDB_AVAILABLE = True
-    except ImportError:
-        logger.warning("DuckDB 模块不可用，将使用 pickle 缓存")
+    logger.warning("parquet_cache 模块不可用")
 
 
 _UNLOCK_SCHEMA = [
@@ -85,130 +52,124 @@ _UNLOCK_SCHEMA = [
 ]
 
 
-class UnlockDBManager:
-    """限售解禁 DuckDB 管理器"""
+class UnlockCacheManager:
+    """限售解禁 parquet_cache 管理器"""
 
     _instance = None
 
-    def __new__(cls, db_path: str = None):
+    def __new__(cls, base_dir: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._init_manager(base_dir)
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
-        if not _DUCKDB_AVAILABLE:
-            self._manager = None
+    def _init_manager(self, base_dir: str = None):
+        if not _CACHE_AVAILABLE:
+            self._cache = None
             return
 
-        if db_path is None:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if base_dir is None:
+            base_dir = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                ),
+                "data",
+                "cache",
             )
-            db_path = os.path.join(base_dir, "data", "unlock.db")
 
-        self.db_path = db_path
-        self._manager = None
-
-        try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
-            self._init_tables()
-        except Exception as e:
-            logger.warning(f"DuckDB 初始化失败: {e}")
-            self._manager = None
-
-    def _init_tables(self):
-        if self._manager is None:
-            return
+        self.base_dir = base_dir
+        self._cache = None
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS unlock (
-                        code VARCHAR NOT NULL,
-                        unlock_date DATE NOT NULL,
-                        unlock_amount BIGINT,
-                        unlock_ratio DOUBLE,
-                        unlock_type VARCHAR,
-                        holder_type VARCHAR,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code, unlock_date)
-                    )
-                """)
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_unlock_code ON unlock(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_unlock_date ON unlock(unlock_date)"
-                )
-                logger.info("限售解禁表结构初始化完成")
+            self._cache = get_cache_manager(base_dir=base_dir)
         except Exception as e:
-            logger.warning(f"初始化表结构失败: {e}")
+            logger.warning(f"parquet_cache 初始化失败: {e}")
+            self._cache = None
 
     def insert_unlock(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
+        if self._cache is None or df.empty:
             return
 
         df = df.copy()
-        for col in _UNLOCK_SCHEMA:
+        rename_map = {
+            "code": "symbol",
+            "unlock_amount": "unlock_count",
+        }
+        df = df.rename(columns=rename_map)
+
+        for col in [
+            "symbol",
+            "announce_date",
+            "unlock_date",
+            "unlock_count",
+            "unlock_ratio",
+            "unlock_type",
+        ]:
             if col not in df.columns:
                 df[col] = None
+        if "announce_date" not in df.columns and "unlock_date" in df.columns:
+            df["announce_date"] = df["unlock_date"]
 
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
-
-        cols = _UNLOCK_SCHEMA + ["update_time"]
+        cols = [
+            "symbol",
+            "announce_date",
+            "unlock_date",
+            "unlock_count",
+            "unlock_ratio",
+            "unlock_type",
+        ]
         df = df[cols]
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("INSERT OR REPLACE INTO unlock SELECT * FROM df")
-                logger.info(f"插入/更新 {len(df)} 条限售解禁信息")
+            if "announce_date" in df.columns:
+                for value, group in df.groupby("announce_date"):
+                    self._cache.put("unlock", group, partition_value=str(value))
+            else:
+                self._cache.put("unlock", df)
+            logger.info(f"插入/更新 {len(df)} 条限售解禁信息")
         except Exception as e:
             logger.warning(f"插入限售解禁信息失败: {e}")
 
     def get_unlock(
         self, code: str, start_date: str = None, end_date: str = None
     ) -> pd.DataFrame:
-        if self._manager is None:
+        if self._cache is None:
             return pd.DataFrame(columns=_UNLOCK_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                if start_date and end_date:
-                    df = conn.execute(
-                        "SELECT * FROM unlock WHERE code = ? AND unlock_date >= ? AND unlock_date <= ? ORDER BY unlock_date",
-                        [code, start_date, end_date],
-                    ).fetchdf()
-                else:
-                    df = conn.execute(
-                        "SELECT * FROM unlock WHERE code = ? ORDER BY unlock_date",
-                        [code],
-                    ).fetchdf()
-                return df
+            result = self._cache.get("unlock", where={"symbol": code})
+            if result is not None and not result.empty:
+                rename_map = {
+                    "symbol": "code",
+                    "unlock_count": "unlock_amount",
+                }
+                result = result.rename(columns=rename_map)
+                for col in _UNLOCK_SCHEMA:
+                    if col not in result.columns:
+                        result[col] = None
+                result = result[_UNLOCK_SCHEMA]
+                if start_date and end_date and "unlock_date" in result.columns:
+                    result = result[
+                        (result["unlock_date"] >= start_date)
+                        & (result["unlock_date"] <= end_date)
+                    ]
+                return result.sort_values("unlock_date")
+            return pd.DataFrame(columns=_UNLOCK_SCHEMA)
         except Exception as e:
             logger.warning(f"查询限售解禁信息失败: {e}")
             return pd.DataFrame(columns=_UNLOCK_SCHEMA)
 
     def is_cache_valid(self, code: str, cache_days: int = 7) -> bool:
-        if self._manager is None:
+        if self._cache is None:
             return False
-
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                result = conn.execute(
-                    "SELECT MAX(update_time) FROM unlock WHERE code = ?",
-                    [code],
-                ).fetchone()
-                if result and result[0]:
-                    update_time = pd.to_datetime(result[0])
-                    return (datetime.now() - update_time).days < cache_days
-                return False
+            result = self._cache.get("unlock", where={"symbol": code})
+            return result is not None and not result.empty
         except Exception:
             return False
 
 
-_db_manager = UnlockDBManager() if _DUCKDB_AVAILABLE else None
+_db_manager = UnlockCacheManager() if _CACHE_AVAILABLE else None
 
 
 def _extract_code_num(symbol: str) -> str:
@@ -296,7 +257,6 @@ def get_unlock(
     - unlock_type: 解禁类型
     - holder_type: 持股人类型
     """
-    code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
     if use_duckdb and _db_manager is not None and not force_update:
@@ -305,65 +265,49 @@ def get_unlock(
             if not df_cached.empty:
                 return df_cached[_UNLOCK_SCHEMA]
 
-    cache_file = os.path.join(cache_dir, f"unlock_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
+    try:
+        results = []
 
-    if not need_download:
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 7:
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_unlock(cached_df)
-                if start_date is None and end_date is None:
-                    return cached_df
-                return _filter_by_date_range(cached_df, start_date, end_date)
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            results = []
-
-            try:
-                df_queue = get_adapter().get_unlock_queue_sina(symbol=code_num)
-                if df_queue is not None and not df_queue.empty:
-                    for _, row in df_queue.iterrows():
-                        record = _parse_queue_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
-
-            try:
-                df_summary = get_adapter().get_unlock_summary_em(symbol=code_num)
-                if df_summary is not None and not df_summary.empty:
-                    for _, row in df_summary.iterrows():
-                        record = _parse_summary_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"stock_restricted_release_summary_em 失败: {e}")
-
-            if results:
-                result_df = pd.DataFrame(results)
-                result_df = result_df.drop_duplicates(
-                    subset=["code", "unlock_date"], keep="first"
-                )
-                result_df = result_df.sort_values("unlock_date")
-                result_df.to_pickle(cache_file)
-                if use_duckdb and _db_manager is not None:
-                    _db_manager.insert_unlock(result_df)
-                if start_date is None and end_date is None:
-                    return result_df
-                return _filter_by_date_range(result_df, start_date, end_date)
-
+            df_queue = get_adapter().get_unlock_queue_sina(
+                symbol=_extract_code_num(symbol)
+            )
+            if df_queue is not None and not df_queue.empty:
+                for _, row in df_queue.iterrows():
+                    record = _parse_queue_row(row, jq_code)
+                    if record:
+                        results.append(record)
         except Exception as e:
-            logger.warning(f"[unlock] 获取限售解禁失败 {symbol}: {e}")
+            logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
+
+        try:
+            df_summary = get_adapter().get_unlock_summary_em(
+                symbol=_extract_code_num(symbol)
+            )
+            if df_summary is not None and not df_summary.empty:
+                for _, row in df_summary.iterrows():
+                    record = _parse_summary_row(row, jq_code)
+                    if record:
+                        results.append(record)
+        except Exception as e:
+            logger.debug(f"stock_restricted_release_summary_em 失败: {e}")
+
+        if results:
+            result_df = pd.DataFrame(results)
+            result_df = result_df.drop_duplicates(
+                subset=["code", "unlock_date"], keep="first"
+            )
+            result_df = result_df.sort_values("unlock_date")
+            if use_duckdb and _db_manager is not None:
+                _db_manager.insert_unlock(result_df)
+            if start_date is None and end_date is None:
+                return result_df
+            return _filter_by_date_range(result_df, start_date, end_date)
+
+    except Exception as e:
+        logger.warning(f"[unlock] 获取限售解禁失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_UNLOCK_SCHEMA)
 
@@ -459,7 +403,6 @@ def query_unlock(
                 symbol,
                 start_date=start_date,
                 end_date=end_date,
-                cache_dir=cache_dir,
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -494,53 +437,36 @@ def get_unlock_calendar(
     if date is None:
         date = datetime.now().strftime("%Y-%m-%d")
 
-    cache_file = os.path.join(cache_dir, f"unlock_calendar_{date.replace('-', '')}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            return cached_df
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            date_num = date.replace("-", "")
-            df = get_adapter().get_unlock_detail_em(
-                start_date=date_num, end_date=date_num
+    try:
+        date_num = date.replace("-", "")
+        df = get_adapter().get_unlock_detail_em(start_date=date_num, end_date=date_num)
+        if df is not None and not df.empty:
+            result = pd.DataFrame()
+            code_col = "股票代码" if "股票代码" in df.columns else "code"
+            result["code"] = df[code_col].apply(
+                lambda x: _normalize_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
             )
-            if df is not None and not df.empty:
-                result = pd.DataFrame()
-                code_col = "股票代码" if "股票代码" in df.columns else "code"
-                result["code"] = df[code_col].apply(
-                    lambda x: _normalize_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
-                )
-                result["unlock_date"] = [date] * len(df)
-                amount_col = (
-                    "实际解禁数量" if "实际解禁数量" in df.columns else "解禁数量"
-                )
-                result["unlock_amount"] = pd.to_numeric(
-                    df.get(amount_col, 0), errors="coerce"
-                )
-                ratio_col = (
-                    "占解禁前流通市值比例"
-                    if "占解禁前流通市值比例" in df.columns
-                    else "解禁比例"
-                )
-                result["unlock_ratio"] = pd.to_numeric(
-                    df.get(ratio_col, 0), errors="coerce"
-                )
-                type_col = "限售股类型" if "限售股类型" in df.columns else "解禁类型"
-                result["unlock_type"] = df.get(type_col, "")
-                result["holder_type"] = ""
-                result.to_pickle(cache_file)
-                return result
-        except Exception as e:
-            logger.warning(f"[unlock_calendar] 获取解禁日历失败 {date}: {e}")
+            result["unlock_date"] = [date] * len(df)
+            amount_col = "实际解禁数量" if "实际解禁数量" in df.columns else "解禁数量"
+            result["unlock_amount"] = pd.to_numeric(
+                df.get(amount_col, 0), errors="coerce"
+            )
+            ratio_col = (
+                "占解禁前流通市值比例"
+                if "占解禁前流通市值比例" in df.columns
+                else "解禁比例"
+            )
+            result["unlock_ratio"] = pd.to_numeric(
+                df.get(ratio_col, 0), errors="coerce"
+            )
+            type_col = "限售股类型" if "限售股类型" in df.columns else "解禁类型"
+            result["unlock_type"] = df.get(type_col, "")
+            result["holder_type"] = ""
+            return result
+    except Exception as e:
+        logger.warning(f"[unlock_calendar] 获取解禁日历失败 {date}: {e}")
 
     return pd.DataFrame(columns=_UNLOCK_SCHEMA)
 
@@ -598,9 +524,7 @@ class FinanceQuery:
         shareholder_name = None
         shareholder_type = None
 
-    def run_query(
-        self, query_obj, force_update=False, use_duckdb=True
-    ) -> pd.DataFrame:
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
 
@@ -620,15 +544,11 @@ class FinanceQuery:
             "STK_UNLOCK_DATE",
         ]:
             if "code" in conditions:
-                return get_unlock(
-                    conditions["code"], use_duckdb=use_duckdb
-                )
+                return get_unlock(conditions["code"], use_duckdb=use_duckdb)
             return pd.DataFrame(columns=_UNLOCK_SCHEMA)
         elif table_name == "STK_LOCK_SHARE":
             if "code" in conditions:
-                return query_lock_share(
-                    conditions["code"], force_update=force_update
-                )
+                return query_lock_share(conditions["code"], force_update=force_update)
             return pd.DataFrame(columns=_LOCK_SHARE_SCHEMA)
         else:
             raise ValueError(f"不支持的表: {table_name}")
@@ -661,7 +581,6 @@ def get_unlock_schedule(
         symbol,
         start_date=start_date,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
@@ -698,7 +617,6 @@ def get_unlock_pressure(
         symbol,
         start_date=today_str,
         end_date=future_date,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
@@ -802,120 +720,68 @@ def get_unlock_info(
     >>> else:
     >>>     print(f"获取失败: {result.reason}")
     """
-    code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"unlock_robust_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-    cached_df = None
-    cache_valid = False
-    cache_age_days = 0
+    try:
+        results = []
 
-    if os.path.exists(cache_file):
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            cache_age_days = (datetime.now() - file_mtime).days
-            if cache_age_days < UNLOCK_CACHE_DAYS:
-                cache_valid = True
-                if not need_download:
-                    df_filtered = _filter_by_date_range(cached_df, start_date, end_date)
-                    if not df_filtered.empty or (
-                        start_date is None and end_date is None
-                    ):
-                        return RobustResult(
-                            success=True,
-                            data=df_filtered if not df_filtered.empty else cached_df,
-                            reason=f"从缓存获取解禁信息（缓存有效期: {cache_age_days}天）",
-                            source="cache",
-                        )
-            need_download = True
-        except Exception as e:
-            logger.warning(f"[get_unlock_info] 读取缓存失败: {e}")
-            need_download = True
+            df_queue = get_adapter().get_unlock_queue_sina(
+                symbol=_extract_code_num(symbol)
+            )
+            if df_queue is not None and not df_queue.empty:
+                for _, row in df_queue.iterrows():
+                    record = _parse_queue_row(row, jq_code)
+                    if record:
+                        results.append(record)
+        except Exception as e1:
+            logger.debug(f"stock_restricted_release_queue_sina 失败: {e1}")
 
-    if need_download:
-        from jk2bt.data_access import get_adapter
         try:
-            results = []
-            source_used = "network"
+            df_summary = get_adapter().get_unlock_summary_em(
+                symbol=_extract_code_num(symbol)
+            )
+            if df_summary is not None and not df_summary.empty:
+                for _, row in df_summary.iterrows():
+                    record = _parse_summary_row(row, jq_code)
+                    if record:
+                        results.append(record)
+        except Exception as e2:
+            logger.debug(f"stock_restricted_release_summary_em 失败: {e2}")
 
-            try:
-                df_queue = get_adapter().get_unlock_queue_sina(symbol=code_num)
-                if df_queue is not None and not df_queue.empty:
-                    for _, row in df_queue.iterrows():
-                        record = _parse_queue_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e1:
-                logger.debug(f"stock_restricted_release_queue_sina 失败: {e1}")
+        if results:
+            result_df = pd.DataFrame(results)
+            result_df = result_df.drop_duplicates(
+                subset=["code", "unlock_date"], keep="first"
+            )
+            result_df = result_df.sort_values("unlock_date").reset_index(drop=True)
 
-            try:
-                df_summary = get_adapter().get_unlock_summary_em(symbol=code_num)
-                if df_summary is not None and not df_summary.empty:
-                    for _, row in df_summary.iterrows():
-                        record = _parse_summary_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e2:
-                logger.debug(f"stock_restricted_release_summary_em 失败: {e2}")
-                logger.debug(f"stock_restricted_release_detail_em 失败: {e2}")
-
-            if not results and cached_df is not None and not cached_df.empty:
-                results = cached_df.to_dict("records")
-                source_used = "fallback"
-                logger.info(f"[get_unlock_info] 使用缓存兜底")
-
-            if results:
-                result_df = pd.DataFrame(results)
-                result_df = result_df.drop_duplicates(
-                    subset=["code", "unlock_date"], keep="first"
+            df_filtered = _filter_by_date_range(result_df, start_date, end_date)
+            if not df_filtered.empty or (start_date is None and end_date is None):
+                return RobustResult(
+                    success=True,
+                    data=df_filtered if not df_filtered.empty else result_df,
+                    reason=f"成功获取 {len(result_df)} 条解禁记录",
+                    source="network",
                 )
-                result_df = result_df.sort_values("unlock_date").reset_index(drop=True)
-                result_df.to_pickle(cache_file)
+            else:
+                return RobustResult(
+                    success=False,
+                    data=pd.DataFrame(columns=_UNLOCK_SCHEMA),
+                    reason=f"指定日期范围无解禁记录",
+                    source="network",
+                )
 
-                df_filtered = _filter_by_date_range(result_df, start_date, end_date)
-                if not df_filtered.empty or (start_date is None and end_date is None):
-                    return RobustResult(
-                        success=True,
-                        data=df_filtered if not df_filtered.empty else result_df,
-                        reason=f"成功获取 {len(result_df)} 条解禁记录",
-                        source=source_used,
-                    )
-                else:
-                    return RobustResult(
-                        success=False,
-                        data=pd.DataFrame(columns=_UNLOCK_SCHEMA),
-                        reason=f"指定日期范围无解禁记录",
-                        source=source_used,
-                    )
-
-        except Exception as e:
-            logger.warning(f"[get_unlock_info] 网络获取失败: {e}")
-            if cached_df is not None and not cached_df.empty:
-                df_filtered = _filter_by_date_range(cached_df, start_date, end_date)
-                if not df_filtered.empty:
-                    return RobustResult(
-                        success=True,
-                        data=df_filtered,
-                        reason=f"网络失败，使用缓存兜底（缓存已过期 {cache_age_days} 天）",
-                        source="fallback",
-                    )
-                elif start_date is None and end_date is None:
-                    return RobustResult(
-                        success=True,
-                        data=cached_df,
-                        reason=f"网络失败，使用缓存兜底",
-                        source="fallback",
-                    )
+    except Exception as e:
+        logger.warning(f"[get_unlock_info] 获取失败: {e}")
 
     return RobustResult(
         success=False,
         data=pd.DataFrame(columns=_UNLOCK_SCHEMA),
         reason=f"无法获取解禁信息 (股票: {symbol})",
-        source="fallback",
+        source="error",
     )
 
 
@@ -945,72 +811,49 @@ def get_upcoming_unlocks(
     start_date = today.strftime("%Y-%m-%d")
     end_date = (today + timedelta(days=days)).strftime("%Y-%m-%d")
 
-    cache_file = os.path.join(
-        cache_dir,
-        f"upcoming_unlocks_{start_date.replace('-', '')}_{end_date.replace('-', '')}.pkl",
-    )
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 1:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            start_num = start_date.replace("-", "")
-            end_num = end_date.replace("-", "")
-            df = get_adapter().get_unlock_detail_em(
-                start_date=start_num, end_date=end_num
+    try:
+        start_num = start_date.replace("-", "")
+        end_num = end_date.replace("-", "")
+        df = get_adapter().get_unlock_detail_em(start_date=start_num, end_date=end_num)
+        if df is not None and not df.empty:
+            result = pd.DataFrame()
+            code_col = "股票代码" if "股票代码" in df.columns else "code"
+            result["code"] = df[code_col].apply(
+                lambda x: _normalize_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
             )
-            if df is not None and not df.empty:
-                result = pd.DataFrame()
-                code_col = "股票代码" if "股票代码" in df.columns else "code"
-                result["code"] = df[code_col].apply(
-                    lambda x: _normalize_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
+            date_col = "解禁日期" if "解禁日期" in df.columns else "unlock_date"
+            result["unlock_date"] = (
+                df[date_col].apply(_parse_date) if date_col in df.columns else None
+            )
+            amount_col = "实际解禁数量" if "实际解禁数量" in df.columns else "解禁数量"
+            result["unlock_amount"] = pd.to_numeric(
+                df.get(amount_col, 0), errors="coerce"
+            )
+            ratio_col = (
+                "占解禁前流通市值比例"
+                if "占解禁前流通市值比例" in df.columns
+                else "解禁比例"
+            )
+            result["unlock_ratio"] = pd.to_numeric(
+                df.get(ratio_col, 0), errors="coerce"
+            )
+            type_col = "限售股类型" if "限售股类型" in df.columns else "解禁类型"
+            result["unlock_type"] = df.get(type_col, "")
+            value_col = (
+                "解禁市值" if "解禁市值" in df.columns else "unlock_market_value"
+            )
+            if value_col in df.columns:
+                result["unlock_market_value"] = pd.to_numeric(
+                    df[value_col], errors="coerce"
                 )
-                date_col = "解禁日期" if "解禁日期" in df.columns else "unlock_date"
-                result["unlock_date"] = (
-                    df[date_col].apply(_parse_date) if date_col in df.columns else None
-                )
-                amount_col = (
-                    "实际解禁数量" if "实际解禁数量" in df.columns else "解禁数量"
-                )
-                result["unlock_amount"] = pd.to_numeric(
-                    df.get(amount_col, 0), errors="coerce"
-                )
-                ratio_col = (
-                    "占解禁前流通市值比例"
-                    if "占解禁前流通市值比例" in df.columns
-                    else "解禁比例"
-                )
-                result["unlock_ratio"] = pd.to_numeric(
-                    df.get(ratio_col, 0), errors="coerce"
-                )
-                type_col = "限售股类型" if "限售股类型" in df.columns else "解禁类型"
-                result["unlock_type"] = df.get(type_col, "")
-                value_col = (
-                    "解禁市值" if "解禁市值" in df.columns else "unlock_market_value"
-                )
-                if value_col in df.columns:
-                    result["unlock_market_value"] = pd.to_numeric(
-                        df[value_col], errors="coerce"
-                    )
-                else:
-                    result["unlock_market_value"] = None
-                result = result.dropna(subset=["code"])
-                result.to_pickle(cache_file)
-                return result
-        except Exception as e:
-            logger.warning(f"[get_upcoming_unlocks] 获取即将解禁股票失败: {e}")
+            else:
+                result["unlock_market_value"] = None
+            result = result.dropna(subset=["code"])
+            return result
+    except Exception as e:
+        logger.warning(f"[get_upcoming_unlocks] 获取即将解禁股票失败: {e}")
 
     return pd.DataFrame(columns=_UNLOCK_SCHEMA + ["unlock_market_value"])
 
@@ -1047,7 +890,6 @@ def get_unlock_history(
         security,
         start_date=start_date,
         end_date=end_date,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
@@ -1074,58 +916,45 @@ def query_lock_share(
     - shareholder_name: 股东名称
     - shareholder_type: 股东类型
     """
-    code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-    cache_file = os.path.join(cache_dir, f"lock_share_{code_num}.pkl")
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data_access import get_adapter
 
-    need_download = force_update or (not os.path.exists(cache_file))
-
-    if not need_download:
+    try:
+        results = []
         try:
-            cached_df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days < 7:
-                return cached_df
-            need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        from jk2bt.data_access import get_adapter
-        try:
-            results = []
-            try:
-                df_queue = get_adapter().get_unlock_queue_sina(symbol=code_num)
-                if df_queue is not None and not df_queue.empty:
-                    for _, row in df_queue.iterrows():
-                        record = _parse_lock_share_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
-
-            try:
-                df_summary = get_adapter().get_unlock_summary_em(symbol=code_num)
-                if df_summary is not None and not df_summary.empty:
-                    for _, row in df_summary.iterrows():
-                        record = _parse_lock_share_summary_row(row, jq_code)
-                        if record:
-                            results.append(record)
-            except Exception as e:
-                logger.debug(f"stock_restricted_release_summary_em 失败: {e}")
-
-            if results:
-                result_df = pd.DataFrame(results)
-                result_df = result_df.drop_duplicates(
-                    subset=["code", "unlock_date"], keep="first"
-                )
-                result_df = result_df.sort_values("unlock_date")
-                result_df.to_pickle(cache_file)
-                return result_df
+            df_queue = get_adapter().get_unlock_queue_sina(
+                symbol=_extract_code_num(symbol)
+            )
+            if df_queue is not None and not df_queue.empty:
+                for _, row in df_queue.iterrows():
+                    record = _parse_lock_share_row(row, jq_code)
+                    if record:
+                        results.append(record)
         except Exception as e:
-            logger.warning(f"[query_lock_share] 获取限售股份信息失败 {symbol}: {e}")
+            logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
+
+        try:
+            df_summary = get_adapter().get_unlock_summary_em(
+                symbol=_extract_code_num(symbol)
+            )
+            if df_summary is not None and not df_summary.empty:
+                for _, row in df_summary.iterrows():
+                    record = _parse_lock_share_summary_row(row, jq_code)
+                    if record:
+                        results.append(record)
+        except Exception as e:
+            logger.debug(f"stock_restricted_release_summary_em 失败: {e}")
+
+        if results:
+            result_df = pd.DataFrame(results)
+            result_df = result_df.drop_duplicates(
+                subset=["code", "unlock_date"], keep="first"
+            )
+            result_df = result_df.sort_values("unlock_date")
+            return result_df
+    except Exception as e:
+        logger.warning(f"[query_lock_share] 获取限售股份信息失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_LOCK_SHARE_SCHEMA)
 
@@ -1204,14 +1033,12 @@ def analyze_unlock_impact(
         security,
         start_date=today_str,
         end_date=future_30,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
     df_history = get_unlock_history(
         security,
         years=3,
-        cache_dir=cache_dir,
         force_update=force_update,
     )
 
@@ -1305,7 +1132,6 @@ def get_unlock_info_batch(
                 code,
                 start_date=start_date,
                 end_date=end_date,
-                cache_dir=cache_dir,
                 force_update=force_update,
             )
             if result.success and not result.is_empty():

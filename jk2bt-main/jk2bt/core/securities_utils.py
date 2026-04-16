@@ -11,7 +11,11 @@ import warnings
 import pandas as pd
 from datetime import datetime
 
-from jk2bt.utils.symbol import normalize_symbol, format_stock_symbol as format_stock_symbol_for_akshare
+from jk2bt.utils.symbol import (
+    normalize_symbol,
+    format_stock_symbol as format_stock_symbol_for_akshare,
+)
+from jk2bt.utils.result import RobustResult
 
 # 项目根目录和缓存目录
 _PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -258,47 +262,3 @@ def _normalize_index_weights(df):
         result["weight"] = result["W"].astype(float)
 
     return result
-
-
-# =====================================================================
-# RobustResult - 稳健结果封装类
-# =====================================================================
-
-
-class RobustResult:
-    """
-    稳健结果封装类，用于统一处理API返回结果。
-
-    属性:
-        success: bool - 是否成功获取数据
-        data: Any - 返回的数据（DataFrame/list等）
-        reason: str - 失败原因或成功说明
-        source: str - 数据来源（'cache'/'network'/'fallback'）
-
-    用法:
-        result = get_index_stocks_robust('000300.XSHG')
-        if result.success:
-            stocks = result.data
-        else:
-            log.warn(f"获取失败: {result.reason}")
-    """
-
-    def __init__(self, success=True, data=None, reason="", source="network"):
-        self.success = success
-        self.data = data if data is not None else pd.DataFrame()
-        self.reason = reason
-        self.source = source
-
-    def __bool__(self):
-        return self.success
-
-    def __repr__(self):
-        status = "SUCCESS" if self.success else "FAILED"
-        return f"<RobustResult[{status}] source={self.source} reason='{self.reason}' data_type={type(self.data).__name__}>"
-
-    def is_empty(self):
-        if isinstance(self.data, pd.DataFrame):
-            return self.data.empty
-        elif isinstance(self.data, (list, tuple)):
-            return len(self.data) == 0
-        return self.data is None

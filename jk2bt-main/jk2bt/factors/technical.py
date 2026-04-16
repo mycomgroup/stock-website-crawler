@@ -2872,7 +2872,7 @@ def compute_sharpe_ratio(
     close = df["close"].astype(float)
 
     ret = close.pct_change()
-    ann_ret = (1 + ret.rolling(window).mean()) ** 252 - 1
+    ann_ret = ret.rolling(window).mean() * 252
     ann_std = ret.rolling(window).std() * np.sqrt(252)
 
     sharpe = safe_divide(ann_ret - rf, ann_std)
@@ -2925,58 +2925,6 @@ def compute_sharpe_ratio_120(
         end_date=end_date,
         count=count,
     )
-
-
-# -----------------------------------------------------------------
-# PLRC（价格线性回归系数）
-# -----------------------------------------------------------------
-
-
-def compute_plrc(
-    symbol: str,
-    window: int,
-    end_date: Optional[str] = None,
-    count: Optional[int] = None,
-    **kwargs,
-) -> Union[float, pd.Series]:
-    """
-    计算 PLRC（价格线性回归系数）因子。
-
-    公式：对 close 进行 window 日的线性回归，返回斜率
-    """
-    need_count = count + window if count else window + 10
-    df = _get_daily_ohlcv(
-        symbol,
-        end_date=end_date,
-        count=need_count,
-    )
-
-    if df.empty or "close" not in df.columns:
-        return np.nan
-
-    df = df.set_index("date")
-    close = df["close"].astype(float)
-
-    def _linear_regression_slope(x):
-        if len(x) < window:
-            return np.nan
-        y = np.arange(len(x))
-        try:
-            slope = np.polyfit(y, x, 1)[0]
-            return slope
-        except Exception:
-            return np.nan
-
-    plrc = close.rolling(window=window, min_periods=window).apply(
-        _linear_regression_slope
-    )
-
-    if count is not None and count > 0:
-        plrc = plrc.tail(count)
-
-    if len(plrc) == 1:
-        return float(plrc.iloc[-1])
-    return plrc
 
 
 def compute_plrc_6(

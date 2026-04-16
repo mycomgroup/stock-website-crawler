@@ -105,6 +105,12 @@ def set_adapter(adapter) -> None:
     _default_adapter = adapter
 
 
+from .multi_source_adapter import (
+    MultiSourceAdapter,
+    get_multi_source_adapter,
+    set_tushare_token,
+)
+
 __all__ = [
     # 抽象基类
     "DataSource",
@@ -113,6 +119,10 @@ __all__ = [
     "AkShareAdapter",
     "MockDataSource",
     "create_mock_with_sample_data",
+    # 多数据源适配器
+    "MultiSourceAdapter",
+    "get_multi_source_adapter",
+    "set_tushare_token",
     # 注册中心
     "DataRegistry",
     "get_data_source",

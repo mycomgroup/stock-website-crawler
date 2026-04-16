@@ -1,6 +1,6 @@
 """
 db/meta_cache_api.py
-元数据缓存 API - 提供使用统一缓存管理器的元数据获取功能。
+元数据缓存 API - 使用 parquet_cache 提供元数据获取功能。
 
 使用方式:
     from jk2bt.db.meta_cache_api import (
@@ -17,7 +17,7 @@ from datetime import datetime
 from typing import Optional, List, Dict, Union
 import pandas as pd
 
-from .unified_cache import UnifiedCacheManager, get_unified_cache
+from parquet_cache import get_cache_manager
 from .cache_config import init_default_cache
 
 logger = logging.getLogger(__name__)
@@ -42,28 +42,29 @@ def get_trade_days_from_cache(
 
     Args:
         force_update: 是否强制更新
-        use_duckdb: 是否使用 DuckDB（否则 fallback 到 pickle）
+        use_duckdb: 是否使用 parquet_cache（保留参数名以兼容）
 
     Returns:
         交易日列表 (pd.Timestamp)
     """
     _ensure_initialized()
-    cache = get_unified_cache()
+    cache = get_cache_manager()
 
     if use_duckdb and not force_update:
-        df = cache.get("meta", "trade_days")
+        df = cache.get("trade_calendar")
         if not df.empty:
             return pd.to_datetime(df["date"]).tolist()
 
     logger.info("从 akshare 获取交易日历...")
     try:
         from jk2bt.data_access import get_adapter
+
         df = get_adapter().get_trade_dates()
         df = df.rename(columns={"trade_date": "date"})
         df["date"] = pd.to_datetime(df["date"]).dt.date
 
         if use_duckdb:
-            cache.set("meta", "trade_days", df)
+            cache.put("trade_calendar", df)
 
         return pd.to_datetime(df["date"]).tolist()
     except Exception as e:
@@ -82,19 +83,19 @@ def get_securities_from_cache(
     Args:
         types: 证券类型列表，默认 ["stock"]
         force_update: 是否强制更新
-        use_duckdb: 是否使用 DuckDB
+        use_duckdb: 是否使用 parquet_cache
 
     Returns:
         DataFrame: 证券列表
     """
     _ensure_initialized()
-    cache = get_unified_cache()
+    cache = get_cache_manager()
 
     if types is None:
         types = ["stock"]
 
     if use_duckdb and not force_update:
-        df = cache.get("meta", "securities")
+        df = cache.get("securities")
         if not df.empty:
             if "type" in df.columns:
                 df = df[df["type"].isin(types)]
@@ -103,6 +104,7 @@ def get_securities_from_cache(
     logger.info("从 akshare 获取证券列表...")
     try:
         from jk2bt.data_access import get_adapter
+
         df = get_adapter().get_securities_code_name()
 
         df["code"] = df["code"].apply(
@@ -133,7 +135,7 @@ def get_securities_from_cache(
         df["update_time"] = pd.Timestamp.now()
 
         if use_duckdb:
-            cache.set("meta", "securities", df)
+            cache.put("securities", df)
 
         return df[df["type"].isin(types)]
     except Exception as e:
@@ -152,13 +154,13 @@ def get_security_info_from_cache(
     Args:
         code: 证券代码（支持多种格式）
         force_update: 是否强制更新
-        use_duckdb: 是否使用 DuckDB
+        use_duckdb: 是否使用 parquet_cache
 
     Returns:
         Dict: 证券信息
     """
     _ensure_initialized()
-    cache = get_unified_cache()
+    cache = get_cache_manager()
 
     code_num = code.replace(".XSHG", "").replace(".XSHE", "")
     if code.startswith("sh"):
@@ -169,23 +171,33 @@ def get_security_info_from_cache(
     code_with_prefix = ("sh" if code_num.startswith("6") else "sz") + code_num
 
     if use_duckdb and not force_update:
-        adapter = cache.get_adapter("meta")
-        if adapter:
-            df = adapter.query("security_info", {"code": code_with_prefix})
-            if not df.empty:
-                info_json = df.iloc[0]["info_json"]
-                try:
-                    return json.loads(info_json)
-                except:
-                    pass
+        df = cache.get("company_info", where={"symbol": code_with_prefix})
+        if not df.empty:
+            row = df.iloc[0]
+            return {
+                "code": code_with_prefix,
+                "name": row.get("name", code_num),
+                "display_name": row.get("name", code_num),
+                "industry": row.get("industry", ""),
+                "area": row.get("area", ""),
+                "list_date": row.get("list_date"),
+                "market": row.get("market", ""),
+                "type": "stock",
+            }
 
-            df = adapter.query("security_info", {"code": code})
-            if not df.empty:
-                info_json = df.iloc[0]["info_json"]
-                try:
-                    return json.loads(info_json)
-                except:
-                    pass
+        df = cache.get("company_info", where={"symbol": code})
+        if not df.empty:
+            row = df.iloc[0]
+            return {
+                "code": code,
+                "name": row.get("name", code_num),
+                "display_name": row.get("name", code_num),
+                "industry": row.get("industry", ""),
+                "area": row.get("area", ""),
+                "list_date": row.get("list_date"),
+                "market": row.get("market", ""),
+                "type": "stock",
+            }
 
     securities = get_securities_from_cache(use_duckdb=use_duckdb)
 
@@ -217,19 +229,19 @@ def get_security_info_from_cache(
         }
 
     if use_duckdb:
-        info_json = json.dumps(result, ensure_ascii=False)
         df = pd.DataFrame(
             [
                 {
-                    "code": code_with_prefix,
-                    "info_json": info_json,
-                    "update_time": datetime.now(),
+                    "symbol": code_with_prefix,
+                    "name": result.get("display_name", result.get("name", "")),
+                    "industry": result.get("industry", ""),
+                    "area": result.get("area", ""),
+                    "list_date": result.get("start_date"),
+                    "market": result.get("market", ""),
                 }
             ]
         )
-        adapter = cache.get_adapter("meta")
-        if adapter:
-            adapter.insert("security_info", df)
+        cache.put("company_info", df)
 
     return result
 
@@ -272,14 +284,16 @@ def check_meta_cache_status() -> Dict:
         Dict: 缓存状态
     """
     _ensure_initialized()
-    cache = get_unified_cache()
-
-    adapter = cache.get_adapter("meta")
-    if not adapter:
-        return {"error": "meta 数据库未注册"}
+    cache = get_cache_manager()
 
     return {
-        "trade_days": adapter.count("trade_days"),
-        "securities": adapter.count("securities"),
-        "security_info": adapter.count("security_info"),
+        "trade_calendar": cache.get("trade_calendar").shape[0]
+        if cache.get("trade_calendar") is not None
+        else 0,
+        "securities": cache.get("securities").shape[0]
+        if cache.get("securities") is not None
+        else 0,
+        "company_info": cache.get("company_info").shape[0]
+        if cache.get("company_info") is not None
+        else 0,
     }

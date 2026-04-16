@@ -98,8 +98,127 @@ def _fq_to_adjust(fq):
     return fq_map.get(fq, "qfq")
 
 
+_FUTURES_EXCHANGES = {".CCFX", ".XSGE", ".XDCE", ".XZCE", ".XINE", ".GFEX"}
+
+
+def _is_futures_code(symbol):
+    """判断是否为期货代码（如 IF2401.CCFX, RB2401.XSGE）"""
+    sym = symbol.upper()
+    for ex in _FUTURES_EXCHANGES:
+        if sym.endswith(ex):
+            return True
+    return False
+
+
+def _jq_futures_to_sina(symbol):
+    """将聚宽风格期货代码转换为新浪期货符号。
+
+    IF2401.CCFX -> IF2401
+    AU9999.XSGE -> AU0  (连续合约使用主力合约)
+    """
+    sym = symbol.upper()
+    for ex in _FUTURES_EXCHANGES:
+        if sym.endswith(ex):
+            code = sym[: -len(ex)]
+            break
+    else:
+        code = sym
+
+    # 9999 结尾表示连续合约，使用主力合约（0 结尾）
+    if code.endswith("9999"):
+        variety = code[:-4]
+        return variety + "0"
+    return code
+
+
+def _fetch_futures_daily(symbol, start_date, end_date):
+    """获取期货日线数据，返回与股票一致的 DataFrame 格式。"""
+    import akshare as ak
+
+    sina_symbol = _jq_futures_to_sina(symbol)
+    is_continuous = sina_symbol.endswith("0")
+
+    try:
+        df = ak.futures_zh_daily_sina(symbol=sina_symbol)
+    except Exception as e:
+        if is_continuous:
+            warnings.warn(f"期货主力合约 {sina_symbol} 获取失败: {e}，尝试备用接口")
+            # TODO: 主力合约备用接口，futures_main_sina 字段名不同需转换
+            try:
+                df = ak.futures_main_sina(
+                    symbol=sina_symbol,
+                    start_date=start_date.replace("-", "")
+                    if start_date
+                    else "19900101",
+                    end_date=end_date.replace("-", "") if end_date else "22220101",
+                )
+                if df is not None and not df.empty:
+                    col_map = {
+                        "日期": "datetime",
+                        "开盘价": "open",
+                        "最高价": "high",
+                        "最低价": "low",
+                        "收盘价": "close",
+                        "成交量": "volume",
+                    }
+                    df = df.rename(columns=col_map)
+                    df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+                    df = df.dropna(subset=["datetime"])
+                    df["money"] = None
+                    df["openinterest"] = df.get("持仓量", None)
+                    return df
+            except Exception as e2:
+                warnings.warn(f"期货主力合约备用接口也失败: {e2}")
+                return pd.DataFrame()
+        return pd.DataFrame()
+
+    if df is None or df.empty:
+        return pd.DataFrame()
+
+    # 统一列名格式
+    col_map = {
+        "date": "datetime",
+        "open": "open",
+        "high": "high",
+        "low": "low",
+        "close": "close",
+        "volume": "volume",
+    }
+    df = df.rename(columns=col_map)
+    df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+    df = df.dropna(subset=["datetime"])
+
+    # 期货没有成交额字段，设为 None
+    df["money"] = None
+
+    # 持仓量映射为 openinterest
+    if "hold" in df.columns:
+        df["openinterest"] = df["hold"]
+    elif "持仓量" in df.columns:
+        df["openinterest"] = df["持仓量"]
+
+    # 按日期过滤
+    if start_date:
+        start_dt = pd.to_datetime(start_date)
+        df = df[df["datetime"] >= start_dt]
+    if end_date:
+        end_dt = pd.to_datetime(end_date)
+        df = df[df["datetime"] <= end_dt]
+
+    return df.sort_values("datetime").reset_index(drop=True)
+
+
 def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="qfq"):
     """从缓存或 AkShare 获取行情数据"""
+    # 期货代码分支：直接走期货数据获取逻辑
+    if _is_futures_code(symbol):
+        if frequency in ["1d", "daily"]:
+            return _fetch_futures_daily(symbol, start_date, end_date)
+        else:
+            # TODO: 期货分钟线数据暂未实现，返回空 DataFrame
+            warnings.warn(f"期货 {symbol} 的 {frequency} 分钟数据暂未支持")
+            return pd.DataFrame()
+
     ak_sym = _normalize_symbol(symbol)
 
     is_lof = ak_sym.startswith("16")
@@ -111,6 +230,9 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
         or ak_sym.startswith("56")
         or ak_sym.startswith("58")
     )
+    is_cov = ak_sym.startswith("11") or ak_sym.startswith(
+        "12"
+    )  # 可转债: 11xxxx.XSHG, 12xxxx.XSHE
     is_index = (
         ak_sym.startswith("000")
         and ak_sym
@@ -146,6 +268,49 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
 
     try:
         if frequency in ["1d", "daily"]:
+            if is_cov:
+                try:
+                    import akshare as ak
+                except ImportError:
+                    raise ImportError("请安装 akshare: pip install akshare")
+
+                try:
+                    df = ak.bond_zh_cov_daily(symbol=ak_sym)
+                    if df is not None and not df.empty:
+                        if start_date:
+                            df = df[df["date"] >= start_date]
+                        if end_date:
+                            df = df[df["date"] <= end_date]
+                        df = df.rename(columns={"date": "datetime"})
+                        if "close" in df.columns and "money" not in df.columns:
+                            df["money"] = df.get("amount", None)
+                        return df
+                except Exception as cov_err:
+                    logger.warning(
+                        f"{symbol}: bond_zh_cov_daily 获取失败: {cov_err}，尝试 bond_zh_hs_daily"
+                    )
+
+                try:
+                    ak_code_for_hs = (
+                        "11" + ak_sym[2:]
+                        if ak_sym.startswith("11")
+                        else "12" + ak_sym[2:]
+                    )
+                    df = ak.bond_zh_hs_daily(symbol=ak_sym)
+                    if df is not None and not df.empty:
+                        if start_date:
+                            df = df[df["date"] >= start_date]
+                        if end_date:
+                            df = df[df["date"] <= end_date]
+                        df = df.rename(columns={"date": "datetime"})
+                        if "close" in df.columns and "money" not in df.columns:
+                            df["money"] = df.get("amount", None)
+                        return df
+                except Exception as hs_err:
+                    logger.warning(f"{symbol}: bond_zh_hs_daily 获取失败: {hs_err}")
+
+                return pd.DataFrame()
+
             if is_index:
                 try:
                     from .market_data.index import get_index_daily
@@ -226,10 +391,10 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                 )
             except Exception:
                 try:
-                    from .db.duckdb_manager import DuckDBManager
+                    from .db.parquet_adapter import ParquetAdapter
                 except ImportError:
-                    from jk2bt.db.duckdb_manager import DuckDBManager
-                db = DuckDBManager(read_only=True)
+                    from jk2bt.db.parquet_adapter import ParquetAdapter
+                db = ParquetAdapter(read_only=True)
                 df = db.get_stock_daily(
                     ak_code,
                     start_date or "1990-01-01",
@@ -243,6 +408,13 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
             return df
 
         elif frequency in ["1m", "5m", "15m", "30m", "60m", "minute"]:
+            if is_cov:
+                # TODO: akshare 目前没有可转债分钟数据的直接接口
+                # 可以考虑使用 bond_zh_cov_daily 的日线数据作为替代
+                # 或者使用新浪/腾讯的实时行情接口获取分钟级快照
+                warnings.warn(f"{symbol}: 可转债分钟数据暂不支持，返回空数据")
+                return pd.DataFrame()
+
             try:
                 try:
                     from jk2bt.market_data.minute import (
@@ -337,11 +509,18 @@ def _standardize_columns(df):
 def _add_derived_fields(df, symbol):
     if df.empty:
         return df
-    c = _normalize_symbol(symbol)
     df["pre_close"] = df["close"].shift(1)
     df["paused"] = 0
     if "volume" in df.columns:
         df.loc[df["volume"] == 0, "paused"] = 1
+
+    # 期货不计算涨跌停价（期货涨跌停规则与股票不同）
+    if _is_futures_code(symbol):
+        df["high_limit"] = None
+        df["low_limit"] = None
+        return df
+
+    c = _normalize_symbol(symbol)
 
     def _calc_high_limit(row):
         if row["paused"] == 1:
@@ -1035,6 +1214,60 @@ def get_detailed_quote(security, date=None):
     return result
 
 
+def get_ticks(security, count=1000, fields=None, df=True, date=None):
+    """获取 tick 级数据（聚宽风格）"""
+    if fields is None:
+        fields = ["time", "price", "volume", "amount"]
+
+    if isinstance(security, str):
+        security = [security]
+
+    result = {}
+
+    for symbol in security:
+        ak_sym = _normalize_symbol(symbol)
+        is_cov = ak_sym.startswith("11") or ak_sym.startswith("12")
+
+        if is_cov:
+            # TODO: akshare 目前没有可转债 tick 数据的直接接口
+            # bond_zh_cov_daily 只提供日线数据
+            # 如需可转债 tick 数据，可考虑使用实时行情接口或第三方数据源
+            warnings.warn(f"{symbol}: 可转债 tick 数据暂不支持，返回空结果")
+            result[symbol] = pd.DataFrame() if df else []
+            continue
+
+        tick_df = _fetch_tick_data(symbol, count=count, date=date)
+
+        if tick_df.empty:
+            result[symbol] = pd.DataFrame() if df else []
+            continue
+
+        keep_cols = [f for f in fields if f in tick_df.columns]
+        tick_df = tick_df[[c for c in keep_cols if c in tick_df.columns]].copy()
+
+        if df:
+            result[symbol] = tick_df.reset_index(drop=True)
+        else:
+            tick_list = []
+            for _, row in tick_df.iterrows():
+                item = {}
+                for f in fields:
+                    if f in row.index:
+                        val = row[f]
+                        item[f] = (
+                            val.strftime("%Y-%m-%d %H:%M:%S")
+                            if isinstance(val, pd.Timestamp)
+                            else val
+                        )
+                tick_list.append(item)
+            result[symbol] = tick_list
+
+    if len(result) == 1:
+        return result[security[0]]
+
+    return result
+
+
 def get_ticks_enhanced(security, count=1000, fields=None, df=True, date=None):
     """获取增强的 tick 级数据（聚宽风格）"""
     if fields is None:
@@ -1083,6 +1316,37 @@ def get_ticks_enhanced(security, count=1000, fields=None, df=True, date=None):
 # ---------------------------------------------------------------------------
 
 
+def get_call_auction(security, date=None):
+    """获取集合竞价数据（聚宽风格）"""
+    if isinstance(security, str):
+        security = [security]
+
+    result = {}
+
+    for symbol in security:
+        ak_sym = _normalize_symbol(symbol)
+        is_cov = ak_sym.startswith("11") or ak_sym.startswith("12")
+
+        if is_cov:
+            # TODO: akshare 目前没有可转债集合竞价数据的直接接口
+            # 可转债的集合竞价数据通常包含在 tick 数据中
+            # 如需可转债集合竞价数据，可考虑使用实时行情接口或第三方数据源
+            warnings.warn(f"{symbol}: 可转债集合竞价数据暂不支持，返回空结果")
+            result[symbol] = pd.DataFrame()
+            continue
+
+        # 股票集合竞价数据（如果 akshare 有相关接口可以在这里添加）
+        # TODO: akshare 目前没有专门的集合竞价接口
+        # 通常集合竞价数据包含在 tick 数据的前几分钟
+        warnings.warn(f"{symbol}: 股票集合竞价数据暂不支持，返回空结果")
+        result[symbol] = pd.DataFrame()
+
+    if len(result) == 1:
+        return result[security[0]]
+
+    return result
+
+
 def get_open_price(security, date=None):
     """获取开盘价"""
     from jk2bt.api.jq_compat import get_current_data
@@ -1122,7 +1386,10 @@ __all__ = [
     # 来自 market_api_enhanced.py
     "get_market",
     "get_detailed_quote",
+    "get_ticks",
     "get_ticks_enhanced",
+    # 集合竞价
+    "get_call_auction",
     # 来自 enhancements.py（行情辅助）
     "get_open_price",
     "get_close_price",

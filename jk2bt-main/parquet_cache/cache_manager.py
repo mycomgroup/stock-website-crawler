@@ -78,7 +78,7 @@ class CacheManager:
             self.memory_cache.put(cache_key, result)
             logger.debug("Query hit for table=%s, wrote to memory cache", table)
 
-        return result
+        return result if result is not None else pd.DataFrame()
 
     def put(
         self,
@@ -183,6 +183,38 @@ class CacheManager:
                 "Invalidated all cache for table=%s, deleted %d files", table, deleted
             )
             return deleted
+
+    def has_data_range(
+        self,
+        table: str,
+        where: dict[str, Any] | None = None,
+        date_col: str = "date",
+        start: str | None = None,
+        end: str | None = None,
+    ) -> bool:
+        """检查数据是否覆盖指定日期范围
+
+        类似 DuckDBManager.has_data() 的语义：
+        查询 MIN(date) 和 MAX(date)，判断是否覆盖 [start, end]
+        """
+        result = self.get(table, where=where, columns=[date_col])
+        if result is None or result.empty:
+            return False
+
+        min_date = pd.to_datetime(result[date_col].min())
+        max_date = pd.to_datetime(result[date_col].max())
+
+        if start:
+            start_dt = pd.to_datetime(start)
+            if min_date > start_dt:
+                return False
+
+        if end:
+            end_dt = pd.to_datetime(end)
+            if max_date < end_dt:
+                return False
+
+        return True
 
     def exists(
         self,

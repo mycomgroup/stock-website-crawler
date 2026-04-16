@@ -401,33 +401,27 @@ class ValuationDataSource:
         pd.DataFrame
             估值数据表
         """
-        fetch_methods = {
-            DataSource.BAIDU: self.fetch_from_baidu,
-            DataSource.EASTMONEY: self.fetch_from_eastmoney,
-            DataSource.THS: self.fetch_from_ths,
-        }
+        from jk2bt.data_access import get_adapter
 
-        for source in DATA_SOURCE_PRIORITY:
-            try:
-                df = fetch_methods[source](symbol)
-                if df is not None and not df.empty:
-                    if "date" in df.columns:
-                        df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
-                    df = df.sort_values("date").reset_index(drop=True)
+        try:
+            df = get_adapter().get_stock_valuation_with_fallback(symbol)
+            if df is not None and not df.empty:
+                if "date" in df.columns:
+                    df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+                df = df.sort_values("date").reset_index(drop=True)
 
-                    if validate:
-                        validation = validate_valuation_data(df, symbol, strict=False)
-                        if validation["is_valid"]:
-                            return df
-                        else:
-                            warnings.warn(
-                                f"{source.value} 数据源质量检查未通过: {validation['message']}"
-                            )
-                    else:
+                if validate:
+                    validation = validate_valuation_data(df, symbol, strict=False)
+                    if validation["is_valid"]:
                         return df
-            except DataSourceError as e:
-                warnings.warn(f"{source.value} 数据源失败: {e}")
-                continue
+                    else:
+                        warnings.warn(
+                            f"估值数据质量检查未通过: {validation['message']}"
+                        )
+                else:
+                    return df
+        except DataSourceError as e:
+            warnings.warn(f"估值数据源失败: {e}")
 
         warnings.warn(f"{symbol} 所有数据源均无法获取有效估值数据")
         return pd.DataFrame()

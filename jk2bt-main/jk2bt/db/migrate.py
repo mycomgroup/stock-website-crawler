@@ -10,7 +10,7 @@ import logging
 from typing import List, Dict
 import pandas as pd
 
-from .duckdb_manager import DuckDBManager
+from .parquet_adapter import ParquetAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -95,16 +95,16 @@ def parse_index_pickle_filename(filename: str) -> Dict[str, str]:
 
 
 def migrate_stock_pickles(
-    pickle_dir: str = "stock_cache", db: DuckDBManager = None
+    pickle_dir: str = "stock_cache", db: ParquetAdapter = None
 ) -> int:
     """
-    迁移股票 pickle 文件到 DuckDB。
+    迁移股票 pickle 文件到 Parquet。
 
     参数
     ----
     pickle_dir : str
         pickle 文件目录
-    db : DuckDBManager
+    db : ParquetAdapter
         数据库管理器实例
 
     返回
@@ -113,7 +113,7 @@ def migrate_stock_pickles(
         成功迁移的文件数量
     """
     if db is None:
-        db = DuckDBManager()
+        db = ParquetAdapter()
 
     if not os.path.exists(pickle_dir):
         logger.warning(f"pickle 目录不存在: {pickle_dir}")
@@ -197,12 +197,14 @@ def migrate_stock_pickles(
     return success_count
 
 
-def migrate_etf_pickles(pickle_dir: str = "etf_cache", db: DuckDBManager = None) -> int:
+def migrate_etf_pickles(
+    pickle_dir: str = "etf_cache", db: ParquetAdapter = None
+) -> int:
     """
-    迁移 ETF pickle 文件到 DuckDB。
+    迁移 ETF pickle 文件到 Parquet。
     """
     if db is None:
-        db = DuckDBManager()
+        db = ParquetAdapter()
 
     if not os.path.exists(pickle_dir):
         logger.warning(f"pickle 目录不存在: {pickle_dir}")
@@ -285,13 +287,13 @@ def migrate_etf_pickles(pickle_dir: str = "etf_cache", db: DuckDBManager = None)
 
 
 def migrate_index_pickles(
-    pickle_dir: str = "index_cache", db: DuckDBManager = None
+    pickle_dir: str = "index_cache", db: ParquetAdapter = None
 ) -> int:
     """
-    迁移指数 pickle 文件到 DuckDB。
+    迁移指数 pickle 文件到 Parquet。
     """
     if db is None:
-        db = DuckDBManager()
+        db = ParquetAdapter()
 
     if not os.path.exists(pickle_dir):
         logger.warning(f"pickle 目录不存在: {pickle_dir}")
@@ -390,7 +392,7 @@ def auto_migrate(base_dir: str = None) -> Dict[str, int]:
     if base_dir is None:
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    db = DuckDBManager()
+    db = ParquetAdapter()
 
     stock_count = db.count_records("stock_daily")
     etf_count = db.count_records("etf_daily")
@@ -398,12 +400,12 @@ def auto_migrate(base_dir: str = None) -> Dict[str, int]:
 
     if stock_count > 0 or etf_count > 0 or index_count > 0:
         logger.info(
-            f"DuckDB 已有数据: 股票 {stock_count} 条, ETF {etf_count} 条, 指数 {index_count} 条"
+            f"Parquet 已有数据: 股票 {stock_count} 条, ETF {etf_count} 条, 指数 {index_count} 条"
         )
         logger.info("跳过自动迁移（如需强制迁移，请使用手动迁移工具）")
         return {"stock": 0, "etf": 0, "index": 0, "skipped": True}
 
-    logger.info("开始自动迁移 pickle 数据到 DuckDB...")
+    logger.info("开始自动迁移 pickle 数据到 Parquet...")
 
     results = {"stock": 0, "etf": 0, "index": 0, "skipped": False}
 

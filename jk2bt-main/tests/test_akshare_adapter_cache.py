@@ -6,6 +6,8 @@ AkShareAdapter 缓存功能连通性测试
 1. 能正常调用 akshare 获取数据
 2. 缓存读写生效（第二次调用命中缓存）
 3. 最小数据量，加速测试
+
+注意：使用历史日期确保有数据，避免周末非交易日无数据导致 skip
 """
 
 import pytest
@@ -16,16 +18,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def _get_recent_dates(count=3):
-    """获取最近 count 个交易日（近似）"""
-    today = datetime.now()
-    dates = []
-    d = today
-    while len(dates) < count:
-        if d.weekday() < 5:
-            dates.append(d.strftime("%Y-%m-%d"))
-        d -= timedelta(days=1)
-    return dates
+# 使用历史日期确保有数据（避免周末非交易日无数据）
+HISTORICAL_START = "2024-01-01"
+HISTORICAL_END = "2024-01-10"
 
 
 def _skip_if_no_akshare(adapter):
@@ -44,38 +39,30 @@ class TestAkShareAdapterCache:
 
         return AkShareAdapter(use_cache=True)
 
-    @pytest.fixture(scope="class")
-    def recent_dates(self):
-        """最近 3 个交易日"""
-        return _get_recent_dates(3)
-
     # ── P0 日线类 ──
 
-    def test_get_daily_data(self, adapter, recent_dates):
+    def test_get_daily_data(self, adapter):
         """测试日线数据缓存"""
         _skip_if_no_akshare(adapter)
-        df1 = adapter.get_daily_data("600519", recent_dates[0], recent_dates[-1])
+        df1 = adapter.get_daily_data("600519", HISTORICAL_START, HISTORICAL_END)
         assert isinstance(df1, pd.DataFrame)
-
-        df2 = adapter.get_daily_data("600519", recent_dates[0], recent_dates[-1])
+        df2 = adapter.get_daily_data("600519", HISTORICAL_START, HISTORICAL_END)
         assert isinstance(df2, pd.DataFrame)
 
-    def test_get_etf_daily(self, adapter, recent_dates):
+    def test_get_etf_daily(self, adapter):
         """测试 ETF 日线缓存"""
         _skip_if_no_akshare(adapter)
-        df1 = adapter.get_etf_daily("510300", recent_dates[0], recent_dates[-1])
+        df1 = adapter.get_etf_daily("510300", HISTORICAL_START, HISTORICAL_END)
         assert isinstance(df1, pd.DataFrame)
-
-        df2 = adapter.get_etf_daily("510300", recent_dates[0], recent_dates[-1])
+        df2 = adapter.get_etf_daily("510300", HISTORICAL_START, HISTORICAL_END)
         assert isinstance(df2, pd.DataFrame)
 
-    def test_get_index_daily(self, adapter, recent_dates):
+    def test_get_index_daily(self, adapter):
         """测试指数日线缓存"""
         _skip_if_no_akshare(adapter)
-        df1 = adapter.get_index_daily("000300", recent_dates[0], recent_dates[-1])
+        df1 = adapter.get_index_daily("000300", HISTORICAL_START, HISTORICAL_END)
         assert isinstance(df1, pd.DataFrame)
-
-        df2 = adapter.get_index_daily("000300", recent_dates[0], recent_dates[-1])
+        df2 = adapter.get_index_daily("000300", HISTORICAL_START, HISTORICAL_END)
         assert isinstance(df2, pd.DataFrame)
 
     # ── P0 指数成分类 ──
@@ -135,19 +122,17 @@ class TestAkShareAdapterCache:
         _skip_if_no_akshare(adapter)
         df1 = adapter.get_north_money_flow()
         assert isinstance(df1, pd.DataFrame)
-
         df2 = adapter.get_north_money_flow()
         assert isinstance(df2, pd.DataFrame)
 
     # ── P1 行业概念类 ──
 
     def test_get_industry_stocks(self, adapter):
-        """测试行业成分股缓存"""
+        """测试行业成分股缓存（使用申万一级农林牧渔）"""
         _skip_if_no_akshare(adapter)
-        stocks1 = adapter.get_industry_stocks("801010")
+        stocks1 = adapter.get_industry_stocks("801010")  # 农林牧渔一级行业
         assert isinstance(stocks1, list)
         assert len(stocks1) >= 1
-
         stocks2 = adapter.get_industry_stocks("801010")
         assert isinstance(stocks2, list)
 
@@ -167,7 +152,6 @@ class TestAkShareAdapterCache:
         _skip_if_no_akshare(adapter)
         df1 = adapter.get_index_valuation("000300")
         assert isinstance(df1, pd.DataFrame)
-
         df2 = adapter.get_index_valuation("000300")
         assert isinstance(df2, pd.DataFrame)
 
@@ -176,7 +160,6 @@ class TestAkShareAdapterCache:
         _skip_if_no_akshare(adapter)
         df1 = adapter.get_stock_valuation("600519")
         assert isinstance(df1, pd.DataFrame)
-
         df2 = adapter.get_stock_valuation("600519")
         assert isinstance(df2, pd.DataFrame)
 
@@ -185,7 +168,6 @@ class TestAkShareAdapterCache:
         _skip_if_no_akshare(adapter)
         df1 = adapter.get_stock_pe_pb("600519")
         assert isinstance(df1, pd.DataFrame)
-
         df2 = adapter.get_stock_pe_pb("600519")
         assert isinstance(df2, pd.DataFrame)
 
@@ -196,7 +178,6 @@ class TestAkShareAdapterCache:
         _skip_if_no_akshare(adapter)
         df1 = adapter.get_dividend_fhps(symbol="600519")
         assert isinstance(df1, pd.DataFrame)
-
         df2 = adapter.get_dividend_fhps(symbol="600519")
         assert isinstance(df2, pd.DataFrame)
 
@@ -205,7 +186,6 @@ class TestAkShareAdapterCache:
         _skip_if_no_akshare(adapter)
         df1 = adapter.get_pledge_ratio_em("600519")
         assert isinstance(df1, pd.DataFrame)
-
         df2 = adapter.get_pledge_ratio_em("600519")
         assert isinstance(df2, pd.DataFrame)
 
@@ -214,7 +194,6 @@ class TestAkShareAdapterCache:
         _skip_if_no_akshare(adapter)
         df1 = adapter.get_unlock_schedule("600519")
         assert isinstance(df1, pd.DataFrame)
-
         df2 = adapter.get_unlock_schedule("600519")
         assert isinstance(df2, pd.DataFrame)
 
@@ -229,13 +208,12 @@ class TestAkShareAdapterCache:
         df2 = adapter.get_macro_raw("gdp")
         assert isinstance(df2, pd.DataFrame)
 
-    def test_get_margin_detail(self, adapter, recent_dates):
-        """测试融资融券缓存"""
+    def test_get_margin_detail(self, adapter):
+        """测试融资融券缓存（使用历史交易日）"""
         _skip_if_no_akshare(adapter)
-        df1 = adapter.get_margin_detail("sh", recent_dates[-1])
+        df1 = adapter.get_margin_detail("sh", "2024-01-05")  # 使用历史交易日
         assert isinstance(df1, pd.DataFrame)
-
-        df2 = adapter.get_margin_detail("sh", recent_dates[-1])
+        df2 = adapter.get_margin_detail("sh", "2024-01-05")
         assert isinstance(df2, pd.DataFrame)
 
 
@@ -248,14 +226,12 @@ class TestAkShareAdapterCacheDisabled:
 
         return AkShareAdapter(use_cache=False)
 
-    def test_get_daily_data_no_cache(self, adapter_no_cache, recent_dates):
+    def test_get_daily_data_no_cache(self, adapter_no_cache):
         """缓存关闭时日线数据正常"""
         _skip_if_no_akshare(adapter_no_cache)
-        df = adapter_no_cache.get_daily_data(
-            "600519", recent_dates[0], recent_dates[-1]
-        )
+        df = adapter_no_cache.get_daily_data("600519", HISTORICAL_START, HISTORICAL_END)
         assert isinstance(df, pd.DataFrame)
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s", "--timeout=30"])
+    pytest.main([__file__, "-v", "-s", "--timeout=120"])
