@@ -10,10 +10,9 @@ from .date_utils import find_date_column
 from .logging_config import (
     setup_logging,
     get_logger,
-    LogAdapter,
+    get_jq_log,
     JQLogAdapter,
     create_jq_log_adapter,
-    get_default_logger,
 )
 from .config import (
     Config,

@@ -25,21 +25,22 @@ import logging
 import warnings
 
 from jk2bt.data_access import get_adapter
+from jk2bt.utils.result import RobustResult
 
 logger = logging.getLogger(__name__)
 
-_DUCKDB_AVAILABLE = False
+_PARQUET_AVAILABLE = False
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from ..db.parquet_adapter import ParquetAdapter
 
-    _DUCKDB_AVAILABLE = True
+    _PARQUET_AVAILABLE = True
 except ImportError:
     try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        _DUCKDB_AVAILABLE = True
+        _PARQUET_AVAILABLE = True
     except ImportError:
-        logger.warning("DuckDB 模块不可用，将使用 pickle 缓存")
+        logger.warning("ParquetAdapter 模块不可用，将使用 pickle 缓存")
 
 
 DEFAULT_INDUSTRY_SCHEMA = {
@@ -50,38 +51,6 @@ DEFAULT_INDUSTRY_SCHEMA = {
     "level3_code": "",
     "level3_name": "",
 }
-
-
-class RobustResult:
-    """稳健结果类"""
-
-    def __init__(
-        self,
-        success: bool = True,
-        data=None,
-        reason: str = "",
-        source: str = "network",
-    ):
-        self.success = success
-        self.data = data if data is not None else pd.DataFrame()
-        self.reason = reason
-        self.source = source
-
-    def __bool__(self):
-        return self.success
-
-    def __repr__(self):
-        status = "SUCCESS" if self.success else "FAILED"
-        return f"RobustResult({status}, source={self.source}, reason={self.reason})"
-
-    def is_empty(self) -> bool:
-        if self.data is None:
-            return True
-        if isinstance(self.data, pd.DataFrame):
-            return self.data.empty
-        if isinstance(self.data, (list, dict)):
-            return len(self.data) == 0
-        return False
 
 
 class SWIndustryCache:
@@ -154,7 +123,7 @@ class IndustrySWDBManager:
         self._manager = None
 
         try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
+            self._manager = ParquetAdapter(db_path=db_path, read_only=False)
             self._init_tables()
         except Exception as e:
             logger.warning(f"DuckDB 初始化失败: {e}")

@@ -30,18 +30,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-_DUCKDB_AVAILABLE = False
+_PARQUET_AVAILABLE = False
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from ..db.parquet_adapter import ParquetAdapter
 
-    _DUCKDB_AVAILABLE = True
+    _PARQUET_AVAILABLE = True
 except ImportError:
     try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        _DUCKDB_AVAILABLE = True
+        _PARQUET_AVAILABLE = True
     except ImportError:
-        logger.warning("DuckDB 模块不可用，将使用 pickle 缓存")
+        logger.warning("ParquetAdapter 模块不可用，将使用 pickle 缓存")
 
 
 _INDEX_COMPONENTS_SCHEMA = [
@@ -115,7 +115,7 @@ class IndexComponentsDBManager:
         self._manager = None
 
         try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
+            self._manager = ParquetAdapter(db_path=db_path, read_only=False)
             self._init_tables()
         except Exception as e:
             logger.warning(f"DuckDB 初始化失败: {e}")

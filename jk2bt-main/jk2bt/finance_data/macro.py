@@ -28,51 +28,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-_DUCKDB_AVAILABLE = False
+_CACHE_AVAILABLE = False
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from parquet_cache import get_cache_manager
 
-    _DUCKDB_AVAILABLE = True
+    _CACHE_AVAILABLE = True
 except ImportError:
-    try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
+    logger.warning("parquet_cache 模块不可用")
 
-        _DUCKDB_AVAILABLE = True
-    except ImportError:
-        logger.warning("DuckDB 模块不可用，将使用 pickle 缓存")
-
-_ROBUST_RESULT_AVAILABLE = False
-try:
-    from ..index_fundamentals_robust import RobustResult
-
-    _ROBUST_RESULT_AVAILABLE = True
-except ImportError:
-    try:
-        from index_fundamentals_robust import RobustResult
-
-        _ROBUST_RESULT_AVAILABLE = True
-    except ImportError:
-        pass
-
-if not _ROBUST_RESULT_AVAILABLE:
-
-    class RobustResult:
-        """稳健结果封装类"""
-
-        def __init__(self, success=True, data=None, reason="", source="network"):
-            self.success = success
-            self.data = data if data is not None else pd.DataFrame()
-            self.reason = reason
-            self.source = source
-
-        def __bool__(self):
-            return self.success
-
-        def __repr__(self):
-            status = "OK" if self.success else "FAIL"
-            return (
-                f"<RobustResult[{status}] source={self.source} reason='{self.reason}'>"
-            )
+from jk2bt.utils.result import RobustResult
 
 
 _MACRO_SCHEMA = [
@@ -85,128 +49,97 @@ _MACRO_SCHEMA = [
 ]
 
 
-class MacroDBManager:
-    """宏观数据 DuckDB 管理器"""
+class MacroCacheManager:
+    """宏观数据 parquet_cache 管理器"""
 
     _instance = None
 
-    def __new__(cls, db_path: str = None):
+    def __new__(cls, base_dir: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._init_manager(base_dir)
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
-        if not _DUCKDB_AVAILABLE:
-            self._manager = None
+    def _init_manager(self, base_dir: str = None):
+        if not _CACHE_AVAILABLE:
+            self._cache = None
             return
 
-        if db_path is None:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if base_dir is None:
+            base_dir = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                ),
+                "data",
+                "cache",
             )
-            db_path = os.path.join(base_dir, "data", "macro.db")
 
-        self.db_path = db_path
-        self._manager = None
-
-        try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
-            self._init_tables()
-        except Exception as e:
-            logger.warning(f"DuckDB 初始化失败: {e}")
-            self._manager = None
-
-    def _init_tables(self):
-        if self._manager is None:
-            return
+        self.base_dir = base_dir
+        self._cache = None
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS macro (
-                        indicator VARCHAR NOT NULL,
-                        date DATE NOT NULL,
-                        value DOUBLE,
-                        unit VARCHAR,
-                        yoy DOUBLE,
-                        mom DOUBLE,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (indicator, date)
-                    )
-                """)
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_macro_ind ON macro(indicator)"
-                )
-                conn.execute("CREATE INDEX IF NOT EXISTS idx_macro_date ON macro(date)")
-                logger.info("宏观数据表结构初始化完成")
+            self._cache = get_cache_manager(base_dir=base_dir)
         except Exception as e:
-            logger.warning(f"初始化表结构失败: {e}")
+            logger.warning(f"parquet_cache 初始化失败: {e}")
+            self._cache = None
 
     def insert_macro(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
+        if self._cache is None or df.empty:
             return
 
         df = df.copy()
-        for col in _MACRO_SCHEMA:
+        rename_map = {"yoy": "change_pct"}
+        df = df.rename(columns=rename_map)
+
+        for col in ["indicator", "date", "value", "change_pct"]:
             if col not in df.columns:
                 df[col] = None
 
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
-
-        cols = _MACRO_SCHEMA + ["update_time"]
+        cols = ["indicator", "date", "value", "change_pct"]
         df = df[cols]
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("INSERT OR REPLACE INTO macro SELECT * FROM df")
-                logger.info(f"插入/更新 {len(df)} 条宏观数据")
+            self._cache.put("macro_data", df)
+            logger.info(f"插入/更新 {len(df)} 条宏观数据")
         except Exception as e:
             logger.warning(f"插入宏观数据失败: {e}")
 
     def get_macro(
         self, indicator: str, start_date: str = None, end_date: str = None
     ) -> pd.DataFrame:
-        if self._manager is None:
+        if self._cache is None:
             return pd.DataFrame(columns=_MACRO_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                if start_date and end_date:
-                    df = conn.execute(
-                        "SELECT * FROM macro WHERE indicator = ? AND date >= ? AND date <= ? ORDER BY date DESC",
-                        [indicator, start_date, end_date],
-                    ).fetchdf()
-                else:
-                    df = conn.execute(
-                        "SELECT * FROM macro WHERE indicator = ? ORDER BY date DESC",
-                        [indicator],
-                    ).fetchdf()
-                return df
+            result = self._cache.get("macro_data", where={"indicator": indicator})
+            if result is not None and not result.empty:
+                rename_map = {"change_pct": "yoy"}
+                result = result.rename(columns=rename_map)
+                for col in _MACRO_SCHEMA:
+                    if col not in result.columns:
+                        result[col] = None
+                result = result[_MACRO_SCHEMA]
+                if start_date and end_date and "date" in result.columns:
+                    result = result[
+                        (result["date"] >= start_date) & (result["date"] <= end_date)
+                    ]
+                return result.sort_values("date", ascending=False)
+            return pd.DataFrame(columns=_MACRO_SCHEMA)
         except Exception as e:
             logger.warning(f"查询宏观数据失败: {e}")
             return pd.DataFrame(columns=_MACRO_SCHEMA)
 
     def is_cache_valid(self, indicator: str, cache_days: int = 30) -> bool:
-        if self._manager is None:
+        if self._cache is None:
             return False
-
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                result = conn.execute(
-                    "SELECT MAX(update_time) FROM macro WHERE indicator = ?",
-                    [indicator],
-                ).fetchone()
-                if result and result[0]:
-                    update_time = pd.to_datetime(result[0])
-                    return (datetime.now() - update_time).days < cache_days
-                return False
+            result = self._cache.get("macro_data", where={"indicator": indicator})
+            return result is not None and not result.empty
         except Exception:
             return False
 
 
-_db_manager = MacroDBManager() if _DUCKDB_AVAILABLE else None
+_db_manager = MacroCacheManager() if _CACHE_AVAILABLE else None
 
 
 def _parse_num(value) -> Optional[float]:
@@ -454,26 +387,21 @@ def query_macro_data(
         return pd.DataFrame(columns=_MACRO_SCHEMA)
 
     try:
-        with _db_manager._manager._get_connection(read_only=True) as conn:
-            sql = "SELECT * FROM macro WHERE 1=1"
-            params = []
-
+        where = {}
+        if indicator:
+            where["indicator"] = indicator.upper()
+        result = _db_manager.get_macro(indicator if indicator else "")
+        if result is not None and not result.empty:
             if indicator:
-                sql += " AND indicator = ?"
-                params.append(indicator.upper())
-
-            if start_date:
-                sql += " AND date >= ?"
-                params.append(start_date)
-
-            if end_date:
-                sql += " AND date <= ?"
-                params.append(end_date)
-
-            sql += " ORDER BY indicator, date"
-            df = conn.execute(sql, params).fetchdf()
-            df = df.rename(columns={"yoy": "YoY", "mom": "MoM"})
-            return df
+                result = result[result["indicator"] == indicator.upper()]
+            if start_date and "date" in result.columns:
+                result = result[result["date"] >= start_date]
+            if end_date and "date" in result.columns:
+                result = result[result["date"] <= end_date]
+            result = result.sort_values(["indicator", "date"])
+            result = result.rename(columns={"yoy": "YoY", "mom": "MoM"})
+            return result
+        return pd.DataFrame(columns=_MACRO_SCHEMA)
     except Exception as e:
         logger.warning(f"查询宏观数据失败: {e}")
         return pd.DataFrame(columns=_MACRO_SCHEMA)

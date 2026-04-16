@@ -1,6 +1,6 @@
 """
 market_data/minute.py
-分钟级行情数据获取模块（使用 DuckDB 存储）。
+分钟级行情数据获取模块（使用 Parquet 缓存）。
 支持股票和ETF的 1m/5m/15m/30m/60m 分钟数据。
 
 统一标准化：
@@ -9,7 +9,7 @@ market_data/minute.py
 
 数据源备份:
 - 东方财富 (主数据源)
-- 本地 DuckDB 缓存 (备用，分钟数据难以获取其他备用源)
+- 本地 Parquet 缓存 (备用，分钟数据难以获取其他备用源)
 """
 
 import logging
@@ -17,7 +17,7 @@ import pandas as pd
 from typing import Optional
 
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from ..db.parquet_adapter import ParquetAdapter
     from ..utils.symbol import format_stock_symbol
     from ..utils.standardize import (
         standardize_minute_ohlcv,
@@ -30,7 +30,7 @@ try:
         fetch_stock_minute_eastmoney,
     )
 except ImportError:
-    from jk2bt.db.duckdb_manager import DuckDBManager
+    from jk2bt.db.parquet_adapter import ParquetAdapter
     from utils.symbol import format_stock_symbol
     from utils.standardize import (
         standardize_minute_ohlcv,
@@ -70,7 +70,7 @@ def get_stock_minute(
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
-    获取股票分钟行情数据，使用 DuckDB 存储。
+    获取股票分钟行情数据，使用 Parquet 缓存。
 
     参数
     ----
@@ -95,7 +95,7 @@ def get_stock_minute(
     period = _validate_period(period)
     akshare_period = PERIOD_MAP[period]
 
-    db_read = DuckDBManager(read_only=True)
+    db_read = ParquetAdapter(read_only=True)
 
     if not force_update:
         try:
@@ -106,7 +106,7 @@ def get_stock_minute(
                     symbol, akshare_period, start, end, adjust
                 )
                 if not df.empty:
-                    logger.info(f"{symbol} ({period}): 从 DuckDB 加载分钟数据")
+                    logger.info(f"{symbol} ({period}): 从 Parquet 缓存加载分钟数据")
                     return standardize_minute_ohlcv(df)
         except Exception as e:
             logger.warning(f"{symbol} ({period}): 只读查询失败，尝试写入模式: {e}")
@@ -117,6 +117,7 @@ def get_stock_minute(
 
     try:
         from jk2bt.data_access import get_adapter as _get_adapter
+
         raw_df = _get_adapter().get_stock_minute_raw(
             symbol=akshare_symbol,
             period=akshare_period,
@@ -133,11 +134,11 @@ def get_stock_minute(
     df = _prepare_for_storage(raw_df)
 
     try:
-        db_write = DuckDBManager(read_only=False)
+        db_write = ParquetAdapter(read_only=False)
         db_write.insert_stock_minute(symbol, akshare_period, df, adjust)
     except Exception as e:
         logger.warning(
-            f"{symbol} ({period}): 写入数据库失败（可能并发锁冲突），继续使用数据: {e}"
+            f"{symbol} ({period}): 写入缓存失败（可能并发锁冲突），继续使用数据: {e}"
         )
 
     start_dt = pd.to_datetime(start)
@@ -155,7 +156,7 @@ def get_etf_minute(
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
-    获取 ETF 分钟行情数据，使用 DuckDB 存储。
+    获取 ETF 分钟行情数据，使用 Parquet 缓存。
 
     参数
     ----
@@ -178,14 +179,14 @@ def get_etf_minute(
     period = _validate_period(period)
     akshare_period = PERIOD_MAP[period]
 
-    db_read = DuckDBManager(read_only=True)
+    db_read = ParquetAdapter(read_only=True)
 
     if not force_update:
         try:
             if db_read.has_data("etf_minute", symbol, start, end, None, akshare_period):
                 df = db_read.get_etf_minute(symbol, akshare_period, start, end)
                 if not df.empty:
-                    logger.info(f"{symbol} ({period}): 从 DuckDB 加载分钟数据")
+                    logger.info(f"{symbol} ({period}): 从 Parquet 缓存加载分钟数据")
                     return standardize_minute_ohlcv(df)
         except Exception as e:
             logger.warning(f"{symbol} ({period}): 只读查询失败，尝试写入模式: {e}")
@@ -194,6 +195,7 @@ def get_etf_minute(
 
     try:
         from jk2bt.data_access import get_adapter as _get_adapter
+
         raw_df = _get_adapter().get_etf_minute_raw(
             symbol=symbol,
             period=akshare_period,
@@ -210,11 +212,11 @@ def get_etf_minute(
     df = _prepare_for_storage(raw_df)
 
     try:
-        db_write = DuckDBManager(read_only=False)
+        db_write = ParquetAdapter(read_only=False)
         db_write.insert_etf_minute(symbol, akshare_period, df)
     except Exception as e:
         logger.warning(
-            f"{symbol} ({period}): 写入数据库失败（可能并发锁冲突），继续使用数据: {e}"
+            f"{symbol} ({period}): 写入缓存失败（可能并发锁冲突），继续使用数据: {e}"
         )
 
     start_dt = pd.to_datetime(start)
@@ -226,7 +228,7 @@ def get_etf_minute(
 
 def _prepare_for_storage(df: pd.DataFrame) -> pd.DataFrame:
     """
-    为存储到 DuckDB 准备分钟数据。
+    为存储到 Parquet 缓存准备分钟数据。
 
     使用统一的标准化层处理：
     1. 列名映射（中文 -> 英文）
@@ -236,7 +238,7 @@ def _prepare_for_storage(df: pd.DataFrame) -> pd.DataFrame:
     返回
     ----
     pd.DataFrame
-        包含 datetime/open/high/low/close/volume/money 列，适合存储到 DuckDB
+        包含 datetime/open/high/low/close/volume/money 列，适合存储到 Parquet 缓存
     """
     df = normalize_columns(df, COLUMN_MAP_COMMON)
     df = normalize_datetime(df)

@@ -361,6 +361,8 @@ STOCK_MINUTE = CacheTable(
     schema={
         "symbol": "string",
         "datetime": "timestamp",
+        "period": "string",
+        "adjust": "string",
         "open": "float64",
         "high": "float64",
         "low": "float64",
@@ -368,7 +370,7 @@ STOCK_MINUTE = CacheTable(
         "volume": "float64",
         "amount": "float64",
     },
-    primary_key=["symbol", "datetime"],
+    primary_key=["symbol", "datetime", "period", "adjust"],
     compaction_threshold=50,
     storage_layer="minute",
     priority="P2",
@@ -381,6 +383,7 @@ ETF_MINUTE = CacheTable(
     schema={
         "symbol": "string",
         "datetime": "timestamp",
+        "period": "string",
         "open": "float64",
         "high": "float64",
         "low": "float64",
@@ -388,7 +391,7 @@ ETF_MINUTE = CacheTable(
         "volume": "float64",
         "amount": "float64",
     },
-    primary_key=["symbol", "datetime"],
+    primary_key=["symbol", "datetime", "period"],
     compaction_threshold=50,
     storage_layer="minute",
     priority="P2",
@@ -692,6 +695,23 @@ OPTION_DAILY = CacheTable(
 )
 
 # 集合竞价（P3）
+STATUS_CHANGE = CacheTable(
+    name="status_change",
+    partition_by=None,
+    ttl_hours=720,
+    schema={
+        "symbol": "string",
+        "status_date": "date",
+        "status_type": "string",
+        "reason": "string",
+    },
+    primary_key=["symbol", "status_date"],
+    aggregation_enabled=False,
+    compaction_threshold=0,
+    storage_layer="meta",
+    priority="P2",
+)
+
 CALL_AUCTION = CacheTable(
     name="call_auction",
     partition_by="date",
@@ -748,6 +768,7 @@ for _table in (
     MACRO_DATA,
     MARGIN_DETAIL,
     MARGIN_UNDERLYING,
+    STATUS_CHANGE,
     OPTION_DAILY,
     CALL_AUCTION,
 ):

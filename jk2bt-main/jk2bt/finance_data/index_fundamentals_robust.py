@@ -23,6 +23,8 @@ import os
 import re
 import logging
 
+from jk2bt.utils.result import RobustResult
+
 logger = logging.getLogger(__name__)
 
 
@@ -68,45 +70,6 @@ INDEX_CODE_ALIAS_MAP = {
     "上证指数": "000001",
     "深证成指": "399001",
 }
-
-
-class RobustResult:
-    """
-    稳健结果封装类，用于统一处理API返回结果。
-
-    属性:
-        success: bool - 是否成功获取数据
-        data: Any - 返回的数据（DataFrame/list等）
-        reason: str - 失败原因或成功说明
-        source: str - 数据来源（'cache'/'network'/'fallback'）
-
-    用法:
-        result = get_index_stocks_robust('000300.XSHG')
-        if result.success:
-            stocks = result.data
-        else:
-            log.warn(f"获取失败: {result.reason}")
-    """
-
-    def __init__(self, success=True, data=None, reason="", source="network"):
-        self.success = success
-        self.data = data if data is not None else pd.DataFrame()
-        self.reason = reason
-        self.source = source
-
-    def __bool__(self):
-        return self.success
-
-    def __repr__(self):
-        status = "SUCCESS" if self.success else "FAILED"
-        return f"<RobustResult[{status}] source={self.source} reason='{self.reason}' data_type={type(self.data).__name__}>"
-
-    def is_empty(self):
-        if isinstance(self.data, pd.DataFrame):
-            return self.data.empty
-        elif isinstance(self.data, (list, tuple)):
-            return len(self.data) == 0
-        return self.data is None
 
 
 def format_index_code(index_code):

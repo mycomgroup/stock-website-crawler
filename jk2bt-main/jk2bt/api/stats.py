@@ -18,10 +18,11 @@ from datetime import datetime, timedelta
 # get_ols - 线性回归OLS计算
 # =====================================================================
 
+
 def get_ols(
     x: Union[pd.Series, np.ndarray, list],
     y: Union[pd.Series, np.ndarray, list],
-    method: str = 'linear'
+    method: str = "linear",
 ) -> Dict[str, float]:
     """
     线性回归OLS计算
@@ -82,16 +83,16 @@ def get_ols(
 
     if len(x_clean) < 2:
         return {
-            'beta': np.nan,
-            'alpha': np.nan,
-            'r_squared': np.nan,
-            'residual': pd.Series([np.nan] * len(x_values), index=x_index),
-            'p_value': np.nan,
-            'std_err': np.nan
+            "beta": np.nan,
+            "alpha": np.nan,
+            "r_squared": np.nan,
+            "residual": pd.Series([np.nan] * len(x_values), index=x_index),
+            "p_value": np.nan,
+            "std_err": np.nan,
         }
 
     # 对数回归转换
-    if method == 'log':
+    if method == "log":
         # 检查 x 值是否为正
         if np.any(x_clean <= 0):
             warnings.warn("对数回归要求 x > 0，将移除非正值")
@@ -101,12 +102,12 @@ def get_ols(
 
             if len(x_clean) < 2:
                 return {
-                    'beta': np.nan,
-                    'alpha': np.nan,
-                    'r_squared': np.nan,
-                    'residual': pd.Series([np.nan] * len(x_values), index=x_index),
-                    'p_value': np.nan,
-                    'std_err': np.nan
+                    "beta": np.nan,
+                    "alpha": np.nan,
+                    "r_squared": np.nan,
+                    "residual": pd.Series([np.nan] * len(x_values), index=x_index),
+                    "p_value": np.nan,
+                    "std_err": np.nan,
                 }
 
         x_transformed = np.log(x_clean)
@@ -114,10 +115,12 @@ def get_ols(
         x_transformed = x_clean
 
     # 使用 scipy.stats.linregress 进行线性回归
-    slope, intercept, r_value, p_value, std_err = stats.linregress(x_transformed, y_clean)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(
+        x_transformed, y_clean
+    )
 
     # 计算残差
-    if method == 'log':
+    if method == "log":
         # 对数回归的残差需要用原始 x 值计算
         predicted = intercept + slope * np.log(np.where(x_values > 0, x_values, np.nan))
     else:
@@ -126,15 +129,15 @@ def get_ols(
     residual = pd.Series(y_values - predicted, index=x_index)
 
     # R²
-    r_squared = r_value ** 2
+    r_squared = r_value**2
 
     return {
-        'beta': float(slope),
-        'alpha': float(intercept),
-        'r_squared': float(r_squared),
-        'residual': residual,
-        'p_value': float(p_value),
-        'std_err': float(std_err)
+        "beta": float(slope),
+        "alpha": float(intercept),
+        "r_squared": float(r_squared),
+        "residual": residual,
+        "p_value": float(p_value),
+        "std_err": float(std_err),
     }
 
 
@@ -142,9 +145,9 @@ def get_ols(
 # get_zscore - 计算Z分数
 # =====================================================================
 
+
 def get_zscore(
-    data: Union[pd.Series, np.ndarray, list],
-    window: Optional[int] = None
+    data: Union[pd.Series, np.ndarray, list], window: Optional[int] = None
 ) -> pd.Series:
     """
     计算Z分数(标准分数)
@@ -205,9 +208,9 @@ def get_zscore(
 # get_rank - 排名函数
 # =====================================================================
 
+
 def get_rank(
-    data: Union[pd.Series, np.ndarray, list, Dict[str, float]],
-    method: str = 'asc'
+    data: Union[pd.Series, np.ndarray, list, Dict[str, float]], method: str = "asc"
 ) -> pd.Series:
     """
     排名函数
@@ -254,25 +257,25 @@ def get_rank(
         return pd.Series([np.nan] * len(s), index=s.index)
 
     # 根据方法计算排名
-    if method == 'asc':
+    if method == "asc":
         # 升序排名，最小值为1
-        ranks = s.rank(method='average', ascending=True)
+        ranks = s.rank(method="average", ascending=True)
 
-    elif method == 'desc':
+    elif method == "desc":
         # 降序排名，最大值为1
-        ranks = s.rank(method='average', ascending=False)
+        ranks = s.rank(method="average", ascending=False)
 
-    elif method == 'pct':
+    elif method == "pct":
         # 百分比排名
-        ranks = s.rank(method='average', ascending=True, pct=True)
+        ranks = s.rank(method="average", ascending=True, pct=True)
 
-    elif method == 'dense':
+    elif method == "dense":
         # 密集排名
-        ranks = s.rank(method='dense', ascending=True)
+        ranks = s.rank(method="dense", ascending=True)
 
     else:
         warnings.warn(f"未知的排名方法 '{method}'，使用默认的 'asc'")
-        ranks = s.rank(method='average', ascending=True)
+        ranks = s.rank(method="average", ascending=True)
 
     return ranks
 
@@ -281,13 +284,14 @@ def get_rank(
 # get_factor_filter_list - 因子筛选
 # =====================================================================
 
+
 def get_factor_filter_list(
     factor_name: str,
     threshold: Union[int, float],
-    operator: str = '>',
+    operator: str = ">",
     date: Optional[str] = None,
     stock_list: Optional[List[str]] = None,
-    top_n: Optional[int] = None
+    top_n: Optional[int] = None,
 ) -> List[str]:
     """
     因子筛选
@@ -338,6 +342,7 @@ def get_factor_filter_list(
     if stock_list is None:
         try:
             from jk2bt.market_data import get_all_securities
+
             stock_list = get_all_securities(date=date)
             if isinstance(stock_list, pd.DataFrame):
                 stock_list = stock_list.index.tolist()
@@ -345,7 +350,8 @@ def get_factor_filter_list(
             # 默认使用沪深300成分股
             try:
                 from jk2bt.market_data import get_index_stocks
-                stock_list = get_index_stocks('000300.XSHG', date=date)
+
+                stock_list = get_index_stocks("000300.XSHG", date=date)
             except Exception:
                 stock_list = []
 
@@ -362,14 +368,14 @@ def get_factor_filter_list(
 
         # 聚宽因子名称映射
         jq_factor_map = {
-            'pe': 'pe_ratio',
-            'pb': 'pb_ratio',
-            'ps': 'ps_ratio',
-            'market_cap': 'market_cap',
-            'roe': 'roe',
-            'roa': 'roa',
-            'net_profit_ratio': 'net_profit_margin',
-            'revenue_growth': 'inc_revenue_year_on_year',
+            "pe": "pe_ratio",
+            "pb": "pb_ratio",
+            "ps": "ps_ratio",
+            "market_cap": "market_cap",
+            "roe": "roe",
+            "roa": "roa",
+            "net_profit_ratio": "net_profit_margin",
+            "revenue_growth": "inc_revenue_year_on_year",
         }
 
         jq_factor_name = jq_factor_map.get(factor_lower, factor_lower)
@@ -382,7 +388,11 @@ def get_factor_filter_list(
         )
 
         if result and jq_factor_name in result:
-            factor_values = result[jq_factor_name].iloc[-1].to_dict() if hasattr(result[jq_factor_name], 'iloc') else result[jq_factor_name]
+            factor_values = (
+                result[jq_factor_name].iloc[-1].to_dict()
+                if hasattr(result[jq_factor_name], "iloc")
+                else result[jq_factor_name]
+            )
 
     except Exception as e:
         warnings.warn(f"从因子库获取因子 {factor_name} 失败: {e}")
@@ -390,22 +400,24 @@ def get_factor_filter_list(
     # 如果因子库没有，尝试技术指标
     if not factor_values:
         try:
-            if factor_name.upper() == 'RSI':
+            if factor_name.upper() == "RSI":
                 for stock in stock_list:
                     try:
-                        factor_values[stock] = RSI(stock, timeperiod=14, check_date=date)
+                        factor_values[stock] = RSI(
+                            stock, timeperiod=14, check_date=date
+                        )
                     except Exception:
                         pass
 
-            elif factor_name.upper() == 'MACD':
+            elif factor_name.upper() == "MACD":
                 result = MACD(stock_list, check_date=date)
-                if 'MACD' in result:
-                    factor_values = result['MACD']
+                if "MACD" in result:
+                    factor_values = result["MACD"]
 
-            elif factor_name.upper() == 'KDJ':
+            elif factor_name.upper() == "KDJ":
                 result = KDJ(stock_list, check_date=date)
-                if 'K' in result:
-                    factor_values = result['K']
+                if "K" in result:
+                    factor_values = result["K"]
 
         except Exception as e:
             warnings.warn(f"获取技术指标 {factor_name} 失败: {e}")
@@ -426,12 +438,12 @@ def get_factor_filter_list(
     # 根据运算符筛选
     operator = operator.strip()
 
-    if operator == 'top':
+    if operator == "top":
         # 前 N 只
         n = int(threshold)
         result_list = factor_series.sort_values(ascending=False).head(n).index.tolist()
 
-    elif operator == 'bottom':
+    elif operator == "bottom":
         # 后 N 只
         n = int(threshold)
         result_list = factor_series.sort_values(ascending=True).head(n).index.tolist()
@@ -439,24 +451,29 @@ def get_factor_filter_list(
     else:
         # 条件筛选
         op_map = {
-            '>': lambda x, t: x > t,
-            '>=': lambda x, t: x >= t,
-            '<': lambda x, t: x < t,
-            '<=': lambda x, t: x <= t,
-            '==': lambda x, t: x == t,
-            '!=': lambda x, t: x != t,
+            ">": lambda x, t: x > t,
+            ">=": lambda x, t: x >= t,
+            "<": lambda x, t: x < t,
+            "<=": lambda x, t: x <= t,
+            "==": lambda x, t: x == t,
+            "!=": lambda x, t: x != t,
         }
 
         if operator not in op_map:
             warnings.warn(f"未知的运算符 '{operator}'，使用默认的 '>'")
-            operator = '>'
+            operator = ">"
 
         mask = factor_series.apply(lambda x: op_map[operator](x, threshold))
         result_list = factor_series[mask].index.tolist()
 
         # 排序并取前 N
         if top_n is not None:
-            result_list = factor_series[mask].sort_values(ascending=False).head(top_n).index.tolist()
+            result_list = (
+                factor_series[mask]
+                .sort_values(ascending=False)
+                .head(top_n)
+                .index.tolist()
+            )
 
     return result_list
 
@@ -465,11 +482,8 @@ def get_factor_filter_list(
 # get_num - 数值提取工具
 # =====================================================================
 
-def get_num(
-    stock: str,
-    field: str,
-    date: Optional[str] = None
-) -> float:
+
+def get_num(stock: str, field: str, date: Optional[str] = None) -> float:
     """
     数值提取工具
 
@@ -501,24 +515,50 @@ def get_num(
     from jk2bt.finance_data import get_balance_sheet, get_income_statement
 
     # 行情数据
-    market_fields = ['open', 'close', 'high', 'low', 'volume', 'money', 'high_limit', 'low_limit']
+    market_fields = [
+        "open",
+        "close",
+        "high",
+        "low",
+        "volume",
+        "money",
+        "high_limit",
+        "low_limit",
+    ]
 
     # 估值数据
-    valuation_fields = ['pe', 'pb', 'ps', 'market_cap', 'circulation_market_cap', 'total_market_cap']
+    valuation_fields = [
+        "pe",
+        "pb",
+        "ps",
+        "market_cap",
+        "circulation_market_cap",
+        "total_market_cap",
+    ]
 
     # 财务数据字段映射
     finance_field_map = {
-        'revenue': 'operating_revenue',
-        'net_profit': 'net_profit',
-        'total_assets': 'total_assets',
-        'total_liability': 'total_liabilities',
-        'total_equity': 'total_equity',
-        'roe': 'roe',
-        'roa': 'roa',
+        "revenue": "operating_revenue",
+        "net_profit": "net_profit",
+        "total_assets": "total_assets",
+        "total_liability": "total_liabilities",
+        "total_equity": "total_equity",
+        "roe": "roe",
+        "roa": "roa",
     }
 
     # 技术指标
-    indicator_fields = ['ma5', 'ma10', 'ma20', 'ma60', 'rsi', 'macd', 'kdj_k', 'kdj_d', 'kdj_j']
+    indicator_fields = [
+        "ma5",
+        "ma10",
+        "ma20",
+        "ma60",
+        "rsi",
+        "macd",
+        "kdj_k",
+        "kdj_d",
+        "kdj_j",
+    ]
 
     field_lower = field.lower()
 
@@ -529,8 +569,8 @@ def get_num(
                 security=stock,
                 end_date=date,
                 count=1,
-                frequency='daily',
-                fields=[field_lower]
+                frequency="daily",
+                fields=[field_lower],
             )
 
             if not df.empty:
@@ -546,12 +586,12 @@ def get_num(
             from jk2bt.factors import get_factor_values_jq
 
             jq_field_map = {
-                'pe': 'pe_ratio',
-                'pb': 'pb_ratio',
-                'ps': 'ps_ratio',
-                'market_cap': 'market_cap',
-                'circulation_market_cap': 'circulating_market_cap',
-                'total_market_cap': 'market_cap',
+                "pe": "pe_ratio",
+                "pb": "pb_ratio",
+                "ps": "ps_ratio",
+                "market_cap": "market_cap",
+                "circulation_market_cap": "circulating_market_cap",
+                "total_market_cap": "market_cap",
             }
 
             jq_field = jq_field_map.get(field_lower, field_lower)
@@ -578,9 +618,9 @@ def get_num(
     # 3. 财务数据
     elif field_lower in finance_field_map:
         try:
-            code = stock.replace('.XSHG', '').replace('.XSHE', '')
+            code = stock.replace(".XSHG", "").replace(".XSHE", "")
 
-            if field_lower in ['total_assets', 'total_liability', 'total_equity']:
+            if field_lower in ["total_assets", "total_liability", "total_equity"]:
                 df = get_balance_sheet(code, end_date=date)
             else:
                 df = get_income_statement(code, end_date=date)
@@ -597,28 +637,32 @@ def get_num(
     # 4. 技术指标
     elif field_lower in indicator_fields:
         try:
-            if field_lower == 'rsi':
+            if field_lower == "rsi":
                 from jk2bt.api.indicators import RSI
+
                 return float(RSI(stock, timeperiod=14, check_date=date))
 
-            elif field_lower == 'macd':
+            elif field_lower == "macd":
                 from jk2bt.api.indicators import MACD
+
                 result = MACD([stock], check_date=date)
-                if 'MACD' in result and stock in result['MACD']:
-                    return float(result['MACD'][stock])
+                if "MACD" in result and stock in result["MACD"]:
+                    return float(result["MACD"][stock])
                 return np.nan
 
-            elif field_lower.startswith('kdj'):
+            elif field_lower.startswith("kdj"):
                 from jk2bt.api.indicators import KDJ
+
                 result = KDJ([stock], check_date=date)
-                key = field_lower.replace('kdj_', '').upper()
+                key = field_lower.replace("kdj_", "").upper()
                 if key in result and stock in result[key]:
                     return float(result[key][stock])
                 return np.nan
 
-            elif field_lower.startswith('ma'):
+            elif field_lower.startswith("ma"):
                 from jk2bt.api.indicators import MA
-                window = int(field_lower.replace('ma', ''))
+
+                window = int(field_lower.replace("ma", ""))
                 result = MA([stock], timeperiod=window, check_date=date)
                 if stock in result:
                     return float(result[stock])
@@ -657,6 +701,7 @@ def get_num(
 # =====================================================================
 # get_beta - Beta系数计算
 # =====================================================================
+
 
 def get_beta(
     security: Union[str, List[str]],
@@ -716,12 +761,12 @@ def get_beta(
         )
 
         if benchmark_df.empty:
-            return 1.0 if single_security else {sec: 1.0 for sec in securities}
+            return np.nan if single_security else {sec: np.nan for sec in securities}
 
         benchmark_returns = benchmark_df[benchmark].pct_change().dropna()
 
     except Exception:
-        return 1.0 if single_security else {sec: 1.0 for sec in securities}
+        return np.nan if single_security else {sec: np.nan for sec in securities}
 
     result = {}
 
@@ -736,33 +781,35 @@ def get_beta(
             )
 
             if stock_df.empty:
-                result[sec] = 1.0
+                result[sec] = np.nan
                 continue
 
             stock_returns = stock_df[sec].pct_change().dropna()
 
-            aligned_data = pd.DataFrame({
-                "stock": stock_returns,
-                "benchmark": benchmark_returns,
-            }).dropna()
+            aligned_data = pd.DataFrame(
+                {
+                    "stock": stock_returns,
+                    "benchmark": benchmark_returns,
+                }
+            ).dropna()
 
             if len(aligned_data) < 20:
-                result[sec] = 1.0
+                result[sec] = np.nan
                 continue
 
             covariance = aligned_data["stock"].cov(aligned_data["benchmark"])
             benchmark_variance = aligned_data["benchmark"].var()
 
             if benchmark_variance == 0:
-                result[sec] = 1.0
+                result[sec] = np.nan
             else:
                 result[sec] = covariance / benchmark_variance
 
         except Exception:
-            result[sec] = 1.0
+            result[sec] = np.nan
 
     if single_security:
-        return result.get(security, 1.0)
+        return result.get(security, np.nan)
     return result
 
 

@@ -7,10 +7,10 @@ import logging
 import pandas as pd
 
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from ..db.parquet_adapter import ParquetAdapter
     from ..utils.standardize import standardize_ohlcv
 except ImportError:
-    from jk2bt.db.duckdb_manager import DuckDBManager
+    from jk2bt.db.parquet_adapter import ParquetAdapter
     from utils.standardize import standardize_ohlcv
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ def get_index_daily(symbol, start, end, force_update=False):
         标准化后的 OHLCV 数据
     """
     # 先尝试使用只读模式读取缓存数据（避免锁冲突）
-    db_readonly = DuckDBManager(read_only=True)
+    db_readonly = ParquetAdapter(read_only=True)
 
     if not force_update:
         try:
@@ -49,7 +49,7 @@ def get_index_daily(symbol, start, end, force_update=False):
             logger.warning(f"{symbol}: 只读模式读取失败: {e}")
 
     # 需要写入数据时才使用写模式
-    db = DuckDBManager()
+    db = ParquetAdapter()
 
     if not force_update and db.has_data("index_daily", symbol, start, end):
         df = db.get_index_daily(symbol, start, end)

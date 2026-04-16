@@ -18,7 +18,7 @@ print("=" * 70)
 print("\n【示例1】RSRS择时信号 - 沪深300指数")
 print("-" * 70)
 
-from jk2bt.indicators.rsrs import get_current_rsrs_signal
+from jk2bt.signals.rsrs import get_current_rsrs_signal
 
 rsrs_signal = get_current_rsrs_signal(index_code="000300", N=18, M=600)
 print(f"信号值: {rsrs_signal['signal']}")
@@ -54,7 +54,7 @@ if not holdings.empty:
 print("\n【示例3】市场情绪指标汇总")
 print("-" * 70)
 
-from jk2bt.indicators.market_sentiment import (
+from jk2bt.signals.market_sentiment import (
     compute_crowding_ratio,
     compute_fed_model,
     compute_graham_index,

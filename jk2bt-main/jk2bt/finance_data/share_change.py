@@ -32,49 +32,18 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 logger = logging.getLogger(__name__)
 
-try:
-    from ..index_fundamentals_robust import RobustResult
-except ImportError:
-    try:
-        from index_fundamentals_robust import RobustResult
-    except ImportError:
-
-        class RobustResult:
-            def __init__(self, success=True, data=None, reason="", source="network"):
-                self.success = success
-                self.data = data if data is not None else pd.DataFrame()
-                self.reason = reason
-                self.source = source
-
-            def __bool__(self):
-                return self.success
-
-            def __repr__(self):
-                status = "SUCCESS" if self.success else "FAILED"
-                return f"<RobustResult[{status}] source={self.source} reason='{self.reason}' data_type={type(self.data).__name__}>"
-
-            def is_empty(self):
-                if isinstance(self.data, pd.DataFrame):
-                    return self.data.empty
-                elif isinstance(self.data, (list, tuple)):
-                    return len(self.data) == 0
-                return self.data is None
+from jk2bt.utils.result import RobustResult
 
 
 SHARE_CHANGE_CACHE_DAYS = 7
 
-_DUCKDB_AVAILABLE = False
+_CACHE_AVAILABLE = False
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from parquet_cache import get_cache_manager
 
-    _DUCKDB_AVAILABLE = True
+    _CACHE_AVAILABLE = True
 except ImportError:
-    try:
-        from jk2bt.db.duckdb_manager import DuckDBManager
-
-        _DUCKDB_AVAILABLE = True
-    except ImportError:
-        logger.warning("DuckDB 模块不可用，将使用 pickle 缓存")
+    logger.warning("parquet_cache 模块不可用")
 
 
 _SHARE_CHANGE_SCHEMA = [
@@ -89,132 +58,122 @@ _SHARE_CHANGE_SCHEMA = [
 ]
 
 
-class ShareChangeDBManager:
-    """股东变动 DuckDB 管理器"""
+class ShareChangeCacheManager:
+    """股东变动 parquet_cache 管理器"""
 
     _instance = None
 
-    def __new__(cls, db_path: str = None):
+    def __new__(cls, base_dir: str = None):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._init_manager(db_path)
+            cls._instance._init_manager(base_dir)
         return cls._instance
 
-    def _init_manager(self, db_path: str = None):
-        if not _DUCKDB_AVAILABLE:
-            self._manager = None
+    def _init_manager(self, base_dir: str = None):
+        if not _CACHE_AVAILABLE:
+            self._cache = None
             return
 
-        if db_path is None:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if base_dir is None:
+            base_dir = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                ),
+                "data",
+                "cache",
             )
-            db_path = os.path.join(base_dir, "data", "share_change.db")
 
-        self.db_path = db_path
-        self._manager = None
-
-        try:
-            self._manager = DuckDBManager(db_path=db_path, read_only=False)
-            self._init_tables()
-        except Exception as e:
-            logger.warning(f"DuckDB 初始化失败: {e}")
-            self._manager = None
-
-    def _init_tables(self):
-        if self._manager is None:
-            return
+        self.base_dir = base_dir
+        self._cache = None
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS share_change (
-                        code VARCHAR NOT NULL,
-                        shareholder_name VARCHAR,
-                        change_date DATE NOT NULL,
-                        change_type VARCHAR,
-                        change_amount BIGINT,
-                        change_ratio DOUBLE,
-                        hold_amount_after BIGINT,
-                        hold_ratio_after DOUBLE,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (code, shareholder_name, change_date)
-                    )
-                """)
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_shchg_code ON share_change(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_shchg_date ON share_change(change_date)"
-                )
-                logger.info("股东变动表结构初始化完成")
+            self._cache = get_cache_manager(base_dir=base_dir)
         except Exception as e:
-            logger.warning(f"初始化表结构失败: {e}")
+            logger.warning(f"parquet_cache 初始化失败: {e}")
+            self._cache = None
 
     def insert_share_change(self, df: pd.DataFrame):
-        if self._manager is None or df.empty:
+        if self._cache is None or df.empty:
             return
 
         df = df.copy()
-        for col in _SHARE_CHANGE_SCHEMA:
+        rename_map = {
+            "code": "symbol",
+            "change_date": "announce_date",
+            "change_amount": "total_shares",
+        }
+        df = df.rename(columns=rename_map)
+
+        for col in [
+            "symbol",
+            "announce_date",
+            "total_shares",
+            "circulating_shares",
+            "change_type",
+        ]:
             if col not in df.columns:
                 df[col] = None
 
-        if "update_time" not in df.columns:
-            df["update_time"] = datetime.now()
-
-        cols = _SHARE_CHANGE_SCHEMA + ["update_time"]
+        cols = [
+            "symbol",
+            "announce_date",
+            "total_shares",
+            "circulating_shares",
+            "change_type",
+        ]
         df = df[cols]
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("INSERT OR REPLACE INTO share_change SELECT * FROM df")
-                logger.info(f"插入/更新 {len(df)} 条股东变动信息")
+            if "announce_date" in df.columns:
+                for value, group in df.groupby("announce_date"):
+                    self._cache.put("share_change", group, partition_value=str(value))
+            else:
+                self._cache.put("share_change", df)
+            logger.info(f"插入/更新 {len(df)} 条股东变动信息")
         except Exception as e:
             logger.warning(f"插入股东变动信息失败: {e}")
 
     def get_share_change(
         self, code: str, start_date: str = None, end_date: str = None
     ) -> pd.DataFrame:
-        if self._manager is None:
+        if self._cache is None:
             return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                if start_date and end_date:
-                    df = conn.execute(
-                        "SELECT * FROM share_change WHERE code = ? AND change_date >= ? AND change_date <= ? ORDER BY change_date DESC",
-                        [code, start_date, end_date],
-                    ).fetchdf()
-                else:
-                    df = conn.execute(
-                        "SELECT * FROM share_change WHERE code = ? ORDER BY change_date DESC",
-                        [code],
-                    ).fetchdf()
-                return df
+            result = self._cache.get("share_change", where={"symbol": code})
+            if result is not None and not result.empty:
+                rename_map = {
+                    "symbol": "code",
+                    "announce_date": "change_date",
+                    "total_shares": "change_amount",
+                }
+                result = result.rename(columns=rename_map)
+                for col in _SHARE_CHANGE_SCHEMA:
+                    if col not in result.columns:
+                        result[col] = None
+                result = result[_SHARE_CHANGE_SCHEMA]
+                if start_date and end_date and "change_date" in result.columns:
+                    result = result[
+                        (result["change_date"] >= start_date)
+                        & (result["change_date"] <= end_date)
+                    ]
+                return result.sort_values("change_date", ascending=False)
+            return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
         except Exception as e:
             logger.warning(f"查询股东变动信息失败: {e}")
             return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
 
     def is_cache_valid(self, code: str, cache_days: int = 7) -> bool:
-        if self._manager is None:
+        if self._cache is None:
             return False
-
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                result = conn.execute(
-                    "SELECT MAX(update_time) FROM share_change WHERE code = ?",
-                    [code],
-                ).fetchone()
-                if result and result[0]:
-                    update_time = pd.to_datetime(result[0])
-                    return (datetime.now() - update_time).days < cache_days
-                return False
+            result = self._cache.get("share_change", where={"symbol": code})
+            return result is not None and not result.empty
         except Exception:
             return False
 
 
-_db_manager = ShareChangeDBManager() if _DUCKDB_AVAILABLE else None
+_db_manager = ShareChangeCacheManager() if _CACHE_AVAILABLE else None
 
 
 def _extract_code_num(symbol: str) -> str:
@@ -278,7 +237,6 @@ def get_share_change(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -314,9 +272,8 @@ def get_share_change(
             if not df_cached.empty:
                 return df_cached[_SHARE_CHANGE_SCHEMA]
 
-
-
     from jk2bt.data_access import get_adapter
+
     try:
         df = get_adapter().get_shareholder_change_ths(symbol=code_num)
         if df is not None and not df.empty:
@@ -396,7 +353,6 @@ def query_share_change(
     symbols: List[str],
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -413,7 +369,6 @@ def query_share_change(
                 symbol,
                 start_date=start_date,
                 end_date=end_date,
-                
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -440,9 +395,7 @@ class FinanceQuery:
         change_amount = None
         change_ratio = None
 
-    def run_query(
-        self, query_obj, force_update=False, use_duckdb=True
-    ) -> pd.DataFrame:
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
 
@@ -457,9 +410,7 @@ class FinanceQuery:
 
         if table_name == "STK_SHAREHOLDER_CHANGE":
             if "code" in conditions:
-                return get_share_change(
-                    conditions["code"], use_duckdb=use_duckdb
-                )
+                return get_share_change(conditions["code"], use_duckdb=use_duckdb)
             return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
         else:
             raise ValueError(f"不支持的表: {table_name}")
@@ -471,15 +422,12 @@ finance = FinanceQuery()
 def run_query_simple(
     table: str,
     code: str = None,
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """简化的查询接口"""
     if table == "STK_SHAREHOLDER_CHANGE":
         if code:
-            return get_share_change(
-                code, force_update=force_update
-            )
+            return get_share_change(code, force_update=force_update)
         return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
     else:
         raise ValueError(f"不支持的表: {table}")
@@ -497,16 +445,14 @@ _PLEDGE_SCHEMA = [
 
 def get_pledge_info(
     symbol: str,
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取股权质押信息"""
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-
-
     from jk2bt.data_access import get_adapter
+
     try:
         df_raw = get_adapter().get_pledge_ratio_em(symbol=code_num)
         if df_raw is not None and not df_raw.empty:
@@ -550,7 +496,6 @@ _HOLDER_TRADE_SCHEMA = [
 
 def get_major_holder_trade(
     symbol: str,
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取重要股东交易信息"""
@@ -574,7 +519,6 @@ def get_shareholder_changes(
     code: str,
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> RobustResult:
@@ -632,8 +576,6 @@ def get_shareholder_changes(
                     source="cache",
                 )
 
-
-
     try:
         df = _fetch_shareholder_changes_from_akshare(code_num, jq_code)
         if df is not None and not df.empty:
@@ -690,6 +632,7 @@ def _fetch_shareholder_changes_from_akshare(
 ) -> Optional[pd.DataFrame]:
     """从 akshare 获取股东增减持数据"""
     from jk2bt.data_access import get_adapter
+
     try:
         df = get_adapter().get_holding_change_em(symbol=code_num)
         if df is not None and not df.empty:
@@ -806,7 +749,6 @@ class FinanceQueryEnhanced:
     def run_query(
         self,
         query_obj,
-        
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> Union[pd.DataFrame, RobustResult]:
@@ -828,7 +770,6 @@ class FinanceQueryEnhanced:
             if "code" in conditions:
                 return get_shareholder_changes(
                     conditions["code"],
-                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -861,7 +802,6 @@ def get_insider_trading(
     security: str,
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -889,9 +829,8 @@ def get_insider_trading(
     code_num = _extract_code_num(security)
     jq_code = _normalize_to_jq(security)
 
-
-
     from jk2bt.data_access import get_adapter
+
     try:
         df_raw = None
         try:
@@ -970,7 +909,6 @@ def get_major_shareholder_change(
     security: str,
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -993,7 +931,6 @@ def get_major_shareholder_change(
         security,
         start_date=start_date,
         end_date=end_date,
-        
         force_update=force_update,
         use_duckdb=use_duckdb,
     )
@@ -1002,7 +939,6 @@ def get_major_shareholder_change(
 def analyze_share_change_trend(
     security: str,
     period_days: int = 90,
-    
     force_update: bool = False,
 ) -> Dict:
     """
@@ -1050,7 +986,6 @@ def analyze_share_change_trend(
             security,
             start_date=start_date,
             end_date=end_date,
-            
             force_update=force_update,
         )
 
@@ -1089,7 +1024,6 @@ def analyze_share_change_trend(
             security,
             start_date=start_date,
             end_date=end_date,
-            
             force_update=force_update,
         )
 
@@ -1165,7 +1099,6 @@ class FinanceQueryV2:
     def run_query(
         self,
         query_obj,
-        
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
@@ -1189,7 +1122,6 @@ class FinanceQueryV2:
             if "code" in conditions:
                 return get_share_change(
                     conditions["code"],
-                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -1198,7 +1130,6 @@ class FinanceQueryV2:
             if "code" in conditions:
                 return get_shareholder_changes(
                     conditions["code"],
-                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 ).data
@@ -1224,7 +1155,6 @@ _FREEZE_SCHEMA = [
 
 def get_freeze_info(
     symbol: str,
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1250,8 +1180,6 @@ def get_freeze_info(
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-
-
     try:
         df_raw = _fetch_freeze_data_from_akshare(code_num)
         if df_raw is not None and not df_raw.empty:
@@ -1267,6 +1195,7 @@ def get_freeze_info(
 def _fetch_freeze_data_from_akshare(code_num: str) -> Optional[pd.DataFrame]:
     """从 akshare 获取冻结数据"""
     from jk2bt.data_access import get_adapter
+
     try:
         df = get_adapter().get_equity_mortgage_cninfo(symbol=code_num)
         if df is not None and not df.empty:
@@ -1340,7 +1269,6 @@ def get_capital_change(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
     use_duckdb: bool = True,
 ) -> pd.DataFrame:
@@ -1371,8 +1299,6 @@ def get_capital_change(
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-
-
     try:
         df_raw = _fetch_capital_change_from_akshare(code_num, start_date, end_date)
         if df_raw is not None and not df_raw.empty:
@@ -1392,6 +1318,7 @@ def _fetch_capital_change_from_akshare(
 ) -> Optional[pd.DataFrame]:
     """从 akshare 获取股本变动数据"""
     from jk2bt.data_access import get_adapter
+
     try:
         if start_date is None:
             start_date = (datetime.now() - timedelta(days=365 * 3)).strftime("%Y%m%d")
@@ -1493,7 +1420,6 @@ def get_topholder_change(
     symbol: str,
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1513,8 +1439,6 @@ def get_topholder_change(
     code_num = _extract_code_num(symbol)
     jq_code = _normalize_to_jq(symbol)
 
-
-
     try:
         df_raw = _fetch_topholder_change_from_akshare(code_num)
         if df_raw is not None and not df_raw.empty:
@@ -1524,9 +1448,7 @@ def get_topholder_change(
                     return result
                 return _filter_by_date_range(result, start_date, end_date)
     except Exception as e:
-        logger.warning(
-            f"[get_topholder_change] 获取前十大股东变动失败 {symbol}: {e}"
-        )
+        logger.warning(f"[get_topholder_change] 获取前十大股东变动失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_TOPHOLDER_CHANGE_SCHEMA)
 
@@ -1534,6 +1456,7 @@ def get_topholder_change(
 def _fetch_topholder_change_from_akshare(code_num: str) -> Optional[pd.DataFrame]:
     """从 akshare 获取前十大股东变动数据"""
     from jk2bt.data_access import get_adapter
+
     try:
         df = get_adapter().get_holding_change_em(date=datetime.now().strftime("%Y%m%d"))
         if df is not None and not df.empty:
@@ -1597,7 +1520,6 @@ def _normalize_topholder_change(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
 
 def query_pledge_data(
     symbols: List[str],
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1633,7 +1555,6 @@ def query_pledge_data(
 
 def query_freeze_data(
     symbols: List[str],
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1671,7 +1592,6 @@ def query_capital_change(
     symbols: List[str],
     start_date: str = None,
     end_date: str = None,
-    
     force_update: bool = False,
 ) -> pd.DataFrame:
     """
@@ -1698,7 +1618,6 @@ def query_capital_change(
                 symbol,
                 start_date=start_date,
                 end_date=end_date,
-                
                 force_update=force_update,
             )
             if not df.empty:
@@ -1769,7 +1688,6 @@ class FinanceQueryV3:
     def run_query(
         self,
         query_obj,
-        
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
@@ -1791,15 +1709,11 @@ class FinanceQueryV3:
 
         if table_name == "STK_SHARE_PLEDGE":
             if "code" in conditions:
-                return get_pledge_info(
-                    conditions["code"], force_update=force_update
-                )
+                return get_pledge_info(conditions["code"], force_update=force_update)
             return pd.DataFrame(columns=_PLEDGE_SCHEMA)
         elif table_name == "STK_SHARE_FREEZE":
             if "code" in conditions:
-                return get_freeze_info(
-                    conditions["code"], force_update=force_update
-                )
+                return get_freeze_info(conditions["code"], force_update=force_update)
             return pd.DataFrame(columns=_FREEZE_SCHEMA)
         elif table_name == "STK_TOPHOLDER_CHANGE":
             if "code" in conditions:
@@ -1809,15 +1723,12 @@ class FinanceQueryV3:
             return pd.DataFrame(columns=_TOPHOLDER_CHANGE_SCHEMA)
         elif table_name == "STK_CAPITAL_CHANGE":
             if "code" in conditions:
-                return get_capital_change(
-                    conditions["code"], force_update=force_update
-                )
+                return get_capital_change(conditions["code"], force_update=force_update)
             return pd.DataFrame(columns=_CAPITAL_CHANGE_SCHEMA)
         elif table_name == "STK_SHARE_CHANGE":
             if "code" in conditions:
                 return get_share_change(
                     conditions["code"],
-                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -1826,7 +1737,6 @@ class FinanceQueryV3:
             if "code" in conditions:
                 return get_shareholder_changes(
                     conditions["code"],
-                    
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 ).data

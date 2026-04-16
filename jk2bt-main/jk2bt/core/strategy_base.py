@@ -278,9 +278,61 @@ class FinanceDBProxy:
         "forecast_max",
     ]
     _COMPANY_BASIC_INFO_SCHEMA = ["code", "company_name", "industry", "list_date"]
+    _FUT_MARGIN_SCHEMA = [
+        "symbol",
+        "exchange",
+        "long_margin_ratio",
+        "short_margin_ratio",
+        "date",
+    ]
+    _FUT_CHARGE_SCHEMA = [
+        "symbol",
+        "exchange",
+        "open_commission",
+        "close_commission",
+        "close_today_commission",
+        "commission_type",
+    ]
+    _FUT_WAREHOUSE_RECEIPT_SCHEMA = [
+        "symbol",
+        "exchange",
+        "warehouse_date",
+        "warehouse_num",
+        "change",
+    ]
+    _FUT_MEMBER_POSITION_RANK_SCHEMA = [
+        "symbol",
+        "exchange",
+        "trade_date",
+        "member_name",
+        "long_holding",
+        "long_change",
+        "short_holding",
+        "short_change",
+    ]
 
     def run_query(self, query_obj):
         """执行finance查询"""
+        # 解析查询对象获取表名
+        table_name = None
+        if hasattr(query_obj, "_name"):
+            table_name = query_obj._name
+        elif hasattr(query_obj, "__class__"):
+            table_name = query_obj.__class__.__name__
+
+        # 处理期货相关表
+        if table_name in [
+            "FUT_MARGIN",
+            "FUT_CHARGE",
+            "FUT_WAREHOUSE_RECEIPT",
+            "FUT_MEMBER_POSITION_RANK",
+        ]:
+            # TODO: 实现期货数据获取逻辑
+            # 可以使用 ak.futures_fees_info() 获取手续费和保证金数据
+            # 可以使用 ak.futures_shfe_warehouse_receipt() 等获取仓单数据
+            # 可以使用 ak.futures_dce_position_rank() 等获取持仓排名数据
+            return pd.DataFrame()
+
         # 简化实现，完整实现见原文件
         return pd.DataFrame()
 
@@ -331,7 +383,9 @@ class JQ2BTBaseStrategy(bt.Strategy):
         self._requested_stocks = set()
         self._prerun_day_count = 0
 
-        if hasattr(self, "initialize"):
+        if hasattr(self, "initialize") and not getattr(
+            self, "_initialize_called", False
+        ):
             self.initialize()
 
     def log(self, txt, dt=None, log_type="info"):

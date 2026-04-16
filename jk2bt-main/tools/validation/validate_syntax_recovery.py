@@ -9,7 +9,9 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.strategy.txt_normalizer import TxtNormalizer
+from jk2bt.strategy.txt_strategy_normalizer import (
+    TxtStrategyNormalizer as TxtNormalizer,
+)
 
 
 def validate_syntax(filepath):

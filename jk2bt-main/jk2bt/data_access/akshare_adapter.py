@@ -326,7 +326,12 @@ class AkShareAdapter(DataSource):
         end = self._normalize_date(end_date)
 
         # 检查缓存
-        cache_key = {"symbol": symbol, "adjust": adjust}
+        cache_key = {
+            "symbol": symbol,
+            "adjust": adjust,
+            "start_date": start,
+            "end_date": end,
+        }
         cached = self._get_from_cache("market", "stock_daily", **cache_key)
         if cached is not None and not cached.empty:
             self._record_cache_hit("stock_daily")
@@ -353,29 +358,10 @@ class AkShareAdapter(DataSource):
                 symbol=symbol,
             )
 
-        # 从数据源获取
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
-        # router = self._get_source_router(required_columns=["datetime", "open", "high", "low", "close", "volume"])
-        # result = router.execute(fetch_fn=_fetch_daily_impl)
-        self._load_market_data()
-
-        if hasattr(self, "_get_stock_daily"):
-            try:
-                df = self._get_stock_daily(
-                    symbol=symbol,
-                    start=start,
-                    end=end,
-                    adjust=adjust,
-                    force_update=kwargs.get("force_update", False),
-                    offline_mode=self._offline_mode,
-                )
-                if not df.empty:
-                    self._set_to_cache("market", "stock_daily", df, **cache_key)
-                return df
-            except Exception as e:
-                raise DataSourceError(str(e), source=self.name, symbol=symbol)
-
-        # 直接使用 akshare
+        # 从数据源获取 - 直接使用 akshare（避免 market_data 循环依赖）
+        # 注意：market_data.stock.get_stock_daily 会调用 data_source_backup，
+        # 而 data_source_backup 又调用 get_adapter().get_daily_data()，形成循环
+        # 所以直接使用 akshare API
         if self._akshare_available:
             try:
                 import time
@@ -927,7 +913,6 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> List[str]:
         """获取行业成分股"""
-        # 尝试从 parquet_cache 获取
         cached = self._parquet_get(
             "industry_components",
             where={"industry_code": industry_code},
@@ -948,7 +933,7 @@ class AkShareAdapter(DataSource):
                     self._parquet_put("industry_components", df)
                 return stocks
             except Exception as e:
-                raise DataSourceError(str(e), source=self.name, symbol=industry_code)
+                logger.warning(f"market_data 获取失败: {e}")
 
         if self._akshare_available:
             try:
@@ -956,16 +941,24 @@ class AkShareAdapter(DataSource):
                 df = self._akshare.index_component_sw(symbol=code)
                 if df is not None and not df.empty:
                     stocks = []
-                    for stock_code in df.get("证券代码", []):
-                        code_str = str(stock_code).zfill(6)
-                        if code_str.startswith("6"):
-                            stocks.append(f"{code_str}.XSHG")
-                        else:
-                            stocks.append(f"{code_str}.XSHE")
-                    df_cache = pd.DataFrame(
-                        {"industry_code": industry_code, "symbol": stocks}
-                    )
-                    self._parquet_put("industry_components", df_cache)
+                    code_col = None
+                    for col in ["证券代码", "股票代码", "code", "symbol"]:
+                        if col in df.columns:
+                            code_col = col
+                            break
+                    if code_col:
+                        for stock_code in df[code_col]:
+                            code_str = str(stock_code).zfill(6)
+                            if code_str.startswith("6"):
+                                stocks.append(f"{code_str}.XSHG")
+                            else:
+                                stocks.append(f"{code_str}.XSHE")
+
+                    if stocks:
+                        cache_df = pd.DataFrame(
+                            {"industry_code": industry_code, "symbol": stocks}
+                        )
+                        self._parquet_put("industry_components", cache_df)
                     return stocks
             except Exception as e:
                 raise DataSourceError(str(e), source=self.name, symbol=industry_code)
@@ -1135,9 +1128,7 @@ class AkShareAdapter(DataSource):
             except Exception as e:
                 logger.warning(f"ETF 数据获取失败: {e}")
 
-        return self.get_daily_data(
-            symbol, start_date, end_date, adjust="none", **kwargs
-        )
+        return self.get_daily_data(symbol, start_date, end_date, adjust="", **kwargs)
 
     def get_index_daily(
         self,
@@ -1190,9 +1181,7 @@ class AkShareAdapter(DataSource):
             except Exception as e:
                 logger.warning(f"指数数据获取失败: {e}")
 
-        return self.get_daily_data(
-            symbol, start_date, end_date, adjust="none", **kwargs
-        )
+        return self.get_daily_data(symbol, start_date, end_date, adjust="", **kwargs)
 
     def get_source_info(self) -> Dict[str, Any]:
         """获取数据源信息"""
@@ -1237,10 +1226,16 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            result = self._akshare.index_value_hist_fina(symbol=index_code)
-            if not result.empty:
+            csindex_code = (
+                index_code.replace("000", "H30").zfill(6)
+                if index_code.startswith("000")
+                else index_code
+            )
+            result = self._akshare.stock_zh_index_value_csindex(symbol=csindex_code)
+            if result is not None and not result.empty:
+                result["symbol"] = index_code
                 self._parquet_put("valuation", result)
-            return result
+            return result if result is not None else pd.DataFrame()
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1255,10 +1250,20 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            result = self._akshare.stock_a_lg_indicator(symbol=symbol)
-            if not result.empty:
+            code = (
+                symbol.replace("sh", "")
+                .replace("sz", "")
+                .replace(".XSHG", "")
+                .replace(".XSHE", "")
+                .zfill(6)
+            )
+            market = ".SH" if code.startswith("6") else ".SZ"
+            ak_symbol = code + market
+            result = self._akshare.stock_a_indicator_em(symbol=ak_symbol)
+            if result is not None and not result.empty:
+                result["symbol"] = symbol
                 self._parquet_put("valuation", result)
-            return result
+            return result if result is not None else pd.DataFrame()
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1273,7 +1278,31 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            result = self._akshare.stock_a_pe_and_pb(symbol=symbol)
+            df_all = self._akshare.stock_a_all_pb()
+            if df_all is None or df_all.empty:
+                return pd.DataFrame()
+
+            target_code = (
+                symbol.replace("sh", "")
+                .replace("sz", "")
+                .replace(".XSHG", "")
+                .replace(".XSHE", "")
+                .zfill(6)
+            )
+            code_col = None
+            for col in ["股票代码", "code", "symbol", "证券代码"]:
+                if col in df_all.columns:
+                    code_col = col
+                    break
+
+            if code_col:
+                df_all["code_normalized"] = df_all[code_col].astype(str).str.zfill(6)
+                result = df_all[df_all["code_normalized"] == target_code].copy()
+                result = result.drop(columns=["code_normalized"])
+                result["symbol"] = symbol
+            else:
+                result = df_all
+
             if not result.empty:
                 self._parquet_put("valuation", result)
             return result
@@ -1294,19 +1323,32 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
+            date_str = date.replace("-", "")
             if market == "sh":
-                result = self._akshare.stock_margin_detail_sse(date=date)
+                result = self._akshare.stock_margin_detail_sse(date=date_str)
             elif market == "sz":
-                result = self._akshare.stock_margin_detail_szse(date=date)
+                result = self._akshare.stock_margin_detail_szse(date=date_str)
             else:
                 raise DataSourceError(f"不支持的市场: {market}", source=self.name)
+
+            # 检查返回数据是否为空
+            if result is None or result.empty:
+                logger.warning(f"{market} {date}: 融资融券数据为空（可能是非交易日）")
+                return pd.DataFrame()
+
+            # 添加 market 和 date 列
+            result["market"] = market
+            result["date"] = date
+
             if not result.empty:
-                result["market"] = market
-                result["date"] = date
                 self._parquet_put("margin_detail", result)
             return result
-        except DataSourceError:
-            raise
+        except ValueError as e:
+            # 处理 pandas 列赋值失败
+            if "Length mismatch" in str(e):
+                logger.warning(f"{market} {date}: akshare 返回数据格式异常")
+                return pd.DataFrame()
+            raise DataSourceError(str(e), source=self.name)
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
@@ -1478,11 +1520,11 @@ class AkShareAdapter(DataSource):
             raise DataSourceError(str(e), source=self.name)
 
     def get_dividend_fhps(self, symbol: str = None, date: str = None) -> pd.DataFrame:
-        """获取分红送股数据（stock_fhps_em）。symbol 或 date 二选一"""
+        """获取分红送股数据"""
         # 尝试从 parquet_cache 获取
         where = {}
         if symbol:
-            where["symbol"] = symbol
+            where["symbol"] = self._normalize_symbol(symbol)
         if date:
             where["announce_date"] = date
 
@@ -1493,12 +1535,50 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            if symbol is not None:
-                result = self._akshare.stock_fhps_em(symbol=symbol)
-            elif date is not None:
-                result = self._akshare.stock_fhps_em(date=date)
+            # 获取指定日期的全市场分红数据
+            if date is None:
+                # 默认获取最近一个报告期（年报/半年报/季报）
+                from datetime import datetime
+
+                # 尝试最近的报告期日期
+                today = datetime.now()
+                for report_date in ["1231", "0630", "0930", "0331"]:
+                    test_date = today.strftime("%Y") + report_date
+                    try:
+                        df_all = self._akshare.stock_fhps_em(date=test_date)
+                        if df_all is not None and not df_all.empty:
+                            break
+                    except:
+                        continue
             else:
-                result = self._akshare.stock_fhps_em()
+                df_all = self._akshare.stock_fhps_em(date=date.replace("-", ""))
+
+            if df_all is None or df_all.empty:
+                return pd.DataFrame()
+
+            # 如果指定了 symbol，过滤
+            if symbol:
+                symbol_norm = self._normalize_symbol(symbol)
+                code_col = None
+                for col in ["股票代码", "code", "symbol", "证券代码"]:
+                    if col in df_all.columns:
+                        code_col = col
+                        break
+
+                if code_col:
+                    target_code = (
+                        symbol_norm.replace("sh", "").replace("sz", "").zfill(6)
+                    )
+                    df_all["code_normalized"] = (
+                        df_all[code_col].astype(str).str.zfill(6)
+                    )
+                    result = df_all[df_all["code_normalized"] == target_code].copy()
+                    result = result.drop(columns=["code_normalized"])
+                else:
+                    result = df_all
+            else:
+                result = df_all
+
             if not result.empty:
                 self._parquet_put("dividend", result)
             return result
@@ -1565,7 +1645,7 @@ class AkShareAdapter(DataSource):
             raise DataSourceError(str(e), source=self.name)
 
     def get_pledge_ratio_em(self, symbol: str) -> pd.DataFrame:
-        """获取股权质押比例数据（stock_gpzy_pledge_ratio_em）"""
+        """获取股权质押比例数据"""
         symbol = self._normalize_symbol(symbol)
 
         # 尝试从 parquet_cache 获取
@@ -1576,7 +1656,30 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            result = self._akshare.stock_gpzy_pledge_ratio_em(symbol=symbol)
+            # 获取最新日期的全市场质押数据
+            today = datetime.now().strftime("%Y%m%d")
+            df_all = self._akshare.stock_gpzy_pledge_ratio_em(date=today)
+
+            if df_all is None or df_all.empty:
+                return pd.DataFrame()
+
+            # 过滤指定 symbol（代码列可能是 '股票代码' 或类似字段）
+            code_col = None
+            for col in ["股票代码", "code", "symbol", "证券代码"]:
+                if col in df_all.columns:
+                    code_col = col
+                    break
+
+            if code_col:
+                # 标准化代码格式进行比较
+                target_code = symbol.replace("sh", "").replace("sz", "").zfill(6)
+                df_all["code_normalized"] = df_all[code_col].astype(str).str.zfill(6)
+                result = df_all[df_all["code_normalized"] == target_code].copy()
+                result = result.drop(columns=["code_normalized"])
+                result["symbol"] = symbol  # 确保有 symbol 列
+            else:
+                result = df_all  # 无法过滤，返回全量
+
             if not result.empty:
                 self._parquet_put("share_change", result)
             return result
@@ -1604,7 +1707,33 @@ class AkShareAdapter(DataSource):
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
-            result = self._akshare.stock_restricted_release_detail_em(symbol=symbol)
+            from datetime import timedelta
+
+            start = datetime.now().strftime("%Y%m%d")
+            end = (datetime.now() + timedelta(days=90)).strftime("%Y%m%d")
+
+            df_all = self._akshare.stock_restricted_release_detail_em(
+                start_date=start, end_date=end
+            )
+
+            if df_all is None or df_all.empty:
+                return pd.DataFrame()
+
+            code_col = None
+            for col in ["股票代码", "code", "symbol", "证券代码"]:
+                if col in df_all.columns:
+                    code_col = col
+                    break
+
+            if code_col:
+                target_code = symbol.replace("sh", "").replace("sz", "").zfill(6)
+                df_all["code_normalized"] = df_all[code_col].astype(str).str.zfill(6)
+                result = df_all[df_all["code_normalized"] == target_code].copy()
+                result = result.drop(columns=["code_normalized"])
+                result["symbol"] = symbol
+            else:
+                result = df_all
+
             if not result.empty:
                 self._parquet_put("unlock", result)
             return result
@@ -1805,6 +1934,287 @@ class AkShareAdapter(DataSource):
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
             return self._akshare.stock_individual_info_em(symbol=symbol)
+        except Exception as e:
+            raise DataSourceError(str(e), source=self.name)
+
+    def get_stock_valuation_with_fallback(self, symbol: str) -> pd.DataFrame:
+        """
+        获取个股估值数据，支持多数据源自动切换（BAIDU→EASTMONEY→THS）。
+
+        Returns DataFrame with columns: date, market_cap, pe_ratio, pb_ratio,
+        circulating_market_cap, pe_ratio_ttm
+        """
+        import warnings
+        from functools import reduce
+
+        try:
+            from ..utils.date_utils import find_date_column
+        except ImportError:
+            try:
+                from jk2bt.utils.date_utils import find_date_column
+            except ImportError:
+
+                def find_date_column(df, prefix):
+                    for col in df.columns:
+                        col_lower = str(col).lower()
+                        if any(k in col_lower for k in ["date", "day", "日期", "时间"]):
+                            return col
+                    return None
+
+        sources = [
+            ("baidu", self._fetch_valuation_baidu),
+            ("eastmoney", self._fetch_valuation_eastmoney),
+            ("ths", self._fetch_valuation_ths),
+        ]
+
+        for source_name, fetch_fn in sources:
+            try:
+                df = fetch_fn(symbol)
+                if df is not None and not df.empty:
+                    return df
+            except Exception as e:
+                warnings.warn(f"{source_name} 估值数据获取失败: {e}")
+                continue
+
+        return pd.DataFrame()
+
+    def _fetch_valuation_baidu(self, symbol: str) -> pd.DataFrame:
+        """从百度估值接口获取数据"""
+        symbol_norm = (
+            symbol.replace("sh", "")
+            .replace("sz", "")
+            .replace(".XSHG", "")
+            .replace(".XSHE", "")
+            .zfill(6)
+        )
+
+        indicators = [
+            ("总市值", "market_cap"),
+            ("市净率", "pb_ratio"),
+            ("市盈率", "pe_ratio"),
+        ]
+
+        dfs = []
+        for indicator, col_name in indicators:
+            try:
+                df = self.get_stock_valuation_baidu(
+                    symbol=symbol_norm, indicator=indicator
+                )
+                if df is not None and not df.empty:
+                    df = df.rename(columns={"value": col_name})
+                    dfs.append(df)
+            except Exception as e:
+                warnings.warn(f"百度接口获取 {indicator} 失败: {e}")
+
+        if not dfs:
+            return pd.DataFrame()
+
+        result = reduce(lambda x, y: pd.merge(x, y, on="date", how="outer"), dfs)
+        if "date" in result.columns:
+            result["date"] = pd.to_datetime(result["date"]).dt.strftime("%Y-%m-%d")
+        return result.sort_values("date").reset_index(drop=True)
+
+    def _fetch_valuation_eastmoney(self, symbol: str) -> pd.DataFrame:
+        """从东财估值接口获取数据"""
+        symbol_norm = (
+            symbol.replace("sh", "")
+            .replace("sz", "")
+            .replace(".XSHG", "")
+            .replace(".XSHE", "")
+            .zfill(6)
+        )
+
+        try:
+            from ..utils.date_utils import find_date_column
+        except ImportError:
+            try:
+                from jk2bt.utils.date_utils import find_date_column
+            except ImportError:
+
+                def find_date_column(df, prefix):
+                    for col in df.columns:
+                        col_lower = str(col).lower()
+                        if any(k in col_lower for k in ["date", "day", "日期", "时间"]):
+                            return col
+                    return None
+
+        df = self.get_stock_valuation(symbol=symbol_norm)
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        col_map = {
+            "pe": "pe_ratio",
+            "pe_ttm": "pe_ratio_ttm",
+            "pb": "pb_ratio",
+            "总市值": "market_cap",
+            "流通市值": "circulating_market_cap",
+        }
+
+        for old, new in col_map.items():
+            if old in df.columns:
+                df[new] = df[old]
+
+        if "date" not in df.columns:
+            date_col = find_date_column(df, "market")
+            if date_col:
+                df["date"] = pd.to_datetime(df[date_col]).dt.strftime("%Y-%m-%d")
+
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
+            df = df.sort_values("date").reset_index(drop=True)
+
+        return df
+
+    def _fetch_valuation_ths(self, symbol: str) -> pd.DataFrame:
+        """从同花顺接口获取估值数据"""
+        symbol_norm = (
+            symbol.replace("sh", "")
+            .replace("sz", "")
+            .replace(".XSHG", "")
+            .replace(".XSHE", "")
+            .zfill(6)
+        )
+
+        df = self.get_stock_individual_info(symbol=symbol_norm)
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        result = {}
+        for _, row in df.iterrows():
+            item = row.get("item", "")
+            value = row.get("value", "")
+            if item == "总市值":
+                result["market_cap"] = value
+            elif item == "市盈率":
+                result["pe_ratio"] = value
+            elif item == "市净率":
+                result["pb_ratio"] = value
+            elif item == "流通市值":
+                result["circulating_market_cap"] = value
+
+        if not result:
+            return pd.DataFrame()
+
+        return pd.DataFrame([result])
+
+    def get_futures_daily_with_fallback(
+        self,
+        symbol: str,
+        start_date: str = None,
+        end_date: str = None,
+    ) -> pd.DataFrame:
+        """
+        获取期货日线数据，支持多数据源自动切换。
+
+        Parameters
+        ----------
+        symbol : str
+            期货代码（如 IF2401, AU9999）
+        start_date : str, optional
+            开始日期（YYYYMMDD格式）
+        end_date : str, optional
+            结束日期（YYYYMMDD格式）
+
+        Returns
+        -------
+        pd.DataFrame
+            包含 datetime, open, high, low, close, volume, money, openinterest 字段
+        """
+        import warnings
+
+        if not self._akshare_available:
+            return pd.DataFrame()
+
+        def _jq_futures_to_sina(sym):
+            """将聚宽风格期货代码转换为新浪期货符号"""
+            sym = sym.upper()
+            for ex in [".CCFX", ".XSGE", ".XDCE", ".XZCE", ".XINE", ".GFEX"]:
+                if sym.endswith(ex):
+                    code = sym[: -len(ex)]
+                    break
+            else:
+                code = sym
+            if code.endswith("9999"):
+                variety = code[:-4]
+                return variety + "0"
+            return code
+
+        def _standardize_futures(df):
+            """标准化期货数据格式"""
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            col_map = {
+                "date": "datetime",
+                "open": "open",
+                "high": "high",
+                "low": "low",
+                "close": "close",
+                "volume": "volume",
+            }
+            df = df.rename(columns=col_map)
+            df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+            df = df.dropna(subset=["datetime"])
+            df["money"] = None
+            if "hold" in df.columns:
+                df["openinterest"] = df["hold"]
+            elif "持仓量" in df.columns:
+                df["openinterest"] = df["持仓量"]
+
+            if start_date:
+                start_dt = pd.to_datetime(start_date)
+                df = df[df["datetime"] >= start_dt]
+            if end_date:
+                end_dt = pd.to_datetime(end_date)
+                df = df[df["datetime"] <= end_dt]
+
+            return df.sort_values("datetime").reset_index(drop=True)
+
+        sina_symbol = _jq_futures_to_sina(symbol)
+        is_continuous = sina_symbol.endswith("0")
+
+        sources = [
+            ("sina", lambda: self.get_futures_daily(sina_symbol)),
+        ]
+
+        if is_continuous:
+            sources.append(
+                (
+                    "main_sina",
+                    lambda: self.get_futures_main_sina(
+                        symbol=sina_symbol,
+                        start_date=start_date or "19900101",
+                        end_date=end_date or "22220101",
+                    ),
+                )
+            )
+
+        for source_name, fetch_fn in sources:
+            try:
+                df = fetch_fn()
+                if df is not None and not df.empty:
+                    return _standardize_futures(df)
+            except Exception as e:
+                warnings.warn(f"期货 {symbol} {source_name} 获取失败: {e}")
+                continue
+
+        return pd.DataFrame()
+
+    def get_futures_main_sina(
+        self,
+        symbol: str,
+        start_date: str = "19900101",
+        end_date: str = "22220101",
+    ) -> pd.DataFrame:
+        """获取期货主力合约数据（futures_main_sina）"""
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+        try:
+            return self._akshare.futures_main_sina(
+                symbol=symbol,
+                start_date=start_date,
+                end_date=end_date,
+            )
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 

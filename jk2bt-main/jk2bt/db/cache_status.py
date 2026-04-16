@@ -19,7 +19,7 @@ from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 import pandas as pd
 
-from .duckdb_manager import DuckDBManager
+from .parquet_adapter import ParquetAdapter
 from jk2bt.utils.code_converter import normalize_to_jq_format
 
 logger = logging.getLogger(__name__)
@@ -29,8 +29,19 @@ class CacheManager:
     """数据缓存管理器"""
 
     def __init__(self, db_path: str = None):
-        self.db = DuckDBManager(db_path=db_path, read_only=True)
-        self.db_path = db_path or self.db.db_path
+        self.db = ParquetAdapter(db_path=db_path, read_only=True)
+        self.db_path = db_path or getattr(self.db, "db_path", None)
+
+    def _get_date_range(
+        self, table: str, where: dict
+    ) -> Tuple[Optional[str], Optional[str]]:
+        """获取指定表的日期范围"""
+        df = self.db.query(table, where=where)
+        if df.empty or "datetime" not in df.columns:
+            return None, None
+        min_date = str(df["datetime"].min())
+        max_date = str(df["datetime"].max())
+        return min_date, max_date
 
     def check_stock_daily_cache(
         self, symbol: str, start: str, end: str, adjust: str = "qfq"
@@ -67,26 +78,19 @@ class CacheManager:
                 result["has_data"] = True
                 result["count"] = count
 
-                with self.db._get_connection(read_only=True) as conn:
-                    row = conn.execute(
-                        """
-                        SELECT MIN(datetime), MAX(datetime)
-                        FROM stock_daily
-                        WHERE symbol = ? AND adjust = ?
-                    """,
-                        [jq_symbol, adjust],
-                    ).fetchone()
+                min_date, max_date = self._get_date_range(
+                    "stock_daily", {"symbol": jq_symbol}
+                )
+                if min_date:
+                    result["min_date"] = min_date
+                    result["max_date"] = max_date
 
-                    if row and row[0]:
-                        result["min_date"] = str(row[0])
-                        result["max_date"] = str(row[1])
+                    min_dt = pd.to_datetime(min_date)
+                    max_dt = pd.to_datetime(max_date)
+                    start_dt = pd.to_datetime(start)
+                    end_dt = pd.to_datetime(end)
 
-                        min_dt = pd.to_datetime(row[0])
-                        max_dt = pd.to_datetime(row[1])
-                        start_dt = pd.to_datetime(start)
-                        end_dt = pd.to_datetime(end)
-
-                        result["is_complete"] = min_dt <= start_dt and max_dt >= end_dt
+                    result["is_complete"] = min_dt <= start_dt and max_dt >= end_dt
         except Exception as e:
             logger.warning(f"检查缓存状态失败 {symbol}: {e}")
 
@@ -116,26 +120,19 @@ class CacheManager:
                 result["has_data"] = True
                 result["count"] = count
 
-                with self.db._get_connection(read_only=True) as conn:
-                    row = conn.execute(
-                        """
-                        SELECT MIN(datetime), MAX(datetime)
-                        FROM etf_daily
-                        WHERE symbol = ?
-                    """,
-                        [jq_symbol],
-                    ).fetchone()
+                min_date, max_date = self._get_date_range(
+                    "etf_daily", {"symbol": jq_symbol}
+                )
+                if min_date:
+                    result["min_date"] = min_date
+                    result["max_date"] = max_date
 
-                    if row and row[0]:
-                        result["min_date"] = str(row[0])
-                        result["max_date"] = str(row[1])
+                    min_dt = pd.to_datetime(min_date)
+                    max_dt = pd.to_datetime(max_date)
+                    start_dt = pd.to_datetime(start)
+                    end_dt = pd.to_datetime(end)
 
-                        min_dt = pd.to_datetime(row[0])
-                        max_dt = pd.to_datetime(row[1])
-                        start_dt = pd.to_datetime(start)
-                        end_dt = pd.to_datetime(end)
-
-                        result["is_complete"] = min_dt <= start_dt and max_dt >= end_dt
+                    result["is_complete"] = min_dt <= start_dt and max_dt >= end_dt
         except Exception as e:
             logger.warning(f"检查ETF缓存状态失败 {symbol}: {e}")
 
@@ -165,26 +162,19 @@ class CacheManager:
                 result["has_data"] = True
                 result["count"] = count
 
-                with self.db._get_connection(read_only=True) as conn:
-                    row = conn.execute(
-                        """
-                        SELECT MIN(datetime), MAX(datetime)
-                        FROM index_daily
-                        WHERE symbol = ?
-                    """,
-                        [jq_symbol],
-                    ).fetchone()
+                min_date, max_date = self._get_date_range(
+                    "index_daily", {"symbol": jq_symbol}
+                )
+                if min_date:
+                    result["min_date"] = min_date
+                    result["max_date"] = max_date
 
-                    if row and row[0]:
-                        result["min_date"] = str(row[0])
-                        result["max_date"] = str(row[1])
+                    min_dt = pd.to_datetime(min_date)
+                    max_dt = pd.to_datetime(max_date)
+                    start_dt = pd.to_datetime(start)
+                    end_dt = pd.to_datetime(end)
 
-                        min_dt = pd.to_datetime(row[0])
-                        max_dt = pd.to_datetime(row[1])
-                        start_dt = pd.to_datetime(start)
-                        end_dt = pd.to_datetime(end)
-
-                        result["is_complete"] = min_dt <= start_dt and max_dt >= end_dt
+                    result["is_complete"] = min_dt <= start_dt and max_dt >= end_dt
         except Exception as e:
             logger.warning(f"检查指数缓存状态失败 {symbol}: {e}")
 
@@ -249,6 +239,7 @@ class CacheManager:
             # 从统一配置获取缓存目录
             try:
                 from jk2bt.utils.config import get_config
+
                 config = get_config()
                 cache_base_dir = config.cache.cache_dir
             except Exception:

@@ -12,7 +12,7 @@ import logging
 import pandas as pd
 
 try:
-    from ..db.duckdb_manager import DuckDBManager
+    from ..db.parquet_adapter import ParquetAdapter
     from ..utils.standardize import standardize_ohlcv
     from ..utils.data_source_backup import (
         get_etf_daily_with_fallback,
@@ -20,7 +20,7 @@ try:
         set_tushare_token,
     )
 except ImportError:
-    from jk2bt.db.duckdb_manager import DuckDBManager
+    from jk2bt.db.parquet_adapter import ParquetAdapter
     from jk2bt.utils.standardize import standardize_ohlcv
     from jk2bt.utils.data_source_backup import (
         get_etf_daily_with_fallback,
@@ -56,7 +56,7 @@ def get_etf_daily(symbol, start, end, force_update=False, data_sources=None):
     pd.DataFrame
         标准化后的 OHLCV 数据
     """
-    db = DuckDBManager()
+    db = ParquetAdapter()
 
     # 检查本地缓存
     if not force_update and db.has_data("etf_daily", symbol, start, end):
@@ -111,7 +111,7 @@ def get_etf_daily_legacy(symbol, start, end, force_update=False):
     """
     旧版获取函数（仅使用 akshare），保留兼容性。
     """
-    db = DuckDBManager()
+    db = ParquetAdapter()
 
     if not force_update and db.has_data("etf_daily", symbol, start, end):
         df = db.get_etf_daily(symbol, start, end)
@@ -123,6 +123,7 @@ def get_etf_daily_legacy(symbol, start, end, force_update=False):
 
     try:
         from jk2bt.data_access import get_adapter
+
         raw_df = get_adapter().get_etf_hist(symbol=symbol)
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")

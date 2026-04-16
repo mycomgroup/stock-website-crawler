@@ -10,15 +10,6 @@ signals 模块
 - divergence_signals.py : 背离类信号（MACD/RSI/KDJ背离）
 - rsrs.py              : RSRS择时信号（阻力支撑相对强度）
 - market_sentiment.py  : 市场情绪信号（拥挤率、GSISI、FED等）
-- fields.py            : 指标数据获取
-
-信号分类：
-- 交叉信号：快线穿越慢线，从"没交叉"变"交叉"
-- 极值信号：指标进入极端区域，从"正常"变"极端"
-- 突破信号：价格或成交量突破阈值，从"没突破"变"突破"
-- 背离信号：价格与指标走势背离
-- RSRS信号：阻力支撑相对强度择时
-- 情绪信号：市场情绪指标
 
 职责边界：
 - factors/ 用于选股因子（连续值，打分排序）
@@ -84,8 +75,8 @@ from .market_sentiment import (
     get_all_sentiment_indicators,
 )
 
-# 指标数据获取
-from .fields import (
+# 指标数据获取（已移至 factors/financials.py，保持向后兼容）
+from jk2bt.factors.financials import (
     get_indicator_data,
     get_indicator_batch,
     get_indicator_ranking,

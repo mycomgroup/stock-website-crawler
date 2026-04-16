@@ -404,6 +404,14 @@ try:
         get_sector_money_flow,
         get_money_flow_rank,
     )
+    from jk2bt.api.jq_compat import (
+        get_all_alpha_101,
+        get_all_alpha_191,
+        get_factor_names,
+        get_style_factor_returns,
+        get_specific_returns,
+        get_style_factor_covariance,
+    )
 except ImportError as e:
     # 如果导入失败，定义占位函数
     import warnings
@@ -430,6 +438,188 @@ except ImportError as e:
     get_recent_limit_up_stock = get_recent_limit_down_stock = None
     get_hl_stock = get_continue_count_df = get_hl_count_df = None
     get_money_flow = get_sector_money_flow = get_money_flow_rank = None
+    get_all_alpha_101 = get_all_alpha_191 = get_factor_names = None
+    get_style_factor_returns = get_specific_returns = get_style_factor_covariance = None
+
+# =====================================================================
+# JQData 风格行业相关 API
+# =====================================================================
+
+
+def get_industry(security, date=None):
+    """
+    查询股票所属行业
+
+    参数:
+        security: 单个股票代码或股票代码列表（聚宽格式，如 '600519.XSHG'）
+        date: 查询日期（可选，当前未使用，保留接口兼容）
+
+    返回:
+        dict: key为股票代码，value为包含 sw_l1, sw_l2, sw_l3, zjw, jq_l1, jq_l2 的dict
+    """
+    import akshare as ak
+
+    if isinstance(security, str):
+        security = [security]
+
+    result = {}
+    for sec in security:
+        # 转换为 akshare 格式（6位数字）
+        ak_code = sec.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+
+        industry_info = {
+            "sw_l1": None,
+            "sw_l2": None,
+            "sw_l3": None,
+            "zjw": None,
+            "jq_l1": None,
+            "jq_l2": None,
+        }
+
+        try:
+            # 使用 akshare 的 stock_board_industry_name_em 获取行业信息
+            df = ak.stock_board_industry_name_em(symbol=ak_code)
+            if df is not None and not df.empty:
+                # 东方财富行业数据，通常包含板块名称
+                if "板块名称" in df.columns:
+                    industry_info["sw_l1"] = df["板块名称"].iloc[0]
+                elif "行业" in df.columns:
+                    industry_info["sw_l1"] = df["行业"].iloc[0]
+                elif "名称" in df.columns:
+                    industry_info["sw_l1"] = df["名称"].iloc[0]
+                else:
+                    # 尝试获取第一列的值
+                    industry_info["sw_l1"] = str(df.iloc[0, 0])
+        except Exception:
+            pass
+
+        # 尝试获取证监会行业分类（zjw）
+        try:
+            from jk2bt.data_access import get_adapter
+
+            company_info = get_adapter().get_company_info(ak_code)
+            if company_info is not None and not company_info.empty:
+                for _, row in company_info.iterrows():
+                    item = str(row.get("item", ""))
+                    if "行业" in item or "所属" in item:
+                        industry_info["zjw"] = str(row.get("value", ""))
+                        break
+        except Exception:
+            pass
+
+        result[sec] = industry_info
+
+    return result
+
+
+def get_industries(name="zjw", date=None):
+    """
+    获取行业列表
+
+    参数:
+        name: 行业分类类型 ('sw_l1', 'sw_l2', 'sw_l3', 'zjw', 'jq_l1', 'jq_l2')
+        date: 查询日期（可选，当前未使用，保留接口兼容）
+
+    返回:
+        DataFrame with columns=['name', 'start_date']
+    """
+    import akshare as ak
+
+    if name in ("sw_l1", "sw_l2", "sw_l3"):
+        try:
+            # 使用申万行业指数信息
+            from jk2bt.data_access import get_adapter
+
+            df = get_adapter().get_sw_index_info()
+            if df is not None and not df.empty:
+                if "指数名称" in df.columns and "指数代码" in df.columns:
+                    result = pd.DataFrame(
+                        {
+                            "name": df["指数名称"].values,
+                            "start_date": df.get("上市日期", df.get("基日", None)),
+                        }
+                    )
+                    # 清理 start_date 列
+                    if "start_date" in result.columns:
+                        result["start_date"] = pd.to_datetime(
+                            result["start_date"], errors="coerce"
+                        )
+                    return result
+        except Exception:
+            pass
+
+        # Fallback: 返回申万一级行业列表
+        from jk2bt.market_data.industry import SW_LEVEL1_CODES
+
+        result = pd.DataFrame(
+            {
+                "name": list(SW_LEVEL1_CODES.keys()),
+                "start_date": None,
+            }
+        )
+        return result
+
+    elif name == "zjw":
+        try:
+            # 使用东方财富行业列表
+            df = ak.stock_board_industry_name_em()
+            if df is not None and not df.empty:
+                # 东方财富行业板块列表
+                if "板块名称" in df.columns:
+                    result = pd.DataFrame(
+                        {
+                            "name": df["板块名称"].values,
+                            "start_date": None,
+                        }
+                    )
+                    return result
+                elif "行业名称" in df.columns:
+                    result = pd.DataFrame(
+                        {
+                            "name": df["行业名称"].values,
+                            "start_date": None,
+                        }
+                    )
+                    return result
+        except Exception:
+            pass
+
+    elif name in ("jq_l1", "jq_l2"):
+        # 聚宽自定义行业分类，当前使用申万行业作为替代
+        from jk2bt.market_data.industry import SW_LEVEL1_CODES
+
+        result = pd.DataFrame(
+            {
+                "name": list(SW_LEVEL1_CODES.keys()),
+                "start_date": None,
+            }
+        )
+        return result
+
+    # 默认返回空 DataFrame
+    return pd.DataFrame(columns=["name", "start_date"])
+
+
+def get_history_industry(name, securities=None):
+    """
+    获取行业历史成分股纳入剔除记录
+
+    参数:
+        name: 行业分类类型 ('sw_l1', 'sw_l2', 'sw_l3', 'zjw', 'jq_l1', 'jq_l2')
+        securities: 股票代码列表（可选）
+
+    返回:
+        DataFrame: 包含行业历史变更记录
+    """
+    # TODO: akshare 目前没有直接提供行业历史成分股纳入剔除记录的接口
+    # 未来可以考虑从申万指数官网或其他数据源获取
+    logger.warning(
+        "get_history_industry: 当前 akshare 不支持行业历史成分股变更记录，返回空 DataFrame"
+    )
+    return pd.DataFrame(
+        columns=["industry_code", "industry_name", "security", "date", "type"]
+    )
+
 
 # =====================================================================
 # 模拟 jqdata 模块
@@ -463,6 +653,7 @@ _jqdata.balance = balance
 _jqdata.cash_flow = cash_flow
 _jqdata.indicator = indicator
 _jqdata.finance = finance
+# get_ticks and get_call_auction are defined later, assigned after their definitions
 
 
 # =====================================================================
@@ -881,6 +1072,11 @@ def get_call_auction(security_list, date=None):
     return pd.DataFrame(
         columns=["code", "auction_price", "auction_volume", "auction_amount"]
     )
+
+
+# 延迟赋值：get_ticks 和 get_call_auction 在前面定义
+_jqdata.get_ticks = get_ticks
+_jqdata.get_call_auction = get_call_auction
 
 
 # 创建 jqlib 模块实例
@@ -1669,8 +1865,19 @@ def load_jq_strategy(strategy_file):
         "get_hl_count_df": get_hl_count_df,
         # 资金流向API
         "get_money_flow": get_money_flow,
+        "get_ticks": get_ticks,
+        "get_call_auction": get_call_auction,
         "get_sector_money_flow": get_sector_money_flow,
         "get_money_flow_rank": get_money_flow_rank,
+        # Alpha101/191 因子
+        "get_all_alpha_101": get_all_alpha_101,
+        "get_all_alpha_191": get_all_alpha_191,
+        # 因子名称
+        "get_factor_names": get_factor_names,
+        # 风格因子相关
+        "get_style_factor_returns": get_style_factor_returns,
+        "get_specific_returns": get_specific_returns,
+        "get_style_factor_covariance": get_style_factor_covariance,
         # jqlib 技术分析
         "LB": _JQLibModule.technical_analysis.LB,
         "MA_jq": _JQLibModule.technical_analysis.MA,
@@ -1741,6 +1948,10 @@ def load_jq_strategy(strategy_file):
         "get_industry_daily": get_industry_daily,
         "get_industry_performance": get_industry_performance,
         "get_market_breadth": get_market_breadth,
+        # JQData 风格行业 API
+        "get_industry": get_industry,
+        "get_industries": get_industries,
+        "get_history_industry": get_history_industry,
         # 北向资金
         "get_north_money_flow": get_north_money_flow,
         "get_north_money_daily": get_north_money_daily,
