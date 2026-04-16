@@ -21,6 +21,27 @@ from typing import Iterable
 
 from notebook_executor import execute_strategy
 
+try:
+    from skills.autoresearch_joinquant_factor.factor_categories import (
+        calculate_diversity_score,
+        get_factor_category,
+    )
+except Exception:
+    import importlib.util
+    import sys
+
+    root = Path(__file__).resolve().parents[2]
+    module_path = (
+        root / "skills" / "autoresearch_joinquant_factor" / "factor_categories.py"
+    )
+    spec = importlib.util.spec_from_file_location("factor_categories", module_path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["factor_categories"] = mod
+    assert spec and spec.loader
+    spec.loader.exec_module(mod)
+    calculate_diversity_score = mod.calculate_diversity_score
+    get_factor_category = mod.get_factor_category
+
 
 AUTORESEARCH_DIR = Path(__file__).parent
 POOL_FILE = "strategy_pool.json"
@@ -30,13 +51,17 @@ HISTORY_FILE = "iteration_history.jsonl"
 def _load_factor_pool() -> list[str]:
     """复用主项目因子分类，作为候选因子全集。"""
     try:
-        from skills.autoresearch_joinquant_factor.factor_categories import FACTOR_CATEGORIES
+        from skills.autoresearch_joinquant_factor.factor_categories import (
+            FACTOR_CATEGORIES,
+        )
     except Exception:
         import importlib.util
         import sys
 
         root = Path(__file__).resolve().parents[2]
-        module_path = root / "skills" / "autoresearch_joinquant_factor" / "factor_categories.py"
+        module_path = (
+            root / "skills" / "autoresearch_joinquant_factor" / "factor_categories.py"
+        )
         spec = importlib.util.spec_from_file_location("factor_categories", module_path)
         mod = importlib.util.module_from_spec(spec)
         sys.modules["factor_categories"] = mod
@@ -100,11 +125,15 @@ def _extract_factor_combo(strategy_text: str) -> list[str]:
 def _replace_factor_combo(strategy_text: str, combo: list[str]) -> str:
     line = f"FACTOR_COMBO = {combo!r}"
     if re.search(r"^FACTOR_COMBO\s*=\s*.+$", strategy_text, flags=re.MULTILINE):
-        return re.sub(r"^FACTOR_COMBO\s*=\s*.+$", line, strategy_text, flags=re.MULTILINE)
+        return re.sub(
+            r"^FACTOR_COMBO\s*=\s*.+$", line, strategy_text, flags=re.MULTILINE
+        )
     return strategy_text + "\n" + line + "\n"
 
 
-def _mutate_combo(base_combo: list[str], factor_pool: list[str], rng: random.Random) -> list[str]:
+def _mutate_combo(
+    base_combo: list[str], factor_pool: list[str], rng: random.Random
+) -> list[str]:
     combo = _normalize_combo(base_combo)
     if not combo:
         combo = rng.sample(factor_pool, k=min(4, len(factor_pool)))
@@ -134,11 +163,55 @@ def _mutate_combo(base_combo: list[str], factor_pool: list[str], rng: random.Ran
     return _normalize_combo(combo)
 
 
+def generate_combo_with_diversity(
+    base_candidates: list[list[str]],
+    factor_pool: list[str],
+    seen: set[tuple[str, ...]],
+    rng: random.Random,
+    min_diversity: float = 0.5,
+    max_trials: int = 100,
+) -> list[str] | None:
+    best_combo: list[str] | None = None
+    best_diversity = 0.0
+
+    for _ in range(max_trials):
+        base_combo = rng.choice(base_candidates) if base_candidates else []
+        combo = _mutate_combo(base_combo, factor_pool, rng)
+        key = _combo_key(combo)
+        if not key or key in seen:
+            continue
+
+        diversity = calculate_diversity_score(combo)
+        if diversity >= min_diversity:
+            return combo
+        if diversity > best_diversity:
+            best_diversity = diversity
+            best_combo = combo
+
+    return best_combo
+
+
+def check_hard_constraints(result: dict) -> tuple[bool, str]:
+    payload = result.get("payload", {})
+    ic_mean = float(payload.get("ic_mean", 0.0))
+    diversity = float(
+        payload.get("diversity", calculate_diversity_score(result.get("factors", [])))
+    )
+
+    if diversity < 0.5:
+        return False, f"diversity={diversity:.2f} < 0.5"
+    if ic_mean < 0:
+        return False, f"ic_mean={ic_mean:.4f} < 0"
+    return True, ""
+
+
 def _load_seed_config(base: Path) -> dict:
     return _read_json(base / "seed_config.json", default={})
 
 
-def _load_strategy_pool(base: Path, seed_factors: list[list[str]], baseline_score: float) -> list[dict]:
+def _load_strategy_pool(
+    base: Path, seed_factors: list[list[str]], baseline_score: float
+) -> list[dict]:
     pool_path = base / POOL_FILE
     existing = _read_json(pool_path, default=[])
     if existing:
@@ -162,11 +235,17 @@ def _load_strategy_pool(base: Path, seed_factors: list[list[str]], baseline_scor
     return bootstrap
 
 
-def _evaluate_combo(base: Path, strategy_template: str, combo: list[str], notebook_dir: str | None) -> dict:
+def _evaluate_combo(
+    base: Path, strategy_template: str, combo: list[str], notebook_dir: str | None
+) -> dict:
     temp_strategy = base / ".strategy_candidate.py"
-    temp_strategy.write_text(_replace_factor_combo(strategy_template, combo), encoding="utf-8")
+    temp_strategy.write_text(
+        _replace_factor_combo(strategy_template, combo), encoding="utf-8"
+    )
 
-    result = execute_strategy(str(temp_strategy), timeout_ms=600_000, notebook_dir=notebook_dir)
+    result = execute_strategy(
+        str(temp_strategy), timeout_ms=600_000, notebook_dir=notebook_dir
+    )
     score = float(result.get("score", 0.0)) if result.get("success") else -1e9
 
     return {
@@ -178,7 +257,13 @@ def _evaluate_combo(base: Path, strategy_template: str, combo: list[str], notebo
     }
 
 
-def _save_search_notes(base: Path, state: dict, strategy_pool: list[dict], latest_results: list[dict]) -> None:
+def _save_search_notes(
+    base: Path,
+    state: dict,
+    strategy_pool: list[dict],
+    latest_results: list[dict],
+    decisions: list[dict] | None = None,
+) -> None:
     lines: list[str] = []
 
     lines.append("## 当前状态")
@@ -203,12 +288,41 @@ def _save_search_notes(base: Path, state: dict, strategy_pool: list[dict], lates
     lines.append("")
 
     lines.append("## 最近一轮候选结果")
-    lines.append("| idx | score | factors | success |")
-    lines.append("|-----|-------|---------|---------|")
+    lines.append("| idx | score | factors | success | decision |")
+    lines.append("|-----|-------|---------|---------|----------|")
+    decisions = decisions or []
     for i, item in enumerate(latest_results, start=1):
+        dec = decisions[i - 1].get("decision", "") if i - 1 < len(decisions) else ""
         lines.append(
-            f"| {i} | {float(item.get('score', 0.0)):.6f} | {item.get('factors', [])} | {item.get('success', False)} |"
+            f"| {i} | {float(item.get('score', 0.0)):.6f} | {item.get('factors', [])} | {item.get('success', False)} | {dec} |"
         )
+    lines.append("")
+
+    keep_list = [d for d in decisions if d.get("decision") == "keep"]
+    rollback_list = [d for d in decisions if d.get("decision") == "rollback"]
+
+    lines.append("## 搜索地图")
+    lines.append("")
+    lines.append("### 已验证有效（keep）")
+    for d in keep_list:
+        factors = d.get("factors", [])
+        score = d.get("score", 0.0)
+        reason = d.get("reason", "")
+        lines.append(f"- {factors}: score={score:.4f}, {reason}")
+    lines.append("")
+
+    lines.append("### 已验证无效（rollback）")
+    for d in rollback_list:
+        factors = d.get("factors", [])
+        score = d.get("score", 0.0)
+        reason = d.get("reason", "")
+        lines.append(f"- {factors}: score={score:.4f}, {reason}")
+    lines.append("")
+
+    lines.append("### 待探索方向")
+    lines.append("- [ ] 尝试新的因子类别组合")
+    lines.append("- [ ] 优化因子权重配置")
+    lines.append("")
 
     (base / "search_notes.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -230,14 +344,22 @@ def main() -> None:
     seed_cfg = _load_seed_config(base)
     seed_factors = seed_cfg.get("seed_factors") or []
     baseline_result = seed_cfg.get("baseline_result") or {}
-    baseline_score = float(baseline_result.get("score", 0.0)) if isinstance(baseline_result, dict) else 0.0
+    baseline_score = (
+        float(baseline_result.get("score", 0.0))
+        if isinstance(baseline_result, dict)
+        else 0.0
+    )
     top_k = int(args.top_k if args.top_k is not None else seed_cfg.get("top_k", 5))
 
     strategy_text = strategy_file.read_text(encoding="utf-8")
     current_combo = _extract_factor_combo(strategy_text)
 
-    strategy_pool = _load_strategy_pool(base, seed_factors=seed_factors, baseline_score=baseline_score)
-    if current_combo and _combo_key(current_combo) not in {_combo_key(x.get("factors", [])) for x in strategy_pool}:
+    strategy_pool = _load_strategy_pool(
+        base, seed_factors=seed_factors, baseline_score=baseline_score
+    )
+    if current_combo and _combo_key(current_combo) not in {
+        _combo_key(x.get("factors", [])) for x in strategy_pool
+    }:
         strategy_pool.append(
             {
                 "rank": len(strategy_pool) + 1,
@@ -249,12 +371,20 @@ def main() -> None:
             }
         )
 
-    rng = random.Random(args.seed if args.seed is not None else int(datetime.utcnow().timestamp()))
+    rng = random.Random(
+        args.seed if args.seed is not None else int(datetime.utcnow().timestamp())
+    )
     factor_pool = _load_factor_pool()
 
-    base_candidates = [p.get("factors", []) for p in strategy_pool[: min(len(strategy_pool), top_k)]]
+    base_candidates = [
+        p.get("factors", []) for p in strategy_pool[: min(len(strategy_pool), top_k)]
+    ]
     if not base_candidates:
-        base_candidates = [current_combo] if current_combo else [seed_factors[0] if seed_factors else []]
+        base_candidates = (
+            [current_combo]
+            if current_combo
+            else [seed_factors[0] if seed_factors else []]
+        )
 
     seen = {_combo_key(x.get("factors", [])) for x in strategy_pool}
     candidates: list[list[str]] = []
@@ -263,13 +393,15 @@ def main() -> None:
     trials = 0
     while len(candidates) < args.batch_size and trials < max_trials:
         trials += 1
-        base_combo = rng.choice(base_candidates)
-        new_combo = _mutate_combo(base_combo, factor_pool, rng)
-        key = _combo_key(new_combo)
-        if not key or key in seen:
+        new_combo = generate_combo_with_diversity(
+            base_candidates, factor_pool, seen, rng, min_diversity=0.5, max_trials=100
+        )
+        if new_combo is None:
             continue
-        seen.add(key)
-        candidates.append(new_combo)
+        key = _combo_key(new_combo)
+        if key and key not in seen:
+            seen.add(key)
+            candidates.append(new_combo)
 
     if not candidates:
         print("[warn] 未生成新候选组合，跳过本轮")
@@ -278,11 +410,32 @@ def main() -> None:
     iter_no = 1
     history_path = base / HISTORY_FILE
     if history_path.exists():
-        iter_no += sum(1 for _ in history_path.read_text(encoding="utf-8").splitlines() if _.strip())
+        iter_no += sum(
+            1
+            for _ in history_path.read_text(encoding="utf-8").splitlines()
+            if _.strip()
+        )
 
     latest_results: list[dict] = []
+    decisions: list[dict] = []
     for combo in candidates:
-        result = _evaluate_combo(base, strategy_text, combo, notebook_dir=args.notebook_dir)
+        result = _evaluate_combo(
+            base, strategy_text, combo, notebook_dir=args.notebook_dir
+        )
+        passed, reason = check_hard_constraints(result)
+        if not passed:
+            result["score"] = -1e9
+            decisions.append(
+                {
+                    "factors": combo,
+                    "decision": "rollback",
+                    "reason": f"hard constraint: {reason}",
+                }
+            )
+        else:
+            decisions.append(
+                {"factors": combo, "decision": "keep", "reason": "passed constraints"}
+            )
         latest_results.append(result)
 
     # 去重合并并按分数排序
@@ -308,7 +461,9 @@ def main() -> None:
                 "iter": iter_no,
             }
 
-    sorted_pool = sorted(merged.values(), key=lambda x: float(x.get("score", -1e9)), reverse=True)
+    sorted_pool = sorted(
+        merged.values(), key=lambda x: float(x.get("score", -1e9)), reverse=True
+    )
     sorted_pool = sorted_pool[: max(1, top_k)]
     for i, item in enumerate(sorted_pool, start=1):
         item["rank"] = i
@@ -316,10 +471,14 @@ def main() -> None:
     # 更新主 strategy.py 为当前第一名
     best = sorted_pool[0]
     best_combo = _normalize_combo(best.get("factors", []))
-    strategy_file.write_text(_replace_factor_combo(strategy_text, best_combo), encoding="utf-8")
+    strategy_file.write_text(
+        _replace_factor_combo(strategy_text, best_combo), encoding="utf-8"
+    )
 
     # 落盘
-    (base / POOL_FILE).write_text(json.dumps(sorted_pool, ensure_ascii=False, indent=2), encoding="utf-8")
+    (base / POOL_FILE).write_text(
+        json.dumps(sorted_pool, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
     state = {
         "best_score": float(best.get("score", 0.0)),
@@ -329,7 +488,7 @@ def main() -> None:
         "date_range": f"{seed_cfg.get('start_date', 'N/A')} ~ {seed_cfg.get('end_date', 'N/A')}",
         "pool": seed_cfg.get("pool", "N/A"),
     }
-    _save_search_notes(base, state, sorted_pool, latest_results)
+    _save_search_notes(base, state, sorted_pool, latest_results, decisions)
 
     with history_path.open("a", encoding="utf-8") as f:
         f.write(
@@ -351,7 +510,9 @@ def main() -> None:
     if temp_strategy.exists():
         temp_strategy.unlink()
 
-    print(f"[iter] iter={iter_no} candidates={len(candidates)} top_k={top_k} best_score={state['best_score']:.6f}")
+    print(
+        f"[iter] iter={iter_no} candidates={len(candidates)} top_k={top_k} best_score={state['best_score']:.6f}"
+    )
 
 
 if __name__ == "__main__":

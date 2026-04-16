@@ -10,8 +10,9 @@ function resolveSessionFile(sessionFile) {
 }
 
 function isSessionExpired(sessionData) {
-  if (!sessionData?.capturedAt) return true;
-  const capturedAt = new Date(sessionData.capturedAt);
+  const timestamp = sessionData?.capturedAt || sessionData?.timestamp;
+  if (!timestamp) return true;
+  const capturedAt = new Date(timestamp);
   const now = new Date();
   const hoursSinceCapture = (now - capturedAt) / (1000 * 60 * 60);
   return hoursSinceCapture > 24 * 7;
@@ -47,7 +48,8 @@ export async function ensureJoinQuantSession(options = {}) {
     try {
       const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
       
-      if (!isSessionExpired(sessionData) && sessionData.login?.loggedIn && hasValidCookies(sessionData)) {
+      const isLoggedIn = sessionData.login?.loggedIn ?? true;
+      if (!isSessionExpired(sessionData) && isLoggedIn && hasValidCookies(sessionData)) {
         const client = new JoinQuantClient({
           sessionFile,
           notebookUrl,
