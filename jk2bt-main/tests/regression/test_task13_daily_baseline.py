@@ -27,7 +27,7 @@ try:
         StrategyScanner,
         StrategyStatus,
     )
-    from jk2bt.db.duckdb_manager import DuckDBManager
+    from jk2bt.db.parquet_adapter import ParquetAdapter
 except ImportError as e:
     print(f"导入失败: {e}")
     print("尝试从项目根目录导入...")
@@ -38,7 +38,7 @@ except ImportError as e:
         StrategyScanner,
         StrategyStatus,
     )
-    from jk2bt.db.duckdb_manager import DuckDBManager
+    from jk2bt.db.parquet_adapter import ParquetAdapter
 
 
 class TestDailyBaselineCapability(unittest.TestCase):
@@ -189,7 +189,7 @@ def my_func(context):
 
         if os.path.exists(db_path):
             try:
-                manager = DuckDBManager(db_path)
+                manager = ParquetAdapter(db_path)
                 conn = manager.get_connection()
 
                 result = conn.execute("SELECT COUNT(*) FROM stock_daily").fetchone()

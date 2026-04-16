@@ -14,21 +14,21 @@ class TestDuckDBConnection:
     """DuckDB 连接与数据统计测试"""
 
     def test_duckdb_manager_importable(self):
-        """DuckDBManager 可导入"""
+        """ParquetAdapter 可导入"""
         try:
-            from jk2bt.db import DuckDBManager
-            assert DuckDBManager is not None
+            from jk2bt.db import ParquetAdapter
+            assert ParquetAdapter is not None
         except ImportError:
-            pytest.skip("src.db.DuckDBManager 不可用")
+            pytest.skip("src.db.ParquetAdapter 不可用")
 
     def test_duckdb_connection(self):
         """DuckDB 连接正常"""
         try:
-            from jk2bt.db import DuckDBManager
+            from jk2bt.db import ParquetAdapter
         except ImportError:
-            pytest.skip("src.db.DuckDBManager 不可用")
+            pytest.skip("src.db.ParquetAdapter 不可用")
 
-        db = DuckDBManager()
+        db = ParquetAdapter()
         stock_count = db.count_records("stock_daily")
         etf_count = db.count_records("etf_daily")
         index_count = db.count_records("index_daily")
@@ -40,11 +40,11 @@ class TestDuckDBConnection:
     def test_duckdb_get_symbols(self):
         """DuckDB 获取代码列表"""
         try:
-            from jk2bt.db import DuckDBManager
+            from jk2bt.db import ParquetAdapter
         except ImportError:
-            pytest.skip("src.db.DuckDBManager 不可用")
+            pytest.skip("src.db.ParquetAdapter 不可用")
 
-        db = DuckDBManager()
+        db = ParquetAdapter()
         stock_symbols = db.get_symbols("stock_daily")
         assert isinstance(stock_symbols, list)
 

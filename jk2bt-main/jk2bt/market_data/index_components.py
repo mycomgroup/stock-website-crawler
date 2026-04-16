@@ -71,16 +71,6 @@ _INDEX_CACHE_DAYS = {
     "000001": 180,
 }
 
-_INDEX_SOURCE_MAP = {
-    "000300": "csindex",
-    "000905": "csindex",
-    "000016": "csindex",
-    "000852": "csindex",
-    "399006": "sina",
-    "399001": "sina",
-    "000001": "sina",
-}
-
 
 class IndexComponentsDBManager:
     """指数成分股 DuckDB 管理器（延迟初始化）"""
@@ -331,36 +321,6 @@ def _normalize_weights(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _fetch_from_csindex(index_num: str) -> pd.DataFrame:
-    """从中证指数公司获取成分股及权重"""
-    try:
-        from jk2bt.data_access import get_adapter
-
-        df = get_adapter().get_index_stock_cons_weight_csindex(symbol=index_num)
-        if df is not None and not df.empty:
-            logger.info(f"[csindex] 成功获取 {index_num} 成分股: {len(df)} 只")
-            return df
-    except Exception as e:
-        logger.warning(f"[csindex] 获取失败 {index_num}: {e}")
-    return pd.DataFrame()
-
-
-def _fetch_from_sina(index_num: str) -> pd.DataFrame:
-    """从新浪财经获取成分股（无权重，使用等权重）"""
-    try:
-        from jk2bt.data_access import get_adapter
-
-        df = get_adapter().get_index_stock_cons(symbol=index_num)
-        if df is not None and not df.empty:
-            df = df.copy()
-            df["权重"] = 100.0 / len(df)
-            logger.info(f"[sina] 成功获取 {index_num} 成分股: {len(df)} 只 (等权重)")
-            return df
-    except Exception as e:
-        logger.warning(f"[sina] 获取失败 {index_num}: {e}")
-    return pd.DataFrame()
-
-
 def get_index_components(
     symbol: str,
     force_update: bool = False,
@@ -399,20 +359,7 @@ def get_index_components(
             if not df_cached.empty:
                 return _normalize_weights(df_cached[_INDEX_COMPONENTS_SCHEMA])
 
-    source = _get_index_source(index_num)
-
-    df = pd.DataFrame()
-
-    if source == "csindex":
-        df = _fetch_from_csindex(index_num)
-        if df.empty:
-            logger.info(f"[fallback] 尝试备用数据源 sina")
-            df = _fetch_from_sina(index_num)
-    else:
-        df = _fetch_from_sina(index_num)
-        if df.empty:
-            logger.info(f"[fallback] 尝试备用数据源 csindex")
-            df = _fetch_from_csindex(index_num)
+    df = get_adapter().get_index_components(index_num)
 
     if df is not None and not df.empty:
         result = _normalize_index_components(df, jq_index_code)

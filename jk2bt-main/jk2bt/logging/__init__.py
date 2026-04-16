@@ -27,11 +27,21 @@ from .stats import (
     get_stats_collector,
     reset_stats_collector,
 )
-from .manager import LogManager, setup_logging, get_logger, get_jq_log
+from .manager import (
+    LogManager,
+    setup_logging,
+    get_logger,
+    get_jq_log,
+    get_default_logger,
+)
+
+# Backward compatibility alias
+LogAdapter = JQLogAdapter
 
 __all__ = [
     # adapters
     "JQLogAdapter",
+    "LogAdapter",
     "create_jq_log_adapter",
     # config
     "LoggingConfig",
@@ -60,4 +70,5 @@ __all__ = [
     "setup_logging",
     "get_logger",
     "get_jq_log",
+    "get_default_logger",
 ]

@@ -24,9 +24,9 @@ print("任务32: 分钟数据 API 直接验证")
 print("=" * 80)
 
 print("\n1. 测试 DuckDB 缓存...")
-from jk2bt.db.duckdb_manager import DuckDBManager
+from jk2bt.db.parquet_adapter import ParquetAdapter
 
-db = DuckDBManager(read_only=True)
+db = ParquetAdapter(read_only=True)
 with db._get_connection(read_only=True) as conn:
     tables = conn.execute("SHOW TABLES").fetchall()
     print(f"  可用表: {[t[0] for t in tables]}")

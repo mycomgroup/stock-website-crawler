@@ -624,9 +624,9 @@ class TestMinuteCacheIntegration(unittest.TestCase):
 
     def test_cache_query_path(self):
         """测试缓存查询路径"""
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        db = DuckDBManager(read_only=True)
+        db = ParquetAdapter(read_only=True)
         symbol = "sh600000"
         end_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         start_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")

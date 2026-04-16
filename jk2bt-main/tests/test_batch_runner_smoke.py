@@ -39,7 +39,7 @@ sys.path.insert(
 )
 
 from strategy_scanner import StrategyScanner, StrategyStatus
-from jk2bt.db.duckdb_manager import DuckDBManager, LocalCache, clear_global_cache
+from jk2bt.db.parquet_adapter import ParquetAdapter, LocalCache, clear_global_cache
 
 
 class TestBatchRunnerStatistics(unittest.TestCase):
@@ -120,7 +120,7 @@ class TestDuckDBConcurrency(unittest.TestCase):
         clear_global_cache()
         self.temp_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.temp_dir, "test_concurrency.db")
-        self.manager = DuckDBManager(
+        self.manager = ParquetAdapter(
             db_path=self.db_path, read_only=False, use_cache=True
         )
 
@@ -148,7 +148,7 @@ class TestDuckDBConcurrency(unittest.TestCase):
 
     def test_read_only_manager_creation(self):
         """测试只读管理器创建"""
-        from jk2bt.db.duckdb_manager import get_shared_read_only_manager
+        from jk2bt.db.parquet_adapter import get_shared_read_only_manager
 
         read_manager = get_shared_read_only_manager(db_path=self.db_path)
         self.assertTrue(read_manager.read_only)
@@ -192,7 +192,7 @@ class TestDuckDBConcurrency(unittest.TestCase):
 
         self.manager.insert_stock_daily("sh600001", df, adjust="qfq")
 
-        read_manager = DuckDBManager(
+        read_manager = ParquetAdapter(
             db_path=self.db_path, read_only=True, use_cache=True
         )
 
@@ -318,7 +318,7 @@ def run_smoke_test():
     db_path = os.path.join(temp_dir, "smoke_test.db")
 
     try:
-        manager = DuckDBManager(db_path=db_path, read_only=False, use_cache=True)
+        manager = ParquetAdapter(db_path=db_path, read_only=False, use_cache=True)
         dates = pd.date_range("2023-01-01", periods=10, freq="D")
         df = pd.DataFrame(
             {

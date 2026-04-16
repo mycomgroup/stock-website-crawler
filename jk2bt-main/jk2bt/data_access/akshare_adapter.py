@@ -25,6 +25,11 @@ from .akshare_compat import get_compat_adapter, AkShareCompatAdapter
 from .stats_collector import get_stats_collector, StatsCollector
 
 try:
+    from jk2bt.utils import data_source_backup
+except ImportError:
+    data_source_backup = None
+
+try:
     from parquet_cache import get_cache_manager
 
     _PARQUET_CACHE_AVAILABLE = True
@@ -416,6 +421,26 @@ class AkShareAdapter(DataSource):
                 return df
 
             except Exception as e:
+                logger.warning("[AkShare] 获取 %s 失败，尝试备用数据源: %s", symbol, e)
+
+                if data_source_backup is not None:
+                    try:
+                        fallback_df = data_source_backup.get_stock_daily_with_fallback(
+                            symbol,
+                            start,
+                            end,
+                            adjust,
+                            sources=["east_money", "tushare", "baostock"],
+                        )
+                        if fallback_df is not None and not fallback_df.empty:
+                            df = self._standardize_ohlcv(fallback_df)
+                            self._set_to_cache("market", "stock_daily", df, **cache_key)
+                            return df
+                    except Exception as fallback_error:
+                        logger.warning(
+                            "[Fallback] 备用数据源获取失败: %s", fallback_error
+                        )
+
                 raise DataSourceError(str(e), source=self.name, symbol=symbol)
 
         raise SourceUnavailableError(
@@ -802,6 +827,26 @@ class AkShareAdapter(DataSource):
                 if df is not None and not df.empty:
                     return self._standardize_ohlcv(df)
             except Exception as e:
+                logger.warning("[AkShare] 获取 %s 失败，尝试备用数据源: %s", symbol, e)
+
+                if data_source_backup is not None:
+                    try:
+                        fallback_df = data_source_backup.get_stock_daily_with_fallback(
+                            symbol,
+                            start,
+                            end,
+                            adjust,
+                            sources=["east_money", "tushare", "baostock"],
+                        )
+                        if fallback_df is not None and not fallback_df.empty:
+                            df = self._standardize_ohlcv(fallback_df)
+                            self._set_to_cache("market", "stock_daily", df, **cache_key)
+                            return df
+                    except Exception as fallback_error:
+                        logger.warning(
+                            "[Fallback] 备用数据源获取失败: %s", fallback_error
+                        )
+
                 raise DataSourceError(str(e), source=self.name, symbol=symbol)
 
         raise SourceUnavailableError(
@@ -2829,6 +2874,34 @@ class AkShareAdapter(DataSource):
             return self._akshare.index_stock_cons_weight_csindex(symbol=symbol)
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
+
+    def get_index_components(self, symbol: str) -> pd.DataFrame:
+        """获取指数成分股及权重（统一接口，带 fallback）
+
+        优先级: csindex -> sina
+        csindex 优先因为包含权重信息，sina 仅在 csindex 不可用时使用（等权重）
+        """
+        if not self._akshare_available:
+            raise DataSourceError("akshare 不可用", source=self.name)
+
+        try:
+            return self._akshare.index_stock_cons_weight_csindex(symbol=symbol)
+        except Exception:
+            pass
+
+        try:
+            df = self._akshare.index_stock_cons(symbol=symbol)
+            if df is not None and not df.empty:
+                df = df.copy()
+                df["权重"] = 100.0 / len(df)
+                logger.info(
+                    f"[fallback] sina 成功获取 {symbol} 成分股: {len(df)} 只 (等权重)"
+                )
+            return df
+        except Exception:
+            pass
+
+        raise DataSourceError(f"无法获取指数 {symbol} 成分股", source=self.name)
 
     # ── 申万行业扩展 ──────────────────────────────────────────────
 

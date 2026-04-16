@@ -30,7 +30,7 @@ from jk2bt.market_data import (
     get_stock_minute,
     get_etf_minute,
 )
-from jk2bt.db.duckdb_manager import DuckDBManager
+from jk2bt.db.parquet_adapter import ParquetAdapter
 
 
 class TestStandardizeFunctions:
@@ -580,7 +580,7 @@ class TestDuckDBMinuteTables:
 
     def test_tables_exist(self):
         """验证分钟数据表创建"""
-        db = DuckDBManager(read_only=False)
+        db = ParquetAdapter(read_only=False)
 
         with db._get_connection(read_only=False) as conn:
             tables = conn.execute("SHOW TABLES").fetchall()
@@ -591,7 +591,7 @@ class TestDuckDBMinuteTables:
 
     def test_table_structure_stock_minute(self):
         """验证 stock_minute 表结构"""
-        db = DuckDBManager(read_only=False)
+        db = ParquetAdapter(read_only=False)
 
         with db._get_connection(read_only=False) as conn:
             columns = conn.execute("DESCRIBE stock_minute").fetchall()
@@ -612,7 +612,7 @@ class TestDuckDBMinuteTables:
 
     def test_table_structure_etf_minute(self):
         """验证 etf_minute 表结构"""
-        db = DuckDBManager(read_only=False)
+        db = ParquetAdapter(read_only=False)
 
         with db._get_connection(read_only=False) as conn:
             columns = conn.execute("DESCRIBE etf_minute").fetchall()

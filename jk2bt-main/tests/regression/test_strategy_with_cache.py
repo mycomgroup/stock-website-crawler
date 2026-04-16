@@ -11,10 +11,10 @@ import backtrader as bt
 from datetime import datetime
 
 try:
-    from jk2bt.db.duckdb_manager import DuckDBManager
+    from jk2bt.db.parquet_adapter import ParquetAdapter
     from market_data.stock import get_stock_daily
 except ImportError:
-    from .db.duckdb_manager import DuckDBManager
+    from .db.parquet_adapter import ParquetAdapter
     from .market_data.stock import get_stock_daily
 
 from jk2bt.core.runner import load_jq_strategy, JQStrategyWrapper
@@ -62,7 +62,7 @@ def test_with_cached_data():
     db_path = "data/market.db"
 
     try:
-        conn = DuckDBManager(db_path, read_only=True)
+        conn = ParquetAdapter(db_path, read_only=True)
 
         symbols = conn.execute(
             "SELECT DISTINCT symbol FROM stock_daily ORDER BY symbol LIMIT 5"

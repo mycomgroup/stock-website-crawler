@@ -17,6 +17,7 @@ __all__ = [
     "setup_logging",
     "get_logger",
     "get_jq_log",
+    "get_default_logger",
 ]
 
 
@@ -168,3 +169,12 @@ def get_jq_log(strategy=None, logger_name: str = "jk2bt") -> JQLogAdapter:
     return LogManager.get_instance().get_jq_adapter(
         strategy=strategy, logger_name=logger_name
     )
+
+
+def get_default_logger() -> logging.Logger:
+    """Convenience function to get the default logger.
+
+    Returns:
+        logging.Logger instance (named 'jk2bt')
+    """
+    return LogManager.get_instance().get_logger("jk2bt")

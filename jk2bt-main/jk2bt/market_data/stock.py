@@ -27,14 +27,7 @@ try:
     )
     from ..utils.symbol import format_stock_symbol
     from ..utils.standardize import standardize_ohlcv
-    from ..utils.data_source_backup import (
-        get_stock_daily_with_fallback,
-        fetch_stock_daily_eastmoney,
-        fetch_stock_daily_tushare,
-        fetch_stock_daily_baostock,
-        fetch_stock_daily_sina,
-        set_tushare_token,
-    )
+    from ..data_access import get_adapter
 except ImportError:
     from jk2bt.db.parquet_adapter import (
         ParquetAdapter,
@@ -43,19 +36,9 @@ except ImportError:
     )
     from utils.symbol import format_stock_symbol
     from utils.standardize import standardize_ohlcv
-    from utils.data_source_backup import (
-        get_stock_daily_with_fallback,
-        fetch_stock_daily_eastmoney,
-        fetch_stock_daily_tushare,
-        fetch_stock_daily_baostock,
-        fetch_stock_daily_sina,
-        set_tushare_token,
-    )
+    from data_access import get_adapter
 
 logger = logging.getLogger(__name__)
-
-# 数据源优先级配置 (Sina 优先)
-DEFAULT_DATA_SOURCES = ["sina", "east_money", "tushare", "baostock"]
 
 
 def get_stock_daily(
@@ -130,23 +113,11 @@ def get_stock_daily(
         else:
             raise ValueError(f"{symbol}: 离线模式下无缓存数据可用")
 
-    # 使用多数据源备份系统
-    sources = data_sources or DEFAULT_DATA_SOURCES
-
-    def cache_getter(sym, s, e, adj):
-        try:
-            return db_read.get_stock_daily(sym, s, e, adj)
-        except Exception:
-            return pd.DataFrame()
-
-    raw_df = get_stock_daily_with_fallback(
+    raw_df = get_adapter().get_daily_data(
         symbol=symbol,
-        start=start,
-        end=end,
+        start_date=start,
+        end_date=end,
         adjust=adjust,
-        sources=sources,
-        fallback_to_cache=True,
-        cache_getter=cache_getter,
     )
 
     if raw_df is None or raw_df.empty:

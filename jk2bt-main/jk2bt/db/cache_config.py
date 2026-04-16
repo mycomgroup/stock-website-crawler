@@ -8,8 +8,31 @@ db/cache_config.py
     )
 """
 
-from typing import List
-from .unified_cache import TableSchema, CachePolicy
+from typing import List, Any, Optional
+from dataclasses import dataclass, field
+
+try:
+    from .unified_cache import TableSchema, CachePolicy
+except ImportError:
+
+    @dataclass
+    class TableSchema:
+        name: str
+        columns: List[tuple]
+        primary_key: List[str] = field(default_factory=list)
+        indexes: List[str] = field(default_factory=list)
+        partition_by: Optional[str] = None
+        schema_definition: Optional[str] = None
+
+    @dataclass
+    class CachePolicy:
+        domain: str
+        ttl_hours: int = 0
+        max_memory_items: int = 1000
+        ttl_seconds: int = 3600
+        max_size_mb: int = 100
+        compression: bool = True
+        preload: bool = False
 
 
 META_SCHEMAS: List[TableSchema] = [

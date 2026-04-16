@@ -161,13 +161,13 @@ class TestMinuteCacheIntegration(unittest.TestCase):
     def test_cache_query_path(self):
         """验证缓存查询路径正确"""
         from market_data.minute import get_stock_minute
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
         symbol = "sh600000"
         end_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         start_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
 
-        db = DuckDBManager(read_only=True)
+        db = ParquetAdapter(read_only=True)
 
         has_cache = db.has_data(
             "stock_minute", symbol, start_date, end_date, "qfq", "5"

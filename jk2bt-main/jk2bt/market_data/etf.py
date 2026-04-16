@@ -14,24 +14,13 @@ import pandas as pd
 try:
     from ..db.parquet_adapter import ParquetAdapter
     from ..utils.standardize import standardize_ohlcv
-    from ..utils.data_source_backup import (
-        get_etf_daily_with_fallback,
-        fetch_etf_daily_eastmoney,
-        set_tushare_token,
-    )
+    from ..data_access import get_adapter
 except ImportError:
     from jk2bt.db.parquet_adapter import ParquetAdapter
     from jk2bt.utils.standardize import standardize_ohlcv
-    from jk2bt.utils.data_source_backup import (
-        get_etf_daily_with_fallback,
-        fetch_etf_daily_eastmoney,
-        set_tushare_token,
-    )
+    from data_access import get_adapter
 
 logger = logging.getLogger(__name__)
-
-# ETF 数据源优先级 (Sina 优先)
-DEFAULT_DATA_SOURCES = ["sina", "east_money", "tushare"]
 
 
 def get_etf_daily(symbol, start, end, force_update=False, data_sources=None):
@@ -65,22 +54,10 @@ def get_etf_daily(symbol, start, end, force_update=False, data_sources=None):
             logger.info(f"{symbol}: 从 DuckDB 加载数据")
             return standardize_ohlcv(df)
 
-    # 使用多数据源备份系统
-    sources = data_sources or DEFAULT_DATA_SOURCES
-
-    def cache_getter(sym, s, e):
-        try:
-            return db.get_etf_daily(sym, s, e)
-        except Exception:
-            return pd.DataFrame()
-
-    raw_df = get_etf_daily_with_fallback(
+    raw_df = get_adapter().get_etf_daily(
         symbol=symbol,
-        start=start,
-        end=end,
-        sources=sources,
-        fallback_to_cache=True,
-        cache_getter=cache_getter,
+        start_date=start,
+        end_date=end,
     )
 
     if raw_df is None or raw_df.empty:

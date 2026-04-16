@@ -19,7 +19,9 @@ from jk2bt.logging import (
     setup_logging,
     get_logger,
     get_jq_log,
+    get_default_logger,
     JQLogAdapter,
+    LogAdapter,
     create_jq_log_adapter,
 )
 
@@ -27,6 +29,8 @@ __all__ = [
     "setup_logging",
     "get_logger",
     "get_jq_log",
+    "get_default_logger",
     "JQLogAdapter",
+    "LogAdapter",
     "create_jq_log_adapter",
 ]

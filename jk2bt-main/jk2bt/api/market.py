@@ -133,79 +133,16 @@ def _jq_futures_to_sina(symbol):
 
 def _fetch_futures_daily(symbol, start_date, end_date):
     """获取期货日线数据，返回与股票一致的 DataFrame 格式。"""
-    import akshare as ak
-
-    sina_symbol = _jq_futures_to_sina(symbol)
-    is_continuous = sina_symbol.endswith("0")
-
     try:
-        df = ak.futures_zh_daily_sina(symbol=sina_symbol)
+        df = get_adapter().get_futures_daily_with_fallback(
+            symbol=symbol,
+            start_date=start_date.replace("-", "") if start_date else None,
+            end_date=end_date.replace("-", "") if end_date else None,
+        )
+        return df
     except Exception as e:
-        if is_continuous:
-            warnings.warn(f"期货主力合约 {sina_symbol} 获取失败: {e}，尝试备用接口")
-            # TODO: 主力合约备用接口，futures_main_sina 字段名不同需转换
-            try:
-                df = ak.futures_main_sina(
-                    symbol=sina_symbol,
-                    start_date=start_date.replace("-", "")
-                    if start_date
-                    else "19900101",
-                    end_date=end_date.replace("-", "") if end_date else "22220101",
-                )
-                if df is not None and not df.empty:
-                    col_map = {
-                        "日期": "datetime",
-                        "开盘价": "open",
-                        "最高价": "high",
-                        "最低价": "low",
-                        "收盘价": "close",
-                        "成交量": "volume",
-                    }
-                    df = df.rename(columns=col_map)
-                    df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
-                    df = df.dropna(subset=["datetime"])
-                    df["money"] = None
-                    df["openinterest"] = df.get("持仓量", None)
-                    return df
-            except Exception as e2:
-                warnings.warn(f"期货主力合约备用接口也失败: {e2}")
-                return pd.DataFrame()
+        warnings.warn(f"期货 {symbol} 获取失败: {e}")
         return pd.DataFrame()
-
-    if df is None or df.empty:
-        return pd.DataFrame()
-
-    # 统一列名格式
-    col_map = {
-        "date": "datetime",
-        "open": "open",
-        "high": "high",
-        "low": "low",
-        "close": "close",
-        "volume": "volume",
-    }
-    df = df.rename(columns=col_map)
-    df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
-    df = df.dropna(subset=["datetime"])
-
-    # 期货没有成交额字段，设为 None
-    df["money"] = None
-
-    # 持仓量映射为 openinterest
-    if "hold" in df.columns:
-        df["openinterest"] = df["hold"]
-    elif "持仓量" in df.columns:
-        df["openinterest"] = df["持仓量"]
-
-    # 按日期过滤
-    if start_date:
-        start_dt = pd.to_datetime(start_date)
-        df = df[df["datetime"] >= start_dt]
-    if end_date:
-        end_dt = pd.to_datetime(end_date)
-        df = df[df["datetime"] <= end_dt]
-
-    return df.sort_values("datetime").reset_index(drop=True)
 
 
 def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="qfq"):

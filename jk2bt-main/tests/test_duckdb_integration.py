@@ -4,7 +4,7 @@
 
 import pytest
 
-from jk2bt.db import DuckDBManager
+from jk2bt.db import ParquetAdapter
 from jk2bt.market_data import (
     get_stock_daily,
     get_etf_daily,
@@ -28,7 +28,7 @@ def test_duckdb_connection():
     print("测试 1: DuckDB 连接和数据统计")
     print("=" * 60)
 
-    db = DuckDBManager()
+    db = ParquetAdapter()
 
     stock_count = db.count_records("stock_daily")
     etf_count = db.count_records("etf_daily")

@@ -77,12 +77,8 @@ class JQLogAdapter:
                 prefix = "[DEBUG] "
             self._strategy.log(f"{prefix}{msg}")
         else:
-            log_method = getattr(
-                self._logger, method if method != "warn" else "warning", None
-            )
-            if log_method is None:
-                log_method = self._logger.info
-            log_method(msg)
+            level_prefix = method.upper()
+            print(f"[{level_prefix}] {msg}")
 
     def _format_message(self, args, kwargs):
         parts = []

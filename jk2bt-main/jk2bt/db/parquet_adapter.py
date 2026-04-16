@@ -548,3 +548,29 @@ def get_manager(
         return get_shared_read_only_manager(db_path=db_path, use_cache=use_cache)
     else:
         return get_writer_manager(db_path=db_path, use_cache=use_cache)
+
+
+# 兼容旧测试用例的 LocalCache 存根
+class LocalCache:
+    """兼容旧 DuckDBManager.LocalCache 的存根类"""
+
+    def __init__(self, max_size: int = 1000):
+        self._max_size = max_size
+
+    def get(self, *args, **kwargs):
+        return None
+
+    def set(self, *args, **kwargs):
+        pass
+
+    def invalidate(self, *args, **kwargs):
+        pass
+
+    def clear(self):
+        pass
+
+
+def clear_global_cache():
+    """兼容旧 duckdb_manager.clear_global_cache()"""
+    global _PROCESS_SINGLETONS
+    _PROCESS_SINGLETONS.clear()
