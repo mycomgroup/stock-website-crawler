@@ -302,14 +302,22 @@ class WeakFactorPortfolio:
         target_vol: float = 0.15,
         n_active_factors: int = 120,
         retrain_freq: int = 21,
+        market_phases: dict[str, tuple[str | pd.Timestamp, str | pd.Timestamp]] | None = None,
     ):
         self.factors = factors_df.copy()
         self.target = target_return.reindex(self.factors.index)
         self.target_vol = target_vol
         self.n_active = n_active_factors
         self.retrain_freq = retrain_freq
+        self.market_phases = market_phases or {
+            "full_sample": (self.factors.index.min(), self.factors.index.max())
+        }
         self.risk_manager = RiskManager(target_vol=target_vol)
         self.valid_factors: list[str] = []
+        self.cyclical_factors: list[str] = []
+        self.phase_factor_ic: pd.DataFrame = pd.DataFrame()
+        self.phase_factor_ic_detail: pd.DataFrame = pd.DataFrame()
+        self.phase_summary: pd.DataFrame = pd.DataFrame()
         self.active_factor_audit: pd.DataFrame = pd.DataFrame()
 
     def _rolling_ic(self, factor: pd.Series, target: pd.Series, window: int = 60) -> pd.Series:
@@ -317,20 +325,89 @@ class WeakFactorPortfolio:
         # 将因子滞后一期以预测下一期收益，避免在 as-of 日期使用未来收益。
         return factor.shift(1).rolling(window, min_periods=max(20, window // 2)).corr(target)
 
+    def _phase_slice(self, start: str | pd.Timestamp, end: str | pd.Timestamp) -> pd.Index:
+        start_ts = pd.Timestamp(start)
+        end_ts = pd.Timestamp(end)
+        return self.factors.loc[(self.factors.index >= start_ts) & (self.factors.index <= end_ts)].index
+
+    def evaluate_phase_factor_ic(self, window: int = 60) -> pd.DataFrame:
+        """分阶段评估每个因子的 IC，输出 phase_factor_ic（阶段 x 因子）。"""
+        phase_ic_values: dict[str, dict[str, float]] = {}
+        phase_detail_rows: list[dict[str, float | str]] = []
+
+        for phase_name, (start, end) in self.market_phases.items():
+            idx = self._phase_slice(start, end)
+            phase_ic_values[phase_name] = {}
+            for col in self.factors.columns:
+                ic_series = self._rolling_ic(self.factors[col], self.target, window=window).reindex(idx).dropna()
+                median_abs_ic = float(ic_series.abs().median()) if not ic_series.empty else 0.0
+                mean_ic = float(ic_series.mean()) if not ic_series.empty else 0.0
+                flip_rate = float((ic_series * ic_series.shift(1) < 0).mean()) if not ic_series.empty else 1.0
+
+                phase_ic_values[phase_name][col] = mean_ic
+                phase_detail_rows.append(
+                    {
+                        "phase": phase_name,
+                        "factor": col,
+                        "mean_ic": mean_ic,
+                        "median_abs_ic": median_abs_ic,
+                        "flip_rate": flip_rate,
+                        "sample_size": int(ic_series.shape[0]),
+                    }
+                )
+
+        self.phase_factor_ic = pd.DataFrame(phase_ic_values).T
+        self.phase_factor_ic_detail = pd.DataFrame(phase_detail_rows)
+        return self.phase_factor_ic
+
     def prescreen_factors(
         self,
         min_ic: float = 0.02,
         max_flip_rate: float = 0.30,
     ) -> list[str]:
+        self.evaluate_phase_factor_ic(window=60)
         valid_factors: list[str] = []
+        cyclical_factors: list[str] = []
+
+        phase_detail = self.phase_factor_ic_detail
+
         for col in self.factors.columns:
             ic_series = self._rolling_ic(self.factors[col], self.target, window=60)
             median_abs_ic = float(ic_series.abs().median()) if not ic_series.dropna().empty else 0.0
             flip_rate = float((ic_series * ic_series.shift(1) < 0).mean()) if not ic_series.dropna().empty else 1.0
             if median_abs_ic >= min_ic and flip_rate <= max_flip_rate:
                 valid_factors.append(col)
+                continue
+
+            factor_phase = phase_detail[phase_detail["factor"] == col]
+            phase_strong = (
+                not factor_phase.empty
+                and ((factor_phase["median_abs_ic"] >= min_ic) & (factor_phase["flip_rate"] <= max_flip_rate)).any()
+            )
+            if phase_strong:
+                cyclical_factors.append(col)
+                valid_factors.append(col)
 
         self.valid_factors = valid_factors
+        self.cyclical_factors = cyclical_factors
+
+        if phase_detail.empty:
+            self.phase_summary = pd.DataFrame()
+        else:
+            summary_rows: list[dict[str, float | str | int]] = []
+            for phase_name, grp in phase_detail.groupby("phase"):
+                strong_count = int(
+                    ((grp["median_abs_ic"] >= min_ic) & (grp["flip_rate"] <= max_flip_rate)).sum()
+                )
+                summary_rows.append(
+                    {
+                        "phase": phase_name,
+                        "avg_abs_ic": float(grp["median_abs_ic"].mean()),
+                        "strong_factor_count": strong_count,
+                        "sample_size_median": int(grp["sample_size"].median()),
+                    }
+                )
+            self.phase_summary = pd.DataFrame(summary_rows).set_index("phase")
         return valid_factors
 
     def _get_active_factors(self, as_of_date: pd.Timestamp) -> list[str]:
@@ -342,6 +419,24 @@ class WeakFactorPortfolio:
         recent = ic_history.loc[:as_of_date].tail(63).mean().abs().sort_values(ascending=False)
         return recent.head(min(self.n_active, len(recent))).index.tolist()
 
+    def _get_current_phase(self, as_of_date: pd.Timestamp) -> str | None:
+        for phase_name, (start, end) in self.market_phases.items():
+            if pd.Timestamp(start) <= as_of_date <= pd.Timestamp(end):
+                return phase_name
+        return None
+
+    def _get_phase_priority_factors(self, as_of_date: pd.Timestamp) -> list[str]:
+        if self.phase_factor_ic.empty:
+            return []
+        phase_name = self._get_current_phase(as_of_date)
+        if phase_name is None or phase_name not in self.phase_factor_ic.index:
+            return []
+        phase_rank = self.phase_factor_ic.loc[phase_name].abs().sort_values(ascending=False)
+        selected = [c for c in phase_rank.index if c in self.valid_factors]
+        return selected[: min(self.n_active, len(selected))]
+
+    def signal_equal_weighted(self, factors_subset: pd.DataFrame) -> pd.Series:
+        return strategy_equal_weighted(factors_subset)
     def _build_rebalance_dates(self, index: pd.Index, rebalance_freq: str | int = 21) -> pd.Index:
         """根据频率生成再平衡日期序列。支持交易日步长或时间规则。"""
         if len(index) == 0:
@@ -455,6 +550,7 @@ class WeakFactorPortfolio:
         self,
         use_dynamic_factors: bool = True,
         portfolio_return: pd.Series | None = None,
+        phase_priority: bool = False,
         rebalance_freq: str | int = 21,
         audit_top_n: int = 10,
         print_audit: bool = True,
@@ -466,6 +562,12 @@ class WeakFactorPortfolio:
         factors_to_use = self.factors[self.valid_factors]
         active_mask: pd.DataFrame | None = None
         if use_dynamic_factors:
+            as_of_date = factors_to_use.index[-1]
+            active = self._get_phase_priority_factors(as_of_date) if phase_priority else []
+            if not active:
+                active = self._get_active_factors(as_of_date)
+            if active:
+                factors_to_use = factors_to_use[active]
             active_mask, audit_df = self.build_active_factor_timeline(
                 factors_to_use,
                 rebalance_freq=rebalance_freq,
@@ -484,6 +586,12 @@ class WeakFactorPortfolio:
 
         combined = self.combine_signals(s_eq, s_rp, s_ml)
         final = self.apply_risk_management(combined, portfolio_return=portfolio_return)
+
+        if not self.phase_summary.empty:
+            print("[Phase Evaluation Summary]")
+            print(self.phase_summary.to_string())
+            if self.cyclical_factors:
+                print(f"[Cyclical Factors Retained] {len(self.cyclical_factors)}")
         return final
 
 
