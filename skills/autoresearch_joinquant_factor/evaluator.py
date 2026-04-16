@@ -17,28 +17,70 @@ warnings.filterwarnings("ignore")
 
 from factor_categories import calculate_diversity_score, get_factor_category
 from metrics import calculate_composite_score
+from config import PERIOD_CONFIG
 
 
-def get_period_date(peroid, start_date, end_date):
-    """获取指定周期的日期列表"""
+def get_period_dates(start_date, end_date, period: str = "W"):
+    """
+    根据周期生成调仓日期列表
+
+    Args:
+        start_date: 开始日期
+        end_date: 结束日期
+        period: 周期类型，D/W/M
+
+    Returns:
+        日期列表
+    """
     import datetime
 
     stock_data = get_price(
         "000001.XSHE", start_date, end_date, "daily", fields=["close"]
     )
     stock_data["date"] = stock_data.index
-    period_stock_data = stock_data.resample(peroid, how="last")
+
+    if period == "D":
+        period_stock_data = stock_data
+    elif period == "W":
+        period_stock_data = stock_data.resample("W", how="last")
+    elif period == "M":
+        period_stock_data = stock_data.resample("M", how="last")
+    else:
+        period_stock_data = stock_data.resample(period, how="last")
+
     period_stock_data = period_stock_data.set_index("date").dropna()
     date = period_stock_data.index
     pydate_array = date.to_pydatetime()
     date_only_array = np.vectorize(lambda s: s.strftime("%Y-%m-%d"))(pydate_array)
     date_only_series = pd.Series(date_only_array)
-    start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-    start_date = start_date - datetime.timedelta(days=1)
-    start_date = start_date.strftime("%Y-%m-%d")
+    start_date_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+    start_date_dt = start_date_dt - datetime.timedelta(days=1)
+    start_date_str = start_date_dt.strftime("%Y-%m-%d")
     date_list = date_only_series.values.tolist()
-    date_list.insert(0, start_date)
+    date_list.insert(0, start_date_str)
     return date_list
+
+
+def get_period_date(peroid=None, start_date=None, end_date=None, period: str = "W"):
+    """
+    获取指定周期的日期列表（兼容旧接口）
+
+    Args:
+        peroid: 旧参数名，兼容旧调用
+        start_date: 开始日期
+        end_date: 结束日期
+        period: 周期类型，D/W/M
+
+    Returns:
+        日期列表
+    """
+    if peroid is not None and start_date is None:
+        start_date = end_date
+        end_date = peroid
+        peroid = "W"
+    if period is None:
+        period = "W"
+    return get_period_dates(start_date, end_date, period)
 
 
 def delect_stop(stocks, beginDate, n=30 * 3):
@@ -80,11 +122,23 @@ def get_factor_data(securities_list, date, jqfactors_list):
 
 
 def fetch_data(
-    jqfactors_list, start_date="2025-01-01", end_date="2024-04-15", train_ratio=0.66
+    jqfactors_list,
+    start_date="2025-01-01",
+    end_date="2024-04-15",
+    train_ratio=0.66,
+    period: str = "W",
 ):
-    """获取训练和测试数据"""
-    peroid = "W"
-    dateList = get_period_date(peroid, start_date, end_date)
+    """
+    获取训练和测试数据
+
+    Args:
+        jqfactors_list: 因子列表
+        start_date: 开始日期
+        end_date: 结束日期
+        train_ratio: 训练集比例
+        period: 周期类型，D/W/M
+    """
+    dateList = get_period_dates(start_date, end_date, period)
     train_length = int(len(dateList) * train_ratio)
 
     train_data = pd.DataFrame()
@@ -140,9 +194,18 @@ def evaluate_factor_combination(
     X_test: pd.DataFrame,
     y_train: pd.Series,
     y_test: pd.Series,
+    period: str = "W",
 ) -> Tuple[float, Dict]:
     """
     评估单个因子组合（多指标评价）
+
+    Args:
+        factor_combo: 因子组合列表
+        X_train: 训练特征
+        X_test: 测试特征
+        y_train: 训练标签
+        y_test: 测试标签
+        period: 周期类型，D/W/M
 
     Returns:
         (total_score, details)
@@ -167,7 +230,9 @@ def evaluate_factor_combination(
 
     diversity = calculate_diversity_score(factor_combo)
 
-    metrics = calculate_composite_score(factor_df, ret_df, diversity, num_layers=10)
+    metrics = calculate_composite_score(
+        factor_df, ret_df, diversity, num_layers=10, period=period
+    )
 
     category_info = {f: get_factor_category(f) for f in factor_combo}
 
@@ -181,6 +246,7 @@ def evaluate_factor_combination(
         "coefficients": model.coef_.tolist(),
         "intercept": model.intercept_,
         "categories": category_info,
+        "period": period,
         "metrics": {
             "long_short_return": metrics["long_short_return"],
             "top_sharpe": metrics["top_sharpe"],
@@ -190,6 +256,8 @@ def evaluate_factor_combination(
             "monotonicity": metrics["monotonicity"],
             "return_volatility": metrics["return_volatility"],
             "diversity": metrics["diversity"],
+            "annual_return": metrics.get("annual_return", 0),
+            "max_drawdown": metrics.get("max_drawdown", 0),
         },
     }
 

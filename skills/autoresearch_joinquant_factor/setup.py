@@ -26,19 +26,29 @@ import subprocess
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from config import PERIOD_CONFIG, DEFAULT_PERIOD
 
 AUTORESEARCH_DIR = Path(__file__).parent
 PARENT_DIR = AUTORESEARCH_DIR
 
 
-def _default_dates():
+def _default_dates(period=None):
+    period = period or DEFAULT_PERIOD
+    config = PERIOD_CONFIG[period]
     today = datetime.today()
-    end = (today - timedelta(days=7)).strftime("%Y-%m-%d")
-    start = (today - timedelta(days=365 * 5)).strftime("%Y-%m-%d")
-    return start, end
+    backtest_end = (today - timedelta(days=7)).strftime("%Y-%m-%d")
+    test_days = config["test_months"] * 30
+    backtest_start = (today - timedelta(days=test_days + 7)).strftime("%Y-%m-%d")
+    train_days = config["train_years"] * 365
+    train_start = (today - timedelta(days=train_days + test_days + 7)).strftime(
+        "%Y-%m-%d"
+    )
+    return train_start, backtest_start, backtest_end
 
 
-_start, _end = _default_dates()
+_train_start, _backtest_start, _backtest_end = _default_dates()
+
+TSV_HEADER = "iter\tscore\tdiversity\tannual_return\tmax_drawdown\tdecision\tmutation\n"
 
 DEFAULT_SEED_FACTORS = [
     [
@@ -62,6 +72,8 @@ STRATEGY_TEMPLATE = '''#!/usr/bin/env python
 """
 
 FACTOR_COMBO = {factors}
+PERIOD = "{period}"
+PERIODS_PER_YEAR = {periods_per_year}
 
 from jqdata import *
 from jqlib.technical_analysis import *
@@ -133,10 +145,13 @@ def get_factor_data(securities_list, date, factors):
 def calculate_metrics(factor_df, ret_df, num_layers=10):
     import numpy as np
     
+    periods_per_year = PERIODS_PER_YEAR
+    
     long_short_returns = []
     top_returns = []
     ic_list = []
     all_group_means = []
+    layer_returns_all = []
     
     for date in factor_df.index:
         factors = factor_df.loc[date].dropna()
@@ -163,6 +178,7 @@ def calculate_metrics(factor_df, ret_df, num_layers=10):
         all_group_means.append(group_means)
         long_short_returns.append(group_means[0] - group_means[-1])
         top_returns.append(groups[0]["return"].mean())
+        layer_returns_all.append(group_means)
         
         ic, _ = spearmanr(f, r)
         if not np.isnan(ic):
@@ -183,6 +199,19 @@ def calculate_metrics(factor_df, ret_df, num_layers=10):
     
     vol = float(np.std(top_returns)) if len(top_returns) > 1 else 1.0
     
+    annual_return = 0.0
+    max_drawdown = 0.0
+    if top_returns:
+        top_returns_arr = np.array(top_returns)
+        cumulative = (1 + top_returns_arr).cumprod()
+        total_return = cumulative[-1] - 1 if len(cumulative) > 0 else 0
+        num_periods = len(top_returns)
+        annual_return = float((1 + total_return) ** (periods_per_year / num_periods) - 1) if num_periods > 0 else 0
+        
+        peak = np.maximum.accumulate(cumulative)
+        drawdown = (cumulative - peak) / peak
+        max_drawdown = float(abs(np.min(drawdown))) if len(drawdown) > 0 else 0
+    
     return dict(
         long_short_return=float(long_short),
         top_sharpe=float(top_sharpe),
@@ -191,6 +220,8 @@ def calculate_metrics(factor_df, ret_df, num_layers=10):
         ic_win_rate=ic_win,
         monotonicity=float(mono),
         return_volatility=vol,
+        annual_return=annual_return,
+        max_drawdown=max_drawdown,
     )
 
 
@@ -242,37 +273,46 @@ def calculate_score(metrics, diversity):
 
 
 def main():
-    start_date = "{start_date}"
-    end_date = "{end_date}"
+    train_start = "{train_start}"
+    backtest_start = "{backtest_start}"
+    backtest_end = "{backtest_end}"
     pool = "{pool}"
     
-    peroid = "W"
-    dateList = get_period_date(peroid, start_date, end_date)
-    train_len = int(len(dateList) * 0.66)
+    peroid = "{period}"
+    dateList = get_period_date(peroid, train_start, backtest_end)
+    
+    train_dateList = [d for d in dateList if d <= backtest_start]
+    test_dateList = [d for d in dateList if d > backtest_start]
     
     train_data = pd.DataFrame()
     test_data = pd.DataFrame()
     
-    for date in dateList[:train_len]:
+    for date in train_dateList:
         try:
             stocks = get_stock(pool, date)
             if len(stocks) < 20:
                 continue
             fd = get_factor_data(stocks, date, FACTOR_COMBO)
-            dc = get_price(stocks, date, dateList[dateList.index(date)+1], "1d", "close")["close"]
+            next_idx = dateList.index(date) + 1
+            if next_idx >= len(dateList):
+                continue
+            dc = get_price(stocks, date, dateList[next_idx], "1d", "close")["close"]
             fd["pchg"] = dc.iloc[-1] / dc.iloc[1] - 1
             fd["date"] = date
             train_data = pd.concat([train_data, fd]) if not train_data.empty else fd
         except:
             pass
     
-    for date in dateList[train_len:-1]:
+    for date in test_dateList[:-1]:
         try:
             stocks = get_stock(pool, date)
             if len(stocks) < 20:
                 continue
             fd = get_factor_data(stocks, date, FACTOR_COMBO)
-            dc = get_price(stocks, date, dateList[dateList.index(date)+1], "1d", "close")["close"]
+            next_idx = dateList.index(date) + 1
+            if next_idx >= len(dateList):
+                continue
+            dc = get_price(stocks, date, dateList[next_idx], "1d", "close")["close"]
             fd["pchg"] = dc.iloc[-1] / dc.iloc[1] - 1
             fd["date"] = date
             test_data = pd.concat([test_data, fd]) if not test_data.empty else fd
@@ -318,6 +358,8 @@ def main():
         score=score,
         metrics=metrics,
         diversity=diversity,
+        annual_return=metrics.get("annual_return", 0),
+        max_drawdown=metrics.get("max_drawdown", 0),
         data_points=len(test_data),
     )
     
@@ -330,10 +372,8 @@ if __name__ == "__main__":
 
 
 def parse_seed_factors(s: str) -> list:
-    """解析种子因子字符串"""
     if not s:
         return DEFAULT_SEED_FACTORS
-
     try:
         return ast.literal_eval(s)
     except:
@@ -341,10 +381,41 @@ def parse_seed_factors(s: str) -> list:
         return DEFAULT_SEED_FACTORS
 
 
+def init_iterations_tsv(base: Path) -> None:
+    tsv = base / "iterations.tsv"
+    if not tsv.exists():
+        tsv.write_text(TSV_HEADER, encoding="utf-8")
+
+
+def append_tsv(base: Path, row: dict) -> None:
+    tsv = base / "iterations.tsv"
+    line = (
+        "\t".join(
+            [
+                str(row.get("iter", "")),
+                f"{row.get('score', 0):.4f}",
+                f"{row.get('diversity', 0):.2f}",
+                f"{row.get('annual_return', 0):.4f}",
+                f"{row.get('max_drawdown', 0):.4f}",
+                str(row.get("decision", "")),
+                str(row.get("mutation", "")),
+            ]
+        )
+        + "\n"
+    )
+    with open(tsv, "a", encoding="utf-8") as f:
+        f.write(line)
+
+
 def generate_search_notes(
-    seed_factors, start_date, end_date, pool, baseline_score=0, notebook_info=None
+    seed_factors,
+    train_start,
+    backtest_start,
+    backtest_end,
+    pool,
+    baseline_score=0,
+    notebook_info=None,
 ):
-    """生成 search_notes.md"""
     seed_str = ", ".join([str(f) for f in seed_factors])
 
     notebook_section = ""
@@ -363,7 +434,8 @@ def generate_search_notes(
 - phase: explore
 
 ## 回测配置
-- 日期范围: {start_date} ~ {end_date}
+- 训练区间: {train_start} ~ {backtest_start}（约1年）
+- 回测区间: {backtest_start} ~ {backtest_end}（约3个月）
 - 选股池: {pool}
 
 {notebook_section}## 已尝试组合
@@ -387,7 +459,6 @@ def generate_search_notes(
 
 
 def run_baseline(strategy_file, notebook_dir=None):
-    """运行 baseline 回测"""
     from notebook_executor import execute_strategy
 
     print("[baseline] 执行 baseline 回测...")
@@ -396,10 +467,10 @@ def run_baseline(strategy_file, notebook_dir=None):
     )
 
     if result["success"]:
-        return result.get("score", 0), result
+        return result.get("score", 0), result.get("diversity", 0), result
     else:
         print(f"[baseline] 执行失败: {result.get('error')}")
-        return 0, result
+        return 0, 0, result
 
 
 def main():
@@ -409,15 +480,29 @@ def main():
         epilog="""
 示例:
   python setup.py --name my_search
-  python setup.py --name my_search --start-date 2020-01-01 --end-date 2025-03-28
+  python setup.py --name my_search --period D
+  python setup.py --name my_search --period W
+  python setup.py --name my_search --period M
+  python setup.py --name my_search --train-start 2024-04-01 --backtest-start 2025-01-01 --backtest-end 2025-04-01
   python setup.py --name my_search --pool HS300 --seed-factors "[['size','roe_ttm'],['momentum','beta']]"
         """,
     )
     parser.add_argument("--name", required=True, help="实验名称")
     parser.add_argument(
-        "--start-date", default=_start, help=f"回测开始日期（默认 {_start}）"
+        "--train-start",
+        default=_train_start,
+        help=f"训练开始日期（默认 {_train_start}）",
     )
-    parser.add_argument("--end-date", default=_end, help=f"回测结束日期（默认 {_end}）")
+    parser.add_argument(
+        "--backtest-start",
+        default=_backtest_start,
+        help=f"回测开始日期（默认 {_backtest_start}）",
+    )
+    parser.add_argument(
+        "--backtest-end",
+        default=_backtest_end,
+        help=f"回测结束日期（默认 {_backtest_end}）",
+    )
     parser.add_argument(
         "--pool",
         default="small",
@@ -428,46 +513,58 @@ def main():
         "--seed-factors", default=None, help="种子因子组合（JSON 格式）"
     )
     parser.add_argument(
+        "--period",
+        default=DEFAULT_PERIOD,
+        choices=["D", "W", "M"],
+        help=f"周期频率（默认 {DEFAULT_PERIOD}）",
+    )
+    parser.add_argument(
         "--notebook-dir", default=None, help="joinquant_notebook 目录路径"
     )
     args = parser.parse_args()
+
+    period_config = PERIOD_CONFIG[args.period]
 
     ts = datetime.now().strftime("%Y%m%d")
     exp_name = f"strategy_autoresearch_factor_{args.name}_{ts}"
     base = PARENT_DIR / exp_name
 
     print(f"[setup] 实验目录: {base}")
-    print(f"[setup] 日期范围: {args.start_date} ~ {args.end_date}")
+    print(f"[setup] 周期频率: {args.period}（{period_config['name']}）")
+    print(
+        f"[setup] 训练区间: {args.train_start} ~ {args.backtest_start}（约{period_config['train_years']}年）"
+    )
+    print(
+        f"[setup] 回测区间: {args.backtest_start} ~ {args.backtest_end}（约{period_config['test_months']}个月）"
+    )
     print(f"[setup] 选股池: {args.pool}")
 
     if base.exists():
         print(f"[错误] 目录已存在: {base}")
         sys.exit(1)
 
-    # 创建目录
     base.mkdir(parents=True)
     print("[setup] 创建实验目录")
 
-    # git init
     subprocess.run(["git", "init"], cwd=str(base), capture_output=True)
     print("[setup] git init")
 
-    # 解析种子因子
     seed_factors = parse_seed_factors(args.seed_factors)
     print(f"[setup] 种子组合数: {len(seed_factors)}")
 
-    # 生成 strategy.py
     strategy_file = base / "strategy.py"
     strategy_content = STRATEGY_TEMPLATE.format(
         factors=seed_factors[0],
-        start_date=args.start_date,
-        end_date=args.end_date,
+        train_start=args.train_start,
+        backtest_start=args.backtest_start,
+        backtest_end=args.backtest_end,
         pool=args.pool,
+        period=args.period,
+        periods_per_year=period_config["periods_per_year"],
     )
     strategy_file.write_text(strategy_content, encoding="utf-8")
     print("[setup] 生成 strategy.py")
 
-    # git add + commit
     subprocess.run(["git", "add", "strategy.py"], cwd=str(base), capture_output=True)
     r = subprocess.run(
         ["git", "commit", "-m", "iter_0000_baseline: initial seed factors"],
@@ -478,7 +575,6 @@ def main():
     if r.returncode == 0:
         print("[setup] git commit baseline")
 
-    # 复制 program.md
     src_program = AUTORESEARCH_DIR / "program.md"
     if src_program.exists():
         content = src_program.read_text(encoding="utf-8")
@@ -486,15 +582,31 @@ def main():
         (base / "program.md").write_text(content, encoding="utf-8")
         print("[setup] 生成 program.md")
 
-    # 运行 baseline
-    baseline_score, baseline_result = run_baseline(strategy_file, args.notebook_dir)
-    print(f"[baseline] score={baseline_score:.4f}")
+    baseline_score, baseline_diversity, baseline_result = run_baseline(
+        strategy_file, args.notebook_dir
+    )
+    print(f"[baseline] score={baseline_score:.4f}, diversity={baseline_diversity:.2f}")
 
-    # 生成 search_notes.md
+    init_iterations_tsv(base)
+    append_tsv(
+        base,
+        {
+            "iter": "0000",
+            "score": baseline_score,
+            "diversity": baseline_diversity,
+            "annual_return": baseline_result.get("metrics", {}).get("annual_return", 0),
+            "max_drawdown": baseline_result.get("metrics", {}).get("max_drawdown", 0),
+            "decision": "keep",
+            "mutation": f"【L0-建立基准】初始因子组合 {seed_factors[0]}",
+        },
+    )
+    print("[setup] 生成 iterations.tsv")
+
     search_notes = generate_search_notes(
         seed_factors,
-        args.start_date,
-        args.end_date,
+        args.train_start,
+        args.backtest_start,
+        args.backtest_end,
         args.pool,
         baseline_score,
         None,
