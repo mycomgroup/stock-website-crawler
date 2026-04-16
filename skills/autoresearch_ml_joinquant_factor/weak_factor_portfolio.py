@@ -310,6 +310,7 @@ class WeakFactorPortfolio:
         self.retrain_freq = retrain_freq
         self.risk_manager = RiskManager(target_vol=target_vol)
         self.valid_factors: list[str] = []
+        self.prescreen_report: dict[str, dict] = {}
 
     def _rolling_ic(self, factor: pd.Series, target: pd.Series, window: int = 60) -> pd.Series:
         return factor.rolling(window, min_periods=max(20, window // 2)).corr(target.shift(-1))
@@ -318,16 +319,83 @@ class WeakFactorPortfolio:
         self,
         min_ic: float = 0.02,
         max_flip_rate: float = 0.30,
-    ) -> list[str]:
+        min_oos_ic_ratio: float = 0.5,
+        min_ic_tstat: float = 1.5,
+        split_ratio: float = 0.7,
+        ic_window: int = 60,
+        use_abs_ic: bool = True,
+        return_report: bool = False,
+    ) -> list[str] | dict[str, object]:
+        if not 0 < split_ratio < 1:
+            raise ValueError("split_ratio 必须在 (0, 1) 区间内。")
+
         valid_factors: list[str] = []
+        prescreen_report: dict[str, dict] = {}
+
         for col in self.factors.columns:
-            ic_series = self._rolling_ic(self.factors[col], self.target, window=60)
-            median_abs_ic = float(ic_series.abs().median()) if not ic_series.dropna().empty else 0.0
-            flip_rate = float((ic_series * ic_series.shift(1) < 0).mean()) if not ic_series.dropna().empty else 1.0
-            if median_abs_ic >= min_ic and flip_rate <= max_flip_rate:
+            ic_series = self._rolling_ic(self.factors[col], self.target, window=ic_window)
+            ic_valid = ic_series.dropna()
+            split_idx = int(len(ic_series) * split_ratio)
+            ins_ic = ic_series.iloc[:split_idx].dropna()
+            oos_ic = ic_series.iloc[split_idx:].dropna()
+
+            median_abs_ic = float(ic_valid.abs().median()) if not ic_valid.empty else 0.0
+            flip_rate = float((ic_series * ic_series.shift(1) < 0).mean()) if not ic_valid.empty else 1.0
+
+            if use_abs_ic:
+                ins_metric = float(ins_ic.abs().mean()) if not ins_ic.empty else 0.0
+                oos_metric = float(oos_ic.abs().mean()) if not oos_ic.empty else 0.0
+            else:
+                ins_metric = float(ins_ic.mean()) if not ins_ic.empty else 0.0
+                oos_metric = float(oos_ic.mean()) if not oos_ic.empty else 0.0
+
+            oos_ic_ratio = oos_metric / (abs(ins_metric) + EPS)
+
+            if len(ic_valid) > 1:
+                ic_std = float(ic_valid.std(ddof=1))
+                if ic_std > EPS:
+                    ic_tstat = float(np.sqrt(len(ic_valid)) * ic_valid.mean() / ic_std)
+                else:
+                    ic_tstat = 0.0
+            else:
+                ic_tstat = 0.0
+
+            elimination_reasons: list[str] = []
+            if median_abs_ic < min_ic:
+                elimination_reasons.append(f"median_abs_ic<{min_ic}")
+            if flip_rate > max_flip_rate:
+                elimination_reasons.append(f"flip_rate>{max_flip_rate}")
+            if oos_ic_ratio < min_oos_ic_ratio:
+                elimination_reasons.append(f"oos_ic_ratio<{min_oos_ic_ratio}")
+            if abs(ic_tstat) < min_ic_tstat:
+                elimination_reasons.append(f"|ic_tstat|<{min_ic_tstat}")
+
+            passed = len(elimination_reasons) == 0
+            if passed:
                 valid_factors.append(col)
 
+            prescreen_report[col] = {
+                "passed": passed,
+                "elimination_reasons": elimination_reasons,
+                "metrics": {
+                    "median_abs_ic": median_abs_ic,
+                    "flip_rate": flip_rate,
+                    "in_sample_ic": ins_metric,
+                    "out_of_sample_ic": oos_metric,
+                    "oos_ic_ratio": oos_ic_ratio,
+                    "ic_tstat": ic_tstat,
+                    "ic_sample_size": int(len(ic_valid)),
+                    "in_sample_size": int(len(ins_ic)),
+                    "out_of_sample_size": int(len(oos_ic)),
+                    "split_ratio": split_ratio,
+                    "use_abs_ic": use_abs_ic,
+                },
+            }
+
         self.valid_factors = valid_factors
+        self.prescreen_report = prescreen_report
+        if return_report:
+            return {"valid_factors": valid_factors, "factor_report": prescreen_report}
         return valid_factors
 
     def _get_active_factors(self, as_of_date: pd.Timestamp) -> list[str]:
