@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 龙虎榜挖掘V2.0策略 - RiceQuant版本
 # 逻辑：用近期涨停+成交量放大代替龙虎榜数据，选近5日有涨停且量比>2的小市值股票
 
@@ -27,7 +43,7 @@ def update_pool(context, bar_dict):
         factor_df = get_factor(stocks, ['market_cap'])
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[(df['market_cap'] > 5) & (df['market_cap'] < 100)]
         df = df.sort_values('market_cap')
         pool = df.index.tolist()[:300]
@@ -65,7 +81,7 @@ def trade(context, bar_dict):
     target = []
     for stock in context.candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is None or not bar.is_trading:
+        if bar is not None and not bar.is_trading:
             continue
         target.append(stock)
         if len(target) >= context.stock_num:

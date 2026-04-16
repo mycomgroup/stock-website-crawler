@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 中小综指数增强策略 - RiceQuant版本
 # 来源：28 【回顾2】小市值成长股策略更新
 # 逻辑：在中证500成分股中，选市值小、ROE高、净利润增速高的成长股，月度调仓
@@ -14,7 +30,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     # 中证500成分股（RiceQuant中中小综指399101可能不可用，用中证500替代）
     stocks = index_components('000905.XSHG')
@@ -31,7 +46,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['market_cap'] > 5e+08]
         df = df[df['market_cap'] < 2e+10]
         df = df[df['roe'] > 0.05]
@@ -43,13 +58,14 @@ def handle_bar(context, bar_dict):
     target = []
     for stock in candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break
 
     if not target:
         return
+    context.month = current_month
 
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:

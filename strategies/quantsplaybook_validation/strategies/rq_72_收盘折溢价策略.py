@@ -44,5 +44,5 @@ def handle_bar(context, bar_dict):
             order_target_value(etf, 0)
 
     bar = (bar_dict[best] if best in bar_dict else None)
-    if bar is not None and bar.is_trading:
+    if bar is None or bar.is_trading:
         order_target_value(best, context.portfolio.total_value * 0.95)

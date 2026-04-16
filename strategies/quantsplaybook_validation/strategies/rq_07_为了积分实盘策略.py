@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 为了挣点积分自己实盘的策略 - RiceQuant版本
 # 原文：为了挣点积分自己实盘的策略分享出来
 # 原文：https://www.joinquant.com/post/43194
@@ -27,7 +43,7 @@ def handle_bar(context, bar_dict):
     )
     if factor_df is None or factor_df.empty:
         return
-    df = factor_df.groupby(level=-1).last().dropna()
+    df = _normalize_factor_frame(factor_df)
     df = df[df['pb_ratio'] > 0.0]
     df = df[df['pb_ratio'] < 5.0]
     df = df[df['roe'] > 0.04]
@@ -66,6 +82,6 @@ def handle_bar(context, bar_dict):
     weight = 1.0 / len(target)
     for stock in target:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is None or not bar.is_trading:
+        if bar is not None and not bar.is_trading:
             continue
         order_target_value(stock, context.portfolio.total_value * weight * 0.95)

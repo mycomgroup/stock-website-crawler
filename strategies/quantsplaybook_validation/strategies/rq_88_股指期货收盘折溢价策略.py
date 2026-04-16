@@ -20,7 +20,7 @@ def handle_bar(context, bar_dict):
     cur = closes[-1]
 
     bar = (bar_dict[context.security] if context.security in bar_dict else None)
-    if bar is None or not bar.is_trading:
+    if bar is not None and not bar.is_trading:
         return
 
     # 折价（价格低于均线）→ 买入

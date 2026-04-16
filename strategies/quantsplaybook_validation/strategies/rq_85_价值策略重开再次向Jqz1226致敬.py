@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 价值策略重开，再次向Jqz1226致敬 - RiceQuant版本
 # 原文：价值策略重开，再次向Jqz1226致敬
 # 逻辑：RSRS择时 + 价值选股（低PB、高ROE），大盘弱势时持债券ETF
@@ -86,20 +102,20 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if rsrs > context.buy_threshold:
         if current_month != context.month:
-            context.month = current_month
-            rebalance_stocks(context, bar_dict)
+            if rebalance_stocks(context, bar_dict):
+                context.month = current_month
         context.in_stock = True
     elif rsrs < context.sell_threshold:
         for stock in list(context.portfolio.positions.keys()):
             if stock != context.bond_etf:
                 order_target_value(stock, 0)
         bar = (bar_dict[context.bond_etf] if context.bond_etf in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             order_target_value(context.bond_etf, context.portfolio.total_value * 0.95)
         context.in_stock = False
     elif not context.in_stock:
         bar = (bar_dict[context.bond_etf] if context.bond_etf in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             order_target_value(context.bond_etf, context.portfolio.total_value * 0.95)
 
 
@@ -118,10 +134,10 @@ def rebalance_stocks(context, bar_dict):
             ['pb_ratio', 'market_cap', 'roe'],
         )
         if factor_df is None or len(factor_df) == 0:
-            return
-        df = factor_df.groupby(level=-1).last().dropna()
+            return False
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
-            return
+            return False
         df = df[df['pb_ratio'] > 0.0]
         df = df[df['pb_ratio'] < 4.0]
         df = df[df['market_cap'] > 3e+09]
@@ -129,17 +145,17 @@ def rebalance_stocks(context, bar_dict):
         df = df.sort_values(['pb_ratio', 'roe'], ascending=[True, False]).head(context.stock_num * 3)
         candidates = df.index.tolist()
     except Exception:
-        return
+        return False
     target = []
     for stock in candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break
 
     if not target:
-        return
+        return False
 
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:
@@ -148,3 +164,4 @@ def rebalance_stocks(context, bar_dict):
     weight = 1.0 / len(target)
     for stock in target:
         order_target_value(stock, context.portfolio.total_value * weight * 0.95)
+    return True

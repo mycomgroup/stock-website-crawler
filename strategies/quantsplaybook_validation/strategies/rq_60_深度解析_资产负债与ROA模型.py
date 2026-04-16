@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 深度解析_资产负债与ROA模型 - RiceQuant版本
 # 原文：深度解析_资产负债与ROA模型
 # 逻辑：选低负债率（资产负债率低）、高ROA的优质股票，月度调仓
@@ -28,7 +44,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or factor_df.empty:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['roa'] > 0.05]
         df = df[df['debt_to_asset_ratio'] < 50.0]
         df = df.head(context.stock_num * 3)
@@ -41,7 +57,7 @@ def handle_bar(context, bar_dict):
     target = []
     for stock in candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break

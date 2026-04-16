@@ -21,7 +21,7 @@ def handle_bar(context, bar_dict):
     ma_long = np.mean(closes[-context.ma_long:])
 
     bar = (bar_dict[context.security] if context.security in bar_dict else None)
-    if bar is None or not bar.is_trading:
+    if bar is not None and not bar.is_trading:
         return
 
     if ma_short > ma_long and not context.pos:

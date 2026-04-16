@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 14个月200%超短线实盘交易策略 - RiceQuant版本
 # 逻辑：选近期有涨停、低开、量比放大的小市值股票，日度交易，无未来函数
 
@@ -37,7 +53,7 @@ def update_pool(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['market_cap'] > 5e+08]
         df = df[df['market_cap'] < 5e+09]
         df = df.sort_values('market_cap')

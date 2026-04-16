@@ -50,7 +50,7 @@ def handle_bar(context, bar_dict):
         return
 
     sorted_stocks = sorted(high_rps, key=high_rps.get, reverse=True)
-    target = [s for s in sorted_stocks if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in sorted_stocks if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
 
     if not target:
         return

@@ -18,7 +18,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     # 趋势过滤：MA20>MA60
     trend_etfs = []
@@ -79,6 +78,7 @@ def handle_bar(context, bar_dict):
             else:
                 break
 
+    context.month = current_month
     for etf in list(context.portfolio.positions.keys()):
         if etf not in target:
             order_target_value(etf, 0)
@@ -88,5 +88,5 @@ def handle_bar(context, bar_dict):
     weight = 1.0 / len(target)
     for etf in target:
         bar = (bar_dict[etf] if etf in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             order_target_value(etf, context.portfolio.total_value * weight * 0.95)

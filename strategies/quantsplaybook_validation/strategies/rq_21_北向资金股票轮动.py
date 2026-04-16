@@ -61,6 +61,6 @@ def handle_bar(context, bar_dict):
     weight = 1.0 / len(target)
     for stock in target:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is None or not bar.is_trading:
+        if bar is not None and not bar.is_trading:
             continue
         order_target_value(stock, context.portfolio.total_value * weight * 0.95)

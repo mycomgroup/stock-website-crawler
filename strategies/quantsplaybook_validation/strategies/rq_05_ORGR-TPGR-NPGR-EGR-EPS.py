@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # ORGR-TPGR-NPGR-EGR-EPS 纯成长因子策略 - RiceQuant版本
 # 因子：营收增速+利润增速+净利润增速+盈利增速+EPS
 # 逻辑：纯成长因子，选各项增速均高且EPS为正的股票，月度调仓
@@ -27,18 +43,18 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=-1).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
-        df = df[df['market_cap'] > 1e+09]
-        df = df[df['market_cap'] < 5e+10]
+        df = df[df['market_cap'] > 10]
+        df = df[df['market_cap'] < 500]
         df = df[df['inc_net_profit_year_on_year'] > 0.05]
         df = df[df['roe'] > 0.08]
         df = df.sort_values(['inc_net_profit_year_on_year', 'roe'], ascending=[False, False]).head(context.stock_num * 3)
         candidates = df.index.tolist()
     except Exception:
         return
-    target = [s for s in candidates if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in candidates if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
     if not target:
         target = candidates[:context.stock_num]
 

@@ -61,8 +61,8 @@ const DAY_FREQUENCY_FILES = new Set([
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function inferFrequency(filename, code) {
-  if (DAY_FREQUENCY_FILES.has(filename)) return 'day';
   if (MINUTE_FREQUENCY_FILES.has(filename)) return '1m';
+  if (DAY_FREQUENCY_FILES.has(filename)) return 'day';
   if (/(竞价|开盘|打板|首板|一进二|龙头|日内|T0|T-?0|高频)/.test(filename)) {
     return '1m';
   }
