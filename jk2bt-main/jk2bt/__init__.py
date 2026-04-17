@@ -19,7 +19,7 @@ __author__ = "jk2bt"
 # 日志系统初始化
 # =============================================================================
 import os
-from jk2bt.utils.logging_config import setup_logging
+from jk2bt.logging import setup_logging
 
 # 通过环境变量控制日志级别，默认INFO
 setup_logging(level=os.environ.get("JK2BT_LOG_LEVEL", "INFO"))
@@ -78,7 +78,12 @@ from jk2bt.engine.strategy_base import (
 )
 
 # 以下函数在 runner.py 中定义
-from jk2bt.engine.runner import get_trade_days, get_call_auction, get_ticks, get_valuation
+from jk2bt.engine.runner import (
+    get_trade_days,
+    get_call_auction,
+    get_ticks,
+    get_valuation,
+)
 
 # =============================================================================
 # Core - 运行时IO

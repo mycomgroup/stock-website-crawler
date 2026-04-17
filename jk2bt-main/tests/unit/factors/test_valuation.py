@@ -60,7 +60,7 @@ mock_signals = MagicMock()
 sys.modules['jk2bt.signals'] = mock_signals
 
 # 预先加载 base 模块并放入 sys.modules
-base_file_path = jk2bt_path / "factors" / "base.py"
+base_file_path = jk2bt_path / "analysis" / "factors" / "base.py"
 spec_base = importlib.util.spec_from_file_location("jk2bt.analysis.factors.base", str(base_file_path))
 base_module = importlib.util.module_from_spec(spec_base)
 sys.modules['jk2bt.analysis.factors.base'] = base_module
@@ -79,7 +79,7 @@ except Exception:
     sys.modules['jk2bt.utils'] = MagicMock()
 
 # 预先加载 technical 模块（用于 turnover_ratio 等函数）
-technical_file_path = jk2bt_path / "factors" / "technical.py"
+technical_file_path = jk2bt_path / "analysis" / "factors" / "technical.py"
 try:
     spec_technical = importlib.util.spec_from_file_location("jk2bt.analysis.factors.technical", str(technical_file_path))
     technical_module = importlib.util.module_from_spec(spec_technical)
@@ -92,7 +92,7 @@ except Exception:
     sys.modules['jk2bt.analysis.factors.technical'] = mock_technical
 
 # 加载 valuation 模块
-valuation_file_path = jk2bt_path / "factors" / "valuation.py"
+valuation_file_path = jk2bt_path / "analysis" / "factors" / "valuation.py"
 spec_valuation = importlib.util.spec_from_file_location("jk2bt.analysis.factors.valuation", str(valuation_file_path))
 valuation_module = importlib.util.module_from_spec(spec_valuation)
 sys.modules['jk2bt.analysis.factors.valuation'] = valuation_module

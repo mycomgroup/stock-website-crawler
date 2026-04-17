@@ -43,7 +43,7 @@ pip install -e ".[ta]"          # 技术分析依赖（可选）
 python3 -c "import jk2bt; print(jk2bt.__version__)"
 
 # 2) 核心链路 smoke
-pytest -q tests/test_package_import.py tests/integration/test_jq_runner.py
+pytest -q tests/smoke/test_package_import.py tests/unit/engine/test_jq_runner.py
 
 # 3) 扫描全部测试用例是否可收集
 pytest --collect-only -q
@@ -72,9 +72,9 @@ run_jq_strategy(
 ```bash
 python3 -m jk2bt.cli run --strategy strategies/03*.txt --start 2020-01-01 --end 2023-12-31
 # 或批量运行
-python3 tests/run_daily_strategy_batch.py --strategies_dir strategies --limit 1
+python3 tests/scripts/run_daily_strategy_batch.py --strategies_dir strategies --limit 1
 # 或并行运行
-python3 tests/run_strategies_parallel.py --strategies_dir strategies --workers 4
+python3 tests/scripts/run_strategies_parallel.py --strategies_dir strategies --workers 4
 ```
 
 ### 方式3：继承基类
@@ -353,15 +353,30 @@ jk2bt-main/
 │   ├── json_config/                   # JSON配置示例
 │   └── samples/                       # 示例策略结构
 │
-├── tests/                             # 100+ 测试文件
-│   ├── unit/                          # 单元测试
+├── tests/                             # 169 测试文件
+│   ├── unit/                          # 单元测试 (按源码镜像)
+│   │   ├── engine/                    #   回测引擎 (runner, strategy_base, ...)
+│   │   ├── api/                       #   策略API (market, date, filter, ...)
+│   │   ├── data/                      #   数据层
+│   │   │   ├── sources/               #     数据源 (akshare, router, ...)
+│   │   │   ├── market/                #     行情数据 (stock, index, futures, ...)
+│   │   │   ├── finance/               #     财务数据 (income, cashflow, ...)
+│   │   │   └── storage/               #     存储 (duckdb, parquet, ...)
+│   │   ├── analysis/                  #   分析层
+│   │   │   ├── factors/               #     因子计算 (valuation, technical, ...)
+│   │   │   ├── signals/               #     信号生成 (cross, breakthrough, ...)
+│   │   │   └── risk/                  #     风险管理 (drawdown, volatility, ...)
+│   │   ├── cache/                     #   缓存系统
+│   │   ├── scanner/                   #   策略扫描器
+│   │   ├── validation/                #   策略验证
+│   │   ├── logging/                   #   日志系统
+│   │   └── utils/                     #   工具函数
 │   ├── integration/                   # 集成测试
-│   ├── regression/                    # 回归测试 (30+)
-│   ├── api_compatibility/             # API兼容性测试
-│   ├── comparison/                    # 比较测试
-│   ├── validation/                    # 验证测试
-│   ├── fixtures/                      # 测试夹具
-│   └── sample_strategies/             # 示例策略
+│   ├── regression/                    # 回归测试 (35 tests)
+│   ├── e2e/                          # 端到端测试
+│   ├── smoke/                        # 冒烟测试
+│   ├── scripts/                      # 运行脚本
+│   └── fixtures/                     # 测试数据
 │
 ├── tools/                             # 辅助工具
 │   ├── data/                          # 数据工具 (prewarm/download)

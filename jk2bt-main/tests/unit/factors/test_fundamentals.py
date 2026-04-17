@@ -66,7 +66,7 @@ global_factor_registry = fundamentals_base.global_factor_registry
 import importlib
 
 # 手动导入 factors 模块的 __init__.py
-_factors_init_path = str(jk2bt_path / "factors" / "__init__.py")
+_factors_init_path = str(jk2bt_path / "analysis" / "factors" / "__init__.py")
 _factors_spec = importlib.util.spec_from_file_location("jk2bt_analysis_factors_init", _factors_init_path)
 _factors_init = importlib.util.module_from_spec(_factors_spec)
 
@@ -75,7 +75,7 @@ sys.modules['jk2bt.factors'] = _factors_init
 sys.modules['jk2bt.factors.base'] = fundamentals_base
 
 # 加载 fundamentals 模块
-_fundamentals_path = str(jk2bt_path / "factors" / "fundamentals.py")
+_fundamentals_path = str(jk2bt_path / "analysis" / "factors" / "fundamentals.py")
 _fundamentals_spec = importlib.util.spec_from_file_location("jk2bt.analysis.factors.fundamentals", _fundamentals_path)
 _fundamentals_module = importlib.util.module_from_spec(_fundamentals_spec)
 sys.modules['jk2bt.analysis.factors.fundamentals'] = _fundamentals_module
