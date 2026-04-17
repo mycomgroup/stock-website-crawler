@@ -60,7 +60,7 @@ stock_cache/
 
 # Logs and outputs
 logs/
-strategy_outputs/
+outputs/
 reports/
 
 # Docs

@@ -7,7 +7,7 @@
 - 输出资源：运行时输出文件、研究产物、交易记录
 
 目录结构约定：
-strategy_outputs/
+data/outputs/
   ├── strategy_name_1/
   │   ├── input/
   │   │   ├── config/     - 配置文件（JSON/YAML/TXT）
@@ -65,7 +65,7 @@ class RuntimeResourcePack:
         },
     }
 
-    DEFAULT_RUNTIME_BASE = "strategy_outputs"
+    DEFAULT_RUNTIME_BASE = "data/outputs"
 
     _current_strategy_name: Optional[str] = None
     _lock = threading.Lock()
