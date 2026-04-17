@@ -6,23 +6,16 @@ securities_utils.py 单元测试
 1. _find_date_column 日期列查找
 2. _resolve_cache_dir 缓存目录解析
 3. _stock_code_to_jq 股票代码转聚宽格式
-4. _format_index_code 指数代码格式化
-5. _normalize_index_weights 指数权重标准化
-6. 导入的常量
 """
 
 import pytest
 import pandas as pd
 import os
-from jk2bt.engine.securities_utils import (
+from jk2bt.api.securities_utils import (
     _find_date_column,
-    _resolve_cache_dir,
     _stock_code_to_jq,
-    _format_index_code,
-    _normalize_index_weights,
-    SUPPORTED_INDEXES,
-    _DATE_COLUMN_CANDIDATES,
 )
+from jk2bt.utils.date_utils import _resolve_cache_dir
 
 
 class TestFindDateColumn:

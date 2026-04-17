@@ -124,14 +124,13 @@ import logging
 # 2. 从子模块导入
 # =====================================================================
 
-# 证券工具函数和常量
-from .securities_utils import (
+# 证券工具函数和常量 (从 api 层导入)
+from jk2bt.api.securities_utils import (
     format_stock_symbol_for_akshare,
     jq_code_to_ak,
     ak_code_to_jq,
     _stock_code_to_jq,
     _find_date_column,
-    _resolve_cache_dir,
     _format_index_code,
     _normalize_index_weights,
     SUPPORTED_INDEXES,
@@ -139,12 +138,12 @@ from .securities_utils import (
     INDEX_FALLBACK_MAP,
     INDEX_DESCRIPTION,
     INDEX_CODE_ALIAS_MAP,
-    _DATE_COLUMN_CANDIDATES,
-    RobustResult,
+    DATE_COLUMN_CANDIDATES as _DATE_COLUMN_CANDIDATES,
 )
+from jk2bt.utils.result import RobustResult
 
-# 数据代理类
-from .data_proxies import (
+# API 兼容类 (从 api 层导入)
+from jk2bt.api.proxies import (
     SecurityInfo,
     _QueryBuilder,
     _Expression,
@@ -158,6 +157,10 @@ from .data_proxies import (
     cash_flow,
     balance,
     indicator,
+)
+
+# 策略运行代理类 (engine 层)
+from .data_proxies import (
     PositionProxy,
     PortfolioProxy,
     _CurrentDataEntry,

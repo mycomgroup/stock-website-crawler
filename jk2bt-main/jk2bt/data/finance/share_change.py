@@ -1574,6 +1574,9 @@ class FinanceQueryV3:
         pledge_amount = None
         pledge_ratio = None
 
+    # Alias for JQData compatibility
+    STK_SHARES_PLEDGE = STK_SHARE_PLEDGE
+
     class STK_SHARE_FREEZE:
         code = None
         shareholder_name = None
@@ -1581,6 +1584,9 @@ class FinanceQueryV3:
         freeze_ratio = None
         freeze_date = None
         freeze_reason = None
+
+    # Alias for JQData compatibility
+    STK_SHARES_FROZEN = STK_SHARE_FREEZE
 
     class STK_TOPHOLDER_CHANGE:
         code = None

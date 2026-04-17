@@ -55,7 +55,7 @@ def filter_st(stock_list, _date=None):
 
         st_codes = set(st_df["代码"].astype(str).str.zfill(6).values)
 
-        from jk2bt.engine.securities_utils import format_stock_symbol_for_akshare
+        from jk2bt.api.securities_utils import format_stock_symbol_for_akshare
 
         clean_stocks = []
         for stock in stock_list:
@@ -89,7 +89,7 @@ def filter_paused(stock_list, _date=None):
 
         paused_codes = set(stop_df["代码"].astype(str).str.zfill(6).values)
 
-        from jk2bt.engine.securities_utils import format_stock_symbol_for_akshare
+        from jk2bt.api.securities_utils import format_stock_symbol_for_akshare
 
         active_stocks = []
         for stock in stock_list:

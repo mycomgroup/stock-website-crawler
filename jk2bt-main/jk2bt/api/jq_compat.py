@@ -32,29 +32,22 @@ try:
 except ImportError:
     sm = None
 
-# akshare 改为延迟导入，减少启动依赖
-
-# 从子模块导入
-from jk2bt.engine.securities_utils import (
+from jk2bt.api.securities_utils import (
     format_stock_symbol_for_akshare,
     jq_code_to_ak,
     _find_date_column,
     RobustResult,
 )
-from jk2bt.engine.data_proxies import (
+from jk2bt.api.proxies import (
     SecurityInfo,
     _QueryBuilder,
     _TableProxy,
-    _CurrentDataProxy,
-    _TickDataProxy,
 )
 from jk2bt.engine.global_state import (
-    logger,
     _prerun_mode_active,
     _prerun_requested_stocks,
 )
 
-# 从 market.py 导入纯透传函数，避免重复定义
 from jk2bt.api.market import (
     history,
     attribute_history,
@@ -629,6 +622,8 @@ def get_current_data(bt_strategy=None):
         current = get_current_data(context)
         price = current['sh600519'].last_price
     """
+    from jk2bt.engine.data_proxies import _CurrentDataProxy
+
     return _CurrentDataProxy(bt_strategy)
 
 
@@ -647,6 +642,8 @@ def get_current_tick(security, bt_strategy=None):
         tick = get_current_tick('000001.XSHG')
         price = tick.current  # 当前价格
     """
+    from jk2bt.engine.data_proxies import _TickDataProxy
+
     # 如果没有传入策略实例，尝试获取当前策略实例
     if bt_strategy is None:
         try:
@@ -1660,6 +1657,47 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
             if df is not None and not df.empty:
                 all_dfs.append(df)
 
+        elif t == "futures":
+            try:
+                from jk2bt.api.futures import get_future_contracts, FUTURE_EXCHANGE_MAP
+
+                # Get all futures products
+                all_products = list(FUTURE_EXCHANGE_MAP.keys())
+                futures_dfs = []
+
+                for product in all_products:
+                    try:
+                        contracts = get_future_contracts(product)
+                        if contracts:
+                            df = pd.DataFrame(
+                                {
+                                    "code": contracts,
+                                    "name": [product] * len(contracts),
+                                    "type": ["futures"] * len(contracts),
+                                    "start_date": [None] * len(contracts),
+                                    "end_date": [None] * len(contracts),
+                                    "exchange": [FUTURE_EXCHANGE_MAP.get(product, "")]
+                                    * len(contracts),
+                                }
+                            )
+                            futures_dfs.append(df)
+                    except Exception:
+                        pass
+
+                if futures_dfs:
+                    result = pd.concat(futures_dfs, ignore_index=True)
+                    result["jq_code"] = result["code"]
+                    # Add exchange suffix
+                    result["jq_code"] = result.apply(
+                        lambda row: row["code"]
+                        + "."
+                        + FUTURE_EXCHANGE_MAP.get(row["code"][:2], "CCFX"),
+                        axis=1,
+                    )
+                    all_dfs.append(result)
+            except Exception as e:
+                logger.warning(f"获取期货列表失败: {e}")
+
         elif t == "fund":
             try:
                 import akshare as ak
@@ -2314,6 +2352,36 @@ def get_extras_jq(
 
         result_df = pd.DataFrame(result_data, index=[pd.Timestamp(end_date)])
         return result_df
+
+    elif field == "futures_positions":
+        # 获取期货持仓量（持仓量）
+        import akshare as ak
+
+        results = {}
+        for sec in securities_str:
+            try:
+                code = (
+                    sec.replace(".XSGE", "")
+                    .replace(".XDCE", "")
+                    .replace(".XZCE", "")
+                    .replace(".XINE", "")
+                    .replace(".CCFX", "")
+                )
+                # Try to get open interest from daily data
+                df = ak.futures_main_sina(symbol=code)
+                if df is not None and not df.empty:
+                    # Look for 持仓量 or open_interest column
+                    for col in ["持仓量", "open_interest", "oi"]:
+                        if col in df.columns:
+                            results[sec] = df[col].iloc[-1]
+                            break
+                    else:
+                        results[sec] = 0
+                else:
+                    results[sec] = 0
+            except Exception:
+                results[sec] = 0
+        return pd.Series(results)
 
     elif field in ("high_limit", "low_limit"):
         result_data = {}

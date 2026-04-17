@@ -610,6 +610,68 @@ def _get_real_factor_style_returns(
         )
 
 
+def get_factor_cov(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    factors: Optional[List[str]] = None,
+    columns: Optional[List[str]] = None,
+    industry: str = "sw_l1",
+    universe: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取风格因子协方差矩阵（聚宽标准接口）。
+
+    参数
+    ----
+    start_date : str, optional
+        起始日期
+    end_date : str, optional
+        结束日期
+    factors : list, optional
+        因子列表
+    columns : list, optional
+        返回列
+    industry : str, default 'sw_l1'
+        行业分类
+    universe : str, optional
+        股票池
+
+    返回
+    ----
+    pd.DataFrame
+        风格因子协方差矩阵
+    """
+    try:
+        factor_returns = get_factor_style_returns(
+            factors=factors,
+            start_date=start_date,
+            end_date=end_date,
+            universe=universe,
+            industry=industry,
+            use_real_data=True,
+        )
+    except Exception:
+        factor_returns = get_factor_style_returns(
+            factors=factors,
+            start_date=start_date,
+            end_date=end_date,
+            universe=universe,
+            industry=industry,
+            use_real_data=False,
+        )
+
+    if factor_returns.empty:
+        return pd.DataFrame()
+
+    cov_matrix = factor_returns.cov()
+
+    if columns is not None:
+        cov_matrix = cov_matrix[columns]
+        cov_matrix = cov_matrix.loc[columns]
+
+    return cov_matrix
+
+
 def get_factor_specific_returns(
     security: str,
     start_date: Optional[str] = None,
@@ -683,4 +745,5 @@ __all__ = [
     "get_factor_stats",
     "get_factor_style_returns",
     "get_factor_specific_returns",
+    "get_factor_cov",
 ]

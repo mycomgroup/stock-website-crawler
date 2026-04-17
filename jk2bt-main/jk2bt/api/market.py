@@ -1591,7 +1591,20 @@ def get_ticks(
 
 
 def get_call_auction(security, date=None):
-    """获取集合竞价数据（聚宽风格）"""
+    """获取集合竞价数据（聚宽风格）
+
+    Args:
+        security: 证券代码或代码列表
+        date: 指定日期（暂未使用）
+
+    Returns:
+        dict: 以证券代码为键，DataFrame 为值的字典
+
+    Note:
+        - ETF/LOF: 使用 akshare fund_etf_spot_em 获取
+        - 股票: akshare 暂无股票集合竞价 tick 数据接口
+        - 指数: 免费数据源通常不提供指数集合竞价 tick 数据
+    """
     if isinstance(security, str):
         security = [security]
 
@@ -1656,11 +1669,46 @@ def get_call_auction(security, date=None):
                 result[symbol] = pd.DataFrame()
                 continue
 
-        # 股票集合竞价数据（如果 akshare 有相关接口可以在这里添加）
-        # TODO: akshare 目前没有专门的集合竞价接口
-        # 通常集合竞价数据包含在 tick 数据的前几分钟
-        warnings.warn(f"{symbol}: 股票集合竞价数据暂不支持，返回空结果")
-        result[symbol] = pd.DataFrame()
+        # 判断是否为指数
+        if _is_index_code(symbol):
+            raise NotImplementedError(
+                "指数集合竞价tick数据需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+            )
+
+        # 股票集合竞价数据
+        # akshare 目前没有专门的股票集合竞价 tick 数据接口
+        # 集合竞价数据通常包含在 tick 数据的前几分钟（9:15-9:25）
+        try:
+            import akshare as ak
+
+            # 尝试获取盘前数据
+            premarket_df = ak.stock_zh_a_premarket_em()
+            if premarket_df is not None and not premarket_df.empty:
+                code_col = None
+                for c in ["代码", "symbol", "code"]:
+                    if c in premarket_df.columns:
+                        code_col = c
+                        break
+                if code_col:
+                    row = premarket_df[premarket_df[code_col] == ak_sym]
+                    if not row.empty:
+                        row = row.iloc[0]
+                        auction_data = {
+                            "code": [symbol],
+                            "time": [pd.Timestamp.now()],
+                            "bid_price": [row.get("买一价", None)],
+                            "ask_price": [row.get("卖一价", None)],
+                            "bid_volume": [row.get("买一量", None)],
+                            "ask_volume": [row.get("卖一量", None)],
+                        }
+                        result[symbol] = pd.DataFrame(auction_data)
+                        continue
+        except Exception:
+            pass
+
+        raise NotImplementedError(
+            "股票集合竞价tick数据需要专业数据源。当前akshare仅提供ETF/LOF集合竞价。请替换为其他数据源。"
+        )
 
     if len(result) == 1:
         return result[security[0]]
