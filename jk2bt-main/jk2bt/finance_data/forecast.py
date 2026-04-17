@@ -5,6 +5,8 @@ finance_data/forecast.py
 
 import pandas as pd
 
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
+
 
 def get_forecast_data(symbol, force_update=False):
     """
@@ -27,7 +29,7 @@ def get_forecast_data(symbol, force_update=False):
     - agency_count: 预测机构数
     - industry_avg: 行业平均数
     """
-    code_num = _extract_code_num(symbol)
+    code_num = extract_code_num(symbol)
 
     from jk2bt.data_access import get_adapter
 
@@ -75,33 +77,10 @@ def get_forecast_data(symbol, force_update=False):
         return pd.DataFrame()
 
 
-def _extract_code_num(symbol):
-    """提取6位代码数字"""
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
-def _normalize_to_jq(symbol):
-    """转换为聚宽格式"""
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
-
-
 def _normalize_predict_data(df, symbol):
     """标准化预测每股收益数据"""
     result = pd.DataFrame()
-    result["code"] = [_normalize_to_jq(symbol)] * len(df)
+    result["code"] = [ak_code_to_jq(symbol)] * len(df)
 
     if "年度" in df.columns:
         result["year"] = df["年度"]
@@ -125,7 +104,7 @@ def _normalize_predict_data(df, symbol):
 def _normalize_forecast_data(df, symbol):
     """标准化业绩预告数据"""
     result = pd.DataFrame()
-    result["code"] = [_normalize_to_jq(symbol)] * len(df)
+    result["code"] = [ak_code_to_jq(symbol)] * len(df)
     result["type"] = ["业绩预告"] * len(df)
 
     if "年度" in df.columns:
@@ -152,7 +131,7 @@ def _normalize_forecast_data(df, symbol):
 def _normalize_quick_data(df, symbol):
     """标准化业绩快报数据"""
     result = pd.DataFrame()
-    result["code"] = [_normalize_to_jq(symbol)] * len(df)
+    result["code"] = [ak_code_to_jq(symbol)] * len(df)
     result["type"] = ["业绩快报"] * len(df)
 
     if "年度" in df.columns:

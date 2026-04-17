@@ -34,7 +34,7 @@ class TestImportNoFileCreation:
     def test_import_in_clean_environment(self):
         """在干净环境中导入不创建文件"""
         # 使用子进程测试，确保干净环境
-        test_code = '''
+        test_code = """
 import sys
 import os
 import tempfile
@@ -61,28 +61,31 @@ print("NEW_FILES:", list(new_files))
 # 清理
 import shutil
 shutil.rmtree(temp_dir, ignore_errors=True)
-'''
+"""
         result = subprocess.run(
-            [sys.executable, '-c', test_code],
+            [sys.executable, "-c", test_code],
             capture_output=True,
             text=True,
-            cwd=str(Path(__file__).parent.parent)
+            cwd=str(Path(__file__).parent.parent),
         )
 
         # 解析输出
         output = result.stdout + result.stderr
         if "NEW_FILES:" in output:
-            new_files_line = [line for line in output.split('\n') if 'NEW_FILES:' in line]
+            new_files_line = [
+                line for line in output.split("\n") if "NEW_FILES:" in line
+            ]
             if new_files_line:
                 new_files = new_files_line[0].replace("NEW_FILES:", "").strip()
                 # 允许空列表或仅有预期的临时文件
-                assert new_files == "[]" or new_files == "", \
+                assert new_files == "[]" or new_files == "", (
                     f"导入创建了非预期文件: {new_files}"
+                )
 
     def test_import_no_cache_directory_created(self):
         """导入不创建缓存目录"""
         with tempfile.TemporaryDirectory() as tmpdir:
-            test_code = '''
+            test_code = """
 import os
 import sys
 
@@ -105,41 +108,43 @@ print(f"DATA_BEFORE:{before_data_exists}")
 print(f"DATA_AFTER:{after_data_exists}")
 print(f"CACHE_BEFORE:{before_cache_exists}")
 print(f"CACHE_AFTER:{after_cache_exists}")
-'''
+"""
             env = os.environ.copy()
             env["TEMP_DIR"] = tmpdir
 
             result = subprocess.run(
-                [sys.executable, '-c', test_code],
+                [sys.executable, "-c", test_code],
                 capture_output=True,
                 text=True,
                 env=env,
-                cwd=str(Path(__file__).parent.parent)
+                cwd=str(Path(__file__).parent.parent),
             )
 
             output = result.stdout
             # 解析输出
-            lines = output.strip().split('\n')
+            lines = output.strip().split("\n")
             results = {}
             for line in lines:
-                if ':' in line:
-                    key, value = line.split(':', 1)
-                    results[key] = value == 'True'
+                if ":" in line:
+                    key, value = line.split(":", 1)
+                    results[key] = value == "True"
 
             # 导入应该不创建 data 目录
             # 如果目录不存在导入前，导入后也不应该存在
-            if 'DATA_BEFORE' in results and not results['DATA_BEFORE']:
-                assert 'DATA_AFTER' in results and not results['DATA_AFTER'], \
+            if "DATA_BEFORE" in results and not results["DATA_BEFORE"]:
+                assert "DATA_AFTER" in results and not results["DATA_AFTER"], (
                     f"导入创建了 data 目录: {output}"
+                )
             # 如果目录已存在导入前，导入后状态相同（不创建新的子目录）
-            if 'CACHE_BEFORE' in results and not results['CACHE_BEFORE']:
-                assert 'CACHE_AFTER' in results and not results['CACHE_AFTER'], \
+            if "CACHE_BEFORE" in results and not results["CACHE_BEFORE"]:
+                assert "CACHE_AFTER" in results and not results["CACHE_AFTER"], (
                     f"导入创建了 data/cache 目录: {output}"
+                )
 
     def test_import_no_log_files_created(self):
         """导入不创建日志文件"""
         with tempfile.TemporaryDirectory() as tmpdir:
-            test_code = '''
+            test_code = """
 import os
 
 os.chdir(os.environ.get("TEMP_DIR"))
@@ -153,32 +158,33 @@ after_logs_exists = os.path.exists("logs")
 
 print(f"LOGS_BEFORE:{before_logs_exists}")
 print(f"LOGS_AFTER:{after_logs_exists}")
-'''
+"""
             env = os.environ.copy()
             env["TEMP_DIR"] = tmpdir
             env["JK2BT_LOG_LEVEL"] = "ERROR"  # 最小化日志
 
             result = subprocess.run(
-                [sys.executable, '-c', test_code],
+                [sys.executable, "-c", test_code],
                 capture_output=True,
                 text=True,
                 env=env,
-                cwd=str(Path(__file__).parent.parent)
+                cwd=str(Path(__file__).parent.parent),
             )
 
             output = result.stdout
             # 解析输出
-            lines = output.strip().split('\n')
+            lines = output.strip().split("\n")
             results = {}
             for line in lines:
-                if ':' in line:
-                    key, value = line.split(':', 1)
-                    results[key] = value == 'True'
+                if ":" in line:
+                    key, value = line.split(":", 1)
+                    results[key] = value == "True"
 
             # 如果 logs 目录不存在导入前，导入后也不应该存在
-            if 'LOGS_BEFORE' in results and not results['LOGS_BEFORE']:
-                assert 'LOGS_AFTER' in results and not results['LOGS_AFTER'], \
+            if "LOGS_BEFORE" in results and not results["LOGS_BEFORE"]:
+                assert "LOGS_AFTER" in results and not results["LOGS_AFTER"], (
                     f"导入创建了 logs 目录: {output}"
+                )
             # 如果目录已存在，我们只验证导入没有改变状态（没有创建新文件）
             # 这个场景我们跳过，因为目录已存在意味着测试环境不干净
 
@@ -189,16 +195,16 @@ class TestImportNoDatabaseConnection:
     def test_import_no_duckdb_connection(self):
         """导入不创建 DuckDB 连接"""
         # Mock duckdb.connect
-        with patch('duckdb.connect') as mock_connect:
+        with patch("duckdb.connect") as mock_connect:
             mock_connect.return_value = MagicMock()
 
             # 强制重新导入
-            if 'jk2bt' in sys.modules:
-                del sys.modules['jk2bt']
-            if 'jk2bt.db.parquet_adapter' in sys.modules:
-                del sys.modules['jk2bt.db.parquet_adapter']
-            if 'jk2bt.db.parquet_adapter' in sys.modules:
-                del sys.modules['jk2bt.db.parquet_adapter']
+            if "jk2bt" in sys.modules:
+                del sys.modules["jk2bt"]
+            if "jk2bt.db.parquet_adapter" in sys.modules:
+                del sys.modules["jk2bt.db.parquet_adapter"]
+            if "jk2bt.db.parquet_adapter" in sys.modules:
+                del sys.modules["jk2bt.db.parquet_adapter"]
 
             import jk2bt
 
@@ -208,13 +214,14 @@ class TestImportNoDatabaseConnection:
             # 允许零次调用或仅做导入检查
             call_count = mock_connect.call_count
             # 导入不应该触发实际数据库连接
-            assert call_count == 0, \
+            assert call_count == 0, (
                 f"导入阶段不应连接数据库，但 duckdb.connect 被调用了 {call_count} 次"
+            )
 
     def test_import_no_db_initialization(self):
         """导入不初始化数据库表"""
         # 在子进程中测试
-        test_code = '''
+        test_code = """
 import sys
 from unittest.mock import patch, MagicMock
 
@@ -245,45 +252,41 @@ import jk2bt
 
 # 恢复
 cache_module.DuckDBAdapter = original_adapter
-'''
+"""
         result = subprocess.run(
-            [sys.executable, '-c', test_code],
+            [sys.executable, "-c", test_code],
             capture_output=True,
             text=True,
-            cwd=str(Path(__file__).parent.parent)
+            cwd=str(Path(__file__).parent.parent),
         )
 
         output = result.stdout + result.stderr
         # 导入不应该触发 _init_tables
-        assert "INIT_TABLES_CALLED" not in output, \
-            "导入阶段不应该初始化数据库表"
+        assert "INIT_TABLES_CALLED" not in output, "导入阶段不应该初始化数据库表"
 
     def test_db_modules_import_without_connection(self):
         """db 子模块可以单独导入而不连接数据库"""
-        with patch('duckdb.connect') as mock_connect:
+        with patch("duckdb.connect") as mock_connect:
             mock_connect.return_value = MagicMock()
 
             # 清除已导入的模块
             modules_to_clear = [
-                'jk2bt.db',
-                'jk2bt.db.parquet_adapter',
-                'jk2bt.db.parquet_adapter',
-                'jk2bt.db.cache_config',
-                'jk2bt.db.cache_status',
-                'jk2bt.db.migrate',
-                'jk2bt.db.migrate_pickle',
-                'jk2bt.db.meta_cache_api',
+                "jk2bt.db",
+                "jk2bt.db.parquet_adapter",
+                "jk2bt.db.parquet_adapter",
+                "jk2bt.db.cache_config",
+                "jk2bt.db.cache_status",
+                "jk2bt.db.meta_cache_api",
             ]
             for mod in modules_to_clear:
                 if mod in sys.modules:
                     del sys.modules[mod]
 
             # 仅导入 db 模块
-            from jk2bt.db import ParquetAdapter, UnifiedCacheManager
+            from jk2bt.db import ParquetAdapter
 
             # 验证没有数据库连接
-            assert mock_connect.call_count == 0, \
-                "导入 db 模块不应该创建数据库连接"
+            assert mock_connect.call_count == 0, "导入 db 模块不应该创建数据库连接"
 
 
 class TestImportNoNetworkRequests:
@@ -291,19 +294,19 @@ class TestImportNoNetworkRequests:
 
     def test_import_no_http_requests(self):
         """导入不发起 HTTP 请求"""
-        with patch('urllib.request.urlopen') as mock_urlopen:
+        with patch("urllib.request.urlopen") as mock_urlopen:
             mock_urlopen.return_value = MagicMock()
 
-        with patch('requests.get') as mock_get:
+        with patch("requests.get") as mock_get:
             mock_get.return_value = MagicMock()
 
-        with patch('requests.post') as mock_post:
+        with patch("requests.post") as mock_post:
             mock_post.return_value = MagicMock()
 
             # 清除模块缓存
-            if 'jk2bt' in sys.modules:
+            if "jk2bt" in sys.modules:
                 # 保留部分子模块，清除主模块
-                del sys.modules['jk2bt']
+                del sys.modules["jk2bt"]
 
             import jk2bt
 
@@ -314,22 +317,21 @@ class TestImportNoNetworkRequests:
 
     def test_import_no_akshare_data_fetch(self):
         """导入不从 akshare 获取数据"""
-        with patch('akshare.stock_zh_a_hist') as mock_akshare:
+        with patch("akshare.stock_zh_a_hist") as mock_akshare:
             mock_akshare.return_value = MagicMock()
 
             # 清除相关模块
             for mod in list(sys.modules.keys()):
-                if 'jk2bt' in mod and ('data_access' in mod or 'market_data' in mod):
+                if "jk2bt" in mod and ("data_access" in mod or "market_data" in mod):
                     del sys.modules[mod]
 
-            if 'jk2bt' in sys.modules:
-                del sys.modules['jk2bt']
+            if "jk2bt" in sys.modules:
+                del sys.modules["jk2bt"]
 
             import jk2bt
 
             # 导入不应该调用 akshare 获取数据
-            assert mock_akshare.call_count == 0, \
-                "导入阶段不应该从 akshare 获取数据"
+            assert mock_akshare.call_count == 0, "导入阶段不应该从 akshare 获取数据"
 
 
 class TestImportLoggingControlled:
@@ -338,7 +340,7 @@ class TestImportLoggingControlled:
     def test_import_logging_level_controllable(self):
         """导入时日志级别可通过环境变量控制"""
         # 使用子进程测试
-        test_code = '''
+        test_code = """
 import os
 import sys
 import logging
@@ -362,33 +364,32 @@ after_handlers = len(root_logger.handlers)
 print(f"HANDLERS_BEFORE:{before_handlers}")
 print(f"HANDLERS_AFTER:{after_handlers}")
 print(f"ROOT_LEVEL:{root_logger.level}")
-'''
+"""
         result = subprocess.run(
-            [sys.executable, '-c', test_code],
+            [sys.executable, "-c", test_code],
             capture_output=True,
             text=True,
-            cwd=str(Path(__file__).parent.parent)
+            cwd=str(Path(__file__).parent.parent),
         )
 
         output = result.stdout
         # 验证日志级别被正确设置
-        assert "ROOT_LEVEL:40" in output, \
-            f"ERROR 级别应该是 40，实际输出: {output}"
+        assert "ROOT_LEVEL:40" in output, f"ERROR 级别应该是 40，实际输出: {output}"
 
     def test_import_minimal_stdout_output(self):
         """导入时 stdout 输出极少"""
         # 使用子进程测试
-        test_code = '''
+        test_code = """
 import os
 os.environ["JK2BT_LOG_LEVEL"] = "CRITICAL"
 
 import jk2bt
-'''
+"""
         result = subprocess.run(
-            [sys.executable, '-c', test_code],
+            [sys.executable, "-c", test_code],
             capture_output=True,
             text=True,
-            cwd=str(Path(__file__).parent.parent)
+            cwd=str(Path(__file__).parent.parent),
         )
 
         stdout = result.stdout.strip()
@@ -398,8 +399,9 @@ import jk2bt
         # 允许少量输出（如版本信息或必要警告）
         total_output_len = len(stdout) + len(stderr)
         # 允许最多 500 字符的输出（考虑可能的初始化信息）
-        assert total_output_len < 500, \
+        assert total_output_len < 500, (
             f"导入产生了过多输出 ({total_output_len} 字符): stdout={stdout[:200]}, stderr={stderr[:200]}"
+        )
 
     def test_import_no_excessive_logging(self):
         """导入不产生大量日志"""
@@ -416,8 +418,8 @@ import jk2bt
 
         try:
             # 清除模块缓存
-            if 'jk2bt' in sys.modules:
-                del sys.modules['jk2bt']
+            if "jk2bt" in sys.modules:
+                del sys.modules["jk2bt"]
 
             import jk2bt
 
@@ -425,12 +427,13 @@ import jk2bt
             log_output = log_capture.getvalue()
 
             # 统计日志行数
-            log_lines = log_output.strip().split('\n') if log_output.strip() else []
+            log_lines = log_output.strip().split("\n") if log_output.strip() else []
 
             # 导入阶段不应该产生大量日志
             # 允许最多 10 行日志（合理的初始化信息）
-            assert len(log_lines) <= 10, \
+            assert len(log_lines) <= 10, (
                 f"导入产生了过多日志 ({len(log_lines)} 行): {log_output[:500]}"
+            )
         finally:
             root_logger.handlers.clear()
             for h in original_handlers:
@@ -450,6 +453,7 @@ class TestImportPredictability:
 
         # 再次导入
         import importlib
+
         importlib.reload(jk2bt)
 
         # 获取第二次导入的属性
@@ -457,10 +461,8 @@ class TestImportPredictability:
         second_all = set(jk2bt.__all__)
 
         # 验证一致
-        assert first_attrs == second_attrs, \
-            "两次导入的属性不一致"
-        assert first_all == second_all, \
-            "两次导入的 __all__ 不一致"
+        assert first_attrs == second_attrs, "两次导入的属性不一致"
+        assert first_all == second_all, "两次导入的 __all__ 不一致"
 
     def test_import_time_reasonable(self):
         """导入时间合理（不超过 5 秒）"""
@@ -469,16 +471,15 @@ class TestImportPredictability:
         start = time.time()
 
         # 清除模块缓存
-        if 'jk2bt' in sys.modules:
-            del sys.modules['jk2bt']
+        if "jk2bt" in sys.modules:
+            del sys.modules["jk2bt"]
 
         import jk2bt
 
         elapsed = time.time() - start
 
         # 导入应该在 5 秒内完成
-        assert elapsed < 5.0, \
-            f"导入耗时 {elapsed:.2f} 秒，超过预期的 5 秒"
+        assert elapsed < 5.0, f"导入耗时 {elapsed:.2f} 秒，超过预期的 5 秒"
 
     def test_import_all_exports_accessible(self):
         """__all__ 中的所有符号都可访问"""
@@ -489,13 +490,14 @@ class TestImportPredictability:
             if not hasattr(jk2bt, symbol):
                 missing_symbols.append(symbol)
 
-        assert len(missing_symbols) == 0, \
+        assert len(missing_symbols) == 0, (
             f"以下符号在 __all__ 中但不可访问: {missing_symbols}"
+        )
 
     def test_import_no_global_state_mutation(self):
         """导入不修改全局状态"""
         # 在子进程中测试
-        test_code = '''
+        test_code = """
 import sys
 import os
 
@@ -512,23 +514,26 @@ after_env_keys = set(os.environ.keys())
 new_env_vars = after_env_keys - before_env_keys
 
 print(f"NEW_ENV_VARS:{list(new_env_vars)}")
-'''
+"""
         result = subprocess.run(
-            [sys.executable, '-c', test_code],
+            [sys.executable, "-c", test_code],
             capture_output=True,
             text=True,
-            cwd=str(Path(__file__).parent.parent)
+            cwd=str(Path(__file__).parent.parent),
         )
 
         output = result.stdout
         # 导入不应该设置新的环境变量
         if "NEW_ENV_VARS:" in output:
-            new_vars_line = [line for line in output.split('\n') if 'NEW_ENV_VARS:' in line]
+            new_vars_line = [
+                line for line in output.split("\n") if "NEW_ENV_VARS:" in line
+            ]
             if new_vars_line:
                 new_vars = new_vars_line[0].replace("NEW_ENV_VARS:", "").strip()
                 # 允许空列表
-                assert new_vars == "[]" or new_vars == "", \
+                assert new_vars == "[]" or new_vars == "", (
                     f"导入设置了新的环境变量: {new_vars}"
+                )
 
 
 class TestImportModuleIsolation:
@@ -536,48 +541,49 @@ class TestImportModuleIsolation:
 
     def test_import_core_no_db_connection(self):
         """导入 core 模块不连接数据库"""
-        with patch('duckdb.connect') as mock_connect:
+        with patch("duckdb.connect") as mock_connect:
             mock_connect.return_value = MagicMock()
 
             # 清除模块
-            modules_to_clear = [k for k in sys.modules.keys() if 'jk2bt.core' in k]
+            modules_to_clear = [k for k in sys.modules.keys() if "jk2bt.core" in k]
             for mod in modules_to_clear:
                 del sys.modules[mod]
 
             from jk2bt.core import GlobalState, ContextProxy
 
             # 验证没有数据库连接
-            assert mock_connect.call_count == 0, \
-                "导入 core 模块不应该连接数据库"
+            assert mock_connect.call_count == 0, "导入 core 模块不应该连接数据库"
 
     def test_import_market_data_no_network(self):
         """导入 market_data 模块不发起网络请求"""
-        with patch('akshare.stock_zh_a_hist') as mock_akshare:
+        with patch("akshare.stock_zh_a_hist") as mock_akshare:
             mock_akshare.return_value = MagicMock()
 
             # 清除模块
-            modules_to_clear = [k for k in sys.modules.keys() if 'jk2bt.market_data' in k]
+            modules_to_clear = [
+                k for k in sys.modules.keys() if "jk2bt.market_data" in k
+            ]
             for mod in modules_to_clear:
                 del sys.modules[mod]
 
             from jk2bt.market_data import get_stock_daily
 
             # 导入不应该调用 akshare
-            assert mock_akshare.call_count == 0, \
+            assert mock_akshare.call_count == 0, (
                 "导入 market_data 模块不应该发起网络请求"
+            )
 
     def test_import_factors_no_data_fetch(self):
         """导入 factors 模块不获取数据"""
         # 清除模块
-        modules_to_clear = [k for k in sys.modules.keys() if 'jk2bt.factors' in k]
+        modules_to_clear = [k for k in sys.modules.keys() if "jk2bt.factors" in k]
         for mod in modules_to_clear:
             del sys.modules[mod]
 
         from jk2bt.factors import get_factor_values_jq
 
         # 导入成功，没有数据获取
-        assert callable(get_factor_values_jq), \
-            "factors 模块导入应该提供函数"
+        assert callable(get_factor_values_jq), "factors 模块导入应该提供函数"
 
 
 class TestImportInCIEnvironment:
@@ -586,24 +592,23 @@ class TestImportInCIEnvironment:
     def test_import_with_network_disabled(self):
         """网络禁用时仍可导入"""
         # Mock 所有网络请求
-        with patch('urllib.request.urlopen', side_effect=Exception("Network disabled")):
-            with patch('requests.get', side_effect=Exception("Network disabled")):
-                with patch('requests.post', side_effect=Exception("Network disabled")):
+        with patch("urllib.request.urlopen", side_effect=Exception("Network disabled")):
+            with patch("requests.get", side_effect=Exception("Network disabled")):
+                with patch("requests.post", side_effect=Exception("Network disabled")):
                     # 清除模块
-                    if 'jk2bt' in sys.modules:
-                        del sys.modules['jk2bt']
+                    if "jk2bt" in sys.modules:
+                        del sys.modules["jk2bt"]
 
                     # 导入应该成功
                     import jk2bt
 
-                    assert jk2bt is not None, \
-                        "网络禁用时导入应该仍然成功"
+                    assert jk2bt is not None, "网络禁用时导入应该仍然成功"
 
     def test_import_with_minimal_dependencies(self):
         """仅有必要依赖时可导入"""
         # 这个测试验证导入不依赖可选依赖
         # 如 akshare 可能不是所有环境都有
-        test_code = '''
+        test_code = """
 import sys
 
 # Mock akshare
@@ -615,12 +620,12 @@ try:
     print("IMPORT_SUCCESS")
 except ImportError as e:
     print(f"IMPORT_FAILED:{e}")
-'''
+"""
         result = subprocess.run(
-            [sys.executable, '-c', test_code],
+            [sys.executable, "-c", test_code],
             capture_output=True,
             text=True,
-            cwd=str(Path(__file__).parent.parent)
+            cwd=str(Path(__file__).parent.parent),
         )
 
         # 注意：这个测试可能失败，因为 akshare 是核心依赖
@@ -641,7 +646,7 @@ class TestImportSideEffectsSummary:
     def test_import_cleanliness_summary(self):
         """导入洁净性综合测试"""
         # 使用隔离子进程测试
-        test_code = '''
+        test_code = """
 import os
 import sys
 import tempfile
@@ -688,29 +693,31 @@ print(f"NEW_ENV_VARS:{list(new_env_vars)}")
 
 # 清理
 shutil.rmtree(temp_dir, ignore_errors=True)
-'''
+"""
         result = subprocess.run(
-            [sys.executable, '-c', test_code],
+            [sys.executable, "-c", test_code],
             capture_output=True,
             text=True,
             cwd=str(Path(__file__).parent.parent),
-            timeout=30  # 30秒超时
+            timeout=30,  # 30秒超时
         )
 
         output = result.stdout
 
         # 验证结果
         # 不应该有新文件
-        assert "NEW_FILES:[]" in output or "NEW_FILES:" not in output, \
+        assert "NEW_FILES:[]" in output or "NEW_FILES:" not in output, (
             f"导入创建了新文件: {output}"
+        )
 
         # 不应该有新环境变量
-        new_env_match = [line for line in output.split('\n') if 'NEW_ENV_VARS:' in line]
+        new_env_match = [line for line in output.split("\n") if "NEW_ENV_VARS:" in line]
         if new_env_match:
             new_vars = new_env_match[0].replace("NEW_ENV_VARS:", "").strip()
             # JK2BT_LOG_LEVEL 是我们主动设置的，可以忽略
-            assert new_vars == "[]" or "JK2BT_LOG_LEVEL" in new_vars, \
+            assert new_vars == "[]" or "JK2BT_LOG_LEVEL" in new_vars, (
                 f"导入设置了新的环境变量: {new_vars}"
+            )
 
 
 if __name__ == "__main__":

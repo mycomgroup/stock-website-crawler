@@ -20,14 +20,13 @@ prewarm_static.py
 import os
 import sys
 import argparse
-import logging
 from datetime import datetime
 import time
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger(__name__)
+from jk2bt.logging import setup_logging, get_logger
+
+setup_logging()
+logger = get_logger(__name__)
 
 _project_root = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

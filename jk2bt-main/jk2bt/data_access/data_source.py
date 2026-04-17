@@ -11,15 +11,7 @@ from typing import Optional, List, Dict, Any, Union
 from datetime import datetime, date
 import pandas as pd
 
-
-class DataSourceError(Exception):
-    """数据源相关错误"""
-
-    def __init__(self, message: str, source: str = None, symbol: str = None):
-        self.message = message
-        self.source = source
-        self.symbol = symbol
-        super().__init__(f"[{source or 'Unknown'}] {symbol or ''}: {message}")
+from jk2bt.core.exceptions import DataSourceError
 
 
 class DataSource(ABC):
@@ -404,7 +396,9 @@ class DataSource(ABC):
 
         默认使用 get_daily_data 实现。
         """
-        return self.get_daily_data(symbol, start_date, end_date, adjust="none", **kwargs)
+        return self.get_daily_data(
+            symbol, start_date, end_date, adjust="none", **kwargs
+        )
 
     def get_index_daily(
         self,
@@ -418,7 +412,9 @@ class DataSource(ABC):
 
         默认使用 get_daily_data 实现。
         """
-        return self.get_daily_data(symbol, start_date, end_date, adjust="none", **kwargs)
+        return self.get_daily_data(
+            symbol, start_date, end_date, adjust="none", **kwargs
+        )
 
     def get_lof_daily(
         self,
@@ -430,7 +426,9 @@ class DataSource(ABC):
         """
         获取 LOF 日线数据。
         """
-        return self.get_daily_data(symbol, start_date, end_date, adjust="none", **kwargs)
+        return self.get_daily_data(
+            symbol, start_date, end_date, adjust="none", **kwargs
+        )
 
     def get_conversion_bond_list(self, **kwargs) -> pd.DataFrame:
         """
@@ -468,6 +466,7 @@ class DataSource(ABC):
         """
         try:
             import time
+
             start = time.time()
             # 尝试获取一个简单的数据
             days = self.get_trading_days()
@@ -615,7 +614,9 @@ class DataSource(ABC):
         """获取行业列表。source: 'em' (东方财富) 等"""
         raise NotImplementedError(f"{self.name} 不支持 get_industry_list")
 
-    def get_industry_components(self, industry_name: str, source: str = "em") -> pd.DataFrame:
+    def get_industry_components(
+        self, industry_name: str, source: str = "em"
+    ) -> pd.DataFrame:
         """获取行业成分股。source: 'em' 等"""
         raise NotImplementedError(f"{self.name} 不支持 get_industry_components")
 

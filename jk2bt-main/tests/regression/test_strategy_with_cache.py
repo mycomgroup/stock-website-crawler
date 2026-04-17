@@ -59,15 +59,11 @@ def test_with_cached_data():
     print("测试2: 使用缓存数据运行策略")
     print("=" * 80)
 
-    db_path = "data/market.db"
-
     try:
-        conn = ParquetAdapter(db_path, read_only=True)
+        conn = ParquetAdapter(read_only=True)
 
-        symbols = conn.execute(
-            "SELECT DISTINCT symbol FROM stock_daily ORDER BY symbol LIMIT 5"
-        ).fetchdf()
-        print(f"可用股票代码样本: {symbols['symbol'].tolist()}")
+        symbols = conn.get_symbols("stock_daily")[:5]
+        print(f"可用股票代码样本: {symbols}")
 
         start_date = "2020-01-01"
         end_date = "2020-12-31"

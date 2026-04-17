@@ -516,102 +516,45 @@ def apply_common_filters(
     return result
 
 
-def filter_limitup_stock(stock_list, date=None):
-    """
-    过滤涨停股票（当日已涨停的股票）
+# Aliases for compatibility
+filter_limitup_stock = filter_limit_up
+filter_limitdown_stock = filter_limit_down
 
-    别名: filter_limit_up
+
+def filter_kcbj_stock(stock_list):
+    """
+    过滤科创板股票（保留科创板）
 
     参数:
         stock_list: 股票代码列表
-        date: 查询日期（可选）
 
     返回:
-        过滤后的股票列表（排除涨停股票）
-    """
-    return filter_limit_up(stock_list, date)
-
-
-def filter_limitdown_stock(stock_list, date=None):
-    """
-    过滤跌停股票（当日已跌停的股票）
-
-    别名: filter_limit_down
-
-    参数:
-        stock_list: 股票代码列表
-        date: 查询日期（可选）
-
-    返回:
-        过滤后的股票列表（排除跌停股票）
-    """
-    return filter_limit_down(stock_list, date)
-
-
-def filter_kcbj_stock(stock_list, date=None):
-    """
-    过滤科创板和北交所股票
-
-    科创板代码以 688 开头（上海）
-    北交所代码以 8 开头（北京）
-
-    参数:
-        stock_list: 股票代码列表
-        date: 查询日期（可选）
-
-    返回:
-        过滤后的股票列表（排除科创板和北交所股票）
+        list: 过滤后的股票列表（仅保留科创板股票）
     """
     if not stock_list:
         return []
-
-    clean_stocks = []
-    for stock in stock_list:
-        code_num = _get_code_num(stock)
-
-        # 科创板: 688xxx
-        if code_num.startswith("688"):
-            continue
-
-        # 北交所: 8xxxxx (4开头或8开头)
-        if code_num.startswith("4") or code_num.startswith("8"):
-            # 但要排除正常的沪市B股和深市股票
-            # 北交所: 43xxxx, 83xxxx, 87xxxx
-            if (
-                code_num.startswith("43")
-                or code_num.startswith("83")
-                or code_num.startswith("87")
-            ):
-                continue
-
-        clean_stocks.append(stock)
-
-    return clean_stocks
+    return [s for s in stock_list if _is_kcbj_code(s)]
 
 
-def filter_kcb_stock(stock_list, date=None):
+def filter_kcb_stock(stock_list):
     """
-    过滤科创板股票（仅科创板，不含北交所）
-
-    科创板代码以 688 开头
+    过滤科创板股票（排除科创板）
 
     参数:
         stock_list: 股票代码列表
-        date: 查询日期（可选）
 
     返回:
-        过滤后的股票列表（排除科创板股票）
+        list: 过滤后的股票列表（排除科创板股票）
     """
     if not stock_list:
         return []
+    return [s for s in stock_list if not _is_kcbj_code(s)]
 
-    clean_stocks = []
-    for stock in stock_list:
-        code_num = _get_code_num(stock)
-        if not code_num.startswith("688"):
-            clean_stocks.append(stock)
 
-    return clean_stocks
+def _is_kcbj_code(code: str) -> bool:
+    """判断是否为科创板股票代码"""
+    code_num = _get_code_num(code)
+    return code_num.startswith("688")
 
 
 __all__ = [
@@ -628,9 +571,10 @@ __all__ = [
     "filter_limit_up",
     "filter_limit_down",
     "filter_new_stocks",
-    # 新增别名和函数
+    # 别名
     "filter_limitup_stock",
     "filter_limitdown_stock",
+    # 科创板过滤
     "filter_kcbj_stock",
     "filter_kcb_stock",
 ]

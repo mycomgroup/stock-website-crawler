@@ -12,11 +12,15 @@ jk2bt/market_data/futures_data.py
 """
 
 import warnings
+import re
+import logging
 from typing import Optional, List, Dict
 import pandas as pd
 from datetime import datetime
 
 from jk2bt.data_access import get_adapter
+
+logger = logging.getLogger(__name__)
 
 
 # 期货品种代码映射
@@ -209,7 +213,9 @@ def get_futures_info(
 
                 # 筛选
                 if contract_code:
-                    df = df[df["code"].str.contains(contract_code, case=False, na=False)]
+                    df = df[
+                        df["code"].str.contains(contract_code, case=False, na=False)
+                    ]
                 if exchange:
                     df = df[df["exchange"].str.contains(exchange, case=False, na=False)]
 
@@ -222,12 +228,14 @@ def get_futures_info(
             try:
                 dominant = get_dominant_contract(underlying)
                 if dominant:
-                    results.append({
-                        "code": dominant,
-                        "name": f"{FUTURE_UNDERLYING_MAP.get(underlying, underlying)}主力",
-                        "exchange": _get_exchange_by_underlying(underlying),
-                        "multiplier": _get_multiplier(underlying),
-                    })
+                    results.append(
+                        {
+                            "code": dominant,
+                            "name": f"{FUTURE_UNDERLYING_MAP.get(underlying, underlying)}主力",
+                            "exchange": _get_exchange_by_underlying(underlying),
+                            "multiplier": _get_multiplier(underlying),
+                        }
+                    )
             except Exception:
                 continue
 
@@ -249,7 +257,25 @@ def _get_exchange_by_underlying(underlying: str) -> str:
     if underlying in ["AU", "AG", "CU", "AL", "ZN", "PB", "NI", "SN", "RB", "HC", "SS"]:
         return "SHFE"
     # 大商所
-    if underlying in ["I", "J", "JM", "ZC", "A", "B", "M", "Y", "P", "C", "CS", "JD", "L", "V", "PP", "EG", "MA"]:
+    if underlying in [
+        "I",
+        "J",
+        "JM",
+        "ZC",
+        "A",
+        "B",
+        "M",
+        "Y",
+        "P",
+        "C",
+        "CS",
+        "JD",
+        "L",
+        "V",
+        "PP",
+        "EG",
+        "MA",
+    ]:
         return "DCE"
     # 郑商所
     if underlying in ["TA", "OI", "RM", "SR", "CF"]:
@@ -260,10 +286,24 @@ def _get_exchange_by_underlying(underlying: str) -> str:
 def _get_multiplier(underlying: str) -> int:
     """获取合约乘数"""
     multipliers = {
-        "IF": 300, "IC": 200, "IH": 300, "IM": 200,
-        "T": 10000, "TF": 10000, "TS": 20000, "TL": 10000,
-        "AU": 1000, "AG": 15, "CU": 5, "AL": 5, "ZN": 5,
-        "RB": 10, "HC": 10, "I": 100, "J": 100, "JM": 60,
+        "IF": 300,
+        "IC": 200,
+        "IH": 300,
+        "IM": 200,
+        "T": 10000,
+        "TF": 10000,
+        "TS": 20000,
+        "TL": 10000,
+        "AU": 1000,
+        "AG": 15,
+        "CU": 5,
+        "AL": 5,
+        "ZN": 5,
+        "RB": 10,
+        "HC": 10,
+        "I": 100,
+        "J": 100,
+        "JM": 60,
     }
     return multipliers.get(underlying.upper(), 10)
 
@@ -365,10 +405,122 @@ def get_futures_daily(
     return pd.DataFrame()
 
 
+def _get_order_contracts(
+    product: str,
+    date: Optional[str] = None,
+) -> List[str]:
+    """
+    获取期货品种的顺序合约列表（当月/次月/当季/隔季）。
+
+    参数
+    ----
+    product : str
+        期货品种代码，如 'IF', 'IC', 'AU', 'AG' 等
+    date : str, optional
+        查询日期
+
+    返回
+    ----
+    List[str]
+        合约代码列表，按到期月份排序
+    """
+    from datetime import datetime
+
+    product = product.upper()
+
+    if date is None:
+        date = datetime.now()
+    else:
+        date = pd.to_datetime(date)
+
+    year = date.year % 100
+    month = date.month
+
+    if product in ["IF", "IC", "IH", "IM"]:
+        contract_months = _generate_index_future_months(year, month)
+    else:
+        contract_months = _generate_commodity_future_months(year, month)
+
+    contracts = []
+    for y, m in contract_months:
+        contract_code = f"{product}{y:02d}{m:02d}"
+        contracts.append(contract_code)
+
+    return contracts
+
+
+def _generate_index_future_months(year: int, month: int) -> List[tuple]:
+    """
+    生成股指期货合约月份。
+
+    规则: 当月、下月、随后两个季月（3, 6, 9, 12）
+    """
+    months = []
+
+    months.append((year, month))
+
+    next_month = month + 1 if month < 12 else 1
+    next_year = year if month < 12 else year + 1
+    months.append((next_year, next_month))
+
+    quarter_months = [3, 6, 9, 12]
+    found_next_quarter = False
+    for qm in quarter_months:
+        if qm > month and not found_next_quarter:
+            months.append((year, qm))
+            found_next_quarter = True
+        elif qm > month:
+            months.append((year, qm))
+            break
+
+    if len(months) < 4:
+        for qm in quarter_months:
+            if (year + 1, qm) not in months:
+                months.append((year + 1, qm))
+                if len(months) >= 4:
+                    break
+
+    unique_months = []
+    for m in months:
+        if m not in unique_months:
+            unique_months.append(m)
+    return unique_months[:4]
+
+
+def _generate_commodity_future_months(year: int, month: int) -> List[tuple]:
+    """
+    生成商品期货合约月份。
+
+    规则: 主力合约通常是最近活跃的月份，如 1, 5, 9 或逐月轮换
+    """
+    months = []
+
+    active_months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+
+    for am in active_months:
+        if am >= month:
+            months.append((year, am))
+        else:
+            months.append((year + 1, am))
+
+        if len(months) >= 4:
+            break
+
+    if len(months) < 4:
+        for am in active_months:
+            if (year + 1, am) not in months:
+                months.append((year + 1, am))
+                if len(months) >= 4:
+                    break
+
+    return months[:4]
+
+
 __all__ = [
     "get_dominant_contract",
     "get_futures_info",
     "get_future_contracts",
     "get_futures_daily",
     "FUTURE_UNDERLYING_MAP",
+    "_get_order_contracts",
 ]

@@ -16,18 +16,19 @@ run_validation_strategies.py
 import os
 import sys
 import json
-import logging
 import argparse
 from datetime import datetime
 from typing import Dict, List
 import time
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger(__name__)
+from jk2bt.logging import setup_logging, get_logger
 
-_project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+setup_logging()
+logger = get_logger(__name__)
+
+_project_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
@@ -37,8 +38,10 @@ from jk2bt.db.cache_status import get_cache_manager
 
 def load_validation_strategies() -> List[Dict]:
     """加载验收策略配置"""
-    config_file = os.path.join(_project_root, "tools/validation/validation_strategies.json")
-    with open(config_file, 'r', encoding='utf-8') as f:
+    config_file = os.path.join(
+        _project_root, "tools/validation/validation_strategies.json"
+    )
+    with open(config_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -58,51 +61,53 @@ def run_single_strategy(strategy: Dict, offline_mode: bool = False) -> Dict:
         }
     """
     result = {
-        'success': False,
-        'strategy_id': strategy['id'],
-        'strategy_name': strategy['name'],
-        'start_time': datetime.now().isoformat(),
+        "success": False,
+        "strategy_id": strategy["id"],
+        "strategy_name": strategy["name"],
+        "start_time": datetime.now().isoformat(),
     }
 
     # 检查策略文件
-    strategy_file = strategy.get('file')
-    if not strategy_file.startswith('strategies/'):
-        strategy_file = os.path.join('strategies', strategy_file)
+    strategy_file = strategy.get("file")
+    if not strategy_file.startswith("strategies/"):
+        strategy_file = os.path.join("strategies", strategy_file)
 
     full_path = os.path.join(_project_root, strategy_file)
     if not os.path.exists(full_path):
-        result['error'] = f'策略文件不存在: {full_path}'
-        result['end_time'] = datetime.now().isoformat()
+        result["error"] = f"策略文件不存在: {full_path}"
+        result["end_time"] = datetime.now().isoformat()
         return result
 
     # 提取配置
-    time_range = strategy.get('time_range', {})
-    start = time_range.get('start', '2020-01-01')
-    end = time_range.get('end', '2023-12-31')
+    time_range = strategy.get("time_range", {})
+    start = time_range.get("start", "2020-01-01")
+    end = time_range.get("end", "2023-12-31")
 
     # 构造股票池/ETF池
     stock_pool = []
     etf_pool = []
 
-    sp = strategy.get('stock_pool', {})
-    if sp.get('type') == 'fixed':
-        stock_pool = sp.get('symbols', [])
-    elif sp.get('type') == 'dynamic':
+    sp = strategy.get("stock_pool", {})
+    if sp.get("type") == "fixed":
+        stock_pool = sp.get("symbols", [])
+    elif sp.get("type") == "dynamic":
         # 动态池使用fixed_stock_pool作为fallback
-        fallback = strategy.get('fixed_stock_pool', {})
-        if fallback.get('type') == 'fixed':
-            stock_pool = fallback.get('symbols', [])
+        fallback = strategy.get("fixed_stock_pool", {})
+        if fallback.get("type") == "fixed":
+            stock_pool = fallback.get("symbols", [])
             logger.info(f"策略 {strategy['id']} 使用fixed_stock_pool fallback")
 
-    ep = strategy.get('etf_pool', {})
-    if ep.get('type') == 'fixed':
-        etf_pool = ep.get('symbols', [])
+    ep = strategy.get("etf_pool", {})
+    if ep.get("type") == "fixed":
+        etf_pool = ep.get("symbols", [])
 
     all_pool = stock_pool + etf_pool
 
     if len(all_pool) == 0:
-        result['error'] = '股票池/ETF池为空，请检查配置（需要fixed_stock_pool fallback）'
-        result['end_time'] = datetime.now().isoformat()
+        result["error"] = (
+            "股票池/ETF池为空，请检查配置（需要fixed_stock_pool fallback）"
+        )
+        result["end_time"] = datetime.now().isoformat()
         return result
 
     # 运行策略
@@ -122,38 +127,44 @@ def run_single_strategy(strategy: Dict, offline_mode: bool = False) -> Dict:
 
         if run_result:
             # GATE-2修复：runtime_errors为空是验收成功的必要条件
-            runtime_errors = run_result.get('runtime_errors', [])
+            runtime_errors = run_result.get("runtime_errors", [])
             if runtime_errors and len(runtime_errors) > 0:
                 # 有运行时错误，标记为失败
-                result['success'] = False
-                result['runtime_errors'] = runtime_errors
-                result['runtime_errors_count'] = len(runtime_errors)
-                result['error'] = f'运行时有{len(runtime_errors)}个错误: {runtime_errors[0]["function"]} - {runtime_errors[0]["error_type"]}'
-                result['final_value'] = run_result.get('final_value', 0)
-                result['pnl_pct'] = run_result.get('pnl_pct', 0)
-                logger.error(f"❌ 策略 {strategy['id']} 运行失败: "
-                           f"runtime_errors={len(runtime_errors)}个, "
-                           f"首个错误: {runtime_errors[0]['function']} - {runtime_errors[0]['error_type']}")
+                result["success"] = False
+                result["runtime_errors"] = runtime_errors
+                result["runtime_errors_count"] = len(runtime_errors)
+                result["error"] = (
+                    f"运行时有{len(runtime_errors)}个错误: {runtime_errors[0]['function']} - {runtime_errors[0]['error_type']}"
+                )
+                result["final_value"] = run_result.get("final_value", 0)
+                result["pnl_pct"] = run_result.get("pnl_pct", 0)
+                logger.error(
+                    f"❌ 策略 {strategy['id']} 运行失败: "
+                    f"runtime_errors={len(runtime_errors)}个, "
+                    f"首个错误: {runtime_errors[0]['function']} - {runtime_errors[0]['error_type']}"
+                )
             else:
                 # 无运行时错误，验收成功
-                result['success'] = True
-                result['runtime_errors'] = []
-                result['runtime_errors_count'] = 0
-                result['final_value'] = run_result.get('final_value', 0)
-                result['pnl_pct'] = run_result.get('pnl_pct', 0)
-                logger.info(f"✅ 策略 {strategy['id']} 运行成功: "
-                           f"收益率 {result['pnl_pct']:.2f}%")
+                result["success"] = True
+                result["runtime_errors"] = []
+                result["runtime_errors_count"] = 0
+                result["final_value"] = run_result.get("final_value", 0)
+                result["pnl_pct"] = run_result.get("pnl_pct", 0)
+                logger.info(
+                    f"✅ 策略 {strategy['id']} 运行成功: "
+                    f"收益率 {result['pnl_pct']:.2f}%"
+                )
         else:
-            result['error'] = '运行结果为None'
+            result["error"] = "运行结果为None"
             logger.error(f"❌ 策略 {strategy['id']} 运行失败: {result['error']}")
 
     except Exception as e:
-        result['error'] = str(e)
+        result["error"] = str(e)
         logger.error(f"❌ 策略 {strategy['id']} 运行失败: {e}")
 
     end_time = time.time()
-    result['run_time'] = end_time - start_time
-    result['end_time'] = datetime.now().isoformat()
+    result["run_time"] = end_time - start_time
+    result["end_time"] = datetime.now().isoformat()
 
     return result
 
@@ -171,42 +182,56 @@ def generate_validation_report(results: List[Dict]) -> str:
 
     # 统计结果
     total = len(results)
-    success_count = sum(1 for r in results if r['success'])
+    success_count = sum(1 for r in results if r["success"])
     failed_count = total - success_count
-    p0_count = sum(1 for r in results if r.get('priority') == 'P0')
-    p0_success = sum(1 for r in results if r['success'] and r.get('priority') == 'P0')
+    p0_count = sum(1 for r in results if r.get("priority") == "P0")
+    p0_success = sum(1 for r in results if r["success"] and r.get("priority") == "P0")
 
     # GATE-2修复：统计runtime_errors
-    runtime_error_count = sum(1 for r in results if r.get('runtime_errors_count', 0) > 0)
-    total_runtime_errors = sum(r.get('runtime_errors_count', 0) for r in results)
+    runtime_error_count = sum(
+        1 for r in results if r.get("runtime_errors_count", 0) > 0
+    )
+    total_runtime_errors = sum(r.get("runtime_errors_count", 0) for r in results)
 
     report_lines.append(f"- 总策略数: {total}\n")
     report_lines.append(f"- 成功: {success_count}\n")
     report_lines.append(f"- 失败: {failed_count}\n")
     report_lines.append(f"- P0策略: {p0_count}（必须通过）\n")
     report_lines.append(f"- P0通过: {p0_success}\n")
-    report_lines.append(f"- **runtime_errors**: {runtime_error_count}个策略有错误，共{total_runtime_errors}个错误\n")
+    report_lines.append(
+        f"- **runtime_errors**: {runtime_error_count}个策略有错误，共{total_runtime_errors}个错误\n"
+    )
 
     if p0_success == p0_count and runtime_error_count == 0:
-        report_lines.append(f"\n✅ **验收通过：所有P0策略运行成功，无runtime_errors**\n")
+        report_lines.append(
+            f"\n✅ **验收通过：所有P0策略运行成功，无runtime_errors**\n"
+        )
     elif p0_success < p0_count:
         report_lines.append(f"\n❌ **验收失败：{p0_count - p0_success}个P0策略失败**\n")
     elif runtime_error_count > 0:
-        report_lines.append(f"\n❌ **验收失败：{runtime_error_count}个策略有runtime_errors**\n")
+        report_lines.append(
+            f"\n❌ **验收失败：{runtime_error_count}个策略有runtime_errors**\n"
+        )
 
     # 详细结果
     report_lines.append(f"\n## 策略运行详情\n")
-    report_lines.append("| ID | 策略名称 | 优先级 | 状态 | 收益率 | 运行时间 | runtime_errors | 备注 |\n")
-    report_lines.append("|----|---------|-------|------|--------|---------|---------------|-----|\n")
+    report_lines.append(
+        "| ID | 策略名称 | 优先级 | 状态 | 收益率 | 运行时间 | runtime_errors | 备注 |\n"
+    )
+    report_lines.append(
+        "|----|---------|-------|------|--------|---------|---------------|-----|\n"
+    )
 
     for result in results:
-        status = "✅ 通过" if result['success'] else "❌ 失败"
-        priority = result.get('priority', 'P1')
-        pnl = f"{result.get('pnl_pct', 0):.2f}%" if result['success'] else "N/A"
-        run_time = f"{result.get('run_time', 0):.1f}s" if result['success'] else "N/A"
-        runtime_errors_count = result.get('runtime_errors_count', 0)
-        runtime_errors_str = f"{runtime_errors_count}个" if runtime_errors_count > 0 else "0"
-        note = result.get('error', '')[:30] if not result['success'] else ""
+        status = "✅ 通过" if result["success"] else "❌ 失败"
+        priority = result.get("priority", "P1")
+        pnl = f"{result.get('pnl_pct', 0):.2f}%" if result["success"] else "N/A"
+        run_time = f"{result.get('run_time', 0):.1f}s" if result["success"] else "N/A"
+        runtime_errors_count = result.get("runtime_errors_count", 0)
+        runtime_errors_str = (
+            f"{runtime_errors_count}个" if runtime_errors_count > 0 else "0"
+        )
+        note = result.get("error", "")[:30] if not result["success"] else ""
 
         report_lines.append(
             f"| {result['strategy_id']} | {result['strategy_name']} | {priority} | "
@@ -221,19 +246,23 @@ def generate_validation_report(results: List[Dict]) -> str:
     report_lines.append(f"- 总记录数: {cache_summary['total_records']}\n")
 
     # 失败策略详情
-    failed_results = [r for r in results if not r['success']]
+    failed_results = [r for r in results if not r["success"]]
     if failed_results:
         report_lines.append(f"\n## 失败策略详情\n")
         for result in failed_results:
-            report_lines.append(f"\n### {result['strategy_id']}: {result['strategy_name']}\n")
+            report_lines.append(
+                f"\n### {result['strategy_id']}: {result['strategy_name']}\n"
+            )
             report_lines.append(f"- **错误信息**: {result.get('error', 'N/A')}\n")
             report_lines.append(f"- **开始时间**: {result.get('start_time', 'N/A')}\n")
             report_lines.append(f"- **结束时间**: {result.get('end_time', 'N/A')}\n")
 
     report_lines.append(f"\n---\n")
-    report_lines.append(f"Generated by jk2bt tools/validation/run_validation_strategies.py\n")
+    report_lines.append(
+        f"Generated by jk2bt tools/validation/run_validation_strategies.py\n"
+    )
 
-    return ''.join(report_lines)
+    return "".join(report_lines)
 
 
 def main():
@@ -254,25 +283,27 @@ def main():
 
     # 过滤策略
     if args.p0_only:
-        strategies = [s for s in strategies if s.get('validation_priority') == 'P0']
+        strategies = [s for s in strategies if s.get("validation_priority") == "P0"]
         logger.info(f"仅运行P0策略: {len(strategies)}个")
 
     if args.limit:
-        strategies = strategies[:args.limit]
+        strategies = strategies[: args.limit]
         logger.info(f"限制运行策略数: {len(strategies)}个")
 
     # 运行策略
     results = []
 
     for i, strategy in enumerate(strategies, 1):
-        logger.info(f"\n[{i}/{len(strategies)}] 运行策略 {strategy['id']}: {strategy['name']}")
+        logger.info(
+            f"\n[{i}/{len(strategies)}] 运行策略 {strategy['id']}: {strategy['name']}"
+        )
 
         result = run_single_strategy(strategy, args.offline)
-        result['priority'] = strategy.get('validation_priority', 'P1')
+        result["priority"] = strategy.get("validation_priority", "P1")
         results.append(result)
 
         # 显示进度
-        success_so_far = sum(1 for r in results if r['success'])
+        success_so_far = sum(1 for r in results if r["success"])
         logger.info(f"进度: {success_so_far}/{i} 成功")
 
     # 生成报告
@@ -283,7 +314,7 @@ def main():
     report_content = generate_validation_report(results)
 
     report_file = os.path.join(_project_root, "validation_report.md")
-    with open(report_file, 'w', encoding='utf-8') as f:
+    with open(report_file, "w", encoding="utf-8") as f:
         f.write(report_content)
 
     logger.info(f"✅ 验收报告已生成: {report_file}")
@@ -293,7 +324,7 @@ def main():
     print("验收策略集运行完成")
     print("=" * 80)
 
-    success_count = sum(1 for r in results if r['success'])
+    success_count = sum(1 for r in results if r["success"])
     failed_count = len(results) - success_count
 
     print(f"\n运行结果:")

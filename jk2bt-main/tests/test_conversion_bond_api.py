@@ -974,31 +974,6 @@ class TestCacheAndPerformance:
             assert result_cached.source == "cache"
             print(f"使用预热缓存数据: {len(result_cached.data)} 只")
 
-    def test_cache_expiration_one_day(self):
-        """
-        测试按日缓存过期策略。
-
-        验证缓存数据在超过一天后需要重新获取，
-        缓存策略正确判断数据新鲜度。
-        """
-        import os
-        import tempfile
-        from datetime import datetime
-
-        cache_dir = tempfile.mkdtemp()
-        cache_file = os.path.join(cache_dir, "conversion_bond_list.pkl")
-
-        result = get_conversion_bond_list_robust(force_update=True, use_cache=False)
-        assert isinstance(result, RobustResult)
-
-        if os.path.exists(cache_file):
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            cache_age_hours = (datetime.now() - file_mtime).total_seconds() / 3600
-            print(
-                f"缓存文件存在，创建时间: {file_mtime}, 年龄: {cache_age_hours:.2f} 小时"
-            )
-            assert cache_age_hours < 1, "刚创建的缓存应该小于1小时"
-
 
 class TestCacheWarmup:
     """

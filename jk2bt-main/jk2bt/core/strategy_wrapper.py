@@ -195,6 +195,20 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
             "before_trading_start", None
         )
 
+        # 缓存函数签名参数数量，避免next()中反复调用inspect.signature
+        self._bts_params_count = (
+            len(inspect.signature(self._before_trading_start_func).parameters)
+            if self._before_trading_start_func is not None
+            else 0
+        )
+        self._handle_params_counts = {
+            name: len(inspect.signature(func).parameters)
+            for name, func in self._handle_functions.items()
+        }
+
+        # 构建证券名到data对象的映射，避免O(N)线性扫描
+        self._data_by_name = {data._name: data for data in self.datas}
+
     def next(self):
         """每日/每bar执行"""
         # 更新当前策略实例
@@ -206,9 +220,7 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
         # 执行before_trading_start函数（聚宽特殊函数，在每个交易日开盘前执行）
         if self._before_trading_start_func is not None:
             try:
-                sig = inspect.signature(self._before_trading_start_func)
-                params = list(sig.parameters.keys())
-                if len(params) >= 1:
+                if self._bts_params_count >= 1:
                     self._before_trading_start_func(self.context)
             except Exception as e:
                 import traceback
@@ -233,10 +245,8 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
         data_proxy = _DataProxy(self)
         for name, func in self._handle_functions.items():
             try:
-                # 检查函数签名，判断是否需要 data 参数
-                sig = inspect.signature(func)
-                params = list(sig.parameters.keys())
-                if len(params) >= 2:
+                # 使用缓存的参数数量判断是否需要 data 参数
+                if self._handle_params_counts.get(name, 0) >= 2:
                     # handle_data(context, data) 格式
                     func(self.context, data_proxy)
                 else:
@@ -297,38 +307,28 @@ class JQStrategyWrapper(JQ2BTBaseStrategy):
 
     def _get_current_price(self, security):
         """获取证券当前价格"""
-        for data in self.datas:
-            if data._name == security:
-                return data.close[0]
-        return None
+        data = self._data_by_name.get(security)
+        return data.close[0] if data else None
 
     def _get_current_high(self, security):
         """获取证券当前最高价"""
-        for data in self.datas:
-            if data._name == security:
-                return data.high[0]
-        return None
+        data = self._data_by_name.get(security)
+        return data.high[0] if data else None
 
     def _get_current_low(self, security):
         """获取证券当前最低价"""
-        for data in self.datas:
-            if data._name == security:
-                return data.low[0]
-        return None
+        data = self._data_by_name.get(security)
+        return data.low[0] if data else None
 
     def _get_current_open(self, security):
         """获取证券当前开盘价"""
-        for data in self.datas:
-            if data._name == security:
-                return data.open[0]
-        return None
+        data = self._data_by_name.get(security)
+        return data.open[0] if data else None
 
     def _get_current_volume(self, security):
         """获取证券当前成交量"""
-        for data in self.datas:
-            if data._name == security:
-                return data.volume[0]
-        return None
+        data = self._data_by_name.get(security)
+        return data.volume[0] if data else None
 
 
 __all__ = [

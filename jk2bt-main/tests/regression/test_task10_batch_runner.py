@@ -12,6 +12,7 @@
 import os
 import sys
 import tempfile
+import shutil
 import unittest
 from unittest.mock import patch, MagicMock
 import pandas as pd
@@ -429,14 +430,17 @@ class TestDuckDBManagerConcurrency(unittest.TestCase):
     """测试DuckDB并发优化"""
 
     def setUp(self):
-        self.db_path = tempfile.mktemp(suffix=".db")
+        self.db_path = tempfile.mkdtemp(suffix="_parquet")
         self.teardown_paths = [self.db_path]
 
     def tearDown(self):
         for path in self.teardown_paths:
             if os.path.exists(path):
                 try:
-                    os.remove(path)
+                    if os.path.isdir(path):
+                        shutil.rmtree(path)
+                    else:
+                        os.remove(path)
                 except:
                     pass
 

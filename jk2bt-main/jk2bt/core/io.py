@@ -226,7 +226,9 @@ def send_message(
     print(f"[SEND_MESSAGE] [{channel}] {title}: {content or ''}")
 
 
-def read_file(filepath: str, mode: str = "rb", encoding: str = "utf-8") -> Union[str, bytes]:
+def read_file(
+    filepath: str, mode: str = "rb", encoding: str = "utf-8"
+) -> Union[str, bytes]:
     """
     从工作区安全目录读取文件
 
@@ -350,9 +352,6 @@ def _read_file_with_resource_pack(filepath: str, mode: str) -> Union[str, bytes]
         )
     except Exception as e:
         raise
-    else:
-        with open(target_path, "r", encoding=encoding) as f:
-            return f.read()
 
 
 def write_file(

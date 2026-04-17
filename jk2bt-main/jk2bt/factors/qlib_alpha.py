@@ -1,14 +1,8 @@
-"""
-factors/qlib_alpha.py
-封装 qlib 的 Alpha101/Alpha191 因子计算。
+"""Qlib Alpha101/Alpha191 factor implementations.
 
-使用方法:
-    from factors.qlib_alpha import compute_alpha101, compute_alpha191
-
-    alpha101_values = compute_alpha101(['sh600519'], factors=['alpha001', 'alpha002'])
-    alpha191_values = compute_alpha191(['sh600519'], factors=['alpha001'])
-
-依赖: qlib (pip install pyqlib)
+NOTE: Currently incomplete — Alpha101 has 10/101 expressions implemented,
+Alpha191 has 3/191. Factors not explicitly defined fall back to generic
+formulas that may not match the original paper.
 """
 
 import warnings

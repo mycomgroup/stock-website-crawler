@@ -742,10 +742,10 @@ class TestEdgeCases:
     """边界情况和异常数据处理"""
 
     @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.market_data.stock.get_adapter")
     @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
     def test_empty_dataframe_from_cache_hit(
-        self, mock_get_read, mock_fallback, mock_get_write
+        self, mock_get_read, mock_get_adapter, mock_get_write
     ):
         """缓存命中但返回空 DataFrame 时应继续获取数据"""
         db_mock = MagicMock()
@@ -754,7 +754,9 @@ class TestEdgeCases:
         mock_get_read.return_value = db_mock
 
         raw_df = _make_raw_df_chinese()
-        mock_fallback.return_value = raw_df
+        adapter_mock = MagicMock()
+        adapter_mock.get_daily_data.return_value = raw_df
+        mock_get_adapter.return_value = adapter_mock
 
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
@@ -763,24 +765,24 @@ class TestEdgeCases:
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
-        # 缓存为空，应该调用 fallback
-        mock_fallback.assert_called_once()
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
     @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.market_data.stock.get_adapter")
     @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
     def test_none_from_fallback_with_empty_cache(
-        self, mock_get_read, mock_fallback, mock_get_write
+        self, mock_get_read, mock_get_adapter, mock_get_write
     ):
-        """fallback 返回 None 且缓存为空时抛出 ValueError"""
+        """adapter 返回 None 且缓存为空时抛出 ValueError"""
         db_mock = MagicMock()
         db_mock.has_data.return_value = False
         db_mock.get_stock_daily.return_value = pd.DataFrame()
         mock_get_read.return_value = db_mock
 
-        mock_fallback.return_value = None
+        adapter_mock = MagicMock()
+        adapter_mock.get_daily_data.return_value = None
+        mock_get_adapter.return_value = adapter_mock
 
         from jk2bt.market_data.stock import get_stock_daily
 
@@ -788,26 +790,30 @@ class TestEdgeCases:
             get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
     @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.fetch_stock_daily_eastmoney")
+    @patch("jk2bt.market_data.stock.get_adapter")
     @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
-    def test_fast_none_from_fetch(self, mock_get_read, mock_fetch, mock_get_write):
-        """fast 函数 fetch 返回 None 时应抛出"""
+    def test_fast_none_from_fetch(
+        self, mock_get_read, mock_get_adapter, mock_get_write
+    ):
+        """fast 函数 adapter 返回 None 时应抛出"""
         db_mock = MagicMock()
         db_mock.has_data.return_value = False
         mock_get_read.return_value = db_mock
 
-        mock_fetch.return_value = None
+        adapter_mock = MagicMock()
+        adapter_mock.get_daily_data.return_value = None
+        mock_get_adapter.return_value = adapter_mock
 
         from jk2bt.market_data.stock import get_stock_daily_fast
 
-        with pytest.raises(ValueError, match="快速获取失败"):
+        with pytest.raises(ValueError, match="所有数据源获取失败"):
             get_stock_daily_fast("sh600000", "2024-01-01", "2024-01-31")
 
     @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.market_data.stock.get_adapter")
     @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
     def test_output_has_openinterest_column(
-        self, mock_get_read, mock_fallback, mock_get_write
+        self, mock_get_read, mock_get_adapter, mock_get_write
     ):
         """输出应包含 openinterest 列（standardize_ohlcv 添加）"""
         raw_df = _make_raw_df_chinese()
@@ -816,7 +822,10 @@ class TestEdgeCases:
         db_mock.has_data.return_value = False
         mock_get_read.return_value = db_mock
 
-        mock_fallback.return_value = raw_df
+        adapter_mock = MagicMock()
+        adapter_mock.get_daily_data.return_value = raw_df
+        mock_get_adapter.return_value = adapter_mock
+
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
@@ -828,10 +837,10 @@ class TestEdgeCases:
         assert (result["openinterest"] == 0.0).all()
 
     @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.market_data.stock.get_adapter")
     @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
     def test_output_columns_standardized(
-        self, mock_get_read, mock_fallback, mock_get_write
+        self, mock_get_read, mock_get_adapter, mock_get_write
     ):
         """输出列应标准化"""
         raw_df = _make_raw_df_chinese()
@@ -840,7 +849,10 @@ class TestEdgeCases:
         db_mock.has_data.return_value = False
         mock_get_read.return_value = db_mock
 
-        mock_fallback.return_value = raw_df
+        adapter_mock = MagicMock()
+        adapter_mock.get_daily_data.return_value = raw_df
+        mock_get_adapter.return_value = adapter_mock
+
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 

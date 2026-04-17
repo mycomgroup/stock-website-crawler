@@ -74,6 +74,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest pytest-cov pandas duckdb akshare
+          pip install -e .
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Create prewarmed cache directory
@@ -94,6 +95,12 @@ jobs:
           sys.path.insert(0, '.')
 
           from jk2bt.db.duckdb_manager import DuckDBManager
+          from jk2bt.db.cache_config import init_default_cache
+          from parquet_cache import get_cache_manager
+
+          # 初始化 parquet_cache
+          init_default_cache()
+          cache = get_cache_manager()
 
           # 创建测试数据目录
           db_path = os.path.expanduser('$HOME/test_db/market.db')
@@ -121,22 +128,18 @@ jobs:
               db.insert_stock_daily(stock, df, adjust='qfq')
               print(f'Prewarmed: {stock}, {len(df)} records')
 
-          # 创建交易日历
-          cache_dir = os.path.expanduser('$HOME/test_cache')
-          meta_dir = os.path.join(cache_dir, 'meta_cache')
-          trade_days = pd.DataFrame({
-              'trade_date': dates
-          })
-          trade_days.to_pickle(os.path.join(meta_dir, 'trade_days.pkl'))
-          print(f'Prewarmed trade_days: {len(trade_days)} records')
+          # 创建交易日历并写入 parquet_cache
+          trade_days_df = pd.DataFrame({'date': dates})
+          cache.put('trade_calendar', trade_days_df)
+          print(f'Prewarmed trade_calendar: {len(trade_days_df)} records')
 
-          # 创建证券信息
-          securities = pd.DataFrame({
+          # 创建证券信息并写入 parquet_cache
+          securities_df = pd.DataFrame({
               'code': ['sh600519', 'sz000858', 'sh600036'],
               'name': ['贵州茅台', '五粮液', '招商银行']
           })
-          securities.to_pickle(os.path.join(meta_dir, 'securities_20230404.pkl'))
-          print(f'Prewarmed securities: {len(securities)} records')
+          cache.put('securities', securities_df)
+          print(f'Prewarmed securities: {len(securities_df)} records')
 
           print('Prewarm complete!')
           "

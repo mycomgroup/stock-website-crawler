@@ -18,7 +18,7 @@ market_data/index_components.py
 - out_date: 剔除日期
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/index_components.db 中
+- Parquet 缓存：存储在 data/index_components_parquet 中
 - 按季度缓存
 """
 
@@ -29,6 +29,8 @@ from typing import Optional, List
 import logging
 
 logger = logging.getLogger(__name__)
+
+from jk2bt.utils.date_utils import parse_date as _parse_date, filter_by_date_range
 
 _PARQUET_AVAILABLE = False
 try:
@@ -90,7 +92,7 @@ class IndexComponentsDBManager:
         if self._initialized:
             return
 
-        if not _DUCKDB_AVAILABLE:
+        if not _PARQUET_AVAILABLE:
             self._manager = None
             self._initialized = True
             return
@@ -99,7 +101,7 @@ class IndexComponentsDBManager:
             base_dir = os.path.dirname(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             )
-            db_path = os.path.join(base_dir, "data", "index_components.db")
+            db_path = os.path.join(base_dir, "data", "index_components_parquet")
 
         self._db_path = db_path
         self._manager = None
@@ -219,14 +221,11 @@ class IndexComponentsDBManager:
 
 def _get_db_manager():
     """获取数据库管理器单例（延迟初始化）"""
-    if not _DUCKDB_AVAILABLE:
+    if not _PARQUET_AVAILABLE:
         return None
     manager = IndexComponentsDBManager()
     manager._ensure_initialized()
     return manager
-
-
-_db_manager = None  # 延迟初始化，避免导入时副作用
 
 
 _INDEX_CODE_MAP = {
@@ -276,31 +275,11 @@ def _parse_weight(value) -> Optional[float]:
         return None
 
 
-def _parse_date(date_str) -> Optional[str]:
-    if not date_str or pd.isna(date_str):
-        return None
-    date_str = str(date_str).strip()
-    for fmt in ["%Y-%m-%d", "%Y%m%d", "%Y/%m/%d"]:
-        try:
-            dt = datetime.strptime(date_str, fmt)
-            return dt.strftime("%Y-%m-%d")
-        except ValueError:
-            continue
-    return None
-
-
 def _get_cache_days(index_code: str) -> int:
     """根据指数类型返回缓存天数"""
     code_num = index_code.split(".")[0] if "." in index_code else index_code
     code_num = code_num.zfill(6).replace("sh", "").replace("sz", "")
     return _INDEX_CACHE_DAYS.get(code_num, 90)
-
-
-def _get_index_source(index_code: str) -> str:
-    """根据指数类型返回数据源类型"""
-    code_num = index_code.split(".")[0] if "." in index_code else index_code
-    code_num = code_num.zfill(6).replace("sh", "").replace("sz", "")
-    return _INDEX_SOURCE_MAP.get(code_num, "csindex")
 
 
 def _normalize_weights(df: pd.DataFrame) -> pd.DataFrame:
@@ -493,7 +472,9 @@ def get_index_component_history(
         if df_current is not None and not df_current.empty:
             result = _normalize_index_history(df_current, jq_index_code)
             if not result.empty:
-                return _filter_history_by_date(result, start_date, end_date)
+                return filter_by_date_range(
+                    result, start_date, end_date, date_col="in_date"
+                )
     except Exception as e:
         logger.warning(
             f"[get_index_component_history] 获取成分股历史失败 {index_code}: {e}"
@@ -544,33 +525,6 @@ def _normalize_index_history(df: pd.DataFrame, jq_index_code: str) -> pd.DataFra
     result["change_type"] = "current"
 
     return result
-
-
-def _filter_history_by_date(
-    df: pd.DataFrame, start_date: str = None, end_date: str = None
-) -> pd.DataFrame:
-    """按日期筛选历史记录"""
-    if df.empty:
-        return df
-
-    if start_date is None and end_date is None:
-        return df
-
-    df = df.copy()
-    if "in_date" in df.columns:
-        df["in_date_dt"] = pd.to_datetime(df["in_date"], errors="coerce")
-
-        if start_date:
-            start_dt = pd.to_datetime(start_date)
-            df = df[df["in_date_dt"] >= start_dt]
-
-        if end_date:
-            end_dt = pd.to_datetime(end_date)
-            df = df[df["in_date_dt"] <= end_dt]
-
-        df = df.drop(columns=["in_date_dt"])
-
-    return df
 
 
 def get_index_stocks(

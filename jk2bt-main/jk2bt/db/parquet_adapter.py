@@ -46,11 +46,7 @@ class ParquetAdapter:
                     "parquet_cache",
                 )
         else:
-            base_dir = (
-                db_path.replace(".db", "").rstrip("/") + "_parquet"
-                if db_path.endswith(".db")
-                else db_path
-            )
+            base_dir = db_path
 
         self.db_path = db_path
         self.read_only = read_only
@@ -70,6 +66,14 @@ class ParquetAdapter:
     def _rename_to_date(self, df: pd.DataFrame) -> pd.DataFrame:
         if "datetime" in df.columns and "date" not in df.columns:
             df = df.rename(columns={"datetime": "date"})
+        if "date" in df.columns:
+            try:
+                if df["date"].isna().all():
+                    df["date"] = df["date"].astype(object)
+                else:
+                    df["date"] = pd.to_datetime(df["date"]).dt.date
+            except Exception:
+                pass
         return df
 
     def _rename_to_datetime(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -89,6 +93,14 @@ class ParquetAdapter:
 
     def _select_columns(self, df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
         return df[[c for c in columns if c in df.columns]]
+
+    def _put_partitioned(self, table: str, df: pd.DataFrame, partition_col: str):
+        """按分区列分组写入 parquet_cache"""
+        if partition_col in df.columns:
+            for value, group in df.groupby(partition_col):
+                self.cache_manager.put(table, group, partition_value=str(value))
+        else:
+            self.cache_manager.put(table, df)
 
     def insert_stock_daily(self, symbol: str, df: pd.DataFrame, adjust: str = "qfq"):
         if df is None or df.empty:
@@ -116,15 +128,7 @@ class ParquetAdapter:
             ],
         )
 
-        partition_value = None
-        if "date" in df.columns:
-            first_date = df["date"].iloc[0]
-            if hasattr(first_date, "strftime"):
-                partition_value = first_date.strftime("%Y-%m-%d")
-            else:
-                partition_value = str(first_date)
-
-        self.cache_manager.put("stock_daily", df, partition_value=partition_value)
+        self._put_partitioned("stock_daily", df, "date")
         logger.info(f"{jq_symbol} ({adjust}): 插入 {len(df)} 条数据")
 
     def insert_etf_daily(self, symbol: str, df: pd.DataFrame):
@@ -141,15 +145,7 @@ class ParquetAdapter:
             df, ["symbol", "date", "open", "high", "low", "close", "volume", "amount"]
         )
 
-        partition_value = None
-        if "date" in df.columns:
-            first_date = df["date"].iloc[0]
-            if hasattr(first_date, "strftime"):
-                partition_value = first_date.strftime("%Y-%m-%d")
-            else:
-                partition_value = str(first_date)
-
-        self.cache_manager.put("etf_daily", df, partition_value=partition_value)
+        self._put_partitioned("etf_daily", df, "date")
         logger.info(f"{jq_symbol}: 插入 {len(df)} 条数据")
 
     def insert_lof_daily(self, symbol: str, df: pd.DataFrame):
@@ -166,15 +162,7 @@ class ParquetAdapter:
             df, ["symbol", "date", "open", "high", "low", "close", "volume", "amount"]
         )
 
-        partition_value = None
-        if "date" in df.columns:
-            first_date = df["date"].iloc[0]
-            if hasattr(first_date, "strftime"):
-                partition_value = first_date.strftime("%Y-%m-%d")
-            else:
-                partition_value = str(first_date)
-
-        self.cache_manager.put("etf_daily", df, partition_value=partition_value)
+        self._put_partitioned("etf_daily", df, "date")
         logger.info(f"{jq_symbol}: 插入 {len(df)} 条数据")
 
     def insert_index_daily(self, symbol: str, df: pd.DataFrame):
@@ -191,15 +179,7 @@ class ParquetAdapter:
             df, ["symbol", "date", "open", "high", "low", "close", "volume", "amount"]
         )
 
-        partition_value = None
-        if "date" in df.columns:
-            first_date = df["date"].iloc[0]
-            if hasattr(first_date, "strftime"):
-                partition_value = first_date.strftime("%Y-%m-%d")
-            else:
-                partition_value = str(first_date)
-
-        self.cache_manager.put("index_daily", df, partition_value=partition_value)
+        self._put_partitioned("index_daily", df, "date")
         logger.info(f"{jq_symbol}: 插入 {len(df)} 条数据")
 
     def insert_stock_minute(
@@ -231,12 +211,10 @@ class ParquetAdapter:
             ],
         )
 
-        partition_value = None
         if "datetime" in df.columns:
-            first_dt = pd.to_datetime(df["datetime"].iloc[0])
-            partition_value = first_dt.strftime("%Y-W%W")
+            df["week"] = pd.to_datetime(df["datetime"]).dt.strftime("%Y-W%W")
 
-        self.cache_manager.put("stock_minute", df, partition_value=partition_value)
+        self._put_partitioned("stock_minute", df, "week")
         logger.info(f"{jq_symbol} ({period} {adjust}): 插入 {len(df)} 条分钟数据")
 
     def insert_etf_minute(self, symbol: str, period: str, df: pd.DataFrame):
@@ -264,12 +242,10 @@ class ParquetAdapter:
             ],
         )
 
-        partition_value = None
         if "datetime" in df.columns:
-            first_dt = pd.to_datetime(df["datetime"].iloc[0])
-            partition_value = first_dt.strftime("%Y-W%W")
+            df["week"] = pd.to_datetime(df["datetime"]).dt.strftime("%Y-W%W")
 
-        self.cache_manager.put("etf_minute", df, partition_value=partition_value)
+        self._put_partitioned("etf_minute", df, "week")
         logger.info(f"{jq_symbol} ({period}): 插入 {len(df)} 条分钟数据")
 
     def get_stock_daily(
@@ -499,6 +475,14 @@ class ParquetAdapter:
             where=where if where else None,
         )
 
+    def query(self, table: str, where: dict = None) -> pd.DataFrame:
+        """兼容 cache_status.py 等旧代码的查询接口"""
+        pc_table = _TABLE_MAP.get(table, table)
+        result = self.cache_manager.get(pc_table, where=where)
+        if result is None or result.empty:
+            return pd.DataFrame()
+        return self._rename_to_datetime(result)
+
     def get_symbols(self, table: str) -> List[str]:
         pc_table = _TABLE_MAP.get(table, table)
         result = self.cache_manager.get(pc_table, columns=["symbol"])
@@ -507,7 +491,7 @@ class ParquetAdapter:
         return sorted(result["symbol"].unique().tolist())
 
     def clear_cache(self):
-        self.cache_manager.memory_cache.clear()
+        self.cache_manager.memory_cache.invalidate()
         logger.info("本地缓存已清除")
 
     def close(self):

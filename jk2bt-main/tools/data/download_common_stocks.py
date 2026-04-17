@@ -19,12 +19,9 @@ import time
 import argparse
 from datetime import datetime
 
-sys.path.insert(
-    0, os.path.join(os.path.dirname(__file__), "src")
-)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 try:
-    from jk2bt.db.duckdb_manager import DuckDBManager
     from market_data.stock import get_stock_daily
     from market_data.index import get_index_daily
     from utils.symbol import format_stock_symbol
@@ -278,7 +275,9 @@ def main():
     print("=" * 80)
 
     print("\n下一步:")
-    print('  1. 检查数据: sqlite3 data/market.db "SELECT COUNT(*) FROM stock_daily"')
+    print(
+        "  1. 检查数据: python -c \"from jk2bt.db import ParquetAdapter; print(ParquetAdapter().count_records('stock_daily'))\""
+    )
     print("  2. 运行离线模式: python run_daily_strategy_batch.py --use-cache-only")
     print("  3. 测试策略: python test_strategy_with_cache.py")
 

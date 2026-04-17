@@ -238,12 +238,9 @@ class QueryEngine:
                     conditions.append(
                         f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
                     )
-                elif all(isinstance(v, str) for v in value):
-                    conditions.append(
-                        f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
-                    )
                 else:
-                    conditions.append(f"{key} = {self._format_value(value)}")
+                    formatted_values = ", ".join(self._format_value(v) for v in value)
+                    conditions.append(f"{key} IN ({formatted_values})")
             elif isinstance(value, list):
                 formatted_values = ", ".join(self._format_value(v) for v in value)
                 conditions.append(f"{key} IN ({formatted_values})")

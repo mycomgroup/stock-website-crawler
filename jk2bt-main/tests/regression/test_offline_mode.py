@@ -17,27 +17,26 @@ if __name__ != "__main__":
 sys.path.insert(0, "src")
 
 from jk2bt.market_data.stock import get_stock_daily
-import duckdb
+from jk2bt.db.parquet_adapter import ParquetAdapter
 
 print("=" * 80)
 print("测试离线模式和重试机制")
 print("=" * 80)
 
-print("\n测试1: 检查数据库中的数据")
-conn = duckdb.connect("data/market.db", read_only=True)
-result = conn.execute("SELECT COUNT(*) as count FROM stock_daily").fetchdf()
-print(f"  stock_daily表总行数: {result['count'][0]}")
+print("\n测试1: 检查缓存中的数据")
+adapter = ParquetAdapter(read_only=True)
+count = adapter.count_records("stock_daily")
+print(f"  stock_daily表总行数: {count}")
 
-result = conn.execute(
-    "SELECT COUNT(DISTINCT symbol) as count FROM stock_daily"
-).fetchdf()
-print(f"  不同股票数: {result['count'][0]}")
+symbols = adapter.get_symbols("stock_daily")
+print(f"  不同股票数: {len(symbols)}")
 
-result = conn.execute(
-    "SELECT MIN(datetime) as min_date, MAX(datetime) as max_date FROM stock_daily WHERE symbol='sh600519'"
-).fetchdf()
-print(f"  sh600519数据范围: {result['min_date'][0]} ~ {result['max_date'][0]}")
-conn.close()
+df = adapter.query("stock_daily", where={"symbol": "600519.XSHG"})
+if not df.empty:
+    print(f"  sh600519数据范围: {df['datetime'].min()} ~ {df['datetime'].max()}")
+else:
+    print(f"  sh600519数据范围: 无数据")
+adapter.close()
 
 print("\n测试2: 在线模式（使用缓存）")
 try:

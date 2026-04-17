@@ -130,8 +130,8 @@ def main():
 
         print("\n💡 使用建议:")
         print("  - 使用 cache_common_data.py 批量更新数据")
-        print("  - 数据自动从 DuckDB 加载，无需手动管理 pickle 文件")
-        print("  - 财务数据仍使用 pickle 缓存")
+        print("  - 数据自动从 parquet_cache 加载，无需手动管理 pickle 文件")
+        print("  - 财务数据使用 parquet_cache")
 
         return True
 

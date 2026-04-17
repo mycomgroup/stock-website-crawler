@@ -15,6 +15,7 @@ utils/date_utils.py
 import os
 import pandas as pd
 from datetime import datetime
+from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -297,6 +298,64 @@ def get_all_trade_days_jq(use_duckdb=True):
 get_trading_days = get_all_trade_days  # 常用别名
 
 
+def parse_date(date_str) -> Optional[str]:
+    """统一日期解析函数，支持多种格式"""
+    if not date_str or pd.isna(date_str):
+        return None
+    date_str = str(date_str).strip()
+    for fmt in ["%Y-%m-%d", "%Y%m%d", "%Y/%m/%d"]:
+        try:
+            dt = datetime.strptime(date_str, fmt)
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    return None
+
+
+def filter_by_date_range(
+    df: pd.DataFrame,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    date_col: str = "datetime",
+) -> pd.DataFrame:
+    """统一日期范围过滤"""
+    if start_date is None and end_date is None:
+        return df
+    result = df.copy()
+    if date_col not in result.columns:
+        return result
+    result = result.copy()
+    result["_filter_date"] = pd.to_datetime(result[date_col], errors="coerce")
+    if start_date:
+        result = result[result["_filter_date"] >= pd.to_datetime(start_date)]
+    if end_date:
+        result = result[result["_filter_date"] <= pd.to_datetime(end_date)]
+    return result.drop(columns=["_filter_date"])
+
+
+def standardize_datetime(df: pd.DataFrame, date_col: str = "datetime") -> pd.DataFrame:
+    """标准化DataFrame中的日期列"""
+    result = df.copy()
+    if date_col not in result.columns:
+        return result
+    result[date_col] = pd.to_datetime(result[date_col], errors="coerce")
+    result = result.dropna(subset=[date_col])
+    return result.sort_values(date_col).reset_index(drop=True)
+
+
+def parse_ratio(value) -> Optional[float]:
+    """统一百分比解析函数"""
+    if value is None or value == "" or value == "-":
+        return None
+    try:
+        if isinstance(value, str):
+            value = value.replace("%", "").strip()
+            return float(value) / 100 if float(value) > 1 else float(value)
+        return float(value)
+    except (ValueError, TypeError):
+        return None
+
+
 __all__ = [
     "find_date_column",
     "get_all_trade_days",
@@ -307,4 +366,8 @@ __all__ = [
     "get_previous_trade_date",
     "get_next_trade_date",
     "count_trade_days_between",
+    "parse_date",
+    "filter_by_date_range",
+    "standardize_datetime",
+    "parse_ratio",
 ]

@@ -39,7 +39,6 @@ from .akshare_adapter import AkShareAdapter
 from .mock_data_source import MockDataSource, create_mock_with_sample_data
 from .data_registry import (
     DataRegistry,
-    get_data_source,
     set_data_source,
     reset_data_source,
     get_source_health,
@@ -62,29 +61,6 @@ from .error_codes import (
     RateLimitError,
 )
 from .akshare_compat import AkShareCompatAdapter, get_compat_adapter, FUNCTION_ALIASES
-from .stats_collector import (
-    StatsCollector,
-    RequestStats,
-    CacheStats,
-    get_stats_collector,
-    reset_stats_collector,
-)
-from .cache_manager import DataAccessCacheManager, get_cache, clear_cache, reset_cache
-from .source_router import (
-    MultiSourceRouter,
-    EmptyDataPolicy,
-    ExecutionResult,
-    create_simple_router,
-)
-from .error_codes import (
-    ErrorCode,
-    DataAccessException,
-    DataSourceError as DataAccessExceptionCode,
-    SourceUnavailableError,
-    NoDataError,
-    TimeoutError,
-    RateLimitError,
-)
 
 # ── 全局单例工厂 ──────────────────────────────────────────────────
 
@@ -105,11 +81,22 @@ def set_adapter(adapter) -> None:
     _default_adapter = adapter
 
 
-from .multi_source_adapter import (
-    MultiSourceAdapter,
-    get_multi_source_adapter,
-    set_tushare_token,
-)
+def get_data_source():
+    """Alias for get_adapter() — consolidated to single access pattern."""
+    return get_adapter()
+
+
+# Patch DataRegistry.get_source to use the same singleton
+_original_dr_get_source = DataRegistry.get_source
+
+
+@classmethod
+def _dr_get_source_patched(cls):
+    return get_adapter()
+
+
+DataRegistry.get_source = _dr_get_source_patched
+
 
 __all__ = [
     # 抽象基类
@@ -119,10 +106,6 @@ __all__ = [
     "AkShareAdapter",
     "MockDataSource",
     "create_mock_with_sample_data",
-    # 多数据源适配器
-    "MultiSourceAdapter",
-    "get_multi_source_adapter",
-    "set_tushare_token",
     # 注册中心
     "DataRegistry",
     "get_data_source",
@@ -152,12 +135,6 @@ __all__ = [
     "AkShareCompatAdapter",
     "get_compat_adapter",
     "FUNCTION_ALIASES",
-    # 统计收集
-    "StatsCollector",
-    "RequestStats",
-    "CacheStats",
-    "get_stats_collector",
-    "reset_stats_collector",
     # 单例工厂
     "get_adapter",
     "set_adapter",

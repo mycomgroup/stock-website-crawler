@@ -25,7 +25,7 @@ market_data/option.py
 - date: 日期
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/option.db 中
+- Parquet 缓存：存储在 data/option_parquet 中
 - 按日缓存：实时数据
 """
 
@@ -42,12 +42,18 @@ __all__ = [
     "RobustResult",
     "FinanceQuery",
     "finance",
+    "OptionQuery",
+    "opt",
     "run_query_simple",
     "OptionDBManager",
     "OPTION_SCHEMA",
     "OPTION_BASIC_SCHEMA",
     "OPTION_DAILY_SCHEMA",
     "GREEKS_SCHEMA",
+    "OPT_TRADE_RANK_STK_SCHEMA",
+    "OPT_EXERCISE_INFO_SCHEMA",
+    "OPT_ADJUSTMENT_SCHEMA",
+    "OPT_DAILY_PREOPEN_SCHEMA",
 ]
 
 import os
@@ -131,10 +137,73 @@ _GREEKS_SCHEMA = [
     "date",
 ]
 
+_OPT_TRADE_RANK_STK_SCHEMA = [
+    "date",
+    "underlying_symbol",
+    "contract_code",
+    "rank",
+    "volume",
+    "position",
+    "turnover",
+    "buy_volume",
+    "sell_volume",
+    "net_position",
+]
+
+_OPT_EXERCISE_INFO_SCHEMA = [
+    "date",
+    "option_code",
+    "option_name",
+    "underlying_code",
+    "underlying_name",
+    "exercise_price",
+    "exercise_quantity",
+    "exercise_type",
+    "settlement_price",
+    "settlement_amount",
+]
+
+_OPT_ADJUSTMENT_SCHEMA = [
+    "date",
+    "option_code",
+    "option_name",
+    "underlying_code",
+    "adjustment_type",
+    "old_strike",
+    "new_strike",
+    "old_contract_unit",
+    "new_contract_unit",
+    "reason",
+]
+
+_OPT_DAILY_PREOPEN_SCHEMA = [
+    "date",
+    "option_code",
+    "option_name",
+    "underlying_code",
+    "open_price",
+    "high_price",
+    "low_price",
+    "close_price",
+    "pre_close",
+    "volume",
+    "amount",
+    "position",
+    "implied_vol",
+    "delta",
+    "gamma",
+    "theta",
+    "vega",
+]
+
 OPTION_SCHEMA = _OPTION_SCHEMA
 OPTION_BASIC_SCHEMA = _OPTION_BASIC_SCHEMA
 OPTION_DAILY_SCHEMA = _OPTION_DAILY_SCHEMA
 GREEKS_SCHEMA = _GREEKS_SCHEMA
+OPT_TRADE_RANK_STK_SCHEMA = _OPT_TRADE_RANK_STK_SCHEMA
+OPT_EXERCISE_INFO_SCHEMA = _OPT_EXERCISE_INFO_SCHEMA
+OPT_ADJUSTMENT_SCHEMA = _OPT_ADJUSTMENT_SCHEMA
+OPT_DAILY_PREOPEN_SCHEMA = _OPT_DAILY_PREOPEN_SCHEMA
 
 
 class OptionDBManager:
@@ -155,7 +224,7 @@ class OptionDBManager:
         if self._initialized:
             return
 
-        if not _DUCKDB_AVAILABLE:
+        if not _PARQUET_AVAILABLE:
             self._manager = None
             self._initialized = True
             return
@@ -164,7 +233,7 @@ class OptionDBManager:
             base_dir = os.path.dirname(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             )
-            db_path = os.path.join(base_dir, "data", "option.db")
+            db_path = os.path.join(base_dir, "data", "option_parquet")
 
         self._db_path = db_path
         self._manager = None
@@ -340,14 +409,11 @@ class OptionDBManager:
 
 def _get_db_manager():
     """获取数据库管理器单例（延迟初始化）"""
-    if not _DUCKDB_AVAILABLE:
+    if not _PARQUET_AVAILABLE:
         return None
     manager = OptionDBManager()
     manager._ensure_initialized()
     return manager
-
-
-_db_manager = None  # 延迟初始化，避免导入时副作用
 
 
 def _parse_num(value) -> Optional[float]:
@@ -1114,6 +1180,69 @@ class FinanceQuery:
         call_code = None
         put_code = None
 
+    class OPT_TRADE_RANK_STK:
+        """期权交易和持仓排名统计"""
+
+        date = None
+        underlying_symbol = None
+        contract_code = None
+        rank = None
+        volume = None
+        position = None
+        turnover = None
+        buy_volume = None
+        sell_volume = None
+        net_position = None
+
+    class OPT_EXERCISE_INFO:
+        """期权行权交收信息"""
+
+        date = None
+        option_code = None
+        option_name = None
+        underlying_code = None
+        underlying_name = None
+        exercise_price = None
+        exercise_quantity = None
+        exercise_type = None
+        settlement_price = None
+        settlement_amount = None
+
+    class OPT_ADJUSTMENT:
+        """期权合约调整记录"""
+
+        date = None
+        option_code = None
+        option_name = None
+        underlying_code = None
+        adjustment_type = None
+        old_strike = None
+        new_strike = None
+        old_contract_unit = None
+        new_contract_unit = None
+        reason = None
+
+    class OPT_DAILY_PREOPEN:
+        """期权每日盘前静态文件"""
+
+        date = None
+        option_code = None
+        option_name = None
+        underlying_code = None
+        open_price = None
+        high_price = None
+        low_price = None
+        close_price = None
+        pre_close = None
+        volume = None
+        amount = None
+        position = None
+        implied_vol = None
+        delta = None
+        gamma = None
+        theta = None
+        vega = None
+
     def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
@@ -1196,11 +1325,97 @@ class FinanceQuery:
                     "put_code",
                 ]
             )
+        elif table_name == "OPT_TRADE_RANK_STK":
+            logger.warning("OPT_TRADE_RANK_STK: akshare 暂无此接口，返回空 DataFrame")
+            return pd.DataFrame(
+                columns=[
+                    "date",
+                    "underlying_symbol",
+                    "contract_code",
+                    "rank",
+                    "volume",
+                    "position",
+                    "turnover",
+                    "buy_volume",
+                    "sell_volume",
+                    "net_position",
+                ]
+            )
+        elif table_name == "OPT_EXERCISE_INFO":
+            logger.warning("OPT_EXERCISE_INFO: akshare 暂无此接口，返回空 DataFrame")
+            return pd.DataFrame(
+                columns=[
+                    "date",
+                    "option_code",
+                    "option_name",
+                    "underlying_code",
+                    "underlying_name",
+                    "exercise_price",
+                    "exercise_quantity",
+                    "exercise_type",
+                    "settlement_price",
+                    "settlement_amount",
+                ]
+            )
+        elif table_name == "OPT_ADJUSTMENT":
+            logger.warning("OPT_ADJUSTMENT: akshare 暂无此接口，返回空 DataFrame")
+            return pd.DataFrame(
+                columns=[
+                    "date",
+                    "option_code",
+                    "option_name",
+                    "underlying_code",
+                    "adjustment_type",
+                    "old_strike",
+                    "new_strike",
+                    "old_contract_unit",
+                    "new_contract_unit",
+                    "reason",
+                ]
+            )
+        elif table_name == "OPT_DAILY_PREOPEN":
+            logger.warning("OPT_DAILY_PREOPEN: akshare 暂无此接口，返回空 DataFrame")
+            return pd.DataFrame(
+                columns=[
+                    "date",
+                    "option_code",
+                    "option_name",
+                    "underlying_code",
+                    "open_price",
+                    "high_price",
+                    "low_price",
+                    "close_price",
+                    "pre_close",
+                    "volume",
+                    "amount",
+                    "position",
+                    "implied_vol",
+                    "delta",
+                    "gamma",
+                    "theta",
+                    "vega",
+                ]
+            )
         else:
             raise ValueError(f"不支持的表: {table_name}")
 
 
 finance = FinanceQuery()
+
+
+class OptionQuery:
+    """聚宽 opt 模块模拟器 - 期权专项查询"""
+
+    OPT_TRADE_RANK_STK = FinanceQuery.OPT_TRADE_RANK_STK
+    OPT_EXERCISE_INFO = FinanceQuery.OPT_EXERCISE_INFO
+    OPT_ADJUSTMENT = FinanceQuery.OPT_ADJUSTMENT
+    OPT_DAILY_PREOPEN = FinanceQuery.OPT_DAILY_PREOPEN
+
+    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
+        return finance.run_query(query_obj, force_update, use_duckdb)
+
+
+opt = OptionQuery()
 
 
 def get_option_quote(

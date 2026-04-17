@@ -791,30 +791,6 @@ class TestCacheMechanism:
         assert isinstance(df, pd.DataFrame), "应返回 DataFrame"
         print(f"DuckDB缓存: {len(df)} 条")
 
-    def test_cache_with_pickle(self):
-        """
-        测试Pickle缓存
-
-        验证规则：
-        - Pickle缓存应正常工作
-        """
-        df = get_index_components("000300", use_duckdb=False, force_update=False)
-        assert isinstance(df, pd.DataFrame), "应返回 DataFrame"
-        print(f"Pickle缓存: {len(df)} 条")
-
-    def test_cache_consistency(self):
-        """
-        测试不同缓存方式数据一致性
-
-        验证规则：
-        - DuckDB和Pickle缓存应返回相同数据
-        """
-        df_duckdb = get_index_components("000300", use_duckdb=True, force_update=False)
-        df_pickle = get_index_components("000300", use_duckdb=False, force_update=False)
-        if not df_duckdb.empty and not df_pickle.empty:
-            assert len(df_duckdb) == len(df_pickle), "不同缓存方式数据量应一致"
-        print(f"缓存一致性验证通过")
-
     def test_force_update(self):
         """
         测试强制更新

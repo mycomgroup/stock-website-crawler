@@ -17,16 +17,15 @@ prewarm_data.py
 
 import os
 import sys
-import logging
 import argparse
 from datetime import datetime
 from typing import List, Dict, Optional
 import time
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger(__name__)
+from jk2bt.logging import setup_logging, get_logger
+
+setup_logging()
+logger = get_logger(__name__)
 
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _project_root not in sys.path:
@@ -36,7 +35,6 @@ from jk2bt.db.cache_status import (
     CacheManager,
     get_cache_manager,
 )
-from jk2bt.db.duckdb_manager import DuckDBManager
 from jk2bt.market_data.stock import get_stock_daily
 from jk2bt.market_data.etf import get_etf_daily
 from jk2bt.market_data.index import get_index_daily
@@ -79,72 +77,17 @@ def prewarm_meta_data(cache_base_dir: str = None, force_update: bool = False) ->
     logger.info("预热元数据...")
     logger.info("=" * 60)
 
-    if cache_base_dir is None:
-        # 从统一配置获取缓存目录
-        try:
-            from jk2bt.utils.config import get_config
-
-            config = get_config()
-            cache_base_dir = config.cache.cache_dir
-        except Exception:
-            # fallback 到原有逻辑（向后兼容）
-            utility_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            cache_base_dir = os.path.join(utility_dir, "cache")
-
     result = {"trade_days": False, "securities": False, "errors": []}
 
-    meta_cache_dir = os.path.join(cache_base_dir, "meta_cache")
-    os.makedirs(meta_cache_dir, exist_ok=True)
+    try:
+        from jk2bt.db.meta_cache_api import prewarm_meta_cache
 
-    trade_days_file = os.path.join(meta_cache_dir, "trade_days.pkl")
-
-    if not force_update and os.path.exists(trade_days_file):
-        logger.info("  交易日历: 缓存已存在，跳过")
-        result["trade_days"] = True
-    else:
-        try:
-            logger.info("  交易日历: 从网络下载...")
-            from jk2bt.data_access import get_adapter
-
-            adapter = get_adapter()
-            df = adapter.get_trade_dates()
-            import pandas as pd
-
-            df = pd.DataFrame({"trade_date": df})
-            df.to_pickle(trade_days_file)
-            logger.info(f"  交易日历: 成功缓存 {len(df)} 条记录")
-            result["trade_days"] = True
-        except Exception as e:
-            logger.error(f"  交易日历: 下载失败 - {e}")
-            result["errors"].append(f"trade_days: {e}")
-
-    securities_file = os.path.join(
-        meta_cache_dir, f"securities_{datetime.now().strftime('%Y%m%d')}.pkl"
-    )
-
-    if not force_update and os.path.exists(securities_file):
-        logger.info("  证券信息: 缓存已存在，跳过")
-        result["securities"] = True
-    else:
-        try:
-            logger.info("  证券信息: 从网络下载...")
-            from jk2bt.data_access import get_adapter
-
-            adapter = get_adapter()
-            df = adapter.get_securities_code_name()
-            df["code"] = df["code"].apply(
-                lambda x: (
-                    "sz" + x
-                    if x.startswith(("0", "3"))
-                    else ("sh" + x if x.startswith("6") else x)
-                )
-            )
-            df.to_pickle(securities_file)
-            logger.info(f"  证券信息: 成功缓存 {len(df)} 条记录")
-            result["securities"] = True
-        except Exception as e:
-            logger.error(f"  证券信息: 下载失败 - {e}")
-            result["errors"].append(f"securities: {e}")
+        meta_result = prewarm_meta_cache(force_update=force_update)
+        result["trade_days"] = meta_result.get("trade_days", 0) > 0
+        result["securities"] = meta_result.get("securities", 0) > 0
+    except Exception as e:
+        logger.error(f"  预热元数据失败: {e}")
+        result["errors"].append(f"meta_cache: {e}")
 
     return result
 
@@ -320,39 +263,36 @@ def prewarm_index_weights(
     Returns:
         Dict: 预热结果统计
     """
+    import pandas as pd
+
     logger.info("=" * 60)
     logger.info(f"预热指数成分权重: {len(index_pool)}只")
     logger.info("=" * 60)
 
-    if cache_base_dir is None:
-        # 从统一配置获取缓存目录
-        try:
-            from jk2bt.utils.config import get_config
-
-            config = get_config()
-            cache_base_dir = config.cache.cache_dir
-        except Exception:
-            # fallback 到原有逻辑（向后兼容）
-            utility_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            cache_base_dir = os.path.join(utility_dir, "cache")
-
     result = {"success": 0, "skipped": 0, "failed": [], "errors": []}
 
-    index_cache_dir = os.path.join(cache_base_dir, "index_cache")
-    os.makedirs(index_cache_dir, exist_ok=True)
+    from jk2bt.db.cache_config import init_default_cache
+    from parquet_cache import get_cache_manager
+
+    init_default_cache()
+    cache = get_cache_manager()
 
     for i, index in enumerate(index_pool, 1):
         index_num = index.zfill(6)
-        cache_file = os.path.join(index_cache_dir, f"{index_num}_weights.pkl")
 
         logger.info(f"  [{i}/{len(index_pool)}] {index}")
 
-        if not force_update and os.path.exists(cache_file):
-            mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - mtime).days < 7:
-                logger.info(f"    缓存已存在且新鲜，跳过")
-                result["skipped"] += 1
-                continue
+        if not force_update:
+            try:
+                cached_df = cache.get("index_weights", where={"index_code": index_num})
+                if not cached_df.empty:
+                    max_update_date = pd.to_datetime(cached_df["update_date"]).max()
+                    if (datetime.now() - max_update_date).days < 7:
+                        logger.info(f"    缓存已存在且新鲜，跳过")
+                        result["skipped"] += 1
+                        continue
+            except Exception:
+                pass
 
         try:
             from jk2bt.data_access import get_adapter
@@ -360,8 +300,53 @@ def prewarm_index_weights(
             adapter = get_adapter()
             df = adapter.get_index_stock_cons_weight_csindex(symbol=index_num)
             if df is not None and not df.empty:
-                df.to_pickle(cache_file)
-                logger.info(f"    成功: {len(df)} 条记录")
+                normalized = pd.DataFrame()
+                normalized["index_code"] = [index_num] * len(df)
+
+                code_col = None
+                for col in ["成分券代码", "成分股代码", "股票代码", "code"]:
+                    if col in df.columns:
+                        code_col = col
+                        break
+                if code_col:
+                    normalized["stock_code"] = df[code_col].apply(
+                        lambda x: (
+                            "sz" + str(x)
+                            if str(x).startswith(("0", "3"))
+                            else ("sh" + str(x) if str(x).startswith("6") else str(x))
+                        )
+                    )
+                else:
+                    normalized["stock_code"] = ""
+
+                weight_col = None
+                for col in ["权重", "weight", "Weight"]:
+                    if col in df.columns:
+                        weight_col = col
+                        break
+                if weight_col:
+                    normalized["weight"] = pd.to_numeric(
+                        df[weight_col], errors="coerce"
+                    )
+                else:
+                    normalized["weight"] = 0.0
+
+                date_col = None
+                for col in ["日期", "生效日期", "纳入日期", "date"]:
+                    if col in df.columns:
+                        date_col = col
+                        break
+                if date_col:
+                    normalized["update_date"] = pd.to_datetime(
+                        df[date_col], errors="coerce"
+                    ).dt.date
+                else:
+                    normalized["update_date"] = pd.Timestamp.now().date()
+
+                normalized["update_time"] = pd.Timestamp.now()
+
+                cache.put("index_weights", normalized)
+                logger.info(f"    成功: {len(normalized)} 条记录")
                 result["success"] += 1
             else:
                 logger.warning(f"    失败: 无数据")

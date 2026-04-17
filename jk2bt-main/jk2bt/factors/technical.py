@@ -238,6 +238,19 @@ def _compute_std(series: pd.Series, window: int) -> pd.Series:
     return series.rolling(window=window, min_periods=window).std()
 
 
+def _make_factor_wrapper(compute_func, window, name_suffix=None):
+    """Create a factor wrapper with a fixed window parameter."""
+    suffix = name_suffix or str(window)
+
+    def wrapper(symbol, end_date=None, count=None, **kwargs):
+        return compute_func(
+            symbol, window=window, end_date=end_date, count=count, **kwargs
+        )
+
+    wrapper.__name__ = f"{compute_func.__name__}_{suffix}"
+    return wrapper
+
+
 # -----------------------------------------------------------------
 # BIAS（乖离率）
 # -----------------------------------------------------------------
@@ -279,60 +292,10 @@ def compute_bias(
     return bias
 
 
-def compute_bias_5(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_bias(
-        symbol,
-        window=5,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_bias_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_bias(
-        symbol,
-        window=10,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_bias_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_bias(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_bias_60(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_bias(
-        symbol,
-        window=60,
-        end_date=end_date,
-        count=count,
-    )
+compute_bias_5 = _make_factor_wrapper(compute_bias, 5)
+compute_bias_10 = _make_factor_wrapper(compute_bias, 10)
+compute_bias_20 = _make_factor_wrapper(compute_bias, 20)
+compute_bias_60 = _make_factor_wrapper(compute_bias, 60)
 
 
 # -----------------------------------------------------------------
@@ -375,60 +338,10 @@ def compute_emac(
     return ema
 
 
-def compute_emac_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_emac(
-        symbol,
-        window=10,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_emac_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_emac(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_emac_26(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_emac(
-        symbol,
-        window=26,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_emac_60(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_emac(
-        symbol,
-        window=60,
-        end_date=end_date,
-        count=count,
-    )
+compute_emac_10 = _make_factor_wrapper(compute_emac, 10)
+compute_emac_20 = _make_factor_wrapper(compute_emac, 20)
+compute_emac_26 = _make_factor_wrapper(compute_emac, 26)
+compute_emac_60 = _make_factor_wrapper(compute_emac, 60)
 
 
 # -----------------------------------------------------------------
@@ -471,74 +384,11 @@ def compute_roc(
     return roc
 
 
-def compute_roc_6(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_roc(
-        symbol,
-        window=6,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_roc_12(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_roc(
-        symbol,
-        window=12,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_roc_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_roc(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_roc_60(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_roc(
-        symbol,
-        window=60,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_roc_120(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_roc(
-        symbol,
-        window=120,
-        end_date=end_date,
-        count=count,
-    )
+compute_roc_6 = _make_factor_wrapper(compute_roc, 6)
+compute_roc_12 = _make_factor_wrapper(compute_roc, 12)
+compute_roc_20 = _make_factor_wrapper(compute_roc, 20)
+compute_roc_60 = _make_factor_wrapper(compute_roc, 60)
+compute_roc_120 = _make_factor_wrapper(compute_roc, 120)
 
 
 # -----------------------------------------------------------------
@@ -582,46 +432,9 @@ def compute_price_nm(
     return price_nm
 
 
-def compute_price_1m(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_price_nm(
-        symbol,
-        window=21,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_price_3m(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_price_nm(
-        symbol,
-        window=61,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_price_1y(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_price_nm(
-        symbol,
-        window=250,
-        end_date=end_date,
-        count=count,
-    )
+compute_price_1m = _make_factor_wrapper(compute_price_nm, 21, "1m")
+compute_price_3m = _make_factor_wrapper(compute_price_nm, 61, "3m")
+compute_price_1y = _make_factor_wrapper(compute_price_nm, 250, "1y")
 
 
 # -----------------------------------------------------------------
@@ -674,46 +487,9 @@ def compute_plrc(
     return plrc
 
 
-def compute_plrc_6(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_plrc(
-        symbol,
-        window=6,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_plrc_12(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_plrc(
-        symbol,
-        window=12,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_plrc_24(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_plrc(
-        symbol,
-        window=24,
-        end_date=end_date,
-        count=count,
-    )
+compute_plrc_6 = _make_factor_wrapper(compute_plrc, 6)
+compute_plrc_12 = _make_factor_wrapper(compute_plrc, 12)
+compute_plrc_24 = _make_factor_wrapper(compute_plrc, 24)
 
 
 # -----------------------------------------------------------------
@@ -1054,46 +830,9 @@ def compute_vpt(
     return vpt
 
 
-def compute_single_day_vpt(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vpt(
-        symbol,
-        window=1,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_single_day_vpt_6(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vpt(
-        symbol,
-        window=6,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_single_day_vpt_12(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vpt(
-        symbol,
-        window=12,
-        end_date=end_date,
-        count=count,
-    )
+compute_single_day_vpt = _make_factor_wrapper(compute_vpt, 1)
+compute_single_day_vpt_6 = _make_factor_wrapper(compute_vpt, 6)
+compute_single_day_vpt_12 = _make_factor_wrapper(compute_vpt, 12)
 
 
 # -----------------------------------------------------------------
@@ -1141,32 +880,8 @@ def compute_trix(
     return trix
 
 
-def compute_trix_5(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_trix(
-        symbol,
-        window=5,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_trix_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_trix(
-        symbol,
-        window=10,
-        end_date=end_date,
-        count=count,
-    )
+compute_trix_5 = _make_factor_wrapper(compute_trix, 5)
+compute_trix_10 = _make_factor_wrapper(compute_trix, 10)
 
 
 # -----------------------------------------------------------------
@@ -1209,32 +924,8 @@ def compute_mac(
     return ma
 
 
-def compute_mac_60(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_mac(
-        symbol,
-        window=60,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_mac_120(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_mac(
-        symbol,
-        window=120,
-        end_date=end_date,
-        count=count,
-    )
+compute_mac_60 = _make_factor_wrapper(compute_mac, 60)
+compute_mac_120 = _make_factor_wrapper(compute_mac, 120)
 
 
 # -----------------------------------------------------------------
@@ -1277,88 +968,12 @@ def compute_vol(
     return vol
 
 
-def compute_vol_5(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vol(
-        symbol,
-        window=5,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vol_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vol(
-        symbol,
-        window=10,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vol_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vol(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vol_60(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vol(
-        symbol,
-        window=60,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vol_120(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vol(
-        symbol,
-        window=120,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vol_240(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vol(
-        symbol,
-        window=240,
-        end_date=end_date,
-        count=count,
-    )
+compute_vol_5 = _make_factor_wrapper(compute_vol, 5)
+compute_vol_10 = _make_factor_wrapper(compute_vol, 10)
+compute_vol_20 = _make_factor_wrapper(compute_vol, 20)
+compute_vol_60 = _make_factor_wrapper(compute_vol, 60)
+compute_vol_120 = _make_factor_wrapper(compute_vol, 120)
+compute_vol_240 = _make_factor_wrapper(compute_vol, 240)
 
 
 # -----------------------------------------------------------------
@@ -1407,49 +1022,9 @@ def compute_davol(
     return davol
 
 
-def compute_davol_5(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_davol(
-        symbol,
-        window=5,
-        ref_window=120,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_davol_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_davol(
-        symbol,
-        window=10,
-        ref_window=120,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_davol_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_davol(
-        symbol,
-        window=20,
-        ref_window=120,
-        end_date=end_date,
-        count=count,
-    )
+compute_davol_5 = _make_factor_wrapper(compute_davol, 5)
+compute_davol_10 = _make_factor_wrapper(compute_davol, 10)
+compute_davol_20 = _make_factor_wrapper(compute_davol, 20)
 
 
 # -----------------------------------------------------------------
@@ -1488,32 +1063,8 @@ def compute_vstd(
     return vstd
 
 
-def compute_vstd_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vstd(
-        symbol,
-        window=10,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vstd_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vstd(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
+compute_vstd_10 = _make_factor_wrapper(compute_vstd, 10)
+compute_vstd_20 = _make_factor_wrapper(compute_vstd, 20)
 
 
 # -----------------------------------------------------------------
@@ -1552,32 +1103,8 @@ def compute_vroc(
     return vroc
 
 
-def compute_vroc_6(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vroc(
-        symbol,
-        window=6,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vroc_12(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vroc(
-        symbol,
-        window=12,
-        end_date=end_date,
-        count=count,
-    )
+compute_vroc_6 = _make_factor_wrapper(compute_vroc, 6)
+compute_vroc_12 = _make_factor_wrapper(compute_vroc, 12)
 
 
 # -----------------------------------------------------------------
@@ -1616,60 +1143,10 @@ def compute_vema(
     return vema
 
 
-def compute_vema_5(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vema(
-        symbol,
-        window=5,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vema_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vema(
-        symbol,
-        window=10,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vema_12(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vema(
-        symbol,
-        window=12,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_vema_26(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_vema(
-        symbol,
-        window=26,
-        end_date=end_date,
-        count=count,
-    )
+compute_vema_5 = _make_factor_wrapper(compute_vema, 5)
+compute_vema_10 = _make_factor_wrapper(compute_vema, 10)
+compute_vema_12 = _make_factor_wrapper(compute_vema, 12)
+compute_vema_26 = _make_factor_wrapper(compute_vema, 26)
 
 
 # -----------------------------------------------------------------
@@ -1750,32 +1227,8 @@ def compute_tvma(
     return tvma
 
 
-def compute_tvma_6(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_tvma(
-        symbol,
-        window=6,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_tvma_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_tvma(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
+compute_tvma_6 = _make_factor_wrapper(compute_tvma, 6)
+compute_tvma_20 = _make_factor_wrapper(compute_tvma, 20)
 
 
 def compute_tvstd(
@@ -1809,32 +1262,8 @@ def compute_tvstd(
     return tvstd
 
 
-def compute_tvstd_6(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_tvstd(
-        symbol,
-        window=6,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_tvstd_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_tvstd(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
+compute_tvstd_6 = _make_factor_wrapper(compute_tvstd, 6)
+compute_tvstd_20 = _make_factor_wrapper(compute_tvstd, 20)
 
 
 # -----------------------------------------------------------------
@@ -1885,60 +1314,10 @@ def compute_cci(
     return cci
 
 
-def compute_cci_10(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_cci(
-        symbol,
-        window=10,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_cci_15(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_cci(
-        symbol,
-        window=15,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_cci_20(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_cci(
-        symbol,
-        window=20,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_cci_88(
-    symbol,
-    end_date=None,
-    count=None,
-    **kwargs,
-):
-    return compute_cci(
-        symbol,
-        window=88,
-        end_date=end_date,
-        count=count,
-    )
+compute_cci_10 = _make_factor_wrapper(compute_cci, 10)
+compute_cci_15 = _make_factor_wrapper(compute_cci, 15)
+compute_cci_20 = _make_factor_wrapper(compute_cci, 20)
+compute_cci_88 = _make_factor_wrapper(compute_cci, 88)
 
 
 # -----------------------------------------------------------------
@@ -2922,21 +2301,6 @@ def compute_sharpe_ratio_120(
     return compute_sharpe_ratio(
         symbol,
         window=120,
-        end_date=end_date,
-        count=count,
-    )
-
-
-def compute_plrc_6(
-    symbol: str,
-    end_date: Optional[str] = None,
-    count: Optional[int] = None,
-    **kwargs,
-) -> Union[float, pd.Series]:
-    """计算 PLRC6（6日价格线性回归系数）因子。"""
-    return compute_plrc(
-        symbol,
-        window=6,
         end_date=end_date,
         count=count,
     )

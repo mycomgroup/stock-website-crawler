@@ -313,28 +313,299 @@ class FinanceDBProxy:
 
     def run_query(self, query_obj):
         """执行finance查询"""
-        # 解析查询对象获取表名
         table_name = None
         if hasattr(query_obj, "_name"):
             table_name = query_obj._name
         elif hasattr(query_obj, "__class__"):
             table_name = query_obj.__class__.__name__
 
-        # 处理期货相关表
         if table_name in [
             "FUT_MARGIN",
             "FUT_CHARGE",
             "FUT_WAREHOUSE_RECEIPT",
             "FUT_MEMBER_POSITION_RANK",
         ]:
-            # TODO: 实现期货数据获取逻辑
-            # 可以使用 ak.futures_fees_info() 获取手续费和保证金数据
-            # 可以使用 ak.futures_shfe_warehouse_receipt() 等获取仓单数据
-            # 可以使用 ak.futures_dce_position_rank() 等获取持仓排名数据
             return pd.DataFrame()
 
-        # 简化实现，完整实现见原文件
+        if table_name == "STK_PERFORMANCE_LETTERS":
+            return self._query_performance_letters(query_obj)
+
+        if table_name == "STK_REPORT_DISCLOSURE":
+            return self._query_report_disclosure(query_obj)
+
+        if table_name == "STK_EMPLOYEE_INFO":
+            return self._query_employee_info(query_obj)
+
+        if table_name == "STK_MANAGEMENT_INFO":
+            return self._query_management_info(query_obj)
+
+        if table_name == "STK_LIMITED_SHARES_LIST":
+            return self._query_limited_shares_list(query_obj)
+
+        if table_name == "STK_LIMITED_SHARES_UNLIMIT":
+            return self._query_limited_shares_unlimit(query_obj)
+
         return pd.DataFrame()
+
+    def _query_employee_info(self, query_obj):
+        """查询上市公司员工情况数据"""
+        try:
+            import akshare as ak
+
+            code = None
+
+            if hasattr(query_obj, "_symbols") and query_obj._symbols:
+                code = query_obj._symbols[0] if query_obj._symbols else None
+
+            df = ak.stock_employee_info_em()
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "股票代码": "code",
+                "股票简称": "name",
+                "发布日期": "pub_date",
+                "报告期": "end_date",
+                "员工总数": "total_employee",
+                "人均工资": "avg_salary",
+                "学历结构": "education_structure",
+                "年龄结构": "age_structure",
+            }
+            df = df.rename(columns=column_mapping)
+
+            if code:
+                ak_code = code
+                if code.startswith("sh") or code.startswith("sz"):
+                    ak_code = code[2:]
+                if code.endswith(".XSHG") or code.endswith(".XSHE"):
+                    ak_code = code[:6]
+                ak_code = ak_code.zfill(6)
+                df = df[df["code"] == ak_code]
+
+            return df.reset_index(drop=True)
+
+        except Exception:
+            return pd.DataFrame()
+
+    def _query_management_info(self, query_obj):
+        """查询公司管理人员任职情况数据"""
+        try:
+            import akshare as ak
+
+            code = None
+
+            if hasattr(query_obj, "_symbols") and query_obj._symbols:
+                code = query_obj._symbols[0] if query_obj._symbols else None
+
+            df = ak.stock_management_info_em()
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "股票代码": "code",
+                "股票简称": "name",
+                "公告日期": "pub_date",
+                "姓名": "person_name",
+                "职务": "position",
+                "任职开始日期": "start_date",
+                "任职结束日期": "end_date",
+                "持股数量": "share_holding",
+                "持股比例": "share_ratio",
+            }
+            df = df.rename(columns=column_mapping)
+
+            if code:
+                ak_code = code
+                if code.startswith("sh") or code.startswith("sz"):
+                    ak_code = code[2:]
+                if code.endswith(".XSHG") or code.endswith(".XSHE"):
+                    ak_code = code[:6]
+                ak_code = ak_code.zfill(6)
+                df = df[df["code"] == ak_code]
+
+            return df.reset_index(drop=True)
+
+        except Exception:
+            return pd.DataFrame()
+
+    def _query_limited_shares_list(self, query_obj):
+        """查询受限股份上市公告日期数据"""
+        try:
+            import akshare as ak
+
+            code = None
+
+            if hasattr(query_obj, "_symbols") and query_obj._symbols:
+                code = query_obj._symbols[0] if query_obj._symbols else None
+
+            df = ak.stock_cixinqr_cninfo(date="20240101")
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "股票代码": "code",
+                "股票简称": "name",
+                "可上市交易日期": "end_date",
+                "总股本": "total_shares",
+                "受限股份数": "limited_shares",
+                "流通股份数": "float_shares",
+                "流通比例": "float_ratio",
+            }
+            df = df.rename(columns=column_mapping)
+            df["pub_date"] = None
+
+            if code:
+                ak_code = code
+                if code.startswith("sh") or code.startswith("sz"):
+                    ak_code = code[2:]
+                if code.endswith(".XSHG") or code.endswith(".XSHE"):
+                    ak_code = code[:6]
+                ak_code = ak_code.zfill(6)
+                df = df[df["code"] == ak_code]
+
+            return df.reset_index(drop=True)
+
+        except Exception:
+            return pd.DataFrame()
+
+    def _query_limited_shares_unlimit(self, query_obj):
+        """查询受限股份实际解禁日期数据"""
+        try:
+            import akshare as ak
+
+            code = None
+
+            if hasattr(query_obj, "_symbols") and query_obj._symbols:
+                code = query_obj._symbols[0] if query_obj._symbols else None
+
+            df = ak.stock_cixinhhr_cninfo(date="20240101")
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "股票代码": "code",
+                "股票简称": "name",
+                "解禁日期": "unlimit_date",
+                "股份类型": "share_type",
+                "解禁股份数": "unlimit_shares",
+                "总股本": "total_shares",
+                "解禁比例": "unlimit_ratio",
+            }
+            df = df.rename(columns=column_mapping)
+            df["pub_date"] = None
+
+            if code:
+                ak_code = code
+                if code.startswith("sh") or code.startswith("sz"):
+                    ak_code = code[2:]
+                if code.endswith(".XSHG") or code.endswith(".XSHE"):
+                    ak_code = code[:6]
+                ak_code = ak_code.zfill(6)
+                df = df[df["code"] == ak_code]
+
+            return df.reset_index(drop=True)
+
+        except Exception:
+            return pd.DataFrame()
+
+    def _query_performance_letters(self, query_obj):
+        """查询业绩快报数据"""
+        try:
+            import akshare as ak
+
+            code = None
+            start_date = None
+            end_date = None
+
+            if hasattr(query_obj, "_symbols") and query_obj._symbols:
+                code = query_obj._symbols[0] if query_obj._symbols else None
+
+            if hasattr(query_obj, "_value") and query_obj._value:
+                if hasattr(query_obj, "_field"):
+                    field = query_obj._field
+                    if field == "code":
+                        code = query_obj._value
+
+            df = ak.stock_em_performance_letters()
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "股票代码": "code",
+                "股票简称": "name",
+                "公告日期": "pub_date",
+                "报告日期": "report_date",
+                "业绩预告日期": "start_date",
+                "预计开始日期": "start_date",
+                "预计结束日期": "end_date",
+                "业绩预告类型": "report_type",
+                "营业总收入": "total_operating_revenue",
+                "营业收入": "operating_revenue",
+                "营业利润": "operating_profit",
+                "利润总额": "total_profit",
+                "归属于母公司所有者的净利润": "np_parent_company_owners",
+                "资产总计": "total_assets",
+                "归属于母公司所有者权益": "equities_parent_company_owners",
+                "基本每股收益": "basic_eps",
+                "加权平均净资产收益率": "weight_roe",
+            }
+
+            df = df.rename(columns=column_mapping)
+
+            if code:
+                ak_code = code
+                if code.startswith("sh") or code.startswith("sz"):
+                    ak_code = code[2:]
+                if code.endswith(".XSHG") or code.endswith(".XSHE"):
+                    ak_code = code[:6]
+                ak_code = ak_code.zfill(6)
+                df = df[df["code"] == ak_code]
+
+            return df.reset_index(drop=True)
+
+        except Exception:
+            return pd.DataFrame()
+
+    def _query_report_disclosure(self, query_obj):
+        """查询报告披露时间表"""
+        try:
+            import akshare as ak
+
+            code = None
+
+            if hasattr(query_obj, "_symbols") and query_obj._symbols:
+                code = query_obj._symbols[0] if query_obj._symbols else None
+
+            df = ak.stock_report_disclosure()
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "股票代码": "code",
+                "股票简称": "name",
+                "报告期": "end_date",
+                "预约日期": "appoint_date",
+                "第一次预约日期": "first_date",
+                "第二次预约日期": "second_date",
+                "第三次预约日期": "third_date",
+                "实际披露日期": "pub_date",
+            }
+
+            df = df.rename(columns=column_mapping)
+
+            if code:
+                ak_code = code
+                if code.startswith("sh") or code.startswith("sz"):
+                    ak_code = code[2:]
+                if code.endswith(".XSHG") or code.endswith(".XSHE"):
+                    ak_code = code[:6]
+                ak_code = ak_code.zfill(6)
+                df = df[df["code"] == ak_code]
+
+            return df.reset_index(drop=True)
+
+        except Exception:
+            return pd.DataFrame()
 
 
 finance_db = FinanceDBProxy()
@@ -603,7 +874,7 @@ def run_bt_framework(
     strategy_nav = pd.Series(strat.navs, index=dates)
 
     benchmark_nav = get_index_nav(benchmark_symbol, start_date, end_date)
-    benchmark_nav = benchmark_nav.reindex(strategy_nav.index).fillna(method="ffill")
+    benchmark_nav = benchmark_nav.reindex(strategy_nav.index).ffill()
 
     analyze_performance(strategy_nav, benchmark_nav)
 

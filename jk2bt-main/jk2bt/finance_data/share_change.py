@@ -17,7 +17,7 @@ finance_data/share_change.py
 - hold_ratio_after: 变动后持股比例
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/share_change.db 中
+- Parquet 缓存：存储在 data/share_change_parquet 中
 - 按周缓存：动态数据
 """
 
@@ -26,13 +26,14 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional, List, Union, Dict
 import logging
-import sys
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-logger = logging.getLogger(__name__)
 
 from jk2bt.utils.result import RobustResult
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
+from jk2bt.utils.date_utils import (
+    parse_ratio as _parse_ratio,
+    parse_date as _parse_date,
+    filter_by_date_range,
+)
 
 
 SHARE_CHANGE_CACHE_DAYS = 7
@@ -176,40 +177,6 @@ class ShareChangeCacheManager:
 _db_manager = ShareChangeCacheManager() if _CACHE_AVAILABLE else None
 
 
-def _extract_code_num(symbol: str) -> str:
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
-def _normalize_to_jq(symbol: str) -> str:
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
-
-
-def _parse_date(date_str) -> Optional[str]:
-    if not date_str or pd.isna(date_str):
-        return None
-    date_str = str(date_str).strip()
-    for fmt in ["%Y-%m-%d", "%Y%m%d", "%Y/%m/%d"]:
-        try:
-            dt = datetime.strptime(date_str, fmt)
-            return dt.strftime("%Y-%m-%d")
-        except ValueError:
-            continue
-    return None
-
-
 def _parse_num(value) -> Optional[int]:
     if value is None or value == "" or value == "-":
         return None
@@ -217,18 +184,6 @@ def _parse_num(value) -> Optional[int]:
         if isinstance(value, str):
             value = value.replace(",", "").strip()
         return int(float(value))
-    except (ValueError, TypeError):
-        return None
-
-
-def _parse_ratio(value) -> Optional[float]:
-    if value is None or value == "" or value == "-":
-        return None
-    try:
-        if isinstance(value, str):
-            value = value.replace("%", "").strip()
-            return float(value) / 100 if float(value) > 1 else float(value)
-        return float(value)
     except (ValueError, TypeError):
         return None
 
@@ -263,8 +218,8 @@ def get_share_change(
     - hold_amount_after: 变动后持股数量
     - hold_ratio_after: 变动后持股比例
     """
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if use_duckdb and _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(jq_code, cache_days=7):
@@ -283,7 +238,9 @@ def get_share_change(
                     _db_manager.insert_share_change(result)
                 if start_date is None and end_date is None:
                     return result
-                return _filter_by_date_range(result, start_date, end_date)
+                return filter_by_date_range(
+                    result, start_date, end_date, date_col="change_date"
+                )
     except Exception as e:
         logger.warning(f"[share_change] 获取股东变动失败 {symbol}: {e}")
 
@@ -322,31 +279,6 @@ def _normalize_share_change(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
             result[target] = None
 
     return result
-
-
-def _filter_by_date_range(
-    df: pd.DataFrame, start_date: str, end_date: str
-) -> pd.DataFrame:
-    """按日期范围筛选数据"""
-    if df.empty:
-        return df
-
-    df = df.copy()
-
-    if "change_date" not in df.columns:
-        return df
-
-    df["_date"] = pd.to_datetime(df["change_date"])
-
-    if start_date:
-        start_dt = pd.Timestamp(start_date)
-        df = df[df["_date"] >= start_dt]
-
-    if end_date:
-        end_dt = pd.Timestamp(end_date)
-        df = df[df["_date"] <= end_dt]
-
-    return df.drop(columns=["_date"]).reset_index(drop=True)
 
 
 def query_share_change(
@@ -448,8 +380,8 @@ def get_pledge_info(
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取股权质押信息"""
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     from jk2bt.data_access import get_adapter
 
@@ -558,8 +490,8 @@ def get_shareholder_changes(
             source="input",
         )
 
-    code_num = _extract_code_num(code)
-    jq_code = _normalize_to_jq(code)
+    code_num = extract_code_num(code)
+    jq_code = ak_code_to_jq(code)
 
     if use_duckdb and _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(jq_code, cache_days=SHARE_CHANGE_CACHE_DAYS):
@@ -591,7 +523,9 @@ def get_shareholder_changes(
                 _db_manager.insert_share_change(cache_df)
 
             if start_date or end_date:
-                df_result = _filter_by_date_range(df_result, start_date, end_date)
+                df_result = filter_by_date_range(
+                    df_result, start_date, end_date, date_col="change_date"
+                )
                 if "change_reason" not in df_result.columns:
                     df_result["change_reason"] = None
 
@@ -603,21 +537,6 @@ def get_shareholder_changes(
             )
     except Exception as e:
         logger.warning(f"[get_shareholder_changes] 获取股东变动失败 {code}: {e}")
-
-    if os.path.exists(cache_file):
-        try:
-            if "change_reason" not in cached_df.columns:
-                cached_df["change_reason"] = None
-            if start_date or end_date:
-                cached_df = _filter_by_date_range(cached_df, start_date, end_date)
-            return RobustResult(
-                success=True,
-                data=cached_df[_SHAREHOLDER_CHANGES_SCHEMA],
-                reason=f"网络失败，使用缓存兜底获取{len(cached_df)}条记录",
-                source="fallback",
-            )
-        except Exception as e:
-            logger.warning(f"读取缓存兜底失败: {e}")
 
     return RobustResult(
         success=False,
@@ -633,23 +552,12 @@ def _fetch_shareholder_changes_from_akshare(
     """从 akshare 获取股东增减持数据"""
     from jk2bt.data_access import get_adapter
 
-    try:
-        df = get_adapter().get_holding_change_em(symbol=code_num)
-        if df is not None and not df.empty:
+    df = get_adapter().get_shareholder_changes_with_fallback(symbol=code_num)
+    if df is not None and not df.empty:
+        if "change_date" in df.columns or "变动日期" in df.columns:
             return _normalize_shareholder_changes(df, jq_code)
-    except Exception as e:
-        logger.warning(f"ak.stock_gdfx_holding_change_em 失败: {e}")
-
-    try:
-        end_date = datetime.now().strftime("%Y%m%d")
-        start_date = (datetime.now() - timedelta(days=365)).strftime("%Y%m%d")
-        df = get_adapter().get_share_change_cninfo(
-            symbol=code_num, start_date=start_date, end_date=end_date
-        )
-        if df is not None and not df.empty:
+        else:
             return _normalize_shareholder_changes_from_cninfo(df, jq_code)
-    except Exception as e:
-        logger.warning(f"ak.stock_share_change_cninfo 失败: {e}")
 
     return pd.DataFrame(columns=_SHAREHOLDER_CHANGES_SCHEMA)
 
@@ -826,8 +734,8 @@ def get_insider_trading(
     - change_ratio: 变动比例
     - hold_amount_after: 变动后持股数量
     """
-    code_num = _extract_code_num(security)
-    jq_code = _normalize_to_jq(security)
+    code_num = extract_code_num(security)
+    jq_code = ak_code_to_jq(security)
 
     from jk2bt.data_access import get_adapter
 
@@ -855,7 +763,9 @@ def get_insider_trading(
             if not result.empty:
                 if start_date is None and end_date is None:
                     return result
-                return _filter_by_date_range(result, start_date, end_date)
+                return filter_by_date_range(
+                    result, start_date, end_date, date_col="change_date"
+                )
     except Exception as e:
         logger.warning(f"[get_insider_trading] 获取高管增减持失败 {security}: {e}")
 
@@ -1177,8 +1087,8 @@ def get_freeze_info(
     - freeze_type: 冻结类型
     - unfreeze_date: 解冻日期
     """
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     try:
         df_raw = _fetch_freeze_data_from_akshare(code_num)
@@ -1296,8 +1206,8 @@ def get_capital_change(
     - circulating_capital_before: 变动前流通股本
     - circulating_capital_after: 变动后流通股本
     """
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     try:
         df_raw = _fetch_capital_change_from_akshare(code_num, start_date, end_date)
@@ -1436,8 +1346,8 @@ def get_topholder_change(
     ----
     DataFrame，包含前十大股东变动信息
     """
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     try:
         df_raw = _fetch_topholder_change_from_akshare(code_num)
@@ -1446,7 +1356,9 @@ def get_topholder_change(
             if not result.empty:
                 if start_date is None and end_date is None:
                     return result
-                return _filter_by_date_range(result, start_date, end_date)
+                return filter_by_date_range(
+                    result, start_date, end_date, date_col="change_date"
+                )
     except Exception as e:
         logger.warning(f"[get_topholder_change] 获取前十大股东变动失败 {symbol}: {e}")
 

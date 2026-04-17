@@ -39,7 +39,7 @@ class TestCacheManager:
         from jk2bt.db.cache_status import CacheManager
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            db_path = os.path.join(tmpdir, "test_cache.db")
+            db_path = os.path.join(tmpdir, "test_cache_parquet")
             manager = CacheManager(db_path=db_path)
             assert manager.db_path == db_path
 
@@ -169,7 +169,7 @@ class TestCacheManager:
 
     def test_check_cache_status_convenience(self):
         """测试便捷函数"""
-        from jk2bt.db.cache_manager import (
+        from jk2bt.db.cache_status import (
             check_cache_status,
         )
 

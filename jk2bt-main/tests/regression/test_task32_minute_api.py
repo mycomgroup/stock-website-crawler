@@ -7,9 +7,7 @@ test_task32_minute_api.py
 import sys
 import os
 
-sys.path.insert(
-    0, os.path.join(os.path.dirname(__file__), "src")
-)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 import pandas as pd
 from datetime import datetime, timedelta
@@ -211,22 +209,12 @@ def test_period_validation():
     try:
         from jk2bt.db.parquet_adapter import ParquetAdapter
 
-        db_path = os.path.join(os.path.dirname(__file__), "data", "market.db")
-        if os.path.exists(db_path):
-            print(f"\n✓ DuckDB 数据库存在: {db_path}")
-            db = ParquetAdapter(read_only=True)
-            with db._get_connection(read_only=True) as conn:
-                tables = conn.execute("SHOW TABLES").fetchall()
-                table_names = [t[0] for t in tables]
-                print(f"  可用表: {table_names}")
-
-                if "stock_minute" in table_names:
-                    count = conn.execute(
-                        "SELECT COUNT(*) FROM stock_minute"
-                    ).fetchone()[0]
-                    print(f"  stock_minute 行数: {count}")
+        db = ParquetAdapter(read_only=True)
+        count = db.count_records("stock_minute")
+        print(f"\n✓ Parquet 缓存可用")
+        print(f"  stock_minute 行数: {count}")
     except Exception as e:
-        print(f"\n✗ DuckDB 检查失败: {e}")
+        print(f"\n✗ Parquet 缓存检查失败: {e}")
 
     results = {}
 
@@ -242,9 +230,9 @@ def test_period_validation():
 
 
 def check_duckdb_cache():
-    """检查 DuckDB 缓存状态"""
+    """检查 Parquet 缓存状态"""
     print("\n" + "=" * 60)
-    print("检查 DuckDB 缓存状态")
+    print("检查 Parquet 缓存状态")
     print("=" * 60)
 
     try:
@@ -252,47 +240,46 @@ def check_duckdb_cache():
 
         db = ParquetAdapter(read_only=True)
 
-        with db._get_connection(read_only=True) as conn:
-            tables = conn.execute("SHOW TABLES").fetchall()
-            table_names = [t[0] for t in tables]
-            print(f"\n可用表: {table_names}")
+        stock_minute_count = db.count_records("stock_minute")
+        print(f"\nstock_minute 总行数: {stock_minute_count}")
 
-            if "stock_minute" in table_names:
-                count = conn.execute("SELECT COUNT(*) FROM stock_minute").fetchone()[0]
-                print(f"stock_minute 总行数: {count}")
+        if stock_minute_count > 0:
+            df = db.query("stock_minute")
+            if not df.empty:
+                sample = (
+                    df.groupby(["symbol", "period", "adjust"])
+                    .size()
+                    .reset_index(name="cnt")
+                    .sort_values("cnt", ascending=False)
+                    .head(10)
+                )
+                print(f"\nstock_minute 数据分布:")
+                for _, row in sample.iterrows():
+                    print(
+                        f"  {row['symbol']} ({row['period']}, {row['adjust']}): {row['cnt']} 条"
+                    )
 
-                if count > 0:
-                    sample = conn.execute("""
-                        SELECT symbol, period, adjust, COUNT(*) as cnt
-                        FROM stock_minute
-                        GROUP BY symbol, period, adjust
-                        ORDER BY cnt DESC
-                        LIMIT 10
-                    """).fetchall()
-                    print(f"\nstock_minute 数据分布:")
-                    for row in sample:
-                        print(f"  {row[0]} ({row[1]}, {row[2]}): {row[3]} 条")
+        etf_minute_count = db.count_records("etf_minute")
+        print(f"\netf_minute 总行数: {etf_minute_count}")
 
-            if "etf_minute" in table_names:
-                count = conn.execute("SELECT COUNT(*) FROM etf_minute").fetchone()[0]
-                print(f"\netf_minute 总行数: {count}")
+        if etf_minute_count > 0:
+            df = db.query("etf_minute")
+            if not df.empty:
+                sample = (
+                    df.groupby(["symbol", "period"])
+                    .size()
+                    .reset_index(name="cnt")
+                    .sort_values("cnt", ascending=False)
+                    .head(10)
+                )
+                print(f"\netf_minute 数据分布:")
+                for _, row in sample.iterrows():
+                    print(f"  {row['symbol']} ({row['period']}): {row['cnt']} 条")
 
-                if count > 0:
-                    sample = conn.execute("""
-                        SELECT symbol, period, COUNT(*) as cnt
-                        FROM etf_minute
-                        GROUP BY symbol, period
-                        ORDER BY cnt DESC
-                        LIMIT 10
-                    """).fetchall()
-                    print(f"\netf_minute 数据分布:")
-                    for row in sample:
-                        print(f"  {row[0]} ({row[1]}): {row[2]} 条")
-
-        return {"status": "checked", "tables": table_names}
+        return {"status": "checked", "tables": ["stock_minute", "etf_minute"]}
 
     except Exception as e:
-        print(f"  ✗ DuckDB 检查失败: {e}")
+        print(f"  ✗ Parquet 检查失败: {e}")
         return {"status": "failed", "error": str(e)[:100]}
 
 

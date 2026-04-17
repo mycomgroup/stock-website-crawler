@@ -15,7 +15,7 @@ finance_data/unlock.py
 - holder_type: 持股人类型
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/unlock.db 中
+- Parquet 缓存：存储在 data/unlock_parquet 中
 - 按周缓存：动态数据
 """
 
@@ -24,13 +24,14 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional, List, Union
 import logging
-import sys
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-logger = logging.getLogger(__name__)
 
 from jk2bt.utils.result import RobustResult
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
+from jk2bt.utils.date_utils import (
+    parse_ratio as _parse_ratio,
+    parse_date as _parse_date,
+    filter_by_date_range,
+)
 
 
 _CACHE_AVAILABLE = False
@@ -172,40 +173,6 @@ class UnlockCacheManager:
 _db_manager = UnlockCacheManager() if _CACHE_AVAILABLE else None
 
 
-def _extract_code_num(symbol: str) -> str:
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
-def _normalize_to_jq(symbol: str) -> str:
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
-
-
-def _parse_date(date_str) -> Optional[str]:
-    if not date_str or pd.isna(date_str):
-        return None
-    date_str = str(date_str).strip()
-    for fmt in ["%Y-%m-%d", "%Y%m%d", "%Y/%m/%d"]:
-        try:
-            dt = datetime.strptime(date_str, fmt)
-            return dt.strftime("%Y-%m-%d")
-        except ValueError:
-            continue
-    return None
-
-
 def _parse_num(value) -> Optional[int]:
     if value is None or value == "" or value == "-":
         return None
@@ -213,18 +180,6 @@ def _parse_num(value) -> Optional[int]:
         if isinstance(value, str):
             value = value.replace(",", "").strip()
         return int(float(value))
-    except (ValueError, TypeError):
-        return None
-
-
-def _parse_ratio(value) -> Optional[float]:
-    if value is None or value == "" or value == "-":
-        return None
-    try:
-        if isinstance(value, str):
-            value = value.replace("%", "").strip()
-            return float(value) / 100 if float(value) > 1 else float(value)
-        return float(value)
     except (ValueError, TypeError):
         return None
 
@@ -257,7 +212,7 @@ def get_unlock(
     - unlock_type: 解禁类型
     - holder_type: 持股人类型
     """
-    jq_code = _normalize_to_jq(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if use_duckdb and _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(jq_code, cache_days=7):
@@ -270,29 +225,20 @@ def get_unlock(
     try:
         results = []
 
-        try:
-            df_queue = get_adapter().get_unlock_queue_sina(
-                symbol=_extract_code_num(symbol)
-            )
-            if df_queue is not None and not df_queue.empty:
-                for _, row in df_queue.iterrows():
+        data_sources = get_adapter().get_unlock_with_fallback(
+            symbol=extract_code_num(symbol)
+        )
+        for source_name, df in data_sources:
+            if source_name == "sina_queue":
+                for _, row in df.iterrows():
                     record = _parse_queue_row(row, jq_code)
                     if record:
                         results.append(record)
-        except Exception as e:
-            logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
-
-        try:
-            df_summary = get_adapter().get_unlock_summary_em(
-                symbol=_extract_code_num(symbol)
-            )
-            if df_summary is not None and not df_summary.empty:
-                for _, row in df_summary.iterrows():
+            elif source_name == "em_summary":
+                for _, row in df.iterrows():
                     record = _parse_summary_row(row, jq_code)
                     if record:
                         results.append(record)
-        except Exception as e:
-            logger.debug(f"stock_restricted_release_summary_em 失败: {e}")
 
         if results:
             result_df = pd.DataFrame(results)
@@ -304,7 +250,9 @@ def get_unlock(
                 _db_manager.insert_unlock(result_df)
             if start_date is None and end_date is None:
                 return result_df
-            return _filter_by_date_range(result_df, start_date, end_date)
+            return filter_by_date_range(
+                result_df, start_date, end_date, date_col="unlock_date"
+            )
 
     except Exception as e:
         logger.warning(f"[unlock] 获取限售解禁失败 {symbol}: {e}")
@@ -356,31 +304,6 @@ def _parse_detail_row(row, jq_code: str) -> Optional[dict]:
         }
     except Exception:
         return None
-
-
-def _filter_by_date_range(
-    df: pd.DataFrame, start_date: str, end_date: str
-) -> pd.DataFrame:
-    """按日期范围筛选数据"""
-    if df.empty:
-        return df
-
-    df = df.copy()
-
-    if "unlock_date" not in df.columns:
-        return df
-
-    df["_date"] = pd.to_datetime(df["unlock_date"])
-
-    if start_date:
-        start_dt = pd.Timestamp(start_date)
-        df = df[df["_date"] >= start_dt]
-
-    if end_date:
-        end_dt = pd.Timestamp(end_date)
-        df = df[df["_date"] <= end_dt]
-
-    return df.drop(columns=["_date"]).reset_index(drop=True)
 
 
 def query_unlock(
@@ -446,7 +369,7 @@ def get_unlock_calendar(
             result = pd.DataFrame()
             code_col = "股票代码" if "股票代码" in df.columns else "code"
             result["code"] = df[code_col].apply(
-                lambda x: _normalize_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
+                lambda x: ak_code_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
             )
             result["unlock_date"] = [date] * len(df)
             amount_col = "实际解禁数量" if "实际解禁数量" in df.columns else "解禁数量"
@@ -620,7 +543,7 @@ def get_unlock_pressure(
         force_update=force_update,
     )
 
-    jq_code = _normalize_to_jq(symbol) if "normalize_to_jq" in dir() else symbol
+    jq_code = ak_code_to_jq(symbol) if "normalize_to_jq" in dir() else symbol
 
     if df.empty:
         return {
@@ -720,36 +643,27 @@ def get_unlock_info(
     >>> else:
     >>>     print(f"获取失败: {result.reason}")
     """
-    jq_code = _normalize_to_jq(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     from jk2bt.data_access import get_adapter
 
     try:
         results = []
 
-        try:
-            df_queue = get_adapter().get_unlock_queue_sina(
-                symbol=_extract_code_num(symbol)
-            )
-            if df_queue is not None and not df_queue.empty:
-                for _, row in df_queue.iterrows():
+        data_sources = get_adapter().get_unlock_with_fallback(
+            symbol=extract_code_num(symbol)
+        )
+        for source_name, df in data_sources:
+            if source_name == "sina_queue":
+                for _, row in df.iterrows():
                     record = _parse_queue_row(row, jq_code)
                     if record:
                         results.append(record)
-        except Exception as e1:
-            logger.debug(f"stock_restricted_release_queue_sina 失败: {e1}")
-
-        try:
-            df_summary = get_adapter().get_unlock_summary_em(
-                symbol=_extract_code_num(symbol)
-            )
-            if df_summary is not None and not df_summary.empty:
-                for _, row in df_summary.iterrows():
+            elif source_name == "em_summary":
+                for _, row in df.iterrows():
                     record = _parse_summary_row(row, jq_code)
                     if record:
                         results.append(record)
-        except Exception as e2:
-            logger.debug(f"stock_restricted_release_summary_em 失败: {e2}")
 
         if results:
             result_df = pd.DataFrame(results)
@@ -758,7 +672,9 @@ def get_unlock_info(
             )
             result_df = result_df.sort_values("unlock_date").reset_index(drop=True)
 
-            df_filtered = _filter_by_date_range(result_df, start_date, end_date)
+            df_filtered = filter_by_date_range(
+                result_df, start_date, end_date, date_col="unlock_date"
+            )
             if not df_filtered.empty or (start_date is None and end_date is None):
                 return RobustResult(
                     success=True,
@@ -821,7 +737,7 @@ def get_upcoming_unlocks(
             result = pd.DataFrame()
             code_col = "股票代码" if "股票代码" in df.columns else "code"
             result["code"] = df[code_col].apply(
-                lambda x: _normalize_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
+                lambda x: ak_code_to_jq(str(x).zfill(6)) if pd.notna(x) else ""
             )
             date_col = "解禁日期" if "解禁日期" in df.columns else "unlock_date"
             result["unlock_date"] = (
@@ -916,35 +832,27 @@ def query_lock_share(
     - shareholder_name: 股东名称
     - shareholder_type: 股东类型
     """
-    jq_code = _normalize_to_jq(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     from jk2bt.data_access import get_adapter
 
     try:
         results = []
-        try:
-            df_queue = get_adapter().get_unlock_queue_sina(
-                symbol=_extract_code_num(symbol)
-            )
-            if df_queue is not None and not df_queue.empty:
-                for _, row in df_queue.iterrows():
+
+        data_sources = get_adapter().get_unlock_with_fallback(
+            symbol=extract_code_num(symbol)
+        )
+        for source_name, df in data_sources:
+            if source_name == "sina_queue":
+                for _, row in df.iterrows():
                     record = _parse_lock_share_row(row, jq_code)
                     if record:
                         results.append(record)
-        except Exception as e:
-            logger.debug(f"stock_restricted_release_queue_sina 失败: {e}")
-
-        try:
-            df_summary = get_adapter().get_unlock_summary_em(
-                symbol=_extract_code_num(symbol)
-            )
-            if df_summary is not None and not df_summary.empty:
-                for _, row in df_summary.iterrows():
+            elif source_name == "em_summary":
+                for _, row in df.iterrows():
                     record = _parse_lock_share_summary_row(row, jq_code)
                     if record:
                         results.append(record)
-        except Exception as e:
-            logger.debug(f"stock_restricted_release_summary_em 失败: {e}")
 
         if results:
             result_df = pd.DataFrame(results)
@@ -1012,8 +920,8 @@ def analyze_unlock_impact(
     - risk_factors: 风险因素列表
     - historical_impact: 历史解禁影响分析
     """
-    code_num = _extract_code_num(security)
-    jq_code = _normalize_to_jq(security)
+    code_num = extract_code_num(security)
+    jq_code = ak_code_to_jq(security)
 
     result = {
         "code": jq_code,

@@ -14,7 +14,7 @@ import pandas as pd
 
 from .data_source import DataSource, DataSourceError
 from .cache_manager import get_cache
-from .source_router import MultiSourceRouter, EmptyDataPolicy
+
 from .error_codes import (
     ErrorCode,
     DataSourceError as DataErrorCode,
@@ -23,11 +23,18 @@ from .error_codes import (
 )
 from .akshare_compat import get_compat_adapter, AkShareCompatAdapter
 from .stats_collector import get_stats_collector, StatsCollector
+from .source_router import MultiSourceRouter
 
 try:
     from jk2bt.utils import data_source_backup
+    from jk2bt.utils.data_source_backup import (
+        DEFAULT_STOCK_DAILY_SOURCES,
+        DEFAULT_ETF_DAILY_SOURCES,
+    )
 except ImportError:
     data_source_backup = None
+    DEFAULT_STOCK_DAILY_SOURCES = ["sina", "east_money", "tushare", "baostock"]
+    DEFAULT_ETF_DAILY_SOURCES = ["sina", "east_money", "tushare"]
 
 try:
     from parquet_cache import get_cache_manager
@@ -35,6 +42,8 @@ try:
     _PARQUET_CACHE_AVAILABLE = True
 except ImportError:
     _PARQUET_CACHE_AVAILABLE = False
+
+from jk2bt.utils.symbol import jq_code_to_ak as _jq_code_to_ak
 
 logger = logging.getLogger(__name__)
 
@@ -59,9 +68,7 @@ class AkShareAdapter(DataSource):
 
     name = "akshare"
     source_type = "real"
-
-    # 数据源优先级配置
-    DEFAULT_DATA_SOURCES = ["sina", "east_money", "tushare", "baostock"]
+    DEFAULT_DATA_SOURCES = DEFAULT_STOCK_DAILY_SOURCES
 
     def __init__(
         self,
@@ -102,9 +109,6 @@ class AkShareAdapter(DataSource):
 
         # 按需导入 market_data 模块
         self._market_data_loaded = False
-
-        # Source router for multi-source failover (Phase 1: infrastructure only)
-        self._source_router = None
 
         # AkShare version compatibility adapter (Phase 2)
         self._compat_adapter = None
@@ -171,21 +175,6 @@ class AkShareAdapter(DataSource):
             logger.warning(f"market_data 模块导入失败: {e}")
             # 设置空函数作为备用
             self._market_data_loaded = True  # 标记为已尝试加载
-
-    def _get_source_router(self, required_columns=None, policy=EmptyDataPolicy.STRICT):
-        """Lazily create and return the MultiSourceRouter.
-
-        Phase 1: Registers self as the sole provider. When additional
-        sources are added they will be appended to the providers list.
-        """
-        if self._source_router is None:
-            self._source_router = MultiSourceRouter(
-                providers=[("akshare", self)],
-                required_columns=required_columns or [],
-                min_rows=0,
-                policy=policy,
-            )
-        return self._source_router
 
     def _get_compat_adapter(self) -> AkShareCompatAdapter:
         """Lazily create and return the AkShareCompatAdapter."""
@@ -272,23 +261,7 @@ class AkShareAdapter(DataSource):
 
     def _normalize_symbol(self, symbol: str) -> str:
         """标准化代码格式"""
-        # 去除前缀
-        symbol = str(symbol)
-        if symbol.startswith("sh"):
-            return symbol
-        if symbol.startswith("sz"):
-            return symbol
-        # 聚宽格式转换
-        if ".XSHG" in symbol:
-            return "sh" + symbol.replace(".XSHG", "")
-        if ".XSHE" in symbol:
-            return "sz" + symbol.replace(".XSHE", "")
-        # 纯代码添加前缀
-        if symbol.startswith("6"):
-            return "sh" + symbol.zfill(6)
-        if symbol.startswith("0") or symbol.startswith("3"):
-            return "sz" + symbol.zfill(6)
-        return symbol
+        return _jq_code_to_ak(symbol)
 
     def _get_from_cache(
         self,
@@ -701,7 +674,6 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> pd.DataFrame:
         """获取证券列表"""
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         if self._akshare_available:
             try:
                 import time
@@ -795,8 +767,19 @@ class AkShareAdapter(DataSource):
         **kwargs,
     ) -> pd.DataFrame:
         """获取分钟线数据"""
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         self._load_market_data()
+        symbol = self._normalize_symbol(symbol)
+        start = self._normalize_date(start_date) if start_date else None
+        end = self._normalize_date(end_date) if end_date else None
+        adjust = kwargs.get("adjust", "")
+
+        cache_key = {
+            "symbol": symbol,
+            "freq": freq,
+            "adjust": adjust,
+            "start_date": start,
+            "end_date": end,
+        }
 
         if hasattr(self, "_get_stock_minute"):
             try:
@@ -1161,7 +1144,6 @@ class AkShareAdapter(DataSource):
                 symbol=symbol,
             )
 
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         self._load_market_data()
 
         if hasattr(self, "_get_etf_daily"):
@@ -1214,7 +1196,6 @@ class AkShareAdapter(DataSource):
                 symbol=symbol,
             )
 
-        # TODO: Phase 2 - Use self._get_source_router().execute() for multi-source failover
         self._load_market_data()
 
         if hasattr(self, "_get_index_daily"):
@@ -1284,8 +1265,8 @@ class AkShareAdapter(DataSource):
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
-    def get_stock_valuation(self, symbol: str) -> pd.DataFrame:
-        """获取个股估值数据"""
+    def _get_stock_valuation_em(self, symbol: str) -> pd.DataFrame:
+        """获取个股估值数据（东方财富）"""
         symbol = self._normalize_symbol(symbol)
 
         cached = self._parquet_get("valuation", where={"symbol": symbol})
@@ -1982,46 +1963,30 @@ class AkShareAdapter(DataSource):
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
-    def get_stock_valuation_with_fallback(self, symbol: str) -> pd.DataFrame:
+    def get_stock_valuation(self, symbol: str) -> pd.DataFrame:
         """
         获取个股估值数据，支持多数据源自动切换（BAIDU→EASTMONEY→THS）。
 
         Returns DataFrame with columns: date, market_cap, pe_ratio, pb_ratio,
         circulating_market_cap, pe_ratio_ttm
         """
-        import warnings
-        from functools import reduce
+        router = MultiSourceRouter(
+            providers=[
+                ("baidu", lambda: self._fetch_valuation_baidu(symbol)),
+                ("eastmoney", lambda: self._fetch_valuation_eastmoney(symbol)),
+                ("ths", lambda: self._fetch_valuation_ths(symbol)),
+            ],
+            required_columns=["date"],
+            min_rows=1,
+        )
+        result = router.execute()
+        if not result.success:
+            raise DataSourceError(
+                result.error or "all sources failed", source=result.source or "all"
+            )
+        return result.data
 
-        try:
-            from ..utils.date_utils import find_date_column
-        except ImportError:
-            try:
-                from jk2bt.utils.date_utils import find_date_column
-            except ImportError:
-
-                def find_date_column(df, prefix):
-                    for col in df.columns:
-                        col_lower = str(col).lower()
-                        if any(k in col_lower for k in ["date", "day", "日期", "时间"]):
-                            return col
-                    return None
-
-        sources = [
-            ("baidu", self._fetch_valuation_baidu),
-            ("eastmoney", self._fetch_valuation_eastmoney),
-            ("ths", self._fetch_valuation_ths),
-        ]
-
-        for source_name, fetch_fn in sources:
-            try:
-                df = fetch_fn(symbol)
-                if df is not None and not df.empty:
-                    return df
-            except Exception as e:
-                warnings.warn(f"{source_name} 估值数据获取失败: {e}")
-                continue
-
-        return pd.DataFrame()
+    get_stock_valuation_with_fallback = get_stock_valuation
 
     def _fetch_valuation_baidu(self, symbol: str) -> pd.DataFrame:
         """从百度估值接口获取数据"""
@@ -2141,109 +2106,6 @@ class AkShareAdapter(DataSource):
             return pd.DataFrame()
 
         return pd.DataFrame([result])
-
-    def get_futures_daily_with_fallback(
-        self,
-        symbol: str,
-        start_date: str = None,
-        end_date: str = None,
-    ) -> pd.DataFrame:
-        """
-        获取期货日线数据，支持多数据源自动切换。
-
-        Parameters
-        ----------
-        symbol : str
-            期货代码（如 IF2401, AU9999）
-        start_date : str, optional
-            开始日期（YYYYMMDD格式）
-        end_date : str, optional
-            结束日期（YYYYMMDD格式）
-
-        Returns
-        -------
-        pd.DataFrame
-            包含 datetime, open, high, low, close, volume, money, openinterest 字段
-        """
-        import warnings
-
-        if not self._akshare_available:
-            return pd.DataFrame()
-
-        def _jq_futures_to_sina(sym):
-            """将聚宽风格期货代码转换为新浪期货符号"""
-            sym = sym.upper()
-            for ex in [".CCFX", ".XSGE", ".XDCE", ".XZCE", ".XINE", ".GFEX"]:
-                if sym.endswith(ex):
-                    code = sym[: -len(ex)]
-                    break
-            else:
-                code = sym
-            if code.endswith("9999"):
-                variety = code[:-4]
-                return variety + "0"
-            return code
-
-        def _standardize_futures(df):
-            """标准化期货数据格式"""
-            if df is None or df.empty:
-                return pd.DataFrame()
-
-            col_map = {
-                "date": "datetime",
-                "open": "open",
-                "high": "high",
-                "low": "low",
-                "close": "close",
-                "volume": "volume",
-            }
-            df = df.rename(columns=col_map)
-            df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
-            df = df.dropna(subset=["datetime"])
-            df["money"] = None
-            if "hold" in df.columns:
-                df["openinterest"] = df["hold"]
-            elif "持仓量" in df.columns:
-                df["openinterest"] = df["持仓量"]
-
-            if start_date:
-                start_dt = pd.to_datetime(start_date)
-                df = df[df["datetime"] >= start_dt]
-            if end_date:
-                end_dt = pd.to_datetime(end_date)
-                df = df[df["datetime"] <= end_dt]
-
-            return df.sort_values("datetime").reset_index(drop=True)
-
-        sina_symbol = _jq_futures_to_sina(symbol)
-        is_continuous = sina_symbol.endswith("0")
-
-        sources = [
-            ("sina", lambda: self.get_futures_daily(sina_symbol)),
-        ]
-
-        if is_continuous:
-            sources.append(
-                (
-                    "main_sina",
-                    lambda: self.get_futures_main_sina(
-                        symbol=sina_symbol,
-                        start_date=start_date or "19900101",
-                        end_date=end_date or "22220101",
-                    ),
-                )
-            )
-
-        for source_name, fetch_fn in sources:
-            try:
-                df = fetch_fn()
-                if df is not None and not df.empty:
-                    return _standardize_futures(df)
-            except Exception as e:
-                warnings.warn(f"期货 {symbol} {source_name} 获取失败: {e}")
-                continue
-
-        return pd.DataFrame()
 
     def get_futures_main_sina(
         self,
@@ -2425,14 +2287,116 @@ class AkShareAdapter(DataSource):
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
 
-    def get_futures_daily(self, contract_code: str) -> pd.DataFrame:
-        """获取期货日线数据"""
+    def _fetch_futures_daily_sina(self, contract_code: str) -> pd.DataFrame:
+        """获取期货日线数据（sina源）"""
         if not self._akshare_available:
             raise DataSourceError("akshare 不可用", source=self.name)
         try:
             return self._akshare.futures_zh_daily_sina(symbol=contract_code)
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
+
+    def get_futures_daily(
+        self,
+        symbol: str,
+        start_date: str = None,
+        end_date: str = None,
+    ) -> pd.DataFrame:
+        """
+        获取期货日线数据，支持多数据源自动切换。
+
+        Parameters
+        ----------
+        symbol : str
+            期货代码（如 IF2401, AU9999）
+        start_date : str, optional
+            开始日期（YYYYMMDD格式）
+        end_date : str, optional
+            结束日期（YYYYMMDD格式）
+
+        Returns
+        -------
+        pd.DataFrame
+            包含 datetime, open, high, low, close, volume, money, openinterest 字段
+        """
+        if not self._akshare_available:
+            return pd.DataFrame()
+
+        def _jq_futures_to_sina(sym):
+            """将聚宽风格期货代码转换为新浪期货符号"""
+            sym = sym.upper()
+            for ex in [".CCFX", ".XSGE", ".XDCE", ".XZCE", ".XINE", ".GFEX"]:
+                if sym.endswith(ex):
+                    code = sym[: -len(ex)]
+                    break
+            else:
+                code = sym
+            if code.endswith("9999"):
+                variety = code[:-4]
+                return variety + "0"
+            return code
+
+        def _standardize_futures(df):
+            """标准化期货数据格式"""
+            if df is None or df.empty:
+                return pd.DataFrame()
+            col_map = {
+                "date": "datetime",
+                "open": "open",
+                "high": "high",
+                "low": "low",
+                "close": "close",
+                "volume": "volume",
+            }
+            df = df.rename(columns=col_map)
+            df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+            df = df.dropna(subset=["datetime"])
+            df["money"] = None
+            if "hold" in df.columns:
+                df["openinterest"] = df["hold"]
+            elif "持仓量" in df.columns:
+                df["openinterest"] = df["持仓量"]
+            if start_date:
+                start_dt = pd.to_datetime(start_date)
+                df = df[df["datetime"] >= start_dt]
+            if end_date:
+                end_dt = pd.to_datetime(end_date)
+                df = df[df["datetime"] <= end_dt]
+            return df.sort_values("datetime").reset_index(drop=True)
+
+        sina_symbol = _jq_futures_to_sina(symbol)
+        is_continuous = sina_symbol.endswith("0")
+
+        providers = [
+            (
+                "sina",
+                lambda: _standardize_futures(
+                    self._fetch_futures_daily_sina(sina_symbol)
+                ),
+            ),
+        ]
+
+        if is_continuous:
+
+            def main_fetcher():
+                return self.get_futures_main_sina(
+                    symbol=sina_symbol,
+                    start_date=start_date or "19900101",
+                    end_date=end_date or "22220101",
+                )
+
+            providers.append(("main_sina", main_fetcher))
+
+        router = MultiSourceRouter(
+            providers=providers,
+            min_rows=1,
+        )
+        result = router.execute()
+        if not result.success:
+            return pd.DataFrame()
+        return result.data
+
+    get_futures_daily_with_fallback = get_futures_daily
 
     def get_option_daily(self, option_code: str) -> pd.DataFrame:
         """获取期权日线数据"""
@@ -3049,6 +3013,108 @@ class AkShareAdapter(DataSource):
             return self._akshare.stock_hk_ah_spot_em()
         except Exception as e:
             raise DataSourceError(str(e), source=self.name)
+
+    # ── 多数据源 Fallback 封装 ──────────────────────────────────────
+
+    def get_unlock_with_fallback(self, symbol: str) -> list:
+        """获取限售股解禁数据（多数据源 fallback）
+
+        Returns:
+            list of (source_name, DataFrame) tuples.
+            优先级: get_unlock_queue_sina -> get_unlock_summary_em
+        """
+        results = []
+
+        try:
+            df_queue = self.get_unlock_queue_sina(symbol=symbol)
+            if df_queue is not None and not df_queue.empty:
+                results.append(("sina_queue", df_queue))
+        except Exception as e:
+            logger.debug(f"get_unlock_queue_sina 失败: {e}")
+
+        try:
+            df_summary = self.get_unlock_summary_em(symbol=symbol)
+            if df_summary is not None and not df_summary.empty:
+                results.append(("em_summary", df_summary))
+        except Exception as e:
+            logger.debug(f"get_unlock_summary_em 失败: {e}")
+
+        return results
+
+    def get_top10_shareholders(self, symbol: str) -> pd.DataFrame:
+        """获取前十大股东数据（多数据源 fallback）
+
+        优先级: get_top10_holders_em -> get_top10_holders
+        """
+        router = MultiSourceRouter(
+            providers=[
+                ("em", lambda: self.get_top10_holders_em(symbol=symbol)),
+                ("tushare", lambda: self.get_top10_holders(symbol=symbol)),
+            ],
+            min_rows=1,
+        )
+        result = router.execute()
+        if not result.success:
+            return pd.DataFrame()
+        return result.data
+
+    get_top10_shareholders_with_fallback = get_top10_shareholders
+
+    def get_shareholders(self, symbol: str) -> pd.DataFrame:
+        """获取股东数据（多数据源 fallback）
+
+        优先级: get_top10_holders -> get_share_change
+        """
+        router = MultiSourceRouter(
+            providers=[
+                ("tushare", lambda: self.get_top10_holders(symbol=symbol)),
+                ("cninfo", lambda: self.get_share_change(symbol=symbol)),
+            ],
+            min_rows=1,
+        )
+        result = router.execute()
+        if not result.success:
+            return pd.DataFrame()
+        return result.data
+
+    get_shareholders_with_fallback = get_shareholders
+
+    def get_shareholder_changes(
+        self, symbol: str, start_date: str = None, end_date: str = None
+    ) -> pd.DataFrame:
+        """获取股东增减持数据（多数据源 fallback）
+
+        优先级: get_holding_change_em -> get_share_change_cninfo
+        """
+
+        def make_cninfo_fetcher():
+            if start_date is None:
+                from datetime import datetime, timedelta
+
+                end_date_str = datetime.now().strftime("%Y%m%d")
+                start_date_str = (datetime.now() - timedelta(days=365)).strftime(
+                    "%Y%m%d"
+                )
+            else:
+                start_date_str = start_date
+                end_date_str = end_date or datetime.now().strftime("%Y%m%d")
+            return self.get_share_change_cninfo(
+                symbol=symbol, start_date=start_date_str, end_date=end_date_str
+            )
+
+        router = MultiSourceRouter(
+            providers=[
+                ("em", lambda: self.get_holding_change_em(symbol=symbol)),
+                ("cninfo", make_cninfo_fetcher),
+            ],
+            min_rows=1,
+        )
+        result = router.execute()
+        if not result.success:
+            return pd.DataFrame()
+        return result.data
+
+    get_shareholder_changes_with_fallback = get_shareholder_changes
 
 
 __all__ = ["AkShareAdapter"]

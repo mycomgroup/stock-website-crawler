@@ -77,33 +77,12 @@ def run_comparison_tests():
     )
 
 
-def run_existing_tests():
-    """运行原有测试文件。"""
-    import pytest
-
-    base_dir = os.path.dirname(__file__)
-
-    test_files = [
-        os.path.join(base_dir, "test_jqdata_api.py"),
-        os.path.join(base_dir, "test_factors.py"),
-    ]
-
-    return pytest.main(
-        [
-            *test_files,
-            "-v",
-            "--tb=short",
-        ]
-    )
-
-
 def main():
     parser = argparse.ArgumentParser(description="运行测试验证体系")
     parser.add_argument("--all", action="store_true", help="运行所有测试")
     parser.add_argument("--factor", action="store_true", help="运行因子计算测试")
     parser.add_argument("--api", action="store_true", help="运行接口兼容性测试")
     parser.add_argument("--comparison", action="store_true", help="运行回测对比测试")
-    parser.add_argument("--existing", action="store_true", help="运行原有测试")
     parser.add_argument("--module", type=str, help="运行指定测试模块")
 
     args = parser.parse_args()
@@ -116,8 +95,6 @@ def main():
         return run_api_tests()
     elif args.comparison:
         return run_comparison_tests()
-    elif args.existing:
-        return run_existing_tests()
     elif args.module:
         import pytest
 

@@ -70,6 +70,15 @@ from .securities_utils import (
     SUPPORTED_INDEXES,
 )
 
+from .constants import (
+    SECURITY_INDEXES,
+    CONS_ONLY_INDICES,
+    INDEX_FALLBACK_MAP,
+    INDEX_DESCRIPTION,
+    INDEX_CODE_ALIAS_MAP,
+    DATE_COLUMN_CANDIDATES,
+)
+
 from .data_proxies import (
     SecurityInfo,
     valuation,
@@ -154,6 +163,12 @@ __all__ = [
     "ak_code_to_jq",
     # 常量
     "SUPPORTED_INDEXES",
+    "SECURITY_INDEXES",
+    "CONS_ONLY_INDICES",
+    "INDEX_FALLBACK_MAP",
+    "INDEX_DESCRIPTION",
+    "INDEX_CODE_ALIAS_MAP",
+    "DATE_COLUMN_CANDIDATES",
     # 类
     "RobustResult",
     "SecurityInfo",

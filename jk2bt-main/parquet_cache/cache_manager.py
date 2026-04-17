@@ -330,19 +330,20 @@ class CacheManager:
         return str(first_value)
 
 
-_default_manager: CacheManager | None = None
+_MANAGERS: dict[str | None, CacheManager] = {}
 
 
 def get_cache_manager(
     base_dir: str | None = None,
     config: CacheConfig | None = None,
 ) -> CacheManager:
-    global _default_manager
-    if _default_manager is None:
-        _default_manager = CacheManager(base_dir=base_dir, config=config)
-    return _default_manager
+    global _MANAGERS
+    key = base_dir
+    if key not in _MANAGERS:
+        _MANAGERS[key] = CacheManager(base_dir=base_dir, config=config)
+    return _MANAGERS[key]
 
 
 def reset_cache_manager():
-    global _default_manager
-    _default_manager = None
+    global _MANAGERS
+    _MANAGERS.clear()

@@ -68,6 +68,10 @@ try:
 except ImportError:
     from jk2bt.utils.config import get_config, BacktestConfig
 try:
+    from jk2bt.utils.symbol import normalize_symbol
+except ImportError:
+    from ..utils.symbol import normalize_symbol
+try:
     from .strategy_base import (
         JQ2BTBaseStrategy,
         GlobalState,
@@ -107,38 +111,8 @@ try:
         standardlize,
     )
 
-    # Wrapper function to support JoinQuant's positional argument style
-    def get_price_wrapper(
-        security=None,
-        start_date=None,
-        end_date=None,
-        frequency="daily",
-        fields=None,
-        symbols=None,
-        **kwargs,
-    ):
-        """Wrapper for get_price_jq that accepts JoinQuant API style positional arguments
+    normalize_code = normalize_symbol
 
-        JoinQuant signature: get_price(security, start_date, end_date, frequency='daily', fields=None)
-        """
-        # JoinQuant uses 'security' parameter, but get_price_jq uses 'symbols'
-        if security is not None and symbols is None:
-            symbols = security
-
-        # Handle fields parameter
-        if fields is not None:
-            kwargs["fields"] = fields
-
-        # Call get_price_jq with the correct parameters
-        return get_price_jq(
-            symbols=symbols,
-            start_date=start_date,
-            end_date=end_date,
-            frequency=frequency,
-            **kwargs,
-        )
-
-    get_price = get_price_wrapper
     get_all_trade_days = get_all_trade_days_jq
     get_extras = get_extras_jq
     get_billboard_list = get_billboard_list_jq
@@ -183,42 +157,45 @@ except ImportError:
         standardlize,
     )
 
-    # Wrapper function to support JoinQuant's positional argument style (重复定义用于fallback)
-    def get_price_wrapper(
-        security=None,
-        start_date=None,
-        end_date=None,
-        frequency="daily",
-        fields=None,
-        symbols=None,
-        **kwargs,
-    ):
-        """Wrapper for get_price_jq that accepts JoinQuant API style positional arguments
-
-        JoinQuant signature: get_price(security, start_date, end_date, frequency='daily', fields=None)
-        """
-        # JoinQuant uses 'security' parameter, but get_price_jq uses 'symbols'
-        if security is not None and symbols is None:
-            symbols = security
-
-        # Handle fields parameter
-        if fields is not None:
-            kwargs["fields"] = fields
-
-        # Call get_price_jq with the correct parameters
-        return get_price_jq(
-            symbols=symbols,
-            start_date=start_date,
-            end_date=end_date,
-            frequency=frequency,
-            **kwargs,
-        )
-
-    get_price = get_price_wrapper
     get_all_trade_days = get_all_trade_days_jq
     get_extras = get_extras_jq
     get_billboard_list = get_billboard_list_jq
     get_bars = get_bars_jq
+
+
+# Wrapper function to support JoinQuant's positional argument style (defined once)
+def get_price_wrapper(
+    security=None,
+    start_date=None,
+    end_date=None,
+    frequency="daily",
+    fields=None,
+    symbols=None,
+    **kwargs,
+):
+    """Wrapper for get_price_jq that accepts JoinQuant API style positional arguments
+
+    JoinQuant signature: get_price(security, start_date, end_date, frequency='daily', fields=None)
+    """
+    # JoinQuant uses 'security' parameter, but get_price_jq uses 'symbols'
+    if security is not None and symbols is None:
+        symbols = security
+
+    # Handle fields parameter
+    if fields is not None:
+        kwargs["fields"] = fields
+
+    # Call get_price_jq with the correct parameters
+    return get_price_jq(
+        symbols=symbols,
+        start_date=start_date,
+        end_date=end_date,
+        frequency=frequency,
+        **kwargs,
+    )
+
+
+get_price = get_price_wrapper
 
 # 导入新模块：行业数据、北向资金、择时指标、市场情绪、竞价数据、龙虎榜数据
 try:
@@ -244,6 +221,8 @@ try:
         get_call_auction,
         get_call_auction_jq,
     )
+
+    from ..market_data.option import opt
 
     from ..signals.rsrs import (
         compute_rsrs,
@@ -299,6 +278,8 @@ except ImportError:
         get_call_auction_jq,
     )
 
+    from jk2bt.market_data.option import opt
+
     from jk2bt.signals.rsrs import (
         compute_rsrs,
         compute_rsrs_signal,
@@ -345,7 +326,7 @@ except ImportError:
 
 # 导入新实现的API模块
 try:
-    from jk2bt.api.market import get_market, get_detailed_quote, get_ticks_enhanced
+    from jk2bt.api.market import get_market, get_detailed_quote, get_preopen_infos
     from jk2bt.api.date_api import (
         get_shifted_date,
         get_previous_trade_date,
@@ -381,8 +362,8 @@ try:
         get_billboard_hot_stocks,
         get_broker_statistics,
     )
-    from jk2bt.api.missing_apis import (
-        get_beta,
+    from jk2bt.api.stats import get_beta
+    from jk2bt.api.finance import (
         get_fund_info,
         get_fundamentals_continuously,
     )
@@ -403,6 +384,7 @@ try:
         get_money_flow,
         get_sector_money_flow,
         get_money_flow_rank,
+        get_money_flow_pro,
     )
     from jk2bt.api.jq_compat import (
         get_all_alpha_101,
@@ -411,13 +393,16 @@ try:
         get_style_factor_returns,
         get_specific_returns,
         get_style_factor_covariance,
+        _SPI_INDEX_DEFINITIONS,
     )
+    from jk2bt.api.bond import bond
+    from jk2bt.api.market import get_index_style_exposure
 except ImportError as e:
     # 如果导入失败，定义占位函数
     import warnings
 
     warnings.warn(f"部分API模块导入失败: {e}")
-    get_market = get_detailed_quote = get_ticks_enhanced = None
+    get_market = get_detailed_quote = None
     get_shifted_date = get_previous_trade_date = get_next_trade_date = None
     transform_date = is_trade_date = get_trade_dates_between = (
         count_trade_dates_between
@@ -437,9 +422,14 @@ except ImportError as e:
     get_north_factor = get_comb_factor = get_factor_momentum = None
     get_recent_limit_up_stock = get_recent_limit_down_stock = None
     get_hl_stock = get_continue_count_df = get_hl_count_df = None
-    get_money_flow = get_sector_money_flow = get_money_flow_rank = None
+    get_money_flow = get_sector_money_flow = get_money_flow_rank = (
+        get_money_flow_pro
+    ) = None
     get_all_alpha_101 = get_all_alpha_191 = get_factor_names = None
     get_style_factor_returns = get_specific_returns = get_style_factor_covariance = None
+    _SPI_INDEX_DEFINITIONS = None
+    get_index_style_exposure = None
+    bond = None
 
 # =====================================================================
 # JQData 风格行业相关 API
@@ -848,10 +838,10 @@ class _JQLibModule:
                                     result[sec] = lb
                                 else:
                                     result[sec] = 1.0
-                            except:
+                            except Exception:
                                 result[sec] = 1.0
-            except:
-                pass
+            except Exception as e:
+                logging.getLogger(__name__).warning("LB calculation failed: %s", e)
 
             # 对于请求但未获取的股票，返回默认值
             if security_list:
@@ -876,10 +866,10 @@ class _JQLibModule:
                                     data.close[i] for i in range(min(N, len(data)))
                                 ]
                                 result[sec] = sum(closes) / len(closes) if closes else 0
-                            except:
+                            except Exception:
                                 result[sec] = 0
-            except:
-                pass
+            except Exception as e:
+                logging.getLogger(__name__).warning("MA calculation failed: %s", e)
             return result
 
         @staticmethod
@@ -925,12 +915,12 @@ class _JQLibModule:
                                     if vols_m2
                                     else current_vol
                                 )
-                            except:
+                            except Exception:
                                 VOLT[sec] = 0
                                 MAVOL_M1[sec] = 0
                                 MAVOL_M2[sec] = 0
-            except:
-                pass
+            except Exception as e:
+                logging.getLogger(__name__).warning("VOL calculation failed: %s", e)
             if security_list:
                 for sec in security_list:
                     if sec not in VOLT:
@@ -967,11 +957,11 @@ class _JQLibModule:
                                 d_value = (2 / 3) * prev_d + (1 / 3) * k_value
                                 K[sec] = k_value
                                 D[sec] = d_value
-                            except:
+                            except Exception:
                                 K[sec] = 50
                                 D[sec] = 50
-            except:
-                pass
+            except Exception as e:
+                logging.getLogger(__name__).warning("KD calculation failed: %s", e)
             if security_list:
                 for sec in security_list:
                     if sec not in K:
@@ -988,95 +978,14 @@ class _JQLibModule:
         pass
 
 
-def get_ticks(security, date=None, count=1000, fields=None, skip=False, df=True):
-    """
-    获取tick数据（模拟实现）
-
-    参数:
-        security: 股票代码
-        date: 查询日期
-        count: 返回条数
-        fields: 字段列表
-        skip: 是否跳过
-        df: 是否返回DataFrame
-
-    返回:
-        DataFrame 或 list
-    """
-    # 当前系统主要是日线数据，tick数据暂时返回模拟数据
-    try:
-        import pandas as pd
-
-        strategy = _get_current_strategy()
-        if strategy and hasattr(strategy, "datas"):
-            for data in strategy.datas:
-                if data._name == security:
-                    # 返回当日模拟tick数据
-                    tick_data = []
-                    base_price = data.close[0]
-                    base_vol = data.volume[0]
-                    for i in range(min(count, 240)):  # 一天约240个tick
-                        tick_data.append(
-                            {
-                                "time": f"{9 + i // 60}:{30 + i % 60}",
-                                "price": base_price * (1 + (i % 10 - 5) * 0.001),
-                                "volume": base_vol // 240,
-                                "amount": base_price * base_vol // 240,
-                            }
-                        )
-                    if df:
-                        return pd.DataFrame(tick_data)
-                    return tick_data
-    except:
-        pass
-
-    if df:
-        import pandas as pd
-
-        return pd.DataFrame(columns=["time", "price", "volume", "amount"])
-    return []
+# Import real implementations from api/market (replaces stub definitions)
+from jk2bt.api.market import get_ticks, get_call_auction
 
 
-def get_call_auction(security_list, date=None):
-    """
-    获取集合竞价数据
-
-    参数:
-        security_list: 股票代码列表
-        date: 查询日期
-
-    返回:
-        DataFrame: 包含开盘价、成交量等集合竞价信息
-    """
-    import pandas as pd
-
-    try:
-        strategy = _get_current_strategy()
-        if strategy and hasattr(strategy, "datas"):
-            result_data = []
-            for data in strategy.datas:
-                sec = data._name
-                if sec in security_list:
-                    result_data.append(
-                        {
-                            "code": sec,
-                            "auction_price": data.open[0],
-                            "auction_volume": data.volume[0] // 10,  # 集合竞价约占10%
-                            "auction_amount": data.open[0] * data.volume[0] // 10,
-                        }
-                    )
-            return pd.DataFrame(result_data)
-    except:
-        pass
-
-    return pd.DataFrame(
-        columns=["code", "auction_price", "auction_volume", "auction_amount"]
-    )
-
-
-# 延迟赋值：get_ticks 和 get_call_auction 在前面定义
+# 延迟赋值：get_ticks 和 get_call_auction 已从 api/market 导入
 _jqdata.get_ticks = get_ticks
 _jqdata.get_call_auction = get_call_auction
+_jqdata.normalize_code = normalize_code
 
 
 # 创建 jqlib 模块实例
@@ -1120,14 +1029,6 @@ class _JQFactorModule:
 _jqfactor = _JQFactorModule()
 
 
-class _XGBoostModule:
-    """模拟 xgboost 模块"""
-
-    @staticmethod
-    def XGBRegressor(*args, **kwargs):
-        raise NotImplementedError("xgboost未安装，请运行: pip install xgboost")
-
-
 # =====================================================================
 # 聚宽 Wizard 帮助函数 stub 实现
 # =====================================================================
@@ -1155,45 +1056,11 @@ def PerTrade(buy_cost=0, sell_cost=0, min_cost=0):
     return _PerTrade(buy_cost, sell_cost, min_cost)
 
 
-def neutralize(
-    factor_data, target=None, date=None, industry_type="sw_l1", score_type="zscore"
-):
-    """
-    因子中性化 - 使用官方SDK或本地实现
-
-    参数:
-        factor_data: 因子数据
-        target: 中性化方式，可以是 'industry', 'market_cap', 或列表
-        date: 日期，用于获取行业/市值数据
-        industry_type: 行业分类，如 'sw_l1', 'sw_l2', 'jq_l1'
-        score_type: 分数类型
-    """
-    # 尝试使用官方SDK
-    try:
-        from jqfactor_analyzer import neutralize as _jq_neutralize
-
-        how = (
-            target
-            if isinstance(target, list)
-            else ([target] if target else [industry_type])
-        )
-        return _jq_neutralize(factor_data, how=how, date=date)
-    except ImportError:
-        pass
-    except Exception:
-        pass
-
-    # Fallback 到本地实现
-    try:
-        from .strategy_base import neutralize as _local_neutralize
-
-        how = target if isinstance(target, list) else ([target] if target else None)
-        return _local_neutralize(factor_data, how=how, date=date)
-    except ImportError:
-        pass
-
-    # 最后 fallback: 返回原数据
-    return factor_data
+# Import neutralize from factors.preprocess (authoritative implementation)
+try:
+    from jk2bt.factors.preprocess import neutralize
+except ImportError:
+    from ..factors.preprocess import neutralize
 
 
 def security_stoploss(context, stoploss_pct, open_sell_securities=None):
@@ -1574,6 +1441,61 @@ def get_locked_shares(stock_list=None, start_date=None, forward_count=0):
     return pd.DataFrame(columns=["code", "rate1"])
 
 
+def get_dominant_future(underlying_symbol, date=None):
+    """
+    获取主力合约代码。
+
+    参数:
+        underlying_symbol: 期货品种代码，如 'IF', 'IC', 'IH', 'AU', 'CU' 等
+            也支持品种指数格式如 'AG8888.XSGE'
+        date: 查询日期
+
+    返回:
+        str: 主力合约代码，如 'IF2401'
+    """
+    try:
+        from jk2bt.api.futures import get_dominant_future as api_func
+
+        return api_func(underlying_symbol, date)
+    except Exception:
+        if "8888" in str(underlying_symbol).upper():
+            return str(underlying_symbol)
+        return ""
+
+
+def get_order_future_bar(
+    product,
+    start_date=None,
+    end_date=None,
+    bar_count=None,
+    fields=None,
+    include_now=True,
+):
+    """
+    获取当月/次月/当季/隔季等合约拼接而成的bar行情。
+
+    参数:
+        product: 期货品种代码，如 'IF', 'IC', 'AU', 'AG' 等
+        start_date: 起始日期，格式 'YYYY-MM-DD'
+        end_date: 结束日期，格式 'YYYY-MM-DD'
+        bar_count: 获取bar数量
+        fields: 返回字段列表
+        include_now: 是否包含当前交易日
+
+    返回:
+        pd.DataFrame: 连续合约bar行情
+    """
+    try:
+        from jk2bt.api.futures import get_order_future_bar as api_func
+
+        return api_func(product, start_date, end_date, bar_count, fields, include_now)
+    except Exception as e:
+        import warnings
+
+        warnings.warn(f"get_order_future_bar 获取失败: {e}")
+        return pd.DataFrame()
+
+
 def get_future_contracts(future_type, date=None):
     """
     获取期货合约列表（模拟实现）
@@ -1619,16 +1541,6 @@ def order_target_value(security, value, style=None, pindex=None):
             return strategy.order_value(security, value, limit_price=style.limit_price)
         return strategy.order_value(security, value)
     return None
-
-
-def get_security_info_jq_ext(security, date=None):
-    """扩展的证券信息"""
-    from jk2bt.core.strategy_base import get_security_info_jq
-
-    info = get_security_info_jq(security)
-    if info and date:
-        info.display_name = info.display_name or security
-    return info
 
 
 # =====================================================================
@@ -1787,6 +1699,7 @@ def load_jq_strategy(strategy_file):
         "cash_flow": cash_flow,
         "indicator": indicator,
         "finance": finance,
+        "opt": opt,
         "get_fundamentals": get_fundamentals,
         "get_all_securities": get_all_securities_jq,
         "get_security_info": get_security_info_jq,
@@ -1806,10 +1719,11 @@ def load_jq_strategy(strategy_file):
         "get_call_auction": get_call_auction,
         "get_ticks": get_ticks,
         "get_valuation": get_valuation,
+        "normalize_code": normalize_code,
         # 行情增强API
         "get_market": get_market,
         "get_detailed_quote": get_detailed_quote,
-        "get_ticks_enhanced": get_ticks_enhanced,
+        "get_preopen_infos": get_preopen_infos,
         # 日期API
         "get_shifted_date": get_shifted_date,
         "get_previous_trade_date": get_previous_trade_date,
@@ -1865,10 +1779,9 @@ def load_jq_strategy(strategy_file):
         "get_hl_count_df": get_hl_count_df,
         # 资金流向API
         "get_money_flow": get_money_flow,
-        "get_ticks": get_ticks,
-        "get_call_auction": get_call_auction,
         "get_sector_money_flow": get_sector_money_flow,
         "get_money_flow_rank": get_money_flow_rank,
+        "get_money_flow_pro": get_money_flow_pro,
         # Alpha101/191 因子
         "get_all_alpha_101": get_all_alpha_101,
         "get_all_alpha_191": get_all_alpha_191,
@@ -1891,6 +1804,7 @@ def load_jq_strategy(strategy_file):
         "kuanke": _kuanke,
         "kqapi": _kqapi,
         "jqfactor": _jqfactor,
+        "bond": bond,
         # pandas.stats 兼容模块
         "pandas": __import__("pandas"),  # 确保 pandas 模块可用
         # jqfactor 函数（直接导出）

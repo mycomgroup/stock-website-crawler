@@ -375,6 +375,176 @@ def migrate_index_pickles(
     return success_count
 
 
+def migrate_meta_pickles(meta_cache_dir: str, db: ParquetAdapter = None) -> int:
+    """
+    迁移元数据 pickle 文件到 Parquet。
+    """
+    if db is None:
+        db = ParquetAdapter()
+
+    if not os.path.exists(meta_cache_dir):
+        logger.warning(f"meta_cache 目录不存在: {meta_cache_dir}")
+        return 0
+
+    success_count = 0
+
+    # 迁移 trade_days.pkl
+    trade_days_path = os.path.join(meta_cache_dir, "trade_days.pkl")
+    if os.path.exists(trade_days_path):
+        try:
+            df = pd.read_pickle(trade_days_path)
+            if df is not None and not df.empty:
+                df = df.copy()
+                if "trade_date" in df.columns and "date" not in df.columns:
+                    df = df.rename(columns={"trade_date": "date"})
+                if "date" in df.columns:
+                    df["date"] = pd.to_datetime(df["date"]).dt.date
+                db.cache_manager.put("trade_calendar", df)
+                logger.info(f"迁移成功: {trade_days_path} -> trade_calendar")
+                success_count += 1
+        except Exception as e:
+            logger.error(f"迁移失败 {trade_days_path}: {e}")
+
+    # 迁移 securities_YYYYMMDD.pkl
+    securities_files = glob.glob(os.path.join(meta_cache_dir, "securities_*.pkl"))
+    for pkl_file in securities_files:
+        try:
+            df = pd.read_pickle(pkl_file)
+            if df is None or df.empty:
+                continue
+
+            df = df.copy()
+
+            required_cols = [
+                "code",
+                "jq_code",
+                "display_name",
+                "name",
+                "start_date",
+                "end_date",
+                "type",
+                "update_time",
+            ]
+            for col in required_cols:
+                if col not in df.columns:
+                    if col == "jq_code":
+                        df[col] = df["code"].apply(
+                            lambda x: (
+                                x[2:] + ".XSHE"
+                                if str(x).startswith("sz")
+                                else x[2:] + ".XSHG"
+                                if str(x).startswith("sh")
+                                else str(x)
+                            )
+                        )
+                    elif col == "display_name":
+                        df[col] = df.get("name", "")
+                    elif col == "type":
+                        df[col] = "stock"
+                    elif col == "update_time":
+                        df[col] = pd.Timestamp.now()
+                    else:
+                        df[col] = None
+
+            db.cache_manager.put("securities", df[required_cols])
+            logger.info(f"迁移成功: {pkl_file} -> securities")
+            success_count += 1
+        except Exception as e:
+            logger.error(f"迁移失败 {pkl_file}: {e}")
+
+    return success_count
+
+
+def migrate_index_weights_pickles(
+    index_cache_dir: str, db: ParquetAdapter = None
+) -> int:
+    """
+    迁移指数权重 pickle 文件到 Parquet。
+    """
+    if db is None:
+        db = ParquetAdapter()
+
+    if not os.path.exists(index_cache_dir):
+        logger.warning(f"index_cache 目录不存在: {index_cache_dir}")
+        return 0
+
+    pkl_files = glob.glob(os.path.join(index_cache_dir, "*_weights.pkl"))
+    if not pkl_files:
+        logger.info(f"未找到指数权重 pickle 文件: {index_cache_dir}")
+        return 0
+
+    # 确保 index_weights 表已注册
+    registry = db.cache_manager.registry
+    if not registry.has("index_weights"):
+        from parquet_cache.table_registry import CacheTable
+
+        registry.register(
+            CacheTable(
+                name="index_weights",
+                partition_by=None,
+                ttl_hours=0,
+                schema={
+                    "index_code": "string",
+                    "stock_code": "string",
+                    "weight": "float64",
+                    "update_date": "date",
+                    "update_time": "timestamp",
+                },
+                primary_key=["index_code", "stock_code", "update_date"],
+                aggregation_enabled=False,
+                compaction_threshold=0,
+                storage_layer="meta",
+                priority="P2",
+            )
+        )
+
+    success_count = 0
+    for pkl_file in pkl_files:
+        try:
+            basename = os.path.basename(pkl_file)
+            index_code = basename.replace("_weights.pkl", "")
+
+            df = pd.read_pickle(pkl_file)
+            if df is None or df.empty:
+                continue
+
+            df = df.copy()
+
+            # 列名映射
+            col_sources = {
+                "stock_code": ["stock_code", "code"],
+                "weight": ["weight"],
+                "update_date": ["update_date", "date"],
+            }
+
+            result = pd.DataFrame()
+            result["index_code"] = index_code
+
+            for target, sources in col_sources.items():
+                found = False
+                for src in sources:
+                    if src in df.columns:
+                        result[target] = df[src]
+                        found = True
+                        break
+                if not found:
+                    if target == "update_date":
+                        result[target] = pd.Timestamp.now().date()
+                    else:
+                        result[target] = None
+
+            if "update_time" not in result.columns:
+                result["update_time"] = pd.Timestamp.now()
+
+            db.cache_manager.put("index_weights", result)
+            logger.info(f"迁移成功: {pkl_file} -> {index_code}")
+            success_count += 1
+        except Exception as e:
+            logger.error(f"迁移失败 {pkl_file}: {e}")
+
+    return success_count
+
+
 def auto_migrate(base_dir: str = None) -> Dict[str, int]:
     """
     自动检测并迁移所有 pickle 数据到 DuckDB。
@@ -403,11 +573,25 @@ def auto_migrate(base_dir: str = None) -> Dict[str, int]:
             f"Parquet 已有数据: 股票 {stock_count} 条, ETF {etf_count} 条, 指数 {index_count} 条"
         )
         logger.info("跳过自动迁移（如需强制迁移，请使用手动迁移工具）")
-        return {"stock": 0, "etf": 0, "index": 0, "skipped": True}
+        return {
+            "stock": 0,
+            "etf": 0,
+            "index": 0,
+            "meta": 0,
+            "index_weights": 0,
+            "skipped": True,
+        }
 
     logger.info("开始自动迁移 pickle 数据到 Parquet...")
 
-    results = {"stock": 0, "etf": 0, "index": 0, "skipped": False}
+    results = {
+        "stock": 0,
+        "etf": 0,
+        "index": 0,
+        "meta": 0,
+        "index_weights": 0,
+        "skipped": False,
+    }
 
     stock_dir = os.path.join(base_dir, "stock_cache")
     if os.path.exists(stock_dir):
@@ -421,20 +605,35 @@ def auto_migrate(base_dir: str = None) -> Dict[str, int]:
     if os.path.exists(index_dir):
         results["index"] = migrate_index_pickles(index_dir, db)
 
-    total = results["stock"] + results["etf"] + results["index"]
+    meta_dir = os.path.join(base_dir, "meta_cache")
+    if os.path.exists(meta_dir):
+        results["meta"] = migrate_meta_pickles(meta_dir, db)
+
+    if os.path.exists(index_dir):
+        results["index_weights"] = migrate_index_weights_pickles(index_dir, db)
+
+    total = (
+        results["stock"]
+        + results["etf"]
+        + results["index"]
+        + results["meta"]
+        + results["index_weights"]
+    )
     logger.info(f"自动迁移完成: 共迁移 {total} 个文件")
     logger.info(f"  - 股票: {results['stock']} 个")
     logger.info(f"  - ETF: {results['etf']} 个")
     logger.info(f"  - 指数: {results['index']} 个")
+    logger.info(f"  - 元数据: {results['meta']} 个")
+    logger.info(f"  - 指数权重: {results['index_weights']} 个")
 
     return results
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
+    from jk2bt.logging import setup_logging, get_logger
+
+    setup_logging()
+    logger = get_logger(__name__)
 
     results = auto_migrate()
     print("\n迁移结果:")

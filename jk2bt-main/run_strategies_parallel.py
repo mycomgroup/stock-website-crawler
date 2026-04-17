@@ -27,15 +27,10 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any, List
 
-# 配置logger - 降低DuckDB相关日志级别，减少噪音
-logging.getLogger("jk2bt.db.duckdb_manager").setLevel(logging.WARNING)
-logging.getLogger("jk2bt.market_data").setLevel(logging.WARNING)
+from jk2bt.logging import setup_logging, get_logger
 
-# 配置logger
-logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+setup_logging()
+logger = get_logger(__name__)
 
 # 项目根目录
 PROJECT_ROOT = Path(__file__).parent
