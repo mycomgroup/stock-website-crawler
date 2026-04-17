@@ -31,13 +31,13 @@ _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
-from jk2bt.db.cache_status import (
+from jk2bt.data.storage.cache_status import (
     CacheManager,
     get_cache_manager,
 )
-from jk2bt.market_data.stock import get_stock_daily
-from jk2bt.market_data.etf import get_etf_daily
-from jk2bt.market_data.index import get_index_daily
+from jk2bt.data.market.stock import get_stock_daily
+from jk2bt.data.market.etf import get_etf_daily
+from jk2bt.data.market.index import get_index_daily
 
 DEFAULT_SAMPLE_STOCKS = [
     "600519.XSHG",  # 贵州茅台
@@ -80,7 +80,7 @@ def prewarm_meta_data(cache_base_dir: str = None, force_update: bool = False) ->
     result = {"trade_days": False, "securities": False, "errors": []}
 
     try:
-        from jk2bt.db.meta_cache_api import prewarm_meta_cache
+        from jk2bt.data.storage.meta_cache_api import prewarm_meta_cache
 
         meta_result = prewarm_meta_cache(force_update=force_update)
         result["trade_days"] = meta_result.get("trade_days", 0) > 0
@@ -271,8 +271,8 @@ def prewarm_index_weights(
 
     result = {"success": 0, "skipped": 0, "failed": [], "errors": []}
 
-    from jk2bt.db.cache_config import init_default_cache
-    from parquet_cache import get_cache_manager
+    from jk2bt.data.storage.cache_config import init_default_cache
+    from jk2bt.cache import get_cache_manager
 
     init_default_cache()
     cache = get_cache_manager()
@@ -295,7 +295,7 @@ def prewarm_index_weights(
                 pass
 
         try:
-            from jk2bt.data_access import get_adapter
+            from jk2bt.data.sources import get_adapter
 
             adapter = get_adapter()
             df = adapter.get_index_stock_cons_weight_csindex(symbol=index_num)

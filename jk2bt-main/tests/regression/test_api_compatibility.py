@@ -126,7 +126,7 @@ class TestStrategyBaseFunctions:
 
     def test_required_functions_callable(self):
         """strategy_base 必需函数均可调用"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_price_jq,
             get_fundamentals_jq,
             get_history_fundamentals_jq,
@@ -144,14 +144,14 @@ class TestStrategyBaseFunctions:
     def test_get_all_securities_returns_dataframe(self):
         """get_all_securities_jq 返回 DataFrame"""
         import pandas as pd
-        from jk2bt.core.strategy_base import get_all_securities_jq
+        from jk2bt.engine.strategy_base import get_all_securities_jq
         result = get_all_securities_jq()
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
     def test_get_all_trade_days_returns_list(self):
         """get_all_trade_days_jq 返回非空列表"""
-        from jk2bt.core.strategy_base import get_all_trade_days_jq
+        from jk2bt.engine.strategy_base import get_all_trade_days_jq
         result = get_all_trade_days_jq()
         assert isinstance(result, list)
         assert len(result) > 0

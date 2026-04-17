@@ -4,7 +4,7 @@
 验证返回结果可直接筛选、排序、取列
 """
 
-from jk2bt.market_data import get_money_flow
+from jk2bt.data.market import get_money_flow
 import pandas as pd
 
 

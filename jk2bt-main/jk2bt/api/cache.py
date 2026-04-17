@@ -204,7 +204,7 @@ class DataPreloader:
     def preload_fundamentals(self, symbols, fields):
         """预加载财务数据"""
         from jk2bt.api.jq_compat import get_fundamentals
-        from jk2bt.core.data_proxies import query, valuation
+        from jk2bt.engine.data_proxies import query, valuation
 
         if "valuation" in fields:
             q = query(valuation).filter(valuation.code.in_(symbols))

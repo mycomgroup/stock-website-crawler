@@ -1,4 +1,0 @@
-run_id=20260404_093658
-total=2
-success=1
-failed=1

@@ -22,7 +22,7 @@ class TestBasicQuery:
 
     def test_single_stock(self):
         """单标的查询"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", count=1)
         assert isinstance(df, pd.DataFrame)
@@ -31,7 +31,7 @@ class TestBasicQuery:
 
     def test_multiple_stocks(self):
         """多标的查询"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         stocks = ["sh600519", "sz000001"]
         df = get_money_flow(stocks, count=1)
@@ -41,7 +41,7 @@ class TestBasicQuery:
 
     def test_default_fields(self):
         """默认字段返回"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", count=1)
         expected_fields = [
@@ -60,7 +60,7 @@ class TestFieldsFilter:
 
     def test_single_field(self):
         """单个字段"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", count=1, fields="change_pct")
         assert isinstance(df, pd.DataFrame)
@@ -69,7 +69,7 @@ class TestFieldsFilter:
 
     def test_multiple_fields_list(self):
         """多字段列表"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(
             "sh600519",
@@ -83,7 +83,7 @@ class TestFieldsFilter:
 
     def test_all_main_fields(self):
         """所有主力相关字段"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(
             "sh600519",
@@ -116,7 +116,7 @@ class TestDateRangeAndCount:
 
     def test_count_parameter(self):
         """count 参数"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", count=5)
         assert isinstance(df, pd.DataFrame)
@@ -125,14 +125,14 @@ class TestDateRangeAndCount:
 
     def test_end_date_parameter(self):
         """end_date 参数"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", end_date="2024-01-15", count=1)
         assert isinstance(df, pd.DataFrame)
 
     def test_start_end_date_range(self):
         """日期区间"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", start_date="2024-01-01", end_date="2024-01-31")
         assert isinstance(df, pd.DataFrame)
@@ -146,7 +146,7 @@ class TestSymbolFormatCompatibility:
 
     def test_jq_format_xshg(self):
         """聚宽格式 XSHG"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("600519.XSHG", count=1, fields=["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -154,7 +154,7 @@ class TestSymbolFormatCompatibility:
 
     def test_jq_format_xshe(self):
         """聚宽格式 XSHE"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("000001.XSHE", count=1, fields=["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -162,7 +162,7 @@ class TestSymbolFormatCompatibility:
 
     def test_sh_prefix(self):
         """sh 前缀格式"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", count=1, fields=["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -170,7 +170,7 @@ class TestSymbolFormatCompatibility:
 
     def test_sz_prefix(self):
         """sz 前缀格式"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sz000001", count=1, fields=["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -178,7 +178,7 @@ class TestSymbolFormatCompatibility:
 
     def test_pure_code(self):
         """纯数字格式"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("600519", count=1, fields=["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -190,7 +190,7 @@ class TestStableSchema:
 
     def test_empty_security_list(self):
         """空 security_list 返回稳定 schema"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(None)
         assert isinstance(df, pd.DataFrame)
@@ -203,7 +203,7 @@ class TestStableSchema:
 
     def test_empty_security_list_with_fields(self):
         """空 security_list 指定字段返回稳定 schema"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(None, fields=["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -213,7 +213,7 @@ class TestStableSchema:
 
     def test_invalid_symbol_returns_stable_schema(self):
         """无效股票代码返回稳定 schema"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("INVALID999999", count=1, fields=["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -222,7 +222,7 @@ class TestStableSchema:
 
     def test_offline_mode_returns_stable_schema(self):
         """离线模式返回稳定 schema（模拟 akshare 不可用）"""
-        from jk2bt.market_data.money_flow import _get_empty_dataframe
+        from jk2bt.data.market.money_flow import _get_empty_dataframe
 
         df = _get_empty_dataframe(["sec_code", "change_pct"])
         assert isinstance(df, pd.DataFrame)
@@ -236,7 +236,7 @@ class TestDataFrameOperations:
 
     def test_filtering(self):
         """数据筛选"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(
             ["sh600519", "sz000001"], count=5, fields=["sec_code", "change_pct"]
@@ -248,7 +248,7 @@ class TestDataFrameOperations:
 
     def test_groupby(self):
         """分组聚合"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(
             ["sh600519", "sz000001"],
@@ -262,7 +262,7 @@ class TestDataFrameOperations:
 
     def test_pivot(self):
         """Pivot 操作"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(
             ["sh600519", "sz000001"], count=2, fields=["sec_code", "date", "change_pct"]
@@ -278,7 +278,7 @@ class TestPositionalArguments:
 
     def test_positional_args_call(self):
         """位置参数调用方式"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow(
             "sh600519", None, "2024-01-15", ["sec_code", "change_pct"], 1
@@ -293,7 +293,7 @@ class TestIntegrationWithStrategy:
 
     def test_strategy_like_call(self):
         """模拟策略调用"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         stock_list = ["sh600519", "sz000001"]
         df = get_money_flow(
@@ -309,7 +309,7 @@ class TestIntegrationWithStrategy:
 
     def test_signal_generation_from_flow(self):
         """从资金流数据生成信号"""
-        from jk2bt.market_data import get_money_flow
+        from jk2bt.data.market import get_money_flow
 
         df = get_money_flow("sh600519", count=5, fields=["sec_code", "net_pct_main"])
         assert isinstance(df, pd.DataFrame)

@@ -19,7 +19,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_single_security_single_factor(self):
         """单标的单因子。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -34,7 +34,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_single_security_multiple_factors(self):
         """单标的多因子。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -50,7 +50,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_multiple_securities_single_factor(self):
         """多标单因子。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities=["sh600519", "sz000001"],
@@ -67,7 +67,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_multiple_securities_multiple_factors(self):
         """多标多因子。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities=["sh600519", "sz000001"],
@@ -84,7 +84,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_count_parameter(self):
         """count 参数测试。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -99,7 +99,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_end_date_only(self):
         """仅提供 end_date。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -112,7 +112,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_start_date_end_date(self):
         """提供 start_date 和 end_date。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -127,7 +127,7 @@ class TestGetFactorValuesJqSignature:
 
     def test_force_update_parameter(self):
         """force_update 参数。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -142,7 +142,7 @@ class TestGetFactorValuesJqSignature:
     def test_cache_dir_parameter(self):
         """cache_dir 参数。"""
         import tempfile
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -159,7 +159,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_return_is_dict(self):
         """返回类型为 dict。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -172,7 +172,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dict_keys_are_factor_names(self):
         """字典键为因子名。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -186,7 +186,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_values_are_dataframe(self):
         """字典值为 DataFrame。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -199,7 +199,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dataframe_index_is_dates(self):
         """DataFrame index 为日期。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -213,7 +213,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dataframe_columns_are_securities(self):
         """DataFrame columns 为证券代码。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities=["sh600519", "sz000001"],
@@ -228,7 +228,7 @@ class TestGetFactorValuesJqReturnStructure:
 
     def test_dataframe_values_are_numeric(self):
         """DataFrame 值为数值类型。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -246,7 +246,7 @@ class TestFactorAliasCompatibility:
 
     def test_pe_ratio_aliases(self):
         """PE_ratio 别名。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         aliases = ["PE_ratio", "pe_ratio", "Pe_ratio", "pe_ratio"]
 
@@ -261,7 +261,7 @@ class TestFactorAliasCompatibility:
 
     def test_bias_aliases(self):
         """BIAS 别名。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         aliases = ["BIAS5", "bias_5"]
 
@@ -276,7 +276,7 @@ class TestFactorAliasCompatibility:
 
     def test_emac_aliases(self):
         """EMAC 别名。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         aliases = ["EMAC26", "emac_26"]
 
@@ -295,7 +295,7 @@ class TestSecurityCodeCompatibility:
 
     def test_sh_prefix(self):
         """sh 前缀格式。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -308,7 +308,7 @@ class TestSecurityCodeCompatibility:
 
     def test_sz_prefix(self):
         """sz 前缀格式。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sz000001",
@@ -321,7 +321,7 @@ class TestSecurityCodeCompatibility:
 
     def test_xshg_suffix(self):
         """XSHG 后缀格式。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="600519.XSHG",
@@ -334,7 +334,7 @@ class TestSecurityCodeCompatibility:
 
     def test_xshe_suffix(self):
         """XSHE 后缀格式。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="000001.XSHE",
@@ -347,7 +347,7 @@ class TestSecurityCodeCompatibility:
 
     def test_pure_code(self):
         """纯数字格式。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="600519",
@@ -364,7 +364,7 @@ class TestGetPriceJqSignature:
 
     def test_required_params(self):
         """必需参数。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="sh600000",
@@ -376,7 +376,7 @@ class TestGetPriceJqSignature:
 
     def test_fields_param(self):
         """fields 参数。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="sh600000",
@@ -389,7 +389,7 @@ class TestGetPriceJqSignature:
 
     def test_frequency_param(self):
         """frequency 参数。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="sh600000",
@@ -402,7 +402,7 @@ class TestGetPriceJqSignature:
 
     def test_count_param(self):
         """count 参数。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="sh600000",
@@ -418,7 +418,7 @@ class TestGetPriceJqReturnStructure:
 
     def test_single_security_returns_dataframe(self):
         """单标的返回 DataFrame。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="sh600000",
@@ -430,7 +430,7 @@ class TestGetPriceJqReturnStructure:
 
     def test_multiple_securities_returns_dict(self):
         """多标的返回 dict。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols=["sh600000", "sz000001"],
@@ -442,7 +442,7 @@ class TestGetPriceJqReturnStructure:
 
     def test_dataframe_has_datetime_column(self):
         """DataFrame 包含 datetime 列。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="sh600000",
@@ -455,7 +455,7 @@ class TestGetPriceJqReturnStructure:
 
     def test_dataframe_has_price_columns(self):
         """DataFrame 包含价格列。"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="sh600000",
@@ -474,7 +474,7 @@ class TestGetFundamentalsJqSignature:
 
     def test_query_object_param(self):
         """query 对象参数。"""
-        from jk2bt.core.strategy_base import get_fundamentals_jq, valuation
+        from jk2bt.engine.strategy_base import get_fundamentals_jq, valuation
 
         query = valuation.code == "sh600000"
         result = get_fundamentals_jq(query, statDate="2022-12-31")
@@ -483,7 +483,7 @@ class TestGetFundamentalsJqSignature:
 
     def test_statdate_param(self):
         """statDate 参数。"""
-        from jk2bt.core.strategy_base import get_fundamentals_jq
+        from jk2bt.engine.strategy_base import get_fundamentals_jq
 
         query = {"table": "balance", "symbol": "sh600000"}
         result = get_fundamentals_jq(query, statDate="2022-12-31")
@@ -492,7 +492,7 @@ class TestGetFundamentalsJqSignature:
 
     def test_statdate_quarter_format(self):
         """statDate 季度格式。"""
-        from jk2bt.core.strategy_base import get_fundamentals_jq
+        from jk2bt.engine.strategy_base import get_fundamentals_jq
 
         query = {"table": "balance", "symbol": "sh600000"}
         result = get_fundamentals_jq(query, statDate="2022q4")
@@ -505,7 +505,7 @@ class TestGetHistoryFundamentalsJqSignature:
 
     def test_basic_params(self):
         """基本参数。"""
-        from jk2bt.core.strategy_base import get_history_fundamentals_jq
+        from jk2bt.engine.strategy_base import get_history_fundamentals_jq
 
         result = get_history_fundamentals_jq(
             entity="sh600000",
@@ -518,7 +518,7 @@ class TestGetHistoryFundamentalsJqSignature:
 
     def test_count_param(self):
         """count 参数。"""
-        from jk2bt.core.strategy_base import get_history_fundamentals_jq
+        from jk2bt.engine.strategy_base import get_history_fundamentals_jq
 
         result = get_history_fundamentals_jq(
             entity="sh600000",
@@ -535,7 +535,7 @@ class TestGetAllSecuritiesJqSignature:
 
     def test_no_params(self):
         """无参数调用。"""
-        from jk2bt.core.strategy_base import get_all_securities_jq
+        from jk2bt.engine.strategy_base import get_all_securities_jq
 
         result = get_all_securities_jq()
 
@@ -544,7 +544,7 @@ class TestGetAllSecuritiesJqSignature:
 
     def test_return_structure(self):
         """返回结构。"""
-        from jk2bt.core.strategy_base import get_all_securities_jq
+        from jk2bt.engine.strategy_base import get_all_securities_jq
 
         result = get_all_securities_jq()
 
@@ -557,7 +557,7 @@ class TestGetSecurityInfoJqSignature:
 
     def test_single_security(self):
         """单标的。"""
-        from jk2bt.core.strategy_base import get_security_info_jq
+        from jk2bt.engine.strategy_base import get_security_info_jq
 
         result = get_security_info_jq("sh600000")
 
@@ -565,7 +565,7 @@ class TestGetSecurityInfoJqSignature:
 
     def test_return_structure(self):
         """返回结构。"""
-        from jk2bt.core.strategy_base import get_security_info_jq
+        from jk2bt.engine.strategy_base import get_security_info_jq
 
         result = get_security_info_jq("sh600000")
 
@@ -578,7 +578,7 @@ class TestGetAllTradeDaysJqSignature:
 
     def test_no_params(self):
         """无参数调用。"""
-        from jk2bt.core.strategy_base import get_all_trade_days_jq
+        from jk2bt.engine.strategy_base import get_all_trade_days_jq
 
         result = get_all_trade_days_jq()
 
@@ -587,7 +587,7 @@ class TestGetAllTradeDaysJqSignature:
 
     def test_return_type(self):
         """返回类型。"""
-        from jk2bt.core.strategy_base import get_all_trade_days_jq
+        from jk2bt.engine.strategy_base import get_all_trade_days_jq
 
         result = get_all_trade_days_jq()
 
@@ -599,7 +599,7 @@ class TestGetExtrasJqSignature:
 
     def test_is_st_param(self):
         """is_st 参数。"""
-        from jk2bt.core.strategy_base import get_extras_jq
+        from jk2bt.engine.strategy_base import get_extras_jq
 
         result = get_extras_jq("is_st", ["sh600000"])
 
@@ -607,7 +607,7 @@ class TestGetExtrasJqSignature:
 
     def test_is_paused_param(self):
         """is_paused 参数。"""
-        from jk2bt.core.strategy_base import get_extras_jq
+        from jk2bt.engine.strategy_base import get_extras_jq
 
         result = get_extras_jq("is_paused", ["sh600000"])
 
@@ -619,7 +619,7 @@ class TestGetBarsJqSignature:
 
     def test_unit_param(self):
         """unit 参数。"""
-        from jk2bt.core.strategy_base import get_bars_jq
+        from jk2bt.engine.strategy_base import get_bars_jq
 
         result = get_bars_jq(
             security="sh600000",
@@ -631,7 +631,7 @@ class TestGetBarsJqSignature:
 
     def test_fields_param(self):
         """fields 参数。"""
-        from jk2bt.core.strategy_base import get_bars_jq
+        from jk2bt.engine.strategy_base import get_bars_jq
 
         result = get_bars_jq(
             security="sh600000",
@@ -648,7 +648,7 @@ class TestBacktraderIntegration:
 
     def test_factor_values_available_in_strategy(self):
         """策略中可获取因子值。"""
-        from jk2bt.core.strategy_base import get_factor_values_jq
+        from jk2bt.engine.strategy_base import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -662,7 +662,7 @@ class TestBacktraderIntegration:
 
     def test_strategy_has_required_functions(self):
         """策略包含必需函数。"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_price_jq,
             get_fundamentals_jq,
             get_history_fundamentals_jq,

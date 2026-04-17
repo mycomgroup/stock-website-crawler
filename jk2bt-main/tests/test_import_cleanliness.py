@@ -201,10 +201,10 @@ class TestImportNoDatabaseConnection:
             # 强制重新导入
             if "jk2bt" in sys.modules:
                 del sys.modules["jk2bt"]
-            if "jk2bt.db.parquet_adapter" in sys.modules:
-                del sys.modules["jk2bt.db.parquet_adapter"]
-            if "jk2bt.db.parquet_adapter" in sys.modules:
-                del sys.modules["jk2bt.db.parquet_adapter"]
+            if "jk2bt.data.storage.parquet_adapter" in sys.modules:
+                del sys.modules["jk2bt.data.storage.parquet_adapter"]
+            if "jk2bt.data.storage.parquet_adapter" in sys.modules:
+                del sys.modules["jk2bt.data.storage.parquet_adapter"]
 
             import jk2bt
 
@@ -241,7 +241,7 @@ class MockDuckDBAdapter:
         self._initialized = True
 
 # 在导入前替换
-import jk2bt.db.parquet_adapter as cache_module
+import jk2bt.data.storage.parquet_adapter as cache_module
 original_adapter = cache_module.DuckDBAdapter
 cache_module.DuckDBAdapter = MockDuckDBAdapter
 
@@ -272,18 +272,18 @@ cache_module.DuckDBAdapter = original_adapter
             # 清除已导入的模块
             modules_to_clear = [
                 "jk2bt.db",
-                "jk2bt.db.parquet_adapter",
-                "jk2bt.db.parquet_adapter",
-                "jk2bt.db.cache_config",
-                "jk2bt.db.cache_status",
-                "jk2bt.db.meta_cache_api",
+                "jk2bt.data.storage.parquet_adapter",
+                "jk2bt.data.storage.parquet_adapter",
+                "jk2bt.data.storage.cache_config",
+                "jk2bt.data.storage.cache_status",
+                "jk2bt.data.storage.meta_cache_api",
             ]
             for mod in modules_to_clear:
                 if mod in sys.modules:
                     del sys.modules[mod]
 
             # 仅导入 db 模块
-            from jk2bt.db import ParquetAdapter
+            from jk2bt.data.storage import ParquetAdapter
 
             # 验证没有数据库连接
             assert mock_connect.call_count == 0, "导入 db 模块不应该创建数据库连接"
@@ -545,11 +545,11 @@ class TestImportModuleIsolation:
             mock_connect.return_value = MagicMock()
 
             # 清除模块
-            modules_to_clear = [k for k in sys.modules.keys() if "jk2bt.core" in k]
+            modules_to_clear = [k for k in sys.modules.keys() if "jk2bt.engine" in k]
             for mod in modules_to_clear:
                 del sys.modules[mod]
 
-            from jk2bt.core import GlobalState, ContextProxy
+            from jk2bt.engine import GlobalState, ContextProxy
 
             # 验证没有数据库连接
             assert mock_connect.call_count == 0, "导入 core 模块不应该连接数据库"
@@ -566,7 +566,7 @@ class TestImportModuleIsolation:
             for mod in modules_to_clear:
                 del sys.modules[mod]
 
-            from jk2bt.market_data import get_stock_daily
+            from jk2bt.data.market import get_stock_daily
 
             # 导入不应该调用 akshare
             assert mock_akshare.call_count == 0, (
@@ -580,7 +580,7 @@ class TestImportModuleIsolation:
         for mod in modules_to_clear:
             del sys.modules[mod]
 
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         # 导入成功，没有数据获取
         assert callable(get_factor_values_jq), "factors 模块导入应该提供函数"

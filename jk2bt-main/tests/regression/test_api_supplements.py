@@ -143,7 +143,7 @@ def test_strategy_helpers():
     print("=" * 80)
 
     try:
-        from jk2bt.strategy.helpers import (
+        from jk2bt.engine.helpers import (
             calculate_ma,
             calculate_ema,
             calculate_rsi,

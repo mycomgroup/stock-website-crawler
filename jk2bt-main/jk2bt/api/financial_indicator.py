@@ -15,7 +15,7 @@ import pandas as pd
 from typing import Optional, List, Union
 import warnings
 
-from jk2bt.data_access import get_adapter, DataSourceError
+from jk2bt.data.sources import get_adapter, DataSourceError
 from jk2bt.utils.symbol import normalize_symbol as _normalize_code
 
 

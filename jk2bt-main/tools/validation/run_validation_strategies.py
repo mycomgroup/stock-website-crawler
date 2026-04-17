@@ -33,7 +33,7 @@ if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
 from jk2bt import run_jq_strategy
-from jk2bt.db.cache_status import get_cache_manager
+from jk2bt.data.storage.cache_status import get_cache_manager
 
 
 def load_validation_strategies() -> List[Dict]:

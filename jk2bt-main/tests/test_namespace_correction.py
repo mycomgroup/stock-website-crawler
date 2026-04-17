@@ -147,7 +147,7 @@ class TestNamespaceBinding:
     """命名空间绑定测试 - 通过策略文件验证"""
 
     def test_get_price_signature(self):
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_price_jq,
         )
 
@@ -164,7 +164,7 @@ class TestNamespaceBinding:
         assert "adjust" in params
 
     def test_get_all_trade_days_signature(self):
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_all_trade_days_jq,
         )
 
@@ -175,7 +175,7 @@ class TestNamespaceBinding:
         assert "force_update" in params
 
     def test_get_extras_signature(self):
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_extras_jq,
         )
 
@@ -188,7 +188,7 @@ class TestNamespaceBinding:
         assert "end_date" in params
 
     def test_get_billboard_list_signature(self):
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_billboard_list_jq,
         )
 
@@ -200,7 +200,7 @@ class TestNamespaceBinding:
         assert "count" in params
 
     def test_get_bars_signature(self):
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_bars_jq,
         )
 

@@ -8,7 +8,7 @@ import backtrader as bt
 from datetime import datetime
 
 # 导入必要的模块
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     JQ2BTBaseStrategy,
     GlobalState,
     get_price,

@@ -21,7 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from jk2bt.core.validator import (
+from jk2bt.engine.validator import (
     validate_single_strategy,
     StrategyValidationResult,
     ValidationStatus,

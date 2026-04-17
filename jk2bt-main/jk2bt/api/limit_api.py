@@ -32,7 +32,7 @@ def get_recent_limit_up_stock(context, stock_list, recent_days=5, date=None):
 
     try:
         from jk2bt.api.market import get_price_jq
-        from jk2bt.core.securities_utils import format_stock_symbol_for_akshare
+        from jk2bt.engine.securities_utils import format_stock_symbol_for_akshare
 
         if date is None:
             end_date = datetime.now().strftime("%Y-%m-%d")

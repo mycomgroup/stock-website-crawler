@@ -11,7 +11,7 @@ sys.path.insert(
 )
 
 try:
-    from jk2bt.core.strategy_base import (
+    from jk2bt.engine.strategy_base import (
         RobustResult,
         get_index_stocks_robust,
         get_index_weights_robust,
@@ -127,7 +127,7 @@ def test_fundamentals_robust():
     """测试基本面查询稳健接口"""
     print("\n=== 测试基本面查询稳健接口 ===")
 
-    from jk2bt.core.strategy_base import query, valuation
+    from jk2bt.engine.strategy_base import query, valuation
 
     test_cases = [
         (query(valuation), "空symbols"),

@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), ".."))
 
 from run_strategies_parallel import RunStatus
-from jk2bt.strategy.scanner import StrategyScanner
+from jk2bt.scanner.scanner import StrategyScanner
 
 
 class TestBatchTruthValidation(unittest.TestCase):

@@ -40,7 +40,7 @@ def prewarm_unlock_data(stocks: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.finance_data.unlock import get_unlock_schedule
+        from jk2bt.data.finance.unlock import get_unlock_schedule
 
         progress = ProgressTracker(len(stocks), "解禁数据")
         progress.start()
@@ -79,7 +79,7 @@ def prewarm_share_change(stocks: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.finance_data.share_change import get_share_change
+        from jk2bt.data.finance.share_change import get_share_change
 
         progress = ProgressTracker(len(stocks), "股东变动")
         progress.start()

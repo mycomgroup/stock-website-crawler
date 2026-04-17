@@ -14,13 +14,13 @@ sys.path.insert(
     os.path.join(os.path.dirname(__file__), "..", "src"),
 )
 
-from jk2bt.market_data.call_auction import (
+from jk2bt.data.market.call_auction import (
     get_call_auction,
     get_call_auction_jq,
     _jq_code_to_ak,
     _normalize_date,
 )
-from jk2bt.core.strategy_base import get_billboard_list_jq
+from jk2bt.engine.strategy_base import get_billboard_list_jq
 
 
 pytestmark = pytest.mark.network

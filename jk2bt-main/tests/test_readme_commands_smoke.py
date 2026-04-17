@@ -168,15 +168,15 @@ class TestBaseStrategyImport:
 
     def test_import_base_strategy(self):
         """测试JQ2BTBaseStrategy导入"""
-        # README: from jk2bt.core.strategy_base import JQ2BTBaseStrategy
-        from jk2bt.core.strategy_base import JQ2BTBaseStrategy
+        # README: from jk2bt.engine.strategy_base import JQ2BTBaseStrategy
+        from jk2bt.engine.strategy_base import JQ2BTBaseStrategy
         import backtrader as bt
 
         assert issubclass(JQ2BTBaseStrategy, bt.Strategy)
 
     def test_base_strategy_can_instantiate(self):
         """测试基类可以实例化"""
-        from jk2bt.core.strategy_base import JQ2BTBaseStrategy
+        from jk2bt.engine.strategy_base import JQ2BTBaseStrategy
 
         # 不能直接实例化策略，需要cerebro，但可以验证类存在
         assert hasattr(JQ2BTBaseStrategy, "__init__")
@@ -333,20 +333,20 @@ class TestFAQCodeExamples:
         """测试缓存管理器导入"""
         # FAQ示例导入
         try:
-            from jk2bt.db.cache_status import get_cache_manager
+            from jk2bt.data.storage.cache_status import get_cache_manager
 
             manager = get_cache_manager()
             assert manager is not None
         except ImportError:
             # 可能旧路径仍存在
-            from jk2bt.db.cache_status import get_cache_manager
+            from jk2bt.data.storage.cache_status import get_cache_manager
 
             manager = get_cache_manager()
             assert manager is not None
 
     def test_cache_summary(self):
         """测试缓存摘要获取"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
         summary = manager.get_cache_summary()

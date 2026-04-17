@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.finance_data.company_info import (
+from jk2bt.data.finance.company_info import (
     get_company_info,
     get_company_info_robust,
     get_security_status,

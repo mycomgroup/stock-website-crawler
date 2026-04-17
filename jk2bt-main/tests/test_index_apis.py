@@ -1,6 +1,6 @@
 import unittest
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     get_index_weights,
     get_index_stocks,
     SUPPORTED_INDEXES,

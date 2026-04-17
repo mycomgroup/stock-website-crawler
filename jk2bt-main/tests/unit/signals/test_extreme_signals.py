@@ -1,6 +1,6 @@
 """
-test_extreme_signals.py
-extreme_signals.py 模块核心函数单元测试。
+test_extreme.py
+extreme.py 模块核心函数单元测试。
 
 测试目标：
 - detect_rsi_extreme: RSI 超买超卖信号
@@ -23,7 +23,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../"))
 
-from jk2bt.signals.extreme_signals import (
+from jk2bt.analysis.signals.extreme import (
     detect_rsi_extreme,
     detect_cci_extreme,
     detect_bias_extreme,

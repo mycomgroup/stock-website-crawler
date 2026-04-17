@@ -17,7 +17,7 @@ import logging
 from typing import Optional, List, Union, Dict
 from datetime import datetime
 
-from jk2bt.data_access import get_adapter
+from jk2bt.data.sources import get_adapter
 
 
 def get_locked_shares(
@@ -176,7 +176,7 @@ def get_fundamentals_continuously(
     返回:
         DataFrame，包含时间序列财务数据
     """
-    from jk2bt.finance_data import get_balance_sheet, get_income_statement
+    from jk2bt.data.finance import get_balance_sheet, get_income_statement
 
     table_name = None
     code = None

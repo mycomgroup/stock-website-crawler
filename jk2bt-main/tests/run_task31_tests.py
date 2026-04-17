@@ -139,7 +139,7 @@ def verify_task19_strategy():
     print("-" * 80)
 
     try:
-        from jk2bt.core.validator import (
+        from jk2bt.engine.validator import (
             validate_single_strategy,
         )
 

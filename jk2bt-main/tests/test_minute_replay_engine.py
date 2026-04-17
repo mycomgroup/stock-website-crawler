@@ -16,14 +16,14 @@ sys.path.insert(
 
 import pandas as pd
 import backtrader as bt
-from timer_rules import (
+from jk2bt.scanner.timer_rules import (
     parse_time_rule,
     check_bar_time_match,
     should_execute_timer,
     MARKET_OPEN_TIME,
     MARKET_CLOSE_TIME,
 )
-from jk2bt.core.strategy_base import JQ2BTBaseStrategy, TimerManager
+from jk2bt.engine.strategy_base import JQ2BTBaseStrategy, TimerManager
 
 
 def make_minute_data(days=2, period_minutes=5):

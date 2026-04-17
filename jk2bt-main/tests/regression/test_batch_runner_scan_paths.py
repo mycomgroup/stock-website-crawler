@@ -36,7 +36,7 @@ class TestScannerSuccessPath(unittest.TestCase):
     """
 
     def setUp(self):
-        from jk2bt.strategy.scanner import StrategyScanner, StrategyStatus
+        from jk2bt.scanner.scanner import StrategyScanner, StrategyStatus
         self.scanner = StrategyScanner()
         self.StrategyStatus = StrategyStatus
         self.temp_files = []
@@ -192,7 +192,7 @@ class TestScannerRejectPath(unittest.TestCase):
     """
 
     def setUp(self):
-        from jk2bt.strategy.scanner import StrategyScanner, StrategyStatus
+        from jk2bt.scanner.scanner import StrategyScanner, StrategyStatus
         self.scanner = StrategyScanner()
         self.StrategyStatus = StrategyStatus
         self.temp_files = []
@@ -908,7 +908,7 @@ class TestAPINameMapping(unittest.TestCase):
     """
 
     def setUp(self):
-        from jk2bt.strategy.scanner import StrategyScanner, StrategyStatus
+        from jk2bt.scanner.scanner import StrategyScanner, StrategyStatus
         self.scanner = StrategyScanner()
         self.StrategyStatus = StrategyStatus
         self.temp_files = []
@@ -1061,7 +1061,7 @@ class TestScanCache(unittest.TestCase):
     """
 
     def setUp(self):
-        from jk2bt.strategy.scanner import StrategyScanner
+        from jk2bt.scanner.scanner import StrategyScanner
         self.scanner = StrategyScanner()
         self.temp_files = []
 

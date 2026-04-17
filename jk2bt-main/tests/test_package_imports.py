@@ -98,7 +98,7 @@ class TestFactorsPackageExports:
 
     def test_factors_from_main_package(self):
         """验证从主包导入 factors 模块。"""
-        from jk2bt.factors import (
+        from jk2bt.analysis.factors import (
             get_factor_values_jq,
             normalize_factor_name,
             normalize_factor_names,
@@ -122,7 +122,7 @@ class TestFactorsPackageExports:
 
     def test_factors_submodules_exist(self):
         """验证 factors 子模块存在。"""
-        from jk2bt.factors import (
+        from jk2bt.analysis.factors import (
             valuation,
             technical,
             fundamentals,
@@ -140,7 +140,7 @@ class TestFactorsPackageExports:
 
     def test_factors_preprocess_functions(self):
         """验证预处理函数存在。"""
-        from jk2bt.factors import (
+        from jk2bt.analysis.factors import (
             winsorize_med,
             standardlize,
             neutralize,
@@ -152,7 +152,7 @@ class TestFactorsPackageExports:
 
     def test_factor_registry_exists(self):
         """验证因子注册表存在。"""
-        from jk2bt.factors import (
+        from jk2bt.analysis.factors import (
             global_factor_registry,
             FactorRegistry,
         )
@@ -166,28 +166,28 @@ class TestFactorAliasNormalization:
 
     def test_uppercase_alias(self):
         """大写别名映射。"""
-        from jk2bt.factors import normalize_factor_name
+        from jk2bt.analysis.factors import normalize_factor_name
 
         assert normalize_factor_name("PE_ratio") == "pe_ratio"
         assert normalize_factor_name("PB_ratio") == "pb_ratio"
 
     def test_lowercase_alias(self):
         """小写别名映射。"""
-        from jk2bt.factors import normalize_factor_name
+        from jk2bt.analysis.factors import normalize_factor_name
 
         assert normalize_factor_name("pe_ratio") == "pe_ratio"
         assert normalize_factor_name("pb_ratio") == "pb_ratio"
 
     def test_mixed_case_alias(self):
         """混合大小写别名映射。"""
-        from jk2bt.factors import normalize_factor_name
+        from jk2bt.analysis.factors import normalize_factor_name
 
         assert normalize_factor_name("Pe_ratio") == "pe_ratio"
         assert normalize_factor_name("pE_Ratio") == "pe_ratio"
 
     def test_technical_factor_aliases(self):
         """技术因子别名映射。"""
-        from jk2bt.factors import normalize_factor_name
+        from jk2bt.analysis.factors import normalize_factor_name
 
         assert normalize_factor_name("BIAS5") == "bias_5"
         assert normalize_factor_name("bias_5") == "bias_5"
@@ -195,14 +195,14 @@ class TestFactorAliasNormalization:
 
     def test_unknown_alias_returns_original(self):
         """未知别名返回原值。"""
-        from jk2bt.factors import normalize_factor_name
+        from jk2bt.analysis.factors import normalize_factor_name
 
         assert normalize_factor_name("unknown_factor") == "unknown_factor"
         assert normalize_factor_name("custom_alpha") == "custom_alpha"
 
     def test_batch_normalization(self):
         """批量归一化。"""
-        from jk2bt.factors import normalize_factor_names
+        from jk2bt.analysis.factors import normalize_factor_names
 
         result = normalize_factor_names(["PE_ratio", "Pe_ratio", "bias_5", "BIAS10"])
         assert result == ["pe_ratio", "pe_ratio", "bias_5", "bias_10"]
@@ -213,7 +213,7 @@ class TestTradeDaysFallback:
 
     def test_get_trade_days_basic(self):
         """基本交易日获取。"""
-        from jk2bt.factors.base import get_trade_days
+        from jk2bt.analysis.factors.base import get_trade_days
 
         result = get_trade_days("2024-01-01", "2024-01-05")
         assert isinstance(result, list)
@@ -221,7 +221,7 @@ class TestTradeDaysFallback:
 
     def test_get_trade_days_holiday_period(self):
         """节假日区间回退到工作日。"""
-        from jk2bt.factors.base import get_trade_days
+        from jk2bt.analysis.factors.base import get_trade_days
 
         result = get_trade_days("2023-12-30", "2024-01-01")
         assert isinstance(result, list)
@@ -229,7 +229,7 @@ class TestTradeDaysFallback:
 
     def test_get_trade_days_format(self):
         """交易日格式正确。"""
-        from jk2bt.factors.base import get_trade_days
+        from jk2bt.analysis.factors.base import get_trade_days
 
         result = get_trade_days("2024-01-01", "2024-01-10")
         assert all(len(d) == 10 for d in result)  # YYYY-MM-DD 格式

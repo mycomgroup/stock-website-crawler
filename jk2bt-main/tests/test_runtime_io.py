@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from jk2bt.core.io import (
+from jk2bt.engine.io import (
     record,
     send_message,
     read_file,

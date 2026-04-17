@@ -1,6 +1,6 @@
 """
-test_market_sentiment.py
-market_sentiment.py 模块核心函数单元测试。
+test_sentiment.py
+sentiment.py 模块核心函数单元测试。
 
 测试目标：
 - compute_crowding_ratio: 拥挤率指标
@@ -36,9 +36,9 @@ def _load_ms_module(name, path):
     return module
 
 
-_base = os.path.join(os.path.dirname(__file__), "../../../jk2bt/signals")
+_base = os.path.join(os.path.dirname(__file__), "../../../jk2bt/analysis/signals")
 _ms_mod = _load_ms_module(
-    "market_sentiment", os.path.join(_base, "market_sentiment.py")
+    "sentiment", os.path.join(_base, "sentiment.py")
 )
 
 compute_crowding_ratio = _ms_mod.compute_crowding_ratio
@@ -139,7 +139,7 @@ def sample_hist_df():
 class TestComputeCrowdingRatio:
     """测试拥挤率指标计算。"""
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_normal(self, mock_get_adapter, sample_spot_df):
         """验证拥挤率基本计算。"""
         mock_adapter = MagicMock()
@@ -153,7 +153,7 @@ class TestComputeCrowdingRatio:
         assert "description" in result
         assert result["crowding_ratio"] > 0
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_high_concentration(self, mock_get_adapter):
         """测试资金高度集中场景（拥挤率>60%）。"""
         df = pd.DataFrame(
@@ -172,7 +172,7 @@ class TestComputeCrowdingRatio:
         assert result["crowding_ratio"] > 60
         assert "资金过度集中" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_low_concentration(self, mock_get_adapter):
         """测试资金分散场景（拥挤率<40%）。"""
         df = pd.DataFrame(
@@ -191,7 +191,7 @@ class TestComputeCrowdingRatio:
         assert result["crowding_ratio"] < 40
         assert "资金分散" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_empty_data(self, mock_get_adapter):
         """测试空数据返回默认值。"""
         mock_adapter = MagicMock()
@@ -203,7 +203,7 @@ class TestComputeCrowdingRatio:
         assert result["crowding_ratio"] == 0.0
         assert "计算失败" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_none_data(self, mock_get_adapter):
         """测试None数据返回默认值。"""
         mock_adapter = MagicMock()
@@ -220,7 +220,7 @@ class TestComputeCrowdingRatio:
         # 实际import错误只在未安装时发生
         pytest.skip("jk2bt.data_access is installed")
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_date_format(self, mock_get_adapter, sample_spot_df):
         """测试日期格式处理（带横杠和不带横杠）。"""
         mock_adapter = MagicMock()
@@ -232,7 +232,7 @@ class TestComputeCrowdingRatio:
 
         assert result1["crowding_ratio"] == result2["crowding_ratio"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_default_date(self, mock_get_adapter, sample_spot_df):
         """测试不传日期时使用当前日期。"""
         mock_adapter = MagicMock()
@@ -244,7 +244,7 @@ class TestComputeCrowdingRatio:
         assert isinstance(result, dict)
         assert "crowding_ratio" in result
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_with_threshold(self, mock_get_adapter):
         """测试不同阈值百分比。"""
         df = pd.DataFrame(
@@ -263,7 +263,7 @@ class TestComputeCrowdingRatio:
 
         assert result_10pct["crowding_ratio"] >= result_5pct["crowding_ratio"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_crowding_ratio_exception(self, mock_get_adapter):
         """测试异常处理。"""
         mock_adapter = MagicMock()
@@ -284,7 +284,7 @@ class TestComputeCrowdingRatio:
 class TestComputeFedModel:
     """测试 FED 模型计算。"""
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_normal(
         self, mock_get_adapter, sample_pe_pb_df, sample_bond_yield_df
     ):
@@ -302,7 +302,7 @@ class TestComputeFedModel:
         assert "bond_rate" in result
         assert "description" in result
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_with_bond_rate(self, mock_get_adapter, sample_pe_pb_df):
         """测试传入国债收益率。"""
         mock_adapter = MagicMock()
@@ -314,7 +314,7 @@ class TestComputeFedModel:
         assert result["bond_rate"] == 0.03
         assert result["pe"] > 0
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_stock_attractive(self, mock_get_adapter):
         """测试股票极具吸引力场景（FED>0.05）。"""
         df = pd.DataFrame(
@@ -333,7 +333,7 @@ class TestComputeFedModel:
         assert result["fed_value"] > 0.05
         assert "极具吸引力" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_bond_better(self, mock_get_adapter):
         """测试债券优于股票场景（FED<0）。"""
         df = pd.DataFrame(
@@ -352,7 +352,7 @@ class TestComputeFedModel:
         assert result["fed_value"] < 0
         assert "债券优于股票" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_empty_pe_data(self, mock_get_adapter):
         """测试空PE数据。"""
         mock_adapter = MagicMock()
@@ -364,7 +364,7 @@ class TestComputeFedModel:
         assert result["fed_value"] == 0.0
         assert "计算失败" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_no_pe_data(self, mock_get_adapter):
         """测试无PE数据场景。"""
         df = pd.DataFrame(
@@ -383,7 +383,7 @@ class TestComputeFedModel:
         assert result["fed_value"] == 0.0
         assert "无PE数据" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_bond_yield_exception(self, mock_get_adapter, sample_pe_pb_df):
         """测试国债收益率获取异常时使用默认值。"""
         mock_adapter = MagicMock()
@@ -395,7 +395,7 @@ class TestComputeFedModel:
 
         assert result["bond_rate"] == 0.025
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_exception(self, mock_get_adapter):
         """测试异常处理。"""
         mock_adapter = MagicMock()
@@ -407,7 +407,7 @@ class TestComputeFedModel:
         assert result["fed_value"] == 0.0
         assert "计算失败" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fed_model_default_date(self, mock_get_adapter, sample_pe_pb_df):
         """测试不传日期时使用当前日期。"""
         mock_adapter = MagicMock()
@@ -512,7 +512,7 @@ class TestComputeGrahamIndex:
 class TestComputeBelowNetRatio:
     """测试破净占比计算。"""
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_below_net_ratio_normal(self, mock_get_adapter, sample_spot_df):
         """验证破净占比基本计算。"""
         mock_adapter = MagicMock()
@@ -527,7 +527,7 @@ class TestComputeBelowNetRatio:
         assert "total_count" in result
         assert "description" in result
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_below_net_ratio_high(self, mock_get_adapter):
         """测试破净占比高场景（>10%）。"""
         df = pd.DataFrame(
@@ -546,7 +546,7 @@ class TestComputeBelowNetRatio:
         assert result["below_net_ratio"] > 10
         assert "极度悲观" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_below_net_ratio_medium(self, mock_get_adapter):
         """测试破净占比中等场景（5%-10%）。"""
         df = pd.DataFrame(
@@ -565,7 +565,7 @@ class TestComputeBelowNetRatio:
         assert 5 < result["below_net_ratio"] < 10
         assert "偏悲观" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_below_net_ratio_low(self, mock_get_adapter):
         """测试破净占比低场景（<5%）。"""
         df = pd.DataFrame(
@@ -584,7 +584,7 @@ class TestComputeBelowNetRatio:
         assert result["below_net_ratio"] < 5
         assert "市场正常" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_below_net_ratio_empty_data(self, mock_get_adapter):
         """测试空数据返回默认值。"""
         mock_adapter = MagicMock()
@@ -596,7 +596,7 @@ class TestComputeBelowNetRatio:
         assert result["below_net_ratio"] == 0.0
         assert "计算失败" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_below_net_ratio_no_pb_column(self, mock_get_adapter):
         """测试缺少市净率列。"""
         df = pd.DataFrame(
@@ -614,7 +614,7 @@ class TestComputeBelowNetRatio:
 
         assert result["below_net_ratio"] == 0.0
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_below_net_ratio_exception(self, mock_get_adapter):
         """测试异常处理。"""
         mock_adapter = MagicMock()
@@ -635,7 +635,7 @@ class TestComputeBelowNetRatio:
 class TestComputeNewHighRatio:
     """测试创新高占比计算。"""
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_new_high_ratio_normal(
         self, mock_get_adapter, sample_spot_df, sample_hist_df
     ):
@@ -653,7 +653,7 @@ class TestComputeNewHighRatio:
         assert "total_count" in result
         assert "description" in result
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_new_high_ratio_strong_market(self, mock_get_adapter):
         """测试市场强势场景（创新高占比>5%）。"""
         spot_df = pd.DataFrame(
@@ -679,7 +679,7 @@ class TestComputeNewHighRatio:
         assert result["new_high_ratio"] > 5
         assert "市场强势" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_new_high_ratio_weak_market(self, mock_get_adapter):
         """测试市场弱势场景（创新高占比<1%）。"""
         spot_df = pd.DataFrame(
@@ -705,7 +705,7 @@ class TestComputeNewHighRatio:
         assert result["new_high_ratio"] < 1
         assert "市场弱势" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_new_high_ratio_empty_data(self, mock_get_adapter):
         """测试空数据返回默认值。"""
         mock_adapter = MagicMock()
@@ -717,7 +717,7 @@ class TestComputeNewHighRatio:
         assert result["new_high_ratio"] == 0.0
         assert "计算失败" in result["description"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_new_high_ratio_insufficient_history(self, mock_get_adapter):
         """测试历史数据不足场景。"""
         spot_df = pd.DataFrame(
@@ -742,7 +742,7 @@ class TestComputeNewHighRatio:
 
         assert result["new_high_ratio"] == 0.0
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_new_high_ratio_exception(self, mock_get_adapter):
         """测试异常处理。"""
         mock_adapter = MagicMock()
@@ -865,7 +865,7 @@ class TestComputeGISI:
             with pytest.raises((ImportError, ModuleNotFoundError)):
                 compute_gisi()
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_gisi_empty_index_data(self, mock_get_adapter):
         """测试指数数据为空时返回空DataFrame。"""
         mock_adapter = MagicMock()
@@ -880,7 +880,7 @@ class TestComputeGISI:
 
         assert result.empty
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_gisi_insufficient_industries(self, mock_get_adapter):
         """测试行业数据不足时返回空DataFrame。"""
         index_df = pd.DataFrame(

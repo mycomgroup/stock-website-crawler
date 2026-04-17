@@ -25,7 +25,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-from jk2bt.market_data.futures import (
+from jk2bt.data.market.futures import (
     parse_future_contract,
     get_future_contracts,
     get_dominant_contract,
@@ -225,7 +225,7 @@ class TestGetFutureContracts(unittest.TestCase):
         self.assertIsInstance(df, pd.DataFrame)
         self.assertTrue(df.empty)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_exchange_contracts_empty_adapter(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_spot.return_value = pd.DataFrame()
@@ -235,7 +235,7 @@ class TestGetFutureContracts(unittest.TestCase):
         self.assertIsInstance(df, pd.DataFrame)
         self.assertTrue(df.empty)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_exchange_contracts_with_data(self, mock_get_adapter):
         spot_df = pd.DataFrame(
             {
@@ -253,7 +253,7 @@ class TestGetFutureContracts(unittest.TestCase):
         self.assertFalse(df.empty)
         self.assertTrue(all(e == "SHFE" for e in df["exchange"]))
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_all_contracts_adapter_empty(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_spot.return_value = pd.DataFrame()
@@ -266,7 +266,7 @@ class TestGetFutureContracts(unittest.TestCase):
 class TestGetDominantContract(unittest.TestCase):
     """测试获取主力合约"""
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_index_dominant_with_spot_data(self, mock_get_adapter):
         spot_df = pd.DataFrame(
             {
@@ -282,7 +282,7 @@ class TestGetDominantContract(unittest.TestCase):
         self.assertIsNotNone(contract)
         self.assertTrue(contract.startswith("IF"))
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_index_dominant_empty_spot(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_spot.return_value = pd.DataFrame()
@@ -292,7 +292,7 @@ class TestGetDominantContract(unittest.TestCase):
         self.assertIsNotNone(contract)
         self.assertTrue(contract.startswith("IF"))
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_commodity_dominant(self, mock_get_adapter):
         spot_df = pd.DataFrame(
             {
@@ -308,7 +308,7 @@ class TestGetDominantContract(unittest.TestCase):
         self.assertIsNotNone(contract)
         self.assertTrue(contract.startswith("AU"))
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_commodity_dominant_empty(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_spot.return_value = pd.DataFrame()
@@ -317,7 +317,7 @@ class TestGetDominantContract(unittest.TestCase):
         contract = get_dominant_contract("AU")
         self.assertIsNone(contract)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_dominant_exception_handling(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_spot.side_effect = Exception("network error")
@@ -446,7 +446,7 @@ class TestRequiredMarginCalculation(unittest.TestCase):
 class TestGetFutureDaily(unittest.TestCase):
     """测试期货日线数据"""
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_basic(self, mock_get_adapter):
         daily_df = pd.DataFrame(
             {
@@ -471,7 +471,7 @@ class TestGetFutureDaily(unittest.TestCase):
         self.assertIn("close", df.columns)
         self.assertEqual(len(df), 3)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_chinese_columns(self, mock_get_adapter):
         daily_df = pd.DataFrame(
             {
@@ -498,7 +498,7 @@ class TestGetFutureDaily(unittest.TestCase):
         self.assertIn("close", df.columns)
         self.assertIn("volume", df.columns)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_empty(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_daily.return_value = pd.DataFrame()
@@ -508,7 +508,7 @@ class TestGetFutureDaily(unittest.TestCase):
         self.assertIsInstance(df, pd.DataFrame)
         self.assertTrue(df.empty)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_date_filter(self, mock_get_adapter):
         daily_df = pd.DataFrame(
             {
@@ -527,7 +527,7 @@ class TestGetFutureDaily(unittest.TestCase):
         df = get_future_daily("IF2312", start_date="2023-11-01", end_date="2023-11-30")
         self.assertEqual(len(df), 1)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_sorted(self, mock_get_adapter):
         daily_df = pd.DataFrame(
             {
@@ -548,7 +548,7 @@ class TestGetFutureDaily(unittest.TestCase):
         self.assertLessEqual(dates[0], dates[1])
         self.assertLessEqual(dates[1], dates[2])
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_missing_openinterest(self, mock_get_adapter):
         daily_df = pd.DataFrame(
             {
@@ -568,7 +568,7 @@ class TestGetFutureDaily(unittest.TestCase):
         self.assertIn("openinterest", df.columns)
         self.assertEqual(df["openinterest"].iloc[0], 0)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_with_ccfx_suffix(self, mock_get_adapter):
         daily_df = pd.DataFrame(
             {
@@ -587,7 +587,7 @@ class TestGetFutureDaily(unittest.TestCase):
         df = get_future_daily("IF2312.CCFX")
         mock_adapter.get_futures_daily.assert_called_once_with(symbol="IF2312")
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_daily_exception(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_daily.side_effect = Exception("API error")
@@ -601,7 +601,7 @@ class TestGetFutureDaily(unittest.TestCase):
 class TestGetFutureSpot(unittest.TestCase):
     """测试期货实时行情"""
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_spot_basic(self, mock_get_adapter):
         spot_df = pd.DataFrame(
             {
@@ -626,7 +626,7 @@ class TestGetFutureSpot(unittest.TestCase):
         self.assertIn("symbol", df.columns)
         self.assertEqual(len(df), 3)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_spot_filter_by_contract(self, mock_get_adapter):
         spot_df = pd.DataFrame(
             {
@@ -647,7 +647,7 @@ class TestGetFutureSpot(unittest.TestCase):
         self.assertEqual(len(df), 1)
         self.assertEqual(df.iloc[0]["symbol"], "IF2312")
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_spot_empty(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_spot.return_value = pd.DataFrame()
@@ -657,7 +657,7 @@ class TestGetFutureSpot(unittest.TestCase):
         self.assertIsInstance(df, pd.DataFrame)
         self.assertTrue(df.empty)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_spot_chinese_columns(self, mock_get_adapter):
         spot_df = pd.DataFrame(
             {
@@ -683,7 +683,7 @@ class TestGetFutureSpot(unittest.TestCase):
         self.assertIn("low", df.columns)
         self.assertIn("last_price", df.columns)
 
-    @patch("jk2bt.market_data.futures._get_adapter")
+    @patch("jk2bt.data.market.futures._get_adapter")
     def test_get_future_spot_exception(self, mock_get_adapter):
         mock_adapter = MagicMock()
         mock_adapter.get_futures_spot.side_effect = Exception("API error")

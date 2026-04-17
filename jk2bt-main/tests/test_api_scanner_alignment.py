@@ -11,7 +11,7 @@ test_api_scanner_alignment.py
 import os
 import tempfile
 import pytest
-from jk2bt.strategy.scanner import StrategyScanner, StrategyStatus
+from jk2bt.scanner.scanner import StrategyScanner, StrategyStatus
 
 
 class TestAPINameMapping:

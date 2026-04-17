@@ -29,7 +29,7 @@ def order_shares(security, amount, style=None):
     返回:
         Order 对象
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
 
     if _current_strategy is None:
         warnings.warn("order_shares 需要在策略运行时调用")
@@ -50,7 +50,7 @@ def order_target_percent(security, percent):
     返回:
         Order 对象
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
 
     if _current_strategy is None:
         warnings.warn("order_target_percent 需要在策略运行时调用")
@@ -84,7 +84,7 @@ def calculate_position_value(security, amount=None):
     返回:
         持仓市值
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
     from jk2bt.api.jq_compat import get_current_data as _get_cd
 
     if _current_strategy is None:
@@ -110,7 +110,7 @@ def get_position_ratio(security):
     返回:
         持仓比例（占总资产的百分比）
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
 
     if _current_strategy is None:
         return 0
@@ -131,7 +131,7 @@ def will_sell_on_limit_up(security):
     返回:
         bool
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
     from jk2bt.api.jq_compat import get_current_data as _get_cd
 
     if _current_strategy is None:
@@ -153,7 +153,7 @@ def will_buy_on_limit_down(security):
     返回:
         bool
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
     from jk2bt.api.jq_compat import get_current_data as _get_cd
 
     if _current_strategy is None:
@@ -173,7 +173,7 @@ def rebalance_portfolio(target_weights, stock_list=None):
         target_weights: dict {股票代码: 目标权重}
         stock_list: 股票列表（可选）
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
 
     if _current_strategy is None:
         return
@@ -195,7 +195,7 @@ def get_portfolio_weights():
     返回:
         dict {股票代码: 当前权重}
     """
-    from jk2bt.core.global_state import _current_strategy
+    from jk2bt.engine.global_state import _current_strategy
 
     if _current_strategy is None:
         return {}

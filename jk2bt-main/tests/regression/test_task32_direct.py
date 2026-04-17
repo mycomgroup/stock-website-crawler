@@ -24,7 +24,7 @@ print("任务32: 分钟数据 API 直接验证")
 print("=" * 80)
 
 print("\n1. 测试 DuckDB 缓存...")
-from jk2bt.db.parquet_adapter import ParquetAdapter
+from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
 db = ParquetAdapter(read_only=True)
 with db._get_connection(read_only=True) as conn:
@@ -50,7 +50,7 @@ with db._get_connection(read_only=True) as conn:
 
 print("\n2. 测试 minute.py 直接调用...")
 try:
-    from market_data.minute import get_stock_minute
+    from jk2bt.data.market.minute import get_stock_minute
 
     df_1m = get_stock_minute(
         "sh600000", "2025-03-28 09:30:00", "2025-03-28 15:00:00", period="1m"

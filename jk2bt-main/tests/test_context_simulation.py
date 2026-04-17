@@ -3,7 +3,7 @@ import backtrader as bt
 import pandas as pd
 from datetime import datetime
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     JQ2BTBaseStrategy,
     ContextProxy,
     PortfolioProxy,

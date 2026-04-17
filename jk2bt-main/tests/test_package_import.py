@@ -661,7 +661,7 @@ class TestImportFromSubmodules:
 
     def test_import_from_market_data(self):
         """测试从 market_data 导入"""
-        from jk2bt.market_data import (
+        from jk2bt.data.market import (
             get_stock_daily,
             get_etf_daily,
             get_index_daily,
@@ -673,7 +673,7 @@ class TestImportFromSubmodules:
 
     def test_import_from_finance_data(self):
         """测试从 finance_data 导入"""
-        from jk2bt.finance_data import (
+        from jk2bt.data.finance import (
             get_income,
             get_cashflow,
         )
@@ -683,13 +683,13 @@ class TestImportFromSubmodules:
 
     def test_import_from_factors(self):
         """测试从 factors 导入"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         assert callable(get_factor_values_jq)
 
     def test_import_from_indicators(self):
         """测试从 signals 导入 (indicators 已废弃)"""
-        from jk2bt.signals import (
+        from jk2bt.analysis.signals import (
             compute_rsrs,
             compute_crowding_ratio,
         )
@@ -709,7 +709,7 @@ class TestImportFromSubmodules:
 
     def test_import_from_db(self):
         """测试从 db 导入"""
-        from jk2bt.db import ParquetAdapter
+        from jk2bt.data.storage import ParquetAdapter
 
         assert isinstance(ParquetAdapter, type)
 

@@ -18,7 +18,7 @@ from jk2bt.utils.standardize import (
     COLUMN_MAP_COMMON,
     COLUMN_MAP_DAILY,
 )
-from jk2bt.market_data.minute import (
+from jk2bt.data.market.minute import (
     get_stock_minute,
     get_etf_minute,
     _validate_period,
@@ -26,11 +26,11 @@ from jk2bt.market_data.minute import (
     PERIOD_MAP,
     VALID_PERIODS,
 )
-from jk2bt.market_data import (
+from jk2bt.data.market import (
     get_stock_minute,
     get_etf_minute,
 )
-from jk2bt.db.parquet_adapter import ParquetAdapter
+from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
 
 class TestStandardizeFunctions:
@@ -647,7 +647,7 @@ class TestMinuteDataIntegration:
 
     def test_import_from_market_data_init(self):
         """验证从 market_data.__init__ 导入"""
-        from jk2bt.market_data import (
+        from jk2bt.data.market import (
             get_stock_minute,
             get_etf_minute,
         )

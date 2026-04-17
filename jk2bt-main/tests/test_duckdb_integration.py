@@ -4,8 +4,8 @@
 
 import pytest
 
-from jk2bt.db import ParquetAdapter
-from jk2bt.market_data import (
+from jk2bt.data.storage import ParquetAdapter
+from jk2bt.data.market import (
     get_stock_daily,
     get_etf_daily,
     get_index_daily,

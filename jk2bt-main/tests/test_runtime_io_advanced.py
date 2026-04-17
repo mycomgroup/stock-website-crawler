@@ -12,7 +12,7 @@ from pathlib import Path
 from datetime import datetime
 import json
 
-from jk2bt.core.io import (
+from jk2bt.engine.io import (
     record,
     send_message,
     read_file,
@@ -590,11 +590,11 @@ class TestRuntimeDirManagement:
     def test_runtime_dir_auto_created(self):
         """测试运行时目录自动创建"""
         # 清除全局运行时目录，测试自动创建功能
-        import jk2bt.core.io as runtime_io_module
+        import jk2bt.engine.io as runtime_io_module
 
         runtime_io_module._RUNTIME_DIR = None
 
-        from jk2bt.core.io import _get_runtime_dir
+        from jk2bt.engine.io import _get_runtime_dir
 
         default_dir = _get_runtime_dir()
         assert default_dir.exists()

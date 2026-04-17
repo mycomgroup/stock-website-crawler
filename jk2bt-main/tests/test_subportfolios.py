@@ -8,8 +8,8 @@ import backtrader as bt
 import pandas as pd
 from datetime import datetime
 
-from jk2bt.core.strategy_base import JQ2BTBaseStrategy
-from jk2bt.asset_router import (
+from jk2bt.engine.strategy_base import JQ2BTBaseStrategy
+from jk2bt.engine.asset_router import (
     AssetType,
     AssetCategory,
     TradingStatus,
@@ -21,7 +21,7 @@ from jk2bt.asset_router import (
     is_future,
     is_index,
 )
-from jk2bt.strategy.subportfolios import (
+from jk2bt.engine.subportfolios import (
     SubportfolioType,
     SubportfolioConfig,
     SubportfolioProxy,
@@ -192,7 +192,7 @@ class TestAssetRouter(unittest.TestCase):
         self.assertIn("supported", repr_str)
 
     def test_get_trading_status_desc(self):
-        from jk2bt.asset_router import (
+        from jk2bt.engine.asset_router import (
             get_trading_status_desc,
         )
 
@@ -201,7 +201,7 @@ class TestAssetRouter(unittest.TestCase):
         self.assertEqual(get_trading_status_desc("IF2312.CCFX"), "已识别(暂不支持)")
 
     def test_is_data_readable(self):
-        from jk2bt.asset_router import is_data_readable
+        from jk2bt.engine.asset_router import is_data_readable
 
         self.assertTrue(is_data_readable("600519.XSHG"))
         self.assertTrue(is_data_readable("510300.XSHG"))

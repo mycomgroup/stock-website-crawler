@@ -10,7 +10,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.finance_data.dividend import (
+from jk2bt.data.finance.dividend import (
     get_dividend,
     get_dividend_info,
     get_adjust_factor,

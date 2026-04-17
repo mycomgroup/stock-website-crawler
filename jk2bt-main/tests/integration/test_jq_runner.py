@@ -195,7 +195,7 @@ def handle_data(context):
         f.write(test_strategy)
 
     try:
-        from jk2bt.core.runner import load_jq_strategy
+        from jk2bt.engine.runner import load_jq_strategy
 
         funcs = load_jq_strategy(test_file)
 
@@ -234,7 +234,7 @@ def handle_data(context):
         f.write(test_strategy)
 
     try:
-        from jk2bt.core.runner import load_jq_strategy
+        from jk2bt.engine.runner import load_jq_strategy
 
         funcs = load_jq_strategy(test_file)
 
@@ -307,7 +307,7 @@ def initialize(context):
         f.write(test_strategy)
 
     try:
-        from jk2bt.core.runner import load_jq_strategy
+        from jk2bt.engine.runner import load_jq_strategy
 
         funcs = load_jq_strategy(test_file)
 
@@ -364,7 +364,7 @@ def initialize(context):
         f.write(test_strategy)
 
     try:
-        from jk2bt.core.runner import load_jq_strategy
+        from jk2bt.engine.runner import load_jq_strategy
 
         funcs = load_jq_strategy(test_file)
 
@@ -431,7 +431,7 @@ def initialize(context):
         f.write(test_strategy)
 
     try:
-        from jk2bt.core.runner import load_jq_strategy
+        from jk2bt.engine.runner import load_jq_strategy
 
         funcs = load_jq_strategy(test_file)
 
@@ -466,7 +466,7 @@ def test_invalid_file_error():
         f.write(b"\xff\xfe\x00\x00\x01\x02invalid bytes")
 
     try:
-        from jk2bt.core.runner import load_jq_strategy
+        from jk2bt.engine.runner import load_jq_strategy
 
         funcs = load_jq_strategy(test_file)
         print("\n❌ 不应该成功加载无效文件")

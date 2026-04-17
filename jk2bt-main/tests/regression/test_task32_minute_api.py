@@ -207,7 +207,7 @@ def test_period_validation():
     print("=" * 60)
 
     try:
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(read_only=True)
         count = db.count_records("stock_minute")
@@ -236,7 +236,7 @@ def check_duckdb_cache():
     print("=" * 60)
 
     try:
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(read_only=True)
 

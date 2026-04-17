@@ -23,13 +23,13 @@ import os
 # Add jk2bt to path for direct import
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../"))
 
-from jk2bt.risk.volatility import (
+from jk2bt.analysis.risk.volatility import (
     compute_volatility,
     compute_volatility_adjusted_position,
     compute_atr_based_stop_loss,
     detect_volatility_regime_change,
 )
-from jk2bt.factors.base import safe_divide
+from jk2bt.analysis.factors.base import safe_divide
 
 
 # =====================================================================

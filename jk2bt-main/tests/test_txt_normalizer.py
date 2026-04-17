@@ -36,7 +36,7 @@ pytestmark = pytest.mark.skip(
 
 # 延迟导入以避免触发整个包的初始化依赖链
 try:
-    from jk2bt.strategy.txt_strategy_normalizer import (
+    from jk2bt.scanner.txt_normalizer import (
         TxtStrategyNormalizer,
         NormalizationResult,
         NormalizationIssue,

@@ -1,6 +1,6 @@
 """
 test_base.py
-factors/base.py 的单元测试。
+analysis/factors/base.py 的单元测试。
 
 测试覆盖：
 - normalize_factor_name: 因子名标准化
@@ -29,7 +29,7 @@ import numpy as np
 
 # 直接从文件路径加载模块，避免 package __init__.py 的问题
 project_root = Path(__file__).parent.parent.parent.parent
-base_file_path = project_root / "jk2bt" / "factors" / "base.py"
+base_file_path = project_root / "jk2bt" / "analysis" / "factors" / "base.py"
 
 # 使用 spec_from_file_location 直接加载模块
 spec = importlib.util.spec_from_file_location("factors_base", str(base_file_path))
@@ -43,11 +43,11 @@ base_module.__package__ = None
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-# 预先 mock jk2bt.core.strategy_base 模块以避免导入问题
+# 预先 mock jk2bt.engine.strategy_base 模块以避免导入问题
 mock_strategy_base = MagicMock()
 mock_strategy_base.get_all_trade_days_jq = MagicMock(return_value=pd.DatetimeIndex([]))
-sys.modules["jk2bt.core.strategy_base"] = mock_strategy_base
-sys.modules["jk2bt.core"] = MagicMock()
+sys.modules["jk2bt.engine.strategy_base"] = mock_strategy_base
+sys.modules["jk2bt.engine"] = MagicMock()
 sys.modules["jk2bt"] = MagicMock()
 
 # 执行模块加载

@@ -29,7 +29,7 @@ def run_strategy_main():
     jk2bt-run 命令入口
     运行聚宽策略文件
     """
-    from jk2bt.core.runner import run_jq_strategy
+    from jk2bt.engine.runner import run_jq_strategy
 
     parser = argparse.ArgumentParser(
         prog="jk2bt-run", description="运行聚宽策略文件进行本地回测"
@@ -148,7 +148,7 @@ def validate_cache_main():
     jk2bt-validate 命令入口
     验证缓存状态
     """
-    from jk2bt.db.cache_status import get_cache_manager
+    from jk2bt.data.storage.cache_status import get_cache_manager
 
     parser = argparse.ArgumentParser(
         prog="jk2bt-validate", description="验证数据缓存状态"

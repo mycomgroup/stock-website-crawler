@@ -10,7 +10,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.finance_data.shareholder import (
+from jk2bt.data.finance.shareholder import (
     get_top10_shareholders,
     get_top10_float_shareholders,
     get_shareholder_count,

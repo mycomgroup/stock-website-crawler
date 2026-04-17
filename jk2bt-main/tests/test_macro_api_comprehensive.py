@@ -10,7 +10,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.finance_data.macro import (
+from jk2bt.data.finance.macro import (
     get_macro_data,
     get_macro_series,
     get_macro_indicators,

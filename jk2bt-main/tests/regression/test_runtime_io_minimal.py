@@ -2,7 +2,7 @@
 最小策略验证 runtime IO API
 """
 
-from jk2bt.core.io import (
+from jk2bt.engine.io import (
     record,
     send_message,
     read_file,

@@ -22,7 +22,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from jk2bt.core.validator import (
+    from jk2bt.engine.validator import (
         ValidationStatus,
         validate_single_strategy,
     )

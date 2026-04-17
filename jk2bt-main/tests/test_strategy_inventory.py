@@ -10,8 +10,8 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from jk2bt.strategy.inventory import StrategyInventory, StrategyClassification
-from jk2bt.strategy.scanner import ScanResult, StrategyStatus
+from jk2bt.engine.inventory import StrategyInventory, StrategyClassification
+from jk2bt.scanner.scanner import ScanResult, StrategyStatus
 
 
 class TestStrategyClassification:

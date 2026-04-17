@@ -52,8 +52,8 @@ class TestPrewarmEndToEnd:
         """每个测试方法前确保环境正确"""
         # 确保可以导入必要模块
         try:
-            from jk2bt.db.cache_status import get_cache_manager
-            from jk2bt.db.parquet_adapter import ParquetAdapter
+            from jk2bt.data.storage.cache_status import get_cache_manager
+            from jk2bt.data.storage.parquet_adapter import ParquetAdapter
         except ImportError as e:
             pytest.skip(f"必要模块导入失败: {e}")
 
@@ -159,7 +159,7 @@ class TestPrewarmEndToEnd:
         logger.info("步骤3: 验证缓存状态")
         logger.info("=" * 80)
 
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         cache_manager = get_cache_manager()
 
@@ -217,7 +217,7 @@ class TestPrewarmEndToEnd:
         logger.info("步骤4: 离线模式缓存验证")
         logger.info("=" * 80)
 
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         cache_manager = get_cache_manager()
 
@@ -263,8 +263,8 @@ class TestPrewarmEndToEnd:
         logger.info("步骤5: 离线运行策略")
         logger.info("=" * 80)
 
-        from jk2bt.core.runner import run_jq_strategy
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.engine.runner import run_jq_strategy
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         # 先验证缓存是否足够
         cache_manager = get_cache_manager()
@@ -384,8 +384,8 @@ def handle_data(context, data):
         except ImportError:
             from prewarm_data import run_prewarm
 
-        from jk2bt.db.cache_status import get_cache_manager
-        from jk2bt.core.runner import run_jq_strategy
+        from jk2bt.data.storage.cache_status import get_cache_manager
+        from jk2bt.engine.runner import run_jq_strategy
 
         # 1. 预热数据
         logger.info("  [1/3] 预热数据...")
@@ -511,7 +511,7 @@ class TestPrewarmEdgeCases:
 
     def test_cache_check_future_dates(self):
         """测试未来日期缓存检查"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         cache_manager = get_cache_manager()
 
@@ -532,7 +532,7 @@ class TestPrewarmEdgeCases:
 
     def test_offline_validation_empty_pool(self):
         """测试空股票池离线验证"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         cache_manager = get_cache_manager()
 

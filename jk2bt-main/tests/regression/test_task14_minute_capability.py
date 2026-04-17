@@ -22,7 +22,7 @@ import unittest
 import importlib
 
 try:
-    from jk2bt.strategy.timer_rules import (
+    from jk2bt.scanner.timer_rules import (
         TimerRules,
         parse_timer_rule,
     )
@@ -30,7 +30,7 @@ except ImportError:
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, project_root)
     try:
-        from jk2bt.strategy.timer_rules import (
+        from jk2bt.scanner.timer_rules import (
             TimerRules,
             parse_timer_rule,
         )
@@ -121,7 +121,7 @@ class TestMinuteDataActualAvailability(unittest.TestCase):
         import_error_message = None
 
         try:
-            from jk2bt.market_data.minute import (
+            from jk2bt.data.market.minute import (
                 get_stock_minute,
             )
 
@@ -145,7 +145,7 @@ class TestMinuteDataActualAvailability(unittest.TestCase):
         call_error_message = None
 
         try:
-            from jk2bt.market_data.minute import (
+            from jk2bt.data.market.minute import (
                 get_stock_minute,
             )
 

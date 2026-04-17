@@ -28,29 +28,29 @@ from unittest.mock import patch, MagicMock, mock_open
 project_root = Path(__file__).parent.parent.parent.parent
 
 # 先 mock 所有依赖模块
-mock_runner = types.ModuleType("jk2bt.core.runner")
+mock_runner = types.ModuleType("jk2bt.engine.runner")
 mock_runner.load_jq_strategy = MagicMock()
 mock_runner.run_jq_strategy = MagicMock()
 
-mock_io = types.ModuleType("jk2bt.core.io")
+mock_io = types.ModuleType("jk2bt.engine.io")
 mock_io.get_record_data = MagicMock(return_value={})
 mock_io.clear_runtime_data = MagicMock()
 mock_io.set_runtime_dir = MagicMock()
 
-mock_strategy_base = types.ModuleType("jk2bt.core.strategy_base")
+mock_strategy_base = types.ModuleType("jk2bt.engine.strategy_base")
 mock_strategy_base.set_current_strategy = MagicMock()
 
 # 注册 mock 模块
-sys.modules["jk2bt.core.runner"] = mock_runner
-sys.modules["jk2bt.core.io"] = mock_io
-sys.modules["jk2bt.core.strategy_base"] = mock_strategy_base
+sys.modules["jk2bt.engine.runner"] = mock_runner
+sys.modules["jk2bt.engine.io"] = mock_io
+sys.modules["jk2bt.engine.strategy_base"] = mock_strategy_base
 
 # 直接加载 validator 模块
 _validator_spec = importlib.util.spec_from_file_location(
-    "jk2bt.core.validator", str(project_root / "jk2bt/core/validator.py")
+    "jk2bt.engine.validator", str(project_root / "jk2bt/engine/validator.py")
 )
 _validator_mod = importlib.util.module_from_spec(_validator_spec)
-sys.modules["jk2bt.core.validator"] = _validator_mod
+sys.modules["jk2bt.engine.validator"] = _validator_mod
 _validator_spec.loader.exec_module(_validator_mod)
 
 ValidationStatus = _validator_mod.ValidationStatus

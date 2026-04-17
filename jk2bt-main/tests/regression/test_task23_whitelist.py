@@ -17,7 +17,7 @@ sys.path.insert(
     os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"),
 )
 
-from jk2bt.core.runner import load_jq_strategy
+from jk2bt.engine.runner import load_jq_strategy
 
 
 class TestStrategyTypeAnalyzer:

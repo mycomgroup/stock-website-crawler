@@ -35,7 +35,7 @@ except ImportError:
 # akshare 改为延迟导入，减少启动依赖
 
 # 从子模块导入
-from jk2bt.core.securities_utils import (
+from jk2bt.engine.securities_utils import (
     format_stock_symbol_for_akshare,
     jq_code_to_ak,
     ak_code_to_jq,
@@ -51,7 +51,7 @@ from jk2bt.core.securities_utils import (
     INDEX_CODE_ALIAS_MAP,
     RobustResult,
 )
-from jk2bt.core.data_proxies import (
+from jk2bt.engine.data_proxies import (
     SecurityInfo,
     _QueryBuilder,
     _Expression,
@@ -69,7 +69,7 @@ from jk2bt.core.data_proxies import (
     _CurrentDataProxy,
     _TickDataProxy,
 )
-from jk2bt.core.global_state import (
+from jk2bt.engine.global_state import (
     log,
     logger,
     _prerun_mode_active,
@@ -101,7 +101,7 @@ def get_index_weights(index_code, date=None, robust=False):
             log.warn(f"获取失败: {result.reason}")
     """
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
@@ -185,7 +185,7 @@ def get_index_stocks(index_code, date=None, robust=False):
         return _get_spi_index_stocks(index_code, date, robust)
 
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
@@ -235,7 +235,7 @@ def get_akshare_etf_data(symbol, start, end, force_update=False):
     symbol: ETF 代码，如 '518880'
     """
     try:
-        from jk2bt.market_data.etf import get_etf_daily
+        from jk2bt.data.market.etf import get_etf_daily
     except ImportError:
         from market_data.etf import get_etf_daily
 
@@ -270,7 +270,7 @@ def get_akshare_stock_data(symbol, start, end, force_update=False, adjust="qfq")
     adjust: 'qfq' 前复权 / 'hfq' 后复权 / '' 不复权
     """
     try:
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
     except ImportError:
         from market_data.stock import get_stock_daily
 
@@ -300,7 +300,7 @@ def get_akshare_stock_data(symbol, start, end, force_update=False, adjust="qfq")
 def get_index_nav(symbol, start, end, force_update=False):
     """获取指数净值序列（归一化），用于基准比较。使用 DuckDB 存储。"""
     try:
-        from jk2bt.market_data.index import get_index_daily
+        from jk2bt.data.market.index import get_index_daily
     except ImportError:
         from market_data.index import get_index_daily
 
@@ -829,7 +829,7 @@ def get_current_tick(security, bt_strategy=None):
     # 如果没有传入策略实例，尝试获取当前策略实例
     if bt_strategy is None:
         try:
-            from jk2bt.core.runner import _get_current_strategy
+            from jk2bt.engine.runner import _get_current_strategy
 
             bt_strategy = _get_current_strategy()
         except ImportError:
@@ -994,7 +994,7 @@ _FUNDAMENTALS_SCHEMA = {
 def get_cashflow_sina(symbol, stat_date=None, force_update=False):
     """获取现金流量表（新浪接口），支持 stat_date 筛选。"""
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
 
         akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
         df = get_adapter().get_cashflow(akshare_symbol)
@@ -1013,7 +1013,7 @@ def get_cashflow_sina(symbol, stat_date=None, force_update=False):
 def get_income_ths(symbol, indicator="按报告期", force_update=False):
     """获取利润表（同花顺接口），支持 indicator 筛选。"""
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
 
         akshare_symbol = symbol[2:] if symbol.startswith(("sh", "sz")) else symbol
         df = get_adapter().get_financial_benefit(akshare_symbol, indicator)
@@ -1027,7 +1027,7 @@ def get_income_ths(symbol, indicator="按报告期", force_update=False):
 def get_balance_sina(symbol, stat_date=None, force_update=False):
     """获取资产负债表（新浪接口），支持 stat_date 筛选。"""
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
 
         akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
         df = get_adapter().get_financial_report(akshare_symbol, "资产负债表")
@@ -1199,7 +1199,7 @@ def _get_valuation_fundamentals(symbols, date=None, filters=None, force_update=F
     """获取估值数据"""
     try:
         try:
-            from jk2bt.factors.factor_zoo import get_factor_values_jq
+            from jk2bt.analysis.factors.factor_zoo import get_factor_values_jq
         except ImportError:
             import sys
             import os as _os
@@ -1690,7 +1690,7 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
         use_duckdb: 是否优先使用 DuckDB 缓存
     """
     if use_duckdb:
-        from jk2bt.db.meta_cache_api import get_securities_from_cache
+        from jk2bt.data.storage.meta_cache_api import get_securities_from_cache
 
         df = get_securities_from_cache(
             types=types, force_update=force_update, use_duckdb=True
@@ -1706,7 +1706,7 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
     for t in types:
         if t == "stock":
             try:
-                from jk2bt.data_access import get_adapter
+                from jk2bt.data.sources import get_adapter
 
                 df = get_adapter().get_securities_list()
             except ImportError:
@@ -2032,7 +2032,7 @@ def _get_spi_industry_stocks(index_code):
     TODO: 完整实现应建立聚宽行业分类到申万行业的映射
     """
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
 
         adapter = get_adapter()
         sw_index_map = {
@@ -2131,7 +2131,7 @@ def get_security_info_jq(code, force_update=False, use_duckdb=True):
 
     if use_duckdb:
         try:
-            from jk2bt.db.meta_cache_api import get_security_info_from_cache
+            from jk2bt.data.storage.meta_cache_api import get_security_info_from_cache
 
             info = get_security_info_from_cache(
                 code, force_update=force_update, use_duckdb=True
@@ -2142,7 +2142,7 @@ def get_security_info_jq(code, force_update=False, use_duckdb=True):
             logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
 
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
 
         info = get_adapter().get_security_info(code)
         return SecurityInfo(info)
@@ -2179,7 +2179,7 @@ def get_all_trade_days_jq(force_update=False, use_duckdb=True):
 
     if use_duckdb:
         try:
-            from jk2bt.db.meta_cache_api import get_trade_days_from_cache
+            from jk2bt.data.storage.meta_cache_api import get_trade_days_from_cache
 
             days = get_trade_days_from_cache(force_update=force_update, use_duckdb=True)
             if days is not None and len(days) > 0:
@@ -2188,7 +2188,7 @@ def get_all_trade_days_jq(force_update=False, use_duckdb=True):
             logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
 
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
 
         raw = get_adapter().get_trading_days()
         if isinstance(raw, pd.DataFrame):
@@ -2233,7 +2233,7 @@ def get_factor_values_jq(
     """
     try:
         try:
-            from jk2bt.factors.factor_zoo import (
+            from jk2bt.analysis.factors.factor_zoo import (
                 get_factor_values_jq as _get_factor_values_jq,
             )
         except ImportError:
@@ -2299,7 +2299,7 @@ def get_extras_jq(
     if field == "is_st":
         st_df = None
         try:
-            from jk2bt.data_access import get_adapter
+            from jk2bt.data.sources import get_adapter
 
             st_df = get_adapter().get_st_stocks()
         except Exception as e:
@@ -2318,7 +2318,7 @@ def get_extras_jq(
     elif field == "is_paused":
         stop_df = None
         try:
-            from jk2bt.data_access import get_adapter
+            from jk2bt.data.sources import get_adapter
 
             stop_df = get_adapter().get_suspended_stocks()
         except Exception as e:
@@ -2456,7 +2456,7 @@ def winsorize_med(factor_data, scale=3, inclusive=True, inf2nan=True, axis=0):
     # Fallback 到本地实现
     try:
         try:
-            from jk2bt.factors.preprocess import winsorize_med as _winsorize_med
+            from jk2bt.analysis.factors.preprocess import winsorize_med as _winsorize_med
         except ImportError:
             import sys
             import os as _os
@@ -2529,7 +2529,7 @@ def standardlize(factor_data, inf2nan=True, axis=0):
     # Fallback 到本地实现
     try:
         try:
-            from jk2bt.factors.preprocess import standardlize as _standardlize
+            from jk2bt.analysis.factors.preprocess import standardlize as _standardlize
         except ImportError:
             import sys
             import os as _os
@@ -2571,7 +2571,7 @@ def get_all_alpha_101(date, code=None, alpha=None):
         或 dict{factor_name: DataFrame}（多因子）
     """
     try:
-        from jk2bt.factors.qlib_alpha import compute_alpha101
+        from jk2bt.analysis.factors.qlib_alpha import compute_alpha101
     except ImportError:
         raise ImportError("请安装 qlib: pip install pyqlib")
 
@@ -2614,7 +2614,7 @@ def get_all_alpha_191(date, code=None, alpha=None):
         DataFrame 或 dict{factor_name: DataFrame}
     """
     try:
-        from jk2bt.factors.qlib_alpha import compute_alpha191
+        from jk2bt.analysis.factors.qlib_alpha import compute_alpha191
     except ImportError:
         raise ImportError("请安装 qlib: pip install pyqlib")
 

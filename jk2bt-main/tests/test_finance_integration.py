@@ -6,7 +6,7 @@ Finance模块集成测试 - 测试所有finance表的联合使用
 import unittest
 import pandas as pd
 
-from jk2bt.core.strategy_base import finance, query
+from jk2bt.engine.strategy_base import finance, query
 
 
 class TestFinanceIntegration(unittest.TestCase):

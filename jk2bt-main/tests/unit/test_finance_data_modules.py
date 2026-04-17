@@ -10,7 +10,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from jk2bt.finance_data.margin import (
+from jk2bt.data.finance.margin import (
     get_margin_data,
     get_margin_history,
     _extract_code_num,
@@ -19,7 +19,7 @@ from jk2bt.finance_data.margin import (
     _filter_and_normalize,
     _normalize_to_jq,
 )
-from jk2bt.finance_data.forecast import (
+from jk2bt.data.finance.forecast import (
     get_forecast_data,
     _extract_code_num as _extract_code_num_forecast,
     _normalize_to_jq as _normalize_to_jq_forecast,

@@ -73,7 +73,7 @@ def get_index_stocks(index_code: str) -> list:
     list : 成分股代码列表
     """
     try:
-        from jk2bt.market_data.index_components import get_index_components
+        from jk2bt.data.market.index_components import get_index_components
         df = get_index_components(index_code)
         if not df.empty and "stock_code" in df.columns:
             return list(df["stock_code"].unique())

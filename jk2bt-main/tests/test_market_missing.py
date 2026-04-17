@@ -27,13 +27,13 @@ class TestStockAPI:
 
     def test_import_stock_module(self):
         """测试导入 stock 模块"""
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         assert callable(get_stock_daily)
 
     def test_get_stock_daily_basic(self):
         """测试获取股票日线数据"""
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         df = get_stock_daily(
             "sh600519",
@@ -50,13 +50,13 @@ class TestETFAPI:
 
     def test_import_etf_module(self):
         """测试导入 etf 模块"""
-        from jk2bt.market_data.etf import get_etf_daily
+        from jk2bt.data.market.etf import get_etf_daily
 
         assert callable(get_etf_daily)
 
     def test_get_etf_daily_basic(self):
         """测试获取 ETF 日线数据"""
-        from jk2bt.market_data.etf import get_etf_daily
+        from jk2bt.data.market.etf import get_etf_daily
 
         df = get_etf_daily(
             "510300",
@@ -73,13 +73,13 @@ class TestIndexAPI:
 
     def test_import_index_module(self):
         """测试导入 index 模块"""
-        from jk2bt.market_data.index import get_index_daily
+        from jk2bt.data.market.index import get_index_daily
 
         assert callable(get_index_daily)
 
     def test_get_index_daily_basic(self):
         """测试获取指数日线数据"""
-        from jk2bt.market_data.index import get_index_daily
+        from jk2bt.data.market.index import get_index_daily
 
         df = get_index_daily(
             "000300",
@@ -96,7 +96,7 @@ class TestMinuteAPI:
 
     def test_import_minute_module(self):
         """测试导入 minute 模块"""
-        from jk2bt.market_data.minute import (
+        from jk2bt.data.market.minute import (
             get_stock_minute,
             get_etf_minute,
         )
@@ -106,7 +106,7 @@ class TestMinuteAPI:
 
     def test_get_stock_minute_basic(self):
         """测试获取股票分钟数据"""
-        from jk2bt.market_data.minute import (
+        from jk2bt.data.market.minute import (
             get_stock_minute,
         )
 
@@ -126,7 +126,7 @@ class TestIndustryAPI:
 
     def test_import_industry_module(self):
         """测试导入 industry 模块"""
-        from jk2bt.market_data.industry import (
+        from jk2bt.data.market.industry import (
             get_industry_stocks,
             get_stock_industry,
         )
@@ -136,7 +136,7 @@ class TestIndustryAPI:
 
     def test_get_stock_industry_basic(self):
         """测试获取股票所属行业"""
-        from jk2bt.market_data.industry import (
+        from jk2bt.data.market.industry import (
             get_stock_industry,
         )
 
@@ -150,7 +150,7 @@ class TestCallAuctionAPI:
 
     def test_import_call_auction_module(self):
         """测试导入 call_auction 模块"""
-        from jk2bt.market_data.call_auction import (
+        from jk2bt.data.market.call_auction import (
             get_call_auction,
         )
 
@@ -158,7 +158,7 @@ class TestCallAuctionAPI:
 
     def test_get_call_auction_realtime(self):
         """测试获取实时竞价数据"""
-        from jk2bt.market_data.call_auction import (
+        from jk2bt.data.market.call_auction import (
             get_call_auction,
         )
 
@@ -182,7 +182,7 @@ class TestNorthMoneyAPI:
 
     def test_import_north_money_module(self):
         """测试导入 north_money 模块"""
-        from jk2bt.market_data.north_money import (
+        from jk2bt.data.market.north_money import (
             get_north_money_flow,
         )
 
@@ -194,7 +194,7 @@ class TestFundOfAPI:
 
     def test_import_fund_of_module(self):
         """测试导入 fund_of 模块"""
-        from jk2bt.market_data.fund_of import (
+        from jk2bt.data.market.fund_of import (
             get_fund_of_nav,
         )
 
@@ -202,7 +202,7 @@ class TestFundOfAPI:
 
     def test_get_fund_of_nav(self):
         """测试获取场外基金净值"""
-        from jk2bt.market_data.fund_of import (
+        from jk2bt.data.market.fund_of import (
             get_fund_of_nav,
         )
 
@@ -220,7 +220,7 @@ class TestLOFAPI:
 
     def test_import_lof_module(self):
         """测试导入 lof 模块"""
-        from jk2bt.market_data.lof import (
+        from jk2bt.data.market.lof import (
             get_lof_daily,
         )
 
@@ -228,7 +228,7 @@ class TestLOFAPI:
 
     def test_get_lof_daily(self):
         """测试获取 LOF 日线数据"""
-        from jk2bt.market_data.lof import (
+        from jk2bt.data.market.lof import (
             get_lof_daily,
         )
 
@@ -250,9 +250,9 @@ def test_quick_validation():
     """快速验证测试"""
     print("\n=== 快速验证测试 ===")
 
-    from jk2bt.market_data.stock import get_stock_daily
-    from jk2bt.market_data.etf import get_etf_daily
-    from jk2bt.market_data.index import get_index_daily
+    from jk2bt.data.market.stock import get_stock_daily
+    from jk2bt.data.market.etf import get_etf_daily
+    from jk2bt.data.market.index import get_index_daily
 
     print("\n1. 测试股票日线")
     df_stock = get_stock_daily(

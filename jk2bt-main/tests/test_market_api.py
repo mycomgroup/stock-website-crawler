@@ -556,7 +556,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
 
     def test_get_price_jq_unified(self):
         """get_price_jq 使用统一接口"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="600519.XSHG",
@@ -569,7 +569,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
 
     def test_history_unified(self):
         """history 使用统一接口"""
-        from jk2bt.core.strategy_base import history
+        from jk2bt.engine.strategy_base import history
 
         result = history(
             count=10,
@@ -582,7 +582,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
 
     def test_attribute_history_unified(self):
         """attribute_history 使用统一接口"""
-        from jk2bt.core.strategy_base import attribute_history
+        from jk2bt.engine.strategy_base import attribute_history
 
         result = attribute_history(
             security="600519.XSHG",
@@ -595,7 +595,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
 
     def test_get_bars_jq_unified(self):
         """get_bars_jq 使用统一接口"""
-        from jk2bt.core.strategy_base import get_bars_jq
+        from jk2bt.engine.strategy_base import get_bars_jq
 
         result = get_bars_jq(
             security="600519.XSHG",

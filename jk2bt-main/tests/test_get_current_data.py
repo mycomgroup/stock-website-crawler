@@ -5,7 +5,7 @@ test_get_current_data.py
 
 import unittest
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     get_current_data,
     _CurrentDataEntry,
     _CurrentDataProxy,

@@ -7,7 +7,7 @@ import tempfile
 import os
 from pathlib import Path
 
-from jk2bt.core.io import (
+from jk2bt.engine.io import (
     record,
     send_message,
     read_file,
@@ -83,11 +83,11 @@ class TestRuntimeIOInStrategy:
         assert "SELL" in content
 
     def test_runtime_dir_defaults_to_repo(self):
-        from jk2bt.core.io import (
+        from jk2bt.engine.io import (
             _get_runtime_dir,
             _RUNTIME_DIR,
         )
-        import jk2bt.core.io as runtime_io_module
+        import jk2bt.engine.io as runtime_io_module
 
         original_runtime_dir = runtime_io_module._RUNTIME_DIR
         runtime_io_module._RUNTIME_DIR = None

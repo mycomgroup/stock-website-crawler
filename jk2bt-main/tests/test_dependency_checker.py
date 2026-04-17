@@ -24,7 +24,7 @@ class TestDependencyRegistry:
     """测试依赖注册表完整性"""
 
     def test_registry_has_required_deps(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DEPENDENCY_REGISTRY,
             DependencyLevel,
         )
@@ -35,7 +35,7 @@ class TestDependencyRegistry:
             assert DEPENDENCY_REGISTRY[name].level == DependencyLevel.REQUIRED
 
     def test_registry_has_optional_deps(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DEPENDENCY_REGISTRY,
             DependencyLevel,
         )
@@ -46,7 +46,7 @@ class TestDependencyRegistry:
             assert DEPENDENCY_REGISTRY[name].level == DependencyLevel.OPTIONAL
 
     def test_registry_has_ml_advanced_deps(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DEPENDENCY_REGISTRY,
             DependencyLevel,
         )
@@ -57,7 +57,7 @@ class TestDependencyRegistry:
             assert DEPENDENCY_REGISTRY[name].level == DependencyLevel.ML_ADVANCED
 
     def test_registry_has_not_supported_deps(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DEPENDENCY_REGISTRY,
             DependencyLevel,
         )
@@ -68,7 +68,7 @@ class TestDependencyRegistry:
             assert DEPENDENCY_REGISTRY[name].level == DependencyLevel.NOT_SUPPORTED
 
     def test_each_dep_has_install_cmd(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DEPENDENCY_REGISTRY,
         )
 
@@ -77,7 +77,7 @@ class TestDependencyRegistry:
             assert "pip install" in dep.install_cmd or name == "talib"
 
     def test_each_dep_has_description(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DEPENDENCY_REGISTRY,
         )
 
@@ -89,7 +89,7 @@ class TestCheckSingleDependency:
     """测试单包检查"""
 
     def test_check_pandas_exists(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -99,7 +99,7 @@ class TestCheckSingleDependency:
         assert version is not None
 
     def test_check_numpy_exists(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -109,7 +109,7 @@ class TestCheckSingleDependency:
         assert version is not None
 
     def test_check_missing_package(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DependencyInfo,
             DependencyLevel,
@@ -128,7 +128,7 @@ class TestCheckSingleDependency:
         assert error is not None
 
     def test_check_sklearn_import_name(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -141,7 +141,7 @@ class TestCheckDependencies:
     """测试全量检查"""
 
     def test_check_all_returns_dict(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_dependencies,
         )
 
@@ -150,7 +150,7 @@ class TestCheckDependencies:
         assert len(results) > 0
 
     def test_check_by_level_required(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_dependencies,
             DependencyLevel,
         )
@@ -162,7 +162,7 @@ class TestCheckDependencies:
         )
 
     def test_check_by_level_optional(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_dependencies,
             DependencyLevel,
         )
@@ -173,7 +173,7 @@ class TestCheckDependencies:
         )
 
     def test_check_verbose_output(self, capsys):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_dependencies,
             DependencyLevel,
         )
@@ -187,7 +187,7 @@ class TestCheckRequiredDependencies:
     """测试必装依赖检查"""
 
     def test_required_deps_present(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_required_dependencies,
         )
 
@@ -195,7 +195,7 @@ class TestCheckRequiredDependencies:
         assert result is True
 
     def test_required_missing_returns_false(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_required_dependencies,
             DEPENDENCY_REGISTRY,
             DependencyLevel,
@@ -221,7 +221,7 @@ class TestCheckMLDependencies:
     """测试ML依赖检查"""
 
     def test_ml_check_returns_dict(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_ml_dependencies,
         )
 
@@ -229,7 +229,7 @@ class TestCheckMLDependencies:
         assert isinstance(results, dict)
 
     def test_ml_check_includes_optional(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_ml_dependencies,
         )
 
@@ -238,7 +238,7 @@ class TestCheckMLDependencies:
         assert "duckdb" in results
 
     def test_ml_check_includes_advanced(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_ml_dependencies,
         )
 
@@ -252,7 +252,7 @@ class TestGetInstallRecommendation:
     """测试安装建议"""
 
     def test_basic_recommendation(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             get_install_recommendation,
         )
 
@@ -261,7 +261,7 @@ class TestGetInstallRecommendation:
         assert any("pandas" in cmd for cmd in cmds)
 
     def test_full_recommendation(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             get_install_recommendation,
         )
 
@@ -270,7 +270,7 @@ class TestGetInstallRecommendation:
         assert any("matplotlib" in cmd for cmd in cmds)
 
     def test_ml_recommendation(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             get_install_recommendation,
         )
 
@@ -279,7 +279,7 @@ class TestGetInstallRecommendation:
         assert any("sklearn" in cmd or "scikit-learn" in cmd for cmd in cmds)
 
     def test_qlib_recommendation(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             get_install_recommendation,
         )
 
@@ -287,7 +287,7 @@ class TestGetInstallRecommendation:
         assert "qlib" in cmds or any("qlib" in cmd for cmd in cmds)
 
     def test_unknown_use_case(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             get_install_recommendation,
         )
 
@@ -299,7 +299,7 @@ class TestImportWithCheck:
     """测试安全导入"""
 
     def test_import_existing_package(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             import_with_check,
         )
 
@@ -308,7 +308,7 @@ class TestImportWithCheck:
         assert hasattr(pd, "DataFrame")
 
     def test_import_missing_optional_warns(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             import_with_check,
         )
 
@@ -319,7 +319,7 @@ class TestImportWithCheck:
             assert len(w) >= 1
 
     def test_import_missing_required_raises(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             import_with_check,
         )
 
@@ -329,7 +329,7 @@ class TestImportWithCheck:
         assert "缺少必装依赖" in str(exc_info.value)
 
     def test_import_unknown_module_warns(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             import_with_check,
         )
 
@@ -343,7 +343,7 @@ class TestSafeImport:
     """测试降级导入"""
 
     def test_safe_import_existing(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             safe_import,
         )
 
@@ -351,7 +351,7 @@ class TestSafeImport:
         assert pd is not None
 
     def test_safe_import_missing_returns_none(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             safe_import,
         )
 
@@ -359,7 +359,7 @@ class TestSafeImport:
         assert result is None
 
     def test_safe_import_with_fallback_missing(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             safe_import,
         )
 
@@ -367,7 +367,7 @@ class TestSafeImport:
         assert result is None
 
     def test_safe_import_fallback_used(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             safe_import,
         )
 
@@ -380,7 +380,7 @@ class TestStartupCheck:
     """测试启动自检"""
 
     def test_startup_check_returns_bool(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             startup_check,
         )
 
@@ -388,7 +388,7 @@ class TestStartupCheck:
         assert isinstance(result, bool)
 
     def test_startup_check_prints_header(self, capsys):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             startup_check,
         )
 
@@ -398,7 +398,7 @@ class TestStartupCheck:
         assert "=" in captured.out
 
     def test_startup_check_reports_missing_ml(self, capsys):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             startup_check,
         )
 
@@ -413,7 +413,7 @@ class TestDependencyLevelEnum:
     """测试依赖层级枚举"""
 
     def test_level_values(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DependencyLevel,
         )
 
@@ -427,7 +427,7 @@ class TestDependencyInfoDataclass:
     """测试依赖信息数据类"""
 
     def test_create_dependency_info(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DependencyInfo,
             DependencyLevel,
         )
@@ -446,7 +446,7 @@ class TestDependencyInfoDataclass:
         assert dep.alternative == "可跳过"
 
     def test_dependency_info_without_optional_fields(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             DependencyInfo,
             DependencyLevel,
         )
@@ -467,7 +467,7 @@ class TestEdgeCases:
     """边界情况测试"""
 
     def test_empty_registry_check(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_dependencies,
         )
 
@@ -479,7 +479,7 @@ class TestEdgeCases:
             assert results == {}
 
     def test_check_with_import_error_variants(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DependencyInfo,
             DependencyLevel,
@@ -499,7 +499,7 @@ class TestEdgeCases:
             assert "mock error" in error
 
     def test_check_with_general_exception(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DependencyInfo,
             DependencyLevel,
@@ -518,7 +518,7 @@ class TestEdgeCases:
             assert ok is False
 
     def test_module_without_version(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -532,7 +532,7 @@ class TestIntegrationWithRealEnvironment:
     """真实环境集成测试"""
 
     def test_pandas_version_check(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -544,7 +544,7 @@ class TestIntegrationWithRealEnvironment:
             assert version == pandas.__version__ or version == "unknown"
 
     def test_numpy_version_check(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -556,7 +556,7 @@ class TestIntegrationWithRealEnvironment:
             assert version == numpy.__version__ or version == "unknown"
 
     def test_akshare_version_check(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -568,7 +568,7 @@ class TestIntegrationWithRealEnvironment:
             assert version == akshare.__version__ or version == "unknown"
 
     def test_statsmodels_version_check(self):
-        from jk2bt.dependency_checker import (
+        from jk2bt.utils.dependency import (
             check_single_dependency,
             DEPENDENCY_REGISTRY,
         )
@@ -584,7 +584,7 @@ class TestAllExportedFunctions:
     """测试所有导出函数"""
 
     def test_all_exports_exist(self):
-        from jk2bt.dependency_checker import __all__
+        from jk2bt.utils.dependency import __all__
 
         expected_exports = [
             "DependencyLevel",

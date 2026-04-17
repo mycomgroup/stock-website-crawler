@@ -1,6 +1,6 @@
 """
 tests/test_market_data_stock.py
-单元测试 for jk2bt/market_data/stock.py
+单元测试 for jk2bt/data/market/stock.py
 
 覆盖场景:
 - get_stock_daily: 缓存命中、缓存未命中、离线模式、数据源失败回退、写入成功/失败
@@ -54,7 +54,7 @@ def _make_raw_df_chinese(start="2024-01-02", rows=5):
 @pytest.fixture(autouse=True)
 def reset_singletons():
     """每个测试前重置 DuckDB 单例缓存，避免状态泄漏"""
-    from jk2bt.db import parquet_adapter
+    from jk2bt.data.storage import parquet_adapter
 
     parquet_adapter._PROCESS_SINGLETONS.clear()
     yield
@@ -69,9 +69,9 @@ def reset_singletons():
 class TestGetStockDaily:
     """测试 get_stock_daily 函数"""
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_cache_hit_returns_cached_data(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -83,7 +83,7 @@ class TestGetStockDaily:
         db_mock.get_stock_daily.return_value = sample_df
         mock_get_read.return_value = db_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
@@ -97,9 +97,9 @@ class TestGetStockDaily:
         assert not result.empty
         assert "openinterest" in result.columns
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_cache_hit_force_update_bypasses_cache(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -116,7 +116,7 @@ class TestGetStockDaily:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily(
             "sh600000", "2024-01-01", "2024-01-31", force_update=True
@@ -127,9 +127,9 @@ class TestGetStockDaily:
         mock_fallback.assert_called_once()
         assert isinstance(result, pd.DataFrame)
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_cache_miss_fetches_from_source(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -147,7 +147,7 @@ class TestGetStockDaily:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
@@ -156,9 +156,9 @@ class TestGetStockDaily:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_offline_mode_with_cache(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -170,7 +170,7 @@ class TestGetStockDaily:
         db_mock.get_stock_daily.return_value = sample_df
         mock_get_read.return_value = db_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily(
             "sh600000", "2024-01-01", "2024-01-31", offline_mode=True
@@ -180,8 +180,8 @@ class TestGetStockDaily:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_offline_mode_no_cache_raises(self, mock_get_read, mock_fallback):
         """离线模式：无缓存时抛出 ValueError"""
         db_mock = MagicMock()
@@ -189,14 +189,14 @@ class TestGetStockDaily:
         db_mock.get_stock_daily.return_value = pd.DataFrame()
         mock_get_read.return_value = db_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         with pytest.raises(ValueError, match="离线模式下无缓存数据"):
             get_stock_daily("sh600000", "2024-01-01", "2024-01-31", offline_mode=True)
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_all_sources_fail_fallback_to_cache(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -210,7 +210,7 @@ class TestGetStockDaily:
 
         mock_fallback.return_value = pd.DataFrame()  # 数据源返回空
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
@@ -218,9 +218,9 @@ class TestGetStockDaily:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_all_sources_fail_no_cache_raises(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -232,14 +232,14 @@ class TestGetStockDaily:
 
         mock_fallback.return_value = None  # 数据源返回 None
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         with pytest.raises(ValueError, match="所有数据源获取失败"):
             get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_write_failure_does_not_affect_result(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -256,7 +256,7 @@ class TestGetStockDaily:
         write_mock.insert_stock_daily.side_effect = Exception("写入失败")
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
@@ -264,9 +264,9 @@ class TestGetStockDaily:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_date_filtering(self, mock_get_read, mock_fallback, mock_get_write):
         """返回数据应过滤到请求的日期范围"""
         # 数据源返回更宽范围的数据（使用英文列名，因为 fallback 返回的数据已经标准化）
@@ -292,7 +292,7 @@ class TestGetStockDaily:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-10")
 
@@ -301,9 +301,9 @@ class TestGetStockDaily:
         assert result["datetime"].min() >= pd.to_datetime("2024-01-01")
         assert result["datetime"].max() <= pd.to_datetime("2024-01-10")
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_custom_data_sources(self, mock_get_read, mock_fallback, mock_get_write):
         """自定义数据源列表应传递给 fallback 函数"""
         raw_df = _make_raw_df_chinese()
@@ -316,7 +316,7 @@ class TestGetStockDaily:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         custom_sources = ["east_money", "tushare"]
         get_stock_daily(
@@ -329,9 +329,9 @@ class TestGetStockDaily:
         call_kwargs = mock_fallback.call_args
         assert call_kwargs.kwargs["sources"] == custom_sources
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_stock_daily_with_fallback")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_stock_daily_with_fallback")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_cache_getter_handles_exception(
         self, mock_get_read, mock_fallback, mock_get_write
     ):
@@ -348,7 +348,7 @@ class TestGetStockDaily:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
@@ -364,9 +364,9 @@ class TestGetStockDaily:
 class TestGetStockDailyFast:
     """测试 get_stock_daily_fast 函数"""
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.fetch_stock_daily_eastmoney")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.fetch_stock_daily_eastmoney")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_cache_hit(self, mock_get_read, mock_fetch, mock_get_write):
         """缓存命中：直接返回缓存"""
         sample_df = _make_sample_df()
@@ -376,7 +376,7 @@ class TestGetStockDailyFast:
         db_mock.get_stock_daily.return_value = sample_df
         mock_get_read.return_value = db_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_fast
+        from jk2bt.data.market.stock import get_stock_daily_fast
 
         result = get_stock_daily_fast("sh600000", "2024-01-01", "2024-01-31")
 
@@ -386,9 +386,9 @@ class TestGetStockDailyFast:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.fetch_stock_daily_eastmoney")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.fetch_stock_daily_eastmoney")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_cache_miss_fetches_eastmoney(
         self, mock_get_read, mock_fetch, mock_get_write
     ):
@@ -404,7 +404,7 @@ class TestGetStockDailyFast:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_fast
+        from jk2bt.data.market.stock import get_stock_daily_fast
 
         result = get_stock_daily_fast("sh600000", "2024-01-01", "2024-01-31")
 
@@ -415,9 +415,9 @@ class TestGetStockDailyFast:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.fetch_stock_daily_eastmoney")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.fetch_stock_daily_eastmoney")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_fetch_failure_raises(self, mock_get_read, mock_fetch, mock_get_write):
         """获取失败时抛出 ValueError"""
         db_mock = MagicMock()
@@ -426,14 +426,14 @@ class TestGetStockDailyFast:
 
         mock_fetch.return_value = pd.DataFrame()
 
-        from jk2bt.market_data.stock import get_stock_daily_fast
+        from jk2bt.data.market.stock import get_stock_daily_fast
 
         with pytest.raises(ValueError, match="快速获取失败"):
             get_stock_daily_fast("sh600000", "2024-01-01", "2024-01-31")
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.fetch_stock_daily_eastmoney")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.fetch_stock_daily_eastmoney")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_write_failure_silent(self, mock_get_read, mock_fetch, mock_get_write):
         """写入失败应静默处理"""
         raw_df = _make_raw_df_chinese()
@@ -448,7 +448,7 @@ class TestGetStockDailyFast:
         write_mock.insert_stock_daily.side_effect = Exception("write error")
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_fast
+        from jk2bt.data.market.stock import get_stock_daily_fast
 
         result = get_stock_daily_fast("sh600000", "2024-01-01", "2024-01-31")
 
@@ -464,9 +464,9 @@ class TestGetStockDailyFast:
 class TestGetStockDailyLegacy:
     """测试 get_stock_daily_legacy 函数"""
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_cache_hit(self, mock_get_read, mock_get_adapter, mock_get_write):
         """缓存命中：直接返回缓存数据"""
         sample_df = _make_sample_df()
@@ -476,7 +476,7 @@ class TestGetStockDailyLegacy:
         db_mock.get_stock_daily.return_value = sample_df
         mock_get_read.return_value = db_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         result = get_stock_daily_legacy("sh600000", "2024-01-01", "2024-01-31")
 
@@ -485,9 +485,9 @@ class TestGetStockDailyLegacy:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_offline_mode_with_cache(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -499,7 +499,7 @@ class TestGetStockDailyLegacy:
         db_mock.get_stock_daily.return_value = sample_df
         mock_get_read.return_value = db_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         result = get_stock_daily_legacy(
             "sh600000", "2024-01-01", "2024-01-31", offline_mode=True
@@ -507,9 +507,9 @@ class TestGetStockDailyLegacy:
 
         assert isinstance(result, pd.DataFrame)
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_offline_mode_no_cache_raises(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -519,16 +519,16 @@ class TestGetStockDailyLegacy:
         db_mock.get_stock_daily.return_value = pd.DataFrame()
         mock_get_read.return_value = db_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         with pytest.raises(ValueError, match="离线模式下无缓存数据"):
             get_stock_daily_legacy(
                 "sh600000", "2024-01-01", "2024-01-31", offline_mode=True
             )
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_first_attempt_success(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -546,7 +546,7 @@ class TestGetStockDailyLegacy:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         result = get_stock_daily_legacy(
             "sh600000", "2024-01-01", "2024-01-31", max_retries=3, retry_delay=0
@@ -557,9 +557,9 @@ class TestGetStockDailyLegacy:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_retry_success_on_second_attempt(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -581,7 +581,7 @@ class TestGetStockDailyLegacy:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         result = get_stock_daily_legacy(
             "sh600000", "2024-01-01", "2024-01-31", max_retries=3, retry_delay=0
@@ -590,8 +590,8 @@ class TestGetStockDailyLegacy:
         assert adapter_mock.get_stock_hist.call_count == 2
         assert isinstance(result, pd.DataFrame)
 
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_all_retries_fail_with_cache_fallback(
         self, mock_get_read, mock_get_adapter
     ):
@@ -608,7 +608,7 @@ class TestGetStockDailyLegacy:
         adapter_mock.get_stock_hist.side_effect = Exception("network error")
         mock_get_adapter.return_value = adapter_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         # max_retries=2: 第一次失败后检查缓存发现有数据，直接返回（不会重试第二次）
         result = get_stock_daily_legacy(
@@ -620,8 +620,8 @@ class TestGetStockDailyLegacy:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_all_retries_fail_no_cache_raises(self, mock_get_read, mock_get_adapter):
         """所有重试失败且无缓存：抛出 ValueError"""
         db_mock = MagicMock()
@@ -633,16 +633,16 @@ class TestGetStockDailyLegacy:
         adapter_mock.get_stock_hist.side_effect = Exception("network error")
         mock_get_adapter.return_value = adapter_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         with pytest.raises(ValueError, match="数据获取失败"):
             get_stock_daily_legacy(
                 "sh600000", "2024-01-01", "2024-01-31", max_retries=2, retry_delay=0
             )
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_date_filtering_legacy(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -672,7 +672,7 @@ class TestGetStockDailyLegacy:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         result = get_stock_daily_legacy(
             "sh600000", "2024-01-01", "2024-01-10", max_retries=1, retry_delay=0
@@ -681,9 +681,9 @@ class TestGetStockDailyLegacy:
         assert result["datetime"].min() >= pd.to_datetime("2024-01-01")
         assert result["datetime"].max() <= pd.to_datetime("2024-01-10")
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_retry_with_cache_fallback_during_retry(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -700,7 +700,7 @@ class TestGetStockDailyLegacy:
         adapter_mock.get_stock_hist.side_effect = Exception("network error")
         mock_get_adapter.return_value = adapter_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         result = get_stock_daily_legacy(
             "sh600000", "2024-01-01", "2024-01-31", max_retries=3, retry_delay=0
@@ -710,9 +710,9 @@ class TestGetStockDailyLegacy:
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_empty_raw_data_raises(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -725,7 +725,7 @@ class TestGetStockDailyLegacy:
         adapter_mock.get_stock_hist.return_value = None
         mock_get_adapter.return_value = adapter_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_legacy
+        from jk2bt.data.market.stock import get_stock_daily_legacy
 
         with pytest.raises(ValueError, match="akshare 返回空数据"):
             get_stock_daily_legacy(
@@ -741,9 +741,9 @@ class TestGetStockDailyLegacy:
 class TestEdgeCases:
     """边界情况和异常数据处理"""
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_empty_dataframe_from_cache_hit(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -761,16 +761,16 @@ class TestEdgeCases:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
         assert isinstance(result, pd.DataFrame)
         assert not result.empty
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_none_from_fallback_with_empty_cache(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -784,14 +784,14 @@ class TestEdgeCases:
         adapter_mock.get_daily_data.return_value = None
         mock_get_adapter.return_value = adapter_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         with pytest.raises(ValueError):
             get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_fast_none_from_fetch(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -804,14 +804,14 @@ class TestEdgeCases:
         adapter_mock.get_daily_data.return_value = None
         mock_get_adapter.return_value = adapter_mock
 
-        from jk2bt.market_data.stock import get_stock_daily_fast
+        from jk2bt.data.market.stock import get_stock_daily_fast
 
         with pytest.raises(ValueError, match="所有数据源获取失败"):
             get_stock_daily_fast("sh600000", "2024-01-01", "2024-01-31")
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_output_has_openinterest_column(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -829,16 +829,16 @@ class TestEdgeCases:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 
         assert "openinterest" in result.columns
         assert (result["openinterest"] == 0.0).all()
 
-    @patch("jk2bt.market_data.stock.get_writer_manager")
-    @patch("jk2bt.market_data.stock.get_adapter")
-    @patch("jk2bt.market_data.stock.get_shared_read_only_manager")
+    @patch("jk2bt.data.market.stock.get_writer_manager")
+    @patch("jk2bt.data.market.stock.get_adapter")
+    @patch("jk2bt.data.market.stock.get_shared_read_only_manager")
     def test_output_columns_standardized(
         self, mock_get_read, mock_get_adapter, mock_get_write
     ):
@@ -856,7 +856,7 @@ class TestEdgeCases:
         write_mock = MagicMock()
         mock_get_write.return_value = write_mock
 
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         result = get_stock_daily("sh600000", "2024-01-01", "2024-01-31")
 

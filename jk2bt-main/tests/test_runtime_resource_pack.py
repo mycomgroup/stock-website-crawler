@@ -15,13 +15,13 @@ from io import BytesIO
 from datetime import datetime
 import pandas as pd
 
-from jk2bt.strategy.runtime_resource_pack import (
+from jk2bt.scanner.runtime_resource import (
     RuntimeResourcePack,
     create_resource_pack,
     list_all_strategies,
     get_current_resource_pack,
 )
-from jk2bt.runtime_io import (
+from jk2bt.engine.io import (
     set_strategy_name,
     get_current_strategy_name,
     get_resource_pack,
@@ -851,7 +851,7 @@ class TestModuleFunctions:
         assert pack.strategy_dir.exists()
 
     def test_get_current_resource_pack_none_when_not_set(self):
-        from jk2bt.strategy.runtime_resource_pack import (
+        from jk2bt.scanner.runtime_resource import (
             RuntimeResourcePack,
         )
 
@@ -862,7 +862,7 @@ class TestModuleFunctions:
         assert pack is None
 
     def test_get_current_resource_pack_returns_set_name(self):
-        from jk2bt.strategy.runtime_resource_pack import (
+        from jk2bt.scanner.runtime_resource import (
             RuntimeResourcePack,
         )
 

@@ -16,8 +16,8 @@ if __name__ != "__main__":
 
 sys.path.insert(0, "src")
 
-from jk2bt.market_data.stock import get_stock_daily
-from jk2bt.db.parquet_adapter import ParquetAdapter
+from jk2bt.data.market.stock import get_stock_daily
+from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
 print("=" * 80)
 print("测试离线模式和重试机制")

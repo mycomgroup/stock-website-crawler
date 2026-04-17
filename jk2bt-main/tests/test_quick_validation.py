@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from jk2bt.core.runner import load_jq_strategy
+from jk2bt.engine.runner import load_jq_strategy
 
 
 def test_timer_recognition():

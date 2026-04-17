@@ -32,7 +32,7 @@ class TestValuationFactorFormulas:
 
     def test_pe_ratio_formula(self, mock_valuation_data):
         """验证 pe_ratio 计算正确性。"""
-        from jk2bt.factors.valuation import compute_pe_ratio
+        from jk2bt.analysis.factors.valuation import compute_pe_ratio
 
         with patch(
             "jk2bt.factors.valuation._get_valuation_raw", return_value=mock_valuation_data
@@ -43,7 +43,7 @@ class TestValuationFactorFormulas:
 
     def test_pb_ratio_formula(self, mock_valuation_data):
         """验证 pb_ratio 计算正确性。"""
-        from jk2bt.factors.valuation import compute_pb_ratio
+        from jk2bt.analysis.factors.valuation import compute_pb_ratio
 
         with patch(
             "jk2bt.factors.valuation._get_valuation_raw", return_value=mock_valuation_data
@@ -53,7 +53,7 @@ class TestValuationFactorFormulas:
 
     def test_ps_ratio_formula(self, mock_valuation_data):
         """验证 ps_ratio 计算正确性。"""
-        from jk2bt.factors.valuation import compute_ps_ratio
+        from jk2bt.analysis.factors.valuation import compute_ps_ratio
 
         with patch(
             "jk2bt.factors.valuation._get_valuation_raw", return_value=mock_valuation_data
@@ -63,7 +63,7 @@ class TestValuationFactorFormulas:
 
     def test_market_cap_formula(self, mock_valuation_data):
         """验证 market_cap 计算正确性。"""
-        from jk2bt.factors.valuation import compute_market_cap
+        from jk2bt.analysis.factors.valuation import compute_market_cap
 
         with patch(
             "jk2bt.factors.valuation._get_valuation_raw", return_value=mock_valuation_data
@@ -73,7 +73,7 @@ class TestValuationFactorFormulas:
 
     def test_circulating_market_cap_formula(self, mock_valuation_data):
         """验证 circulating_market_cap 计算正确性。"""
-        from jk2bt.factors.valuation import compute_circulating_market_cap
+        from jk2bt.analysis.factors.valuation import compute_circulating_market_cap
 
         with patch(
             "jk2bt.factors.valuation._get_valuation_raw", return_value=mock_valuation_data
@@ -85,7 +85,7 @@ class TestValuationFactorFormulas:
 
     def test_natural_log_of_market_cap_formula(self, mock_valuation_data):
         """验证 natural_log_of_market_cap 计算正确性。"""
-        from jk2bt.factors.valuation import compute_natural_log_of_market_cap
+        from jk2bt.analysis.factors.valuation import compute_natural_log_of_market_cap
 
         with patch(
             "jk2bt.factors.valuation._get_valuation_raw", return_value=mock_valuation_data
@@ -98,7 +98,7 @@ class TestValuationFactorFormulas:
 
     def test_cube_of_size_formula(self, mock_valuation_data):
         """验证 cube_of_size 计算正确性。"""
-        from jk2bt.factors.valuation import compute_cube_of_size
+        from jk2bt.analysis.factors.valuation import compute_cube_of_size
 
         with patch(
             "jk2bt.factors.valuation._get_valuation_raw", return_value=mock_valuation_data
@@ -135,7 +135,7 @@ class TestTechnicalFactorFormulas:
 
     def test_bias_formula(self, mock_ohlcv_data):
         """验证 BIAS 公式：(close - MA) / MA。"""
-        from jk2bt.factors.technical import compute_bias_5
+        from jk2bt.analysis.factors.technical import compute_bias_5
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(30)
@@ -150,7 +150,7 @@ class TestTechnicalFactorFormulas:
         ma5 = np.mean(closes[-5:])
         expected_bias = (closes[-1] - ma5) / ma5
 
-        from jk2bt.factors.technical import compute_bias_5
+        from jk2bt.analysis.factors.technical import compute_bias_5
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(15)
@@ -160,7 +160,7 @@ class TestTechnicalFactorFormulas:
 
     def test_emac_formula(self, mock_ohlcv_data):
         """验证 EMAC 公式：EMA(close, window)。"""
-        from jk2bt.factors.technical import compute_emac_10
+        from jk2bt.analysis.factors.technical import compute_emac_10
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(30)
@@ -176,7 +176,7 @@ class TestTechnicalFactorFormulas:
         ema = closes.ewm(span=10, adjust=False).mean()
         expected = ema.iloc[-1]
 
-        from jk2bt.factors.technical import compute_emac_10
+        from jk2bt.analysis.factors.technical import compute_emac_10
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(20)
@@ -186,7 +186,7 @@ class TestTechnicalFactorFormulas:
 
     def test_roc_formula(self, mock_ohlcv_data):
         """验证 ROC 公式：close / close.shift(window) - 1。"""
-        from jk2bt.factors.technical import compute_roc_6
+        from jk2bt.analysis.factors.technical import compute_roc_6
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(20)
@@ -202,7 +202,7 @@ class TestTechnicalFactorFormulas:
         # 或简单的 price rate of change
         expected_roc = (closes[-1] - closes[-7]) / closes[-7]
 
-        from jk2bt.factors.technical import compute_roc_6
+        from jk2bt.analysis.factors.technical import compute_roc_6
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(15)
@@ -215,7 +215,7 @@ class TestTechnicalFactorFormulas:
 
     def test_mac_formula(self, mock_ohlcv_data):
         """验证 MAC 公式：MA(close, window)。"""
-        from jk2bt.factors.technical import compute_mac_60
+        from jk2bt.analysis.factors.technical import compute_mac_60
 
         with patch("jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data):
             result = compute_mac_60("sh600519", end_date="2023-02-01", count=1)
@@ -223,7 +223,7 @@ class TestTechnicalFactorFormulas:
 
     def test_vol_formula(self, mock_ohlcv_data):
         """验证 VOL 公式：MA(volume, window)。"""
-        from jk2bt.factors.technical import compute_vol_20
+        from jk2bt.analysis.factors.technical import compute_vol_20
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(40)
@@ -237,7 +237,7 @@ class TestTechnicalFactorFormulas:
         volumes = df["volume"].values
         expected_vol = np.mean(volumes[-20:])
 
-        from jk2bt.factors.technical import compute_vol_20
+        from jk2bt.analysis.factors.technical import compute_vol_20
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(30)
@@ -247,7 +247,7 @@ class TestTechnicalFactorFormulas:
 
     def test_vstd_formula(self, mock_ohlcv_data):
         """验证 VSTD 公式：Std(volume, window)。"""
-        from jk2bt.factors.technical import compute_vstd_20
+        from jk2bt.analysis.factors.technical import compute_vstd_20
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(40)
@@ -257,7 +257,7 @@ class TestTechnicalFactorFormulas:
 
     def test_cci_formula(self, mock_ohlcv_data):
         """验证 CCI 公式：(TP - MA(TP)) / (0.015 * MD)。"""
-        from jk2bt.factors.technical import compute_cci_10
+        from jk2bt.analysis.factors.technical import compute_cci_10
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(20)
@@ -267,7 +267,7 @@ class TestTechnicalFactorFormulas:
 
     def test_money_flow_formula(self, mock_ohlcv_data):
         """验证 money_flow 公式：MA(money, window)。"""
-        from jk2bt.factors.technical import compute_money_flow_20
+        from jk2bt.analysis.factors.technical import compute_money_flow_20
 
         with patch(
             "jk2bt.factors.technical._get_daily_ohlcv", return_value=mock_ohlcv_data.tail(40)
@@ -317,7 +317,7 @@ class TestFundamentalFactorFormulas:
 
     def test_net_profit_ratio_formula(self, mock_income_data):
         """验证 net_profit_ratio 公式：net_profit / operating_revenue。"""
-        from jk2bt.factors.fundamentals import compute_net_profit_ratio
+        from jk2bt.analysis.factors.fundamentals import compute_net_profit_ratio
 
         with patch(
             "jk2bt.factors.fundamentals._get_income_statement", return_value=mock_income_data
@@ -330,7 +330,7 @@ class TestFundamentalFactorFormulas:
 
     def test_roe_formula(self, mock_income_data, mock_balance_data):
         """验证 ROE 公式：net_profit / avg_equity。"""
-        from jk2bt.factors.fundamentals import compute_roe
+        from jk2bt.analysis.factors.fundamentals import compute_roe
 
         with patch(
             "jk2bt.factors.fundamentals._get_income_statement", return_value=mock_income_data
@@ -346,7 +346,7 @@ class TestFundamentalFactorFormulas:
 
     def test_roa_ttm_formula(self, mock_income_data, mock_balance_data):
         """验证 ROA_TTM 公式：TTM净利润 / 平均总资产。"""
-        from jk2bt.factors.fundamentals import compute_roa_ttm
+        from jk2bt.analysis.factors.fundamentals import compute_roa_ttm
 
         with patch(
             "jk2bt.factors.fundamentals._get_income_statement", return_value=mock_income_data
@@ -367,7 +367,7 @@ class TestFactorRegistry:
 
     def test_registry_has_all_factors(self):
         """验证所有因子都已注册。"""
-        from jk2bt.factors.base import global_factor_registry
+        from jk2bt.analysis.factors.base import global_factor_registry
 
         expected_factors = [
             "pe_ratio",
@@ -407,7 +407,7 @@ class TestFactorRegistry:
 
     def test_factor_metadata(self):
         """验证因子元信息。"""
-        from jk2bt.factors.base import global_factor_registry
+        from jk2bt.analysis.factors.base import global_factor_registry
 
         meta = global_factor_registry.get_metadata("bias_5")
         assert "window" in meta
@@ -416,7 +416,7 @@ class TestFactorRegistry:
 
     def test_normalize_factor_name(self):
         """验证因子名标准化。"""
-        from jk2bt.factors.base import normalize_factor_name
+        from jk2bt.analysis.factors.base import normalize_factor_name
 
         assert normalize_factor_name("PE_ratio") == "pe_ratio"
         assert normalize_factor_name("BIAS5") == "bias_5"
@@ -429,28 +429,28 @@ class TestSafeDivision:
 
     def test_safe_divide_normal(self):
         """正常除法。"""
-        from jk2bt.factors.base import safe_divide
+        from jk2bt.analysis.factors.base import safe_divide
 
         result = safe_divide(10, 2)
         assert result == 5.0
 
     def test_safe_divide_zero_denominator(self):
         """分母为零返回 NaN。"""
-        from jk2bt.factors.base import safe_divide
+        from jk2bt.analysis.factors.base import safe_divide
 
         result = safe_divide(10, 0)
         assert np.isnan(result)
 
     def test_safe_divide_nan_denominator(self):
         """分母为 NaN 返回 NaN。"""
-        from jk2bt.factors.base import safe_divide
+        from jk2bt.analysis.factors.base import safe_divide
 
         result = safe_divide(10, np.nan)
         assert np.isnan(result)
 
     def test_safe_divide_series(self):
         """Series 除法。"""
-        from jk2bt.factors.base import safe_divide
+        from jk2bt.analysis.factors.base import safe_divide
 
         a = pd.Series([10, 20, 30])
         b = pd.Series([2, 0, 3])
@@ -466,7 +466,7 @@ class TestEdgeCases:
 
     def test_empty_data_handling(self):
         """空数据处理。"""
-        from jk2bt.factors.valuation import compute_pe_ratio
+        from jk2bt.analysis.factors.valuation import compute_pe_ratio
 
         with patch("jk2bt.factors.valuation._get_valuation_raw", return_value=pd.DataFrame()):
             result = compute_pe_ratio("sh600519")
@@ -474,7 +474,7 @@ class TestEdgeCases:
 
     def test_negative_values(self):
         """负值处理。"""
-        from jk2bt.factors.valuation import compute_natural_log_of_market_cap
+        from jk2bt.analysis.factors.valuation import compute_natural_log_of_market_cap
 
         mock_data = pd.DataFrame(
             {
@@ -491,7 +491,7 @@ class TestEdgeCases:
 
     def test_window_insufficient_data(self):
         """数据不足时的处理。"""
-        from jk2bt.factors.technical import compute_bias_60
+        from jk2bt.analysis.factors.technical import compute_bias_60
 
         dates = pd.date_range("2023-01-01", "2023-01-05", freq="B")
         n = len(dates)

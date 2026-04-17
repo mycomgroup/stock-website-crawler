@@ -401,7 +401,7 @@ class EnhancedCacheManager:
             fetch_stock_daily_eastmoney,
             fetch_stock_daily_baostock,
         )
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         self.fetchers = {
             "sina": fetch_stock_daily_sina,
@@ -599,7 +599,7 @@ def main():
         return
 
     if args.add_hs300:
-        from jk2bt.core.strategy_base import get_index_stocks
+        from jk2bt.engine.strategy_base import get_index_stocks
 
         stocks = get_index_stocks("000300.XSHG")
         symbols = []
@@ -611,7 +611,7 @@ def main():
         manager.add_stocks_batch(symbols, args.start, args.end)
 
     if args.add_zz500:
-        from jk2bt.core.strategy_base import get_index_stocks
+        from jk2bt.engine.strategy_base import get_index_stocks
 
         stocks = get_index_stocks("000905.XSHG")
         symbols = []

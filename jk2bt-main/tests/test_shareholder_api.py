@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.finance_data.shareholder import (
+from jk2bt.data.finance.shareholder import (
     get_top10_shareholders,
     get_top10_float_shareholders,
     get_shareholder_count,
@@ -305,7 +305,7 @@ class TestSchemaDefinition(unittest.TestCase):
             "holder_num_change",
             "holder_num_change_ratio",
         ]
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             _SHAREHOLDER_NUM_SCHEMA,
         )
 

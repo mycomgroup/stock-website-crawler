@@ -1,12 +1,12 @@
 """
-Tests for jk2bt/risk/position_sizing.py
+Tests for jk2bt/analysis/risk/position_sizing.py
 """
 
 import numpy as np
 import pytest
 from unittest.mock import patch, MagicMock
 
-from jk2bt.risk.position_sizing import (
+from jk2bt.analysis.risk.position import (
     kelly_criterion,
     risk_parity_position,
     equal_risk_contribution,

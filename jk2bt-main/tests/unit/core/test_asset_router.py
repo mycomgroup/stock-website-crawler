@@ -39,10 +39,10 @@ sys.modules["jk2bt.utils"] = _jk2bt_utils
 sys.modules["jk2bt.utils.symbol"] = _symbol_mod
 
 _asset_router_spec = importlib.util.spec_from_file_location(
-    "asset_router", str(project_root / "jk2bt/core/asset_router.py")
+    "asset_router", str(project_root / "jk2bt/engine/asset_router.py")
 )
 _asset_router_mod = importlib.util.module_from_spec(_asset_router_spec)
-sys.modules["jk2bt.core.asset_router"] = _asset_router_mod
+sys.modules["jk2bt.engine.asset_router"] = _asset_router_mod
 _asset_router_spec.loader.exec_module(_asset_router_mod)
 
 # 导出测试需要的类

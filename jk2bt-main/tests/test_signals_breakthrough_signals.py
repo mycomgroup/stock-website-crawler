@@ -14,7 +14,7 @@ import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
 
-from jk2bt.signals.breakthrough_signals import (
+from jk2bt.analysis.signals.breakthrough import (
     detect_price_breakout,
     detect_volume_breakout,
     detect_boll_breakout,

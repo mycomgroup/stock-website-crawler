@@ -276,7 +276,7 @@ def main():
 
     print("\n下一步:")
     print(
-        "  1. 检查数据: python -c \"from jk2bt.db import ParquetAdapter; print(ParquetAdapter().count_records('stock_daily'))\""
+        "  1. 检查数据: python -c \"from jk2bt.data.storage import ParquetAdapter; print(ParquetAdapter().count_records('stock_daily'))\""
     )
     print("  2. 运行离线模式: python run_daily_strategy_batch.py --use-cache-only")
     print("  3. 测试策略: python test_strategy_with_cache.py")

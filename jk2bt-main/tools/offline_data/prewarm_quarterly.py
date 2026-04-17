@@ -47,7 +47,7 @@ def prewarm_dividend(stocks: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.finance_data.dividend import get_dividend_info
+        from jk2bt.data.finance.dividend import get_dividend_info
 
         progress = ProgressTracker(len(stocks), "分红送股")
         progress.start()
@@ -86,7 +86,7 @@ def prewarm_shareholders(stocks: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_shareholders,
             get_top10_float_shareholders,
             get_shareholder_count,

@@ -605,7 +605,7 @@ class TestEdgeCases:
 
     def test_zero_division(self):
         """测试除零处理。"""
-        from jk2bt.factors.base import safe_divide
+        from jk2bt.analysis.factors.base import safe_divide
 
         result = safe_divide(100, 0)
         assert np.isnan(result)

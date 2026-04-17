@@ -3,13 +3,13 @@ test_company_info_demo.py
 验证上市公司基本信息与状态变动 API 实际功能
 """
 
-from jk2bt.finance_data.company_info import (
+from jk2bt.data.finance.company_info import (
     get_company_info,
     get_security_status,
     query_company_basic_info,
     query_status_change,
 )
-from jk2bt.core.strategy_base import finance, query
+from jk2bt.engine.strategy_base import finance, query
 import pandas as pd
 
 

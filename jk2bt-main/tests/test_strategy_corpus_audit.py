@@ -103,7 +103,7 @@ class StrategyCorpusAuditor:
         # 尝试导入scanner
         self.scanner = None
         try:
-            from jk2bt.strategy.scanner import StrategyScanner
+            from jk2bt.scanner.scanner import StrategyScanner
 
             self.scanner = StrategyScanner()
         except ImportError as e:
@@ -542,7 +542,7 @@ def test_strategy_corpus_audit():
 def test_scanner_availability():
     """测试Scanner可用性"""
     try:
-        from jk2bt.strategy.scanner import StrategyScanner
+        from jk2bt.scanner.scanner import StrategyScanner
 
         scanner = StrategyScanner()
         assert scanner is not None, "Scanner应可用"

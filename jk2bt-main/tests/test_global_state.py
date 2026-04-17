@@ -1,6 +1,6 @@
 import unittest
 
-from jk2bt.core.strategy_base import GlobalState
+from jk2bt.engine.strategy_base import GlobalState
 
 
 class TestGlobalState(unittest.TestCase):

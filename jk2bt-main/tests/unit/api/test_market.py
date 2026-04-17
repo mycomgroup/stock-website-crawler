@@ -197,7 +197,7 @@ def mock_akshare_daily():
 class TestGetPriceReturnStructure:
     """get_price 返回结构测试（Mock）"""
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_single_security_returns_dataframe(
         self, mock_get_adapter, mock_akshare_daily
     ):
@@ -211,7 +211,7 @@ class TestGetPriceReturnStructure:
         assert isinstance(result, pd.DataFrame)
         assert "datetime" in result.columns
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_multiple_securities_panel_true(self, mock_get_adapter, mock_akshare_daily):
         mock_adapter = mock_get_adapter.return_value
         mock_adapter.get_stock_hist.return_value = mock_akshare_daily
@@ -227,7 +227,7 @@ class TestGetPriceReturnStructure:
         assert "600519.XSHG" in result
         assert "000858.XSHE" in result
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_multiple_securities_panel_false(
         self, mock_get_adapter, mock_akshare_daily
     ):
@@ -244,7 +244,7 @@ class TestGetPriceReturnStructure:
         assert isinstance(result, pd.DataFrame)
         assert "code" in result.columns
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_count_parameter(self, mock_get_adapter, mock_get_adaptershare_daily):
         mock_adapter = mock_get_adapter.return_value
         mock_adapter.get_stock_hist.return_value = mock_get_adaptershare_daily
@@ -254,7 +254,7 @@ class TestGetPriceReturnStructure:
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 5
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_fields_parameter(self, mock_get_adapter, mock_get_adaptershare_daily):
         mock_adapter = mock_get_adapter.return_value
         mock_adapter.get_stock_hist.return_value = mock_get_adaptershare_daily
@@ -271,8 +271,8 @@ class TestGetPriceReturnStructure:
         assert "close" in result.columns
         assert "high" not in result.columns
 
-    @patch("jk2bt.data_access.get_adapter")
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_empty_data(self, mock_adapter):
         mock_adapter.return_value.get_stock_hist.return_value = pd.DataFrame()
         from jk2bt.api.market import get_price
@@ -283,7 +283,7 @@ class TestGetPriceReturnStructure:
         assert isinstance(result, pd.DataFrame)
         assert result.empty
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_none_data(self, mock_adapter):
         mock_adapter.return_value.get_stock_hist.return_value = None
         from jk2bt.api.market import get_price
@@ -337,7 +337,7 @@ class TestHighFrequencyFieldsWithMock:
             }
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_paused_field_from_volume_zero(
         self, mock_get_adapter, mock_data_with_pause
     ):
@@ -360,7 +360,7 @@ class TestHighFrequencyFieldsWithMock:
         if not trading_rows.empty:
             assert (trading_rows["paused"] == 0).all()
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_pre_close_is_previous_close(self, mock_get_adapter, mock_data_with_pause):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data_with_pause
         from jk2bt.api.market import get_price
@@ -375,7 +375,7 @@ class TestHighFrequencyFieldsWithMock:
         assert pd.isna(result.iloc[0]["pre_close"])
         assert result.iloc[1]["pre_close"] == result.iloc[0]["close"]
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_mainboard_limit_ratio_10pct(self, mock_get_adapter):
         dates = pd.date_range("2023-01-01", periods=5, freq="D")
         mock_get_adapter.return_value.get_stock_hist.return_value = pd.DataFrame(
@@ -408,7 +408,7 @@ class TestHighFrequencyFieldsWithMock:
                     abs(result.iloc[i]["low_limit"] - round(pre_close * 0.90, 2)) < 0.01
                 )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_gem_limit_ratio_20pct(self, mock_get_adapter):
         dates = pd.date_range("2023-01-01", periods=5, freq="D")
         mock_get_adapter.return_value.get_stock_hist.return_value = pd.DataFrame(
@@ -465,7 +465,7 @@ class TestCodeFormatCompatibility:
             }
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_jq_format(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_price
@@ -479,7 +479,7 @@ class TestCodeFormatCompatibility:
             == "600519"
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_sh_prefix(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_price
@@ -491,7 +491,7 @@ class TestCodeFormatCompatibility:
             == "600519"
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_pure_code(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_price
@@ -503,7 +503,7 @@ class TestCodeFormatCompatibility:
             == "600519"
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_sz_format(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_price
@@ -537,7 +537,7 @@ class TestHistoryWithMock:
             }
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_history_returns_dataframe(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import history
@@ -552,7 +552,7 @@ class TestHistoryWithMock:
         assert "600519.XSHG" in result.columns
         assert "000858.XSHE" in result.columns
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_history_df_false_returns_dict(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import history
@@ -590,7 +590,7 @@ class TestAttributeHistoryWithMock:
             }
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_attribute_history_returns_dataframe(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import attribute_history
@@ -602,7 +602,7 @@ class TestAttributeHistoryWithMock:
         for col in ["open", "close", "high", "low"]:
             assert col in result.columns
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_attribute_history_df_false(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import attribute_history
@@ -634,7 +634,7 @@ class TestGetBarsWithMock:
             }
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_get_bars_daily(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_bars
@@ -644,7 +644,7 @@ class TestGetBarsWithMock:
         assert len(result) == 10
         assert "datetime" in result.columns
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_get_bars_multiple_securities(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_bars
@@ -654,7 +654,7 @@ class TestGetBarsWithMock:
         assert "600519.XSHG" in result
         assert "000858.XSHE" in result
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_get_bars_fields(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_bars
@@ -688,7 +688,7 @@ class TestDataTypes:
             }
         )
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_datetime_column_is_datetime_type(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_price
@@ -699,7 +699,7 @@ class TestDataTypes:
         assert "datetime" in result.columns
         assert pd.api.types.is_datetime64_any_dtype(result["datetime"])
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_numeric_fields_are_numeric(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_price
@@ -713,7 +713,7 @@ class TestDataTypes:
         for col in ["open", "close", "volume"]:
             assert pd.api.types.is_numeric_dtype(result[col])
 
-    @patch("jk2bt.data_access.get_adapter")
+    @patch("jk2bt.data.sources.get_adapter")
     def test_paused_field_is_binary(self, mock_get_adapter, mock_data):
         mock_get_adapter.return_value.get_stock_hist.return_value = mock_data
         from jk2bt.api.market import get_price

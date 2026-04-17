@@ -16,7 +16,7 @@ from typing import Optional, List, Union
 import warnings
 from datetime import datetime, timedelta
 
-from jk2bt.data_access import get_adapter, DataSourceError
+from jk2bt.data.sources import get_adapter, DataSourceError
 
 
 def get_mtss(
@@ -69,7 +69,7 @@ def get_mtss(
     >>> df = get_mtss('600519.XSHG', start_date='2024-01-01', end_date='2024-01-31')
     >>> df = get_mtss(['600519.XSHG', '000858.XSHE'], count=5)
     """
-    from jk2bt.finance_data.margin import get_margin_data, get_margin_history
+    from jk2bt.data.finance.margin import get_margin_data, get_margin_history
 
     # 参数校验
     if start_date and count:

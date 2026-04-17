@@ -88,7 +88,7 @@ class TestFactorsCompatImport:
     def test_factors_consistency_with_new_path(self):
         """测试 factors 新旧导入路径一致性"""
         from factors import get_factor_values_jq as old_import
-        from jk2bt.factors import (
+        from jk2bt.analysis.factors import (
             get_factor_values_jq as new_import,
         )
 
@@ -100,13 +100,13 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_main_import(self):
         """测试 backtrader_base_strategy 主模块导入"""
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         assert callable(get_price_jq)
 
     def test_bbs_price_functions(self):
         """测试行情函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_price,
             get_price_jq,
             get_price_unified,
@@ -122,7 +122,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_fundamentals_functions(self):
         """测试财务函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_fundamentals,
             get_fundamentals_jq,
             get_history_fundamentals,
@@ -136,7 +136,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_meta_functions(self):
         """测试元数据函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_all_securities_jq,
             get_security_info_jq,
             get_all_trade_days_jq,
@@ -148,7 +148,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_extras_functions(self):
         """测试额外数据函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_extras_jq,
             get_bars_jq,
             get_billboard_list_jq,
@@ -160,7 +160,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_factor_functions(self):
         """测试因子函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_factor_values_jq,
             winsorize_med,
             standardlize,
@@ -174,7 +174,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_index_functions(self):
         """测试指数函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_index_weights,
             get_index_stocks,
         )
@@ -184,7 +184,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_data_functions(self):
         """测试数据获取函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             get_akshare_stock_data,
             get_akshare_etf_data,
             get_current_data,
@@ -196,7 +196,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_code_conversion(self):
         """测试代码转换函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             format_stock_symbol_for_akshare,
             jq_code_to_ak,
             ak_code_to_jq,
@@ -208,7 +208,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_order_functions(self):
         """测试下单函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             order_target,
             order_value,
             order,
@@ -220,7 +220,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_table_proxies(self):
         """测试表代理对象导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             valuation,
             income,
             balance,
@@ -240,7 +240,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_classes(self):
         """测试类导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             JQ2BTBaseStrategy,
             GlobalState,
             ContextProxy,
@@ -256,7 +256,7 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_log_object(self):
         """测试 log 对象导入"""
-        from jk2bt.core.strategy_base import log
+        from jk2bt.engine.strategy_base import log
 
         assert log is not None
         assert hasattr(log, "info")
@@ -265,14 +265,14 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_finance_db(self):
         """测试 finance_db 对象导入"""
-        from jk2bt.core.strategy_base import finance_db
+        from jk2bt.engine.strategy_base import finance_db
 
         assert finance_db is not None
         assert hasattr(finance_db, "run_query")
 
     def test_bbs_analysis_functions(self):
         """测试分析函数导入"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             analyze_performance,
             run_bt_framework,
         )
@@ -282,8 +282,8 @@ class TestBacktraderBaseStrategyCompatImport:
 
     def test_bbs_consistency_with_new_path(self):
         """测试 backtrader_base_strategy 新旧导入路径一致性"""
-        from jk2bt.core.strategy_base import get_price_jq as old_import
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import get_price_jq as old_import
+        from jk2bt.engine.strategy_base import (
             get_price_jq as new_import,
         )
 
@@ -357,7 +357,7 @@ class TestSubportfoliosCompatImport:
     def test_subportfolios_consistency_with_new_path(self):
         """测试 subportfolios 新旧导入路径一致性"""
         from subportfolios import SubportfolioManager as old_import
-        from jk2bt.strategy.subportfolios import (
+        from jk2bt.engine.subportfolios import (
             SubportfolioManager as new_import,
         )
 
@@ -369,19 +369,19 @@ class TestDbCompatImport:
 
     def test_db_main_import(self):
         """测试 db 主模块导入"""
-        from jk2bt.db import ParquetAdapter
+        from jk2bt.data.storage import ParquetAdapter
 
         assert ParquetAdapter is not None
 
     def test_db_duckdb_manager_import(self):
         """测试 db.duckdb_manager 导入"""
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         assert ParquetAdapter is not None
 
     def test_db_duckdb_manager_functions(self):
         """测试 db.duckdb_manager 函数导入"""
-        from jk2bt.db.parquet_adapter import (
+        from jk2bt.data.storage.parquet_adapter import (
             ParquetAdapter,
             LocalCache,
             clear_global_cache,
@@ -397,7 +397,7 @@ class TestDbCompatImport:
 
     def test_db_cache_manager_import(self):
         """测试 db.CacheManager 导入"""
-        from jk2bt.db import CacheManager, get_cache_manager, check_cache_status
+        from jk2bt.data.storage import CacheManager, get_cache_manager, check_cache_status
 
         assert CacheManager is not None
         assert callable(get_cache_manager)
@@ -405,7 +405,7 @@ class TestDbCompatImport:
 
     def test_db_migrate_import(self):
         """测试 db 迁移函数导入"""
-        from jk2bt.db import (
+        from jk2bt.data.storage import (
             auto_migrate,
             migrate_stock_pickles,
             migrate_etf_pickles,
@@ -419,15 +419,15 @@ class TestDbCompatImport:
 
     def test_db_manager_creation(self):
         """测试 ParquetAdapter 创建"""
-        from jk2bt.db import ParquetAdapter
+        from jk2bt.data.storage import ParquetAdapter
 
         manager = ParquetAdapter()
         assert manager is not None
 
     def test_db_consistency_with_new_path(self):
         """测试 db 新旧导入路径一致性"""
-        from jk2bt.db import ParquetAdapter as old_import
-        from jk2bt.db import ParquetAdapter as new_import
+        from jk2bt.data.storage import ParquetAdapter as old_import
+        from jk2bt.data.storage import ParquetAdapter as new_import
 
         assert old_import is new_import
 
@@ -438,9 +438,9 @@ class TestMixedCompatImport:
     def test_mixed_import_session1(self):
         """测试混合导入会话1"""
         from factors import get_factor_values_jq
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
         from subportfolios import SubportfolioManager
-        from jk2bt.db import ParquetAdapter
+        from jk2bt.data.storage import ParquetAdapter
 
         assert callable(get_factor_values_jq)
         assert callable(get_price_jq)
@@ -450,7 +450,7 @@ class TestMixedCompatImport:
     def test_mixed_import_session2(self):
         """测试混合导入会话2"""
         from factors import valuation, technical
-        from jk2bt.core.strategy_base import query, get_fundamentals
+        from jk2bt.engine.strategy_base import query, get_fundamentals
 
         assert valuation is not None
         assert technical is not None
@@ -460,10 +460,10 @@ class TestMixedCompatImport:
     def test_mixed_import_with_new_package(self):
         """测试新旧导入混合使用"""
         from factors import normalize_factor_name as old_factors
-        from jk2bt.factors import (
+        from jk2bt.analysis.factors import (
             normalize_factor_name as new_factors,
         )
-        from jk2bt.core.strategy_base import jq_code_to_ak as old_code
+        from jk2bt.engine.strategy_base import jq_code_to_ak as old_code
         from jk2bt import jq_code_to_ak as new_code
 
         assert old_factors is new_factors
@@ -489,7 +489,7 @@ class TestCompatImportCallable:
 
     def test_backtrader_code_conversion_callable(self):
         """测试代码转换函数可调用"""
-        from jk2bt.core.strategy_base import jq_code_to_ak, ak_code_to_jq
+        from jk2bt.engine.strategy_base import jq_code_to_ak, ak_code_to_jq
 
         result1 = jq_code_to_ak("600519.XSHG")
         assert result1 == "sh600519"
@@ -498,7 +498,7 @@ class TestCompatImportCallable:
 
     def test_backtrader_format_stock_symbol_callable(self):
         """测试股票代码格式化可调用"""
-        from jk2bt.core.strategy_base import format_stock_symbol_for_akshare
+        from jk2bt.engine.strategy_base import format_stock_symbol_for_akshare
 
         result = format_stock_symbol_for_akshare("sh600519")
         assert result == "600519"
@@ -553,7 +553,7 @@ class TestAssetRouterCompat:
 
     def test_identify_stock(self):
         """测试股票识别"""
-        from jk2bt.core.strategy_base import identify_asset, AssetType
+        from jk2bt.engine.strategy_base import identify_asset, AssetType
 
         info = identify_asset("sh600519")
         assert info.asset_type == AssetType.STOCK
@@ -561,7 +561,7 @@ class TestAssetRouterCompat:
 
     def test_identify_etf(self):
         """测试 ETF 识别"""
-        from jk2bt.core.strategy_base import identify_asset, AssetType
+        from jk2bt.engine.strategy_base import identify_asset, AssetType
 
         info = identify_asset("510300")
         assert info.asset_type == AssetType.ETF
@@ -569,7 +569,7 @@ class TestAssetRouterCompat:
 
     def test_identify_fund_of(self):
         """测试场外基金识别"""
-        from jk2bt.core.strategy_base import identify_asset, AssetType
+        from jk2bt.engine.strategy_base import identify_asset, AssetType
 
         info = identify_asset("000001.OF")
         assert info.asset_type == AssetType.FUND_OF
@@ -578,7 +578,7 @@ class TestAssetRouterCompat:
 
     def test_identify_future_ccfx(self):
         """测试股指期货识别"""
-        from jk2bt.core.strategy_base import identify_asset, AssetType
+        from jk2bt.engine.strategy_base import identify_asset, AssetType
 
         info = identify_asset("IF2312.CCFX")
         assert info.asset_type == AssetType.FUTURE_CCFX
@@ -587,7 +587,7 @@ class TestAssetRouterCompat:
 
     def test_identify_index(self):
         """测试指数识别"""
-        from jk2bt.core.strategy_base import identify_asset, AssetType
+        from jk2bt.engine.strategy_base import identify_asset, AssetType
 
         info = identify_asset("000300.XSHG")
         assert info.asset_type == AssetType.INDEX
@@ -595,35 +595,35 @@ class TestAssetRouterCompat:
 
     def test_is_stock_function(self):
         """测试 is_stock 函数"""
-        from jk2bt.core.strategy_base import is_stock
+        from jk2bt.engine.strategy_base import is_stock
 
         assert is_stock("sh600519") is True
         assert is_stock("510300") is False
 
     def test_is_etf_function(self):
         """测试 is_etf 函数"""
-        from jk2bt.core.strategy_base import is_etf
+        from jk2bt.engine.strategy_base import is_etf
 
         assert is_etf("510300") is True
         assert is_etf("sh600519") is False
 
     def test_is_fund_of_function(self):
         """测试 is_fund_of 函数"""
-        from jk2bt.core.strategy_base import is_fund_of
+        from jk2bt.engine.strategy_base import is_fund_of
 
         assert is_fund_of("000001.OF") is True
         assert is_fund_of("sh600519") is False
 
     def test_is_future_function(self):
         """测试 is_future 函数"""
-        from jk2bt.core.strategy_base import is_future
+        from jk2bt.engine.strategy_base import is_future
 
         assert is_future("IF2312.CCFX") is True
         assert is_future("sh600519") is False
 
     def test_is_index_function(self):
         """测试 is_index 函数"""
-        from jk2bt.core.strategy_base import is_index
+        from jk2bt.engine.strategy_base import is_index
 
         assert is_index("000300.XSHG") is True
         assert is_index("sh600519") is False
@@ -635,21 +635,21 @@ class TestDeepImportChain:
     def test_factors_to_backtrader_chain(self):
         """测试 factors -> backtrader_base_strategy 链功能一致"""
         from factors import winsorize_med
-        from jk2bt.core.strategy_base import winsorize_med as bbs_wm
+        from jk2bt.engine.strategy_base import winsorize_med as bbs_wm
 
         assert callable(winsorize_med)
         assert callable(bbs_wm)
 
     def test_package_to_factors_chain(self):
         """测试 package -> factors 链功能一致"""
-        from jk2bt.factors import winsorize_med as pkg_wm
+        from jk2bt.analysis.factors import winsorize_med as pkg_wm
         from factors import winsorize_med as fac_wm
 
         assert pkg_wm is fac_wm
 
     def test_full_chain_consistency(self):
         """测试完整导入链功能一致"""
-        from jk2bt.factors import winsorize_med as src
+        from jk2bt.analysis.factors import winsorize_med as src
         from factors import winsorize_med as compat
 
         assert src is compat

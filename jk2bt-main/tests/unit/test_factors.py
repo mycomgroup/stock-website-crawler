@@ -21,7 +21,7 @@ import numpy as np
 
 def test_factor_import():
     """测试因子模块能否正常导入。"""
-    from jk2bt.factors import get_factor_values_jq, global_factor_registry
+    from jk2bt.analysis.factors import get_factor_values_jq, global_factor_registry
 
     print("✓ 因子模块导入成功")
     print(f"  已注册因子数量: {len(global_factor_registry.list_factors())}")
@@ -30,7 +30,7 @@ def test_factor_import():
 
 def test_valuation_factors():
     """测试估值因子。"""
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
 
     print("\n==== 测试估值因子 ====")
 
@@ -61,7 +61,7 @@ def test_valuation_factors():
 
 def test_technical_factors():
     """测试技术因子。"""
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
 
     print("\n==== 测试技术因子 ====")
 
@@ -79,7 +79,7 @@ def test_technical_factors():
 
 def test_fundamental_factors():
     """测试财务因子。"""
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
 
     print("\n==== 测试财务因子 ====")
 
@@ -99,7 +99,7 @@ def test_fundamental_factors():
 
 def test_growth_factors():
     """测试成长因子。"""
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
 
     print("\n==== 测试成长因子 ====")
 
@@ -119,7 +119,7 @@ def test_growth_factors():
 
 def test_quality_factors():
     """测试质量/杠杆因子。"""
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
 
     print("\n==== 测试质量/杠杆因子 ====")
 
@@ -139,7 +139,7 @@ def test_quality_factors():
 
 def test_technical_expanded_factors():
     """测试扩展技术因子。"""
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
 
     print("\n==== 测试扩展技术因子 ====")
 
@@ -161,7 +161,7 @@ def test_backtrader_base_strategy_integration():
     """测试与 backtrader_base_strategy 的集成。"""
     print("\n==== 测试与 backtrader_base_strategy 集成 ====")
 
-    from jk2bt.core.strategy_base import get_factor_values_jq
+    from jk2bt.engine.strategy_base import get_factor_values_jq
 
     result = get_factor_values_jq(
         securities="sh600519",

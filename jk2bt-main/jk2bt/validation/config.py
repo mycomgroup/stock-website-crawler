@@ -84,7 +84,7 @@ class ValidationConfig:
 
     def get_dates(self) -> List[str]:
         """获取验证日期列表"""
-        from jk2bt.core.strategy_base import get_all_trade_days
+        from jk2bt.engine.strategy_base import get_all_trade_days
         try:
             trade_days = get_all_trade_days()
             start = datetime.strptime(self.start_date, "%Y-%m-%d")

@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 import warnings
 import logging
 
-from jk2bt.data_access import get_adapter
+from jk2bt.data.sources import get_adapter
 
 try:
     from jk2bt.utils.standardize import (
@@ -32,7 +32,7 @@ except ImportError:
     )
 
 
-from jk2bt.core.exceptions import (
+from jk2bt.engine.exceptions import (
     MarketDataError,
     NetworkError,
     DataSourceError,
@@ -217,7 +217,7 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                     try:
                         from market_data.index import get_index_daily
                     except ImportError:
-                        from jk2bt.market_data.index import get_index_daily
+                        from jk2bt.data.market.index import get_index_daily
                 try:
                     df = get_index_daily(
                         ak_sym,
@@ -255,7 +255,7 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
             ak_code = ("sh" if ak_sym.startswith("6") else "sz") + ak_sym
             try:
                 try:
-                    from jk2bt.market_data.stock import get_stock_daily
+                    from jk2bt.data.market.stock import get_stock_daily
                 except ImportError:
                     try:
                         from .market_data.stock import get_stock_daily
@@ -292,7 +292,7 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                 try:
                     from .db.parquet_adapter import ParquetAdapter
                 except ImportError:
-                    from jk2bt.db.parquet_adapter import ParquetAdapter
+                    from jk2bt.data.storage.parquet_adapter import ParquetAdapter
                 db = ParquetAdapter(read_only=True)
                 df = db.get_stock_daily(
                     ak_code,
@@ -316,7 +316,7 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
 
             try:
                 try:
-                    from jk2bt.market_data.minute import (
+                    from jk2bt.data.market.minute import (
                         get_stock_minute,
                         get_etf_minute,
                     )
@@ -571,7 +571,7 @@ def history(
         end_dt = pd.to_datetime(end_date)
     else:
         try:
-            from jk2bt.core.runner import _get_current_strategy
+            from jk2bt.engine.runner import _get_current_strategy
 
             strategy = _get_current_strategy()
             if (
@@ -648,7 +648,7 @@ def attribute_history(
         end_dt = pd.to_datetime(end_date)
     else:
         try:
-            from jk2bt.core.runner import _get_current_strategy
+            from jk2bt.engine.runner import _get_current_strategy
 
             strategy = _get_current_strategy()
             if (

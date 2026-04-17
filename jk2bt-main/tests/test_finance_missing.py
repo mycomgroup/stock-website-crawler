@@ -22,13 +22,13 @@ class TestIncomeAPI:
 
     def test_import_income_module(self):
         """测试导入 income 模块"""
-        from jk2bt.finance_data import get_income
+        from jk2bt.data.finance import get_income
 
         assert callable(get_income)
 
     def test_get_income_basic(self):
         """测试获取利润表基本功能"""
-        from jk2bt.finance_data import get_income
+        from jk2bt.data.finance import get_income
 
         # 使用缓存数据
         df = get_income("600519", indicator="按报告期", force_update=False)
@@ -37,7 +37,7 @@ class TestIncomeAPI:
 
     def test_get_income_cache(self):
         """测试利润表缓存机制"""
-        from jk2bt.finance_data import get_income
+        from jk2bt.data.finance import get_income
 
         df1 = get_income("600036", indicator="按报告期", force_update=False)
         df2 = get_income("600036", indicator="按报告期", force_update=False)
@@ -51,13 +51,13 @@ class TestCashflowAPI:
 
     def test_import_cashflow_module(self):
         """测试导入 cashflow 模块"""
-        from jk2bt.finance_data import get_cashflow
+        from jk2bt.data.finance import get_cashflow
 
         assert callable(get_cashflow)
 
     def test_get_cashflow_basic(self):
         """测试获取现金流量表基本功能"""
-        from jk2bt.finance_data import get_cashflow
+        from jk2bt.data.finance import get_cashflow
 
         df = get_cashflow("600519", force_update=False)
 
@@ -69,7 +69,7 @@ class TestMarginAPI:
 
     def test_import_margin_module(self):
         """测试导入 margin 模块"""
-        from jk2bt.finance_data import (
+        from jk2bt.data.finance import (
             get_margin_data,
             get_margin_history,
         )
@@ -79,7 +79,7 @@ class TestMarginAPI:
 
     def test_get_margin_data_basic(self):
         """测试获取融资融券数据基本功能"""
-        from jk2bt.finance_data import get_margin_data
+        from jk2bt.data.finance import get_margin_data
 
         df = get_margin_data("600519")
 
@@ -87,7 +87,7 @@ class TestMarginAPI:
 
     def test_get_margin_history_basic(self):
         """测试获取融资融券历史数据"""
-        from jk2bt.finance_data import get_margin_history
+        from jk2bt.data.finance import get_margin_history
 
         df = get_margin_history("600519")
 
@@ -99,13 +99,13 @@ class TestForecastAPI:
 
     def test_import_forecast_module(self):
         """测试导入 forecast 模块"""
-        from jk2bt.finance_data import get_forecast_data
+        from jk2bt.data.finance import get_forecast_data
 
         assert callable(get_forecast_data)
 
     def test_get_forecast_data_basic(self):
         """测试获取业绩预告数据"""
-        from jk2bt.finance_data import get_forecast_data
+        from jk2bt.data.finance import get_forecast_data
 
         df = get_forecast_data("600519")
 
@@ -117,7 +117,7 @@ class TestFinanceIntegration:
 
     def test_finance_run_query_dividend(self):
         """测试 finance.run_query 查询分红"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             finance,
             query,
         )
@@ -129,7 +129,7 @@ class TestFinanceIntegration:
 
     def test_finance_run_query_margin(self):
         """测试 finance.run_query 查询融资融券"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             finance,
             query,
         )
@@ -143,7 +143,7 @@ class TestFinanceIntegration:
 
     def test_finance_run_query_forecast(self):
         """测试 finance.run_query 查询业绩预告"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             finance,
             query,
         )
@@ -160,7 +160,7 @@ def test_quick_validation():
     """快速验证测试"""
     print("\n=== 快速验证测试 ===")
 
-    from jk2bt.finance_data import (
+    from jk2bt.data.finance import (
         get_income,
         get_cashflow,
         get_margin_data,

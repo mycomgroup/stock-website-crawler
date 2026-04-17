@@ -21,7 +21,7 @@ import inspect
 
 try:
     from jk2bt import load_jq_strategy
-    from jk2bt.core.runner import (
+    from jk2bt.engine.runner import (
         set_option,
         set_benchmark,
         set_slippage,
@@ -32,7 +32,7 @@ except ImportError:
     sys.path.insert(0, project_root)
     try:
         from jk2bt import load_jq_strategy
-        from jk2bt.core.runner import (
+        from jk2bt.engine.runner import (
             set_option,
             set_benchmark,
             set_slippage,
@@ -228,7 +228,7 @@ class TestRealAPIImplementation(unittest.TestCase):
     def test_run_daily_is_implemented(self):
         """run_daily应有实际实现"""
         try:
-            from jk2bt.core.strategy_base import (
+            from jk2bt.engine.strategy_base import (
                 run_daily,
             )
 
@@ -245,7 +245,7 @@ class TestRealAPIImplementation(unittest.TestCase):
     def test_get_price_is_implemented(self):
         """get_price应有实际实现"""
         try:
-            from jk2bt.core.strategy_base import (
+            from jk2bt.engine.strategy_base import (
                 get_price_jq,
             )
 
@@ -262,7 +262,7 @@ class TestRealAPIImplementation(unittest.TestCase):
     def test_order_target_value_is_implemented(self):
         """order_target_value应有实际实现"""
         try:
-            from jk2bt.core.strategy_base import (
+            from jk2bt.engine.strategy_base import (
                 JQ2BTBaseStrategy,
             )
 

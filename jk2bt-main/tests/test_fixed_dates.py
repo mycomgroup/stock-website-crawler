@@ -37,7 +37,7 @@ class TestFixedDateCompanyInfo:
 
     def test_company_info_with_cache(self):
         """测试使用缓存的公司信息查询"""
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             get_company_info,
         )
 
@@ -56,7 +56,7 @@ class TestFixedDateDividend:
 
     def test_dividend_history_2023(self):
         """测试 2023 年分红历史"""
-        from jk2bt.finance_data.dividend import (
+        from jk2bt.data.finance.dividend import (
             get_dividend_info,
         )
 
@@ -67,7 +67,7 @@ class TestFixedDateDividend:
 
     def test_dividend_by_year(self):
         """测试按年份查询分红"""
-        from jk2bt.finance_data.dividend import (
+        from jk2bt.data.finance.dividend import (
             get_dividend_by_date,
         )
 
@@ -90,7 +90,7 @@ class TestFixedDateShareholder:
 
     def test_shareholder_by_report_date(self):
         """测试按报告期查询股东"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_shareholders,
         )
 
@@ -105,7 +105,7 @@ class TestFixedDateUnlock:
 
     def test_unlock_schedule_historical(self):
         """测试历史解禁计划"""
-        from jk2bt.finance_data.unlock import (
+        from jk2bt.data.finance.unlock import (
             get_unlock_schedule,
         )
 
@@ -125,7 +125,7 @@ class TestFixedDateMacro:
 
     def test_macro_cpi_2024(self):
         """测试 CPI 数据"""
-        from jk2bt.finance_data.macro import (
+        from jk2bt.data.finance.macro import (
             get_macro_cpi,
         )
 
@@ -136,7 +136,7 @@ class TestFixedDateMacro:
 
     def test_macro_gdp_historical(self):
         """测试历史 GDP 数据"""
-        from jk2bt.finance_data.macro import (
+        from jk2bt.data.finance.macro import (
             get_macro_gdp,
         )
 
@@ -150,7 +150,7 @@ class TestDateNormalization:
 
     def test_date_format_conversion(self):
         """测试日期格式转换"""
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             _normalize_date,
         )
 
@@ -160,7 +160,7 @@ class TestDateNormalization:
 
     def test_stock_code_normalization(self):
         """测试股票代码标准化"""
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             _extract_code_num,
             _normalize_to_jq,
         )
@@ -179,7 +179,7 @@ class TestDateRangeQueries:
 
     def test_stock_daily_range(self):
         """测试股票日线日期范围"""
-        from jk2bt.market_data.stock import get_stock_daily
+        from jk2bt.data.market.stock import get_stock_daily
 
         start = "2024-12-01"
         end = "2024-12-31"
@@ -200,7 +200,7 @@ class TestDateRangeQueries:
 
     def test_index_daily_range(self):
         """测试指数日线日期范围"""
-        from jk2bt.market_data.index import get_index_daily
+        from jk2bt.data.market.index import get_index_daily
 
         start = "2024-11-01"
         end = "2024-11-30"
