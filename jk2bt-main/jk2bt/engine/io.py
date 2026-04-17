@@ -43,10 +43,10 @@ def _get_runtime_dir() -> Path:
     """获取运行时目录"""
     global _RUNTIME_DIR
     if _RUNTIME_DIR is None:
-        # 使用 strategy_outputs 作为默认运行时目录
+        # 使用 data/outputs 作为默认运行时目录
         # Path(__file__) = src/core/io.py
         # parent.parent.parent = 项目根目录
-        base_dir = Path(__file__).parent.parent.parent / "strategy_outputs"
+        base_dir = Path(__file__).parent.parent.parent / "data" / "outputs"
         base_dir.mkdir(parents=True, exist_ok=True)
         _RUNTIME_DIR = base_dir
     return _RUNTIME_DIR
@@ -68,20 +68,20 @@ def set_strategy_name(strategy_name: str) -> None:
         strategy_name: 策略名称（用于创建独立的资源目录）
 
     效果:
-        - 为策略创建独立的资源目录: strategy_outputs/<strategy_name>/
+        - 为策略创建独立的资源目录: data/outputs/<strategy_name>/
         - 所有 read_file/write_file 操作在该策略目录下进行
         - 避免不同策略互相污染资源
 
     示例:
         set_strategy_name("my_ml_strategy")
-        # 后续 read_file/write_file 在 strategy_outputs/my_ml_strategy/ 下操作
+        # 后续 read_file/write_file 在 data/outputs/my_ml_strategy/ 下操作
     """
     global _CURRENT_STRATEGY_NAME, _RESOURCE_PACK, _RUNTIME_DIR
     _CURRENT_STRATEGY_NAME = strategy_name
     RuntimeResourcePack.set_current_strategy_name(strategy_name)
 
-    # 直接使用 strategy_outputs 作为基础目录
-    # RuntimeResourcePack._get_default_runtime_base() 返回 项目根目录/strategy_outputs
+    # 直接使用 data/outputs 作为基础目录
+    # RuntimeResourcePack._get_default_runtime_base() 返回 项目根目录/data/outputs
     base_runtime = RuntimeResourcePack._get_default_runtime_base()
 
     _RESOURCE_PACK = RuntimeResourcePack(
