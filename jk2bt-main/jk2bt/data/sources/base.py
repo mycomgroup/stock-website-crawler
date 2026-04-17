@@ -11,7 +11,7 @@ from typing import Optional, List, Dict, Any, Union
 from datetime import datetime, date
 import pandas as pd
 
-from jk2bt.engine.exceptions import DataSourceError
+from jk2bt.utils.exceptions import DataSourceError
 
 
 class DataSource(ABC):

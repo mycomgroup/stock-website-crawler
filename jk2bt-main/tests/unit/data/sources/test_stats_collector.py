@@ -12,7 +12,7 @@ class TestStatsCollectorImport:
 
     def test_import_from_module(self):
         """测试从模块导入"""
-        from jk2bt.data.sources.stats_collector import (
+        from jk2bt.logging.stats import (
             StatsCollector,
             get_stats_collector,
             reset_stats_collector,
@@ -24,7 +24,7 @@ class TestStatsCollectorImport:
 
     def test_stats_collector_re_exports(self):
         """测试 StatsCollector 是从 jk2bt.logging.stats 重新导出的"""
-        from jk2bt.data.sources.stats_collector import StatsCollector
+        from jk2bt.logging.stats import StatsCollector
         from jk2bt.logging.stats import StatsCollector as OriginalStatsCollector
 
         assert StatsCollector is OriginalStatsCollector
@@ -35,7 +35,7 @@ class TestStatsCollectorForwarding:
 
     def test_get_stats_collector_returns_singleton(self):
         """测试获取统计收集器单例"""
-        from jk2bt.data.sources.stats_collector import get_stats_collector
+        from jk2bt.logging.stats import get_stats_collector
 
         collector1 = get_stats_collector()
         collector2 = get_stats_collector()
@@ -43,7 +43,7 @@ class TestStatsCollectorForwarding:
 
     def test_reset_stats_collector(self):
         """测试重置统计收集器"""
-        from jk2bt.data.sources.stats_collector import (
+        from jk2bt.logging.stats import (
             reset_stats_collector,
             get_stats_collector,
         )

@@ -61,15 +61,21 @@ def get_dividend_info(
     pd.DataFrame
         Dividend information with fields:
         - code: Security code (JQData format)
+        - pub_date: Publication date
+        - announcement_date: Implementation announcement date
         - board_plan_pub_date: Board plan announcement date
-        - bonus_ratio_rmb: Cash dividend per share (CNY)
+        - bonus_ratio_rmb: Cash dividend per share (CNY, pre-tax)
+        - bonus_ratio_rmb_after_tax: Cash dividend per share (CNY, after-tax)
         - transfer_ratio: Transfer ratio
         - bonus_share_ratio: Bonus share ratio
+        - rights_issue_ratio: Rights issue ratio
+        - rights_issue_price_rmb: Rights issue price (CNY)
         - ex_dividend_date: Ex-dividend date
         - record_date: Record date
         - pay_date: Payment date
         - report_date: Report date
         - adjust_factor: Adjustment factor
+        - adjusted_dividend: Adjusted dividend
         - dividend_type: Dividend type
         - company_name: Company name
 
@@ -89,15 +95,21 @@ def get_dividend_info(
         return pd.DataFrame(
             columns=[
                 "code",
+                "pub_date",
+                "announcement_date",
                 "board_plan_pub_date",
                 "bonus_ratio_rmb",
+                "bonus_ratio_rmb_after_tax",
                 "transfer_ratio",
                 "bonus_share_ratio",
+                "rights_issue_ratio",
+                "rights_issue_price_rmb",
                 "ex_dividend_date",
                 "record_date",
                 "pay_date",
                 "report_date",
                 "adjust_factor",
+                "adjusted_dividend",
                 "dividend_type",
                 "company_name",
             ]

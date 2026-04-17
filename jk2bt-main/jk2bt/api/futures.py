@@ -13,7 +13,7 @@ jk2bt/api/futures.py
 """
 
 import pandas as pd
-from typing import Optional, List
+from typing import Optional, List, Union
 import warnings
 import re
 
@@ -87,7 +87,8 @@ def _get_product_from_index(symbol: str) -> Optional[str]:
 def get_dominant_future(
     underlying_symbol: str,
     date: Optional[str] = None,
-) -> str:
+    end_date: Optional[str] = None,
+) -> Union[str, pd.Series]:
     """
     获取主力合约代码。
 
@@ -97,33 +98,75 @@ def get_dominant_future(
     ----
     underlying_symbol : str
         标的合约代码，如 'IF', 'IC', 'IH', 'AU', 'CU' 等
-        也支持品种指数格式如 'AG8888.XSGE'（返回 AG8888.CCFX）
+        也支持品种指数格式如 'AG8888.XSGE'
     date : str, optional
         查询日期，格式 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期，格式 'YYYY-MM-DD'。如果提供，返回主力合约代码序列
 
     返回
     ----
-    str
-        主力合约代码，如 'IF2401'
-        如果传入品种指数格式如 'AG8888.XSGE'，返回 'AG8888.CCFX'
+    str or pd.Series
+        - 如果只提供 date: 返回主力合约代码字符串
+        - 如果提供 end_date: 返回 Series，index 为日期，value 为主力合约代码
 
     示例
     ----
     >>> contract = get_dominant_future('IF')
     >>> print(contract)
     'IF2401'
-    >>> contract = get_dominant_future('AG8888.XSGE')
-    >>> print(contract)
-    'AG8888.CCFX'
+    >>> series = get_dominant_future('IF', date='2024-01-01', end_date='2024-01-31')
+    >>> print(series)
+    2024-01-01    IF2401
+    2024-01-02    IF2401
+    ...
     """
     if _is_index_code(underlying_symbol):
         product = _get_product_from_index(underlying_symbol)
         if product:
             exchange = FUTURE_EXCHANGE_MAP.get(product, "CCFX")
-            return f"{product}8888.{exchange}"
+            result = f"{product}8888.{exchange}"
+            if end_date is not None:
+                from jk2bt.api.date import get_trade_dates_between
+
+                trade_dates = get_trade_dates_between(date, end_date)
+                return pd.Series(
+                    [result] * len(trade_dates),
+                    index=[
+                        d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else str(d)
+                        for d in trade_dates
+                    ],
+                )
+            return result
         return ""
 
     from jk2bt.data.market.futures_data import get_dominant_contract
+
+    if end_date is not None:
+        from jk2bt.api.date import get_trade_dates_between
+
+        trade_dates = get_trade_dates_between(date, end_date)
+        if not trade_dates:
+            return pd.Series(dtype=str)
+
+        results = {}
+        cache = {}
+        for trade_date in trade_dates:
+            date_str = (
+                trade_date.strftime("%Y-%m-%d")
+                if hasattr(trade_date, "strftime")
+                else str(trade_date)
+            )
+            cached = cache.get(date_str)
+            if cached is not None:
+                results[date_str] = cached
+                continue
+            contract = get_dominant_contract(underlying_symbol, date_str)
+            contract = contract or ""
+            cache[date_str] = contract
+            results[date_str] = contract
+
+        return pd.Series(results, name=underlying_symbol)
 
     result = get_dominant_contract(underlying_symbol, date)
     return result or ""

@@ -8,8 +8,10 @@ utils/date_utils.py
 3. 日期转换 - 各种日期格式转换
 
 依赖:
-- DuckDB 缓存（优先）
-- AkShare 作为 fallback
+- DuckDB 缓存（优先）- 延迟导入，避免循环依赖
+- AkShare 作为 fallback - 延迟导入
+
+注意: 为避免循环依赖，data.storage 和 data.sources 的导入在函数内部延迟执行。
 """
 
 import os
@@ -19,21 +21,6 @@ from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
-
-# DuckDB 可用性检测
-_DUCKDB_AVAILABLE = False
-try:
-    from jk2bt.data.storage.meta_cache_api import get_trade_days_from_cache
-
-    _DUCKDB_AVAILABLE = True
-except ImportError:
-    try:
-        from jk2bt.data.storage.meta_cache_api import get_trade_days_from_cache
-
-        _DUCKDB_AVAILABLE = True
-    except ImportError:
-        logger.warning("DuckDB meta_cache_api 不可用，将使用 pickle 缓存")
-
 
 _DATE_COLUMN_CANDIDATES = {
     "market": ["日期", "date", "trade_date", "trading_date"],
@@ -86,14 +73,18 @@ def get_all_trade_days(use_duckdb=True):
         days = get_all_trade_days()
         len(days)  # 约 8000+ 个交易日
     """
-    # 优先使用 DuckDB 缓存
-    if use_duckdb and _DUCKDB_AVAILABLE:
+    # 优先使用 DuckDB 缓存（延迟导入避免循环依赖）
+    if use_duckdb:
         try:
+            from jk2bt.data.storage.meta_cache_api import get_trade_days_from_cache
+
             days = get_trade_days_from_cache(use_duckdb=True)
             if days:
                 if isinstance(days, list):
                     return pd.DatetimeIndex(days)
                 return days
+        except ImportError:
+            logger.debug("DuckDB meta_cache_api 不可用，使用 adapter fallback")
         except Exception as e:
             logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
 

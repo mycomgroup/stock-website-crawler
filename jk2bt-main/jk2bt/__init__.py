@@ -16,9 +16,22 @@ __version__ = "1.0.0"
 __author__ = "jk2bt"
 
 # =============================================================================
+# 添加本地 akshare 项目路径到 sys.path
+# =============================================================================
+import sys
+import os
+
+# 添加本地 akshare 项目路径到 sys.path 的最前面
+local_akshare_path = "/Users/fengzhi/Downloads/git/akshare"
+# 移除可能存在的相同路径
+if local_akshare_path in sys.path:
+    sys.path.remove(local_akshare_path)
+# 插入到最前面
+sys.path.insert(0, local_akshare_path)
+
+# =============================================================================
 # 日志系统初始化
 # =============================================================================
-import os
 from jk2bt.logging import setup_logging
 
 # 通过环境变量控制日志级别，默认INFO

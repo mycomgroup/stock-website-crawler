@@ -11,25 +11,11 @@ test_timer_manager.py
 6. 边界情况
 """
 
-import sys
-import types
-import importlib.util
 import pytest
-from pathlib import Path
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time
 from unittest.mock import MagicMock
 
-project_root = Path(__file__).parent.parent.parent.parent
-
-# 直接加载模块，绕过 jk2bt.__init__.py 的复杂导入链
-_timer_spec = importlib.util.spec_from_file_location(
-    "timer_manager", str(project_root / "jk2bt/engine/timer_manager.py")
-)
-_timer_mod = importlib.util.module_from_spec(_timer_spec)
-sys.modules["jk2bt.engine.timer_manager"] = _timer_mod
-_timer_spec.loader.exec_module(_timer_mod)
-
-TimerManager = _timer_mod.TimerManager
+from jk2bt.engine.timer_manager import TimerManager
 
 
 class TestTimerManagerInit:
@@ -163,14 +149,14 @@ class TestShouldExecute:
 
     def test_every_bar_weekday_executes(self, manager):
         timer = {"time_rule": "every_bar", "frequency": "daily"}
-        monday = date(2023, 1, 2)  # Monday
+        monday = date(2023, 1, 2)
         result, reason = manager._should_execute(timer, monday)
         assert result is True
         assert reason == "every_bar"
 
     def test_every_bar_weekend_does_not_execute(self, manager):
         timer = {"time_rule": "every_bar", "frequency": "daily"}
-        saturday = date(2023, 1, 7)  # Saturday
+        saturday = date(2023, 1, 7)
         result, reason = manager._should_execute(timer, saturday)
         assert result is False
         assert reason == "weekend"
@@ -210,10 +196,10 @@ class TestShouldExecute:
         timer = {
             "frequency": "weekly",
             "time_rule": "open",
-            "weekday": 1,  # Monday
-            "last_executed_date": date(2022, 12, 26),  # Previous Monday
+            "weekday": 1,
+            "last_executed_date": date(2022, 12, 26),
         }
-        monday = date(2023, 1, 2)  # Monday
+        monday = date(2023, 1, 2)
         result, reason = manager._should_execute(timer, monday)
         assert result is True
         assert reason == "target_weekday"
@@ -222,10 +208,10 @@ class TestShouldExecute:
         timer = {
             "frequency": "weekly",
             "time_rule": "open",
-            "weekday": 1,  # Monday
+            "weekday": 1,
             "last_executed_date": None,
         }
-        tuesday = date(2023, 1, 3)  # Tuesday
+        tuesday = date(2023, 1, 3)
         result, reason = manager._should_execute(timer, tuesday)
         assert result is False
         assert reason == "not_target_weekday"
@@ -234,10 +220,9 @@ class TestShouldExecute:
         timer = {
             "frequency": "weekly",
             "time_rule": "open",
-            "weekday": 2,  # Tuesday
+            "weekday": 2,
             "last_executed_date": date(2023, 1, 3),
         }
-        # Same week, different day (Wednesday)
         result, reason = manager._should_execute(timer, date(2023, 1, 4))
         assert result is False
         assert reason == "not_target_weekday"
@@ -249,7 +234,7 @@ class TestShouldExecute:
             "day": 1,
             "last_executed_date": date(2022, 12, 1),
         }
-        jan2 = date(2023, 1, 2)  # First weekday of Jan 2023
+        jan2 = date(2023, 1, 2)
         result, reason = manager._should_execute(timer, jan2)
         assert result is True
 
@@ -334,7 +319,6 @@ class TestGetNthTradingDay:
         return TimerManager(strategy)
 
     def test_first_trading_day_jan_2023(self, manager):
-        # Jan 1, 2023 is Sunday, first weekday is Jan 2
         result = manager._get_nth_trading_day(2023, 1, 1)
         assert result == date(2023, 1, 2)
 
@@ -368,7 +352,7 @@ class TestIsFirstTradingDayOfMonth:
         return TimerManager(strategy)
 
     def test_first_weekday_of_month(self, manager):
-        jan2 = date(2023, 1, 2)  # Monday, first weekday
+        jan2 = date(2023, 1, 2)
         assert manager._is_first_trading_day_of_month(jan2) is True
 
     def test_late_in_month(self, manager):
@@ -416,4 +400,4 @@ class TestCheckAndExecute:
         strategy.datetime.datetime.return_value = datetime(2023, 1, 2, 9, 30)
 
         manager = TimerManager(strategy)
-        manager.check_and_execute()  # Should not raise
+        manager.check_and_execute()

@@ -32,14 +32,16 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any, Union
 import logging
 import time
+import random
 
 from jk2bt.utils.result import RobustResult
 from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
 
 logger = logging.getLogger(__name__)
 
-_MAX_RETRY_ATTEMPTS = 3
-_RETRY_DELAY_SECONDS = 1
+_MAX_RETRY_ATTEMPTS = 5
+_RETRY_DELAY_SECONDS = 3
+_RETRY_JITTER = 3
 
 
 def _retry_akshare_call(func, *args, max_attempts=_MAX_RETRY_ATTEMPTS, **kwargs):
@@ -65,11 +67,12 @@ def _retry_akshare_call(func, *args, max_attempts=_MAX_RETRY_ATTEMPTS, **kwargs)
         except Exception as e:
             last_error = e
             if attempt < max_attempts - 1:
+                delay = _RETRY_DELAY_SECONDS + random.uniform(0, _RETRY_JITTER)
                 logger.warning(
                     f"[retry] {func.__name__} 第 {attempt + 1} 次失败: {e}, "
-                    f"等待 {_RETRY_DELAY_SECONDS}s 后重试"
+                    f"等待 {delay:.1f}s 后重试"
                 )
-                time.sleep(_RETRY_DELAY_SECONDS)
+                time.sleep(delay)
             else:
                 logger.error(
                     f"[retry] {func.__name__} 重试 {max_attempts} 次后仍失败: {e}"
@@ -476,12 +479,23 @@ def _fetch_company_profile(code_num: str) -> Optional[pd.DataFrame]:
 
 
 def _fetch_company_industry(code_num: str) -> Optional[pd.DataFrame]:
-    """从 AkShare 获取公司行业信息（带重试机制）"""
+    """从 AkShare 获取公司行业信息（带重试机制）
+
+    注意：stock_individual_info_em 已包含行业信息，无需单独调用
+    stock_board_industry_name_em（不接受 symbol 参数）
+    """
     from jk2bt.data.sources import get_adapter
 
     try:
-        df = _retry_akshare_call(get_adapter().get_company_industry_em, symbol=code_num)
-        return df
+        # 从公司信息中提取行业信息
+        df = _retry_akshare_call(get_adapter().get_company_info, symbol=code_num)
+        if df is not None and not df.empty and "item" in df.columns:
+            # 提取行业行
+            industry_rows = df[df["item"] == "行业"]
+            if not industry_rows.empty:
+                industry_name = industry_rows.iloc[0]["value"]
+                return pd.DataFrame({"行业板块": [industry_name]})
+        return None
     except Exception as e:
         logger.warning(f"[company_industry] 获取失败 {code_num}: {e}")
         return None
@@ -519,6 +533,16 @@ def _merge_and_normalize(df_profile, df_industry, jq_code: str) -> pd.DataFrame:
     result["company_status"] = ["正常交易"]
     result["status_change_date"] = [None]
     result["change_type"] = [None]
+
+    # 检查是否有有效数据（除了 code 之外的字段）
+    has_data = (
+        result["company_name"].notna().any()
+        or result["list_date"].notna().any()
+        or result["industry"].notna().any()
+    )
+
+    if not has_data:
+        return pd.DataFrame()
 
     return result
 

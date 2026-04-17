@@ -14,53 +14,24 @@ test_validator.py
 9. 边界情况
 """
 
-import sys
 import os
 import json
-import types
-import importlib.util
 import tempfile
 import pytest
 from pathlib import Path
 from datetime import datetime
 from unittest.mock import patch, MagicMock, mock_open
 
-project_root = Path(__file__).parent.parent.parent.parent
-
-# 先 mock 所有依赖模块
-mock_runner = types.ModuleType("jk2bt.engine.runner")
-mock_runner.load_jq_strategy = MagicMock()
-mock_runner.run_jq_strategy = MagicMock()
-
-mock_io = types.ModuleType("jk2bt.engine.io")
-mock_io.get_record_data = MagicMock(return_value={})
-mock_io.clear_runtime_data = MagicMock()
-mock_io.set_runtime_dir = MagicMock()
-
-mock_strategy_base = types.ModuleType("jk2bt.engine.strategy_base")
-mock_strategy_base.set_current_strategy = MagicMock()
-
-# 注册 mock 模块
-sys.modules["jk2bt.engine.runner"] = mock_runner
-sys.modules["jk2bt.engine.io"] = mock_io
-sys.modules["jk2bt.engine.strategy_base"] = mock_strategy_base
-
-# 直接加载 validator 模块
-_validator_spec = importlib.util.spec_from_file_location(
-    "jk2bt.engine.validator", str(project_root / "jk2bt/engine/validator.py")
+from jk2bt.engine.validator import (
+    ValidationStatus,
+    StrategyValidationResult,
+    validate_strategy_loading,
+    validate_strategy_execution,
+    determine_final_status,
+    validate_single_strategy,
+    validate_batch_strategies,
+    generate_report,
 )
-_validator_mod = importlib.util.module_from_spec(_validator_spec)
-sys.modules["jk2bt.engine.validator"] = _validator_mod
-_validator_spec.loader.exec_module(_validator_mod)
-
-ValidationStatus = _validator_mod.ValidationStatus
-StrategyValidationResult = _validator_mod.StrategyValidationResult
-validate_strategy_loading = _validator_mod.validate_strategy_loading
-validate_strategy_execution = _validator_mod.validate_strategy_execution
-determine_final_status = _validator_mod.determine_final_status
-validate_single_strategy = _validator_mod.validate_single_strategy
-validate_batch_strategies = _validator_mod.validate_batch_strategies
-generate_report = _validator_mod.generate_report
 
 
 class TestValidationStatus:
@@ -163,402 +134,389 @@ class TestStrategyValidationResult:
 class TestValidateStrategyLoading:
     """测试策略加载验证"""
 
-    def test_load_success_with_functions(self):
-        with patch.object(_validator_mod, "load_jq_strategy") as mock_load:
-            mock_load.return_value = {
-                "initialize": MagicMock(),
-                "handle_data": MagicMock(),
-            }
-            result = StrategyValidationResult("/path/to/strategy.py")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_success_with_functions(self, mock_load):
+        mock_load.return_value = (
+            {"initialize": MagicMock(), "handle_data": MagicMock()},
+            None,
+        )
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_loading("/path/to/strategy.py", result)
+
+        assert result.load_success is True
+        assert "initialize" in result.functions_found
+        assert "handle_data" in result.functions_found
+        assert result.evidence["loaded"] is True
+
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_success_no_functions(self, mock_load):
+        mock_load.return_value = ({}, None)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_loading("/path/to/strategy.py", result)
+
+        assert result.load_success is True
+        assert result.functions_found == []
+        assert len(result.semantic_issues) > 0
+
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_success_missing_initialize(self, mock_load):
+        mock_load.return_value = ({}, None)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_loading("/path/to/strategy.py", result)
+
+        assert result.load_success is True
+        assert len(result.semantic_issues) > 0
+
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_success_with_timer(self, mock_load):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        result = StrategyValidationResult("/path/to/strategy.py")
+
+        with patch("builtins.open", mock_open(read_data="run_daily(my_func)")):
             validate_strategy_loading("/path/to/strategy.py", result)
 
-            assert result.load_success is True
-            assert "initialize" in result.functions_found
-            assert "handle_data" in result.functions_found
-            assert result.evidence["loaded"] is True
+        assert result.load_success is True
+        assert "定时器注册检查" in result.passed_checks
 
-    def test_load_success_no_functions(self):
-        with patch.object(_validator_mod, "load_jq_strategy") as mock_load:
-            mock_load.return_value = {}
-            result = StrategyValidationResult("/path/to/strategy.py")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_success_with_handle_timer_funcs(self, mock_load):
+        mock_load.return_value = (
+            {"initialize": MagicMock(), "handle_data": MagicMock()},
+            None,
+        )
+        result = StrategyValidationResult("/path/to/strategy.py")
+
+        with patch("builtins.open", mock_open(read_data="")):
             validate_strategy_loading("/path/to/strategy.py", result)
 
-            assert result.load_success is True
-            assert result.functions_found == []
-            assert len(result.semantic_issues) > 0
+        assert result.load_success is True
+        assert "策略函数定义检查" in result.passed_checks
 
-    def test_load_success_missing_initialize(self):
-        with patch.object(_validator_mod, "load_jq_strategy") as mock_load:
-            mock_load.return_value = {"handle_data": MagicMock()}
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_loading("/path/to/strategy.py", result)
-
-            assert result.load_success is True
-            assert len(result.semantic_issues) > 0
-
-    def test_load_success_with_timer(self):
-        with patch.object(_validator_mod, "load_jq_strategy") as mock_load:
-            mock_load.return_value = {"initialize": MagicMock()}
-            result = StrategyValidationResult("/path/to/strategy.py")
-
-            with patch("builtins.open", mock_open(read_data="run_daily(my_func)")):
-                validate_strategy_loading("/path/to/strategy.py", result)
-
-            assert result.load_success is True
-            assert "定时器注册检查" in result.passed_checks
-
-    def test_load_success_with_handle_timer_funcs(self):
-        with patch.object(_validator_mod, "load_jq_strategy") as mock_load:
-            mock_load.return_value = {
-                "initialize": MagicMock(),
-                "handle_data": MagicMock(),
-            }
-            result = StrategyValidationResult("/path/to/strategy.py")
-
-            with patch("builtins.open", mock_open(read_data="")):
-                validate_strategy_loading("/path/to/strategy.py", result)
-
-            assert result.load_success is True
-            assert "策略函数定义检查" in result.passed_checks
-
-    def test_load_file_not_found(self):
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_file_not_found(self, mock_load):
         result = StrategyValidationResult("/nonexistent/strategy.py")
-        with patch.object(
-            _validator_mod,
-            "load_jq_strategy",
-            side_effect=FileNotFoundError("File not found"),
-        ):
-            validate_strategy_loading("/nonexistent/strategy.py", result)
+        mock_load.side_effect = FileNotFoundError("File not found")
+        validate_strategy_loading("/nonexistent/strategy.py", result)
 
         assert result.load_success is False
         assert result.load_error is not None
         assert result.attribution["error_type"] == "FileNotFoundError"
         assert result.attribution["recoverable"] is True
 
-    def test_load_syntax_error(self):
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_syntax_error(self, mock_load):
         result = StrategyValidationResult("/path/to/strategy.py")
         syntax_err = SyntaxError("invalid syntax")
         syntax_err.msg = "invalid syntax"
         syntax_err.lineno = 10
+        mock_load.side_effect = syntax_err
 
-        with patch.object(_validator_mod, "load_jq_strategy", side_effect=syntax_err):
-            validate_strategy_loading("/path/to/strategy.py", result)
+        validate_strategy_loading("/path/to/strategy.py", result)
 
         assert result.load_success is False
         assert result.attribution["error_type"] == "SyntaxError"
         assert result.attribution["error_category"] == "syntax_error"
 
-    def test_load_import_error(self):
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_import_error(self, mock_load):
         result = StrategyValidationResult("/path/to/strategy.py")
+        mock_load.side_effect = ImportError("No module named 'xyz'")
 
-        with patch.object(
-            _validator_mod,
-            "load_jq_strategy",
-            side_effect=ImportError("No module named 'xyz'"),
-        ):
-            validate_strategy_loading("/path/to/strategy.py", result)
+        validate_strategy_loading("/path/to/strategy.py", result)
 
         assert result.load_success is False
         assert result.attribution["error_type"] == "ImportError"
         assert result.attribution["error_category"] == "dependency_missing"
         assert result.attribution["recoverable"] is True
 
-    def test_load_unicode_error(self):
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_unicode_error(self, mock_load):
         result = StrategyValidationResult("/path/to/strategy.py")
+        mock_load.side_effect = UnicodeDecodeError("utf-8", b"", 0, 1, "invalid")
 
-        with patch.object(
-            _validator_mod,
-            "load_jq_strategy",
-            side_effect=UnicodeDecodeError("utf-8", b"", 0, 1, "invalid"),
-        ):
-            validate_strategy_loading("/path/to/strategy.py", result)
+        validate_strategy_loading("/path/to/strategy.py", result)
 
         assert result.load_success is False
         assert result.attribution["error_type"] == "UnicodeDecodeError"
 
-    def test_load_generic_exception(self):
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_generic_exception(self, mock_load):
         result = StrategyValidationResult("/path/to/strategy.py")
+        mock_load.side_effect = RuntimeError("Unexpected error")
 
-        with patch.object(
-            _validator_mod,
-            "load_jq_strategy",
-            side_effect=RuntimeError("Unexpected error"),
-        ):
-            validate_strategy_loading("/path/to/strategy.py", result)
+        validate_strategy_loading("/path/to/strategy.py", result)
 
         assert result.load_success is False
         assert result.attribution["error_type"] == "RuntimeError"
 
-    def test_load_missing_handle_and_timer(self):
-        with patch.object(_validator_mod, "load_jq_strategy") as mock_load:
-            mock_load.return_value = {"initialize": MagicMock()}
-            result = StrategyValidationResult("/path/to/strategy.py")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_load_missing_handle_and_timer(self, mock_load):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        result = StrategyValidationResult("/path/to/strategy.py")
 
-            with patch("builtins.open", mock_open(read_data="")):
-                validate_strategy_loading("/path/to/strategy.py", result)
+        with patch("builtins.open", mock_open(read_data="")):
+            validate_strategy_loading("/path/to/strategy.py", result)
 
-            assert len(result.semantic_issues) > 0
-            assert "缺少交易处理函数或定时器注册" in result.semantic_issues[0]
+        assert len(result.semantic_issues) > 0
+        assert "缺少交易处理函数或定时器注册" in result.semantic_issues[0]
 
 
 class TestValidateStrategyExecution:
     """测试策略执行验证"""
 
-    def test_execution_success_with_trades(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-            patch.object(_validator_mod, "get_record_data") as mock_record,
-        ):
-            mock_load.return_value = {
-                "initialize": MagicMock(),
-                "handle_data": MagicMock(),
-            }
+    @patch("jk2bt.engine.validator.get_record_data")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_success_with_trades(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear, mock_record
+    ):
+        mock_load.return_value = (
+            {"initialize": MagicMock(), "handle_data": MagicMock()},
+            None,
+        )
 
-            mock_strategy = MagicMock()
-            mock_strategy.orders = [
-                {"action": "buy", "symbol": "600519"},
-                {"action": "sell", "symbol": "600519"},
-            ]
-            mock_strategy.navs = [
-                1.0,
-                1.01,
-                1.02,
-                1.03,
-                1.04,
-                1.05,
-                1.06,
-                1.07,
-                1.08,
-                1.09,
-                1.10,
-                1.11,
-            ]
-            mock_strategy.timer_manager = MagicMock()
-            mock_strategy.timer_manager.timers = [MagicMock()]
+        mock_strategy = MagicMock()
+        mock_strategy.orders = [
+            {"action": "buy", "symbol": "600519"},
+            {"action": "sell", "symbol": "600519"},
+        ]
+        mock_strategy.navs = [
+            1.0,
+            1.01,
+            1.02,
+            1.03,
+            1.04,
+            1.05,
+            1.06,
+            1.07,
+            1.08,
+            1.09,
+            1.10,
+            1.11,
+        ]
+        mock_strategy.timer_manager = MagicMock()
+        mock_strategy.timer_manager.timers = [MagicMock()]
 
-            mock_run.return_value = {
-                "strategy": mock_strategy,
-                "cerebro": MagicMock(),
-                "final_value": 110000,
-                "pnl": 10000,
-                "pnl_pct": 0.1,
-            }
-            mock_record.return_value = {"returns": [0.01, 0.02]}
+        mock_run.return_value = {
+            "strategy": mock_strategy,
+            "cerebro": MagicMock(),
+            "final_value": 110000,
+            "pnl": 10000,
+            "pnl_pct": 0.1,
+        }
+        mock_record.return_value = {"returns": [0.01, 0.02]}
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is True
-            assert result.trade_occurred is True
-            assert result.trade_count == 2
-            assert result.nav_curve_exists is True
+        assert result.run_success is True
+        assert result.trade_occurred is True
+        assert result.trade_count == 2
+        assert result.nav_curve_exists is True
 
-    def test_execution_no_trades(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-            patch.object(_validator_mod, "get_record_data") as mock_record,
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_strategy = MagicMock()
-            mock_strategy.orders = []
-            mock_strategy.navs = []
-            mock_strategy.timer_manager = None
+    @patch("jk2bt.engine.validator.get_record_data")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_no_trades(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear, mock_record
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_strategy = MagicMock()
+        mock_strategy.orders = []
+        mock_strategy.navs = []
+        mock_strategy.timer_manager = None
 
-            mock_run.return_value = {
-                "strategy": mock_strategy,
-                "cerebro": MagicMock(),
-                "final_value": 100000,
-                "pnl": 0,
-                "pnl_pct": 0,
-            }
-            mock_record.return_value = {}
+        mock_run.return_value = {
+            "strategy": mock_strategy,
+            "cerebro": MagicMock(),
+            "final_value": 100000,
+            "pnl": 0,
+            "pnl_pct": 0,
+        }
+        mock_record.return_value = {}
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is True
-            assert result.trade_occurred is False
-            assert len(result.semantic_issues) > 0
+        assert result.run_success is True
+        assert result.trade_occurred is False
+        assert len(result.semantic_issues) > 0
 
-    def test_execution_run_returns_none(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_run.return_value = None
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_run_returns_none(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_run.return_value = None
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is False
-            assert result.run_error is not None
+        assert result.run_success is False
+        assert result.run_error is not None
 
-    def test_execution_load_fails(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-        ):
-            mock_load.return_value = None
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_load_fails(self, mock_load, mock_set_runtime, mock_clear):
+        mock_load.return_value = (None, None)
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is False
+        assert result.run_success is False
 
-    def test_execution_exception_data_missing(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_run.side_effect = ValueError("无数据")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_exception_data_missing(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_run.side_effect = ValueError("无数据")
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is False
-            assert result.attribution["error_category"] == "data_missing"
+        assert result.run_success is False
+        assert result.attribution["error_category"] == "data_missing"
 
-    def test_execution_exception_missing_dependency(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_run.side_effect = ImportError("No module named 'pandas'")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_exception_missing_dependency(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_run.side_effect = ImportError("No module named 'pandas'")
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is False
-            assert result.attribution["error_category"] == "dependency_missing"
+        assert result.run_success is False
+        assert result.attribution["error_category"] == "dependency_missing"
 
-    def test_execution_exception_missing_api(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_run.side_effect = AttributeError(
-                "'Strategy' object has no attribute 'get_price'"
-            )
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_exception_missing_api(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_run.side_effect = AttributeError(
+            "'Strategy' object has no attribute 'get_price'"
+        )
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is False
-            assert result.attribution["error_category"] == "api_missing"
+        assert result.run_success is False
+        assert result.attribution["error_category"] == "api_missing"
 
-    def test_execution_exception_resource_missing(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_run.side_effect = FileNotFoundError("File not found: data.csv")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_exception_resource_missing(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_run.side_effect = FileNotFoundError("File not found: data.csv")
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is False
-            assert result.attribution["error_category"] == "resource_missing"
+        assert result.run_success is False
+        assert result.attribution["error_category"] == "resource_missing"
 
-    def test_execution_exception_generic(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_run.side_effect = RuntimeError("Some unknown error")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_exception_generic(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_run.side_effect = RuntimeError("Some unknown error")
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.run_success is False
-            assert result.attribution["error_category"] == "runtime_exception"
+        assert result.run_success is False
+        assert result.attribution["error_category"] == "runtime_exception"
 
-    def test_execution_final_value_same_as_initial(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-            patch.object(_validator_mod, "get_record_data") as mock_record,
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_strategy = MagicMock()
-            mock_strategy.orders = []
-            mock_strategy.navs = []
-            mock_strategy.timer_manager = None
+    @patch("jk2bt.engine.validator.get_record_data")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_final_value_same_as_initial(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear, mock_record
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_strategy = MagicMock()
+        mock_strategy.orders = []
+        mock_strategy.navs = []
+        mock_strategy.timer_manager = None
 
-            mock_run.return_value = {
-                "strategy": mock_strategy,
-                "cerebro": MagicMock(),
-                "final_value": 100000,
-                "pnl": 0,
-                "pnl_pct": 0,
-            }
-            mock_record.return_value = {}
+        mock_run.return_value = {
+            "strategy": mock_strategy,
+            "cerebro": MagicMock(),
+            "final_value": 100000,
+            "pnl": 0,
+            "pnl_pct": 0,
+        }
+        mock_record.return_value = {}
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution(
-                "/path/to/strategy.py",
-                initial_capital=100000,
-                result=result,
-            )
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution(
+            "/path/to/strategy.py",
+            initial_capital=100000,
+            result=result,
+        )
 
-            assert "最终资金与初始资金相同" in " ".join(result.semantic_issues)
+        assert "最终资金与初始资金相同" in " ".join(result.semantic_issues)
 
-    def test_execution_with_nav_curve_valid(self):
-        with (
-            patch.object(_validator_mod, "load_jq_strategy") as mock_load,
-            patch.object(_validator_mod, "run_jq_strategy") as mock_run,
-            patch.object(_validator_mod, "set_runtime_dir"),
-            patch.object(_validator_mod, "clear_runtime_data"),
-            patch.object(_validator_mod, "get_record_data") as mock_record,
-        ):
-            mock_load.return_value = {"initialize": MagicMock()}
-            mock_strategy = MagicMock()
-            mock_strategy.orders = [{"action": "buy", "symbol": "600519"}]
-            mock_strategy.navs = [1.0 + i * 0.01 for i in range(20)]
-            mock_strategy.timer_manager = MagicMock()
-            mock_strategy.timer_manager.timers = [MagicMock()]
+    @patch("jk2bt.engine.validator.get_record_data")
+    @patch("jk2bt.engine.validator.clear_runtime_data")
+    @patch("jk2bt.engine.validator.set_runtime_dir")
+    @patch("jk2bt.engine.validator.run_jq_strategy")
+    @patch("jk2bt.engine.validator.load_jq_strategy")
+    def test_execution_with_nav_curve_valid(
+        self, mock_load, mock_run, mock_set_runtime, mock_clear, mock_record
+    ):
+        mock_load.return_value = ({"initialize": MagicMock()}, None)
+        mock_strategy = MagicMock()
+        mock_strategy.orders = [{"action": "buy", "symbol": "600519"}]
+        mock_strategy.navs = [1.0 + i * 0.01 for i in range(20)]
+        mock_strategy.timer_manager = MagicMock()
+        mock_strategy.timer_manager.timers = [MagicMock()]
 
-            mock_run.return_value = {
-                "strategy": mock_strategy,
-                "cerebro": MagicMock(),
-                "final_value": 105000,
-                "pnl": 5000,
-                "pnl_pct": 0.05,
-            }
-            mock_record.return_value = {"returns": [0.01]}
+        mock_run.return_value = {
+            "strategy": mock_strategy,
+            "cerebro": MagicMock(),
+            "final_value": 105000,
+            "pnl": 5000,
+            "pnl_pct": 0.05,
+        }
+        mock_record.return_value = {"returns": [0.01]}
 
-            result = StrategyValidationResult("/path/to/strategy.py")
-            validate_strategy_execution("/path/to/strategy.py", result=result)
+        result = StrategyValidationResult("/path/to/strategy.py")
+        validate_strategy_execution("/path/to/strategy.py", result=result)
 
-            assert result.nav_curve_exists is True
-            assert result.nav_curve_valid is True
-            assert result.trade_occurred is True
+        assert result.nav_curve_exists is True
+        assert result.nav_curve_valid is True
+        assert result.trade_occurred is True
 
 
 class TestDetermineFinalStatus:
@@ -706,27 +664,26 @@ class TestDetermineFinalStatus:
 class TestValidateSingleStrategy:
     """测试单个策略验证"""
 
-    def test_validate_load_failure(self):
+    @patch("jk2bt.engine.validator.determine_final_status")
+    @patch("jk2bt.engine.validator.validate_strategy_execution")
+    @patch("jk2bt.engine.validator.validate_strategy_loading")
+    def test_validate_load_failure(self, mock_load, mock_exec, mock_determine):
         def set_load_failure(strategy_file, result):
             result.load_success = False
             result.load_error = "File not found"
 
-        with (
-            patch.object(
-                _validator_mod,
-                "validate_strategy_loading",
-                side_effect=set_load_failure,
-            ),
-            patch.object(_validator_mod, "validate_strategy_execution") as mock_exec,
-            patch.object(_validator_mod, "determine_final_status") as mock_determine,
-        ):
-            result = validate_single_strategy("/path/to/strategy.py")
+        mock_load.side_effect = set_load_failure
 
-            assert result.load_success is False
-            mock_exec.assert_not_called()
-            mock_determine.assert_called_once()
+        result = validate_single_strategy("/path/to/strategy.py")
 
-    def test_validate_execution_failure(self):
+        assert result.load_success is False
+        mock_exec.assert_not_called()
+        mock_determine.assert_called_once()
+
+    @patch("jk2bt.engine.validator.determine_final_status")
+    @patch("jk2bt.engine.validator.validate_strategy_execution")
+    @patch("jk2bt.engine.validator.validate_strategy_loading")
+    def test_validate_execution_failure(self, mock_load, mock_exec, mock_determine):
         def set_load_success(strategy_file, result):
             result.load_success = True
             result.functions_found = ["initialize"]
@@ -735,25 +692,18 @@ class TestValidateSingleStrategy:
             kwargs["result"].run_success = False
             kwargs["result"].run_error = "Runtime error"
 
-        with (
-            patch.object(
-                _validator_mod,
-                "validate_strategy_loading",
-                side_effect=set_load_success,
-            ),
-            patch.object(
-                _validator_mod,
-                "validate_strategy_execution",
-                side_effect=set_exec_failure,
-            ),
-            patch.object(_validator_mod, "determine_final_status") as mock_determine,
-        ):
-            result = validate_single_strategy("/path/to/strategy.py")
+        mock_load.side_effect = set_load_success
+        mock_exec.side_effect = set_exec_failure
 
-            assert result.run_success is False
-            mock_determine.assert_called_once()
+        result = validate_single_strategy("/path/to/strategy.py")
 
-    def test_validate_success_path(self):
+        assert result.run_success is False
+        mock_determine.assert_called_once()
+
+    @patch("jk2bt.engine.validator.determine_final_status")
+    @patch("jk2bt.engine.validator.validate_strategy_execution")
+    @patch("jk2bt.engine.validator.validate_strategy_loading")
+    def test_validate_success_path(self, mock_load, mock_exec, mock_determine):
         def set_load_success(strategy_file, result):
             result.load_success = True
             result.functions_found = ["initialize", "handle_data"]
@@ -764,79 +714,69 @@ class TestValidateSingleStrategy:
             kwargs["result"].trade_occurred = True
             kwargs["result"].nav_curve_valid = True
 
-        with (
-            patch.object(
-                _validator_mod,
-                "validate_strategy_loading",
-                side_effect=set_load_success,
-            ),
-            patch.object(
-                _validator_mod,
-                "validate_strategy_execution",
-                side_effect=set_exec_success,
-            ),
-            patch.object(_validator_mod, "determine_final_status") as mock_determine,
-        ):
-            result = validate_single_strategy("/path/to/strategy.py")
+        mock_load.side_effect = set_load_success
+        mock_exec.side_effect = set_exec_success
 
-            assert result.load_success is True
-            assert result.run_success is True
-            mock_determine.assert_called_once()
+        result = validate_single_strategy("/path/to/strategy.py")
+
+        assert result.load_success is True
+        assert result.run_success is True
+        mock_determine.assert_called_once()
 
 
 class TestValidateBatchStrategies:
     """测试批量策略验证"""
 
-    def test_validate_batch(self):
-        with patch.object(_validator_mod, "validate_single_strategy") as mock_single:
-            mock_result = StrategyValidationResult("/path/to/s1.py")
-            mock_result.final_status = "success_with_transactions"
-            mock_result.is_really_running = True
-            mock_single.return_value = mock_result
+    @patch("jk2bt.engine.validator.validate_single_strategy")
+    def test_validate_batch(self, mock_single):
+        mock_result = StrategyValidationResult("/path/to/s1.py")
+        mock_result.final_status = "success_with_transactions"
+        mock_result.is_really_running = True
+        mock_single.return_value = mock_result
 
-            results = validate_batch_strategies(
-                ["/path/to/s1.py", "/path/to/s2.py"],
-                output_file=None,
-            )
+        results = validate_batch_strategies(
+            ["/path/to/s1.py", "/path/to/s2.py"],
+            output_file=None,
+        )
 
-            assert len(results) == 2
-            assert mock_single.call_count == 2
+        assert len(results) == 2
+        assert mock_single.call_count == 2
 
-    def test_validate_batch_with_output(self, tmp_path):
-        with patch.object(_validator_mod, "validate_single_strategy") as mock_single:
-            mock_result = StrategyValidationResult("/path/to/s1.py")
-            mock_result.final_status = "success_with_transactions"
-            mock_result.is_really_running = True
-            mock_single.return_value = mock_result
+    @patch("jk2bt.engine.validator.validate_single_strategy")
+    def test_validate_batch_with_output(self, mock_single, tmp_path):
+        mock_result = StrategyValidationResult("/path/to/s1.py")
+        mock_result.final_status = "success_with_transactions"
+        mock_result.is_really_running = True
+        mock_single.return_value = mock_result
 
-            output_file = str(tmp_path / "output.json")
-            results = validate_batch_strategies(
-                ["/path/to/s1.py"],
-                output_file=output_file,
-            )
+        output_file = str(tmp_path / "output.json")
+        results = validate_batch_strategies(
+            ["/path/to/s1.py"],
+            output_file=output_file,
+        )
 
-            assert os.path.exists(output_file)
-            with open(output_file) as f:
-                data = json.load(f)
-            assert "results" in data
-            assert data["total_strategies"] == 1
+        assert os.path.exists(output_file)
+        with open(output_file) as f:
+            data = json.load(f)
+        assert "results" in data
+        assert data["total_strategies"] == 1
 
-    def test_validate_batch_status_counts(self):
-        with patch.object(_validator_mod, "validate_single_strategy") as mock_single:
-            r1 = StrategyValidationResult("/path/to/s1.py")
-            r1.final_status = "success_with_transactions"
-            r1.is_really_running = True
-            r2 = StrategyValidationResult("/path/to/s2.py")
-            r2.final_status = "load_failed"
-            r2.is_really_running = False
-            mock_single.side_effect = [r1, r2]
+    @patch("jk2bt.engine.validator.validate_single_strategy")
+    def test_validate_batch_status_counts(self, mock_single):
+        r1 = StrategyValidationResult("/path/to/s1.py")
+        r1.final_status = "success_with_transactions"
+        r1.is_really_running = True
+        r2 = StrategyValidationResult("/path/to/s2.py")
+        r2.final_status = "load_failed"
+        r2.is_really_running = False
+        mock_single.side_effect = [r1, r2]
 
-            results = validate_batch_strategies(
-                ["/path/to/s1.py", "/path/to/s2.py"],
-                output_file=None,
-            )
+        results = validate_batch_strategies(
+            ["/path/to/s1.py", "/path/to/s2.py"],
+            output_file=None,
+        )
 
-            assert len(results) == 2
+        assert len(results) == 2
 
 
 class TestGenerateReport:

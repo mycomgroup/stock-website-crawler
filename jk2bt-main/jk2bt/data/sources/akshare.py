@@ -27,8 +27,8 @@ from .stats_collector import get_stats_collector, StatsCollector
 from .router import MultiSourceRouter
 
 try:
-    from jk2bt.utils import data_source_backup
-    from jk2bt.utils.data_source_backup import (
+    from jk2bt.data.sources import data_source_backup
+    from jk2bt.data.sources.data_source_backup import (
         DEFAULT_STOCK_DAILY_SOURCES,
         DEFAULT_ETF_DAILY_SOURCES,
     )
@@ -105,15 +105,20 @@ class AkShareAdapter(DataSource):
         try:
             import sys
             import os
-            # 添加本地 akshare 项目路径到 sys.path
+
+            # 添加本地 akshare 项目路径到 sys.path 的最前面
             local_akshare_path = "/Users/fengzhi/Downloads/git/akshare"
-            if local_akshare_path not in sys.path:
-                sys.path.insert(0, local_akshare_path)
-            
+            # 移除可能存在的相同路径
+            if local_akshare_path in sys.path:
+                sys.path.remove(local_akshare_path)
+            # 插入到最前面
+            sys.path.insert(0, local_akshare_path)
+
             import akshare
 
             self._akshare = akshare
             self._akshare_available = True
+            logger.debug(f"akshare 从本地项目导入: {akshare.__file__}")
         except ImportError:
             logger.warning("akshare 未安装，将仅使用缓存数据")
 
@@ -369,35 +374,72 @@ class AkShareAdapter(DataSource):
 
                 # 转换代码格式
                 ak_symbol = symbol.replace("sh", "").replace("sz", "")
+                # 新浪前缀：股票 6xxxxx=sh, ETF 51xxxx/56xxxx/58xxxx=sh, 指数 000xxx=sh/399xxx=sz
+                sh_prefixes = ("6", "51", "56", "58", "000")
+                sz_prefixes = ("15", "16", "18", "399")
                 sina_symbol = (
-                    f"sh{ak_symbol}" if ak_symbol.startswith("6") else f"sz{ak_symbol}"
+                    f"sh{ak_symbol}"
+                    if ak_symbol.startswith(sh_prefixes)
+                    else f"sz{ak_symbol}"
                 )
+
+                # 检测类型
+                etf_prefixes = ("51", "56", "58", "15", "16", "18")
+                index_prefixes = ("000", "399")
+                is_etf = ak_symbol.startswith(etf_prefixes)
+                is_index = ak_symbol.startswith(index_prefixes)
 
                 # 优先使用新浪（更稳定），失败时使用东方财富
                 raw_df = None
-                for source_func, source_name, source_kwargs in [
-                    (
-                        lambda: self._akshare.stock_zh_a_daily(
-                            symbol=sina_symbol,
-                            start_date=start.replace("-", ""),
-                            end_date=end.replace("-", ""),
-                            adjust=adjust if adjust else "",
+                if is_etf:
+                    # ETF 使用专用函数
+                    source_funcs = [
+                        (
+                            lambda: self._akshare.fund_etf_hist_sina(
+                                symbol=sina_symbol
+                            ),
+                            "sina",
+                            {},
                         ),
-                        "sina",
-                        {},
-                    ),
-                    (
-                        lambda: self._akshare.stock_zh_a_hist(
-                            symbol=ak_symbol,
-                            period="daily",
-                            start_date=start.replace("-", ""),
-                            end_date=end.replace("-", ""),
-                            adjust=adjust,
+                        (
+                            lambda: self._akshare.fund_etf_hist_em(
+                                symbol=ak_symbol,
+                                period="daily",
+                                start_date=start.replace("-", ""),
+                                end_date=end.replace("-", ""),
+                                adjust=adjust if adjust else "",
+                            ),
+                            "eastmoney",
+                            {},
                         ),
-                        "eastmoney",
-                        {},
-                    ),
-                ]:
+                    ]
+                else:
+                    # 股票使用通用函数
+                    source_funcs = [
+                        (
+                            lambda: self._akshare.stock_zh_a_daily(
+                                symbol=sina_symbol,
+                                start_date=start.replace("-", ""),
+                                end_date=end.replace("-", ""),
+                                adjust=adjust if adjust else "",
+                            ),
+                            "sina",
+                            {},
+                        ),
+                        (
+                            lambda: self._akshare.stock_zh_a_hist(
+                                symbol=ak_symbol,
+                                period="daily",
+                                start_date=start.replace("-", ""),
+                                end_date=end.replace("-", ""),
+                                adjust=adjust,
+                            ),
+                            "eastmoney",
+                            {},
+                        ),
+                    ]
+
+                for source_func, source_name, source_kwargs in source_funcs:
                     for attempt in range(self._max_retries):
                         try:
                             start_time = time.time()

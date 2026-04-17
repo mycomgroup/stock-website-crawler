@@ -13,13 +13,23 @@ finance_data/dividend.py
 
 数据字段：
 - code: 股票代码（聚宽格式）
+- pub_date: 公告日期
+- announcement_date: 实施公告日期
 - board_plan_pub_date: 董事会预案公告日期
-- bonus_ratio_rmb: 每股派息(元)
+- bonus_ratio_rmb: 每股派息(元)（税前）
+- bonus_ratio_rmb_after_tax: 每股派息(元)（税后）
 - transfer_ratio: 转增比例
 - bonus_share_ratio: 送股比例
+- rights_issue_ratio: 配股比例
+- rights_issue_price_rmb: 配股价格
 - ex_dividend_date: 除权除息日
 - record_date: 股权登记日
+- pay_date: 派息日
+- report_date: 报告期
 - adjust_factor: 复权因子
+- adjusted_dividend: 调整后的分红
+- dividend_type: 分红类型
+- company_name: 公司名称
 
 缓存策略:
 - Parquet 缓存：存储在 data/dividend_parquet 中
@@ -52,15 +62,21 @@ except ImportError:
 
 _DIVIDEND_SCHEMA = [
     "code",
+    "pub_date",
+    "announcement_date",
     "board_plan_pub_date",
     "bonus_ratio_rmb",
+    "bonus_ratio_rmb_after_tax",
     "transfer_ratio",
     "bonus_share_ratio",
+    "rights_issue_ratio",
+    "rights_issue_price_rmb",
     "ex_dividend_date",
     "record_date",
     "pay_date",
     "report_date",
     "adjust_factor",
+    "adjusted_dividend",
     "dividend_type",
     "company_name",
 ]
@@ -240,13 +256,23 @@ def get_dividend_info(
     ----
     pandas DataFrame，标准化字段：
     - code: 股票代码（聚宽格式）
+    - pub_date: 公告日期
+    - announcement_date: 实施公告日期
     - board_plan_pub_date: 董事会预案公告日期
-    - bonus_ratio_rmb: 每股派息(元)
+    - bonus_ratio_rmb: 每股派息(元)（税前）
+    - bonus_ratio_rmb_after_tax: 每股派息(元)（税后）
     - transfer_ratio: 转增比例
     - bonus_share_ratio: 送股比例
+    - rights_issue_ratio: 配股比例
+    - rights_issue_price_rmb: 配股价格
     - ex_dividend_date: 除权除息日
     - record_date: 股权登记日
+    - pay_date: 派息日
+    - report_date: 报告期
     - adjust_factor: 复权因子
+    - adjusted_dividend: 调整后的分红
+    - dividend_type: 分红类型
+    - company_name: 公司名称
     """
     code_num = extract_code_num(security)
     jq_code = ak_code_to_jq(security)
@@ -314,15 +340,21 @@ def _parse_fhps_row(row, jq_code: str) -> Optional[dict]:
 
         return {
             "code": jq_code,
+            "pub_date": _parse_date(row.get("公告日期", None)),
+            "announcement_date": _parse_date(row.get("实施公告日", None)),
             "board_plan_pub_date": _parse_date(row.get("董事会预案公告日期", None)),
             "bonus_ratio_rmb": bonus_ratio_rmb,
+            "bonus_ratio_rmb_after_tax": _parse_ratio(row.get("税后派息", None)),
             "transfer_ratio": transfer_ratio,
             "bonus_share_ratio": bonus_share_ratio,
+            "rights_issue_ratio": _parse_ratio(row.get("配股比例", None)),
+            "rights_issue_price_rmb": _parse_ratio(row.get("配股价格", None)),
             "ex_dividend_date": _parse_date(row.get("除权除息日", None)),
             "record_date": _parse_date(row.get("股权登记日", None)),
             "pay_date": _parse_date(row.get("派息日", None)),
             "report_date": _parse_date(row.get("报告期", None)),
             "adjust_factor": adjust_factor,
+            "adjusted_dividend": _parse_ratio(row.get("调整后派息", None)),
             "dividend_type": str(row.get("分红类型", "")),
             "company_name": str(row.get("公司名称", "")),
         }
@@ -342,15 +374,21 @@ def _parse_dividend_row(row, jq_code: str) -> Optional[dict]:
 
         return {
             "code": jq_code,
-            "board_plan_pub_date": _parse_date(row.get("公告日期", None)),
+            "pub_date": _parse_date(row.get("公告日期", None)),
+            "announcement_date": _parse_date(row.get("实施公告日", None)),
+            "board_plan_pub_date": _parse_date(row.get("董事会预案公告日", None)),
             "bonus_ratio_rmb": bonus_ratio_rmb,
+            "bonus_ratio_rmb_after_tax": _parse_ratio(row.get("税后派息", None)),
             "transfer_ratio": transfer_ratio,
             "bonus_share_ratio": bonus_share_ratio,
+            "rights_issue_ratio": _parse_ratio(row.get("配股比例", None)),
+            "rights_issue_price_rmb": _parse_ratio(row.get("配股价格", None)),
             "ex_dividend_date": _parse_date(row.get("除权日", None)),
             "record_date": _parse_date(row.get("登记日", None)),
             "pay_date": _parse_date(row.get("派息日", None)),
             "report_date": _parse_date(row.get("实施日期", None)),
             "adjust_factor": adjust_factor,
+            "adjusted_dividend": _parse_ratio(row.get("调整后派息", None)),
             "dividend_type": str(row.get("分红类型", "")),
             "company_name": str(row.get("公司名称", "")),
         }
@@ -671,14 +709,25 @@ def get_dividend_by_date(
                     {
                         "code": jq_code,
                         "company_name": str(row.get("名称", "")),
+                        "pub_date": _parse_date(row.get("公告日期", None)),
+                        "announcement_date": _parse_date(row.get("实施公告日", None)),
                         "bonus_ratio_rmb": bonus_ratio_rmb,
+                        "bonus_ratio_rmb_after_tax": _parse_ratio(
+                            row.get("税后派息", None)
+                        ),
                         "transfer_ratio": transfer_ratio,
                         "bonus_share_ratio": bonus_share_ratio,
+                        "rights_issue_ratio": _parse_ratio(row.get("配股比例", None)),
+                        "rights_issue_price_rmb": _parse_ratio(
+                            row.get("配股价格", None)
+                        ),
                         "ex_dividend_date": _parse_date(row.get("除权除息日", None)),
                         "board_plan_pub_date": _parse_date(row.get("预案公告日", None)),
                         "record_date": _parse_date(row.get("股权登记日", None)),
                         "report_date": report_date,
                         "adjust_factor": adjust_factor,
+                        "adjusted_dividend": _parse_ratio(row.get("调整后派息", None)),
+                        "dividend_type": str(row.get("分红类型", "")),
                     }
                 )
 
@@ -748,29 +797,41 @@ class FinanceQuery:
 
     class STK_XR_XD:
         code = None
+        pub_date = None
+        announcement_date = None
         board_plan_pub_date = None
         bonus_ratio_rmb = None
+        bonus_ratio_rmb_after_tax = None
         transfer_ratio = None
         bonus_share_ratio = None
+        rights_issue_ratio = None
+        rights_issue_price_rmb = None
         ex_dividend_date = None
         record_date = None
         pay_date = None
         report_date = None
         adjust_factor = None
+        adjusted_dividend = None
         dividend_type = None
         company_name = None
 
     class STK_DIVIDEND_INFO:
         code = None
+        pub_date = None
+        announcement_date = None
         board_plan_pub_date = None
         bonus_ratio_rmb = None
+        bonus_ratio_rmb_after_tax = None
         transfer_ratio = None
         bonus_share_ratio = None
+        rights_issue_ratio = None
+        rights_issue_price_rmb = None
         ex_dividend_date = None
         record_date = None
         pay_date = None
         report_date = None
         adjust_factor = None
+        adjusted_dividend = None
         dividend_type = None
         company_name = None
 

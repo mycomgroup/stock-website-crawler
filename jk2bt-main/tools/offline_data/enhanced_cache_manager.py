@@ -396,7 +396,7 @@ class EnhancedCacheManager:
         self.source_manager = DataSourceManager()
         self.retry_config = retry_config or RetryConfig()
 
-        from jk2bt.utils.data_source_backup import (
+        from jk2bt.data.sources.data_source_backup import (
             fetch_stock_daily_sina,
             fetch_stock_daily_eastmoney,
             fetch_stock_daily_baostock,

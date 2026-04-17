@@ -10,40 +10,20 @@ test_source_router.py
 5. create_simple_router 工厂函数
 """
 
-import sys
 import time
-import importlib.util
-import pytest
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+
 import pandas as pd
+import pytest
+from unittest.mock import MagicMock, patch
 
-project_root = Path(__file__).parent.parent.parent
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-
-
-# 直接从文件路径加载模块，绕过 jk2bt/__init__.py
-def _load_module_from_path(module_name, file_path):
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-source_router_path = project_root / "jk2bt" / "data" / "sources" / "router.py"
-source_router = _load_module_from_path("source_router", str(source_router_path))
-
-stats_path = project_root / "jk2bt" / "logging" / "stats.py"
-stats_module = _load_module_from_path("logging_stats_for_router", str(stats_path))
-
-EmptyDataPolicy = source_router.EmptyDataPolicy
-ExecutionResult = source_router.ExecutionResult
-SourceHealthMonitor = source_router.SourceHealthMonitor
-MultiSourceRouter = source_router.MultiSourceRouter
-create_simple_router = source_router.create_simple_router
-reset_stats_collector = stats_module.reset_stats_collector
+from jk2bt.data.sources.router import (
+    EmptyDataPolicy,
+    ExecutionResult,
+    SourceHealthMonitor,
+    MultiSourceRouter,
+    create_simple_router,
+)
+from jk2bt.logging.stats import reset_stats_collector
 
 
 class TestEmptyDataPolicy:
@@ -400,7 +380,6 @@ class TestMultiSourceRouterStats:
         df = pd.DataFrame({"open": [10.0]})
         mock_func = MagicMock(return_value=df)
         router = MultiSourceRouter(providers=[("src1", mock_func)])
-        # _try_import_stats_collector 在没有 stats_collector 模块时返回 None
         router.execute()
         stats = router.get_stats()
         assert stats["successes"] == 1

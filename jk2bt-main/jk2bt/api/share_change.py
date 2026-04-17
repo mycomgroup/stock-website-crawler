@@ -151,14 +151,21 @@ def get_capital_change(
     pd.DataFrame
         Capital change data:
         - code: Stock code (JQData format)
+        - pub_date: Publication date
+        - change_date: Change date
         - change_type: Change type
         - change_amount: Change amount
-        - change_date: Change date
         - change_reason: Change reason
         - total_capital_before: Total capital before change
+        - total_capital_before_unit: Total capital before unit
         - total_capital_after: Total capital after change
+        - total_capital_after_unit: Total capital after unit
         - circulating_capital_before: Circulating capital before
+        - circulating_capital_before_unit: Circulating capital before unit
         - circulating_capital_after: Circulating capital after
+        - circulating_capital_after_unit: Circulating capital after unit
+        - total_shares_change_ratio: Total shares change ratio
+        - circulating_shares_change_ratio: Circulating shares change ratio
 
     Examples
     --------
@@ -180,14 +187,21 @@ def get_capital_change(
         return pd.DataFrame(
             columns=[
                 "code",
+                "pub_date",
+                "change_date",
                 "change_type",
                 "change_amount",
-                "change_date",
                 "change_reason",
                 "total_capital_before",
+                "total_capital_before_unit",
                 "total_capital_after",
+                "total_capital_after_unit",
                 "circulating_capital_before",
+                "circulating_capital_before_unit",
                 "circulating_capital_after",
+                "circulating_capital_after_unit",
+                "total_shares_change_ratio",
+                "circulating_shares_change_ratio",
             ]
         )
     return result
