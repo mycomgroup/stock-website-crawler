@@ -21,11 +21,11 @@ jq_compat.py
 import os
 import re
 import warnings
-import logging
 import backtrader as bt
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta, date
+from datetime import datetime
+from typing import Optional
 
 try:
     import statsmodels.api as sm
@@ -38,39 +38,17 @@ except ImportError:
 from jk2bt.engine.securities_utils import (
     format_stock_symbol_for_akshare,
     jq_code_to_ak,
-    ak_code_to_jq,
-    _stock_code_to_jq,
     _find_date_column,
-    _resolve_cache_dir,
-    _format_index_code,
-    _normalize_index_weights,
-    SUPPORTED_INDEXES,
-    CONS_ONLY_INDICES,
-    INDEX_FALLBACK_MAP,
-    INDEX_DESCRIPTION,
-    INDEX_CODE_ALIAS_MAP,
     RobustResult,
 )
 from jk2bt.engine.data_proxies import (
     SecurityInfo,
     _QueryBuilder,
-    _Expression,
-    _FieldProxy,
     _TableProxy,
-    _FinanceTableProxy,
-    _FinanceFieldProxy,
-    _FinanceModule,
-    valuation,
-    income,
-    cash_flow,
-    balance,
-    indicator,
-    _CurrentDataEntry,
     _CurrentDataProxy,
     _TickDataProxy,
 )
 from jk2bt.engine.global_state import (
-    log,
     logger,
     _prerun_mode_active,
     _prerun_requested_stocks,
@@ -88,14 +66,18 @@ from jk2bt.api.market import (
 # =====================================================================
 
 
-def get_index_weights(index_code, date=None, robust=False):
+def get_index_weights(
+    index_code, date=None, robust=False, force_update=False, use_duckdb=True
+):
     """
     获取指数成分股权重
 
     参数:
         index_code: 指数代码，支持 '000300.XSHG', '000300' 等格式
-        date: 查询日期，默认最新
+        date: 查询日期，默认最新（暂未使用）
         robust: bool - 是否返回 RobustResult 对象（包含成功状态和原因）
+        force_update: 是否强制更新缓存
+        use_duckdb: 是否使用 DuckDB 缓存
 
     返回:
         DataFrame 或 RobustResult, index=股票代码, columns=['weight', 'display_name']
@@ -108,18 +90,21 @@ def get_index_weights(index_code, date=None, robust=False):
             log.warn(f"获取失败: {result.reason}")
     """
     try:
-        from jk2bt.data.sources import get_adapter
+        from jk2bt.data.market.index_components import (
+            get_index_weights as _get_index_weights_impl,
+        )
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
     try:
-        df = get_adapter().get_index_components(index_code, include_weights=True)
+        df = _get_index_weights_impl(
+            index_code, date=date, force_update=force_update, use_duckdb=use_duckdb
+        )
 
-        # 转换为预期的 DataFrame 格式
+        # 转换为 JQ 兼容的 DataFrame 格式: index=股票代码, columns=['weight', 'display_name']
         if df.empty:
             result_data = pd.DataFrame(columns=["weight", "display_name"])
         else:
-            # 获取股票代码列（优先使用stock_code，fallback到code）
             code_col = "stock_code" if "stock_code" in df.columns else "code"
             stock_codes = df[code_col].tolist() if code_col in df.columns else []
             result_data = pd.DataFrame(index=stock_codes)
@@ -128,7 +113,6 @@ def get_index_weights(index_code, date=None, robust=False):
                 if "weight" in df.columns
                 else [0] * len(stock_codes)
             )
-            # 获取股票名称列（优先使用stock_name，fallback到display_name）
             name_col = "stock_name" if "stock_name" in df.columns else "display_name"
             result_data["display_name"] = (
                 df[name_col].tolist()
@@ -165,15 +149,19 @@ def get_index_weights_robust(index_code, date=None):
     return get_index_weights(index_code, date, robust=True)
 
 
-def get_index_stocks(index_code, date=None, robust=False):
+def get_index_stocks(
+    index_code, date=None, robust=False, force_update=False, use_duckdb=True
+):
     """
     获取指数成分股列表
 
     参数:
         index_code: 指数代码，支持 '000300.XSHG', '000300' 等格式
                    也支持聚宽特色指数如 'JQ0001.SPI', 'S00001.SPI' 等
-        date: 查询日期，默认最新
+        date: 查询日期，默认最新（暂未使用）
         robust: bool - 是否返回 RobustResult 对象
+        force_update: 是否强制更新缓存
+        use_duckdb: 是否使用 DuckDB 缓存
 
     返回:
         list 或 RobustResult: 股票代码列表，如 ['600519.XSHG', '000858.XSHE', ...]
@@ -192,12 +180,16 @@ def get_index_stocks(index_code, date=None, robust=False):
         return _get_spi_index_stocks(index_code, date, robust)
 
     try:
-        from jk2bt.data.sources import get_adapter
+        from jk2bt.data.market.index_components import (
+            get_index_stocks as _get_index_stocks_impl,
+        )
     except ImportError:
         raise ImportError("请安装 akshare: pip install akshare")
 
     try:
-        stocks = get_adapter().get_index_stocks(index_code)
+        stocks = _get_index_stocks_impl(
+            index_code, force_update=force_update, use_duckdb=use_duckdb
+        )
 
         # 预运行模式下记录请求的股票
         if _prerun_mode_active and stocks:
@@ -368,10 +360,7 @@ def get_price_unified(
     ----
     df = get_price_unified('600519.XSHG', end_date='2023-12-31', count=30)
     """
-    try:
-        from jk2bt.api.market import get_price as _get_price_impl
-    except ImportError:
-        from jk2bt.api.market import get_price as _get_price_impl
+    from jk2bt.api.market import get_price as _get_price_impl
 
     return _get_price_impl(
         security=security,
@@ -434,10 +423,7 @@ def get_price_jq(
     单标的：DataFrame
     多标的：dict{symbol: DataFrame}（默认，panel=True）或 DataFrame（panel=False）
     """
-    try:
-        from jk2bt.api.market import get_price as _get_price_impl
-    except ImportError:
-        from jk2bt.api.market import get_price as _get_price_impl
+    from jk2bt.api.market import get_price as _get_price_impl
 
     fq_map = {
         "qfq": "pre",
@@ -627,186 +613,6 @@ def get_call_auction(security, date=None):
     )
 
 
-def history(
-    count,
-    unit="1d",
-    field="close",
-    security_list=None,
-    df=True,
-    skip_paused=False,
-    fq="pre",
-    end_date=None,
-):
-    """
-    聚宽风格 history：获取多个标的单个字段历史数据。
-    返回 DataFrame，index=日期，columns=股票代码。
-
-    参数
-    ----
-    count : int
-        历史数据条数
-    unit : str
-        时间单位 '1d', '1m'
-    field : str
-        字段名，支持 'open', 'close', 'high', 'low', 'volume', 'money', 'paused', 'pre_close', 'high_limit', 'low_limit'
-    security_list : list
-        股票代码列表
-    df : bool
-        是否返回 DataFrame
-    skip_paused : bool
-        是否跳过停牌数据
-    fq : str
-        复权方式 'pre', 'post', 'none'
-    end_date : str
-        结束日期
-
-    返回
-    ----
-    df=True: DataFrame(index=日期, columns=股票代码)
-    df=False: dict{symbol: array}
-    """
-    try:
-        from jk2bt.api.market import history as _history_impl
-    except ImportError:
-        from jk2bt.api.market import history as _history_impl
-
-    if security_list is None:
-        if df:
-            return pd.DataFrame()
-        return {}
-
-    if isinstance(security_list, str):
-        security_list = [security_list]
-
-    result = _history_impl(
-        count=count,
-        unit=unit,
-        field=field,
-        security_list=security_list,
-        df=df,
-        skip_paused=skip_paused,
-        fq=fq,
-        end_date=end_date,
-    )
-
-    return result
-
-
-def attribute_history(
-    security,
-    count,
-    unit="1d",
-    fields=None,
-    skip_paused=True,
-    df=True,
-    fq="pre",
-    end_date=None,
-):
-    """
-    聚宽风格 attribute_history：获取单个标的多字段历史数据。
-    返回 DataFrame，index=日期，columns=字段名。
-
-    参数
-    ----
-    security : str
-        股票代码
-    count : int
-        历史数据条数
-    unit : str
-        时间单位 '1d', '1m'
-    fields : list
-        字段列表，支持 ['open', 'close', 'high', 'low', 'volume', 'money', 'paused', 'pre_close', 'high_limit', 'low_limit']
-    skip_paused : bool
-        是否跳过停牌数据
-    df : bool
-        是否返回 DataFrame
-    fq : str
-        复权方式 'pre', 'post', 'none'
-    end_date : str
-        结束日期
-
-    返回
-    ----
-    df=True: DataFrame(index=日期, columns=字段)
-    df=False: dict{field: array}
-    """
-    try:
-        from jk2bt.api.market import attribute_history as _attribute_history_impl
-    except ImportError:
-        from jk2bt.api.market import attribute_history as _attribute_history_impl
-
-    if fields is None:
-        fields = ["open", "close", "high", "low", "volume", "money"]
-
-    result = _attribute_history_impl(
-        security=security,
-        count=count,
-        unit=unit,
-        fields=fields,
-        skip_paused=skip_paused,
-        df=df,
-        fq=fq,
-        end_date=end_date,
-    )
-
-    return result
-
-
-def get_bars_jq(
-    security,
-    count,
-    unit="1d",
-    fields=None,
-    include_now=False,
-    end_dt=None,
-    fq="pre",
-    skip_paused=False,
-):
-    """
-    JQData 风格 get_bars，分钟/日线历史 K 线。
-
-    参数
-    ----
-    security : str or list
-        股票代码
-    count : int
-        历史数据条数
-    unit : str
-        时间单位 '1d', '1m', '5m', '15m', '30m', '60m'
-    fields : list
-        字段列表，支持 ['open', 'close', 'high', 'low', 'volume', 'money', 'paused', 'pre_close', 'high_limit', 'low_limit']
-    include_now : bool
-        是否包含当前 bar
-    end_dt : datetime
-        结束时间
-    fq : str
-        复权方式 'pre', 'post', 'none'
-    skip_paused : bool
-        是否跳过停牌
-
-    返回
-    ----
-    DataFrame
-    """
-    try:
-        from jk2bt.api.market import get_bars as _get_bars_impl
-    except ImportError:
-        from jk2bt.api.market import get_bars as _get_bars_impl
-
-    result = _get_bars_impl(
-        security=security,
-        count=count,
-        unit=unit,
-        fields=fields,
-        include_now=include_now,
-        end_dt=end_dt,
-        fq=fq,
-        skip_paused=skip_paused,
-    )
-
-    return result
-
-
 get_bars = get_bars_jq
 
 
@@ -860,10 +666,7 @@ def get_current_tick(security, bt_strategy=None):
 def analyze_performance(strategy_nav, benchmark_nav):
     """输出策略绩效指标：年化收益、夏普、信息比率、Alpha/Beta、最大回撤、索提诺。"""
     strategy_nav = pd.Series(strategy_nav)
-    # 兼容 pandas 3.0（fillna method= 已由文件头部 patch 处理）
-    benchmark_nav = (
-        pd.Series(benchmark_nav).reindex(strategy_nav.index).fillna(method="ffill")
-    )
+    benchmark_nav = pd.Series(benchmark_nav).reindex(strategy_nav.index).ffill()
 
     strategy_ret = strategy_nav.pct_change().dropna()
     benchmark_ret = benchmark_nav.pct_change().dropna()
@@ -2017,6 +1820,24 @@ def _get_spi_index_stocks(index_code, date=None, robust=False):
         return []
 
 
+def _to_jq_code(code: str) -> Optional[str]:
+    """Convert plain stock code to JQ format (e.g., '600519' -> '600519.XSHG')."""
+    if not code:
+        return None
+    code = code.strip()
+    if "." in code:
+        return code
+    if code.startswith(("sh", "sz")):
+        prefix = code[:2]
+        code_num = code[2:]
+        return code_num + (".XSHG" if prefix == "sh" else ".XSHE")
+    if code.startswith("6"):
+        return code + ".XSHG"
+    if code.startswith(("0", "3")):
+        return code + ".XSHE"
+    return code
+
+
 def _get_spi_jq0001_stocks():
     """JQ0001.SPI 全A等权指数成分股
 
@@ -2038,35 +1859,127 @@ def _get_spi_jq0001_stocks():
 def _get_spi_jq0002_stocks():
     """JQ0002.SPI 小市值指数成分股
 
-    小市值指数选取A股中市值最小的若干只股票。
-    TODO: 完整实现应包含市值筛选和轮动逻辑
+    小市值指数选取A股中市值最小的20%股票。
     """
     try:
+        from jk2bt.data.sources import get_adapter
+
+        adapter = get_adapter()
+        spot_df = adapter.get_spot_em()
+
+        if spot_df is None or spot_df.empty:
+            all_stocks = get_all_securities_jq(types=["stock"])
+            if all_stocks.empty:
+                return []
+            return all_stocks.index.tolist()
+
+        market_cap_col = None
+        for col in ["总市值", "market_cap", "总市值(元)", "总市值(万元)"]:
+            if col in spot_df.columns:
+                market_cap_col = col
+                break
+
+        if market_cap_col is None or "代码" not in spot_df.columns:
+            all_stocks = get_all_securities_jq(types=["stock"])
+            if all_stocks.empty:
+                return []
+            return all_stocks.index.tolist()
+
+        df = spot_df[[market_cap_col, "代码"]].copy()
+        df = df[pd.to_numeric(df[market_cap_col], errors="coerce").notna()]
+        df[market_cap_col] = pd.to_numeric(df[market_cap_col], errors="coerce")
+        df = df[df[market_cap_col] > 0]
+
+        if df.empty:
+            all_stocks = get_all_securities_jq(types=["stock"])
+            if all_stocks.empty:
+                return []
+            return all_stocks.index.tolist()
+
+        df = df.sort_values(market_cap_col, ascending=True)
+        cutoff = int(len(df) * 0.20)
+        cutoff = max(cutoff, 1)
+        small_cap_df = df.head(cutoff)
+
+        stocks = []
+        for code in small_cap_df["代码"].tolist():
+            jq_code = _to_jq_code(code)
+            if jq_code:
+                stocks.append(jq_code)
+
+        if _prerun_mode_active and stocks:
+            _prerun_requested_stocks.update(stocks)
+
+        return stocks
+    except Exception as e:
+        logger.warning(f"获取小市值指数成分股失败: {e}")
         all_stocks = get_all_securities_jq(types=["stock"])
         if all_stocks.empty:
             return []
-        stock_codes = all_stocks.index.tolist()
-        return stock_codes
-    except Exception as e:
-        logger.warning(f"获取小市值指数成分股失败: {e}")
-        return []
+        return all_stocks.index.tolist()
 
 
 def _get_spi_jq0003_stocks():
     """JQ0003.SPI 微盘指数成分股
 
-    微盘指数选取A股中市值极小的若干只股票（通常取市值后10%）。
-    TODO: 完整实现应包含微盘股筛选和定期调样逻辑
+    微盘指数选取A股中市值最小的5%股票。
     """
     try:
+        from jk2bt.data.sources import get_adapter
+
+        adapter = get_adapter()
+        spot_df = adapter.get_spot_em()
+
+        if spot_df is None or spot_df.empty:
+            all_stocks = get_all_securities_jq(types=["stock"])
+            if all_stocks.empty:
+                return []
+            return all_stocks.index.tolist()
+
+        market_cap_col = None
+        for col in ["总市值", "market_cap", "总市值(元)", "总市值(万元)"]:
+            if col in spot_df.columns:
+                market_cap_col = col
+                break
+
+        if market_cap_col is None or "代码" not in spot_df.columns:
+            all_stocks = get_all_securities_jq(types=["stock"])
+            if all_stocks.empty:
+                return []
+            return all_stocks.index.tolist()
+
+        df = spot_df[[market_cap_col, "代码"]].copy()
+        df = df[pd.to_numeric(df[market_cap_col], errors="coerce").notna()]
+        df[market_cap_col] = pd.to_numeric(df[market_cap_col], errors="coerce")
+        df = df[df[market_cap_col] > 0]
+
+        if df.empty:
+            all_stocks = get_all_securities_jq(types=["stock"])
+            if all_stocks.empty:
+                return []
+            return all_stocks.index.tolist()
+
+        df = df.sort_values(market_cap_col, ascending=True)
+        cutoff = int(len(df) * 0.05)
+        cutoff = max(cutoff, 1)
+        micro_cap_df = df.head(cutoff)
+
+        stocks = []
+        for code in micro_cap_df["代码"].tolist():
+            jq_code = _to_jq_code(code)
+            if jq_code:
+                stocks.append(jq_code)
+
+        if _prerun_mode_active and stocks:
+            _prerun_requested_stocks.update(stocks)
+
+        return stocks
+    except Exception as e:
+        logger.warning(f"获取微盘指数成分股失败: {e}")
         all_stocks = get_all_securities_jq(types=["stock"])
         if all_stocks.empty:
             return []
-        stock_codes = all_stocks.index.tolist()
-        return stock_codes
-    except Exception as e:
-        logger.warning(f"获取微盘指数成分股失败: {e}")
-        return []
+        return all_stocks.index.tolist()
 
 
 def _get_spi_industry_stocks(index_code):
@@ -2378,6 +2291,36 @@ def get_extras_jq(
                     result_data[sec] = True
 
         result_df = pd.DataFrame(result_data, index=[pd.Timestamp(end_date)])
+        return result_df
+
+    elif field in ("high_limit", "low_limit"):
+        result_data = {}
+        for sec, code in zip(securities_str, code_nums):
+            result_data[sec] = pd.Series(dtype=float)
+
+        try:
+            from jk2bt.data.sources import get_adapter
+
+            spot_df = get_adapter().get_spot_em()
+            if spot_df is not None and not spot_df.empty:
+                for sec, code in zip(securities_str, code_nums):
+                    row = spot_df[spot_df["代码"] == code]
+                    if not row.empty:
+                        row = row.iloc[0]
+                        if field == "high_limit":
+                            val = row.get("涨停价", None)
+                        else:
+                            val = row.get("跌停价", None)
+                        if val is not None and pd.notna(val):
+                            result_data[sec] = pd.Series(
+                                [float(val)], index=[pd.Timestamp(end_date)]
+                            )
+                        else:
+                            result_data[sec] = pd.Series(dtype=float)
+        except Exception as e:
+            warnings.warn(f"获取涨跌停数据失败: {e}")
+
+        result_df = pd.DataFrame(result_data)
         return result_df
 
     elif field in ("acc_net_value", "unit_net_value"):

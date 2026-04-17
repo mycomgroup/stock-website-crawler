@@ -20,6 +20,7 @@ jk2bt 数据验证命令行工具
 """
 
 import argparse
+import logging
 import sys
 import os
 

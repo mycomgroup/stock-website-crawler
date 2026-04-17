@@ -511,7 +511,7 @@ def get_num(stock: str, field: str, date: Optional[str] = None) -> float:
         # 获取财务数据
         roe = get_num('600519.XSHG', 'roe')
     """
-    from jk2bt.api.market import get_price, history
+    from jk2bt.api.market import get_price
     from jk2bt.data.finance import get_balance_sheet, get_income_statement
 
     # 行情数据

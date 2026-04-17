@@ -16,7 +16,7 @@ Main functions:
 """
 
 import pandas as pd
-from typing import Optional, List
+from typing import Optional
 
 
 def get_unlock_info(

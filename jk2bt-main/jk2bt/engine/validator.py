@@ -185,7 +185,7 @@ def validate_strategy_loading(strategy_file: str, result: StrategyValidationResu
     start_time = time.time()
 
     try:
-        functions = load_jq_strategy(strategy_file)
+        functions, _ = load_jq_strategy(strategy_file)
         load_time = time.time() - start_time
 
         result.load_success = True
@@ -314,7 +314,7 @@ def validate_strategy_execution(
     clear_runtime_data()
 
     try:
-        strategy_functions = load_jq_strategy(strategy_file)
+        strategy_functions, _ = load_jq_strategy(strategy_file)
         if not strategy_functions:
             result.run_success = False
             result.run_error = "策略加载失败，无法运行"
@@ -731,7 +731,9 @@ def validate_batch_strategies(
     logger.info("#" * 80)
 
     for i, strategy_file in enumerate(strategy_files, 1):
-        logger.info(f"[{i}/{len(strategy_files)}] 验证: {os.path.basename(strategy_file)}")
+        logger.info(
+            f"[{i}/{len(strategy_files)}] 验证: {os.path.basename(strategy_file)}"
+        )
         result = validate_single_strategy(
             strategy_file,
             start_date=start_date,

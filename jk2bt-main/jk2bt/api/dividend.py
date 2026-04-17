@@ -15,7 +15,7 @@ Main functions:
 """
 
 import pandas as pd
-from typing import Optional, List, Dict, Union
+from typing import Optional, Dict, Union
 
 from jk2bt.data.finance.dividend import (
     get_dividend_info as _get_dividend_info,
@@ -24,8 +24,6 @@ from jk2bt.data.finance.dividend import (
     get_adjust_factor as _get_adjust_factor,
     get_rights_issue as _get_rights_issue,
     calculate_ex_rights_price as _calculate_ex_rights_price,
-    get_next_dividend as _get_next_dividend,
-    query_dividend as _query_dividend,
 )
 
 

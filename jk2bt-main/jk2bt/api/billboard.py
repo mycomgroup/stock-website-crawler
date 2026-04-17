@@ -12,12 +12,11 @@
 """
 
 import pandas as pd
-import numpy as np
 from typing import Optional, List, Union
 import warnings
 from datetime import datetime, timedelta
 
-from jk2bt.data.sources import get_adapter, DataSourceError
+from jk2bt.data.sources import get_adapter
 from jk2bt.utils.symbol import normalize_symbol as _normalize_symbol
 
 
@@ -38,6 +37,7 @@ def _jq_symbol(code: str) -> str:
 # =====================================================================
 # get_billboard_list - 龙虎榜数据
 # =====================================================================
+
 
 def get_billboard_list(
     stock: Optional[Union[str, List[str]]] = None,
@@ -100,16 +100,30 @@ def get_billboard_list(
     try:
         # 尝试获取龙虎榜明细数据
         start_str = start_date.replace("-", "") if start_date else "20200101"
-        end_str = end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d")
+        end_str = (
+            end_date.replace("-", "") if end_date else datetime.now().strftime("%Y%m%d")
+        )
 
-        df = get_adapter().get_billboard_list(start_str)
+        df = get_adapter().get_billboard_list(start_str, end_str)
 
         if df is None or df.empty:
             warnings.warn("龙虎榜数据为空")
-            return pd.DataFrame(columns=[
-                'code', 'date', 'direction', 'broker_name', 'buy_value',
-                'sell_value', 'net_value', 'buy_ratio', 'sell_ratio', 'reason'
-            ])
+            return pd.DataFrame(
+                columns=[
+                    "code",
+                    "date",
+                    "direction",
+                    "broker_name",
+                    "buy_value",
+                    "sell_value",
+                    "net_value",
+                    "buy_ratio",
+                    "sell_ratio",
+                    "reason",
+                    "rank",
+                    "abnormal_code",
+                ]
+            )
 
         # 中文列名映射到英文
         column_mapping = {
@@ -126,6 +140,8 @@ def get_billboard_list(
             "成交额占总成交比": "total_ratio",
             "上榜原因": "reason",
             "上榜日期": "date",
+            "排名": "rank",
+            "异常波动类型": "abnormal_code",
         }
 
         # 重命名已存在的列
@@ -185,8 +201,16 @@ def get_billboard_list(
 
             # 选择需要的列
             output_cols = [
-                'code', 'date', 'direction', 'broker_name', 'buy_value',
-                'sell_value', 'net_value', 'reason'
+                "code",
+                "date",
+                "direction",
+                "broker_name",
+                "buy_value",
+                "sell_value",
+                "net_value",
+                "reason",
+                "rank",
+                "abnormal_code",
             ]
             available_cols = [c for c in output_cols if c in df.columns]
             result = df[available_cols].copy()
@@ -205,10 +229,22 @@ def get_billboard_list(
 
     except Exception as e:
         warnings.warn(f"获取龙虎榜数据失败: {e}")
-        return pd.DataFrame(columns=[
-            'code', 'date', 'direction', 'broker_name', 'buy_value',
-            'sell_value', 'net_value', 'buy_ratio', 'sell_ratio', 'reason'
-        ])
+        return pd.DataFrame(
+            columns=[
+                "code",
+                "date",
+                "direction",
+                "broker_name",
+                "buy_value",
+                "sell_value",
+                "net_value",
+                "buy_ratio",
+                "sell_ratio",
+                "reason",
+                "rank",
+                "abnormal_code",
+            ]
+        )
 
 
 def _get_billboard_detail(
@@ -259,9 +295,13 @@ def _get_billboard_detail(
                         "龙虎榜买入额": "buy_value",
                         "龙虎榜卖出额": "sell_value",
                         "上榜原因": "reason",
+                        "排名": "rank",
+                        "异常波动类型": "abnormal_code",
                     }
 
-                    rename_cols = {k: v for k, v in column_mapping.items() if k in daily_df.columns}
+                    rename_cols = {
+                        k: v for k, v in column_mapping.items() if k in daily_df.columns
+                    }
                     daily_df = daily_df.rename(columns=rename_cols)
                     daily_df["date"] = current_date
 
@@ -305,6 +345,7 @@ def _get_billboard_detail(
 # =====================================================================
 # get_institutional_holdings - 机构持仓数据
 # =====================================================================
+
 
 def get_institutional_holdings(
     stock: str,
@@ -361,7 +402,11 @@ def get_institutional_holdings(
                     "股东性质": "institution_type",
                 }
 
-                rename_cols = {k: v for k, v in column_mapping.items() if k in df_shareholders.columns}
+                rename_cols = {
+                    k: v
+                    for k, v in column_mapping.items()
+                    if k in df_shareholders.columns
+                }
                 df_shareholders = df_shareholders.rename(columns=rename_cols)
 
                 df_shareholders["code"] = jq_code
@@ -393,7 +438,9 @@ def get_institutional_holdings(
                     "变动比例": "change_ratio",
                 }
 
-                rename_cols = {k: v for k, v in column_mapping.items() if k in df_institute.columns}
+                rename_cols = {
+                    k: v for k, v in column_mapping.items() if k in df_institute.columns
+                }
                 df_institute = df_institute.rename(columns=rename_cols)
 
                 df_institute["code"] = jq_code
@@ -420,7 +467,9 @@ def get_institutional_holdings(
                     "占流通股比例": "float_ratio",
                 }
 
-                rename_cols = {k: v for k, v in column_mapping.items() if k in df_fund.columns}
+                rename_cols = {
+                    k: v for k, v in column_mapping.items() if k in df_fund.columns
+                }
                 df_fund = df_fund.rename(columns=rename_cols)
 
                 df_fund["code"] = jq_code
@@ -432,17 +481,28 @@ def get_institutional_holdings(
             pass
 
         if not all_data:
-            return pd.DataFrame(columns=[
-                'code', 'institution_name', 'institution_type', 'holding_shares',
-                'holding_ratio', 'holding_value', 'change_shares', 'change_ratio', 'report_date'
-            ])
+            return pd.DataFrame(
+                columns=[
+                    "code",
+                    "institution_name",
+                    "institution_type",
+                    "holding_shares",
+                    "holding_ratio",
+                    "holding_value",
+                    "change_shares",
+                    "change_ratio",
+                    "report_date",
+                ]
+            )
 
         # 合并数据
         result = pd.concat(all_data, ignore_index=True)
 
         # 标准化日期
         if "report_date" in result.columns:
-            result["report_date"] = pd.to_datetime(result["report_date"], errors="coerce")
+            result["report_date"] = pd.to_datetime(
+                result["report_date"], errors="coerce"
+            )
 
         # 日期过滤
         if date and "report_date" in result.columns:
@@ -451,8 +511,15 @@ def get_institutional_holdings(
 
         # 选择输出列
         output_cols = [
-            'code', 'institution_name', 'institution_type', 'holding_shares',
-            'holding_ratio', 'holding_value', 'change_shares', 'change_ratio', 'report_date'
+            "code",
+            "institution_name",
+            "institution_type",
+            "holding_shares",
+            "holding_ratio",
+            "holding_value",
+            "change_shares",
+            "change_ratio",
+            "report_date",
         ]
         available_cols = [c for c in output_cols if c in result.columns]
 
@@ -460,7 +527,9 @@ def get_institutional_holdings(
 
         # 去重
         if "institution_name" in result.columns and "report_date" in result.columns:
-            result = result.drop_duplicates(subset=["institution_name", "report_date"], keep="last")
+            result = result.drop_duplicates(
+                subset=["institution_name", "report_date"], keep="last"
+            )
 
         # 按持股比例降序排列
         if "holding_ratio" in result.columns:
@@ -470,15 +539,25 @@ def get_institutional_holdings(
 
     except Exception as e:
         warnings.warn(f"获取机构持仓数据失败 {stock}: {e}")
-        return pd.DataFrame(columns=[
-            'code', 'institution_name', 'institution_type', 'holding_shares',
-            'holding_ratio', 'holding_value', 'change_shares', 'change_ratio', 'report_date'
-        ])
+        return pd.DataFrame(
+            columns=[
+                "code",
+                "institution_name",
+                "institution_type",
+                "holding_shares",
+                "holding_ratio",
+                "holding_value",
+                "change_shares",
+                "change_ratio",
+                "report_date",
+            ]
+        )
 
 
 # =====================================================================
 # 辅助函数 - 获取龙虎榜热门股票
 # =====================================================================
+
 
 def get_billboard_hot_stocks(
     start_date: Optional[str] = None,
@@ -505,14 +584,26 @@ def get_billboard_hot_stocks(
 
     if "code" in df.columns and "net_value" in df.columns:
         # 按股票汇总净买入
-        hot = df.groupby("code").agg({
-            "net_value": "sum",
-            "buy_value": "sum",
-            "sell_value": "sum",
-            "date": "count"
-        }).reset_index()
+        hot = (
+            df.groupby("code")
+            .agg(
+                {
+                    "net_value": "sum",
+                    "buy_value": "sum",
+                    "sell_value": "sum",
+                    "date": "count",
+                }
+            )
+            .reset_index()
+        )
 
-        hot.columns = ["code", "total_net_value", "total_buy_value", "total_sell_value", "appearances"]
+        hot.columns = [
+            "code",
+            "total_net_value",
+            "total_buy_value",
+            "total_sell_value",
+            "appearances",
+        ]
         hot = hot.sort_values("total_net_value", ascending=False).head(top_n)
 
         return hot.reset_index(drop=True)
@@ -523,6 +614,7 @@ def get_billboard_hot_stocks(
 # =====================================================================
 # 辅助函数 - 获取营业部买卖统计
 # =====================================================================
+
 
 def get_broker_statistics(
     start_date: Optional[str] = None,
@@ -548,14 +640,26 @@ def get_broker_statistics(
         return pd.DataFrame()
 
     # 按营业部统计
-    broker_stats = df.groupby("broker_name").agg({
-        "buy_value": "sum",
-        "sell_value": "sum",
-        "net_value": "sum",
-        "code": "count"
-    }).reset_index()
+    broker_stats = (
+        df.groupby("broker_name")
+        .agg(
+            {
+                "buy_value": "sum",
+                "sell_value": "sum",
+                "net_value": "sum",
+                "code": "count",
+            }
+        )
+        .reset_index()
+    )
 
-    broker_stats.columns = ["broker_name", "total_buy", "total_sell", "total_net", "trade_count"]
+    broker_stats.columns = [
+        "broker_name",
+        "total_buy",
+        "total_sell",
+        "total_net",
+        "trade_count",
+    ]
     broker_stats = broker_stats.sort_values("total_net", ascending=False).head(top_n)
 
     return broker_stats.reset_index(drop=True)

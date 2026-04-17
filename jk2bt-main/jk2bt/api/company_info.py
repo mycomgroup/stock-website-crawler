@@ -20,9 +20,10 @@ from jk2bt.data.finance.company_info import (
     get_security_status as _get_security_status,
     get_listing_info as _get_listing_info,
     get_company_info_list as _get_company_info_list,
-    get_company_info_robust as _get_company_info_robust,
     get_industry_info as _get_industry_info,
-    query_company_basic_info as _query_company_basic_info,
+    get_management_info as _get_management_info,
+    get_employee_info as _get_employee_info,
+    get_name_history as _get_name_history,
 )
 
 
@@ -265,10 +266,194 @@ def get_industry_info(
     return result
 
 
+def get_management_info(
+    symbol: str,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    force_update: bool = False,
+    use_duckdb: bool = True,
+) -> pd.DataFrame:
+    """
+    Get company management personnel information.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    symbol : str
+        Security code, e.g. '600519.XSHG'
+    start_date : str, optional
+        Start date in 'YYYY-MM-DD' format
+    end_date : str, optional
+        End date in 'YYYY-MM-DD' format
+    force_update : bool, optional
+        Force update from network
+    use_duckdb : bool, optional
+        Use DuckDB cache (default True)
+
+    Returns
+    ----
+    pd.DataFrame
+        Management information with fields:
+        - code: Security code (JQData format)
+        - name: Executive name
+        - position: Position/title
+        - gender: Gender
+        - education: Education level
+        - start_date: Start date of tenure
+        - end_date: End date of tenure
+        - shares_held: Number of shares held
+        - compensation: Annual compensation
+
+    Examples
+    ----
+    >>> df = get_management_info('600519.XSHG')
+    >>> df = get_management_info('000001.XSHE', start_date='2020-01-01')
+    """
+    result = _get_management_info(
+        symbol,
+        start_date=start_date,
+        end_date=end_date,
+        force_update=force_update,
+        use_duckdb=use_duckdb,
+    )
+    if result is None or result.empty:
+        return pd.DataFrame(
+            columns=[
+                "code",
+                "name",
+                "position",
+                "gender",
+                "education",
+                "start_date",
+                "end_date",
+                "shares_held",
+                "compensation",
+            ]
+        )
+    return result
+
+
+def get_employee_info(
+    symbol: str,
+    year: Optional[int] = None,
+    force_update: bool = False,
+    use_duckdb: bool = True,
+) -> pd.DataFrame:
+    """
+    Get company employee information.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    symbol : str
+        Security code, e.g. '600519.XSHG'
+    year : int, optional
+        Report year, e.g. 2023
+    force_update : bool, optional
+        Force update from network
+    use_duckdb : bool, optional
+        Use DuckDB cache (default True)
+
+    Returns
+    ----
+    pd.DataFrame
+        Employee information with fields:
+        - code: Security code (JQData format)
+        - report_date: Report date
+        - employee_count: Total employee count
+        - professional_count: Professional staff count
+        - production_count: Production staff count
+        - sales_count: Sales staff count
+        - finance_count: Finance staff count
+        - admin_count: Administrative staff count
+        - education_bachelor: Bachelor degree count
+        - education_master: Master degree count
+        - education_phd: PhD degree count
+
+    Examples
+    ----
+    >>> df = get_employee_info('600519.XSHG')
+    >>> df = get_employee_info('000001.XSHE', year=2023)
+    """
+    result = _get_employee_info(
+        symbol,
+        year=year,
+        force_update=force_update,
+        use_duckdb=use_duckdb,
+    )
+    if result is None or result.empty:
+        return pd.DataFrame(
+            columns=[
+                "code",
+                "report_date",
+                "employee_count",
+                "professional_count",
+                "production_count",
+                "sales_count",
+                "finance_count",
+                "admin_count",
+                "education_bachelor",
+                "education_master",
+                "education_phd",
+            ]
+        )
+    return result
+
+
+def get_name_history(
+    symbol: str,
+    force_update: bool = False,
+    use_duckdb: bool = True,
+) -> pd.DataFrame:
+    """
+    Get company name change history.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    symbol : str
+        Security code, e.g. '600519.XSHG'
+    force_update : bool, optional
+        Force update from network
+    use_duckdb : bool, optional
+        Use DuckDB cache (default True)
+
+    Returns
+    ----
+    pd.DataFrame
+        Name history with fields:
+        - code: Security code (JQData format)
+        - name: Historical name
+        - start_date: Start date of name usage
+        - end_date: End date of name usage
+        - change_reason: Reason for name change
+
+    Examples
+    ----
+    >>> df = get_name_history('600519.XSHG')
+    """
+    result = _get_name_history(
+        symbol,
+        force_update=force_update,
+        use_duckdb=use_duckdb,
+    )
+    if result is None or result.empty:
+        return pd.DataFrame(
+            columns=["code", "name", "start_date", "end_date", "change_reason"]
+        )
+    return result
+
+
 __all__ = [
     "get_company_info",
     "get_security_status",
     "get_listing_info",
     "get_company_info_list",
     "get_industry_info",
+    "get_management_info",
+    "get_employee_info",
+    "get_name_history",
 ]

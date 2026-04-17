@@ -126,10 +126,14 @@ def _ledoit_wolf_shrinkage(
     delta = np.sum((sample_corr - target) ** 2) / p
 
     # 计算 Frobenius 范数的期望
-    y = X_std ** 2
-    phi = np.sum(
-        np.sum(y[:, :, np.newaxis] * y[:, np.newaxis, :], axis=0) / n - sample_corr ** 2
-    ) / p
+    y = X_std**2
+    phi = (
+        np.sum(
+            np.sum(y[:, :, np.newaxis] * y[:, np.newaxis, :], axis=0) / n
+            - sample_corr**2
+        )
+        / p
+    )
 
     # 压缩系数
     shrinkage = max(0, min(1, phi / delta)) if delta > 0 else 0
@@ -161,7 +165,12 @@ def _ewma_cov(
     for i, fi in enumerate(factors):
         for j, fj in enumerate(factors):
             # 计算协方差
-            cov_ij = (returns_centered[fi] * returns_centered[fj]).ewm(halflife=halflife).mean().iloc[-1]
+            cov_ij = (
+                (returns_centered[fi] * returns_centered[fj])
+                .ewm(halflife=halflife)
+                .mean()
+                .iloc[-1]
+            )
             cov_matrix[i, j] = cov_ij
 
     return pd.DataFrame(cov_matrix, index=factors, columns=factors)
@@ -245,10 +254,12 @@ def factor_risk_analysis(
     variance = get_factor_variance(factor_returns, annualize=False)
     std = np.sqrt(variance)
 
-    result = pd.DataFrame({
-        "variance": variance,
-        "std": std,
-    })
+    result = pd.DataFrame(
+        {
+            "variance": variance,
+            "std": std,
+        }
+    )
 
     # 计算风险贡献
     if portfolio_weights is not None:
@@ -264,6 +275,576 @@ def factor_risk_analysis(
         result["risk_contribution_pct"] = cr
 
     return result
+
+
+def compute_factor_covariance(
+    factor_returns: pd.DataFrame,
+    window: int = 252,
+) -> pd.DataFrame:
+    """
+    计算因子协方差矩阵。
+
+    Parameters
+    ----------
+    factor_returns : pd.DataFrame
+        因子收益率时间序列
+    window : int
+        滚动窗口大小（交易日）
+
+    Returns
+    -------
+    pd.DataFrame
+        因子协方差矩阵
+    """
+    if factor_returns.empty or len(factor_returns) < 2:
+        warnings.warn("数据不足，无法计算因子协方差矩阵")
+        return pd.DataFrame()
+
+    return factor_returns.tail(window).cov()
+
+
+def compute_style_factor_returns_real(
+    factors: Optional[List[str]] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    universe: str = "hs300",
+    industry: str = "sw_l1",
+) -> pd.DataFrame:
+    """
+    使用真实数据计算风格因子收益率（Fama-MacBeth方法）。
+
+    步骤:
+    1. 获取股票池内所有股票的日收益率
+    2. 计算每只股票在各风格因子上的暴露值
+    3. 对每个交易日进行横截面回归: R_i = alpha + sum(beta_k * f_k) + epsilon_i
+    4. 返回因子收益率时间序列
+
+    Parameters
+    ----------
+    factors : list, optional
+        因子名称列表，默认使用 CNE6 风格因子
+        ['size', 'beta', 'momentum', 'volatility', 'liquidity',
+         'growth', 'leverage', 'earnings_yield', 'book_to_price', 'profitability']
+    start_date : str, optional
+        起始日期，格式 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期，格式 'YYYY-MM-DD'
+    universe : str, default 'hs300'
+        股票池，支持 'hs300', 'csi500', 'csi1000', 'zz800', 'zzqz'
+    industry : str, default 'sw_l1'
+        行业分类标准，暂未使用
+
+    Returns
+    -------
+    pd.DataFrame
+        因子收益率时间序列，index 为日期，columns 为因子名称
+
+    Raises
+    ------
+    ImportError
+        当依赖模块不可用时
+    ValueError
+        当参数不合法时
+    """
+    from jk2bt.api.jq_compat import get_index_stocks, get_price, get_fundamentals
+    from jk2bt.api.jq_compat import query, valuation
+    from jk2bt.api.factor_kanban import CNE6_STYLE_FACTORS
+
+    if factors is None:
+        factors = CNE6_STYLE_FACTORS.copy()
+
+    # 映射指数代码
+    index_map = {
+        "hs300": "000300.XSHG",
+        "csi500": "000905.XSHG",
+        "csi1000": "000852.XSHG",
+        "zz800": "000906.XSHG",
+        "zzqz": "000985.XSHG",
+    }
+    index_code = index_map.get(universe, "000300.XSHG")
+
+    # 设置默认日期范围（最近一年）
+    if end_date is None:
+        end_date = pd.Timestamp.now().strftime("%Y-%m-%d")
+    if start_date is None:
+        start_dt = pd.Timestamp(end_date) - pd.Timedelta(days=365)
+        start_date = start_dt.strftime("%Y-%m-%d")
+
+    # 1. 获取股票池
+    try:
+        stocks = get_index_stocks(index_code)
+    except Exception as e:
+        warnings.warn(f"获取指数成分股失败: {e}")
+        return pd.DataFrame()
+
+    if not stocks:
+        warnings.warn(f"指数 {universe} 成分股为空")
+        return pd.DataFrame()
+
+    # 限制股票数量以提高性能
+    max_stocks = 100
+    if len(stocks) > max_stocks:
+        stocks = stocks[:max_stocks]
+
+    # 2. 获取股票价格数据计算收益率
+    try:
+        price_data = get_price(
+            stocks,
+            start_date=start_date,
+            end_date=end_date,
+            frequency="daily",
+            fields=["close"],
+            skip_paused=True,
+            fq="pre",
+            panel=False,
+        )
+    except Exception as e:
+        warnings.warn(f"获取价格数据失败: {e}")
+        return pd.DataFrame()
+
+    if price_data.empty:
+        warnings.warn("价格数据为空")
+        return pd.DataFrame()
+
+    # 构建收益率矩阵
+    returns_pivot = price_data.pivot_table(
+        index="datetime", columns="code", values="close"
+    )
+    daily_returns = returns_pivot.pct_change().dropna()
+
+    if daily_returns.empty:
+        warnings.warn("收益率数据为空")
+        return pd.DataFrame()
+
+    # 3. 计算因子暴露
+    factor_exposures = _calculate_factor_exposures(
+        stocks, daily_returns.index[-1], factors
+    )
+
+    if factor_exposures.empty:
+        warnings.warn("因子暴露计算失败")
+        return pd.DataFrame()
+
+    # 确保只有有因子暴露的股票参与回归
+    common_stocks = list(set(daily_returns.columns) & set(factor_exposures.index))
+    if len(common_stocks) < 10:
+        warnings.warn("有效股票数量不足，无法进行横截面回归")
+        return pd.DataFrame()
+
+    returns_matrix = daily_returns[common_stocks]
+    exposures_matrix = factor_exposures.loc[common_stocks]
+
+    # 标准化因子暴露（横截面 z-score）
+    exposures_matrix = (
+        exposures_matrix - exposures_matrix.mean()
+    ) / exposures_matrix.std()
+    exposures_matrix = exposures_matrix.fillna(0)
+
+    # 4. Fama-MacBeth 横截面回归
+    factor_return_list = []
+
+    for date_idx in range(len(returns_matrix)):
+        date = returns_matrix.index[date_idx]
+        stock_returns = returns_matrix.iloc[date_idx].values
+
+        # 构建回归矩阵
+        valid_mask = ~np.isnan(stock_returns)
+        if valid_mask.sum() < 10:
+            continue
+
+        y = stock_returns[valid_mask]
+        X = exposures_matrix.values[valid_mask]
+
+        # 添加常数项
+        X_with_const = np.column_stack([np.ones(len(y)), X])
+
+        try:
+            # OLS 回归: (X'X)^(-1) X'y
+            XtX = X_with_const.T @ X_with_const
+            Xty = X_with_const.T @ y
+            coeffs = np.linalg.solve(XtX, Xty)
+
+            # 提取因子收益率（跳过常数项）
+            factor_returns_row = {"date": date}
+            for i, factor_name in enumerate(factors):
+                factor_returns_row[factor_name] = coeffs[i + 1]
+            factor_return_list.append(factor_returns_row)
+
+        except np.linalg.LinAlgError:
+            continue
+
+    if not factor_return_list:
+        warnings.warn("横截面回归未产生有效结果")
+        return pd.DataFrame()
+
+    result_df = pd.DataFrame(factor_return_list)
+    result_df.set_index("date", inplace=True)
+
+    return result_df
+
+
+def _calculate_factor_exposures(
+    stocks: List[str],
+    date: Union[str, pd.Timestamp],
+    factors: List[str],
+) -> pd.DataFrame:
+    """
+    计算股票在各风格因子上的暴露值。
+
+    Parameters
+    ----------
+    stocks : List[str]
+        股票代码列表
+    date : str or pd.Timestamp
+        计算日期
+    factors : List[str]
+        因子名称列表
+
+    Returns
+    -------
+    pd.DataFrame
+        因子暴露矩阵，index 为股票代码，columns 为因子名称
+    """
+    from jk2bt.api.jq_compat import get_fundamentals, query, valuation
+    from jk2bt.api.jq_compat import get_price
+
+    date_str = str(date)[:10] if isinstance(date, pd.Timestamp) else str(date)[:10]
+
+    exposures = pd.DataFrame(index=stocks)
+
+    # 获取估值数据
+    try:
+        valuation_df = get_fundamentals(
+            query(valuation).filter(valuation.code.in_(stocks)),
+            date=date_str,
+        )
+    except Exception:
+        valuation_df = pd.DataFrame()
+
+    if not valuation_df.empty and "code" in valuation_df.columns:
+        valuation_df.set_index("code", inplace=True)
+
+    # Size因子: ln(market_cap)
+    if "size" in factors:
+        if not valuation_df.empty and "market_cap" in valuation_df.columns:
+            exposures["size"] = np.log(valuation_df["market_cap"])
+        else:
+            exposures["size"] = 0.0
+
+    # Beta因子: 使用过去一年的日收益率对市场收益率回归
+    if "beta" in factors:
+        exposures["beta"] = _calculate_beta(stocks, date_str)
+
+    # Momentum因子: 过去12个月收益率（剔除最近1个月）
+    if "momentum" in factors:
+        exposures["momentum"] = _calculate_momentum(stocks, date_str)
+
+    # Volatility因子: 过去一年的日收益率标准差
+    if "volatility" in factors:
+        exposures["volatility"] = _calculate_volatility(stocks, date_str)
+
+    # Liquidity因子: 过去一个月的平均换手率（用成交量/流通市值近似）
+    if "liquidity" in factors:
+        if not valuation_df.empty and "circulating_market_cap" in valuation_df.columns:
+            exposures["liquidity"] = _calculate_liquidity(
+                stocks, date_str, valuation_df["circulating_market_cap"]
+            )
+        else:
+            exposures["liquidity"] = 0.0
+
+    # Growth因子: 营业收入增长率
+    if "growth" in factors:
+        if (
+            not valuation_df.empty
+            and "inc_revenue_year_on_year" in valuation_df.columns
+        ):
+            exposures["growth"] = valuation_df["inc_revenue_year_on_year"]
+        else:
+            exposures["growth"] = 0.0
+
+    # Leverage因子: 资产负债率
+    if "leverage" in factors:
+        if not valuation_df.empty and "debt_to_asset" in valuation_df.columns:
+            exposures["leverage"] = valuation_df["debt_to_asset"]
+        else:
+            exposures["leverage"] = 0.0
+
+    # Earnings Yield因子: 盈利收益率 (EP = 1/PE)
+    if "earnings_yield" in factors:
+        if not valuation_df.empty and "pe_ratio" in valuation_df.columns:
+            pe = valuation_df["pe_ratio"].copy()
+            pe = pe.replace(0, np.nan)
+            exposures["earnings_yield"] = 1.0 / pe
+            exposures["earnings_yield"] = exposures["earnings_yield"].fillna(0)
+        else:
+            exposures["earnings_yield"] = 0.0
+
+    # Book to Price因子: 账面市值比 (1/PB)
+    if "book_to_price" in factors or "book_to_market" in factors:
+        col_name = "book_to_price" if "book_to_price" in factors else "book_to_market"
+        if not valuation_df.empty and "pb_ratio" in valuation_df.columns:
+            pb = valuation_df["pb_ratio"].copy()
+            pb = pb.replace(0, np.nan)
+            exposures[col_name] = 1.0 / pb
+            exposures[col_name] = exposures[col_name].fillna(0)
+        else:
+            exposures[col_name] = 0.0
+
+    # Profitability因子: ROE
+    if "profitability" in factors:
+        if not valuation_df.empty and "roe_ratio" in valuation_df.columns:
+            exposures["profitability"] = valuation_df["roe_ratio"]
+        else:
+            exposures["profitability"] = 0.0
+
+    # 填充缺失值
+    exposures = exposures.fillna(0)
+
+    # 处理无穷大值
+    exposures = exposures.replace([np.inf, -np.inf], 0)
+
+    return exposures
+
+
+def _calculate_beta(
+    stocks: List[str],
+    date_str: str,
+    window: int = 252,
+) -> pd.Series:
+    """
+    计算股票 Beta 值。
+
+    使用过去 window 个交易日的日收益率对市场收益率回归。
+    """
+    from jk2bt.api.jq_compat import get_index_stocks, get_price
+
+    try:
+        start_dt = pd.Timestamp(date_str) - pd.Timedelta(days=window * 2)
+        start_str = start_dt.strftime("%Y-%m-%d")
+
+        # 获取沪深300指数作为市场基准
+        index_prices = get_price(
+            "000300.XSHG",
+            start_date=start_str,
+            end_date=date_str,
+            frequency="daily",
+            fields=["close"],
+            skip_paused=True,
+        )
+
+        if index_prices is None or index_prices.empty:
+            return pd.Series(1.0, index=stocks)
+
+        market_returns = index_prices["close"].pct_change().dropna()
+
+        betas = {}
+        for stock in stocks[:50]:  # 限制计算量
+            try:
+                stock_prices = get_price(
+                    stock,
+                    start_date=start_str,
+                    end_date=date_str,
+                    frequency="daily",
+                    fields=["close"],
+                    skip_paused=True,
+                )
+
+                if stock_prices is None or stock_prices.empty:
+                    betas[stock] = 1.0
+                    continue
+
+                stock_returns = stock_prices["close"].pct_change().dropna()
+
+                # 对齐数据
+                common_idx = market_returns.index.intersection(stock_returns.index)
+                if len(common_idx) < 60:
+                    betas[stock] = 1.0
+                    continue
+
+                m_ret = market_returns.loc[common_idx].values
+                s_ret = stock_returns.loc[common_idx].values
+
+                # 计算 beta = Cov(R_s, R_m) / Var(R_m)
+                cov = np.cov(s_ret, m_ret)[0, 1]
+                var_m = np.var(m_ret)
+
+                if var_m > 0:
+                    betas[stock] = cov / var_m
+                else:
+                    betas[stock] = 1.0
+
+            except Exception:
+                betas[stock] = 1.0
+
+        # 对于未计算的股票，使用平均值
+        mean_beta = np.mean(list(betas.values())) if betas else 1.0
+        for stock in stocks:
+            if stock not in betas:
+                betas[stock] = mean_beta
+
+        return pd.Series(betas)
+
+    except Exception:
+        return pd.Series(1.0, index=stocks)
+
+
+def _calculate_momentum(
+    stocks: List[str],
+    date_str: str,
+    skip_months: int = 1,
+    lookback_months: int = 12,
+) -> pd.Series:
+    """
+    计算动量因子：过去12个月收益率（剔除最近1个月）。
+    """
+    from jk2bt.api.jq_compat import get_price
+
+    try:
+        end_dt = pd.Timestamp(date_str)
+        start_dt = end_dt - pd.Timedelta(days=(lookback_months + skip_months) * 30)
+        start_str = start_dt.strftime("%Y-%m-%d")
+
+        momentums = {}
+        for stock in stocks[:50]:
+            try:
+                prices = get_price(
+                    stock,
+                    start_date=start_str,
+                    end_date=date_str,
+                    frequency="daily",
+                    fields=["close"],
+                    skip_paused=True,
+                )
+
+                if prices is None or prices.empty or len(prices) < 60:
+                    momentums[stock] = 0.0
+                    continue
+
+                close = prices["close"]
+                # 计算 skip_months 前的价格和 lookback_months 前的价格
+                skip_days = skip_months * 20
+                lookback_days = lookback_months * 20
+
+                if len(close) < lookback_days:
+                    momentums[stock] = 0.0
+                    continue
+
+                price_start = close.iloc[-lookback_days]
+                price_end = (
+                    close.iloc[-skip_days] if len(close) > skip_days else close.iloc[-1]
+                )
+
+                momentums[stock] = (price_end / price_start) - 1.0
+
+            except Exception:
+                momentums[stock] = 0.0
+
+        mean_momentum = np.mean(list(momentums.values())) if momentums else 0.0
+        for stock in stocks:
+            if stock not in momentums:
+                momentums[stock] = mean_momentum
+
+        return pd.Series(momentums)
+
+    except Exception:
+        return pd.Series(0.0, index=stocks)
+
+
+def _calculate_volatility(
+    stocks: List[str],
+    date_str: str,
+    window: int = 252,
+) -> pd.Series:
+    """
+    计算波动率因子：过去一年的日收益率标准差。
+    """
+    from jk2bt.api.jq_compat import get_price
+
+    try:
+        start_dt = pd.Timestamp(date_str) - pd.Timedelta(days=window * 2)
+        start_str = start_dt.strftime("%Y-%m-%d")
+
+        vols = {}
+        for stock in stocks[:50]:
+            try:
+                prices = get_price(
+                    stock,
+                    start_date=start_str,
+                    end_date=date_str,
+                    frequency="daily",
+                    fields=["close"],
+                    skip_paused=True,
+                )
+
+                if prices is None or prices.empty or len(prices) < 60:
+                    vols[stock] = 0.0
+                    continue
+
+                returns = prices["close"].pct_change().dropna()
+                vols[stock] = returns.std() * np.sqrt(252)
+
+            except Exception:
+                vols[stock] = 0.0
+
+        mean_vol = np.mean(list(vols.values())) if vols else 0.0
+        for stock in stocks:
+            if stock not in vols:
+                vols[stock] = mean_vol
+
+        return pd.Series(vols)
+
+    except Exception:
+        return pd.Series(0.0, index=stocks)
+
+
+def _calculate_liquidity(
+    stocks: List[str],
+    date_str: str,
+    circulating_caps: pd.Series,
+    window: int = 20,
+) -> pd.Series:
+    """
+    计算流动性因子：过去一个月的日均换手率。
+    使用成交量/流通股本近似。
+    """
+    from jk2bt.api.jq_compat import get_price
+
+    try:
+        start_dt = pd.Timestamp(date_str) - pd.Timedelta(days=window * 2)
+        start_str = start_dt.strftime("%Y-%m-%d")
+
+        liqs = {}
+        for stock in stocks[:50]:
+            try:
+                prices = get_price(
+                    stock,
+                    start_date=start_str,
+                    end_date=date_str,
+                    frequency="daily",
+                    fields=["volume"],
+                    skip_paused=True,
+                )
+
+                if prices is None or prices.empty:
+                    liqs[stock] = 0.0
+                    continue
+
+                # 使用成交量的对数作为流动性代理
+                avg_volume = prices["volume"].mean()
+                liqs[stock] = np.log1p(avg_volume)
+
+            except Exception:
+                liqs[stock] = 0.0
+
+        mean_liq = np.mean(list(liqs.values())) if liqs else 0.0
+        for stock in stocks:
+            if stock not in liqs:
+                liqs[stock] = mean_liq
+
+        return pd.Series(liqs)
+
+    except Exception:
+        return pd.Series(0.0, index=stocks)
 
 
 def portfolio_factor_risk(
@@ -390,7 +971,7 @@ def eigenvalue_decomposition(
         "eigenvectors": pd.DataFrame(
             eigenvectors,
             index=cov_matrix.index,
-            columns=[f"PC{i+1}" for i in range(eigenvectors.shape[1])],
+            columns=[f"PC{i + 1}" for i in range(eigenvectors.shape[1])],
         ),
         "explained_variance_ratio": explained_variance_ratio,
     }

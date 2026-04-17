@@ -32,10 +32,7 @@ from .base import (
     safe_divide,
 )
 
-try:
-    from jk2bt.utils.date_utils import find_date_column
-except ImportError:
-    from jk2bt.utils.date_utils import find_date_column
+from jk2bt.utils.date_utils import find_date_column
 
 from jk2bt.utils.symbol import normalize_symbol as _normalize_symbol
 

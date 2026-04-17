@@ -13,7 +13,7 @@ jk2bt/api/futures.py
 """
 
 import pandas as pd
-from typing import Optional, List, Literal
+from typing import Optional, List
 import warnings
 import re
 
@@ -181,6 +181,7 @@ def get_futures_info(
 
 def get_future_contracts(
     underlying_symbol: str,
+    date: Optional[str] = None,
     exchange: Optional[str] = None,
 ) -> List[str]:
     """
@@ -192,6 +193,8 @@ def get_future_contracts(
     ----
     underlying_symbol : str
         标的合约代码，如 'IF', 'IC', 'AU' 等
+    date : str, optional
+        查询日期，格式 'YYYY-MM-DD'
     exchange : str, optional
         交易所代码
 
@@ -210,7 +213,7 @@ def get_future_contracts(
         get_future_contracts as _get_future_contracts,
     )
 
-    return _get_future_contracts(underlying_symbol, exchange)
+    return _get_future_contracts(underlying_symbol, date, exchange)
 
 
 def get_dominant_contracts(
@@ -333,7 +336,7 @@ def get_order_future_bar(
         get_futures_daily,
         _get_order_contracts,
     )
-    from datetime import datetime, timedelta
+    from datetime import datetime
 
     product = product.upper()
 
@@ -390,6 +393,90 @@ def get_order_future_bar(
         return pd.DataFrame()
 
 
+def get_future_ticks(
+    contract: str,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取期货合约 tick 数据。
+
+    聚宽兼容接口
+
+    参数
+    ----
+    contract : str
+        合约代码，如 'IF2401', 'AU2401' 等
+    start_date : str, optional
+        起始日期，格式 'YYYY-MM-DD' 或 'YYYYMMDD'
+    end_date : str, optional
+        结束日期，格式 'YYYY-MM-DD' 或 'YYYYMMDD'
+
+    返回
+    ----
+    pd.DataFrame
+        Tick 数据，包含:
+        - datetime: 时间戳
+        - price: 最新价
+        - volume: 成交量
+        - bid_price1~bid_price5: 买盘价格
+        - ask_price1~ask_price5: 卖盘价格
+        - bid_volume1~bid_volume5: 买盘量
+        - ask_volume1~ask_volume5: 卖盘量
+
+    示例
+    ----
+    >>> df = get_future_ticks('IF2401', start_date='2024-01-15', end_date='2024-01-15')
+    >>> print(df.head())
+    """
+    import akshare as ak
+
+    contract = contract.upper().replace(".", "")
+
+    if not start_date:
+        start_date = pd.Timestamp.now().strftime("%Y%m%d")
+    if not end_date:
+        end_date = start_date
+
+    start_date = start_date.replace("-", "")
+    end_date = end_date.replace("-", "")
+
+    try:
+        all_ticks = []
+        current = pd.to_datetime(start_date)
+        end = pd.to_datetime(end_date)
+
+        while current <= end:
+            date_str = current.strftime("%Y%m%d")
+            try:
+                df = ak.futures_zh_tick_sina(symbol=contract, trade_date=date_str)
+                if df is not None and not df.empty:
+                    all_ticks.append(df)
+            except Exception:
+                pass
+            current += pd.Timedelta(days=1)
+
+        if not all_ticks:
+            return pd.DataFrame()
+
+        result = pd.concat(all_ticks, ignore_index=True)
+        result = (
+            result.drop_duplicates()
+            .sort_values(
+                by=list(result.columns[:1])
+                if len(result.columns) > 0
+                else result.columns[0]
+            )
+            .reset_index(drop=True)
+        )
+
+        return result
+
+    except Exception as e:
+        warnings.warn(f"获取期货 tick 数据失败 {contract}: {e}")
+        return pd.DataFrame()
+
+
 def get_future_index_bar(
     product: str,
     start_date: Optional[str] = None,
@@ -428,6 +515,176 @@ def get_future_index_bar(
     return pd.DataFrame()
 
 
+def get_futures_margin(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取期货保证金数据。
+
+    参数
+    ----
+    code : str, optional
+        合约代码或品种代码
+    start_date : str, optional
+        起始日期，格式 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期，格式 'YYYY-MM-DD'
+
+    返回
+    ----
+    pd.DataFrame
+        期货保证金数据:
+        - day: 日期
+        - code: 合约代码
+        - exchange: 交易所
+        - exchange_name: 交易所名称
+        - specul_buy_margin_rate: 投机买保证金比例
+        - specul_sell_margin_rate: 投机卖保证金比例
+        - hedg_buy_margin_rate: 套保买保证金比例
+        - hedg_sell_margin_rate: 套保卖保证金比例
+
+    示例
+    ----
+    >>> df = get_futures_margin('IF')
+    >>> df = get_futures_margin(start_date='2024-01-01', end_date='2024-12-31')
+    """
+    from jk2bt.data.finance.tables import get_futures_margin as _get_futures_margin
+
+    return _get_futures_margin(code=code, start_date=start_date, end_date=end_date)
+
+
+def get_futures_charge(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取期货手续费数据。
+
+    参数
+    ----
+    code : str, optional
+        合约代码或品种代码
+    start_date : str, optional
+        起始日期，格式 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期，格式 'YYYY-MM-DD'
+
+    返回
+    ----
+    pd.DataFrame
+        期货手续费数据:
+        - day: 日期
+        - code: 合约代码
+        - exchange: 交易所
+        - exchange_name: 交易所名称
+        - unit: 计费方式 (按手/按金额)
+        - clearance_charge: 平仓手续费
+        - opening_charge: 开仓手续费
+        - short_clearance_charge: 平今仓手续费
+        - short_opening_charge: 开今仓手续费
+
+    示例
+    ----
+    >>> df = get_futures_charge('IF')
+    >>> df = get_futures_charge(start_date='2024-01-01', end_date='2024-12-31')
+    """
+    from jk2bt.data.finance.tables import get_futures_charge as _get_futures_charge
+
+    return _get_futures_charge(code=code, start_date=start_date, end_date=end_date)
+
+
+def get_futures_warehouse(
+    symbol: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取期货仓单数据。
+
+    参数
+    ----
+    symbol : str, optional
+        品种代码
+    start_date : str, optional
+        起始日期，格式 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期，格式 'YYYY-MM-DD'
+
+    返回
+    ----
+    pd.DataFrame
+        期货仓单数据:
+        - day: 日期
+        - symbol: 品种
+        - warehouse_receipt: 仓单数量
+        - warehouse_name: 仓库名称
+        - region: 地区
+
+    示例
+    ----
+    >>> df = get_futures_warehouse('CU')
+    >>> df = get_futures_warehouse(start_date='2024-01-01', end_date='2024-12-31')
+    """
+    from jk2bt.data.finance.tables import (
+        get_futures_warehouse as _get_futures_warehouse,
+    )
+
+    return _get_futures_warehouse(
+        symbol=symbol, start_date=start_date, end_date=end_date
+    )
+
+
+def get_futures_member_position(
+    symbol: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    exchange: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取期货会员持仓数据（龙虎榜）。
+
+    参数
+    ----
+    symbol : str, optional
+        合约代码
+    start_date : str, optional
+        起始日期，格式 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期，格式 'YYYY-MM-DD'
+    exchange : str, optional
+        交易所代码 (CFFEX/SHFE/DCE/CZCE)
+
+    返回
+    ----
+    pd.DataFrame
+        期货会员持仓数据:
+        - day: 日期
+        - symbol: 合约代码
+        - broker: 会员名称
+        - long_holding: 多头持仓
+        - long_change: 多头变化
+        - short_holding: 空头持仓
+        - short_change: 空头变化
+        - volume: 成交量
+        - volume_change: 成交量变化
+
+    示例
+    ----
+    >>> df = get_futures_member_position('IF2401')
+    >>> df = get_futures_member_position(exchange='CFFEX')
+    """
+    from jk2bt.data.finance.tables import (
+        get_futures_member_position as _get_futures_member_position,
+    )
+
+    return _get_futures_member_position(
+        symbol=symbol, start_date=start_date, end_date=end_date, exchange=exchange
+    )
+
+
 # 聚宽风格别名
 get_dominant_future_jq = get_dominant_future
 get_futures_info_jq = get_futures_info
@@ -441,7 +698,12 @@ __all__ = [
     "get_dominant_contracts",
     "get_settlement_price",
     "get_order_future_bar",
+    "get_future_ticks",
     "get_future_index_bar",
+    "get_futures_margin",
+    "get_futures_charge",
+    "get_futures_warehouse",
+    "get_futures_member_position",
     "get_dominant_future_jq",
     "get_futures_info_jq",
     "get_future_contracts_jq",

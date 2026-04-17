@@ -26,10 +26,11 @@ class RobustResult:
         error: Optional[str] = None,
         error_code: Optional[str] = None,
         source: Optional[str] = None,
+        reason: Optional[str] = None,
     ):
         self.success = success
         self.data = data
-        self.error = error
+        self.error = error or reason
         self.error_code = error_code
         self.source = source
 

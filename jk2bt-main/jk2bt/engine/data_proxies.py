@@ -361,10 +361,7 @@ class _FinanceModule:
                     finance_db = sb_module.finance_db
             # 3. 动态导入
             else:
-                try:
-                    from .strategy_base import finance_db
-                except ImportError:
-                    from .strategy_base import finance_db
+                from .strategy_base import finance_db
 
         if finance_db is None:
             # 最后的fallback: 创建一个临时的finance_db实例

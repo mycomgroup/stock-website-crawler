@@ -28,10 +28,7 @@ from enum import Enum
 import pandas as pd
 import numpy as np
 
-try:
-    from jk2bt.utils.date_utils import find_date_column
-except ImportError:
-    from jk2bt.utils.date_utils import find_date_column
+from jk2bt.utils.date_utils import find_date_column
 
 from jk2bt.utils.symbol import normalize_symbol
 

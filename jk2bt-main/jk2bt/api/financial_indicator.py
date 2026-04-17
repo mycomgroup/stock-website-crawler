@@ -15,7 +15,7 @@ import pandas as pd
 from typing import Optional, List, Union
 import warnings
 
-from jk2bt.data.sources import get_adapter, DataSourceError
+from jk2bt.data.sources import get_adapter
 from jk2bt.utils.symbol import normalize_symbol as _normalize_code
 
 
@@ -72,30 +72,23 @@ def bank_indicator(
     results = []
 
     try:
-        # 方法1: 使用银行专项指标接口
-        try:
-            df = get_adapter().get_finance_indicator(symbol="bank")
-            if df is not None and not df.empty:
-                results.append(_process_bank_data(df, security, fields))
-        except Exception:
-            pass
+        # 获取银行股列表
+        securities = (
+            _get_bank_list()
+            if security is None
+            else ([security] if isinstance(security, str) else security)
+        )
 
-        # 方法2: 使用财务分析接口
-        if not results or all(r.empty for r in results):
-            securities = _get_bank_list() if security is None else (
-                [security] if isinstance(security, str) else security
-            )
-
-            for sec in securities:
-                try:
-                    code = _normalize_code(sec)
-                    df = get_adapter().get_finance_indicator(symbol=code)
-                    if df is not None and not df.empty:
-                        processed = _process_financial_data(df, sec, "bank", fields)
-                        if not processed.empty:
-                            results.append(processed)
-                except Exception:
-                    continue
+        for sec in securities:
+            try:
+                code = _normalize_code(sec)
+                df = get_adapter().get_finance_indicator(symbol=code)
+                if df is not None and not df.empty:
+                    processed = _process_financial_data(df, sec, "bank", fields)
+                    if not processed.empty:
+                        results.append(processed)
+            except Exception:
+                continue
 
     except Exception as e:
         warnings.warn(f"获取银行指标失败: {e}")
@@ -222,8 +215,10 @@ def security_indicator(
 
     try:
         # 使用财务分析接口
-        securities = _get_security_list() if security is None else (
-            [security] if isinstance(security, str) else security
+        securities = (
+            _get_security_list()
+            if security is None
+            else ([security] if isinstance(security, str) else security)
         )
 
         for sec in securities:
@@ -306,8 +301,10 @@ def insurance_indicator(
 
     try:
         # 使用财务分析接口
-        securities = _get_insurance_list() if security is None else (
-            [security] if isinstance(security, str) else security
+        securities = (
+            _get_insurance_list()
+            if security is None
+            else ([security] if isinstance(security, str) else security)
         )
 
         for sec in securities:

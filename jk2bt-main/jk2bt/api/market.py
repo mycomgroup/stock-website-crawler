@@ -11,8 +11,7 @@ market.py
 """
 
 import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime
 import warnings
 import logging
 
@@ -35,7 +34,6 @@ except ImportError:
 from jk2bt.engine.exceptions import (
     MarketDataError,
     NetworkError,
-    DataSourceError,
     ValidationError,
 )
 
@@ -211,13 +209,8 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                 return pd.DataFrame()
 
             if is_index:
-                try:
-                    from .market_data.index import get_index_daily
-                except ImportError:
-                    try:
-                        from market_data.index import get_index_daily
-                    except ImportError:
-                        from jk2bt.data.market.index import get_index_daily
+                from jk2bt.data.market.index import get_index_daily
+
                 try:
                     df = get_index_daily(
                         ak_sym,
@@ -236,10 +229,8 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                     ) from e
 
             if is_lof:
-                try:
-                    from .market_data.lof import get_lof_daily_with_fallback
-                except ImportError:
-                    from market_data.lof import get_lof_daily_with_fallback
+                from jk2bt.data.market.lof import get_lof_daily_with_fallback
+
                 try:
                     df = get_lof_daily_with_fallback(
                         ak_sym,
@@ -254,13 +245,7 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
             # 优先使用 market_data.stock 模块获取股票日线数据
             ak_code = ("sh" if ak_sym.startswith("6") else "sz") + ak_sym
             try:
-                try:
-                    from jk2bt.data.market.stock import get_stock_daily
-                except ImportError:
-                    try:
-                        from .market_data.stock import get_stock_daily
-                    except ImportError:
-                        from market_data.stock import get_stock_daily
+                from jk2bt.data.market.stock import get_stock_daily
 
                 df = get_stock_daily(
                     ak_code,
@@ -315,17 +300,11 @@ def _fetch_price_data(symbol, start_date, end_date, frequency="daily", adjust="q
                 return pd.DataFrame()
 
             try:
-                try:
-                    from jk2bt.data.market.minute import (
-                        get_stock_minute,
-                        get_etf_minute,
-                    )
-                except ImportError:
-                    try:
-                        from .market_data.minute import get_stock_minute, get_etf_minute
-                    except ImportError:
-                        from market_data.minute import get_stock_minute, get_etf_minute
-            except ImportError as import_error:
+                from jk2bt.data.market.minute import (
+                    get_stock_minute,
+                    get_etf_minute,
+                )
+            except ImportError:
                 warnings.warn(f"{symbol}: 分钟数据模块导入失败")
                 return pd.DataFrame()
 
@@ -1147,6 +1126,322 @@ def get_detailed_quote(security, date=None):
     return result
 
 
+def _is_options_code(symbol):
+    """判断是否为期权代码"""
+    sym = symbol.upper()
+    # 聚宽期权格式: 1000xxxx.XSHG, 1000xxxx.XSHE
+    if sym.endswith(".XSHG") or sym.endswith(".XSHE"):
+        code = sym.split(".")[0]
+        if code.startswith("1000") or code.startswith("1001"):
+            return True
+    # 其他期权代码模式
+    if any(kw in sym for kw in ["购", "沽", "CALL", "PUT", "C", "P"]):
+        return True
+    return False
+
+
+def _is_index_code(symbol):
+    """判断是否为指数代码"""
+    sym_upper = symbol.upper()
+    # 处理带交易所后缀的代码: 000xxx.XSHG, 880xxx.XSHG, 399xxx.XSHE
+    if sym_upper.endswith(".XSHG") or sym_upper.endswith(".XSHE"):
+        code = sym_upper.split(".")[0]
+        if code.startswith("000") or code.startswith("880") or code.startswith("399"):
+            return True
+
+    ak_sym = _normalize_symbol(symbol)
+    # 上证指数 000xxx, 深证指数 399xxx, 中证指数 880xxx
+    if ak_sym.startswith("000") or ak_sym.startswith("399") or ak_sym.startswith("880"):
+        return True
+    # 常见指数代码
+    known_indexes = [
+        "000001",
+        "000016",
+        "000300",
+        "000688",
+        "000851",
+        "000852",
+        "000903",
+        "000905",
+        "000906",
+        "000978",
+        "399001",
+        "399005",
+        "399006",
+        "399106",
+        "399300",
+    ]
+    if ak_sym in known_indexes:
+        return True
+    return False
+
+
+def _is_fund_code(symbol):
+    """判断是否为基金代码（ETF/LOF/封闭式基金）"""
+    ak_sym = _normalize_symbol(symbol)
+    # ETF: 51xxxx, 52xxxx, 56xxxx, 58xxxx, 159xxx
+    # LOF: 16xxxx
+    # 封闭式基金: 18xxxx, 15xxxx
+    if (
+        ak_sym.startswith("51")
+        or ak_sym.startswith("52")
+        or ak_sym.startswith("56")
+        or ak_sym.startswith("58")
+        or ak_sym.startswith("159")
+        or ak_sym.startswith("16")
+        or ak_sym.startswith("18")
+        or ak_sym.startswith("15")
+    ):
+        return True
+    return False
+
+
+def _fetch_futures_tick(symbol, count=1000, date=None):
+    """获取期货 tick 数据（分钟级）"""
+    try:
+        import akshare as ak
+    except ImportError:
+        warnings.warn("请安装 akshare: pip install akshare")
+        return pd.DataFrame()
+
+    try:
+        sina_symbol = _jq_futures_to_sina(symbol)
+        df = ak.futures_zh_minute_sina(symbol=sina_symbol, period="1")
+        if df is None or df.empty:
+            warnings.warn(f"期货 {symbol} 分钟数据为空")
+            return pd.DataFrame()
+
+        col_map = {
+            "date": "time",
+            "datetime": "time",
+            "open": "price",
+            "close": "price",
+            "volume": "volume",
+            "hold": "amount",
+        }
+        df = df.rename(columns={k: v for k, v in col_map.items() if k in df.columns})
+
+        if "time" not in df.columns and (
+            "date" in df.columns or "datetime" in df.columns
+        ):
+            time_col = "datetime" if "datetime" in df.columns else "date"
+            df["time"] = pd.to_datetime(df[time_col])
+
+        if "price" not in df.columns:
+            df["price"] = df.get("close", df.get("open", 0))
+
+        if (
+            "amount" not in df.columns
+            and "volume" in df.columns
+            and "price" in df.columns
+        ):
+            df["amount"] = df["volume"] * df["price"]
+
+        df["time"] = pd.to_datetime(df["time"], errors="coerce")
+        df = df.dropna(subset=["time"]).sort_values("time").reset_index(drop=True)
+
+        if count and len(df) > count:
+            df = df.tail(count)
+
+        return df
+    except Exception as e:
+        warnings.warn(f"期货 {symbol} tick 数据获取失败: {e}")
+        return pd.DataFrame()
+
+
+def _fetch_options_tick(symbol, count=1000, date=None):
+    """获取期权 tick 数据（实时行情快照）"""
+    try:
+        import akshare as ak
+    except ImportError:
+        warnings.warn("请安装 akshare: pip install akshare")
+        return pd.DataFrame()
+
+    try:
+        # 上交所期权实时行情
+        df = ak.option_sina_sse_spot()
+        if df is None or df.empty:
+            warnings.warn(f"期权 {symbol} 实时行情数据为空")
+            return pd.DataFrame()
+
+        ak_sym = _normalize_symbol(symbol)
+        row = df[df["代码"] == ak_sym] if "代码" in df.columns else pd.DataFrame()
+        if row.empty:
+            warnings.warn(f"期权 {symbol} 未找到匹配数据")
+            return pd.DataFrame()
+
+        row = row.iloc[0]
+        tick_data = {
+            "time": [pd.Timestamp.now()],
+            "price": [row.get("最新价", row.get("现价", 0))],
+            "volume": [row.get("成交量", 0)],
+            "amount": [row.get("成交额", 0)],
+        }
+        return pd.DataFrame(tick_data)
+    except Exception as e:
+        warnings.warn(f"期权 {symbol} tick 数据获取失败: {e}")
+        return pd.DataFrame()
+
+
+def _fetch_index_tick(symbol, count=1000, date=None):
+    """获取指数 tick 数据（指数分钟级数据作为 tick 近似）"""
+    try:
+        import akshare as ak
+    except ImportError:
+        warnings.warn("请安装 akshare: pip install akshare")
+        return pd.DataFrame()
+
+    try:
+        ak_sym = _normalize_symbol(symbol)
+        # 构建 akshare 指数代码格式
+        if ak_sym.startswith("000") or ak_sym.startswith("880"):
+            full_code = f"sh{ak_sym}"
+        elif ak_sym.startswith("399"):
+            full_code = f"sz{ak_sym}"
+        else:
+            full_code = ak_sym
+
+        # 使用指数分钟数据接口
+        target_date = date or datetime.now().strftime("%Y-%m-%d")
+        df = ak.stock_zh_index_hist_min_em(
+            symbol=full_code,
+            period="1",
+            start_date=f"{target_date} 09:30:00",
+            end_date=f"{target_date} 15:00:00",
+        )
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        col_map = {
+            "时间": "time",
+            "datetime": "time",
+            "date": "time",
+            "开盘": "price",
+            "open": "price",
+            "收盘": "price",
+            "close": "price",
+            "成交量": "volume",
+            "volume": "volume",
+            "成交额": "amount",
+            "amount": "amount",
+        }
+        df = df.rename(columns={k: v for k, v in col_map.items() if k in df.columns})
+
+        if "time" not in df.columns:
+            time_col = None
+            for col in df.columns:
+                if (
+                    "时间" in str(col)
+                    or "time" in str(col).lower()
+                    or "date" in str(col).lower()
+                ):
+                    time_col = col
+                    break
+            if time_col:
+                df["time"] = pd.to_datetime(df[time_col])
+
+        if "price" not in df.columns:
+            df["price"] = df.get("close", df.get("open", 0))
+
+        if (
+            "amount" not in df.columns
+            and "volume" in df.columns
+            and "price" in df.columns
+        ):
+            df["amount"] = df["volume"] * df["price"]
+
+        df["time"] = pd.to_datetime(df["time"], errors="coerce")
+        df = df.dropna(subset=["time"]).sort_values("time").reset_index(drop=True)
+
+        if count and len(df) > count:
+            df = df.tail(count)
+
+        return df
+    except Exception as e:
+        warnings.warn(f"指数 {symbol} tick/分钟数据获取失败: {e}")
+        return pd.DataFrame()
+
+
+def _fetch_fund_tick(symbol, count=1000, date=None):
+    """获取基金 tick 数据（ETF/LOF 分钟级数据）"""
+    try:
+        import akshare as ak
+    except ImportError:
+        warnings.warn("请安装 akshare: pip install akshare")
+        return pd.DataFrame()
+
+    try:
+        ak_sym = _normalize_symbol(symbol)
+        prefix = "sh" if ak_sym.startswith(("51", "52", "56", "58")) else "sz"
+        full_code = f"{prefix}{ak_sym}"
+
+        target_date = date or datetime.now().strftime("%Y-%m-%d")
+
+        # 尝试使用基金 ETF 分钟数据
+        try:
+            df = ak.fund_etf_hist_min_em(
+                symbol=full_code,
+                period="1",
+                start_date=f"{target_date} 09:30:00",
+                end_date=f"{target_date} 15:00:00",
+            )
+        except Exception:
+            # 备用: 使用 sina 接口
+            df = ak.fund_etf_hist_sina(symbol=full_code)
+
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        col_map = {
+            "时间": "time",
+            "datetime": "time",
+            "date": "time",
+            "开盘": "price",
+            "open": "price",
+            "收盘": "price",
+            "close": "price",
+            "成交量": "volume",
+            "volume": "volume",
+            "成交额": "amount",
+            "amount": "amount",
+        }
+        df = df.rename(columns={k: v for k, v in col_map.items() if k in df.columns})
+
+        if "time" not in df.columns:
+            time_col = None
+            for col in df.columns:
+                if (
+                    "时间" in str(col)
+                    or "time" in str(col).lower()
+                    or "date" in str(col).lower()
+                ):
+                    time_col = col
+                    break
+            if time_col:
+                df["time"] = pd.to_datetime(df[time_col])
+
+        if "price" not in df.columns:
+            df["price"] = df.get("close", df.get("open", 0))
+
+        if (
+            "amount" not in df.columns
+            and "volume" in df.columns
+            and "price" in df.columns
+        ):
+            df["amount"] = df["volume"] * df["price"]
+
+        df["time"] = pd.to_datetime(df["time"], errors="coerce")
+        df = df.dropna(subset=["time"]).sort_values("time").reset_index(drop=True)
+
+        if count and len(df) > count:
+            df = df.tail(count)
+
+        return df
+    except Exception as e:
+        warnings.warn(f"基金 {symbol} tick 数据获取失败: {e}")
+        return pd.DataFrame()
+
+
 def get_ticks(
     security, start_dt=None, end_dt=None, count=1000, fields=None, df=True, skip=False
 ):
@@ -1171,6 +1466,91 @@ def get_ticks(
             result[symbol] = pd.DataFrame() if df else []
             continue
 
+        # 期货 tick 数据
+        if _is_futures_code(symbol):
+            tick_df = _fetch_futures_tick(symbol, count=count, date=start_dt or end_dt)
+            if tick_df.empty:
+                result[symbol] = pd.DataFrame() if df else []
+                continue
+            keep_cols = [f for f in fields if f in tick_df.columns]
+            tick_df = tick_df[[c for c in keep_cols if c in tick_df.columns]].copy()
+            if df:
+                result[symbol] = tick_df.reset_index(drop=True)
+            else:
+                tick_list = []
+                for _, row in tick_df.iterrows():
+                    item = {}
+                    for f in fields:
+                        if f in row.index:
+                            val = row[f]
+                            item[f] = (
+                                val.strftime("%Y-%m-%d %H:%M:%S")
+                                if isinstance(val, pd.Timestamp)
+                                else val
+                            )
+                    tick_list.append(item)
+                result[symbol] = tick_list
+            continue
+
+        # 期权 tick 数据
+        if _is_options_code(symbol):
+            tick_df = _fetch_options_tick(symbol, count=count, date=start_dt or end_dt)
+            if tick_df.empty:
+                result[symbol] = pd.DataFrame() if df else []
+                continue
+            keep_cols = [f for f in fields if f in tick_df.columns]
+            tick_df = tick_df[[c for c in keep_cols if c in tick_df.columns]].copy()
+            if df:
+                result[symbol] = tick_df.reset_index(drop=True)
+            else:
+                tick_list = []
+                for _, row in tick_df.iterrows():
+                    item = {}
+                    for f in fields:
+                        if f in row.index:
+                            val = row[f]
+                            item[f] = (
+                                val.strftime("%Y-%m-%d %H:%M:%S")
+                                if isinstance(val, pd.Timestamp)
+                                else val
+                            )
+                    tick_list.append(item)
+                result[symbol] = tick_list
+            continue
+
+        # 指数 tick 数据（指数无 tick 数据）
+        if _is_index_code(symbol):
+            tick_df = _fetch_index_tick(symbol, count=count, date=start_dt or end_dt)
+            result[symbol] = pd.DataFrame() if df else []
+            continue
+
+        # 基金 tick 数据（ETF/LOF）
+        if _is_fund_code(symbol):
+            tick_df = _fetch_fund_tick(symbol, count=count, date=start_dt or end_dt)
+            if tick_df.empty:
+                result[symbol] = pd.DataFrame() if df else []
+                continue
+            keep_cols = [f for f in fields if f in tick_df.columns]
+            tick_df = tick_df[[c for c in keep_cols if c in tick_df.columns]].copy()
+            if df:
+                result[symbol] = tick_df.reset_index(drop=True)
+            else:
+                tick_list = []
+                for _, row in tick_df.iterrows():
+                    item = {}
+                    for f in fields:
+                        if f in row.index:
+                            val = row[f]
+                            item[f] = (
+                                val.strftime("%Y-%m-%d %H:%M:%S")
+                                if isinstance(val, pd.Timestamp)
+                                else val
+                            )
+                    tick_list.append(item)
+                result[symbol] = tick_list
+            continue
+
+        # 股票 tick 数据（原有逻辑）
         tick_df = _fetch_tick_data(
             symbol, count=count, start_dt=start_dt, end_dt=end_dt, skip=skip
         )
@@ -1229,6 +1609,53 @@ def get_call_auction(security, date=None):
             result[symbol] = pd.DataFrame()
             continue
 
+        # ETF/LOF 集合竞价数据
+        if _is_fund_code(symbol):
+            try:
+                import akshare as ak
+            except ImportError:
+                warnings.warn("请安装 akshare: pip install akshare")
+                result[symbol] = pd.DataFrame()
+                continue
+
+            try:
+                # ETF 实时行情包含集合竞价阶段数据
+                prefix = "sh" if ak_sym.startswith(("51", "52", "56", "58")) else "sz"
+                full_code = f"{prefix}{ak_sym}"
+
+                # 使用 fund_etf_spot_em 获取 ETF 实时行情（含集合竞价）
+                df = ak.fund_etf_spot_em()
+                if df is not None and not df.empty:
+                    code_col = "代码" if "代码" in df.columns else "symbol"
+                    row = (
+                        df[df[code_col] == ak_sym]
+                        if code_col in df.columns
+                        else pd.DataFrame()
+                    )
+                    if not row.empty:
+                        row = row.iloc[0]
+                        auction_data = {
+                            "code": [symbol],
+                            "time": [pd.Timestamp.now()],
+                            "open": [row.get("今开", row.get("open", None))],
+                            "high": [row.get("最高", row.get("high", None))],
+                            "low": [row.get("最低", row.get("low", None))],
+                            "close": [row.get("最新价", row.get("close", None))],
+                            "volume": [row.get("成交量", row.get("volume", 0))],
+                            "amount": [row.get("成交额", row.get("amount", 0))],
+                            "pre_close": [row.get("昨收", row.get("pre_close", None))],
+                        }
+                        result[symbol] = pd.DataFrame(auction_data)
+                        continue
+
+                warnings.warn(f"{symbol}: ETF/LOF 集合竞价数据为空")
+                result[symbol] = pd.DataFrame()
+                continue
+            except Exception as e:
+                warnings.warn(f"{symbol}: ETF/LOF 集合竞价数据获取失败: {e}")
+                result[symbol] = pd.DataFrame()
+                continue
+
         # 股票集合竞价数据（如果 akshare 有相关接口可以在这里添加）
         # TODO: akshare 目前没有专门的集合竞价接口
         # 通常集合竞价数据包含在 tick 数据的前几分钟
@@ -1241,41 +1668,52 @@ def get_call_auction(security, date=None):
     return result
 
 
-def get_open_price(security, date=None):
-    """获取开盘价"""
+def _get_current_field(security, field):
+    """从 get_current_data 中读取指定字段"""
     from jk2bt.api.jq_compat import get_current_data
 
-    return get_current_data()[security].day_open
+    return getattr(get_current_data()[security], field)
+
+
+def get_open_price(security, date=None):
+    """获取开盘价"""
+    return _get_current_field(security, "day_open")
 
 
 def get_close_price(security, date=None):
     """获取收盘价（最新价）"""
-    from jk2bt.api.jq_compat import get_current_data
-
-    return get_current_data()[security].last_price
+    return _get_current_field(security, "last_price")
 
 
 def get_high_limit(security):
     """获取涨停价"""
-    from jk2bt.api.jq_compat import get_current_data
-
-    return get_current_data()[security].high_limit
+    return _get_current_field(security, "high_limit")
 
 
 def get_low_limit(security):
     """获取跌停价"""
-    from jk2bt.api.jq_compat import get_current_data
-
-    return get_current_data()[security].low_limit
+    return _get_current_field(security, "low_limit")
 
 
-def get_preopen_infos(security, fields=("paused", "factor", "high_limit", "low_limit")):
+def get_preopen_infos(
+    security,
+    fields=(
+        "paused",
+        "factor",
+        "high_limit",
+        "low_limit",
+        "pre_close",
+        "open",
+        "change_pct",
+    ),
+):
     """
-    获取股票当日盘前交易信息（停牌标志、后复权因子、涨停价、跌停价）
+    获取股票当日盘前交易信息（停牌标志、后复权因子、涨停价、跌停价等）
 
     参数:
         security: 股票代码或代码列表
-        fields: 要获取的字段，默认为 ("paused", "factor", "high_limit", "low_limit")
+        fields: 要获取的字段，默认为 ("paused", "factor", "high_limit", "low_limit", "pre_close", "open", "change_pct")
+            扩展支持: volume, money, turnover_rate
 
     返回:
         DataFrame: index 为股票代码，columns 为请求的字段
@@ -1283,11 +1721,17 @@ def get_preopen_infos(security, fields=("paused", "factor", "high_limit", "low_l
             - factor: 后复权因子
             - high_limit: 涨停价
             - low_limit: 跌停价
+            - pre_close: 昨收价
+            - open: 开盘价
+            - change_pct: 涨跌幅(%)
+            - volume: 成交量
+            - money: 成交额
+            - turnover_rate: 换手率(%)
 
     示例:
         >>> get_preopen_infos("600519")
-                    paused  factor  high_limit  low_limit
-        600519        0    1.234    1850.00    1510.00
+                    paused  factor  high_limit  low_limit  pre_close  open  change_pct
+        600519        0    1.234    1850.00    1510.00    1680.00  1690.00    0.60
     """
     try:
         import akshare as ak
@@ -1336,6 +1780,36 @@ def get_preopen_infos(security, fields=("paused", "factor", "high_limit", "low_l
                         if ll_col in row.index:
                             result_df.loc[sec, "low_limit"] = row[ll_col]
                             break
+                if "pre_close" in fields:
+                    for pc_col in ["昨收", "pre_close", "昨日收盘价"]:
+                        if pc_col in row.index:
+                            result_df.loc[sec, "pre_close"] = row[pc_col]
+                            break
+                if "open" in fields:
+                    for op_col in ["今开", "open", "开盘价"]:
+                        if op_col in row.index:
+                            result_df.loc[sec, "open"] = row[op_col]
+                            break
+                if "change_pct" in fields:
+                    for cp_col in ["涨跌幅", "change_pct"]:
+                        if cp_col in row.index:
+                            result_df.loc[sec, "change_pct"] = row[cp_col]
+                            break
+                if "volume" in fields:
+                    for vol_col in ["成交量", "volume"]:
+                        if vol_col in row.index:
+                            result_df.loc[sec, "volume"] = row[vol_col]
+                            break
+                if "money" in fields:
+                    for money_col in ["成交额", "money"]:
+                        if money_col in row.index:
+                            result_df.loc[sec, "money"] = row[money_col]
+                            break
+                if "turnover_rate" in fields:
+                    for tr_col in ["换手率", "turnover_rate"]:
+                        if tr_col in row.index:
+                            result_df.loc[sec, "turnover_rate"] = row[tr_col]
+                            break
     except Exception as e:
         warnings.warn(f"get_preopen_infos 获取失败: {e}")
 
@@ -1381,9 +1855,9 @@ def get_index_style_exposure(
         index: 指数代码，支持 '000300.XSHG', '000905.XSHG', '000906.XSHG', '000852.XSHG', '000985.XSHG'
         factors: 风格因子列表，默认 ['size', 'book_to_market', 'momentum', 'volatility', 'liquidity',
                          'beta', 'growth', 'profitability', 'leverage']
-        start_date: 开始日期（暂未使用）
-        end_date: 结束日期（暂未使用）
-        count: 数据条数（暂未使用）
+        start_date: 开始日期
+        end_date: 结束日期
+        count: 数据条数
 
     返回:
         DataFrame: index=因子名称, columns=['exposure', 'change'] 或时间序列
@@ -1404,6 +1878,40 @@ def get_index_style_exposure(
 
     if isinstance(factors, str):
         factors = [factors]
+
+    try:
+        from jk2bt.api.factor_kanban import get_factor_style_returns
+
+        style_df = get_factor_style_returns(
+            factors=factors,
+            start_date=start_date,
+            end_date=end_date,
+            count=count,
+            universe=index,
+        )
+
+        if style_df is not None and not style_df.empty:
+            result = {}
+            for factor in factors:
+                if factor in style_df.columns:
+                    series = style_df[factor]
+                    exposure = float(series.mean()) if not series.empty else 0.0
+                    if len(series) >= 2:
+                        change = float(series.iloc[-1] - series.iloc[-2])
+                    else:
+                        change = 0.0
+                    result[factor] = {
+                        "exposure": round(exposure, 6),
+                        "change": round(change, 6),
+                    }
+                else:
+                    result[factor] = {"exposure": None, "change": None}
+
+            df = pd.DataFrame(result).T
+            df.index.name = "factor"
+            return df
+    except Exception as e:
+        warnings.warn(f"get_index_style_exposure 计算失败，使用静态数据: {e}")
 
     index_abbr = {
         "000300.XSHG": "HS300",

@@ -1,0 +1,1 @@
+{"factors": ["momentum", "volatility", "value", "quality", "growth"], "rebalance_freq": "monthly", "top_n": 10}

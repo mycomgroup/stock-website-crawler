@@ -529,6 +529,606 @@ def ATR(
     return result
 
 
+def BIAS(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    timeperiod: int = 12,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, float]:
+    """
+    计算乖离率指标 (Bias)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        timeperiod: 计算周期，默认 12
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: {'股票代码': BIAS值}
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {}
+
+    for sec in securities:
+        try:
+            df = history(
+                count=timeperiod + 10,
+                unit=unit,
+                field="close",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df.empty or len(df) < timeperiod:
+                result[sec] = np.nan
+                continue
+
+            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            ma = close.rolling(window=timeperiod, min_periods=timeperiod).mean()
+            bias = (close - ma) / ma * 100
+
+            result[sec] = float(bias.iloc[-1])
+
+        except Exception as e:
+            warnings.warn(f"BIAS计算失败 {sec}: {e}")
+            result[sec] = np.nan
+
+    return result
+
+
+def DKX(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    timeperiod: int = 10,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, Dict[str, float]]:
+    """
+    计算多空线指标 (DKX)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        timeperiod: 计算周期，默认 10
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: {'DKX': {'股票代码': DKX值}, 'MADKX': {'股票代码': MADKX值}}
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {"DKX": {}, "MADKX": {}}
+
+    for sec in securities:
+        try:
+            df_high = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="high",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_low = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="low",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_close = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="close",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_open = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="open",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df_high.empty or df_low.empty or df_close.empty or df_open.empty:
+                result["DKX"][sec] = np.nan
+                result["MADKX"][sec] = np.nan
+                continue
+
+            high = df_high[sec] if sec in df_high.columns else df_high.iloc[:, 0]
+            low = df_low[sec] if sec in df_low.columns else df_low.iloc[:, 0]
+            close = df_close[sec] if sec in df_close.columns else df_close.iloc[:, 0]
+            open_price = df_open[sec] if sec in df_open.columns else df_open.iloc[:, 0]
+
+            dkx = (3 * close + 2 * high + low + open_price) / 7
+            dkx = dkx.rolling(window=timeperiod, min_periods=timeperiod).mean()
+            madkx = dkx.rolling(window=timeperiod, min_periods=timeperiod).mean()
+
+            result["DKX"][sec] = float(dkx.iloc[-1])
+            result["MADKX"][sec] = float(madkx.iloc[-1])
+
+        except Exception as e:
+            warnings.warn(f"DKX计算失败 {sec}: {e}")
+            result["DKX"][sec] = np.nan
+            result["MADKX"][sec] = np.nan
+
+    return result
+
+
+def DPO(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    timeperiod: int = 20,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, float]:
+    """
+    计算去趋势价格摆动指标 (Detrended Price Oscillator)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        timeperiod: 计算周期，默认 20
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: {'股票代码': DPO值}
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {}
+
+    for sec in securities:
+        try:
+            df = history(
+                count=timeperiod + 10,
+                unit=unit,
+                field="close",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df.empty or len(df) < timeperiod:
+                result[sec] = np.nan
+                continue
+
+            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            ma = close.rolling(window=timeperiod, min_periods=timeperiod).mean()
+            dpo = close.shift(int(timeperiod / 2) + 1) - ma
+
+            result[sec] = float(dpo.iloc[-1])
+
+        except Exception as e:
+            warnings.warn(f"DPO计算失败 {sec}: {e}")
+            result[sec] = np.nan
+
+    return result
+
+
+def ADTM(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    N: int = 23,
+    M: int = 8,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, Dict[str, float]]:
+    """
+    计算动态买卖气指标 (ADTM)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        N: 计算周期，默认 23
+        M: 平滑周期，默认 8
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: {'ADTM': {'股票代码': ADTM值}, 'ADTMMA': {'股票代码': ADTMMA值}}
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {"ADTM": {}, "ADTMMA": {}}
+
+    for sec in securities:
+        try:
+            df_high = history(
+                count=N + 20,
+                unit=unit,
+                field="high",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_low = history(
+                count=N + 20,
+                unit=unit,
+                field="low",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_open = history(
+                count=N + 20,
+                unit=unit,
+                field="open",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df_high.empty or df_low.empty or df_open.empty:
+                result["ADTM"][sec] = np.nan
+                result["ADTMMA"][sec] = np.nan
+                continue
+
+            high = df_high[sec] if sec in df_high.columns else df_high.iloc[:, 0]
+            low = df_low[sec] if sec in df_low.columns else df_low.iloc[:, 0]
+            open_price = df_open[sec] if sec in df_open.columns else df_open.iloc[:, 0]
+
+            dtm = np.where(
+                open_price <= open_price.shift(1),
+                np.maximum(high - open_price, open_price - open_price.shift(1)),
+                0,
+            )
+            dbm = np.where(
+                open_price >= open_price.shift(1),
+                np.maximum(open_price - low, open_price - open_price.shift(1)),
+                0,
+            )
+
+            dtm = pd.Series(dtm, index=high.index)
+            dbm = pd.Series(dbm, index=high.index)
+
+            stm = dtm.rolling(window=N, min_periods=N).sum()
+            sbm = dbm.rolling(window=N, min_periods=N).sum()
+
+            adtm = (stm - sbm) / np.where(stm > sbm, stm, sbm)
+            adtm = adtm.fillna(0)
+            adtmma = adtm.rolling(window=M, min_periods=M).mean()
+
+            result["ADTM"][sec] = float(adtm.iloc[-1])
+            result["ADTMMA"][sec] = float(adtmma.iloc[-1])
+
+        except Exception as e:
+            warnings.warn(f"ADTM计算失败 {sec}: {e}")
+            result["ADTM"][sec] = np.nan
+            result["ADTMMA"][sec] = np.nan
+
+    return result
+
+
+def GDX(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    timeperiod: int = 9,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, float]:
+    """
+    计算广德线指标 (GDX)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        timeperiod: 计算周期，默认 9
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: {'股票代码': GDX值}
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {}
+
+    for sec in securities:
+        try:
+            df_high = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="high",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_low = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="low",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df_high.empty or df_low.empty:
+                result[sec] = np.nan
+                continue
+
+            high = df_high[sec] if sec in df_high.columns else df_high.iloc[:, 0]
+            low = df_low[sec] if sec in df_low.columns else df_low.iloc[:, 0]
+
+            highest = high.rolling(window=timeperiod, min_periods=timeperiod).max()
+            lowest = low.rolling(window=timeperiod, min_periods=timeperiod).min()
+            gdx = (highest - lowest) / lowest * 100
+
+            result[sec] = float(gdx.iloc[-1])
+
+        except Exception as e:
+            warnings.warn(f"GDX计算失败 {sec}: {e}")
+            result[sec] = np.nan
+
+    return result
+
+
+def MIKE(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    timeperiod: int = 10,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, Dict[str, float]]:
+    """
+    计算麦克指标 (MIKE)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        timeperiod: 计算周期，默认 10
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: 包含 WR, MR, SR, WS, MS, SS 等支撑压力位
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {"WR": {}, "MR": {}, "SR": {}, "WS": {}, "MS": {}, "SS": {}}
+
+    for sec in securities:
+        try:
+            df_high = history(
+                count=timeperiod + 10,
+                unit=unit,
+                field="high",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_low = history(
+                count=timeperiod + 10,
+                unit=unit,
+                field="low",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_close = history(
+                count=timeperiod + 10,
+                unit=unit,
+                field="close",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df_high.empty or df_low.empty or df_close.empty:
+                for k in result:
+                    result[k][sec] = np.nan
+                continue
+
+            high = df_high[sec] if sec in df_high.columns else df_high.iloc[:, 0]
+            low = df_low[sec] if sec in df_low.columns else df_low.iloc[:, 0]
+            close = df_close[sec] if sec in df_close.columns else df_close.iloc[:, 0]
+
+            highest = high.rolling(window=timeperiod, min_periods=timeperiod).max()
+            lowest = low.rolling(window=timeperiod, min_periods=timeperiod).min()
+            typ = (close + high + low) / 3
+            typ_avg = typ.rolling(window=timeperiod, min_periods=timeperiod).mean()
+
+            result["WR"][sec] = float(
+                typ_avg.iloc[-1] - (highest.iloc[-1] - lowest.iloc[-1])
+            )
+            result["MR"][sec] = float(typ_avg.iloc[-1])
+            result["SR"][sec] = float(
+                typ_avg.iloc[-1] + (highest.iloc[-1] - lowest.iloc[-1])
+            )
+            result["WS"][sec] = float(
+                typ_avg.iloc[-1] - 2 * (highest.iloc[-1] - lowest.iloc[-1])
+            )
+            result["MS"][sec] = float(
+                typ_avg.iloc[-1] - (highest.iloc[-1] - lowest.iloc[-1])
+            )
+            result["SS"][sec] = float(
+                typ_avg.iloc[-1] - 2 * (highest.iloc[-1] - lowest.iloc[-1])
+            )
+
+        except Exception as e:
+            warnings.warn(f"MIKE计算失败 {sec}: {e}")
+            for k in result:
+                result[k][sec] = np.nan
+
+    return result
+
+
+def RAD(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    timeperiod: int = 26,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, float]:
+    """
+    计算威力指标 (RAD)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        timeperiod: 计算周期，默认 26
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: {'股票代码': RAD值}
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {}
+
+    for sec in securities:
+        try:
+            df_close = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="close",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_high = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="high",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+            df_low = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="low",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df_close.empty or df_high.empty or df_low.empty:
+                result[sec] = np.nan
+                continue
+
+            close = df_close[sec] if sec in df_close.columns else df_close.iloc[:, 0]
+            high = df_high[sec] if sec in df_high.columns else df_high.iloc[:, 0]
+            low = df_low[sec] if sec in df_low.columns else df_low.iloc[:, 0]
+
+            pm = (close - close.shift(1)) / close.shift(1)
+            pm = pm.fillna(0)
+            tm = ((high - low) / low).shift(1).fillna(0)
+            rad = (pm / tm).replace([np.inf, -np.inf], 0).fillna(0)
+            rad = rad.rolling(window=timeperiod, min_periods=timeperiod).sum()
+
+            result[sec] = float(rad.iloc[-1])
+
+        except Exception as e:
+            warnings.warn(f"RAD计算失败 {sec}: {e}")
+            result[sec] = np.nan
+
+    return result
+
+
+def AMO(
+    security: Union[str, List[str]],
+    check_date: Optional[str] = None,
+    timeperiod: int = 6,
+    unit: str = "1d",
+    include_now: bool = True,
+) -> Dict[str, float]:
+    """
+    计算成交金额指标 (Amount Oscillator)
+
+    参数:
+        security: 股票代码或股票列表
+        check_date: 查询日期
+        timeperiod: 计算周期，默认 6
+        unit: 时间单位
+        include_now: 是否包含当前日期
+
+    返回:
+        Dict: {'股票代码': AMO值}
+    """
+    from jk2bt.api.market import history
+
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = security
+
+    result = {}
+
+    for sec in securities:
+        try:
+            df = history(
+                count=timeperiod + 20,
+                unit=unit,
+                field="money",
+                security_list=[sec],
+                end_dt=check_date,
+                include_now=include_now,
+            )
+
+            if df.empty or len(df) < timeperiod:
+                result[sec] = np.nan
+                continue
+
+            money = df[sec] if sec in df.columns else df.iloc[:, 0]
+            amo = money.rolling(window=timeperiod, min_periods=timeperiod).mean()
+
+            result[sec] = float(amo.iloc[-1])
+
+        except Exception as e:
+            warnings.warn(f"AMO计算失败 {sec}: {e}")
+            result[sec] = np.nan
+
+    return result
+
+
 __all__ = [
     "MA",
     "EMA",
@@ -537,4 +1137,12 @@ __all__ = [
     "RSI",
     "BOLL",
     "ATR",
+    "BIAS",
+    "DKX",
+    "DPO",
+    "ADTM",
+    "GDX",
+    "MIKE",
+    "RAD",
+    "AMO",
 ]

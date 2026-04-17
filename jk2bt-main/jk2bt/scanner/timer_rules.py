@@ -43,19 +43,22 @@ _TIME_RULE_PRECISION_WARNED = set()
 # 全局交易日历缓存
 _TRADING_DAYS_CACHE: Optional[Set[date]] = None
 _TRADING_DAYS_LIST_CACHE: Optional[List[date]] = None
-_CACHE_FILE_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "trading_days_cache.pkl")
+_CACHE_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "..", "data_cache", "trading_days_cache.pkl"
+)
 
 
 def _fetch_trading_days_from_akshare() -> List[date]:
     """从akshare获取真实A股交易日历"""
     try:
         from jk2bt.data.sources import get_adapter
+
         df = get_adapter().get_trade_dates()
         if df is not None and not df.empty:
             # 列名可能是 'trade_date'
             date_col = None
             for col in df.columns:
-                if 'date' in col.lower():
+                if "date" in col.lower():
                     date_col = col
                     break
             if date_col is None:
@@ -109,6 +112,7 @@ def get_real_trading_days(force_update: bool = False) -> List[date]:
 
     # 从akshare获取
     import pandas as pd
+
     days_list = _fetch_trading_days_from_akshare()
 
     if not days_list:
@@ -124,10 +128,9 @@ def get_real_trading_days(force_update: bool = False) -> List[date]:
     try:
         os.makedirs(os.path.dirname(_CACHE_FILE_PATH), exist_ok=True)
         with open(_CACHE_FILE_PATH, "wb") as f:
-            pickle.dump({
-                "trading_days": days_list,
-                "timestamp": datetime.now().timestamp()
-            }, f)
+            pickle.dump(
+                {"trading_days": days_list, "timestamp": datetime.now().timestamp()}, f
+            )
         logger.info(f"交易日历已缓存到 {_CACHE_FILE_PATH}")
     except Exception as e:
         logger.warning(f"保存交易日历缓存失败: {e}")
@@ -599,7 +602,9 @@ class TradingDayCalendar:
                 self._trading_days = real_days
                 self._trading_days_set = set(real_days)
                 self._use_real_calendar = True
-                logger.info(f"TradingDayCalendar: 使用真实A股交易日历，共 {len(real_days)} 个交易日")
+                logger.info(
+                    f"TradingDayCalendar: 使用真实A股交易日历，共 {len(real_days)} 个交易日"
+                )
 
     def set_trading_days(self, trading_days: List[date]):
         """设置交易日列表"""

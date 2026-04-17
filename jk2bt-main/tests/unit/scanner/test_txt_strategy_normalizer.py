@@ -15,24 +15,18 @@
 import os
 import sys
 import tempfile
-import importlib.util
 import unittest
 from pathlib import Path
 
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-util_dir = os.path.join(base_dir, "jk2bt", "scanner")
-
-spec = importlib.util.spec_from_file_location(
-    "txt_strategy_normalizer", os.path.join(util_dir, "txt_normalizer.py")
+from jk2bt.scanner.txt_normalizer import (
+    TxtStrategyNormalizer,
+    NormalizationResult,
+    NormalizationIssue,
+    IssueType,
+    Severity,
+    normalize_strategy_file,
+    batch_normalize_strategies,
 )
-txt_norm_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(txt_norm_module)
-
-TxtStrategyNormalizer = txt_norm_module.TxtStrategyNormalizer
-NormalizationResult = txt_norm_module.NormalizationResult
-NormalizationIssue = txt_norm_module.NormalizationIssue
-IssueType = txt_norm_module.IssueType
-Severity = txt_norm_module.Severity
 
 
 class TestTxtStrategyNormalizer(unittest.TestCase):
@@ -567,8 +561,6 @@ class TestConvenienceFunctions(TestTxtStrategyNormalizer):
     """测试便捷函数"""
 
     def test_normalize_strategy_file_function(self):
-        normalize_strategy_file = txt_norm_module.normalize_strategy_file
-
         content = "def test():\n    pass\n"
         file_path = self._create_test_file(content)
 
@@ -577,8 +569,6 @@ class TestConvenienceFunctions(TestTxtStrategyNormalizer):
         self.assertTrue(result.success)
 
     def test_batch_normalize_strategies_function(self):
-        batch_normalize_strategies = txt_norm_module.batch_normalize_strategies
-
         files = []
         for i in range(2):
             content = f"def test{i}():\n    pass\n"

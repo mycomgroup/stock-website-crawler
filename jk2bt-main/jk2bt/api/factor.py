@@ -6,10 +6,8 @@
 """
 
 import pandas as pd
-import numpy as np
 from typing import Union, List, Dict, Optional
 import warnings
-from datetime import datetime, timedelta
 
 
 def get_north_factor(
@@ -77,7 +75,11 @@ def get_north_factor(
                 # 流入占比因子
                 total_inflow = df["inflow"].tail(window).sum()
                 total_outflow = df["outflow"].tail(window).sum()
-                factor = (total_inflow - total_outflow) / (total_inflow + total_outflow) if (total_inflow + total_outflow) > 0 else 0
+                factor = (
+                    (total_inflow - total_outflow) / (total_inflow + total_outflow)
+                    if (total_inflow + total_outflow) > 0
+                    else 0
+                )
                 if count == 1:
                     return float(factor)
                 return pd.Series([factor], index=[end_date or "latest"])
@@ -85,7 +87,7 @@ def get_north_factor(
             elif factor_type == "momentum":
                 # 北向资金动量因子：近期流入 vs 远期流入
                 recent = df["net_inflow"].tail(window // 2).mean()
-                earlier = df["net_inflow"].iloc[-window:-window//2].mean()
+                earlier = df["net_inflow"].iloc[-window : -window // 2].mean()
 
                 if earlier == 0:
                     factor = 1.0 if recent > 0 else -1.0
@@ -239,12 +241,26 @@ def get_comb_factor(
         try:
             # 尝试从因子库获取
             if factor_name.lower() in [
-                "pe_ratio", "pb_ratio", "ps_ratio", "market_cap",
-                "roe", "roa", "net_profit_ratio", "bias_5", "bias_10",
-                "emac_10", "emac_20", "roc_6", "vol_20", "macd",
+                "pe_ratio",
+                "pb_ratio",
+                "ps_ratio",
+                "market_cap",
+                "roe",
+                "roa",
+                "net_profit_ratio",
+                "bias_5",
+                "bias_10",
+                "emac_10",
+                "emac_20",
+                "roc_6",
+                "vol_20",
+                "macd",
             ]:
                 result = get_factor_values_jq(
-                    securities=[s.replace(".XSHG", ".XSHG").replace(".XSHE", ".XSHE") for s in security_list],
+                    securities=[
+                        s.replace(".XSHG", ".XSHG").replace(".XSHE", ".XSHE")
+                        for s in security_list
+                    ],
                     factors=factor_name,
                     end_date=end_date,
                     count=count,
@@ -327,7 +343,9 @@ def get_comb_factor(
             weighted_sum += factor_df[col].fillna(0) * w
             weight_sum += w
 
-        comb_factor = weighted_sum / weight_sum if weight_sum > 0 else factor_df.mean(axis=1)
+        comb_factor = (
+            weighted_sum / weight_sum if weight_sum > 0 else factor_df.mean(axis=1)
+        )
 
     elif method == "rank":
         # 排名加权
@@ -400,8 +418,14 @@ def get_factor_momentum(
 
         for sec in security_list:
             try:
-                current_val = current[factor_key][sec].iloc[-1] if factor_key in current else 0
-                past_val = past[factor_key][sec].iloc[0] if factor_key in past and len(past[factor_key]) > window else current_val
+                current_val = (
+                    current[factor_key][sec].iloc[-1] if factor_key in current else 0
+                )
+                past_val = (
+                    past[factor_key][sec].iloc[0]
+                    if factor_key in past and len(past[factor_key]) > window
+                    else current_val
+                )
 
                 if past_val != 0:
                     momentum = (current_val - past_val) / abs(past_val)
@@ -421,8 +445,86 @@ def get_factor_momentum(
         return 0.0 if single_security else {sec: 0.0 for sec in security_list}
 
 
+def get_alpha101(
+    securities: Union[str, List[str]],
+    factors: Optional[Union[str, List[str]]] = None,
+    end_date: Optional[str] = None,
+    count: int = 1,
+) -> Union[pd.DataFrame, Dict[str, pd.DataFrame]]:
+    """
+    获取 Alpha101 因子值（聚宽风格封装）。
+
+    参数:
+        securities: 股票代码或股票列表，如 '600519.XSHG'
+        factors: 因子名称或列表，None 表示全部 101 个因子
+        end_date: 截止日期
+        count: 返回数据条数
+
+    返回:
+        DataFrame 或 {factor_name: DataFrame}
+    """
+    try:
+        from jk2bt.analysis.factors.qlib_alpha import compute_alpha101
+    except ImportError as e:
+        raise ImportError("Alpha101 需要 qlib，请安装: pip install pyqlib") from e
+
+    if isinstance(securities, str):
+        securities = [securities]
+
+    if factors is None:
+        factor_list = None
+    elif isinstance(factors, str):
+        factor_list = [factors]
+    else:
+        factor_list = list(factors)
+
+    return compute_alpha101(
+        securities, factors=factor_list, end_date=end_date, count=count
+    )
+
+
+def get_alpha191(
+    securities: Union[str, List[str]],
+    factors: Optional[Union[str, List[str]]] = None,
+    end_date: Optional[str] = None,
+    count: int = 1,
+) -> Union[pd.DataFrame, Dict[str, pd.DataFrame]]:
+    """
+    获取 Alpha191 因子值（聚宽风格封装）。
+
+    参数:
+        securities: 股票代码或股票列表
+        factors: 因子名称或列表，None 表示全部 191 个因子
+        end_date: 截止日期
+        count: 返回数据条数
+
+    返回:
+        DataFrame 或 {factor_name: DataFrame}
+    """
+    try:
+        from jk2bt.analysis.factors.qlib_alpha import compute_alpha191
+    except ImportError as e:
+        raise ImportError("Alpha191 需要 qlib，请安装: pip install pyqlib") from e
+
+    if isinstance(securities, str):
+        securities = [securities]
+
+    if factors is None:
+        factor_list = None
+    elif isinstance(factors, str):
+        factor_list = [factors]
+    else:
+        factor_list = list(factors)
+
+    return compute_alpha191(
+        securities, factors=factor_list, end_date=end_date, count=count
+    )
+
+
 __all__ = [
     "get_north_factor",
     "get_comb_factor",
     "get_factor_momentum",
+    "get_alpha101",
+    "get_alpha191",
 ]

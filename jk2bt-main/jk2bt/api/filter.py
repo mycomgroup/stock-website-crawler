@@ -19,7 +19,7 @@ import pandas as pd
 import warnings
 from datetime import datetime
 
-from jk2bt.data.sources import get_adapter, DataSourceError
+from jk2bt.data.sources import get_adapter
 
 
 def _get_code_num(stock):
@@ -36,13 +36,13 @@ def _get_code_num(stock):
 # ---------------------------------------------------------------------------
 
 
-def filter_st(stock_list, date=None):
+def filter_st(stock_list, _date=None):
     """
     过滤 ST 股票
 
     参数:
         stock_list: 股票代码列表
-        date: 查询日期（可选）
+        _date: 查询日期（可选，暂未使用）
 
     返回:
         过滤后的股票列表（排除 ST 股票）
@@ -70,13 +70,13 @@ def filter_st(stock_list, date=None):
         return stock_list
 
 
-def filter_paused(stock_list, date=None):
+def filter_paused(stock_list, _date=None):
     """
     过滤停牌股票
 
     参数:
         stock_list: 股票代码列表
-        date: 查询日期（可选）
+        _date: 查询日期（可选，暂未使用）
 
     返回:
         过滤后的股票列表（排除停牌股票）

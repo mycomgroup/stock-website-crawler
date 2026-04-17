@@ -208,10 +208,8 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                         failure_report["total_attempted"] += 1
                         # 尝试获取该指数成分股
                         try:
-                            try:
-                                from .strategy_base import get_index_stocks
-                            except ImportError:
-                                from .strategy_base import get_index_stocks
+                            from .strategy_base import get_index_stocks
+
                             stocks = get_index_stocks(key, robust=False)
                             if stocks:
                                 discovered_stocks.update(stocks)
@@ -259,10 +257,8 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
             failure_report["total_attempted"] += 1
             # 如果策略使用全市场股票，尝试获取常用股票池
             try:
-                try:
-                    from .strategy_base import get_all_securities_jq
-                except ImportError:
-                    from .strategy_base import get_all_securities_jq
+                from .strategy_base import get_all_securities_jq
+
                 all_secs = get_all_securities_jq()
                 if all_secs is not None and not all_secs.empty:
                     # 限制数量，只取前100只活跃股票
@@ -326,10 +322,8 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                 # 指数代码需要获取成分股
                 if match in _COMMON_INDICES or match[:6] in _COMMON_INDICES:
                     try:
-                        try:
-                            from .strategy_base import get_index_stocks
-                        except ImportError:
-                            from .strategy_base import get_index_stocks
+                        from .strategy_base import get_index_stocks
+
                         index_key = match if match in _COMMON_INDICES else match[:6]
                         stocks = get_index_stocks(index_key, robust=False)
                         if stocks:
@@ -434,10 +428,8 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                 failure_report["total_attempted"] += 1
                 # 如果策略使用全市场股票，尝试获取常用股票池
                 try:
-                    try:
-                        from .strategy_base import get_all_securities_jq
-                    except ImportError:
-                        from .strategy_base import get_all_securities_jq
+                    from .strategy_base import get_all_securities_jq
+
                     all_secs = get_all_securities_jq()
                     if all_secs is not None and not all_secs.empty:
                         # 限制数量，只取前100只活跃股票
@@ -502,10 +494,8 @@ def _static_analyze_stock_pool(strategy_functions, strategy_source=None):
                     if match in _COMMON_INDICES or match[:6] in _COMMON_INDICES:
                         failure_report["total_attempted"] += 1
                         try:
-                            try:
-                                from .strategy_base import get_index_stocks
-                            except ImportError:
-                                from .strategy_base import get_index_stocks
+                            from .strategy_base import get_index_stocks
+
                             index_key = match if match in _COMMON_INDICES else match[:6]
                             stocks = get_index_stocks(index_key, robust=False)
                             if stocks:

@@ -30,10 +30,7 @@ from .base import (
     save_factor_cache,
 )
 
-try:
-    from jk2bt.utils.date_utils import find_date_column
-except ImportError:
-    from jk2bt.utils.date_utils import find_date_column
+from jk2bt.utils.date_utils import find_date_column
 
 try:
     from .data_sources import (

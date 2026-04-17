@@ -499,7 +499,7 @@ def rebalance_equally(stock_list, context):
     示例:
         rebalance_equally(['600519.XSHG', '000858.XSHE'], context)
     """
-    from api_enhancements import order_target_percent, rebalance_portfolio
+    from jk2bt.api.enhancements import order_target_percent, rebalance_portfolio
 
     if not stock_list:
         return

@@ -17,7 +17,7 @@ Functions:
 """
 
 import pandas as pd
-from typing import Optional, List
+from typing import Optional
 
 from jk2bt.data.finance.macro import get_macro_gdp as _get_macro_gdp
 from jk2bt.data.finance.macro import get_macro_cpi as _get_macro_cpi

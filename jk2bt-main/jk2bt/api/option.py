@@ -16,10 +16,12 @@ Main functions:
 - calculate_option_implied_vol: Calculate implied volatility
 - get_option_quote: Get options quote
 - query_option: Batch query options
+- get_option_ticks: Get options tick data
+- get_option_preopen: Get options preopen static data
 """
 
 import pandas as pd
-from typing import Optional, List
+from typing import List, Optional
 
 from jk2bt.data.market.option import (
     get_option_list as _get_option_list,
@@ -30,12 +32,15 @@ from jk2bt.data.market.option import (
     get_option_chain as _get_option_chain,
     get_option as _get_option,
     calculate_option_implied_vol as _calculate_option_implied_vol,
-    get_option_quote as _get_option_quote,
     query_option as _query_option,
+    get_option_ticks as _get_option_ticks,
+    get_option_preopen as _get_option_preopen,
     _OPTION_SCHEMA,
     _OPTION_BASIC_SCHEMA,
     _OPTION_DAILY_SCHEMA,
     _GREEKS_SCHEMA,
+    _OPTION_TICK_SCHEMA,
+    _OPT_DAILY_PREOPEN_SCHEMA,
 )
 
 
@@ -490,6 +495,114 @@ def query_option(
     return pd.DataFrame(columns=_OPTION_SCHEMA)
 
 
+def get_option_ticks(
+    option_code: str,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    exchange: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    Get option tick data.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    option_code : str
+        Option code
+    start_date : str, optional
+        Start date, format 'YYYY-MM-DD'
+    end_date : str, optional
+        End date, format 'YYYY-MM-DD'
+    exchange : str, optional
+        Exchange: 'sse' (SSE ETF options), 'szse' (SZSE ETF options),
+        'czce' (CZCE commodity options), 'shfe' (SHFE), 'dce' (DCE),
+        'cffex' (CFFEX index options)
+
+    Returns
+    ----
+    pd.DataFrame
+        Tick data with columns:
+        - datetime: Timestamp
+        - option_code: Option code
+        - price: Last price
+        - volume: Volume
+        - bid_price1~5: Bid prices
+        - ask_price1~5: Ask prices
+        - bid_volume1~5: Bid volumes
+        - ask_volume1~5: Ask volumes
+
+    Examples
+    ----
+    >>> df = get_option_ticks('10004012')
+    >>> df = get_option_ticks('510050C2403M02800', exchange='sse')
+    """
+    result = _get_option_ticks(
+        option_code=option_code,
+        start_date=start_date,
+        end_date=end_date,
+        exchange=exchange,
+    )
+    if result.success and result.data is not None:
+        return result.data
+    return pd.DataFrame(columns=_OPTION_TICK_SCHEMA)
+
+
+def get_option_preopen(
+    date: Optional[str] = None,
+    exchange: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    Get option daily preopen static data.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    date : str, optional
+        Date, format 'YYYY-MM-DD', default today
+    exchange : str, optional
+        Exchange: 'sse', 'szse', 'cffex', 'all'
+
+    Returns
+    ----
+    pd.DataFrame
+        Preopen data with columns:
+        - date: Date
+        - option_code: Option code
+        - option_name: Option name
+        - underlying_code: Underlying code
+        - pre_settle: Previous settlement price
+        - pre_close: Previous close price
+        - pre_position: Previous open interest
+        - limit_up: Limit up price
+        - limit_down: Limit down price
+
+    Examples
+    ----
+    >>> df = get_option_preopen()
+    >>> df = get_option_preopen(date='2024-03-01', exchange='sse')
+    """
+    result = _get_option_preopen(
+        date=date,
+        exchange=exchange,
+    )
+    if result.success and result.data is not None:
+        return result.data
+    preopen_schema = [
+        "date",
+        "option_code",
+        "option_name",
+        "underlying_code",
+        "pre_settle",
+        "pre_close",
+        "pre_position",
+        "limit_up",
+        "limit_down",
+    ]
+    return pd.DataFrame(columns=preopen_schema)
+
+
 __all__ = [
     "get_option_list",
     "get_option_price",
@@ -501,4 +614,6 @@ __all__ = [
     "calculate_option_implied_vol",
     "get_option_quote",
     "query_option",
+    "get_option_ticks",
+    "get_option_preopen",
 ]

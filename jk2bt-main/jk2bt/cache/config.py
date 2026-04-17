@@ -14,7 +14,7 @@ class TableConfig:
 
 @dataclass
 class CacheConfig:
-    base_dir: str = "data/cache"
+    base_dir: str = "data_cache/cache"
     memory_cache_max_items: int = 5000
     memory_cache_default_ttl_seconds: int = 3600
     compression: str = "snappy"
