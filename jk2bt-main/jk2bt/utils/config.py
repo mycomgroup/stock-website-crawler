@@ -29,6 +29,7 @@ class CacheConfig:
     max_memory_items: int = 5000
     cache_dir: str = "data_cache/cache"
     duckdb_path: str = "data_cache/jk2bt.duckdb"
+    parquet_cache_dir: str = "data_cache/cache"
 
 
 @dataclass

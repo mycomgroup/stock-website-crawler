@@ -144,10 +144,7 @@ class DuckDBManager:
                 config = get_config()
                 db_path = config.cache.duckdb_path
             except Exception:
-                # fallback 到原有逻辑（向后兼容）
-                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                project_root = os.path.dirname(base_dir)
-                db_path = os.path.join(project_root, "data_cache", "market.db")
+                db_path = "data_cache/market.db"
 
         self.db_path = db_path
         self.read_only = read_only
@@ -1384,9 +1381,7 @@ def get_shared_read_only_manager(
 
             db_path = get_config().cache.duckdb_path
         except Exception:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            project_root = os.path.dirname(base_dir)
-            db_path = os.path.join(project_root, "data_cache", "market.db")
+            db_path = "data_cache/market.db"
 
     # 使用进程级单例
     cache_key = f"ro:{db_path}:{use_cache}"
@@ -1421,9 +1416,7 @@ def get_writer_manager(db_path: str = None, use_cache: bool = False) -> DuckDBMa
 
             db_path = get_config().cache.duckdb_path
         except Exception:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            project_root = os.path.dirname(base_dir)
-            db_path = os.path.join(project_root, "data_cache", "market.db")
+            db_path = "data_cache/market.db"
 
     # 使用进程级单例
     cache_key = f"rw:{db_path}:{use_cache}"

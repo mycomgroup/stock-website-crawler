@@ -1688,6 +1688,28 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
             except Exception as e:
                 logger.warning(f"获取基金列表失败: {e}")
 
+        elif t == "options":
+            try:
+                from jk2bt.api.option import get_option_list
+
+                df = get_option_list(
+                    underlying="all", force_update=False, use_duckdb=True
+                )
+                if df is not None and not df.empty:
+                    opt_df = pd.DataFrame()
+                    opt_df["code"] = df["option_code"].astype(str)
+                    opt_df["name"] = df.get("option_name", "")
+                    opt_df["jq_code"] = opt_df["code"].apply(lambda x: x + ".XSHG")
+                    opt_df["type"] = "options"
+                    opt_df["start_date"] = df.get("listing_date", None)
+                    opt_df["end_date"] = df.get("expiry_date", None)
+                    opt_df["underlying"] = df.get("underlying", "")
+                    opt_df["strike"] = df.get("strike", None)
+                    opt_df["option_type"] = df.get("option_type", "")
+                    all_dfs.append(opt_df)
+            except Exception as e:
+                logger.warning(f"获取期权列表失败: {e}")
+
     if not all_dfs:
         return pd.DataFrame(columns=["code", "name", "type", "start_date", "end_date"])
 
@@ -2388,6 +2410,65 @@ def get_extras_jq(
             result_df = pd.DataFrame(result_data)
             return result_df
         return result_data
+
+    elif field == "futures_sett_price":
+        result_data = {}
+        for sec, code in zip(securities_str, code_nums):
+            result_data[sec] = pd.Series(dtype=float)
+
+        try:
+            import akshare as ak
+
+            for sec, code in zip(securities_str, code_nums):
+                try:
+                    contract_code = code.split(".")[0] if "." in code else code
+                    contract_code = (
+                        contract_code[2:]
+                        if contract_code.startswith(("sh", "sz"))
+                        else contract_code
+                    )
+
+                    sett_df = ak.futures_settlement_price_sina(symbol=contract_code)
+                    if sett_df is not None and not sett_df.empty:
+                        date_col = None
+                        for c in ["日期", "date", "trade_date"]:
+                            if c in sett_df.columns:
+                                date_col = c
+                                break
+                        price_col = None
+                        for c in ["结算价", "settlement_price", "sett_price"]:
+                            if c in sett_df.columns:
+                                price_col = c
+                                break
+
+                        if date_col and price_col:
+                            sett_df[date_col] = pd.to_datetime(sett_df[date_col])
+                            sett_df = sett_df.sort_values(date_col)
+
+                            if start_date:
+                                sett_df = sett_df[
+                                    sett_df[date_col] >= pd.Timestamp(start_date)
+                                ]
+                            if end_date:
+                                sett_df = sett_df[
+                                    sett_df[date_col] <= pd.Timestamp(end_date)
+                                ]
+                            if count and len(sett_df) > count:
+                                sett_df = sett_df.tail(count)
+
+                            result_data[sec] = pd.Series(
+                                pd.to_numeric(
+                                    sett_df[price_col], errors="coerce"
+                                ).values,
+                                index=sett_df[date_col].values,
+                            )
+                except Exception as e:
+                    logger.debug(f"获取 {sec} 结算价失败: {e}")
+        except Exception as e:
+            logger.warning(f"获取期货结算价数据失败: {e}")
+
+        result_df = pd.DataFrame(result_data)
+        return result_df
 
     else:
         raise NotImplementedError(f"暂不支持的 extras 字段: {field}")

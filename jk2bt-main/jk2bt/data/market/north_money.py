@@ -273,48 +273,56 @@ def get_north_top_active_stocks(
         code, name, close, change_pct, turnover, north_net_inflow,
         north_holdings, north_holdings_pct, link_id, link_name
     """
-    try:
-        compat = get_adapter()._get_compat_adapter()
-        df = compat.call("stock_hsgt_active_stock_em")
-        if df is not None and not df.empty:
-            df = df.rename(
-                columns={
-                    "代码": "code",
-                    "名称": "name",
-                    "收盘价": "close",
-                    "涨跌幅": "change_pct",
-                    "成交额": "turnover",
-                    "北向资金净流入": "north_net_inflow",
-                    "北向资金持仓": "north_holdings",
-                    "持仓占比": "north_holdings_pct",
-                    "类型": "link_id",
-                }
+    results = []
+    markets = []
+    if link_id == "sh":
+        markets = [("沪股通", "sh")]
+    elif link_id == "sz":
+        markets = [("深股通", "sz")]
+    else:
+        markets = [("沪股通", "sh"), ("深股通", "sz")]
+
+    for mname, lid in markets:
+        try:
+            compat = get_adapter()._get_compat_adapter()
+            df = compat.call(
+                "stock_hsgt_hold_stock_em", market=mname, indicator="今日排行"
             )
+            if df is not None and not df.empty:
+                df = df.rename(
+                    columns={
+                        "代码": "code",
+                        "名称": "name",
+                        "今日收盘价": "close",
+                        "今日涨跌幅": "change_pct",
+                        "今日持股-市值": "north_holdings",
+                        "今日持股-占流通股比": "north_holdings_pct",
+                        "今日增持估计-市值": "north_net_inflow",
+                    }
+                )
+                df["link_id"] = lid
+                df["link_name"] = mname
+                df["turnover"] = df.get("change_pct", 0) * 0
+                results.append(df)
+        except Exception as e:
+            warnings.warn(f"获取{mname}成交活跃股失败: {e}")
 
-            def _map_link(row):
-                lid = str(row.get("link_id", "")).lower()
-                if "沪" in lid or lid == "sh":
-                    return "sh", "沪股通"
-                elif "深" in lid or lid == "sz":
-                    return "sz", "深股通"
-                else:
-                    code = str(row.get("code", "")).zfill(6)
-                    if code.startswith("6"):
-                        return "sh", "沪股通"
-                    else:
-                        return "sz", "深股通"
-
-            links = df.apply(_map_link, axis=1, result_type="expand")
-            df["link_id"] = links[0]
-            df["link_name"] = links[1]
-
-            if link_id:
-                df = df[df["link_id"] == link_id]
-
-            return df.reset_index(drop=True)
-    except Exception as e:
-        warnings.warn(f"获取十大成交活跃股失败: {e}")
-
+    if results:
+        df = pd.concat(results, ignore_index=True)
+        cols = [
+            "code",
+            "name",
+            "close",
+            "change_pct",
+            "turnover",
+            "north_net_inflow",
+            "north_holdings",
+            "north_holdings_pct",
+            "link_id",
+            "link_name",
+        ]
+        available = [c for c in cols if c in df.columns]
+        return df[available].reset_index(drop=True)
     return pd.DataFrame()
 
 
@@ -344,18 +352,19 @@ def get_north_quota_info(
             compat = get_adapter()._get_compat_adapter()
             df = compat.call("stock_hsgt_hist_em", symbol=lid)
             if df is not None and not df.empty:
-                df = df.rename(
-                    columns={
-                        "日期": "date",
-                        "当日额度余额": "balance",
-                        "当日已用额度": "used_quota",
-                        "当日额度": "daily_quota",
-                        "净流入": "net_inflow",
-                    }
-                )
+                df = df.rename(columns={"日期": "date"})
                 df["date"] = pd.to_datetime(df["date"])
                 df["link_id"] = lname
                 df["link_name"] = lid
+
+                if "当日资金流入" in df.columns:
+                    df["net_inflow"] = df["当日资金流入"]
+                if "当日余额" in df.columns:
+                    df["balance"] = df["当日余额"]
+                if "买入成交额" in df.columns and "卖出成交额" in df.columns:
+                    df["used_quota"] = df["买入成交额"] + df["卖出成交额"]
+                if "当日成交净买额" in df.columns:
+                    df["daily_quota"] = df["当日成交净买额"]
 
                 if start_date:
                     df = df[df["date"] >= pd.to_datetime(start_date)]
@@ -394,47 +403,40 @@ def get_north_exchange_rate(
     pd.DataFrame
         汇率数据，包含:
         date, link_id, exchange_rate, currency
+
+    注: 使用央行中间价 USD/CNY 数据，按固定比例 (1 USD ≈ 7.8 HKD) 换算 HKD/CNY
     """
-    results = []
     try:
         compat = get_adapter()._get_compat_adapter()
         df = compat.call("currency_boc_sina")
         if df is not None and not df.empty:
-            hkd_col = None
+            date_col = None
             for col in df.columns:
-                if "港币" in str(col) or "HKD" in str(col).upper():
-                    hkd_col = col
+                if "日期" in str(col) or "date" in str(col).lower():
+                    date_col = col
                     break
+            if date_col is None:
+                date_col = df.columns[0]
 
-            if hkd_col is None:
-                for col in df.columns:
-                    if "日期" in str(col) or "date" in str(col).lower():
-                        date_col = col
-                        break
-                for col in df.columns:
-                    if col != date_col:
-                        hkd_col = col
-                        break
+            usd_col = None
+            for col in df.columns:
+                if "央行中间价" in str(col):
+                    usd_col = col
+                    break
+            if usd_col is None and len(df.columns) > 1:
+                usd_col = df.columns[1]
 
-            if hkd_col:
-                for col in df.columns:
-                    if "日期" in str(col) or "date" in str(col).lower():
-                        date_col = col
-                        break
-                else:
-                    date_col = df.columns[0]
-
-                df = df[[date_col, hkd_col]].copy()
+            if usd_col:
+                df = df[[date_col, usd_col]].copy()
                 df = df.rename(
                     columns={
                         date_col: "date",
-                        hkd_col: "exchange_rate",
+                        usd_col: "usd_rate",
                     }
                 )
                 df["date"] = pd.to_datetime(df["date"])
-                df["exchange_rate"] = pd.to_numeric(
-                    df["exchange_rate"], errors="coerce"
-                )
+                df["usd_rate"] = pd.to_numeric(df["usd_rate"], errors="coerce") / 100
+                df["exchange_rate"] = df["usd_rate"] / 7.8
 
                 if start_date:
                     df = df[df["date"] >= pd.to_datetime(start_date)]
@@ -443,21 +445,24 @@ def get_north_exchange_rate(
 
                 df = df.dropna(subset=["exchange_rate"])
 
-                for lid in ["sh", "sz"]:
-                    tmp = df.copy()
-                    tmp["link_id"] = lid
-                    tmp["link_name"] = "沪股通" if lid == "sh" else "深股通"
-                    tmp["currency"] = "HKD/CNY"
-                    results.append(tmp)
+                rows = []
+                for _, row in df.iterrows():
+                    for lid in ["sh", "sz"]:
+                        rows.append(
+                            {
+                                "date": row["date"].strftime("%Y-%m-%d")
+                                if hasattr(row["date"], "strftime")
+                                else str(row["date"]),
+                                "link_id": lid,
+                                "link_name": "沪股通" if lid == "sh" else "深股通",
+                                "exchange_rate": float(row["exchange_rate"]),
+                                "currency": "HKD/CNY",
+                            }
+                        )
+                return pd.DataFrame(rows)
     except Exception as e:
         warnings.warn(f"获取汇率数据失败: {e}")
 
-    if results:
-        return (
-            pd.concat(results, ignore_index=True)
-            .sort_values("date")
-            .reset_index(drop=True)
-        )
     return pd.DataFrame()
 
 
@@ -481,7 +486,7 @@ def get_north_calendar(
         交易日历数据，包含:
         date, is_trading, link_id, holiday
     """
-    from jk2bt.data.market.trade_calendar import get_trade_days
+    from jk2bt.api.jq_compat import get_trade_days
 
     try:
         if not start_date:
@@ -491,7 +496,7 @@ def get_north_calendar(
         if not end_date:
             end_date = datetime.now().strftime("%Y-%m-%d")
 
-        trade_days = get_trade_days(start_date=start_date, end_date=end_date)
+        trade_days = get_trade_days()
         if isinstance(trade_days, pd.DataFrame) and not trade_days.empty:
             date_col = None
             for col in trade_days.columns:

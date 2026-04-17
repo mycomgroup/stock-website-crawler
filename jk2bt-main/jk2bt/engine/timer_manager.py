@@ -82,6 +82,10 @@ class TimerManager:
             except Exception:
                 pass
 
+    @property
+    def timers(self):
+        return self._timers
+
     def register(self, func, frequency, time_rule=None, day=None, weekday=None):
         """
         注册定时器
@@ -125,6 +129,7 @@ class TimerManager:
                     timer["last_executed_date"] = dt
                 except Exception as e:
                     import traceback
+
                     self._strategy.log(f"定时器执行错误: {e}")
                     self._strategy.log(f"详细traceback:\n{traceback.format_exc()}")
 
@@ -341,6 +346,7 @@ class TimerManager:
         """
         # 获取当月第一天的下一个工作日
         import calendar
+
         days_in_month = calendar.monthrange(dt.year, dt.month)[1]
 
         # 查找当月第一个工作日
@@ -364,4 +370,4 @@ class TimerManager:
         self._timers.clear()
 
 
-__all__ = ['TimerManager']
+__all__ = ["TimerManager"]

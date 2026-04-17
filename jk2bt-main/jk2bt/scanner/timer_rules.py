@@ -43,9 +43,7 @@ _TIME_RULE_PRECISION_WARNED = set()
 # 全局交易日历缓存
 _TRADING_DAYS_CACHE: Optional[Set[date]] = None
 _TRADING_DAYS_LIST_CACHE: Optional[List[date]] = None
-_CACHE_FILE_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "..", "data_cache", "trading_days_cache.pkl"
-)
+_CACHE_FILE_PATH = "data_cache/trading_days_cache.pkl"
 
 
 def _fetch_trading_days_from_akshare() -> List[date]:

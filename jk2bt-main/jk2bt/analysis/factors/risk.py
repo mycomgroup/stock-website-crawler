@@ -985,4 +985,6 @@ __all__ = [
     "portfolio_factor_risk",
     "rolling_factor_cov",
     "eigenvalue_decomposition",
+    "compute_factor_covariance",
+    "compute_style_factor_returns_real",
 ]

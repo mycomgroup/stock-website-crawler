@@ -31,6 +31,7 @@ class RobustResult:
         self.success = success
         self.data = data
         self.error = error or reason
+        self.reason = self.error
         self.error_code = error_code
         self.source = source
 

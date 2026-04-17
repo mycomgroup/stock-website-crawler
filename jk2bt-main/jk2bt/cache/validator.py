@@ -106,6 +106,8 @@ class SchemaValidator:
             return True
         if from_normalized in date_types and to_normalized in date_types:
             return True
+        if from_normalized.startswith("datetime64") and to_normalized in date_types:
+            return True
         if from_normalized in ("object", "string") and to_normalized in date_types:
             return True
         if from_normalized in ("object", "string") and to_normalized in numeric_types:

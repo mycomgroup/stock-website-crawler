@@ -253,10 +253,7 @@ class OptionDBManager(LazyInitSingleton):
             return
 
         if db_path is None:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            )
-            db_path = os.path.join(base_dir, "data_cache", "option_parquet")
+            db_path = "data_cache/option_parquet"
 
         self._db_path = db_path
         self._manager = None

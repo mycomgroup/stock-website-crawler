@@ -38,13 +38,7 @@ class ParquetAdapter:
                 config = get_config()
                 base_dir = config.cache.parquet_cache_dir
             except Exception:
-                base_dir = os.path.join(
-                    os.path.dirname(
-                        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                    ),
-                    "data",
-                    "parquet_cache",
-                )
+                base_dir = "data_cache/cache"
         else:
             base_dir = db_path
 
@@ -187,6 +181,32 @@ class ParquetAdapter:
 
         self._put_partitioned("index_daily", df, "date")
         logger.info(f"{jq_symbol}: 插入 {len(df)} 条数据")
+
+    def insert_index_weights(self, symbol: str, df: pd.DataFrame):
+        if df is None or df.empty:
+            logger.warning(f"{symbol}: 无指数权重数据需要插入")
+            return
+
+        df = df.copy()
+        if "index_code" not in df.columns:
+            df["index_code"] = symbol
+        df = self._rename_to_date(df)
+        if "update_date" in df.columns:
+            try:
+                df["update_date"] = pd.to_datetime(df["update_date"]).dt.date
+            except Exception:
+                pass
+        if "update_time" in df.columns:
+            try:
+                df["update_time"] = pd.to_datetime(df["update_time"])
+            except Exception:
+                pass
+        df = self._select_columns(
+            df, ["index_code", "stock_code", "weight", "update_date", "update_time"]
+        )
+
+        self.cache_manager.put("index_weights", df)
+        logger.info(f"{symbol}: 插入 {len(df)} 条指数权重数据")
 
     def insert_stock_minute(
         self, symbol: str, period: str, df: pd.DataFrame, adjust: str = "qfq"

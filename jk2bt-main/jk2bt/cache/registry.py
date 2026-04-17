@@ -158,6 +158,21 @@ INDEX_COMPONENTS = CacheTable(
     storage_layer="daily",
 )
 
+INDEX_WEIGHTS = CacheTable(
+    name="index_weights",
+    partition_by=None,
+    ttl_hours=720,
+    schema={
+        "index_code": "string",
+        "stock_code": "string",
+        "weight": "float64",
+        "update_date": "date",
+        "update_time": "timestamp",
+    },
+    primary_key=["index_code", "stock_code", "update_date"],
+    storage_layer="meta",
+)
+
 FINANCE_INDICATOR = CacheTable(
     name="finance_indicator",
     partition_by="report_date",
@@ -739,6 +754,7 @@ for _table in (
     FUTURES_DAILY,
     CONVERSION_BOND_DAILY,
     INDEX_COMPONENTS,
+    INDEX_WEIGHTS,
     FINANCE_INDICATOR,
     MONEY_FLOW,
     NORTH_FLOW,

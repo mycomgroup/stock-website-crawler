@@ -92,20 +92,16 @@ import sys
 # 设置工作目录到临时目录
 os.chdir(os.environ.get("TEMP_DIR"))
 
-# 检查 data 目录是否存在
-before_data_exists = os.path.exists("data")
-before_cache_exists = os.path.exists("data/cache")
+# 检查 data_cache 目录是否存在
+before_cache_exists = os.path.exists("data_cache")
 
 # 导入包
 import jk2bt
 
 # 再次检查
-after_data_exists = os.path.exists("data")
-after_cache_exists = os.path.exists("data/cache")
+after_cache_exists = os.path.exists("data_cache")
 
 # 输出结果
-print(f"DATA_BEFORE:{before_data_exists}")
-print(f"DATA_AFTER:{after_data_exists}")
 print(f"CACHE_BEFORE:{before_cache_exists}")
 print(f"CACHE_AFTER:{after_cache_exists}")
 """
@@ -129,16 +125,11 @@ print(f"CACHE_AFTER:{after_cache_exists}")
                     key, value = line.split(":", 1)
                     results[key] = value == "True"
 
-            # 导入应该不创建 data 目录
+            # 导入应该不创建 data_cache 目录
             # 如果目录不存在导入前，导入后也不应该存在
-            if "DATA_BEFORE" in results and not results["DATA_BEFORE"]:
-                assert "DATA_AFTER" in results and not results["DATA_AFTER"], (
-                    f"导入创建了 data 目录: {output}"
-                )
-            # 如果目录已存在导入前，导入后状态相同（不创建新的子目录）
             if "CACHE_BEFORE" in results and not results["CACHE_BEFORE"]:
                 assert "CACHE_AFTER" in results and not results["CACHE_AFTER"], (
-                    f"导入创建了 data/cache 目录: {output}"
+                    f"导入创建了 data_cache 目录: {output}"
                 )
 
     def test_import_no_log_files_created(self):

@@ -16,6 +16,7 @@ jk2bt/api/factor_kanban.py
 import numpy as np
 import pandas as pd
 from typing import List, Optional, Dict
+import warnings
 
 FACTOR_LIBRARY = {
     "style": {
@@ -490,6 +491,7 @@ def get_factor_style_returns(
     universe: Optional[str] = None,
     industry: str = "sw_l1",
     category: Optional[str] = None,
+    use_real_data: bool = False,
 ) -> pd.DataFrame:
     """
     获取风格因子暴露收益（Barra风格）。
@@ -510,12 +512,23 @@ def get_factor_style_returns(
         行业分类标准
     category : str, optional
         因子类别，若提供则仅返回该类别下的因子
+    use_real_data : bool, default False
+        是否使用真实数据计算（Fama-MacBeth回归），默认使用模拟数据
 
     Returns
     -------
     pd.DataFrame
         索引为日期，列为因子名称，值为因子日收益率。
     """
+    if use_real_data:
+        return _get_real_factor_style_returns(
+            factors=factors,
+            start_date=start_date,
+            end_date=end_date,
+            universe=universe,
+            industry=industry,
+        )
+
     if factors is None:
         factors = CNE6_STYLE_FACTORS.copy()
 
@@ -550,6 +563,51 @@ def get_factor_style_returns(
         result[factor] = np.round(returns, 6)
 
     return pd.DataFrame(result, index=dates)
+
+
+def _get_real_factor_style_returns(
+    factors: Optional[List[str]] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    universe: str = "hs300",
+    industry: str = "sw_l1",
+) -> pd.DataFrame:
+    """
+    使用真实数据计算风格因子收益率。
+
+    调用 analysis.factors.risk.compute_style_factor_returns_real 进行计算。
+    """
+    from jk2bt.analysis.factors.risk import compute_style_factor_returns_real
+
+    try:
+        result = compute_style_factor_returns_real(
+            factors=factors,
+            start_date=start_date,
+            end_date=end_date,
+            universe=universe,
+            industry=industry,
+        )
+        if result.empty:
+            warnings.warn("真实因子收益计算失败，回退到模拟数据")
+            return get_factor_style_returns(
+                factors=factors,
+                start_date=start_date,
+                end_date=end_date,
+                universe=universe,
+                industry=industry,
+                use_real_data=False,
+            )
+        return result
+    except Exception as e:
+        warnings.warn(f"真实因子收益计算异常: {e}，回退到模拟数据")
+        return get_factor_style_returns(
+            factors=factors,
+            start_date=start_date,
+            end_date=end_date,
+            universe=universe,
+            industry=industry,
+            use_real_data=False,
+        )
 
 
 def get_factor_specific_returns(

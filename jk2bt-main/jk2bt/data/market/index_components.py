@@ -98,10 +98,7 @@ class IndexComponentsDBManager:
             return
 
         if db_path is None:
-            base_dir = os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            )
-            db_path = os.path.join(base_dir, "data_cache", "index_components_parquet")
+            db_path = "data_cache/index_components_parquet"
 
         self._db_path = db_path
         self._manager = None
@@ -118,51 +115,41 @@ class IndexComponentsDBManager:
     def _init_tables(self):
         if self._manager is None:
             return
-
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS index_components (
-                        index_code VARCHAR NOT NULL,
-                        code VARCHAR NOT NULL,
-                        stock_name VARCHAR,
-                        weight DOUBLE,
-                        effective_date DATE NOT NULL,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (index_code, code, effective_date)
-                    )
-                """)
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_idx_comp_index ON index_components(index_code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_idx_comp_code ON index_components(code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_idx_comp_date ON index_components(effective_date)"
-                )
-
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS index_history (
-                        index_code VARCHAR NOT NULL,
-                        code VARCHAR NOT NULL,
-                        stock_name VARCHAR,
-                        in_date DATE,
-                        out_date DATE,
-                        change_type VARCHAR,
-                        update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        PRIMARY KEY (index_code, code, in_date)
-                    )
-                """)
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_idx_hist_index ON index_history(index_code)"
-                )
-                conn.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_idx_hist_date ON index_history(in_date)"
-                )
-                logger.info("指数成分股表结构初始化完成")
+            if hasattr(self._manager, "_init_database"):
+                self._manager._init_database()
+            logger.info("指数成分股缓存初始化完成")
         except Exception as e:
-            logger.warning(f"初始化表结构失败: {e}")
+            logger.warning(f"初始化缓存失败: {e}")
+
+    def _df_to_parquet_schema(self, df: pd.DataFrame) -> pd.DataFrame:
+        """将 DataFrame 列名映射到 parquet cache 的 INDEX_COMPONENTS schema"""
+        df = df.copy()
+        col_map = {}
+        if "code" in df.columns and "symbol" not in df.columns:
+            col_map["code"] = "symbol"
+        if "effective_date" in df.columns and "date" not in df.columns:
+            col_map["effective_date"] = "date"
+        if col_map:
+            df = df.rename(columns=col_map)
+        if "date" in df.columns:
+            try:
+                df["date"] = pd.to_datetime(df["date"]).dt.date
+            except Exception:
+                pass
+        return df
+
+    def _df_from_parquet_schema(self, df: pd.DataFrame) -> pd.DataFrame:
+        """将 parquet cache 的 DataFrame 列名映射回原有 schema"""
+        df = df.copy()
+        col_map = {}
+        if "symbol" in df.columns and "code" not in df.columns:
+            col_map["symbol"] = "code"
+        if "date" in df.columns and "effective_date" not in df.columns:
+            col_map["date"] = "effective_date"
+        if col_map:
+            df = df.rename(columns=col_map)
+        return df
 
     def insert_index_components(self, df: pd.DataFrame):
         if self._manager is None or df.empty:
@@ -180,9 +167,9 @@ class IndexComponentsDBManager:
         df = df[cols]
 
         try:
-            with self._manager._get_connection(read_only=False) as conn:
-                conn.execute("INSERT OR REPLACE INTO index_components SELECT * FROM df")
-                logger.info(f"插入/更新 {len(df)} 条指数成分股信息")
+            pq_df = self._df_to_parquet_schema(df)
+            self._manager.cache_manager.put("index_components", pq_df)
+            logger.info(f"插入/更新 {len(df)} 条指数成分股信息")
         except Exception as e:
             logger.warning(f"插入指数成分股信息失败: {e}")
 
@@ -191,18 +178,33 @@ class IndexComponentsDBManager:
             return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)
 
         try:
-            with self._manager._get_connection(read_only=True) as conn:
-                df = conn.execute(
-                    "SELECT * FROM index_components WHERE index_code = ? ORDER BY weight DESC",
-                    [index_code],
-                ).fetchdf()
-                return df
+            df = self._manager.query(
+                "index_components", where={"index_code": index_code}
+            )
+            if df.empty:
+                return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)
+            df = self._df_from_parquet_schema(df)
+            if "weight" in df.columns:
+                df = df.sort_values("weight", ascending=False)
+            return df
         except Exception as e:
             logger.warning(f"查询指数成分股信息失败: {e}")
             return pd.DataFrame(columns=_INDEX_COMPONENTS_SCHEMA)
 
     def is_cache_valid(self, index_code: str, cache_days: int = 90) -> bool:
         if self._manager is None:
+            return False
+
+        try:
+            df = self._manager.query(
+                "index_components", where={"index_code": index_code}
+            )
+            if df.empty or "date" not in df.columns:
+                return False
+            max_date = pd.to_datetime(df["date"]).max()
+            return (datetime.now() - pd.to_datetime(max_date)).days < cache_days
+        except Exception as e:
+            logger.warning(f"检查缓存有效性失败: {e}")
             return False
 
         try:

@@ -238,6 +238,12 @@ class QueryEngine:
                     conditions.append(
                         f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
                     )
+                elif all(
+                    isinstance(v, str) and self._looks_like_date(v) for v in value
+                ):
+                    conditions.append(
+                        f"{key} >= {self._format_value(value[0])} AND {key} <= {self._format_value(value[1])}"
+                    )
                 else:
                     formatted_values = ", ".join(self._format_value(v) for v in value)
                     conditions.append(f"{key} IN ({formatted_values})")
@@ -247,6 +253,11 @@ class QueryEngine:
             else:
                 conditions.append(f"{key} = {self._format_value(value)}")
         return " AND ".join(conditions)
+
+    def _looks_like_date(self, value: str) -> bool:
+        import re
+
+        return bool(re.match(r"^\d{4}-\d{2}-\d{2}$", value))
 
     def _build_sql(
         self,

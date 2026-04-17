@@ -3,14 +3,10 @@ import pandas as pd
 import pytest
 import tempfile
 
-from jk2bt.engine.strategy_base import (
+from jk2bt import (
     get_akshare_etf_data,
     format_stock_symbol_for_akshare,
     get_akshare_stock_data,
-    get_index_nav,
-    get_price_jq,
-    get_cashflow_sina,
-    get_income_ths,
 )
 import os
 
