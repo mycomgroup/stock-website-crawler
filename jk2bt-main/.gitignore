@@ -58,7 +58,7 @@ stock_cache/
 
 # Logs and outputs
 logs/
-data/outputs/
+data_cache/
 reports/
 
 # Docs

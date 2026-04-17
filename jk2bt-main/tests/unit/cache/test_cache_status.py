@@ -389,6 +389,11 @@ class TestValidateCacheForOffline:
         nonexistent_dir = tmp_path / "nonexistent"
         db_path = tmp_path / "empty_parquet"
 
+        # 清理全局缓存，避免其他测试写入的数据影响当前测试
+        cache = parquet_get_cache_manager()
+        cache.invalidate("trade_calendar")
+        cache.invalidate("securities")
+
         manager = CacheManager(db_path=str(db_path))
         is_valid, report = manager.validate_cache_for_offline(
             stock_pool=["600519.XSHG", "000858.XSHE"],

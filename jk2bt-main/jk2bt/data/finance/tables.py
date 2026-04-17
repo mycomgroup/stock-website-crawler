@@ -885,6 +885,49 @@ def get_futures_member_position(
 
 
 # =====================================================================
+# 期权盘前静态数据
+# =====================================================================
+
+OPT_DAILY_PREOPEN_SCHEMA = [
+    "date",  # 日期
+    "option_code",  # 期权代码
+    "option_name",  # 期权名称
+    "underlying_code",  # 标的代码
+    "pre_settle",  # 前结算价
+    "pre_close",  # 前收盘价
+    "pre_position",  # 前持仓量
+    "limit_up",  # 涨停价
+    "limit_down",  # 跌停价
+]
+
+
+def get_option_preopen(
+    date: Optional[str] = None,
+    exchange: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取期权每日盘前静态数据
+
+    参数:
+        date: 日期 'YYYY-MM-DD'
+        exchange: 交易所 'sse', 'szse', 'cffex', 'all'
+
+    返回:
+        DataFrame，包含期权盘前静态数据
+    """
+    try:
+        from jk2bt.api.option import get_option_preopen as _get_option_preopen
+
+        result = _get_option_preopen(date=date, exchange=exchange)
+        if result.success and result.data is not None:
+            return result.data
+        return pd.DataFrame(columns=OPT_DAILY_PREOPEN_SCHEMA)
+    except Exception as e:
+        warnings.warn(f"获取期权盘前数据失败: {e}")
+        return pd.DataFrame(columns=OPT_DAILY_PREOPEN_SCHEMA)
+
+
+# =====================================================================
 # 统一的 FinanceQuery 类
 # =====================================================================
 
@@ -1012,6 +1055,18 @@ class FinanceTables:
         short_change = None
         volume = None
         volume_change = None
+
+    # 期权盘前静态数据
+    class OPT_DAILY_PREOPEN:
+        date = None
+        option_code = None
+        option_name = None
+        underlying_code = None
+        pre_settle = None
+        pre_close = None
+        pre_position = None
+        limit_up = None
+        limit_down = None
 
     # 母公司利润表
     class FINANCE_INCOME_STATEMENT_PARENT:
@@ -1435,6 +1490,9 @@ class FinanceTables:
         elif table_name == "FUT_MEMBER_POSITION":
             return get_futures_member_position(symbol=code, **kwargs)
 
+        elif table_name == "OPT_DAILY_PREOPEN":
+            return get_option_preopen(**kwargs)
+
         else:
             raise ValueError(f"不支持的表: {table_name}")
 
@@ -1454,6 +1512,7 @@ __all__ = [
     "FUT_CHARGE_SCHEMA",
     "FUT_WAREHOUSE_SCHEMA",
     "FUT_MEMBER_POSITION_SCHEMA",
+    "OPT_DAILY_PREOPEN_SCHEMA",
     "get_balance_sheet",
     "get_income_statement",
     "get_cashflow_statement",
@@ -1464,6 +1523,7 @@ __all__ = [
     "get_futures_charge",
     "get_futures_warehouse",
     "get_futures_member_position",
+    "get_option_preopen",
     "FinanceTables",
     "finance_tables",
 ]

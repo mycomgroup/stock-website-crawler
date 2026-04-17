@@ -40,10 +40,7 @@ def _get_runtime_dir() -> Path:
     """获取运行时目录"""
     global _RUNTIME_DIR
     if _RUNTIME_DIR is None:
-        # 使用 data/outputs 作为默认运行时目录
-        # Path(__file__) = src/core/io.py
-        # parent.parent.parent = 项目根目录
-        base_dir = Path(__file__).parent.parent.parent / "data_cache" / "outputs"
+        base_dir = Path("data_cache/outputs")
         base_dir.mkdir(parents=True, exist_ok=True)
         _RUNTIME_DIR = base_dir
     return _RUNTIME_DIR

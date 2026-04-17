@@ -199,7 +199,7 @@ from jk2bt.scanner.runtime_resource import (
 # 导入新实现的API模块
 try:
     from jk2bt.api.market import get_market, get_detailed_quote, get_preopen_infos
-    from jk2bt.api.date_api import (
+    from jk2bt.api.date import (
         get_shifted_date,
         get_previous_trade_date,
         get_next_trade_date,
@@ -222,14 +222,14 @@ try:
         filter_limit_up,
         filter_limit_down,
     )
-    from jk2bt.api.stats_api import (
+    from jk2bt.api.stats import (
         get_ols,
         get_zscore,
         get_rank,
         get_factor_filter_list,
         get_num,
     )
-    from jk2bt.api.billboard_api import (
+    from jk2bt.api.billboard import (
         get_institutional_holdings,
         get_billboard_hot_stocks,
         get_broker_statistics,
@@ -240,7 +240,7 @@ try:
         get_fundamentals_continuously,
     )
     from jk2bt.api.indicators import MA, EMA, MACD, KDJ, RSI, BOLL, ATR
-    from jk2bt.api.factor_api import (
+    from jk2bt.api.factor import (
         get_north_factor,
         get_comb_factor,
         get_factor_momentum,

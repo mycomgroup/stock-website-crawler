@@ -196,7 +196,17 @@ class OfflineTestFixture:
 
         if self.mode == "prewarmed":
             self._setup_prewarmed_data()
-        # empty模式不需要额外设置
+        else:
+            # empty模式清理全局缓存，避免其他测试数据影响
+            try:
+                from jk2bt.cache import get_cache_manager
+
+                cache = get_cache_manager()
+                cache.invalidate("trade_calendar")
+                cache.invalidate("securities")
+                cache.invalidate("index_weights")
+            except Exception:
+                pass
 
         return self
 
@@ -228,8 +238,16 @@ class OfflineTestFixture:
 
         securities = pd.DataFrame(
             {
-                "code": ["sh600519", "sz000858", "sh600036"],
+                "symbol": ["sh600519", "sz000858", "sh600036"],
                 "name": ["贵州茅台", "五粮液", "招商银行"],
+                "type": ["stock", "stock", "stock"],
+                "list_date": [
+                    pd.Timestamp("2001-01-01").date(),
+                    pd.Timestamp("1998-04-27").date(),
+                    pd.Timestamp("2002-04-09").date(),
+                ],
+                "delist_date": [None, None, None],
+                "exchange": ["XSHG", "XSHE", "XSHG"],
             }
         )
         cache.put("securities", securities)

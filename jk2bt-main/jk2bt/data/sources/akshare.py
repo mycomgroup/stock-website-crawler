@@ -103,6 +103,13 @@ class AkShareAdapter(DataSource):
         # 尝试导入 akshare
         self._akshare_available = False
         try:
+            import sys
+            import os
+            # 添加本地 akshare 项目路径到 sys.path
+            local_akshare_path = "/Users/fengzhi/Downloads/git/akshare"
+            if local_akshare_path not in sys.path:
+                sys.path.insert(0, local_akshare_path)
+            
             import akshare
 
             self._akshare = akshare
@@ -293,7 +300,18 @@ class AkShareAdapter(DataSource):
         from . import get_cache
 
         cache = get_cache()
-        cache.set(domain, table, df, **conditions)
+        # 添加缓存所需的元数据列
+        cache_df = df.copy()
+        if table == "stock_daily" and "symbol" not in cache_df.columns:
+            cache_df = cache_df.copy()
+            cache_df["symbol"] = conditions.get("symbol", "")
+            cache_df["date"] = (
+                cache_df["datetime"].dt.date
+                if "datetime" in cache_df.columns
+                else conditions.get("start_date", "")
+            )
+            cache_df["adjust"] = conditions.get("adjust", "")
+        cache.set(domain, table, cache_df, **conditions)
 
     # === 实现 DataSource 接口 ===
 
@@ -314,8 +332,6 @@ class AkShareAdapter(DataSource):
         cache_key = {
             "symbol": symbol,
             "adjust": adjust,
-            "start_date": start,
-            "end_date": end,
         }
         cached = self._get_from_cache("market", "stock_daily", **cache_key)
         if cached is not None and not cached.empty:
@@ -2282,14 +2298,7 @@ class AkShareAdapter(DataSource):
         self, level: str = "1", use_cache: bool = True, cache_ttl_hours: int = 168
     ) -> pd.DataFrame:
         """获取申万行业数据，支持磁盘缓存（默认缓存7天）"""
-        cache_file = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "..",
-            "..",
-            "data",
-            "cache",
-            f"sw_industry_l{level}.json",
-        )
+        cache_file = os.path.join("data_cache", f"sw_industry_l{level}.json")
         cache_file = os.path.normpath(cache_file)
 
         if use_cache and os.path.exists(cache_file):

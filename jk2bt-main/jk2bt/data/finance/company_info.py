@@ -108,6 +108,40 @@ _STATUS_CHANGE_SCHEMA = [
     "reason",
 ]
 
+_MANAGEMENT_INFO_SCHEMA = [
+    "code",
+    "name",
+    "position",
+    "gender",
+    "education",
+    "start_date",
+    "end_date",
+    "shares_held",
+    "compensation",
+]
+
+_EMPLOYEE_INFO_SCHEMA = [
+    "code",
+    "report_date",
+    "employee_count",
+    "professional_count",
+    "production_count",
+    "sales_count",
+    "finance_count",
+    "admin_count",
+    "education_bachelor",
+    "education_master",
+    "education_phd",
+]
+
+_NAME_HISTORY_SCHEMA = [
+    "code",
+    "name",
+    "start_date",
+    "end_date",
+    "change_reason",
+]
+
 
 class CompanyInfoCacheManager:
     """公司信息 parquet_cache 管理器"""
@@ -127,13 +161,7 @@ class CompanyInfoCacheManager:
             return None
 
         if base_dir is None:
-            base_dir = os.path.join(
-                os.path.dirname(
-                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                ),
-                "data",
-                "cache",
-            )
+            base_dir = "data_cache/cache"
 
         self.base_dir = base_dir
         self._cache = None
@@ -155,10 +183,15 @@ class CompanyInfoCacheManager:
             return
 
         df = df.copy()
+
+        # 如果 establish_date 存在且 list_date 为空，用 establish_date 填充
+        if "establish_date" in df.columns and "list_date" in df.columns:
+            df["list_date"] = df["list_date"].fillna(df["establish_date"])
+            df = df.drop(columns=["establish_date"])
+
         rename_map = {
             "code": "symbol",
             "company_name": "name",
-            "establish_date": "list_date",
         }
         df = df.rename(columns=rename_map)
 
@@ -776,6 +809,34 @@ class FinanceQuery:
         ceo = None
         comments = None
 
+    class STK_MANAGEMENT_INFO:
+        """管理人员任职情况表"""
+
+        code = None
+        name = None
+        position = None
+        gender = None
+        education = None
+        start_date = None
+        end_date = None
+        shares_held = None
+        compensation = None
+
+    class STK_EMPLOYEE_INFO:
+        """员工情况信息表"""
+
+        code = None
+        report_date = None
+        employee_count = None
+        professional_count = None
+        production_count = None
+        sales_count = None
+        finance_count = None
+        admin_count = None
+        education_bachelor = None
+        education_master = None
+        education_phd = None
+
     STK_LIST_SCHEMA = [
         "id",
         "code",
@@ -836,6 +897,10 @@ class FinanceQuery:
         "ceo",
         "comments",
     ]
+
+    STK_MANAGEMENT_INFO_SCHEMA = _MANAGEMENT_INFO_SCHEMA
+
+    STK_EMPLOYEE_INFO_SCHEMA = _EMPLOYEE_INFO_SCHEMA
 
     def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         """
@@ -921,6 +986,16 @@ class FinanceQuery:
                     use_duckdb=use_duckdb,
                 )
             return pd.DataFrame(columns=self.STK_COMPANY_INFO_SCHEMA)
+
+        elif table_name == "STK_MANAGEMENT_INFO":
+            if "code" in conditions:
+                return get_management_info(conditions["code"])
+            return pd.DataFrame(columns=self.STK_MANAGEMENT_INFO_SCHEMA)
+
+        elif table_name == "STK_EMPLOYEE_INFO":
+            if "code" in conditions:
+                return get_employee_info(conditions["code"])
+            return pd.DataFrame(columns=self.STK_EMPLOYEE_INFO_SCHEMA)
 
         else:
             raise ValueError(f"不支持的表: {table_name}")
@@ -1490,41 +1565,6 @@ def _normalize_industry_info(df_raw: pd.DataFrame, jq_code: str) -> pd.DataFrame
     return result
 
 
-_MANAGEMENT_INFO_SCHEMA = [
-    "code",
-    "name",
-    "position",
-    "gender",
-    "education",
-    "start_date",
-    "end_date",
-    "shares_held",
-    "compensation",
-]
-
-_EMPLOYEE_INFO_SCHEMA = [
-    "code",
-    "report_date",
-    "employee_count",
-    "professional_count",
-    "production_count",
-    "sales_count",
-    "finance_count",
-    "admin_count",
-    "education_bachelor",
-    "education_master",
-    "education_phd",
-]
-
-_NAME_HISTORY_SCHEMA = [
-    "code",
-    "name",
-    "start_date",
-    "end_date",
-    "change_reason",
-]
-
-
 def get_management_info(
     symbol: str,
     start_date: Optional[str] = None,
@@ -1572,7 +1612,7 @@ def get_management_info(
     try:
         import akshare as ak
 
-        df = _retry_akshare_call(ak.stock_management_info_em, symbol=code_num)
+        df = _retry_akshare_call(ak.stock_management_change_ths, symbol=code_num)
         if df is not None and not df.empty:
             result = _normalize_management_info(df, jq_code)
             if start_date:
@@ -1634,16 +1674,14 @@ def get_employee_info(
     try:
         import akshare as ak
 
-        df = _retry_akshare_call(ak.stock_employment_em, symbol=code_num)
-        if df is not None and not df.empty:
-            result = _normalize_employee_info(df, jq_code)
-            if year:
-                result = result[
-                    result["report_date"].astype(str).str.startswith(str(year))
-                ]
-            if use_duckdb and _db_manager is not None and not result.empty:
-                _db_manager.insert_employee_info(result)
-            return result
+        # akshare 没有直接的员工信息接口，尝试从财务报告中提取
+        # 使用 stock_financial_report_sina 作为备选
+        df = _retry_akshare_call(
+            ak.stock_financial_report_sina, stock=code_num, symbol="资产负债表"
+        )
+        # 员工信息通常不在标准财务报表中，返回空结果
+        # 注：员工数据需要从年报中手工提取，akshare 暂无直接接口
+        logger.info(f"[employee_info] akshare 暂无直接员工信息接口，返回空结果")
     except Exception as e:
         logger.warning(f"[employee_info] 获取 {symbol} 员工信息失败: {e}")
 
@@ -1702,11 +1740,10 @@ def _normalize_management_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
         return pd.DataFrame(columns=_MANAGEMENT_INFO_SCHEMA)
 
     result = pd.DataFrame()
-    result["code"] = jq_code
 
     col_map = {
-        "name": ["姓名", "高管姓名", "name", "董监高姓名"],
-        "position": ["职位", "职务", "position", "岗位"],
+        "name": ["姓名", "高管姓名", "name", "董监高姓名", "变动人"],
+        "position": ["职位", "职务", "position", "岗位", "与公司高管关系"],
         "gender": ["性别", "gender"],
         "education": ["学历", "education", "教育程度", "文化程度"],
         "start_date": [
@@ -1715,6 +1752,7 @@ def _normalize_management_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
             "start_date",
             "上任日期",
             "任职日期",
+            "变动日期",
         ],
         "end_date": ["任职结束日期", "离任日期", "end_date", "截止日期"],
         "shares_held": [
@@ -1723,6 +1761,7 @@ def _normalize_management_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
             "shares_held",
             "期末持股数",
             "持股数量(股)",
+            "剩余股数",
         ],
         "compensation": [
             "薪酬",
@@ -1730,6 +1769,7 @@ def _normalize_management_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
             "报酬",
             "年薪",
             "从公司获得的税前报酬",
+            "交易均价",
         ],
     }
 
@@ -1743,6 +1783,8 @@ def _normalize_management_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
             result[field] = df[found].values
         else:
             result[field] = None
+
+    result.insert(0, "code", jq_code)
 
     return result
 
@@ -1839,21 +1881,24 @@ def _normalize_name_history(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
         return pd.DataFrame(columns=_NAME_HISTORY_SCHEMA)
 
     result = pd.DataFrame()
-    result["code"] = jq_code
 
     name_col = None
-    for col in ["股票简称", "简称", "名称", "new_name", "证券简称"]:
+    for col in ["股票简称", "简称", "名称", "new_name", "证券简称", "name"]:
         if col in df.columns:
             name_col = col
             break
-    result["name"] = df[name_col] if name_col else None
+
+    if name_col:
+        result["name"] = df[name_col].values
+    else:
+        result["name"] = None
 
     start_date_col = None
     for col in ["变更日期", "start_date", "日期", "公告日期", "开始日期"]:
         if col in df.columns:
             start_date_col = col
             break
-    result["start_date"] = df[start_date_col] if start_date_col else None
+    result["start_date"] = df[start_date_col].values if start_date_col else None
 
     result["end_date"] = None
 
@@ -1862,7 +1907,9 @@ def _normalize_name_history(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
         if col in df.columns:
             reason_col = col
             break
-    result["change_reason"] = df[reason_col] if reason_col else None
+    result["change_reason"] = df[reason_col].values if reason_col else None
+
+    result.insert(0, "code", jq_code)
 
     return result
 

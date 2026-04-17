@@ -16,6 +16,9 @@ from .company_info import (
     get_company_info_list,
     get_industry_info,
     prewarm_company_info_cache,
+    get_management_info,
+    get_employee_info,
+    get_name_history,
 )
 from .shareholder import (
     get_top_shareholders,
@@ -151,6 +154,9 @@ __all__ = [
     "get_company_info_list",
     "get_industry_info",
     "prewarm_company_info_cache",
+    "get_management_info",
+    "get_employee_info",
+    "get_name_history",
     "get_top_shareholders",
     "get_top_float_shareholders",
     "get_shareholder_structure",
