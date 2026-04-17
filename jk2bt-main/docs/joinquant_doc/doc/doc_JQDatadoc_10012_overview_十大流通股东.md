@@ -1,0 +1,187 @@
+---
+id: "url-36497b00"
+type: "website"
+title: "十大流通股东"
+url: "https://www.joinquant.com/help/api/doc?name=JQDatadoc&id=10012"
+description: "描述"
+source: ""
+tags: []
+crawl_time: "2026-03-27T07:44:35.969Z"
+metadata:
+  parser: "JoinquantHelpParser"
+  actualUrl: "https://www.joinquant.com/help/api/doc?name=JQDatadoc&id=10012"
+  headings:
+    - {"level":3,"text":"十大流通股东","id":""}
+    - {"level":5,"text":"表字段信息","id":""}
+    - {"level":5,"text":"示例","id":""}
+  paragraphs:
+    - "描述"
+    - "公司十大流通股东参数"
+  lists:
+    - {"type":"ul","items":["历史范围：2005年至今；更新时间：交易日24:00更新"]}
+    - {"type":"ul","items":["获取上市公司前十大流通股东的持股情况，包括持股数量，所持股份性质，变动原因等。"]}
+    - {"type":"ul","items":["返回一个 dataframe，每一行对应数据表中的一条数据， 列索引是您所查询的字段名称"]}
+    - {"type":"ul","items":["为了防止返回数据量过大, 我们每次最多返回5000行","不能进行连表查询，即同时查询多张表的数据","新增 run_offset_query方法，支持分批从数据库提取超5000条的数据，上限20万条","新增 get_table_info(table) 方法，支持查询数据表中的字段信息"]}
+    - {"type":"ul","items":["query函数的更多用法详见：query简易教程"]}
+    - {"type":"ul","items":["query(finance.STK_SHAREHOLDER_FLOATING_TOP10)：表示从finance.STK_SHAREHOLDER_FLOATING_TOP10这张表中查询上市公司前十大流通股东的持股情况，还可以指定所要查询的字段名，格式如下：query(库名.表名.字段名1，库名.表名.字段名2），多个字段用英文逗号进行分隔；query函数的更多用法详见：[query简易教程]","finance.STK_SHAREHOLDER_FLOATING_TOP10：代表上市公司十大流通股东表，收录了上市公司前十大流通股东的持股情况，包括持股数量，所持股份性质，变动原因等。表结构和字段信息如下：","filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code)：指定筛选条件，通过finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code可以指定你想要查询的股票代码；除此之外，还可以对表中其他字段指定筛选条件，如finance.STK_SHAREHOLDER_FLOATING_TOP10.pub_date>='2015-01-01'，表示筛选公告日期大于等于2015年1月1日之后的数据；多个筛选条件用英文逗号分隔。","limit(n)：限制返回的数据条数，n指定返回条数。"]}
+  tables:
+    - {"caption":"","headers":["字段名称","中文名称","字段类型","备注/示例"],"rows":[["company_id","公司ID","int",""],["company_name","公司名称","varchar(100)",""],["code","股票代码","varchar(12)",""],["end_date","截止日期","date",""],["pub_date","公告日期","date",""],["change_reason_id","变动原因编码","int",""],["change_reason","变动原因","varchar(120)",""],["shareholder_rank","股东名次","int",""],["shareholder_id","股东ID","int",""],["shareholder_name","股东名称","varchar(200)",""],["shareholder_name_en","股东名称（英文）","varchar(150)",""],["shareholder_class_id","股东类别编码","int",""],["shareholder_class","股东类别","varchar(150)",""],["share_number","持股数量","int","股"],["share_ratio","持股比例","decimal(10,4)","%"],["sharesnature_id","股份性质编码","int",""],["sharesnature","股份性质","varchar(120)",""]]}
+  codeBlocks:
+    - {"language":"python","code":"from jqdatasdk import finance\nfinance.run_query(query(finance.STK_SHAREHOLDER_FLOATING_TOP10).filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code).limit(n))"}
+    - {"language":"python","code":"#指定查询对象为恒瑞医药（600276.XSHG)的十大流通股东情况，返回条数为10条\nq=query(finance.STK_SHAREHOLDER_FLOATING_TOP10).filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code=='600276.XSHG',finance.STK_SHAREHOLDER_FLOATING_TOP10.pub_date>'2015-01-01').limit(10)\ndf=finance.run_query(q)\nprint(df)\n\n       id  company_id  company_name         code    end_date    pub_date  \\\n0  585806   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n1  585807   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n2  585808   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n3  585809   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n4  585810   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n5  585811   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n6  585812   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n7  585813   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n8  585814   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n9  585815   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n\n   change_reason_id change_reason  shareholder_rank  shareholder_id  \\\n0            306019          定期报告                 1       100008682   \n1            306019          定期报告                 2       100097529   \n2            306019          定期报告                 3       100008678   \n3            306019          定期报告                 4       100014895   \n4            306019          定期报告                 5       100008257   \n5            306019          定期报告                 6       100011907   \n6            306019          定期报告                 7       120160219   \n7            306019          定期报告                 8       120163402   \n8            306019          定期报告                 9       120050009   \n9            306019          定期报告                10       100000383   \n\n                    shareholder_name shareholder_name_en  \\\n0                       江苏恒瑞医药集团有限公司                None   \n1                         西藏达远投资有限公司                None   \n2                      连云港恒创医药科技有限公司                None   \n3                         中国医药工业有限公司                None   \n4                         江苏金海投资有限公司                None   \n5                         香港中央结算有限公司                None   \n6  中国农业银行股份有限公司-国泰国证医药卫生行业指数分级证券投资基金                None   \n7         兴业银行股份有限公司-兴全趋势投资混合型证券投资基金                None   \n8               交通银行-博时新兴成长股票型证券投资基金                None   \n9   新华人寿保险股份有限公司-分红-团体分红-018L-FH001沪                None   \n\n   shareholder_class_id shareholder_class  share_number  share_ratio  \\\n0                307099              其他机构   332523790.0       22.109   \n1                307099              其他机构   229034683.0       15.228   \n2                307099              其他机构   102094053.0        6.788   \n3                307099              其他机构    70203316.0        4.668   \n4                307099              其他机构    50367370.0        3.349   \n5                307099              其他机构    17207872.0        1.144   \n6                307003            证券投资基金    15161505.0        1.008   \n7                307003            证券投资基金    10299800.0        0.685   \n8                307003            证券投资基金     9929500.0        0.660   \n9                307014            保险投资组合     9296487.0        0.618   \n\n   sharesnature_id sharesnature  \n0           308007         流通A股  \n1           308007         流通A股  \n2           308007         流通A股  \n3           308007         流通A股  \n4           308007         流通A股  \n5           308007         流通A股  \n6           308007         流通A股  \n7           308007         流通A股  \n8           308007         流通A股  \n9           308007         流通A股"}
+  blockquotes: []
+  mainContent:
+    - {"type":"heading","level":3,"content":"十大流通股东"}
+    - {"type":"list","listType":"ul","items":["历史范围：2005年至今；更新时间：交易日24:00更新"]}
+    - {"type":"codeblock","language":"python","content":"from jqdatasdk import finance\nfinance.run_query(query(finance.STK_SHAREHOLDER_FLOATING_TOP10).filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code).limit(n))"}
+    - {"type":"paragraph","content":"描述"}
+    - {"type":"list","listType":"ul","items":["获取上市公司前十大流通股东的持股情况，包括持股数量，所持股份性质，变动原因等。"]}
+    - {"type":"list","listType":"ul","items":["返回一个 dataframe，每一行对应数据表中的一条数据， 列索引是您所查询的字段名称"]}
+    - {"type":"list","listType":"ul","items":["为了防止返回数据量过大, 我们每次最多返回5000行","不能进行连表查询，即同时查询多张表的数据","新增 run_offset_query方法，支持分批从数据库提取超5000条的数据，上限20万条","新增 get_table_info(table) 方法，支持查询数据表中的字段信息"]}
+    - {"type":"list","listType":"ul","items":["query函数的更多用法详见：query简易教程"]}
+    - {"type":"paragraph","content":"公司十大流通股东参数"}
+    - {"type":"list","listType":"ul","items":["query(finance.STK_SHAREHOLDER_FLOATING_TOP10)：表示从finance.STK_SHAREHOLDER_FLOATING_TOP10这张表中查询上市公司前十大流通股东的持股情况，还可以指定所要查询的字段名，格式如下：query(库名.表名.字段名1，库名.表名.字段名2），多个字段用英文逗号进行分隔；query函数的更多用法详见：[query简易教程]","finance.STK_SHAREHOLDER_FLOATING_TOP10：代表上市公司十大流通股东表，收录了上市公司前十大流通股东的持股情况，包括持股数量，所持股份性质，变动原因等。表结构和字段信息如下：","filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code)：指定筛选条件，通过finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code可以指定你想要查询的股票代码；除此之外，还可以对表中其他字段指定筛选条件，如finance.STK_SHAREHOLDER_FLOATING_TOP10.pub_date>='2015-01-01'，表示筛选公告日期大于等于2015年1月1日之后的数据；多个筛选条件用英文逗号分隔。","limit(n)：限制返回的数据条数，n指定返回条数。"]}
+    - {"type":"heading","level":5,"content":"表字段信息"}
+    - {"type":"table","headers":["字段名称","中文名称","字段类型","备注/示例"],"rows":[["company_id","公司ID","int",""],["company_name","公司名称","varchar(100)",""],["code","股票代码","varchar(12)",""],["end_date","截止日期","date",""],["pub_date","公告日期","date",""],["change_reason_id","变动原因编码","int",""],["change_reason","变动原因","varchar(120)",""],["shareholder_rank","股东名次","int",""],["shareholder_id","股东ID","int",""],["shareholder_name","股东名称","varchar(200)",""],["shareholder_name_en","股东名称（英文）","varchar(150)",""],["shareholder_class_id","股东类别编码","int",""],["shareholder_class","股东类别","varchar(150)",""],["share_number","持股数量","int","股"],["share_ratio","持股比例","decimal(10,4)","%"],["sharesnature_id","股份性质编码","int",""],["sharesnature","股份性质","varchar(120)",""]]}
+    - {"type":"heading","level":5,"content":"示例"}
+    - {"type":"codeblock","language":"python","content":"#指定查询对象为恒瑞医药（600276.XSHG)的十大流通股东情况，返回条数为10条\nq=query(finance.STK_SHAREHOLDER_FLOATING_TOP10).filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code=='600276.XSHG',finance.STK_SHAREHOLDER_FLOATING_TOP10.pub_date>'2015-01-01').limit(10)\ndf=finance.run_query(q)\nprint(df)\n\n       id  company_id  company_name         code    end_date    pub_date  \\\n0  585806   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n1  585807   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n2  585808   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n3  585809   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n4  585810   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n5  585811   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n6  585812   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n7  585813   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n8  585814   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n9  585815   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   \n\n   change_reason_id change_reason  shareholder_rank  shareholder_id  \\\n0            306019          定期报告                 1       100008682   \n1            306019          定期报告                 2       100097529   \n2            306019          定期报告                 3       100008678   \n3            306019          定期报告                 4       100014895   \n4            306019          定期报告                 5       100008257   \n5            306019          定期报告                 6       100011907   \n6            306019          定期报告                 7       120160219   \n7            306019          定期报告                 8       120163402   \n8            306019          定期报告                 9       120050009   \n9            306019          定期报告                10       100000383   \n\n                    shareholder_name shareholder_name_en  \\\n0                       江苏恒瑞医药集团有限公司                None   \n1                         西藏达远投资有限公司                None   \n2                      连云港恒创医药科技有限公司                None   \n3                         中国医药工业有限公司                None   \n4                         江苏金海投资有限公司                None   \n5                         香港中央结算有限公司                None   \n6  中国农业银行股份有限公司-国泰国证医药卫生行业指数分级证券投资基金                None   \n7         兴业银行股份有限公司-兴全趋势投资混合型证券投资基金                None   \n8               交通银行-博时新兴成长股票型证券投资基金                None   \n9   新华人寿保险股份有限公司-分红-团体分红-018L-FH001沪                None   \n\n   shareholder_class_id shareholder_class  share_number  share_ratio  \\\n0                307099              其他机构   332523790.0       22.109   \n1                307099              其他机构   229034683.0       15.228   \n2                307099              其他机构   102094053.0        6.788   \n3                307099              其他机构    70203316.0        4.668   \n4                307099              其他机构    50367370.0        3.349   \n5                307099              其他机构    17207872.0        1.144   \n6                307003            证券投资基金    15161505.0        1.008   \n7                307003            证券投资基金    10299800.0        0.685   \n8                307003            证券投资基金     9929500.0        0.660   \n9                307014            保险投资组合     9296487.0        0.618   \n\n   sharesnature_id sharesnature  \n0           308007         流通A股  \n1           308007         流通A股  \n2           308007         流通A股  \n3           308007         流通A股  \n4           308007         流通A股  \n5           308007         流通A股  \n6           308007         流通A股  \n7           308007         流通A股  \n8           308007         流通A股  \n9           308007         流通A股"}
+  suggestedFilename: "doc_JQDatadoc_10012_overview_十大流通股东"
+  pageKind: "doc"
+  pageName: "JQDatadoc"
+  pageId: "10012"
+  sectionHash: ""
+  sourceTitle: "JQData使用说明"
+  treeRootTitle: ""
+---
+
+# 十大流通股东
+
+## 源URL
+
+https://www.joinquant.com/help/api/doc?name=JQDatadoc&id=10012
+
+## 描述
+
+描述
+
+## 内容
+
+#### 十大流通股东
+
+- 历史范围：2005年至今；更新时间：交易日24:00更新
+
+```python
+from jqdatasdk import finance
+finance.run_query(query(finance.STK_SHAREHOLDER_FLOATING_TOP10).filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code).limit(n))
+```
+
+描述
+
+- 获取上市公司前十大流通股东的持股情况，包括持股数量，所持股份性质，变动原因等。
+
+- 返回一个 dataframe，每一行对应数据表中的一条数据， 列索引是您所查询的字段名称
+
+- 为了防止返回数据量过大, 我们每次最多返回5000行
+- 不能进行连表查询，即同时查询多张表的数据
+- 新增 run_offset_query方法，支持分批从数据库提取超5000条的数据，上限20万条
+- 新增 get_table_info(table) 方法，支持查询数据表中的字段信息
+
+- query函数的更多用法详见：query简易教程
+
+公司十大流通股东参数
+
+- query(finance.STK_SHAREHOLDER_FLOATING_TOP10)：表示从finance.STK_SHAREHOLDER_FLOATING_TOP10这张表中查询上市公司前十大流通股东的持股情况，还可以指定所要查询的字段名，格式如下：query(库名.表名.字段名1，库名.表名.字段名2），多个字段用英文逗号进行分隔；query函数的更多用法详见：[query简易教程]
+- finance.STK_SHAREHOLDER_FLOATING_TOP10：代表上市公司十大流通股东表，收录了上市公司前十大流通股东的持股情况，包括持股数量，所持股份性质，变动原因等。表结构和字段信息如下：
+- filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code)：指定筛选条件，通过finance.STK_SHAREHOLDER_FLOATING_TOP10.code==code可以指定你想要查询的股票代码；除此之外，还可以对表中其他字段指定筛选条件，如finance.STK_SHAREHOLDER_FLOATING_TOP10.pub_date>='2015-01-01'，表示筛选公告日期大于等于2015年1月1日之后的数据；多个筛选条件用英文逗号分隔。
+- limit(n)：限制返回的数据条数，n指定返回条数。
+
+###### 表字段信息
+
+| 字段名称 | 中文名称 | 字段类型 | 备注/示例 |
+| --- | --- | --- | --- |
+| company_id | 公司ID | int |  |
+| company_name | 公司名称 | varchar(100) |  |
+| code | 股票代码 | varchar(12) |  |
+| end_date | 截止日期 | date |  |
+| pub_date | 公告日期 | date |  |
+| change_reason_id | 变动原因编码 | int |  |
+| change_reason | 变动原因 | varchar(120) |  |
+| shareholder_rank | 股东名次 | int |  |
+| shareholder_id | 股东ID | int |  |
+| shareholder_name | 股东名称 | varchar(200) |  |
+| shareholder_name_en | 股东名称（英文） | varchar(150) |  |
+| shareholder_class_id | 股东类别编码 | int |  |
+| shareholder_class | 股东类别 | varchar(150) |  |
+| share_number | 持股数量 | int | 股 |
+| share_ratio | 持股比例 | decimal(10,4) | % |
+| sharesnature_id | 股份性质编码 | int |  |
+| sharesnature | 股份性质 | varchar(120) |  |
+
+###### 示例
+
+```python
+#指定查询对象为恒瑞医药（600276.XSHG)的十大流通股东情况，返回条数为10条
+q=query(finance.STK_SHAREHOLDER_FLOATING_TOP10).filter(finance.STK_SHAREHOLDER_FLOATING_TOP10.code=='600276.XSHG',finance.STK_SHAREHOLDER_FLOATING_TOP10.pub_date>'2015-01-01').limit(10)
+df=finance.run_query(q)
+print(df)
+
+       id  company_id  company_name         code    end_date    pub_date  \
+0  585806   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+1  585807   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+2  585808   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+3  585809   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+4  585810   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+5  585811   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+6  585812   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+7  585813   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+8  585814   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+9  585815   420600276  江苏恒瑞医药股份有限公司  600276.XSHG  2014-12-31  2015-03-31   
+
+   change_reason_id change_reason  shareholder_rank  shareholder_id  \
+0            306019          定期报告                 1       100008682   
+1            306019          定期报告                 2       100097529   
+2            306019          定期报告                 3       100008678   
+3            306019          定期报告                 4       100014895   
+4            306019          定期报告                 5       100008257   
+5            306019          定期报告                 6       100011907   
+6            306019          定期报告                 7       120160219   
+7            306019          定期报告                 8       120163402   
+8            306019          定期报告                 9       120050009   
+9            306019          定期报告                10       100000383   
+
+                    shareholder_name shareholder_name_en  \
+0                       江苏恒瑞医药集团有限公司                None   
+1                         西藏达远投资有限公司                None   
+2                      连云港恒创医药科技有限公司                None   
+3                         中国医药工业有限公司                None   
+4                         江苏金海投资有限公司                None   
+5                         香港中央结算有限公司                None   
+6  中国农业银行股份有限公司-国泰国证医药卫生行业指数分级证券投资基金                None   
+7         兴业银行股份有限公司-兴全趋势投资混合型证券投资基金                None   
+8               交通银行-博时新兴成长股票型证券投资基金                None   
+9   新华人寿保险股份有限公司-分红-团体分红-018L-FH001沪                None   
+
+   shareholder_class_id shareholder_class  share_number  share_ratio  \
+0                307099              其他机构   332523790.0       22.109   
+1                307099              其他机构   229034683.0       15.228   
+2                307099              其他机构   102094053.0        6.788   
+3                307099              其他机构    70203316.0        4.668   
+4                307099              其他机构    50367370.0        3.349   
+5                307099              其他机构    17207872.0        1.144   
+6                307003            证券投资基金    15161505.0        1.008   
+7                307003            证券投资基金    10299800.0        0.685   
+8                307003            证券投资基金     9929500.0        0.660   
+9                307014            保险投资组合     9296487.0        0.618   
+
+   sharesnature_id sharesnature  
+0           308007         流通A股  
+1           308007         流通A股  
+2           308007         流通A股  
+3           308007         流通A股  
+4           308007         流通A股  
+5           308007         流通A股  
+6           308007         流通A股  
+7           308007         流通A股  
+8           308007         流通A股  
+9           308007         流通A股
+```
