@@ -21,31 +21,16 @@ import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
 import sys
-import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../"))
-
-import importlib.util
-
-
-def _load_ms_module(name, path):
-    spec = importlib.util.spec_from_file_location(name, path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-_base = os.path.join(os.path.dirname(__file__), "../../../../jk2bt/analysis/signals")
-_ms_mod = _load_ms_module("sentiment", os.path.join(_base, "sentiment.py"))
-
-compute_crowding_ratio = _ms_mod.compute_crowding_ratio
-compute_gisi = _ms_mod.compute_gisi
-compute_fed_model = _ms_mod.compute_fed_model
-compute_graham_index = _ms_mod.compute_graham_index
-compute_below_net_ratio = _ms_mod.compute_below_net_ratio
-compute_new_high_ratio = _ms_mod.compute_new_high_ratio
-get_all_sentiment_indicators = _ms_mod.get_all_sentiment_indicators
+from jk2bt.analysis.signals.sentiment import (
+    compute_crowding_ratio,
+    compute_gisi,
+    compute_fed_model,
+    compute_graham_index,
+    compute_below_net_ratio,
+    compute_new_high_ratio,
+    get_all_sentiment_indicators,
+)
 
 
 # =====================================================================
@@ -214,8 +199,6 @@ class TestComputeCrowdingRatio:
 
     def test_crowding_ratio_import_error(self):
         """测试当data_access模块不可用时的行为（跳过，因为模块已安装）。"""
-        # 由于jk2bt.data_access已安装，此测试验证正常路径
-        # 实际import错误只在未安装时发生
         pytest.skip("jk2bt.data_access is installed")
 
     @patch("jk2bt.data.sources.get_adapter")
@@ -426,7 +409,7 @@ class TestComputeFedModel:
 class TestComputeGrahamIndex:
     """测试格雷厄姆指数计算。"""
 
-    @patch("market_sentiment.compute_fed_model")
+    @patch("jk2bt.analysis.signals.sentiment.compute_fed_model")
     def test_graham_index_normal(self, mock_fed_model):
         """验证格雷厄姆指数基本计算。"""
         mock_fed_model.return_value = {
@@ -443,7 +426,7 @@ class TestComputeGrahamIndex:
         expected = (1.0 / 15.0) / 0.025
         np.testing.assert_almost_equal(result["graham_index"], expected, decimal=6)
 
-    @patch("market_sentiment.compute_fed_model")
+    @patch("jk2bt.analysis.signals.sentiment.compute_fed_model")
     def test_graham_index_undervalued(self, mock_fed_model):
         """测试股票低估场景（指数>1.5）。"""
         mock_fed_model.return_value = {
@@ -458,7 +441,7 @@ class TestComputeGrahamIndex:
         assert result["graham_index"] > 1.5
         assert "股票低估" in result["description"]
 
-    @patch("market_sentiment.compute_fed_model")
+    @patch("jk2bt.analysis.signals.sentiment.compute_fed_model")
     def test_graham_index_reasonable(self, mock_fed_model):
         """测试股票合理场景（1<指数<1.5）。"""
         mock_fed_model.return_value = {
@@ -473,7 +456,7 @@ class TestComputeGrahamIndex:
         assert 1 < result["graham_index"] < 1.5
         assert "股票合理" in result["description"]
 
-    @patch("market_sentiment.compute_fed_model")
+    @patch("jk2bt.analysis.signals.sentiment.compute_fed_model")
     def test_graham_index_overvalued(self, mock_fed_model):
         """测试股票高估场景（指数<1）。"""
         mock_fed_model.return_value = {
@@ -488,7 +471,7 @@ class TestComputeGrahamIndex:
         assert result["graham_index"] < 1
         assert "股票高估" in result["description"]
 
-    @patch("market_sentiment.compute_fed_model")
+    @patch("jk2bt.analysis.signals.sentiment.compute_fed_model")
     def test_graham_index_fed_failed(self, mock_fed_model):
         """测试FED模型失败时返回默认值。"""
         mock_fed_model.return_value = {
@@ -761,11 +744,11 @@ class TestComputeNewHighRatio:
 class TestGetAllSentimentIndicators:
     """测试获取所有情绪指标。"""
 
-    @patch("market_sentiment.compute_new_high_ratio")
-    @patch("market_sentiment.compute_below_net_ratio")
-    @patch("market_sentiment.compute_graham_index")
-    @patch("market_sentiment.compute_fed_model")
-    @patch("market_sentiment.compute_crowding_ratio")
+    @patch("jk2bt.analysis.signals.sentiment.compute_new_high_ratio")
+    @patch("jk2bt.analysis.signals.sentiment.compute_below_net_ratio")
+    @patch("jk2bt.analysis.signals.sentiment.compute_graham_index")
+    @patch("jk2bt.analysis.signals.sentiment.compute_fed_model")
+    @patch("jk2bt.analysis.signals.sentiment.compute_crowding_ratio")
     def test_get_all_indicators(
         self,
         mock_crowding,
@@ -805,11 +788,11 @@ class TestGetAllSentimentIndicators:
         assert "below_net_ratio" in result
         assert "new_high_ratio" in result
 
-    @patch("market_sentiment.compute_new_high_ratio")
-    @patch("market_sentiment.compute_below_net_ratio")
-    @patch("market_sentiment.compute_graham_index")
-    @patch("market_sentiment.compute_fed_model")
-    @patch("market_sentiment.compute_crowding_ratio")
+    @patch("jk2bt.analysis.signals.sentiment.compute_new_high_ratio")
+    @patch("jk2bt.analysis.signals.sentiment.compute_below_net_ratio")
+    @patch("jk2bt.analysis.signals.sentiment.compute_graham_index")
+    @patch("jk2bt.analysis.signals.sentiment.compute_fed_model")
+    @patch("jk2bt.analysis.signals.sentiment.compute_crowding_ratio")
     def test_get_all_indicators_passes_date(
         self,
         mock_crowding,
@@ -858,10 +841,10 @@ class TestComputeGISI:
     """测试 GSISI 投资者情绪指数计算。"""
 
     def test_gisi_import_error(self):
-        """测试导入industry模块失败时抛出异常。"""
-        with patch.dict(sys.modules, {"market_data.industry": None}):
-            with pytest.raises((ImportError, ModuleNotFoundError)):
-                compute_gisi()
+        """测试导入industry模块失败时返回空DataFrame。"""
+        with patch.dict(sys.modules, {"jk2bt.data.market.industry": None}):
+            result = compute_gisi()
+            assert result.empty
 
     @patch("jk2bt.data.sources.get_adapter")
     def test_gisi_empty_index_data(self, mock_get_adapter):
@@ -873,7 +856,7 @@ class TestComputeGISI:
         mock_industry = MagicMock()
         mock_industry.SW_LEVEL1_CODES = {"金融": "801100"}
         mock_industry.get_industry_daily.return_value = None
-        with patch.dict(sys.modules, {"market_data.industry": mock_industry}):
+        with patch.dict(sys.modules, {"jk2bt.data.market.industry": mock_industry}):
             result = compute_gisi()
 
         assert result.empty
@@ -894,7 +877,7 @@ class TestComputeGISI:
         mock_industry = MagicMock()
         mock_industry.SW_LEVEL1_CODES = {"金融": "801100"}
         mock_industry.get_industry_daily.return_value = None
-        with patch.dict(sys.modules, {"market_data.industry": mock_industry}):
+        with patch.dict(sys.modules, {"jk2bt.data.market.industry": mock_industry}):
             result = compute_gisi()
 
         assert result.empty

@@ -47,31 +47,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-# 导入自定义异常类
-try:
-    from jk2bt.engine.exceptions import CacheError, DatabaseError, ValidationError
-except ImportError:
-    # 兼容无 exceptions 模块的情况
-    class CacheError(Exception):
-        """缓存错误"""
-
-        def __init__(self, message: str, context: dict = None):
-            self.message = message
-            self.context = context or {}
-            super().__init__(self.message)
-
-    class DatabaseError(Exception):
-        """数据库错误"""
-
-        def __init__(self, message: str, context: dict = None):
-            self.message = message
-            self.context = context or {}
-            super().__init__(self.message)
-
-    class ValidationError(Exception):
-        """数据验证错误"""
-
-        pass
+from jk2bt.utils.exceptions import CacheError, DatabaseError, ValidationError
 
 
 # 导入统一配置

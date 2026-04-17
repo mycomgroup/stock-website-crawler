@@ -25,7 +25,7 @@ try:
         normalize_datetime,
         COLUMN_MAP_COMMON,
     )
-    from jk2bt.utils.data_source_backup import (
+    from jk2bt.data.sources.data_source_backup import (
         get_stock_minute_with_fallback,
         fetch_stock_minute_eastmoney,
     )

@@ -21,21 +21,8 @@ fundamentals.py 模块的单元测试。
 - 验证财务指标计算逻辑
 """
 
-import sys
-import os
-from pathlib import Path
-from unittest.mock import patch, MagicMock
 import warnings
-
-# 设置路径
-project_root = Path(__file__).parent.parent.parent.parent.parent
-jk2bt_path = project_root / "jk2bt"
-
-# 添加项目路径
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-if str(jk2bt_path) not in sys.path:
-    sys.path.insert(0, str(jk2bt_path))
+from unittest.mock import patch
 
 warnings.filterwarnings("ignore")
 
@@ -43,68 +30,21 @@ import pytest
 import pandas as pd
 import numpy as np
 
-# 首先导入 base 模块（避免相对导入问题）
-# 需要预先处理 date_utils 导入问题
-try:
-    # 尝试导入 utils.date_utils
-    utils_path = jk2bt_path / "utils"
-    if str(utils_path) not in sys.path:
-        sys.path.insert(0, str(utils_path))
-except Exception:
-    pass
-
-# 导入 jk2bt.factors.base 模块
-from jk2bt.analysis.factors import base as fundamentals_base
-
-# 获取 safe_divide 和 global_factor_registry
-safe_divide = fundamentals_base.safe_divide
-global_factor_registry = fundamentals_base.global_factor_registry
-
-# 导入 jk2bt.analysis.factors.fundamentals 模块（使用 base 中已定义的函数）
-# 注意：由于 jk2bt/__init__.py 有导入错误，我们需要绕过它
-# 直接导入 factors 模块下的子模块
-import importlib
-
-# 手动导入 factors 模块的 __init__.py
-_factors_init_path = str(jk2bt_path / "analysis" / "factors" / "__init__.py")
-_factors_spec = importlib.util.spec_from_file_location(
-    "jk2bt_analysis_factors_init", _factors_init_path
+from jk2bt.analysis.factors.base import safe_divide, global_factor_registry
+from jk2bt.analysis.factors.fundamentals import (
+    _normalize_income,
+    _normalize_balance,
+    _get_income_statement,
+    _get_balance_sheet,
+    compute_gross_income_ratio,
+    compute_net_profit_ratio,
+    compute_roe,
+    compute_roa_ttm,
+    compute_rnoa_ttm,
+    compute_inventory_turnover,
+    compute_account_receivable_turnover,
+    compute_total_asset_turnover,
 )
-_factors_init = importlib.util.module_from_spec(_factors_spec)
-
-# 注册 jk2bt.factors 到 sys.modules
-sys.modules["jk2bt.factors"] = _factors_init
-sys.modules["jk2bt.factors.base"] = fundamentals_base
-
-# 加载 fundamentals 模块
-_fundamentals_path = str(jk2bt_path / "analysis" / "factors" / "fundamentals.py")
-_fundamentals_spec = importlib.util.spec_from_file_location(
-    "jk2bt.analysis.factors.fundamentals", _fundamentals_path
-)
-_fundamentals_module = importlib.util.module_from_spec(_fundamentals_spec)
-sys.modules["jk2bt.analysis.factors.fundamentals"] = _fundamentals_module
-_fundamentals_spec.loader.exec_module(_fundamentals_module)
-
-# 获取需要测试的函数
-_normalize_income = _fundamentals_module._normalize_income
-_normalize_balance = _fundamentals_module._normalize_balance
-_compute_gross_income_ratio = _fundamentals_module.compute_gross_income_ratio
-_compute_net_profit_ratio = _fundamentals_module.compute_net_profit_ratio
-_compute_roe = _fundamentals_module.compute_roe
-_compute_roa_ttm = _fundamentals_module.compute_roa_ttm
-_compute_rnoa_ttm = _fundamentals_module.compute_rnoa_ttm
-_compute_inventory_turnover = _fundamentals_module.compute_inventory_turnover
-_compute_account_receivable_turnover = (
-    _fundamentals_module.compute_account_receivable_turnover
-)
-_compute_total_asset_turnover = _fundamentals_module.compute_total_asset_turnover
-_get_income_statement = _fundamentals_module._get_income_statement
-_get_balance_sheet = _fundamentals_module._get_balance_sheet
-
-
-# =====================================================================
-# 测试 fixtures: 模拟财务数据
-# =====================================================================
 
 
 @pytest.fixture
@@ -118,7 +58,6 @@ def mock_income_data():
     """
     dates = pd.to_datetime(["2023-03-31", "2023-06-30", "2023-09-30", "2023-12-31"])
 
-    # 模拟盈利公司数据 (单位: 万元)
     data = {
         "报告期": dates,
         "营业总收入": [1000, 1100, 1200, 1300],
@@ -194,7 +133,7 @@ def mock_balance_zero_equity():
         "报告期": dates,
         "资产总计": [100, 100, 100, 100],
         "负债合计": [100, 100, 100, 100],
-        "股东权益合计": [0, 0, 0, 0],  # 零权益
+        "股东权益合计": [0, 0, 0, 0],
         "流动资产合计": [50, 50, 50, 50],
         "流动负债合计": [50, 50, 50, 50],
     }
@@ -219,14 +158,8 @@ def mock_missing_fields_data():
     data = {
         "报告期": dates,
         "营业收入": [1000, 1100],
-        # 缺少营业成本、净利润等关键字段
     }
     return pd.DataFrame(data)
-
-
-# =====================================================================
-# 测试: 数据标准化函数
-# =====================================================================
 
 
 class TestNormalizeIncome:
@@ -242,17 +175,14 @@ class TestNormalizeIncome:
         assert "operating_cost" in result.columns
         assert "net_profit" in result.columns
 
-        # 验证数值转换正确
         assert result["net_profit"].iloc[-1] == 210
         assert result["operating_revenue"].iloc[-1] == 1200
 
     def test_normalize_sorts_by_date(self, mock_income_data):
         """测试数据按日期排序。"""
-        # 反向输入数据
         reversed_data = mock_income_data.iloc[::-1].copy()
         result = _normalize_income(reversed_data)
 
-        # 结果应该是按日期升序排列
         dates = result["date"].tolist()
         assert dates == sorted(dates)
 
@@ -272,7 +202,6 @@ class TestNormalizeIncome:
         )
         result = _normalize_income(data)
 
-        # 没有日期列应该返回空 DataFrame
         assert result.empty
 
     def test_normalize_handles_nan_values(self):
@@ -287,7 +216,6 @@ class TestNormalizeIncome:
         result = _normalize_income(data)
 
         assert not result.empty
-        # NaN 应该被保留
         assert np.isnan(result["operating_revenue"].iloc[1])
 
 
@@ -306,7 +234,6 @@ class TestNormalizeBalance:
         assert "current_assets" in result.columns
         assert "current_liabilities" in result.columns
 
-        # 验证数值
         assert result["total_assets"].iloc[-1] == 5800
         assert result["total_equity"].iloc[-1] == 3400
 
@@ -318,11 +245,10 @@ class TestNormalizeBalance:
 
     def test_normalize_handles_different_field_names(self):
         """测试不同字段名映射。"""
-        # 使用不同的字段名
         data = pd.DataFrame(
             {
                 "报告期": pd.to_datetime(["2023-12-31"]),
-                "所有者权益合计": [1000],  # 另一种表达方式
+                "所有者权益合计": [1000],
                 "资产总计": [5000],
             }
         )
@@ -330,11 +256,6 @@ class TestNormalizeBalance:
 
         assert "total_equity" in result.columns
         assert result["total_equity"].iloc[0] == 1000
-
-
-# =====================================================================
-# 测试: 财务指标计算函数
-# =====================================================================
 
 
 class TestComputeGrossIncomeRatio:
@@ -348,15 +269,14 @@ class TestComputeGrossIncomeRatio:
     @pytest.mark.xfail(reason="源码 bug: Series 使用 or 操作符导致 ValueError")
     def test_gross_margin_positive(self, mock_income_data):
         """测试盈利情况下的毛利率计算。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            result = _compute_gross_income_ratio(
+            result = compute_gross_income_ratio(
                 "sh600519", end_date="2023-12-31", count=1
             )
 
-            # 毛利率 = (收入 - 成本) / 收入
-            # 最后一季度: (1200 - 750) / 1200 = 0.375
             expected = (1200 - 750) / 1200
 
             assert isinstance(result, float)
@@ -365,41 +285,37 @@ class TestComputeGrossIncomeRatio:
     @pytest.mark.xfail(reason="源码 bug: Series 使用 or 操作符导致 ValueError")
     def test_gross_margin_series(self, mock_income_data):
         """测试返回 Series 类型。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            result = _compute_gross_income_ratio("sh600519", count=4)
+            result = compute_gross_income_ratio("sh600519", count=4)
 
             assert isinstance(result, pd.Series)
             assert len(result) == 4
 
-            # 验证各季度毛利率
-            # Q1: (900-600)/900 = 0.333
-            # Q2: (1000-650)/1000 = 0.35
-            # Q3: (1100-700)/1100 = 0.364
-            # Q4: (1200-750)/1200 = 0.375
             expected_values = [0.333, 0.35, 0.364, 0.375]
             for i, expected in enumerate(expected_values):
                 assert abs(result.iloc[i] - expected) < 0.01
 
     def test_gross_margin_empty_data(self, mock_empty_data):
         """测试空数据返回 NaN。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_empty_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_empty_data,
         ):
-            result = _compute_gross_income_ratio("sh600519")
+            result = compute_gross_income_ratio("sh600519")
 
             assert np.isnan(result)
 
     @pytest.mark.xfail(reason="源码 bug: Series 使用 or 操作符导致 ValueError")
     def test_gross_margin_missing_fields(self, mock_missing_fields_data):
         """测试缺少必要字段返回 NaN。"""
-        with patch.object(
-            _fundamentals_module,
-            "_get_income_statement",
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
             return_value=mock_missing_fields_data,
         ):
-            result = _compute_gross_income_ratio("sh600519")
+            result = compute_gross_income_ratio("sh600519")
 
             assert np.isnan(result)
 
@@ -409,16 +325,16 @@ class TestComputeGrossIncomeRatio:
         data = pd.DataFrame(
             {
                 "报告期": pd.to_datetime(["2023-12-31"]),
-                "营业收入": [0],  # 零收入
+                "营业收入": [0],
                 "营业成本": [100],
             }
         )
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=data,
         ):
-            result = _compute_gross_income_ratio("sh600519")
+            result = compute_gross_income_ratio("sh600519")
 
-            # 分母为零应该返回 NaN
             assert np.isnan(result)
 
 
@@ -427,15 +343,14 @@ class TestComputeNetProfitRatio:
 
     def test_net_profit_ratio_positive(self, mock_income_data):
         """测试盈利情况下的净利率。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            result = _compute_net_profit_ratio(
+            result = compute_net_profit_ratio(
                 "sh600519", end_date="2023-12-31", count=1
             )
 
-            # 净利率 = 净利润 / 营业收入
-            # 最后一季度: 210 / 1200 = 0.175
             expected = 210 / 1200
 
             assert isinstance(result, float)
@@ -443,38 +358,38 @@ class TestComputeNetProfitRatio:
 
     def test_net_profit_ratio_negative_profit(self, mock_income_data_negative):
         """测试亏损情况下的净利率。"""
-        with patch.object(
-            _fundamentals_module,
-            "_get_income_statement",
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
             return_value=mock_income_data_negative,
         ):
-            result = _compute_net_profit_ratio(
+            result = compute_net_profit_ratio(
                 "sh600519", end_date="2023-12-31", count=1
             )
 
-            # 最后一季度亏损: -50 / 600 = -0.0833
             expected = -50 / 600
 
             assert isinstance(result, float)
             assert abs(result - expected) < 0.001
-            assert result < 0  # 应该是负值
+            assert result < 0
 
     def test_net_profit_ratio_series(self, mock_income_data):
         """测试返回 Series。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            result = _compute_net_profit_ratio("sh600519", count=4)
+            result = compute_net_profit_ratio("sh600519", count=4)
 
             assert isinstance(result, pd.Series)
             assert len(result) == 4
 
     def test_net_profit_ratio_empty_data(self, mock_empty_data):
         """测试空数据返回 NaN。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_empty_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_empty_data,
         ):
-            result = _compute_net_profit_ratio("sh600519")
+            result = compute_net_profit_ratio("sh600519")
 
             assert np.isnan(result)
 
@@ -484,21 +399,16 @@ class TestComputeROE:
 
     def test_roe_calculation(self, mock_income_data, mock_balance_data):
         """测试 ROE 计算逻辑。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_roe("sh600519", end_date="2023-12-31", count=1)
+                result = compute_roe("sh600519", end_date="2023-12-31", count=1)
 
-                # ROE = 净利润 / 平均净资产
-                # 最后一季度净利润: 210
-                # 2023-12-31 权益: 3400, 上一期权益(2023-09-30): 3300
-                # 平均权益: (3400 + 3300) / 2 = 3350
-                # ROE = 210 / 3350 = 0.0627
                 avg_equity = (3400 + 3300) / 2
                 expected = 210 / avg_equity
 
@@ -508,49 +418,44 @@ class TestComputeROE:
     @pytest.mark.xfail(reason="源码 bug: 平均权益为零时的 NaN 处理问题")
     def test_roe_zero_equity(self, mock_income_data, mock_balance_zero_equity):
         """测试零权益情况下返回 NaN。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_zero_equity,
             ):
-                result = _compute_roe("sh600519")
+                result = compute_roe("sh600519")
 
-                # 分母为零应该返回 NaN
                 assert np.isnan(result)
 
     def test_roe_negative_profit(self, mock_income_data_negative, mock_balance_data):
         """测试亏损情况下的 ROE。"""
-        with patch.object(
-            _fundamentals_module,
-            "_get_income_statement",
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
             return_value=mock_income_data_negative,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_roe("sh600519", end_date="2023-12-31", count=1)
+                result = compute_roe("sh600519", end_date="2023-12-31", count=1)
 
-                # 亏损时 ROE 应该为负值
                 assert result < 0
 
     def test_roe_series(self, mock_income_data, mock_balance_data):
         """测试返回 Series。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_roe("sh600519", count=3)
+                result = compute_roe("sh600519", count=3)
 
-                # 需要4期数据才能计算3期ROE(需要上一期权益)
                 assert isinstance(result, pd.Series)
 
 
@@ -559,24 +464,20 @@ class TestComputeROATtm:
 
     def test_roa_ttm_calculation(self, mock_income_data, mock_balance_data):
         """测试 ROA TTM 计算逻辑。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_roa_ttm("sh600519", end_date="2023-12-31", count=1)
+                result = compute_roa_ttm("sh600519", end_date="2023-12-31", count=1)
 
-                # ROA TTM = TTM 净利润 / 平均总资产
-                # TTM 净利润 = 最近4期净利润之和 = 150 + 170 + 190 + 210 = 720
-                # 平均总资产需要用期末和期初计算
                 assert isinstance(result, float)
 
     def test_roa_ttm_insufficient_data(self):
         """测试数据不足时返回 NaN。"""
-        # 只提供2期数据，不足以计算TTM
         income_data = pd.DataFrame(
             {
                 "报告期": pd.to_datetime(["2023-09-30", "2023-12-31"]),
@@ -591,15 +492,16 @@ class TestComputeROATtm:
             }
         )
 
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=income_data,
         ):
-            with patch.object(
-                _fundamentals_module, "_get_balance_sheet", return_value=balance_data
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
+                return_value=balance_data,
             ):
-                result = _compute_roa_ttm("sh600519")
+                result = compute_roa_ttm("sh600519")
 
-                # 数据不足4期应该返回 NaN
                 assert np.isnan(result)
 
 
@@ -608,17 +510,16 @@ class TestComputeRnoaTtm:
 
     def test_rnoa_ttm_returns_value(self, mock_income_data, mock_balance_data):
         """测试 RNOA TTM 返回有效值。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_rnoa_ttm("sh600519", end_date="2023-12-31", count=1)
+                result = compute_rnoa_ttm("sh600519", end_date="2023-12-31", count=1)
 
-                # RNOA 使用简化计算，应该返回一个数值
                 assert isinstance(result, float)
 
     def test_rnoa_ttm_insufficient_data(self):
@@ -637,13 +538,15 @@ class TestComputeRnoaTtm:
             }
         )
 
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=income_data,
         ):
-            with patch.object(
-                _fundamentals_module, "_get_balance_sheet", return_value=balance_data
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
+                return_value=balance_data,
             ):
-                result = _compute_rnoa_ttm("sh600519")
+                result = compute_rnoa_ttm("sh600519")
 
                 assert np.isnan(result)
 
@@ -657,22 +560,18 @@ class TestComputeInventoryTurnover:
     @pytest.mark.xfail(reason="源码 bug: 字符串索引与 datetime 比较失败")
     def test_inventory_turnover_calculation(self, mock_income_data, mock_balance_data):
         """测试存货周转率计算。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_inventory_turnover(
+                result = compute_inventory_turnover(
                     "sh600519", end_date="2023-12-31", count=1
                 )
 
-                # 存货周转率 = 营业成本 / 平均存货
-                # 最后一季度成本: 750
-                # 平均存货: (380 + 360) / 2 = 370
-                # 存货周转率 = 750 / 370 = 2.03
                 avg_inventory = (380 + 360) / 2
                 expected = 750 / avg_inventory
 
@@ -690,19 +589,20 @@ class TestComputeInventoryTurnover:
         balance_data = pd.DataFrame(
             {
                 "报告期": pd.to_datetime(["2022-12-31", "2023-12-31"]),
-                "存货": [0, 0],  # 零存货
+                "存货": [0, 0],
             }
         )
 
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=income_data,
         ):
-            with patch.object(
-                _fundamentals_module, "_get_balance_sheet", return_value=balance_data
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
+                return_value=balance_data,
             ):
-                result = _compute_inventory_turnover("sh600519")
+                result = compute_inventory_turnover("sh600519")
 
-                # 分母为零应该返回 NaN
                 assert np.isnan(result)
 
 
@@ -716,22 +616,18 @@ class TestComputeAccountReceivableTurnover:
     @pytest.mark.xfail(reason="源码 bug: Series 使用 or 操作符导致 ValueError")
     def test_ar_turnover_calculation(self, mock_income_data, mock_balance_data):
         """测试应收账款周转率计算。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_account_receivable_turnover(
+                result = compute_account_receivable_turnover(
                     "sh600519", end_date="2023-12-31", count=1
                 )
 
-                # 应收账款周转率 = 营业收入 / 平均应收账款
-                # 最后一季度收入: 1200
-                # 平均应收账款: (280 + 260) / 2 = 270
-                # 周转率 = 1200 / 270 = 4.44
                 avg_ar = (280 + 260) / 2
                 expected = 1200 / avg_ar
 
@@ -750,19 +646,20 @@ class TestComputeAccountReceivableTurnover:
         balance_data = pd.DataFrame(
             {
                 "报告期": pd.to_datetime(["2022-12-31", "2023-12-31"]),
-                "应收账款": [0, 0],  # 零应收账款
+                "应收账款": [0, 0],
             }
         )
 
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=income_data,
         ):
-            with patch.object(
-                _fundamentals_module, "_get_balance_sheet", return_value=balance_data
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
+                return_value=balance_data,
             ):
-                result = _compute_account_receivable_turnover("sh600519")
+                result = compute_account_receivable_turnover("sh600519")
 
-                # 分母为零应该返回 NaN
                 assert np.isnan(result)
 
 
@@ -776,22 +673,18 @@ class TestComputeTotalAssetTurnover:
     @pytest.mark.xfail(reason="源码 bug: Series 使用 or 操作符导致 ValueError")
     def test_asset_turnover_calculation(self, mock_income_data, mock_balance_data):
         """测试总资产周转率计算。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            with patch.object(
-                _fundamentals_module,
-                "_get_balance_sheet",
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
                 return_value=mock_balance_data,
             ):
-                result = _compute_total_asset_turnover(
+                result = compute_total_asset_turnover(
                     "sh600519", end_date="2023-12-31", count=1
                 )
 
-                # 总资产周转率 = 营业收入 / 平均总资产
-                # 最后一季度收入: 1200
-                # 平均总资产: (5800 + 5600) / 2 = 5700
-                # 周转率 = 1200 / 5700 = 0.21
                 avg_assets = (5800 + 5600) / 2
                 expected = 1200 / avg_assets
 
@@ -810,24 +703,21 @@ class TestComputeTotalAssetTurnover:
         balance_data = pd.DataFrame(
             {
                 "报告期": pd.to_datetime(["2022-12-31", "2023-12-31"]),
-                "资产总计": [0, 0],  # 总资产
+                "资产总计": [0, 0],
             }
         )
 
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=income_data,
         ):
-            with patch.object(
-                _fundamentals_module, "_get_balance_sheet", return_value=balance_data
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
+                return_value=balance_data,
             ):
-                result = _compute_total_asset_turnover("sh600519")
+                result = compute_total_asset_turnover("sh600519")
 
                 assert np.isnan(result)
-
-
-# =====================================================================
-# 测试: 边界条件和特殊情况
-# =====================================================================
 
 
 class TestEdgeCases:
@@ -835,26 +725,25 @@ class TestEdgeCases:
 
     def test_end_date_filter(self, mock_income_data):
         """测试 end_date 参数过滤功能。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            # 只取到 2023-09-30 的数据
-            result = _compute_net_profit_ratio(
+            result = compute_net_profit_ratio(
                 "sh600519", end_date="2023-09-30", count=1
             )
 
-            # 应该取 2023-09-30 的数据
             assert isinstance(result, float)
             expected = 190 / 1100
             assert abs(result - expected) < 0.001
 
     def test_count_parameter(self, mock_income_data):
         """测试 count 参数功能。"""
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=mock_income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=mock_income_data,
         ):
-            # 只取最近2期
-            result = _compute_net_profit_ratio("sh600519", count=2)
+            result = compute_net_profit_ratio("sh600519", count=2)
 
             assert isinstance(result, pd.Series)
             assert len(result) == 2
@@ -868,17 +757,17 @@ class TestEdgeCases:
                 "净利润": [210],
             }
         )
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=data,
         ):
-            result = _compute_net_profit_ratio("sh600519")
+            result = compute_net_profit_ratio("sh600519")
 
             assert isinstance(result, float)
             assert abs(result - 210 / 1200) < 0.001
 
     def test_no_common_dates(self):
         """测试利润表和资产负债表日期不匹配的情况。"""
-        # 利润表日期
         income_data = pd.DataFrame(
             {
                 "报告期": pd.to_datetime(["2023-03-31", "2023-06-30"]),
@@ -887,32 +776,25 @@ class TestEdgeCases:
             }
         )
 
-        # 资产负债表日期不同
         balance_data = pd.DataFrame(
             {
-                "报告期": pd.to_datetime(
-                    ["2022-12-31", "2022-09-30"]
-                ),  # 完全不同的日期
+                "报告期": pd.to_datetime(["2022-12-31", "2022-09-30"]),
                 "资产总计": [5000, 4800],
                 "股东权益合计": [3000, 2800],
             }
         )
 
-        with patch.object(
-            _fundamentals_module, "_get_income_statement", return_value=income_data
+        with patch(
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
+            return_value=income_data,
         ):
-            with patch.object(
-                _fundamentals_module, "_get_balance_sheet", return_value=balance_data
+            with patch(
+                "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
+                return_value=balance_data,
             ):
-                result = _compute_roe("sh600519")
+                result = compute_roe("sh600519")
 
-                # 没有共同日期应该返回 NaN
                 assert np.isnan(result)
-
-
-# =====================================================================
-# 测试: 因子注册
-# =====================================================================
 
 
 class TestFactorRegistration:
@@ -920,7 +802,6 @@ class TestFactorRegistration:
 
     def test_factors_registered(self):
         """测试因子是否已注册到全局注册表。"""
-        # 检查 fundamentals.py 中定义的因子是否已注册
         expected_factors = [
             "gross_income_ratio",
             "inventory_turnover",
@@ -939,7 +820,6 @@ class TestFactorRegistration:
 
     def test_factor_metadata(self):
         """测试因子元信息。"""
-        # 检查 ROE 因子的元信息
         metadata = global_factor_registry.get_metadata("roe")
 
         assert metadata is not None
@@ -953,11 +833,6 @@ class TestFactorRegistration:
 
         assert func is not None
         assert callable(func)
-
-
-# =====================================================================
-# 测试: safe_divide 辅助函数
-# =====================================================================
 
 
 class TestSafeDivide:
@@ -981,18 +856,13 @@ class TestSafeDivide:
         result = safe_divide(a, b)
 
         assert result.iloc[0] == 5.0
-        assert np.isnan(result.iloc[1])  # 分母为零
+        assert np.isnan(result.iloc[1])
         assert result.iloc[2] == 10.0
 
     def test_safe_divide_nan_denominator(self):
         """测试 NaN 分母。"""
         result = safe_divide(10, np.nan)
         assert np.isnan(result)
-
-
-# =====================================================================
-# 运行测试
-# =====================================================================
 
 
 def run_tests():

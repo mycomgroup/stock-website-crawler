@@ -6,7 +6,7 @@ test_data_source_backup.py
 import pytest
 import pandas as pd
 from unittest.mock import patch, MagicMock
-from jk2bt.utils.data_source_backup import (
+from jk2bt.data.sources.data_source_backup import (
     set_tushare_token,
     _get_tushare_token,
     DEFAULT_STOCK_DAILY_SOURCES,

@@ -31,7 +31,7 @@ except ImportError:
     )
 
 
-from jk2bt.engine.exceptions import (
+from jk2bt.utils.exceptions import (
     MarketDataError,
     NetworkError,
     ValidationError,

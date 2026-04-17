@@ -12,6 +12,16 @@ Uses standard logging.getLogger(__name__) and traditional typing imports.
 
 import logging
 from typing import Optional, Dict, List, Any, Tuple
+import sys
+import os
+
+# 添加本地 akshare 项目路径到 sys.path 的最前面
+local_akshare_path = "/Users/fengzhi/Downloads/git/akshare"
+# 移除可能存在的相同路径
+if local_akshare_path in sys.path:
+    sys.path.remove(local_akshare_path)
+# 插入到最前面
+sys.path.insert(0, local_akshare_path)
 
 import akshare
 import pandas as pd

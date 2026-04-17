@@ -40,7 +40,7 @@ class DataSource(Enum):
     AKSHARE_DEFAULT = "akshare"
 
 
-from jk2bt.engine.exceptions import DataSourceError
+from jk2bt.utils.exceptions import DataSourceError
 
 
 class DataQualityError(Exception):

@@ -1157,14 +1157,21 @@ def _normalize_freeze_data(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
 
 _CAPITAL_CHANGE_SCHEMA = [
     "code",
+    "pub_date",
+    "change_date",
     "change_type",
     "change_amount",
-    "change_date",
     "change_reason",
     "total_capital_before",
+    "total_capital_before_unit",
     "total_capital_after",
+    "total_capital_after_unit",
     "circulating_capital_before",
+    "circulating_capital_before_unit",
     "circulating_capital_after",
+    "circulating_capital_after_unit",
+    "total_shares_change_ratio",
+    "circulating_shares_change_ratio",
 ]
 
 
@@ -1190,14 +1197,21 @@ def get_capital_change(
     ----
     DataFrame，包含股本变动信息：
     - code: 股票代码（聚宽格式）
+    - pub_date: 公告日期
+    - change_date: 变动日期
     - change_type: 变动类型
     - change_amount: 变动数量
-    - change_date: 变动日期
     - change_reason: 变动原因
     - total_capital_before: 变动前总股本
+    - total_capital_before_unit: 变动前总股本单位
     - total_capital_after: 变动后总股本
+    - total_capital_after_unit: 变动后总股本单位
     - circulating_capital_before: 变动前流通股本
+    - circulating_capital_before_unit: 变动前流通股本单位
     - circulating_capital_after: 变动后流通股本
+    - circulating_capital_after_unit: 变动后流通股本单位
+    - total_shares_change_ratio: 总股本变动比例
+    - circulating_shares_change_ratio: 流通股本变动比例
     """
     code_num = extract_code_num(symbol)
     jq_code = ak_code_to_jq(symbol)
@@ -1247,21 +1261,28 @@ def _normalize_capital_change(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
     result["code"] = [jq_code] * len(df)
 
     col_map = {
+        "公告日期": "pub_date",
         "变动类型": "change_type",
         "变动股份数量": "change_amount",
         "变动数量": "change_amount",
-        "公告日期": "change_date",
         "变动日期": "change_date",
+        "变更日期": "change_date",
         "变动原因": "change_reason",
         "变动前总股本": "total_capital_before",
         "变动后总股本": "total_capital_after",
         "变动前流通股": "circulating_capital_before",
         "变动后流通股": "circulating_capital_after",
+        "变动前总股本单位": "total_capital_before_unit",
+        "变动后总股本单位": "total_capital_after_unit",
+        "变动前流通股单位": "circulating_capital_before_unit",
+        "变动后流通股单位": "circulating_capital_after_unit",
+        "总股本变动比例": "total_shares_change_ratio",
+        "流通股本变动比例": "circulating_shares_change_ratio",
     }
 
     for src, target in col_map.items():
         if src in df.columns:
-            if target == "change_date":
+            if target in ["pub_date", "change_date"]:
                 result[target] = df[src].apply(_parse_date)
             elif target in [
                 "change_amount",
@@ -1271,6 +1292,11 @@ def _normalize_capital_change(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
                 "circulating_capital_after",
             ]:
                 result[target] = df[src].apply(_parse_num)
+            elif target in [
+                "total_shares_change_ratio",
+                "circulating_shares_change_ratio",
+            ]:
+                result[target] = df[src].apply(_parse_ratio)
             else:
                 result[target] = df[src]
 
@@ -1567,12 +1593,21 @@ class FinanceQueryV3:
 
     class STK_CAPITAL_CHANGE:
         code = None
+        pub_date = None
+        change_date = None
         change_type = None
         change_amount = None
-        change_date = None
         change_reason = None
         total_capital_before = None
+        total_capital_before_unit = None
         total_capital_after = None
+        total_capital_after_unit = None
+        circulating_capital_before = None
+        circulating_capital_before_unit = None
+        circulating_capital_after = None
+        circulating_capital_after_unit = None
+        total_shares_change_ratio = None
+        circulating_shares_change_ratio = None
 
     class STK_SHARE_CHANGE:
         code = None
