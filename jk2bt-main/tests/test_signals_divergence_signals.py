@@ -28,8 +28,8 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../"))
 
-from jk2bt.data_access import set_adapter, MockDataSource, get_adapter
-from jk2bt.signals.divergence_signals import (
+from jk2bt.data.sources import set_adapter, MockDataSource, get_adapter
+from jk2bt.analysis.signals.divergence import (
     detect_macd_divergence,
     detect_rsi_divergence,
     detect_bear_power_divergence,

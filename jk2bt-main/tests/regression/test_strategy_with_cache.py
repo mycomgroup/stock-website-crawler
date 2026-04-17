@@ -11,13 +11,13 @@ import backtrader as bt
 from datetime import datetime
 
 try:
-    from jk2bt.db.parquet_adapter import ParquetAdapter
-    from market_data.stock import get_stock_daily
+    from jk2bt.data.storage.parquet_adapter import ParquetAdapter
+    from jk2bt.data.market.stock import get_stock_daily
 except ImportError:
     from .db.parquet_adapter import ParquetAdapter
     from .market_data.stock import get_stock_daily
 
-from jk2bt.core.runner import load_jq_strategy, JQStrategyWrapper
+from jk2bt.engine.runner import load_jq_strategy, JQStrategyWrapper
 
 
 def test_simple_strategy():

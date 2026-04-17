@@ -31,13 +31,13 @@ sys.path.insert(
     ),
 )
 
-from strategy_scanner import (
+from jk2bt.scanner.scanner import (
     StrategyScanner,
     StrategyStatus,
     quick_scan_strategy,
     batch_scan_strategies,
 )
-from jk2bt.db.parquet_adapter import ParquetAdapter, LocalCache, clear_global_cache
+from jk2bt.data.storage.parquet_adapter import ParquetAdapter, LocalCache, clear_global_cache
 
 
 class TestStrategyScannerExtended(unittest.TestCase):

@@ -48,7 +48,7 @@ def prewarm_index_components(indexes: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.market_data.index_components import (
+        from jk2bt.data.market.index_components import (
             get_index_components,
             get_index_weights,
         )
@@ -92,7 +92,7 @@ def prewarm_macro_data(force: bool = False) -> dict:
     indicators = ["gdp", "cpi", "ppi"]
 
     try:
-        from jk2bt.finance_data.macro import get_macro_data
+        from jk2bt.data.finance.macro import get_macro_data
 
         progress = ProgressTracker(len(indicators), "宏观数据")
         progress.start()

@@ -20,8 +20,8 @@ sys.path.insert(0, str(project_root))
 import duckdb
 import pandas as pd
 
-from parquet_cache import get_cache_manager
-from parquet_cache.schema_validator import normalize_date_columns
+from jk2bt.cache import get_cache_manager
+from jk2bt.cache.schema_validator import normalize_date_columns
 
 # DuckDB 文件到 parquet_cache 表的映射
 # 格式: {db_path: [(duckdb_table_name, parquet_table_name), ...]}

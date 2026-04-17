@@ -23,22 +23,22 @@ import importlib.util
 
 try:
     from jk2bt import load_jq_strategy
-    from jk2bt.strategy.scanner import (
+    from jk2bt.scanner.scanner import (
         StrategyScanner,
         StrategyStatus,
     )
-    from jk2bt.db.parquet_adapter import ParquetAdapter
+    from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 except ImportError as e:
     print(f"导入失败: {e}")
     print("尝试从项目根目录导入...")
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, project_root)
     from jk2bt import load_jq_strategy
-    from jk2bt.strategy.scanner import (
+    from jk2bt.scanner.scanner import (
         StrategyScanner,
         StrategyStatus,
     )
-    from jk2bt.db.parquet_adapter import ParquetAdapter
+    from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
 
 class TestDailyBaselineCapability(unittest.TestCase):
@@ -72,7 +72,7 @@ def my_func(context):
 
             try:
                 import backtrader as bt
-                from jk2bt.core.strategy_base import (
+                from jk2bt.engine.strategy_base import (
                     JQ2BTBaseStrategy,
                 )
 
@@ -93,7 +93,7 @@ def my_func(context):
 
                 data_df = None
                 try:
-                    from jk2bt.core.strategy_base import (
+                    from jk2bt.engine.strategy_base import (
                         get_akshare_stock_data,
                     )
 
@@ -262,7 +262,7 @@ def handle_data(context, data):
 
             has_offline_mode = False
             try:
-                from jk2bt.core.strategy_base import (
+                from jk2bt.engine.strategy_base import (
                     get_price_jq,
                 )
                 import inspect

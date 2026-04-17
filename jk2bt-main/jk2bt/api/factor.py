@@ -50,7 +50,7 @@ def get_north_factor(
         # 获取多只股票的北向资金因子
         factors = get_north_factor(['600519.XSHG', '000858.XSHE'], end_date='2024-01-01')
     """
-    from jk2bt.market_data.north_money import (
+    from jk2bt.data.market.north_money import (
         get_north_money_flow,
         get_north_money_stock_flow,
         get_north_money_holdings,
@@ -216,7 +216,7 @@ def get_comb_factor(
             end_date='2024-01-01'
         )
     """
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
     from jk2bt.api.indicators import MACD, RSI, KDJ, BOLL
 
     # 统一为列表格式
@@ -366,7 +366,7 @@ def get_factor_momentum(
     示例:
         momentum = get_factor_momentum('600519.XSHG', 'PE_ratio', window=20)
     """
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
 
     if isinstance(securities, str):
         security_list = [securities]

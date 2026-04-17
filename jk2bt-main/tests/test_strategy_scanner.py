@@ -9,7 +9,7 @@ import os
 import tempfile
 import pytest
 
-from jk2bt.strategy.scanner import (
+from jk2bt.scanner.scanner import (
     StrategyScanner,
     StrategyStatus,
     ScanResult,

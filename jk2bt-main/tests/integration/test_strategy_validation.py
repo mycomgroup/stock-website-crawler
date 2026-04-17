@@ -16,7 +16,7 @@ import tempfile
 from datetime import datetime
 
 try:
-    import jk2bt.core.runner as runner
+    import jk2bt.engine.runner as runner
 
     load_jq_strategy = runner.load_jq_strategy
     run_jq_strategy = runner.run_jq_strategy
@@ -288,7 +288,7 @@ class TestStrategyValidator:
 
     def test_validator_initialization(self):
         """测试验证器初始化"""
-        from jk2bt.core.validator import StrategyValidationResult
+        from jk2bt.engine.validator import StrategyValidationResult
 
         result = StrategyValidationResult("test_strategy.txt")
 
@@ -298,7 +298,7 @@ class TestStrategyValidator:
 
     def test_validator_to_dict(self):
         """测试验证器转字典"""
-        from jk2bt.core.validator import StrategyValidationResult
+        from jk2bt.engine.validator import StrategyValidationResult
 
         result = StrategyValidationResult("test_strategy.txt")
         result.load_success = True
@@ -317,7 +317,7 @@ class TestDataAPIValidation:
     def test_get_index_stocks(self):
         """测试get_index_stocks"""
         try:
-            import jk2bt.core.strategy_base as base
+            import jk2bt.engine.strategy_base as base
 
             stocks = base.get_index_stocks("000300.XSHG")
 
@@ -331,7 +331,7 @@ class TestDataAPIValidation:
     def test_get_current_data(self):
         """测试get_current_data"""
         try:
-            import jk2bt.core.strategy_base as base
+            import jk2bt.engine.strategy_base as base
 
             data = base.get_current_data()
 

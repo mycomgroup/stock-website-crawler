@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.finance_data.share_change import (
+from jk2bt.data.finance.share_change import (
     get_share_change,
     get_pledge_info,
     get_major_holder_trade,

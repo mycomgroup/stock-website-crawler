@@ -813,7 +813,7 @@ class TestScannerIntegration(unittest.TestCase):
 
     def test_scanner_detects_non_strategy(self):
         """测试扫描器识别非策略文件"""
-        from jk2bt.strategy.scanner import StrategyScanner
+        from jk2bt.scanner.scanner import StrategyScanner
 
         scanner = StrategyScanner()
 
@@ -837,7 +837,7 @@ class TestScannerIntegration(unittest.TestCase):
 
     def test_scanner_detects_valid_strategy(self):
         """测试扫描器识别有效策略"""
-        from jk2bt.strategy.scanner import StrategyScanner
+        from jk2bt.scanner.scanner import StrategyScanner
 
         scanner = StrategyScanner()
 

@@ -24,7 +24,7 @@ class TestShareholderAPI:
 
     def test_get_top10_shareholders(self):
         """测试获取十大股东"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_shareholders,
         )
 
@@ -36,7 +36,7 @@ class TestShareholderAPI:
 
     def test_get_top10_float_shareholders(self):
         """测试获取十大流通股东"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_float_shareholders,
         )
 
@@ -46,7 +46,7 @@ class TestShareholderAPI:
 
     def test_get_shareholder_count(self):
         """测试获取股东户数"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_shareholder_count,
         )
 
@@ -58,7 +58,7 @@ class TestShareholderAPI:
 
     def test_query_shareholder_top10(self):
         """测试批量查询十大股东"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             query_shareholder_top10,
         )
 
@@ -68,7 +68,7 @@ class TestShareholderAPI:
 
     def test_finance_query_compatibility(self):
         """测试 finance.run_query 兼容性"""
-        from jk2bt.finance_data.shareholder import finance
+        from jk2bt.data.finance.shareholder import finance
 
         df = finance.run_query(finance.STK_SHAREHOLDER_TOP10)
 
@@ -80,7 +80,7 @@ class TestDividendAPI:
 
     def test_get_dividend(self):
         """测试获取分红信息"""
-        from jk2bt.finance_data.dividend import get_dividend
+        from jk2bt.data.finance.dividend import get_dividend
 
         df = get_dividend("600519.XSHG", force_update=True)
 
@@ -91,7 +91,7 @@ class TestDividendAPI:
 
     def test_query_dividend(self):
         """测试批量查询分红"""
-        from jk2bt.finance_data.dividend import (
+        from jk2bt.data.finance.dividend import (
             query_dividend,
         )
 
@@ -101,7 +101,7 @@ class TestDividendAPI:
 
     def test_finance_query_compatibility(self):
         """测试 finance.run_query 兼容性"""
-        from jk2bt.finance_data.dividend import finance
+        from jk2bt.data.finance.dividend import finance
 
         df = finance.run_query(finance.STK_XR_XD)
 
@@ -113,7 +113,7 @@ class TestShareChangeAPI:
 
     def test_get_share_change(self):
         """测试获取股东变动"""
-        from jk2bt.finance_data.share_change import (
+        from jk2bt.data.finance.share_change import (
             get_share_change,
         )
 
@@ -126,7 +126,7 @@ class TestShareChangeAPI:
 
     def test_query_share_change(self):
         """测试批量查询股东变动"""
-        from jk2bt.finance_data.share_change import (
+        from jk2bt.data.finance.share_change import (
             query_share_change,
         )
 
@@ -140,7 +140,7 @@ class TestUnlockAPI:
 
     def test_get_unlock(self):
         """测试获取限售解禁"""
-        from jk2bt.finance_data.unlock import get_unlock
+        from jk2bt.data.finance.unlock import get_unlock
 
         df = get_unlock("600519.XSHG", force_update=True)
 
@@ -151,7 +151,7 @@ class TestUnlockAPI:
 
     def test_get_unlock_calendar(self):
         """测试获取解禁日历"""
-        from jk2bt.finance_data.unlock import (
+        from jk2bt.data.finance.unlock import (
             get_unlock_calendar,
         )
 
@@ -165,7 +165,7 @@ class TestMacroAPI:
 
     def test_get_macro_cpi(self):
         """测试获取CPI数据"""
-        from jk2bt.finance_data.macro import get_macro_cpi
+        from jk2bt.data.finance.macro import get_macro_cpi
 
         df = get_macro_cpi(force_update=True)
 
@@ -176,7 +176,7 @@ class TestMacroAPI:
 
     def test_get_macro_ppi(self):
         """测试获取PPI数据"""
-        from jk2bt.finance_data.macro import get_macro_ppi
+        from jk2bt.data.finance.macro import get_macro_ppi
 
         df = get_macro_ppi(force_update=True)
 
@@ -184,7 +184,7 @@ class TestMacroAPI:
 
     def test_get_macro_gdp(self):
         """测试获取GDP数据"""
-        from jk2bt.finance_data.macro import get_macro_gdp
+        from jk2bt.data.finance.macro import get_macro_gdp
 
         df = get_macro_gdp(force_update=True)
 
@@ -192,7 +192,7 @@ class TestMacroAPI:
 
     def test_query_macro(self):
         """测试批量查询宏观数据"""
-        from jk2bt.finance_data.macro import query_macro
+        from jk2bt.data.finance.macro import query_macro
 
         df = query_macro(["CPI", "PPI"])
 
@@ -204,7 +204,7 @@ class TestConversionBondAPI:
 
     def test_get_conversion_bond_list(self):
         """测试获取可转债列表"""
-        from jk2bt.market_data.conversion_bond import (
+        from jk2bt.data.market.conversion_bond import (
             get_conversion_bond_list,
         )
 
@@ -217,7 +217,7 @@ class TestConversionBondAPI:
 
     def test_get_conversion_bond(self):
         """测试获取单只可转债"""
-        from jk2bt.market_data.conversion_bond import (
+        from jk2bt.data.market.conversion_bond import (
             get_conversion_bond,
         )
 
@@ -231,7 +231,7 @@ class TestOptionAPI:
 
     def test_get_option_list(self):
         """测试获取期权列表"""
-        from jk2bt.market_data.option import get_option_list
+        from jk2bt.data.market.option import get_option_list
 
         df = get_option_list(underlying="sse", force_update=True)
 
@@ -246,7 +246,7 @@ class TestIndexComponentsAPI:
 
     def test_get_index_components(self):
         """测试获取指数成分股"""
-        from jk2bt.market_data.index_components import (
+        from jk2bt.data.market.index_components import (
             get_index_components,
         )
 
@@ -260,7 +260,7 @@ class TestIndexComponentsAPI:
 
     def test_query_index_components(self):
         """测试批量查询指数成分股"""
-        from jk2bt.market_data.index_components import (
+        from jk2bt.data.market.index_components import (
             query_index_components,
         )
 
@@ -274,7 +274,7 @@ class TestIndustrySWAPI:
 
     def test_get_industry_sw(self):
         """测试获取申万行业分类"""
-        from jk2bt.market_data.industry_sw import (
+        from jk2bt.data.market.industry_sw import (
             get_industry_sw,
         )
 
@@ -287,7 +287,7 @@ class TestIndustrySWAPI:
 
     def test_query_industry_sw(self):
         """测试批量查询申万行业"""
-        from jk2bt.market_data.industry_sw import (
+        from jk2bt.data.market.industry_sw import (
             query_industry_sw,
         )
 
@@ -301,7 +301,7 @@ class TestSchemaConsistency:
 
     def test_shareholder_schema(self):
         """测试股东信息字段一致性"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             _SHAREHOLDER_SCHEMA,
             get_top10_shareholders,
         )
@@ -313,7 +313,7 @@ class TestSchemaConsistency:
 
     def test_dividend_schema(self):
         """测试分红送股字段一致性"""
-        from jk2bt.finance_data.dividend import (
+        from jk2bt.data.finance.dividend import (
             _DIVIDEND_SCHEMA,
             get_dividend,
         )
@@ -325,7 +325,7 @@ class TestSchemaConsistency:
 
     def test_unlock_schema(self):
         """测试限售解禁字段一致性"""
-        from jk2bt.finance_data.unlock import (
+        from jk2bt.data.finance.unlock import (
             _UNLOCK_SCHEMA,
             get_unlock,
         )
@@ -341,7 +341,7 @@ class TestCodeFormatSupport:
 
     def test_jq_format(self):
         """测试聚宽格式"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_shareholders,
         )
 
@@ -350,7 +350,7 @@ class TestCodeFormatSupport:
 
     def test_plain_code(self):
         """测试纯代码格式"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_shareholders,
         )
 
@@ -359,7 +359,7 @@ class TestCodeFormatSupport:
 
     def test_sh_prefix(self):
         """测试sh前缀格式"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_shareholders,
         )
 
@@ -372,7 +372,7 @@ class TestEmptyResultHandling:
 
     def test_invalid_code_returns_empty_df(self):
         """测试无效代码返回空DataFrame"""
-        from jk2bt.finance_data.shareholder import (
+        from jk2bt.data.finance.shareholder import (
             get_top10_shareholders,
         )
 

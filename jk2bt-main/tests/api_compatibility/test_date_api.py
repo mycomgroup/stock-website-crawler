@@ -98,7 +98,7 @@ class TestStrategyBaseDateAPI:
     def test_get_all_trade_days_jq_exists(self):
         """测试get_all_trade_days_jq函数存在"""
         try:
-            from jk2bt.core.strategy_base import get_all_trade_days_jq
+            from jk2bt.engine.strategy_base import get_all_trade_days_jq
             assert callable(get_all_trade_days_jq)
         except ImportError:
             pytest.skip("get_all_trade_days_jq not available")
@@ -106,7 +106,7 @@ class TestStrategyBaseDateAPI:
     def test_get_all_trade_days_jq_returns_list(self):
         """测试get_all_trade_days_jq返回list"""
         try:
-            from jk2bt.core.strategy_base import get_all_trade_days_jq
+            from jk2bt.engine.strategy_base import get_all_trade_days_jq
 
             result = get_all_trade_days_jq()
 
@@ -125,7 +125,7 @@ class TestStrategyBaseDateAPI:
     def test_get_trade_days_count(self):
         """测试交易日数量"""
         try:
-            from jk2bt.core.strategy_base import get_all_trade_days_jq
+            from jk2bt.engine.strategy_base import get_all_trade_days_jq
 
             result = get_all_trade_days_jq()
 

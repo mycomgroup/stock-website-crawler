@@ -23,10 +23,10 @@ project_root = Path(__file__).parent.parent.parent.parent
 
 # 直接加载模块，绕过 jk2bt.__init__.py 的复杂导入链
 _timer_spec = importlib.util.spec_from_file_location(
-    "timer_manager", str(project_root / "jk2bt/core/timer_manager.py")
+    "timer_manager", str(project_root / "jk2bt/engine/timer_manager.py")
 )
 _timer_mod = importlib.util.module_from_spec(_timer_spec)
-sys.modules["jk2bt.core.timer_manager"] = _timer_mod
+sys.modules["jk2bt.engine.timer_manager"] = _timer_mod
 _timer_spec.loader.exec_module(_timer_mod)
 
 TimerManager = _timer_mod.TimerManager

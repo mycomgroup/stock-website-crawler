@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, List
 
 try:
-    from jk2bt.core.runner import (
+    from jk2bt.engine.runner import (
         load_jq_strategy,
         run_jq_strategy,
     )

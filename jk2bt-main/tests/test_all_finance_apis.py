@@ -9,7 +9,7 @@ import datetime as dt
 import sys
 sys.path.insert(0, '/Users/yuping/Downloads/git/jk2bt-main')
 
-from jk2bt.core.strategy_base import finance, query
+from jk2bt.engine.strategy_base import finance, query
 
 
 class TestAllFinanceAPIs(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestAllFinanceAPIs(unittest.TestCase):
     # ========== 任务1：公司基本信息 ==========
     def test_task1_company_info(self):
         """任务1：公司基本信息"""
-        from jk2bt.finance_data import get_company_info
+        from jk2bt.data.finance import get_company_info
         
         df = get_company_info(self.test_stock, use_duckdb=False, force_update=False)
         self.assertIsInstance(df, pd.DataFrame)
@@ -33,7 +33,7 @@ class TestAllFinanceAPIs(unittest.TestCase):
 
     def test_task1_security_status(self):
         """任务1：证券状态"""
-        from jk2bt.finance_data import get_security_status
+        from jk2bt.data.finance import get_security_status
         
         df = get_security_status(self.test_stock, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
@@ -64,7 +64,7 @@ class TestAllFinanceAPIs(unittest.TestCase):
     # ========== 任务2：股东信息 ==========
     def test_task2_top_shareholders(self):
         """任务2：十大股东"""
-        from jk2bt.finance_data import get_top_shareholders
+        from jk2bt.data.finance import get_top_shareholders
         
         df = get_top_shareholders(self.test_stock, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
@@ -74,7 +74,7 @@ class TestAllFinanceAPIs(unittest.TestCase):
 
     def test_task2_shareholder_count(self):
         """任务2：股东户数"""
-        from jk2bt.finance_data import get_shareholder_count
+        from jk2bt.data.finance import get_shareholder_count
         
         df = get_shareholder_count(self.test_stock, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
@@ -94,7 +94,7 @@ class TestAllFinanceAPIs(unittest.TestCase):
     # ========== 任务3：分红送股 ==========
     def test_task3_dividend_info(self):
         """任务3：分红信息"""
-        from jk2bt.finance_data import get_dividend_info
+        from jk2bt.data.finance import get_dividend_info
         
         df = get_dividend_info(self.test_stock, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
@@ -114,7 +114,7 @@ class TestAllFinanceAPIs(unittest.TestCase):
     # ========== 任务4：股东变动 ==========
     def test_task4_share_change(self):
         """任务4：股东变动"""
-        from jk2bt.finance_data import get_share_change
+        from jk2bt.data.finance import get_share_change
         
         df = get_share_change(self.test_stock, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
@@ -124,7 +124,7 @@ class TestAllFinanceAPIs(unittest.TestCase):
     # ========== 任务5：限售解禁 ==========
     def test_task5_unlock(self):
         """任务5：限售解禁"""
-        from jk2bt.finance_data import get_unlock
+        from jk2bt.data.finance import get_unlock
         
         df = get_unlock(self.test_stock, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
@@ -250,7 +250,7 @@ class TestDataQuality(unittest.TestCase):
 
     def test_company_info_data_quality(self):
         """测试公司信息数据质量"""
-        from jk2bt.finance_data import get_company_info
+        from jk2bt.data.finance import get_company_info
         
         df = get_company_info("600519.XSHG", use_duckdb=False)
         
@@ -285,7 +285,7 @@ class TestCacheMechanism(unittest.TestCase):
 
     def test_company_info_cache(self):
         """测试公司信息缓存"""
-        from jk2bt.finance_data import get_company_info
+        from jk2bt.data.finance import get_company_info
         
         # 第一次调用
         df1 = get_company_info("600519.XSHG", use_duckdb=False, force_update=False)

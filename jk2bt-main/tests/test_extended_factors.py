@@ -78,7 +78,7 @@ class TestFactorModuleImport:
 
     def test_import_factors_module(self):
         """测试因子模块导入。"""
-        from jk2bt.factors import (
+        from jk2bt.analysis.factors import (
             get_factor_values_jq,
             global_factor_registry,
             technical,
@@ -91,14 +91,14 @@ class TestFactorModuleImport:
 
     def test_factor_registry_count(self):
         """测试注册因子数量。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         factors = global_factor_registry.list_factors()
         assert len(factors) >= 100, f"因子数量不足: {len(factors)}"
 
     def test_factor_alias_normalization(self):
         """测试因子别名标准化。"""
-        from jk2bt.factors.base import normalize_factor_name
+        from jk2bt.analysis.factors.base import normalize_factor_name
 
         assert normalize_factor_name("BIAS5") == "bias_5"
         assert normalize_factor_name("EMAC26") == "emac_26"
@@ -117,7 +117,7 @@ class TestVolumeFactors:
 
     def test_vol_series_factors_registered(self):
         """测试VOL系列因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [5, 10, 20, 60, 120, 240]:
             factor_name = f"vol_{window}"
@@ -127,7 +127,7 @@ class TestVolumeFactors:
 
     def test_davol_factors_registered(self):
         """测试DAVOL因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [5, 10, 20]:
             factor_name = f"davol_{window}"
@@ -137,7 +137,7 @@ class TestVolumeFactors:
 
     def test_vema_factors_registered(self):
         """测试VEMA因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [5, 10, 12, 26]:
             factor_name = f"vema_{window}"
@@ -147,13 +147,13 @@ class TestVolumeFactors:
 
     def test_vosc_factor_registered(self):
         """测试VOSC因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("vosc")
 
     def test_vroc_factors_registered(self):
         """测试VROC因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [6, 12]:
             factor_name = f"vroc_{window}"
@@ -163,7 +163,7 @@ class TestVolumeFactors:
 
     def test_tvma_tvstd_factors_registered(self):
         """测试TVMA/TVSTD因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [6, 20]:
             assert global_factor_registry.is_registered(f"tvma_{window}")
@@ -175,7 +175,7 @@ class TestTechnicalIndicators:
 
     def test_ar_br_factors_registered(self):
         """测试AR/BR因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("ar")
         assert global_factor_registry.is_registered("br")
@@ -183,38 +183,38 @@ class TestTechnicalIndicators:
 
     def test_wvad_factor_registered(self):
         """测试WVAD因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("wvad")
         assert global_factor_registry.is_registered("mawvad")
 
     def test_psy_factor_registered(self):
         """测试PSY因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("psy")
 
     def test_vr_factor_registered(self):
         """测试VR因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("vr")
 
     def test_macd_factor_registered(self):
         """测试MACD因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("macd")
 
     def test_mfi_factor_registered(self):
         """测试MFI因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("mfi_14")
 
     def test_cci_factors_registered(self):
         """测试CCI因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [10, 15, 20, 88]:
             factor_name = f"cci_{window}"
@@ -224,34 +224,34 @@ class TestTechnicalIndicators:
 
     def test_aroon_factors_registered(self):
         """测试Aroon因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("aroon_up")
         assert global_factor_registry.is_registered("aroon_down")
 
     def test_trix_factors_registered(self):
         """测试TRIX因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("trix_5")
         assert global_factor_registry.is_registered("trix_10")
 
     def test_bull_bear_power_registered(self):
         """测试Bull/Bear Power因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("bull_power")
         assert global_factor_registry.is_registered("bear_power")
 
     def test_bbic_factor_registered(self):
         """测试BBIC因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("bbic")
 
     def test_vpt_factors_registered(self):
         """测试VPT因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("single_day_vpt")
         assert global_factor_registry.is_registered("single_day_vpt_6")
@@ -263,7 +263,7 @@ class TestMomentumFactors:
 
     def test_roc_factors_registered(self):
         """测试ROC因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [6, 12, 20, 60, 120]:
             factor_name = f"roc_{window}"
@@ -273,7 +273,7 @@ class TestMomentumFactors:
 
     def test_price_position_factors_registered(self):
         """测试价格位置因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("price_1m")
         assert global_factor_registry.is_registered("price_3m")
@@ -281,7 +281,7 @@ class TestMomentumFactors:
 
     def test_plrc_factors_registered(self):
         """测试PLRC因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [6, 12, 24]:
             factor_name = f"plrc_{window}"
@@ -291,7 +291,7 @@ class TestMomentumFactors:
 
     def test_fifty_two_week_rank_registered(self):
         """测试52周价格位置因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("fifty_two_week_close_rank")
 
@@ -306,7 +306,7 @@ class TestRiskFactors:
 
     def test_variance_factors_registered(self):
         """测试方差因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [20, 60, 120]:
             factor_name = f"variance_{window}"
@@ -316,7 +316,7 @@ class TestRiskFactors:
 
     def test_skewness_factors_registered(self):
         """测试偏度因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [20, 60, 120]:
             factor_name = f"skewness_{window}"
@@ -326,7 +326,7 @@ class TestRiskFactors:
 
     def test_kurtosis_factors_registered(self):
         """测试峰度因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [20, 60, 120]:
             factor_name = f"kurtosis_{window}"
@@ -336,7 +336,7 @@ class TestRiskFactors:
 
     def test_sharpe_ratio_factors_registered(self):
         """测试夏普比率因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         for window in [20, 60, 120]:
             factor_name = f"sharpe_ratio_{window}"
@@ -355,7 +355,7 @@ class TestBarraFactors:
 
     def test_barra_factors_registered(self):
         """测试Barra风格因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         barra_factors = [
             "beta",
@@ -374,7 +374,7 @@ class TestBarraFactors:
 
     def test_barra_module_import(self):
         """测试Barra因子模块导入。"""
-        from jk2bt.factors import barra_factors
+        from jk2bt.analysis.factors import barra_factors
 
         assert hasattr(barra_factors, "compute_beta")
         assert hasattr(barra_factors, "compute_momentum")
@@ -395,13 +395,13 @@ class TestExtendedFundamentalFactors:
 
     def test_gross_income_ratio_registered(self):
         """测试毛利率因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("gross_income_ratio")
 
     def test_turnover_factors_registered(self):
         """测试周转率因子注册。"""
-        from jk2bt.factors import global_factor_registry
+        from jk2bt.analysis.factors import global_factor_registry
 
         assert global_factor_registry.is_registered("inventory_turnover")
         assert global_factor_registry.is_registered("account_receivable_turnover")
@@ -418,7 +418,7 @@ class TestFactorCalculationUnits:
 
     def test_compute_ma(self, sample_price_data):
         """测试移动平均计算。"""
-        from jk2bt.factors.technical import _compute_ma
+        from jk2bt.analysis.factors.technical import _compute_ma
 
         close = sample_price_data.set_index("date")["close"]
         ma20 = _compute_ma(close, 20)
@@ -429,7 +429,7 @@ class TestFactorCalculationUnits:
 
     def test_compute_ema(self, sample_price_data):
         """测试指数移动平均计算。"""
-        from jk2bt.factors.technical import _compute_ema
+        from jk2bt.analysis.factors.technical import _compute_ema
 
         close = sample_price_data.set_index("date")["close"]
         ema20 = _compute_ema(close, 20)
@@ -439,7 +439,7 @@ class TestFactorCalculationUnits:
 
     def test_compute_std(self, sample_price_data):
         """测试标准差计算。"""
-        from jk2bt.factors.technical import _compute_std
+        from jk2bt.analysis.factors.technical import _compute_std
 
         close = sample_price_data.set_index("date")["close"]
         std20 = _compute_std(close, 20)
@@ -450,7 +450,7 @@ class TestFactorCalculationUnits:
 
     def test_safe_divide(self):
         """测试安全除法。"""
-        from jk2bt.factors.base import safe_divide
+        from jk2bt.analysis.factors.base import safe_divide
 
         assert safe_divide(10, 2) == 5
         assert np.isnan(safe_divide(10, 0))
@@ -463,7 +463,7 @@ class TestFactorCalculationUnits:
 
     def test_bias_calculation(self, sample_price_data):
         """测试BIAS因子计算。"""
-        from jk2bt.factors.technical import compute_bias
+        from jk2bt.analysis.factors.technical import compute_bias
 
         close = sample_price_data.set_index("date")["close"]
         bias = compute_bias("sh600519", window=20, end_date="2024-01-01", count=10)
@@ -529,7 +529,7 @@ class TestFactorAPI:
 
     def test_get_factor_values_single_factor(self):
         """测试单因子查询。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519", factors="vol_20", end_date="2024-01-01", count=5
@@ -540,7 +540,7 @@ class TestFactorAPI:
 
     def test_get_factor_values_multiple_factors(self):
         """测试多因子查询。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -555,7 +555,7 @@ class TestFactorAPI:
 
     def test_get_factor_values_multiple_securities(self):
         """测试多标查询。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities=["sh600519", "sz000858"],
@@ -571,7 +571,7 @@ class TestFactorAPI:
 
     def test_factor_with_count_parameter(self):
         """测试count参数。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519", factors="roc_20", end_date="2024-01-01", count=10
@@ -583,7 +583,7 @@ class TestFactorAPI:
 
     def test_factor_with_start_date(self):
         """测试start_date参数。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -605,7 +605,7 @@ class TestFactorDataQuality:
 
     def test_factor_not_all_nan(self):
         """测试因子值不全为NaN。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519",
@@ -620,7 +620,7 @@ class TestFactorDataQuality:
 
     def test_factor_value_range(self):
         """测试因子值范围合理性。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519", factors="psy", end_date="2024-01-01", count=10
@@ -635,7 +635,7 @@ class TestFactorDataQuality:
 
     def test_variance_positive(self):
         """测试方差因子为正。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         result = get_factor_values_jq(
             securities="sh600519", factors="variance_60", end_date="2024-01-01", count=5
@@ -660,7 +660,7 @@ class TestIntegration:
     @pytest.mark.slow
     def test_full_workflow(self):
         """测试完整工作流。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         factors_to_test = [
             "vol_20",
@@ -699,7 +699,7 @@ class TestIntegration:
     @pytest.mark.slow
     def test_cross_section_factors(self):
         """测试截面因子计算。"""
-        from jk2bt.factors import get_factor_values_jq
+        from jk2bt.analysis.factors import get_factor_values_jq
 
         stocks = ["sh600519", "sh600036", "sz000858"]
         factors = ["vol_20", "roc_20", "bias_20"]

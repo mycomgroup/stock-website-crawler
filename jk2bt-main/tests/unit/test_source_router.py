@@ -32,7 +32,7 @@ def _load_module_from_path(module_name, file_path):
     return module
 
 
-source_router_path = project_root / "jk2bt" / "data_access" / "source_router.py"
+source_router_path = project_root / "jk2bt" / "data" / "sources" / "router.py"
 source_router = _load_module_from_path("source_router", str(source_router_path))
 
 stats_path = project_root / "jk2bt" / "logging" / "stats.py"

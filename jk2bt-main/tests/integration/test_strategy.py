@@ -1,4 +1,4 @@
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     JQ2BTBaseStrategy,
     get_akshare_etf_data,
     get_akshare_stock_data,

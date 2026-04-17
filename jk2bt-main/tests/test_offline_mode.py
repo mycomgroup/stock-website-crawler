@@ -28,11 +28,11 @@ if str(project_root) not in sys.path:
 
 # 导入被测模块
 try:
-    from jk2bt.db.cache_status import CacheManager, get_cache_manager
-    from jk2bt.db.parquet_adapter import ParquetAdapter, get_shared_read_only_manager
-    from jk2bt.market_data.stock import get_stock_daily
-    from jk2bt.market_data.etf import get_etf_daily
-    from jk2bt.market_data.index import get_index_daily
+    from jk2bt.data.storage.cache_status import CacheManager, get_cache_manager
+    from jk2bt.data.storage.parquet_adapter import ParquetAdapter, get_shared_read_only_manager
+    from jk2bt.data.market.stock import get_stock_daily
+    from jk2bt.data.market.etf import get_etf_daily
+    from jk2bt.data.market.index import get_index_daily
 except ImportError as e:
     pytest.skip(f"导入失败: {e}", allow_module_level=True)
 
@@ -208,8 +208,8 @@ class OfflineTestFixture:
 
     def _setup_prewarmed_data(self):
         """设置预热后的数据"""
-        from jk2bt.db.cache_config import init_default_cache
-        from parquet_cache import get_cache_manager
+        from jk2bt.data.storage.cache_config import init_default_cache
+        from jk2bt.cache import get_cache_manager
 
         init_default_cache()
         cache = get_cache_manager()

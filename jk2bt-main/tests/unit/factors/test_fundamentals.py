@@ -54,20 +54,20 @@ except Exception:
     pass
 
 # 导入 jk2bt.factors.base 模块
-from jk2bt.factors import base as fundamentals_base
+from jk2bt.analysis.factors import base as fundamentals_base
 
 # 获取 safe_divide 和 global_factor_registry
 safe_divide = fundamentals_base.safe_divide
 global_factor_registry = fundamentals_base.global_factor_registry
 
-# 导入 jk2bt.factors.fundamentals 模块（使用 base 中已定义的函数）
+# 导入 jk2bt.analysis.factors.fundamentals 模块（使用 base 中已定义的函数）
 # 注意：由于 jk2bt/__init__.py 有导入错误，我们需要绕过它
 # 直接导入 factors 模块下的子模块
 import importlib
 
 # 手动导入 factors 模块的 __init__.py
 _factors_init_path = str(jk2bt_path / "factors" / "__init__.py")
-_factors_spec = importlib.util.spec_from_file_location("jk2bt_factors_init", _factors_init_path)
+_factors_spec = importlib.util.spec_from_file_location("jk2bt_analysis_factors_init", _factors_init_path)
 _factors_init = importlib.util.module_from_spec(_factors_spec)
 
 # 注册 jk2bt.factors 到 sys.modules
@@ -76,9 +76,9 @@ sys.modules['jk2bt.factors.base'] = fundamentals_base
 
 # 加载 fundamentals 模块
 _fundamentals_path = str(jk2bt_path / "factors" / "fundamentals.py")
-_fundamentals_spec = importlib.util.spec_from_file_location("jk2bt.factors.fundamentals", _fundamentals_path)
+_fundamentals_spec = importlib.util.spec_from_file_location("jk2bt.analysis.factors.fundamentals", _fundamentals_path)
 _fundamentals_module = importlib.util.module_from_spec(_fundamentals_spec)
-sys.modules['jk2bt.factors.fundamentals'] = _fundamentals_module
+sys.modules['jk2bt.analysis.factors.fundamentals'] = _fundamentals_module
 _fundamentals_spec.loader.exec_module(_fundamentals_module)
 
 # 获取需要测试的函数

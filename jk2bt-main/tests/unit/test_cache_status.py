@@ -24,13 +24,13 @@ project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from jk2bt.db.cache_status import (
+from jk2bt.data.storage.cache_status import (
     CacheManager,
     get_cache_manager,
     check_cache_status,
 )
-from jk2bt.db.cache_config import init_default_cache
-from parquet_cache import get_cache_manager as parquet_get_cache_manager
+from jk2bt.data.storage.cache_config import init_default_cache
+from jk2bt.cache import get_cache_manager as parquet_get_cache_manager
 
 
 class TestCacheManagerInit:
@@ -111,7 +111,7 @@ class TestCheckStockDailyCache:
         )
 
         # 写入数据库
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
@@ -146,7 +146,7 @@ class TestCheckStockDailyCache:
         )
 
         # 写入数据库
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
@@ -178,7 +178,7 @@ class TestCheckStockDailyCache:
         )
 
         # 写入数据库
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df_qfq, "qfq")
@@ -223,7 +223,7 @@ class TestCheckETFAndIndexCache:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_etf_daily("510300", df)
@@ -255,7 +255,7 @@ class TestCheckETFAndIndexCache:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_index_daily("000300", df)
@@ -324,7 +324,7 @@ class TestCheckMetaCache:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(tmp_path / "test_parquet"), read_only=False)
         db._init_database()
@@ -367,7 +367,7 @@ class TestCheckMetaCache:
                 "update_time": pd.Timestamp.now(),
             }
         )
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(tmp_path / "test_parquet"), read_only=False)
         db._init_database()
@@ -383,15 +383,6 @@ class TestCheckMetaCache:
 
 class TestValidateCacheForOffline:
     """测试离线缓存验证"""
-
-    @pytest.fixture(autouse=True)
-    def setup_parquet_cache(self):
-        """初始化 parquet cache 全局实例"""
-        init_default_cache()
-        yield
-        from parquet_cache import reset_cache_manager
-
-        reset_cache_manager()
 
     def test_validate_empty_directory(self, tmp_path):
         """测试目录不存在/空目录时的离线验证"""
@@ -415,8 +406,6 @@ class TestValidateCacheForOffline:
         """测试部分缓存时的离线验证"""
         db_path = tmp_path / "partial_parquet"
         cache_dir = tmp_path / "partial_cache"
-        meta_cache_dir = cache_dir / "meta_cache"
-        os.makedirs(meta_cache_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2023-01-01", "2024-12-31", freq="B").date}
@@ -441,7 +430,7 @@ class TestValidateCacheForOffline:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
@@ -464,8 +453,6 @@ class TestValidateCacheForOffline:
         """测试完整缓存时的离线验证"""
         db_path = tmp_path / "complete_parquet"
         cache_dir = tmp_path / "complete_cache"
-        meta_cache_dir = cache_dir / "meta_cache"
-        os.makedirs(meta_cache_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
@@ -491,7 +478,7 @@ class TestValidateCacheForOffline:
         )
         df2 = df1.copy()
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df1, "qfq")
@@ -513,8 +500,6 @@ class TestValidateCacheForOffline:
     def test_validate_with_custom_cache_dir(self, tmp_path):
         """测试自定义 cache_dir 参数"""
         custom_cache_dir = tmp_path / "custom_location"
-        custom_meta_dir = custom_cache_dir / "meta_cache"
-        os.makedirs(custom_meta_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date}
@@ -591,7 +576,7 @@ class TestGetCacheSummary:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
@@ -612,21 +597,10 @@ class TestGetCacheSummary:
 class TestSymbolConversion:
     """测试股票代码格式转换"""
 
-    @pytest.fixture(autouse=True)
-    def setup_parquet_cache(self):
-        """初始化 parquet cache 全局实例"""
-        init_default_cache()
-        yield
-        from parquet_cache import reset_cache_manager
-
-        reset_cache_manager()
-
     def test_jq_code_conversion_xshg(self, tmp_path):
         """测试 XSHG 格式代码转换 - validate_cache_for_offline 会转换"""
         db_path = tmp_path / "symbol_test_parquet"
         cache_dir = tmp_path / "symbol_cache"
-        meta_cache_dir = cache_dir / "meta_cache"
-        os.makedirs(meta_cache_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
@@ -649,7 +623,7 @@ class TestSymbolConversion:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
@@ -668,8 +642,6 @@ class TestSymbolConversion:
         """测试 XSHE 格式代码转换 - validate_cache_for_offline 会转换"""
         db_path = tmp_path / "symbol_test2_parquet"
         cache_dir = tmp_path / "symbol_cache2"
-        meta_cache_dir = cache_dir / "meta_cache"
-        os.makedirs(meta_cache_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
@@ -692,7 +664,7 @@ class TestSymbolConversion:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sz000858", df, "qfq")
@@ -711,8 +683,6 @@ class TestSymbolConversion:
         """测试混合代码格式的离线验证"""
         db_path = tmp_path / "mixed_format_parquet"
         cache_dir = tmp_path / "mixed_cache"
-        meta_cache_dir = cache_dir / "meta_cache"
-        os.makedirs(meta_cache_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
@@ -735,7 +705,7 @@ class TestSymbolConversion:
             }
         )
 
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(db_path=str(db_path), read_only=False)
         db.insert_stock_daily("sh600519", df, "qfq")
@@ -770,20 +740,9 @@ class TestConvenienceFunctions:
 class TestEdgeCases:
     """测试边界情况"""
 
-    @pytest.fixture(autouse=True)
-    def setup_parquet_cache(self):
-        """初始化 parquet cache 全局实例"""
-        init_default_cache()
-        yield
-        from parquet_cache import reset_cache_manager
-
-        reset_cache_manager()
-
     def test_validate_empty_stock_pool(self, tmp_path):
         """测试空股票池"""
         cache_dir = tmp_path / "edge_cache"
-        meta_cache_dir = cache_dir / "meta_cache"
-        os.makedirs(meta_cache_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date}
@@ -814,11 +773,9 @@ class TestEdgeCases:
         )
         assert result["has_data"] is False
 
-    def test_check_meta_cache_with_missing_securities(self, tmp_path):
+    def test_check_meta_cache_with_securities(self, tmp_path):
         """测试有证券信息缓存"""
         cache_dir = tmp_path / "old_cache"
-        meta_cache_dir = cache_dir / "meta_cache"
-        os.makedirs(meta_cache_dir, exist_ok=True)
 
         trade_days_df = pd.DataFrame(
             {"date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date}

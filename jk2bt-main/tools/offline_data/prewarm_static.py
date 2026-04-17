@@ -55,7 +55,7 @@ def prewarm_company_info(stocks: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             get_company_info,
             prewarm_company_info_cache,
         )
@@ -106,7 +106,7 @@ def prewarm_industry_sw(stocks: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.market_data.industry_sw import (
+        from jk2bt.data.market.industry_sw import (
             get_industry_sw,
             get_industry_sw_batch,
         )
@@ -159,7 +159,7 @@ def prewarm_security_status(stocks: list, force: bool = False) -> dict:
     result = {"success": 0, "failed": 0, "skipped": 0, "errors": []}
 
     try:
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             get_security_status,
         )
 

@@ -7,7 +7,7 @@ import random
 import glob
 
 try:
-    from jk2bt.core.runner import load_jq_strategy
+    from jk2bt.engine.runner import load_jq_strategy
 except ImportError:
     print("请在仓库根目录运行此脚本")
     import sys

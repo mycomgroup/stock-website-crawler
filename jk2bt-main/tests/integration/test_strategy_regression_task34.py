@@ -12,7 +12,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     RobustResult,
     get_index_stocks_robust,
     get_index_weights_robust,

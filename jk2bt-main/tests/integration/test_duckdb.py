@@ -16,7 +16,7 @@ class TestDuckDBConnection:
     def test_duckdb_manager_importable(self):
         """ParquetAdapter 可导入"""
         try:
-            from jk2bt.db import ParquetAdapter
+            from jk2bt.data.storage import ParquetAdapter
             assert ParquetAdapter is not None
         except ImportError:
             pytest.skip("src.db.ParquetAdapter 不可用")
@@ -24,7 +24,7 @@ class TestDuckDBConnection:
     def test_duckdb_connection(self):
         """DuckDB 连接正常"""
         try:
-            from jk2bt.db import ParquetAdapter
+            from jk2bt.data.storage import ParquetAdapter
         except ImportError:
             pytest.skip("src.db.ParquetAdapter 不可用")
 
@@ -40,7 +40,7 @@ class TestDuckDBConnection:
     def test_duckdb_get_symbols(self):
         """DuckDB 获取代码列表"""
         try:
-            from jk2bt.db import ParquetAdapter
+            from jk2bt.data.storage import ParquetAdapter
         except ImportError:
             pytest.skip("src.db.ParquetAdapter 不可用")
 
@@ -55,7 +55,7 @@ class TestMarketDataModules:
     def test_get_stock_daily_importable(self):
         """get_stock_daily 可导入"""
         try:
-            from jk2bt.market_data import get_stock_daily
+            from jk2bt.data.market import get_stock_daily
             assert callable(get_stock_daily)
         except ImportError:
             pytest.skip("src.market_data.get_stock_daily 不可用")
@@ -63,7 +63,7 @@ class TestMarketDataModules:
     def test_get_etf_daily_importable(self):
         """get_etf_daily 可导入"""
         try:
-            from jk2bt.market_data import get_etf_daily
+            from jk2bt.data.market import get_etf_daily
             assert callable(get_etf_daily)
         except ImportError:
             pytest.skip("src.market_data.get_etf_daily 不可用")
@@ -71,7 +71,7 @@ class TestMarketDataModules:
     def test_get_index_daily_importable(self):
         """get_index_daily 可导入"""
         try:
-            from jk2bt.market_data import get_index_daily
+            from jk2bt.data.market import get_index_daily
             assert callable(get_index_daily)
         except ImportError:
             pytest.skip("src.market_data.get_index_daily 不可用")
@@ -79,7 +79,7 @@ class TestMarketDataModules:
     def test_stock_daily_returns_dataframe(self):
         """get_stock_daily 返回 DataFrame"""
         try:
-            from jk2bt.market_data import get_stock_daily
+            from jk2bt.data.market import get_stock_daily
         except ImportError:
             pytest.skip("src.market_data.get_stock_daily 不可用")
 
@@ -90,7 +90,7 @@ class TestMarketDataModules:
     def test_etf_daily_returns_dataframe(self):
         """get_etf_daily 返回 DataFrame"""
         try:
-            from jk2bt.market_data import get_etf_daily
+            from jk2bt.data.market import get_etf_daily
         except ImportError:
             pytest.skip("src.market_data.get_etf_daily 不可用")
 

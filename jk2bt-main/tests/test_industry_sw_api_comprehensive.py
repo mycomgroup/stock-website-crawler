@@ -10,7 +10,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.market_data.industry_sw import (
+from jk2bt.data.market.industry_sw import (
     get_stock_industry,
     get_industry_stocks_sw,
     get_sw_level1,

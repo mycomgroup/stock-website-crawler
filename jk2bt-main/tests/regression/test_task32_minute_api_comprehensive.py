@@ -624,7 +624,7 @@ class TestMinuteCacheIntegration(unittest.TestCase):
 
     def test_cache_query_path(self):
         """测试缓存查询路径"""
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         db = ParquetAdapter(read_only=True)
         symbol = "sh600000"

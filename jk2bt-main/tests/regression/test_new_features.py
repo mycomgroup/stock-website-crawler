@@ -41,7 +41,7 @@ print("\n[1] 行业数据模块测试")
 print("-" * 40)
 
 try:
-    from market_data.industry import (
+    from jk2bt.data.market.industry import (
         get_industry_classify,
         get_industry_stocks,
         SW_LEVEL1_CODES,
@@ -75,7 +75,7 @@ print("\n[2] 北向资金模块测试")
 print("-" * 40)
 
 try:
-    from market_data.north_money import (
+    from jk2bt.data.market.north_money import (
         get_north_money_flow,
         compute_north_money_signal,
     )
@@ -105,7 +105,7 @@ print("\n[3] RSRS择时指标测试")
 print("-" * 40)
 
 try:
-    from jk2bt.signals.rsrs import (
+    from jk2bt.analysis.signals.rsrs import (
         compute_rsrs,
         compute_rsrs_signal,
         get_current_rsrs_signal,
@@ -150,7 +150,7 @@ print("\n[4] 市场情绪指标测试")
 print("-" * 40)
 
 try:
-    from jk2bt.signals.market_sentiment import (
+    from jk2bt.analysis.signals.market_sentiment import (
         compute_crowding_ratio,
         compute_fed_model,
         compute_graham_index,
@@ -226,7 +226,7 @@ print("\n[6] jq_strategy_runner 集成测试")
 print("-" * 40)
 
 try:
-    from jk2bt.core.runner import (
+    from jk2bt.engine.runner import (
         get_industry_stocks,
         get_north_money_flow,
         compute_rsrs,

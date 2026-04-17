@@ -14,7 +14,7 @@ import pandas as pd
 import warnings
 from datetime import datetime
 
-from jk2bt.data_access import get_adapter
+from jk2bt.data.sources import get_adapter
 from jk2bt.utils.symbol import normalize_symbol as _normalize_code
 
 

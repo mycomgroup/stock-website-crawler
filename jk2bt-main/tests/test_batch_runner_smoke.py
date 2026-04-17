@@ -38,8 +38,8 @@ sys.path.insert(
     ),
 )
 
-from strategy_scanner import StrategyScanner, StrategyStatus
-from jk2bt.db.parquet_adapter import ParquetAdapter, LocalCache, clear_global_cache
+from jk2bt.scanner.scanner import StrategyScanner, StrategyStatus
+from jk2bt.data.storage.parquet_adapter import ParquetAdapter, LocalCache, clear_global_cache
 
 
 class TestBatchRunnerStatistics(unittest.TestCase):
@@ -148,7 +148,7 @@ class TestDuckDBConcurrency(unittest.TestCase):
 
     def test_read_only_manager_creation(self):
         """测试只读管理器创建"""
-        from jk2bt.db.parquet_adapter import get_shared_read_only_manager
+        from jk2bt.data.storage.parquet_adapter import get_shared_read_only_manager
 
         read_manager = get_shared_read_only_manager(db_path=self.db_path)
         self.assertTrue(read_manager.read_only)

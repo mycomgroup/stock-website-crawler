@@ -192,7 +192,7 @@ class TestModuleDirectCall(unittest.TestCase):
 
     def test_get_company_info_direct(self):
         """测试直接调用 get_company_info"""
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             get_company_info,
         )
 
@@ -215,7 +215,7 @@ class TestModuleDirectCall(unittest.TestCase):
 
     def test_get_security_status_direct(self):
         """测试直接调用 get_security_status"""
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             get_security_status,
         )
 
@@ -227,7 +227,7 @@ class TestModuleDirectCall(unittest.TestCase):
 
     def test_get_listing_info_direct(self):
         """测试直接调用 get_listing_info"""
-        from jk2bt.finance_data.company_info import (
+        from jk2bt.data.finance.company_info import (
             get_listing_info,
         )
 

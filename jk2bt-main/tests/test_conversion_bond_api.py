@@ -19,7 +19,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.market_data.conversion_bond import (
+from jk2bt.data.market.conversion_bond import (
     get_conversion_bond_list,
     get_conversion_bond_list_robust,
     get_conversion_bond_price,
@@ -1253,7 +1253,7 @@ class TestEmptyCodeHandling:
 
     def test_module_finance_unsupported_table_returns_empty(self):
         """测试模块 finance 不支持的表返回空 DataFrame"""
-        from jk2bt.market_data.conversion_bond import (
+        from jk2bt.data.market.conversion_bond import (
             FinanceQuery,
         )
 

@@ -30,7 +30,7 @@ import time
 from unittest.mock import patch, MagicMock, PropertyMock
 import warnings
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     RobustResult,
     get_index_stocks_robust,
     get_index_weights_robust,

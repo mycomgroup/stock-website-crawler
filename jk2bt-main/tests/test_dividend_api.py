@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.finance_data.dividend import (
+from jk2bt.data.finance.dividend import (
     get_dividend_info,
     get_dividend_history,
     calculate_ex_rights_price,
@@ -478,31 +478,31 @@ class TestPackageLevelExports(unittest.TestCase):
     """测试包级导出"""
 
     def test_dividend_info_exported(self):
-        from jk2bt.finance_data import get_dividend_info
+        from jk2bt.data.finance import get_dividend_info
 
         df = get_dividend_info("600519", force_update=False, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
 
     def test_rights_issue_exported(self):
-        from jk2bt.finance_data import get_rights_issue
+        from jk2bt.data.finance import get_rights_issue
 
         df = get_rights_issue("600519", force_update=False, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
 
     def test_next_dividend_exported(self):
-        from jk2bt.finance_data import get_next_dividend
+        from jk2bt.data.finance import get_next_dividend
 
         df = get_next_dividend("600519", force_update=False, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
 
     def test_adjust_factor_exported(self):
-        from jk2bt.finance_data import get_adjust_factor
+        from jk2bt.data.finance import get_adjust_factor
 
         df = get_adjust_factor("600519", force_update=False, use_duckdb=False)
         self.assertIsInstance(df, pd.DataFrame)
 
     def test_schema_exports(self):
-        from jk2bt.finance_data import (
+        from jk2bt.data.finance import (
             _DIVIDEND_SCHEMA,
             _RIGHTS_ISSUE_SCHEMA,
             _NEXT_DIVIDEND_SCHEMA,
@@ -515,7 +515,7 @@ class TestPackageLevelExports(unittest.TestCase):
         self.assertIn("code", _ADJUST_FACTOR_SCHEMA)
 
     def test_finance_instance_exported(self):
-        from jk2bt.finance_data import finance
+        from jk2bt.data.finance import finance
 
         self.assertIsNotNone(finance)
         self.assertTrue(hasattr(finance, "STK_XR_XD"))

@@ -18,7 +18,7 @@ sys.path.insert(
     ),
 )
 
-from timer_rules import (
+from jk2bt.scanner.timer_rules import (
     parse_time_rule,
     check_bar_time_match,
     is_trading_day,

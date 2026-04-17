@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 import tempfile
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     get_akshare_etf_data,
     format_stock_symbol_for_akshare,
     get_akshare_stock_data,

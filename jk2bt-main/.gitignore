@@ -39,14 +39,32 @@ env/
 .coverage
 htmlcov/
 
-# DuckDB Database
-data/*.db
-data/*.db.wal
+# Data
+data/
 
-# Cache directories (keep .gitkeep files)
-jqdata_akshare_backtrader_utility/
-data/cache/*/
-runtime_data/
+# Examples
+examples/
+
+# Cache directories
+factors_cache/
+finance_cache/
+index_cache/
+stock_cache/
+.parquet_cache.bak/
+
+# Tool configs
+.opencode/
+.claude/
+.kiro/
+.github/
+
+# Logs and outputs
+logs/
+strategy_outputs/
+reports/
+
+# Docs
+docs/
 
 # Logs
 *.log

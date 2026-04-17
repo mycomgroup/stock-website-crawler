@@ -28,7 +28,7 @@ class TestCacheManager:
 
     def test_cache_manager_init(self):
         """测试 CacheManager 初始化"""
-        from jk2bt.db.cache_status import CacheManager
+        from jk2bt.data.storage.cache_status import CacheManager
 
         manager = CacheManager()
         assert manager.db is not None
@@ -36,7 +36,7 @@ class TestCacheManager:
 
     def test_cache_manager_init_with_path(self):
         """测试带路径参数的初始化"""
-        from jk2bt.db.cache_status import CacheManager
+        from jk2bt.data.storage.cache_status import CacheManager
 
         with tempfile.TemporaryDirectory() as tmpdir:
             db_path = os.path.join(tmpdir, "test_cache_parquet")
@@ -45,7 +45,7 @@ class TestCacheManager:
 
     def test_check_stock_daily_cache_has_data(self):
         """测试股票缓存检查 - 有数据"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -62,7 +62,7 @@ class TestCacheManager:
 
     def test_check_stock_daily_cache_no_data(self):
         """测试股票缓存检查 - 无数据（不存在的股票）"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -75,7 +75,7 @@ class TestCacheManager:
 
     def test_check_etf_daily_cache(self):
         """测试ETF缓存检查"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -87,7 +87,7 @@ class TestCacheManager:
 
     def test_check_index_daily_cache(self):
         """测试指数缓存检查"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -99,7 +99,7 @@ class TestCacheManager:
 
     def test_get_cache_summary(self):
         """测试缓存摘要获取"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -114,7 +114,7 @@ class TestCacheManager:
 
     def test_check_meta_cache(self):
         """测试元数据缓存检查"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -127,7 +127,7 @@ class TestCacheManager:
 
     def test_validate_cache_for_offline_valid(self):
         """测试离线缓存验证 - 有效"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -145,7 +145,7 @@ class TestCacheManager:
 
     def test_validate_cache_for_offline_missing_stock(self):
         """测试离线缓存验证 - 缺失股票"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -159,7 +159,7 @@ class TestCacheManager:
 
     def test_get_cache_manager_factory(self):
         """测试工厂函数"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager1 = get_cache_manager()
         manager2 = get_cache_manager()
@@ -169,7 +169,7 @@ class TestCacheManager:
 
     def test_check_cache_status_convenience(self):
         """测试便捷函数"""
-        from jk2bt.db.cache_status import (
+        from jk2bt.data.storage.cache_status import (
             check_cache_status,
         )
 
@@ -391,7 +391,7 @@ class TestLoadStockDataFromCache:
 
     def test_load_stock_data_from_cache_valid(self):
         """测试从缓存加载 - 有效股票"""
-        from jk2bt.core.runner import (
+        from jk2bt.engine.runner import (
             _load_stock_data_from_cache,
         )
 
@@ -402,7 +402,7 @@ class TestLoadStockDataFromCache:
 
     def test_load_stock_data_from_cache_invalid(self):
         """测试从缓存加载 - 无效股票"""
-        from jk2bt.core.runner import (
+        from jk2bt.engine.runner import (
             _load_stock_data_from_cache,
         )
 
@@ -412,7 +412,7 @@ class TestLoadStockDataFromCache:
 
     def test_load_stock_data_from_cache_different_formats(self):
         """测试从缓存加载 - 不同代码格式"""
-        from jk2bt.core.runner import (
+        from jk2bt.engine.runner import (
             _load_stock_data_from_cache,
         )
 
@@ -429,7 +429,7 @@ class TestRunJqStrategyOfflineMode:
 
     def test_run_jq_strategy_use_cache_only_parameter(self):
         """测试 run_jq_strategy 的 use_cache_only 参数"""
-        from jk2bt.core.runner import run_jq_strategy
+        from jk2bt.engine.runner import run_jq_strategy
 
         strategy_code = """
 def initialize(context):
@@ -459,7 +459,7 @@ def handle_data(context, data):
 
     def test_run_jq_strategy_cache_validation_failure(self):
         """测试缓存验证失败"""
-        from jk2bt.core.runner import run_jq_strategy
+        from jk2bt.engine.runner import run_jq_strategy
 
         strategy_code = """
 def initialize(context):
@@ -488,7 +488,7 @@ class TestEdgeCases:
 
     def test_check_stock_cache_with_future_dates(self):
         """测试缓存检查 - 未来日期"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -503,7 +503,7 @@ class TestEdgeCases:
 
     def test_validate_cache_with_empty_pool(self):
         """测试缓存验证 - 空股票池"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -516,7 +516,7 @@ class TestEdgeCases:
 
     def test_check_cache_with_different_adjust_types(self):
         """测试缓存检查 - 不同复权类型"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -542,7 +542,7 @@ class TestIntegration:
 
     def test_full_workflow(self):
         """测试完整工作流"""
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         manager = get_cache_manager()
 
@@ -559,8 +559,8 @@ class TestIntegration:
 
     def test_cache_manager_with_readonly_db(self):
         """测试只读模式的缓存管理器"""
-        from jk2bt.db.cache_status import CacheManager
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.storage.cache_status import CacheManager
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         manager = CacheManager()
         assert manager.db.read_only is True
@@ -568,7 +568,7 @@ class TestIntegration:
     def test_prewarm_and_validate(self):
         """测试预热后验证"""
         from prewarm_data import run_prewarm
-        from jk2bt.db.cache_status import get_cache_manager
+        from jk2bt.data.storage.cache_status import get_cache_manager
 
         summary = run_prewarm(
             stock_pool=["600519.XSHG"],

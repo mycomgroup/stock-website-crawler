@@ -12,7 +12,7 @@ import json
 import os
 
 from jk2bt.utils.symbol import normalize_symbol
-from jk2bt.data_access import get_adapter
+from jk2bt.data.sources import get_adapter
 
 logger = logging.getLogger(__name__)
 

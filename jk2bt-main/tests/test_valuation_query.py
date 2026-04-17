@@ -6,7 +6,7 @@ TASK_07 valuation表查询单元测试
 import unittest
 import pandas as pd
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     get_fundamentals,
     query,
     valuation,

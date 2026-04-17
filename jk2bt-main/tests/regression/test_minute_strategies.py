@@ -5,7 +5,7 @@ Task 14: 分钟策略实际运行测试
 """
 
 try:
-    from jk2bt.core.runner import run_jq_strategy
+    from jk2bt.engine.runner import run_jq_strategy
 except ImportError:
     print("请在仓库根目录运行此脚本")
     import sys

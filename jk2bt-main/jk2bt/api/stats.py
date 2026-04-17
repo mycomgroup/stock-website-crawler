@@ -335,13 +335,13 @@ def get_factor_filter_list(
         # 在指定股票池中筛选
         stocks = get_factor_filter_list('RSI', 70, operator='<', stock_list=my_stock_list)
     """
-    from jk2bt.factors import get_factor_values_jq
+    from jk2bt.analysis.factors import get_factor_values_jq
     from jk2bt.api.indicators import RSI, MACD, KDJ
 
     # 获取股票列表
     if stock_list is None:
         try:
-            from jk2bt.market_data import get_all_securities
+            from jk2bt.data.market import get_all_securities
 
             stock_list = get_all_securities(date=date)
             if isinstance(stock_list, pd.DataFrame):
@@ -349,7 +349,7 @@ def get_factor_filter_list(
         except Exception:
             # 默认使用沪深300成分股
             try:
-                from jk2bt.market_data import get_index_stocks
+                from jk2bt.data.market import get_index_stocks
 
                 stock_list = get_index_stocks("000300.XSHG", date=date)
             except Exception:
@@ -512,7 +512,7 @@ def get_num(stock: str, field: str, date: Optional[str] = None) -> float:
         roe = get_num('600519.XSHG', 'roe')
     """
     from jk2bt.api.market import get_price, history
-    from jk2bt.finance_data import get_balance_sheet, get_income_statement
+    from jk2bt.data.finance import get_balance_sheet, get_income_statement
 
     # 行情数据
     market_fields = [
@@ -583,7 +583,7 @@ def get_num(stock: str, field: str, date: Optional[str] = None) -> float:
     # 2. 估值数据
     elif field_lower in valuation_fields:
         try:
-            from jk2bt.factors import get_factor_values_jq
+            from jk2bt.analysis.factors import get_factor_values_jq
 
             jq_field_map = {
                 "pe": "pe_ratio",
@@ -674,7 +674,7 @@ def get_num(stock: str, field: str, date: Optional[str] = None) -> float:
     # 5. 尝试从因子库获取
     else:
         try:
-            from jk2bt.factors import get_factor_values_jq
+            from jk2bt.analysis.factors import get_factor_values_jq
 
             result = get_factor_values_jq(
                 securities=[stock],

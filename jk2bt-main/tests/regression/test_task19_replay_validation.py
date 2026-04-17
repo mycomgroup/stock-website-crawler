@@ -20,12 +20,12 @@ import sys
 import unittest
 
 try:
-    from jk2bt.strategy.scanner import StrategyScanner
+    from jk2bt.scanner.scanner import StrategyScanner
 except ImportError:
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, project_root)
     try:
-        from jk2bt.strategy.scanner import StrategyScanner
+        from jk2bt.scanner.scanner import StrategyScanner
     except ImportError:
         StrategyScanner = None
 

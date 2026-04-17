@@ -22,7 +22,7 @@ import shutil
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch, MagicMock
 
-from jk2bt.finance_data.company_info import (
+from jk2bt.data.finance.company_info import (
     get_company_info,
     get_security_status,
     query_company_basic_info,
@@ -42,7 +42,7 @@ from jk2bt.finance_data.company_info import (
     _STATUS_CHANGE_SCHEMA,
     run_query_simple,
 )
-from jk2bt.core.strategy_base import finance, query
+from jk2bt.engine.strategy_base import finance, query
 
 
 class TestCompanyInfo(unittest.TestCase):

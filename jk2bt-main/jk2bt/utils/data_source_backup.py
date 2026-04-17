@@ -25,7 +25,7 @@ import logging
 import pandas as pd
 from typing import Optional, Callable, List
 
-from jk2bt.data_access import get_adapter
+from jk2bt.data.sources import get_adapter
 
 logger = logging.getLogger(__name__)
 

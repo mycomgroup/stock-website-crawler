@@ -35,7 +35,7 @@ class TestAkShareAdapterCache:
     @pytest.fixture(scope="class")
     def adapter(self):
         """创建 adapter 实例，类级别复用"""
-        from jk2bt.data_access.akshare_adapter import AkShareAdapter
+        from jk2bt.data.sources.akshare_adapter import AkShareAdapter
 
         return AkShareAdapter(use_cache=True)
 
@@ -222,7 +222,7 @@ class TestAkShareAdapterCacheDisabled:
 
     @pytest.fixture
     def adapter_no_cache(self):
-        from jk2bt.data_access.akshare_adapter import AkShareAdapter
+        from jk2bt.data.sources.akshare_adapter import AkShareAdapter
 
         return AkShareAdapter(use_cache=False)
 

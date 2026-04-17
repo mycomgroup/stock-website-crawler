@@ -27,7 +27,7 @@ setup_logging(level=os.environ.get("JK2BT_LOG_LEVEL", "INFO"))
 # =============================================================================
 # Core - 策略运行器
 # =============================================================================
-from jk2bt.core.runner import (
+from jk2bt.engine.runner import (
     run_jq_strategy,
     load_jq_strategy,
     JQStrategyWrapper,
@@ -38,7 +38,7 @@ from jk2bt.core.runner import (
 # =============================================================================
 # Core - 策略基类
 # =============================================================================
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     JQ2BTBaseStrategy as StrategyBase,
     GlobalState,
     ContextProxy,
@@ -78,12 +78,12 @@ from jk2bt.core.strategy_base import (
 )
 
 # 以下函数在 runner.py 中定义
-from jk2bt.core.runner import get_trade_days, get_call_auction, get_ticks, get_valuation
+from jk2bt.engine.runner import get_trade_days, get_call_auction, get_ticks, get_valuation
 
 # =============================================================================
 # Core - 运行时IO
 # =============================================================================
-from jk2bt.core.io import (
+from jk2bt.engine.io import (
     record,
     send_message,
     read_file,
@@ -97,7 +97,7 @@ from jk2bt.core.io import (
 # =============================================================================
 # Core - 资产路由
 # =============================================================================
-from jk2bt.core.asset_router import (
+from jk2bt.engine.asset_router import (
     AssetType,
     AssetCategory,
     TradingStatus,
@@ -177,7 +177,7 @@ from jk2bt.api.enhancements import (
 # =============================================================================
 # Strategy - 辅助函数
 # =============================================================================
-from jk2bt.strategy.helpers import (
+from jk2bt.engine.helpers import (
     calculate_ma,
     calculate_ema,
     calculate_std,
@@ -197,7 +197,7 @@ from jk2bt.strategy.helpers import (
 # =============================================================================
 # Strategy - 子账户
 # =============================================================================
-from jk2bt.strategy.subportfolios import (
+from jk2bt.engine.subportfolios import (
     SubportfolioType,
     SubportfolioConfig,
     SubportfolioPosition,
@@ -212,7 +212,7 @@ from jk2bt.strategy.subportfolios import (
 # =============================================================================
 # Signals - 信号模块（包含择时信号和指标数据）
 # =============================================================================
-from jk2bt.signals import (
+from jk2bt.analysis.signals import (
     # RSRS择时信号
     compute_rsrs,
     compute_rsrs_signal,
@@ -228,12 +228,12 @@ from jk2bt.signals import (
 # =============================================================================
 # Factors - 因子模块
 # =============================================================================
-from jk2bt.factors import get_factor_values_jq, finance
+from jk2bt.analysis.factors import get_factor_values_jq, finance
 
 # =============================================================================
 # Risk - 风控模块
 # =============================================================================
-from jk2bt.risk import (
+from jk2bt.analysis.risk import (
     compute_volatility,
     compute_volatility_adjusted_position,
     compute_atr_based_stop_loss,

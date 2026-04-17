@@ -21,8 +21,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from jk2bt.data_access import set_adapter, MockDataSource, get_adapter
-from jk2bt.signals.cross_signals import (
+from jk2bt.data.sources import set_adapter, MockDataSource, get_adapter
+from jk2bt.analysis.signals.cross import (
     detect_ma_cross,
     detect_macd_cross,
     detect_kdj_cross,

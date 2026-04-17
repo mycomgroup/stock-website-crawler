@@ -52,7 +52,7 @@ if str(project_root) not in sys.path:
 # 预先 mock 模块以避免导入问题
 mock_strategy_base = MagicMock()
 mock_strategy_base.get_all_trade_days_jq = MagicMock(return_value=pd.DatetimeIndex([]))
-sys.modules['jk2bt.core.strategy_base'] = mock_strategy_base
+sys.modules['jk2bt.engine.strategy_base'] = mock_strategy_base
 sys.modules['jk2bt.core'] = MagicMock()
 
 # Mock signals 模块
@@ -61,9 +61,9 @@ sys.modules['jk2bt.signals'] = mock_signals
 
 # 预先加载 base 模块并放入 sys.modules
 base_file_path = jk2bt_path / "factors" / "base.py"
-spec_base = importlib.util.spec_from_file_location("jk2bt.factors.base", str(base_file_path))
+spec_base = importlib.util.spec_from_file_location("jk2bt.analysis.factors.base", str(base_file_path))
 base_module = importlib.util.module_from_spec(spec_base)
-sys.modules['jk2bt.factors.base'] = base_module
+sys.modules['jk2bt.analysis.factors.base'] = base_module
 spec_base.loader.exec_module(base_module)
 
 # 预先加载 date_utils 模块
@@ -81,21 +81,21 @@ except Exception:
 # 预先加载 technical 模块（用于 turnover_ratio 等函数）
 technical_file_path = jk2bt_path / "factors" / "technical.py"
 try:
-    spec_technical = importlib.util.spec_from_file_location("jk2bt.factors.technical", str(technical_file_path))
+    spec_technical = importlib.util.spec_from_file_location("jk2bt.analysis.factors.technical", str(technical_file_path))
     technical_module = importlib.util.module_from_spec(spec_technical)
-    sys.modules['jk2bt.factors.technical'] = technical_module
+    sys.modules['jk2bt.analysis.factors.technical'] = technical_module
     spec_technical.loader.exec_module(technical_module)
 except Exception:
     # 如果加载失败，创建一个 mock
     mock_technical = MagicMock()
     mock_technical._get_daily_ohlcv = MagicMock(return_value=pd.DataFrame())
-    sys.modules['jk2bt.factors.technical'] = mock_technical
+    sys.modules['jk2bt.analysis.factors.technical'] = mock_technical
 
 # 加载 valuation 模块
 valuation_file_path = jk2bt_path / "factors" / "valuation.py"
-spec_valuation = importlib.util.spec_from_file_location("jk2bt.factors.valuation", str(valuation_file_path))
+spec_valuation = importlib.util.spec_from_file_location("jk2bt.analysis.factors.valuation", str(valuation_file_path))
 valuation_module = importlib.util.module_from_spec(spec_valuation)
-sys.modules['jk2bt.factors.valuation'] = valuation_module
+sys.modules['jk2bt.analysis.factors.valuation'] = valuation_module
 spec_valuation.loader.exec_module(valuation_module)
 
 # 导出函数供测试使用
@@ -656,7 +656,7 @@ class TestComputeTurnoverRatio:
         mock_technical = MagicMock()
         mock_technical._get_daily_ohlcv.return_value = mock_daily_df
 
-        with patch.dict("sys.modules", {"jk2bt.factors.technical": mock_technical}):
+        with patch.dict("sys.modules", {"jk2bt.analysis.factors.technical": mock_technical}):
             # 重新加载 valuation 模块以使用 mock
             result = compute_turnover_ratio("sh600519", count=1)
 
@@ -684,7 +684,7 @@ class TestComputeCapitalization:
             "close": [100.0],
         })
 
-        with patch.dict("sys.modules", {"jk2bt.factors.technical": mock_technical}):
+        with patch.dict("sys.modules", {"jk2bt.analysis.factors.technical": mock_technical}):
             result = compute_capitalization("sh600519")
 
             assert np.isnan(result)
@@ -710,7 +710,7 @@ class TestComputeCirculatingCap:
             "close": [100.0],
         })
 
-        with patch.dict("sys.modules", {"jk2bt.factors.technical": mock_technical}):
+        with patch.dict("sys.modules", {"jk2bt.analysis.factors.technical": mock_technical}):
             result = compute_circulating_cap("sh600519")
 
             assert np.isnan(result)

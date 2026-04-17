@@ -27,7 +27,7 @@ class TestOptionModuleImport(unittest.TestCase):
     def test_import_option_module(self):
         """测试导入期权模块的所有公开函数"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_price,
                 get_option_quote,
@@ -50,7 +50,7 @@ class TestOptionModuleImport(unittest.TestCase):
 
     def test_robust_result_class(self):
         """测试 RobustResult 类的基本功能"""
-        from jk2bt.market_data.option import RobustResult
+        from jk2bt.data.market.option import RobustResult
 
         result = RobustResult(
             success=True, data=pd.DataFrame(), reason="", source="test"
@@ -71,7 +71,7 @@ class TestOptionList(unittest.TestCase):
     def test_get_option_list_sse(self):
         """测试获取上交所期权列表"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -83,7 +83,7 @@ class TestOptionList(unittest.TestCase):
     def test_get_option_list_szse(self):
         """测试获取深交所期权列表"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -95,7 +95,7 @@ class TestOptionList(unittest.TestCase):
     def test_get_option_list_cffex(self):
         """测试获取中金所股指期权列表"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -106,7 +106,7 @@ class TestOptionList(unittest.TestCase):
 
     def test_get_option_list_invalid_underlying(self):
         """测试无效标的类型"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             get_option_list,
         )
 
@@ -121,7 +121,7 @@ class TestGreeksCalculation(unittest.TestCase):
     def test_get_option_greeks(self):
         """测试获取期权希腊值"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_greeks,
             )
@@ -143,7 +143,7 @@ class TestGreeksCalculation(unittest.TestCase):
     def test_delta_calculation_range(self):
         """测试 Delta 计算值范围（看涨期权 0~1，看跌期权 -1~0）"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_greeks,
             )
@@ -165,7 +165,7 @@ class TestGreeksCalculation(unittest.TestCase):
     def test_gamma_calculation_positive(self):
         """测试 Gamma 计算值应为正数"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_greeks,
             )
@@ -186,7 +186,7 @@ class TestGreeksCalculation(unittest.TestCase):
     def test_theta_calculation(self):
         """测试 Theta 计算值（时间价值衰减，通常为负）"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_greeks,
             )
@@ -207,7 +207,7 @@ class TestGreeksCalculation(unittest.TestCase):
     def test_vega_calculation_positive(self):
         """测试 Vega 计算值应为正数"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_greeks,
             )
@@ -228,7 +228,7 @@ class TestGreeksCalculation(unittest.TestCase):
     def test_greeks_all_fields_present(self):
         """测试希腊值字段完整性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_greeks,
             )
@@ -251,7 +251,7 @@ class TestImpliedVolatility(unittest.TestCase):
     def test_calculate_option_implied_vol_basic(self):
         """测试计算隐含波动率基本功能"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 calculate_option_implied_vol,
             )
@@ -274,7 +274,7 @@ class TestImpliedVolatility(unittest.TestCase):
     def test_implied_vol_different_strikes(self):
         """测试不同行权价的隐含波动率计算"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 calculate_option_implied_vol,
             )
@@ -298,7 +298,7 @@ class TestImpliedVolatility(unittest.TestCase):
     def test_implied_vol_different_expiry(self):
         """测试不同到期时间的隐含波动率计算"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 calculate_option_implied_vol,
             )
@@ -324,7 +324,7 @@ class TestImpliedVolatility(unittest.TestCase):
     def test_implied_vol_deep_in_the_money(self):
         """测试深度实值期权的隐含波动率计算"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 calculate_option_implied_vol,
             )
@@ -346,7 +346,7 @@ class TestImpliedVolatility(unittest.TestCase):
     def test_implied_vol_deep_out_of_money(self):
         """测试深度虚值期权的隐含波动率计算"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 calculate_option_implied_vol,
             )
@@ -368,7 +368,7 @@ class TestImpliedVolatility(unittest.TestCase):
     def test_implied_vol_return_fields(self):
         """测试隐含波动率返回字段完整性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 calculate_option_implied_vol,
             )
@@ -394,7 +394,7 @@ class TestImpliedVolatility(unittest.TestCase):
     def test_implied_vol_greeks_included(self):
         """测试隐含波动率计算结果包含希腊值"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 calculate_option_implied_vol,
             )
@@ -424,7 +424,7 @@ class TestOptionChain(unittest.TestCase):
     def test_get_option_chain_basic(self):
         """测试获取期权链基本功能"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_chain,
             )
 
@@ -437,7 +437,7 @@ class TestOptionChain(unittest.TestCase):
     def test_option_chain_same_expiry(self):
         """测试获取同一到期日的所有期权合约"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_chain,
             )
@@ -458,7 +458,7 @@ class TestOptionChain(unittest.TestCase):
     def test_option_chain_different_strikes(self):
         """测试期权链中包含不同行权价的期权合约"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_chain,
             )
 
@@ -472,7 +472,7 @@ class TestOptionChain(unittest.TestCase):
     def test_option_chain_call_put(self):
         """测试期权链中同时包含看涨和看跌期权"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_chain,
             )
 
@@ -486,7 +486,7 @@ class TestOptionChain(unittest.TestCase):
     def test_option_chain_fields(self):
         """测试期权链返回字段完整性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_chain,
             )
 
@@ -501,7 +501,7 @@ class TestOptionChain(unittest.TestCase):
     def test_option_chain_underlying_filter(self):
         """测试按标的筛选期权链"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_chain,
             )
 
@@ -525,7 +525,7 @@ class TestOptionDaily(unittest.TestCase):
     def test_get_option_daily_basic(self):
         """测试获取期权日线数据基本功能"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_daily,
             )
@@ -542,7 +542,7 @@ class TestOptionDaily(unittest.TestCase):
     def test_option_daily_ohlcv_fields(self):
         """测试日线数据 OHLCV 字段完整性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_daily,
             )
@@ -561,7 +561,7 @@ class TestOptionDaily(unittest.TestCase):
     def test_option_daily_volume_data(self):
         """测试日线数据成交量数据完整性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_daily,
             )
@@ -580,7 +580,7 @@ class TestOptionDaily(unittest.TestCase):
     def test_option_daily_date_range(self):
         """测试日线数据日期范围筛选功能"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_daily,
             )
@@ -603,7 +603,7 @@ class TestOptionDaily(unittest.TestCase):
     def test_option_daily_sorted_by_date(self):
         """测试日线数据按日期升序排列"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_daily,
             )
@@ -621,7 +621,7 @@ class TestOptionDaily(unittest.TestCase):
     def test_option_daily_price_validity(self):
         """测试日线数据价格有效性（high >= low, high >= open/close）"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_daily,
             )
@@ -641,7 +641,7 @@ class TestOptionDaily(unittest.TestCase):
     def test_option_daily_with_option_code(self):
         """测试日线数据包含期权代码字段"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_daily,
             )
@@ -662,7 +662,7 @@ class TestBatchQuery(unittest.TestCase):
     def test_query_option_batch(self):
         """测试批量获取期权信息"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 query_option,
             )
@@ -679,7 +679,7 @@ class TestBatchQuery(unittest.TestCase):
 
     def test_query_option_empty_list(self):
         """测试空列表批量查询返回空 DataFrame"""
-        from jk2bt.market_data.option import query_option
+        from jk2bt.data.market.option import query_option
 
         df = query_option([])
         self.assertIsInstance(df, pd.DataFrame)
@@ -688,7 +688,7 @@ class TestBatchQuery(unittest.TestCase):
     def test_query_filter_by_underlying(self):
         """测试按标的筛选期权列表"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -704,7 +704,7 @@ class TestBatchQuery(unittest.TestCase):
     def test_get_option_info(self):
         """测试获取单个期权详细信息"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_info,
             )
@@ -720,7 +720,7 @@ class TestBatchQuery(unittest.TestCase):
     def test_query_option_single(self):
         """测试查询单个期权"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 query_option,
             )
@@ -736,7 +736,7 @@ class TestBatchQuery(unittest.TestCase):
     def test_get_option_price(self):
         """测试获取期权实时价格"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_price,
             )
@@ -755,7 +755,7 @@ class TestBoundaryConditions(unittest.TestCase):
 
     def test_nonexistent_option_code(self):
         """测试不存在的期权代码处理"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             get_option_price,
             get_option_greeks,
             get_option_daily,
@@ -782,7 +782,7 @@ class TestBoundaryConditions(unittest.TestCase):
     def test_expired_option(self):
         """测试已到期期权处理"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 calculate_option_implied_vol,
             )
 
@@ -798,7 +798,7 @@ class TestBoundaryConditions(unittest.TestCase):
 
     def test_invalid_parameters(self):
         """测试无效参数处理"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             get_option_daily,
         )
 
@@ -810,7 +810,7 @@ class TestBoundaryConditions(unittest.TestCase):
 
     def test_zero_price_implied_vol(self):
         """测试零价格计算隐含波动率"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             calculate_option_implied_vol,
         )
 
@@ -824,7 +824,7 @@ class TestBoundaryConditions(unittest.TestCase):
     def test_negative_strike(self):
         """测试行权价应为非负数"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -837,7 +837,7 @@ class TestBoundaryConditions(unittest.TestCase):
 
     def test_empty_dataframe_handling(self):
         """测试空 DataFrame 处理"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             query_option,
         )
 
@@ -846,7 +846,7 @@ class TestBoundaryConditions(unittest.TestCase):
 
     def test_invalid_underlying_type(self):
         """测试无效标的类型返回错误信息"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             get_option_list,
         )
 
@@ -861,7 +861,7 @@ class TestDataValidation(unittest.TestCase):
     def test_option_basic_info_fields(self):
         """验证期权基本信息字段完整性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -877,7 +877,7 @@ class TestDataValidation(unittest.TestCase):
     def test_strike_price_format(self):
         """验证行权价格为有效数值且大于零"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -893,7 +893,7 @@ class TestDataValidation(unittest.TestCase):
     def test_expiry_date_format(self):
         """验证到期日格式有效性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -908,7 +908,7 @@ class TestDataValidation(unittest.TestCase):
     def test_option_type_values(self):
         """验证看涨看跌标识有效性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -924,7 +924,7 @@ class TestDataValidation(unittest.TestCase):
     def test_option_code_uniqueness(self):
         """验证期权代码唯一性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -938,7 +938,7 @@ class TestDataValidation(unittest.TestCase):
     def test_greeks_data_types(self):
         """验证希腊值数据类型为数值型或 None"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 get_option_greeks,
             )
@@ -960,7 +960,7 @@ class TestDataValidation(unittest.TestCase):
     def test_option_name_format(self):
         """验证期权名称包含期权类型标识"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -983,7 +983,7 @@ class TestFinanceQuery(unittest.TestCase):
 
     def test_finance_query_instance(self):
         """测试 FinanceQuery 单例实例化"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             finance,
             FinanceQuery,
         )
@@ -993,7 +993,7 @@ class TestFinanceQuery(unittest.TestCase):
     def test_finance_query_stk_option_daily(self):
         """测试 finance.STK_OPTION_DAILY 表查询"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 finance,
             )
 
@@ -1005,7 +1005,7 @@ class TestFinanceQuery(unittest.TestCase):
     def test_finance_query_stk_option_basic(self):
         """测试 finance.STK_OPTION_BASIC 表查询"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 finance,
             )
 
@@ -1017,7 +1017,7 @@ class TestFinanceQuery(unittest.TestCase):
     def test_run_query_simple(self):
         """测试 run_query_simple 简化查询接口"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 run_query_simple,
             )
 
@@ -1029,7 +1029,7 @@ class TestFinanceQuery(unittest.TestCase):
     def test_run_query_simple_with_code(self):
         """测试 run_query_simple 带期权代码参数"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
                 run_query_simple,
             )
@@ -1045,7 +1045,7 @@ class TestFinanceQuery(unittest.TestCase):
     def test_run_query_simple_with_underlying(self):
         """测试 run_query_simple 按标的筛选"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 run_query_simple,
             )
 
@@ -1060,7 +1060,7 @@ class TestCacheMechanism(unittest.TestCase):
 
     def test_cache_dir_creation(self):
         """测试缓存目录创建"""
-        from jk2bt.market_data.option import (
+        from jk2bt.data.market.option import (
             get_option_list,
         )
         import tempfile
@@ -1076,7 +1076,7 @@ class TestCacheMechanism(unittest.TestCase):
     def test_force_update_flag(self):
         """测试强制更新标志功能"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 
@@ -1090,7 +1090,7 @@ class TestCacheMechanism(unittest.TestCase):
     def test_cache_validity(self):
         """测试缓存数据有效性"""
         try:
-            from jk2bt.market_data.option import (
+            from jk2bt.data.market.option import (
                 get_option_list,
             )
 

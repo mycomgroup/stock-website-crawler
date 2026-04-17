@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from unittest.mock import patch, MagicMock
 
-from jk2bt.risk.drawdown import (
+from jk2bt.analysis.risk.drawdown import (
     compute_max_drawdown,
     compute_drawdown,
     check_drawdown_alert,

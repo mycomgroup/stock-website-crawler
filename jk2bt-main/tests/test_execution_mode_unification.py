@@ -59,9 +59,9 @@ class TestPackageImportMode:
 
     def test_submodule_importable(self):
         """测试子模块可以导入"""
-        from jk2bt.core.runner import run_jq_strategy
-        from jk2bt.strategy.scanner import StrategyScanner
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.engine.runner import run_jq_strategy
+        from jk2bt.scanner.scanner import StrategyScanner
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         assert callable(run_jq_strategy)
         assert StrategyScanner is not None
@@ -155,10 +155,10 @@ class TestPytestImportMode:
 
     def test_pytest_can_import_submodules(self):
         """pytest 可以正常导入子模块"""
-        from jk2bt.core.strategy_base import (
+        from jk2bt.engine.strategy_base import (
             JQ2BTBaseStrategy,
         )
-        from jk2bt.strategy.scanner import StrategyScanner
+        from jk2bt.scanner.scanner import StrategyScanner
 
         assert JQ2BTBaseStrategy is not None
         assert StrategyScanner is not None
@@ -194,7 +194,7 @@ class TestImportConsistency:
     def test_package_vs_submodule_import(self):
         """测试包导入和子模块导入一致性"""
         from jk2bt import run_jq_strategy as run1
-        from jk2bt.core.runner import (
+        from jk2bt.engine.runner import (
             run_jq_strategy as run2,
         )
 
@@ -245,7 +245,7 @@ class TestBackwardCompatibility:
     def test_old_import_style_compatible(self):
         """测试旧的导入风格仍然兼容"""
         try:
-            from jk2bt.core.runner import (
+            from jk2bt.engine.runner import (
                 run_jq_strategy,
             )
 
@@ -282,7 +282,7 @@ def test_execution_modes_summary():
         print("⚠️  根目录脚本导入需要从根目录运行")
 
     try:
-        from jk2bt.market_data.minute import (
+        from jk2bt.data.market.minute import (
             get_stock_minute,
         )
 

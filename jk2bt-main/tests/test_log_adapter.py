@@ -3,7 +3,7 @@ import io
 import sys
 import pandas as pd
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     JQLogAdapter,
     log,
 )

@@ -3,7 +3,7 @@ import backtrader as bt
 import pandas as pd
 from datetime import datetime
 
-from jk2bt.core.strategy_base import (
+from jk2bt.engine.strategy_base import (
     JQ2BTBaseStrategy,
     jq_code_to_ak,
     set_current_strategy,
@@ -141,19 +141,19 @@ class TestOrderFunctionsIntegrated(unittest.TestCase):
 
 class TestGlobalOrderFunctions(unittest.TestCase):
     def test_global_order_target_without_strategy(self):
-        from jk2bt.core.strategy_base import order_target
+        from jk2bt.engine.strategy_base import order_target
 
         result = order_target("sh600519", 100)
         self.assertIsNone(result)
 
     def test_global_order_value_without_strategy(self):
-        from jk2bt.core.strategy_base import order_value
+        from jk2bt.engine.strategy_base import order_value
 
         result = order_value("sh600519", 10000)
         self.assertIsNone(result)
 
     def test_global_order_without_strategy(self):
-        from jk2bt.core.strategy_base import order
+        from jk2bt.engine.strategy_base import order
 
         result = order("sh600519", 100)
         self.assertIsNone(result)

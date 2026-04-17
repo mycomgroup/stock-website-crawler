@@ -23,12 +23,12 @@ logger = logging.getLogger(__name__)
 # DuckDB 可用性检测
 _DUCKDB_AVAILABLE = False
 try:
-    from ..db.meta_cache_api import get_trade_days_from_cache
+    from jk2bt.data.storage.meta_cache_api import get_trade_days_from_cache
 
     _DUCKDB_AVAILABLE = True
 except ImportError:
     try:
-        from jk2bt.db.meta_cache_api import get_trade_days_from_cache
+        from jk2bt.data.storage.meta_cache_api import get_trade_days_from_cache
 
         _DUCKDB_AVAILABLE = True
     except ImportError:
@@ -99,7 +99,7 @@ def get_all_trade_days(use_duckdb=True):
 
     # 通过适配器获取
     try:
-        from jk2bt.data_access import get_adapter
+        from jk2bt.data.sources import get_adapter
 
         df = get_adapter().get_trade_dates()
         return pd.DatetimeIndex(pd.to_datetime(df["trade_date"]).tolist())
@@ -298,17 +298,40 @@ def get_all_trade_days_jq(use_duckdb=True):
 get_trading_days = get_all_trade_days  # 常用别名
 
 
-def parse_date(date_str) -> Optional[str]:
-    """统一日期解析函数，支持多种格式"""
+def parse_date(date_str, as_datetime: bool = False) -> Optional:
+    """统一日期解析函数，支持多种格式
+
+    Parameters
+    ----------
+    date_str : 日期字符串
+    as_datetime : 是否返回 datetime 对象，默认 False 返回 '%Y-%m-%d' 字符串
+
+    Returns
+    -------
+    str 或 datetime 或 None
+    """
     if not date_str or pd.isna(date_str):
         return None
     date_str = str(date_str).strip()
-    for fmt in ["%Y-%m-%d", "%Y%m%d", "%Y/%m/%d"]:
+    for fmt in ["%Y-%m-%d", "%Y%m%d", "%Y/%m/%d", "%Y年%m月", "%Y年%m月%d日"]:
         try:
             dt = datetime.strptime(date_str, fmt)
+            if as_datetime:
+                return dt
             return dt.strftime("%Y-%m-%d")
         except ValueError:
             continue
+    # Fallback: 尝试解析纯数字格式 (如 202301)
+    if len(date_str) >= 6:
+        try:
+            year = int(date_str[:4])
+            month = int(date_str[4:6])
+            dt = datetime(year, month, 1)
+            if as_datetime:
+                return dt
+            return dt.strftime("%Y-%m-%d")
+        except Exception:
+            pass
     return None
 
 
@@ -349,9 +372,39 @@ def parse_ratio(value) -> Optional[float]:
         return None
     try:
         if isinstance(value, str):
-            value = value.replace("%", "").strip()
+            value = value.replace("%", "").replace(",", "").strip()
+            if not value:
+                return None
             return float(value) / 100 if float(value) > 1 else float(value)
         return float(value)
+    except (ValueError, TypeError):
+        return None
+
+
+def parse_num(value) -> Optional[float]:
+    """统一数值解析函数（返回 float）"""
+    if value is None or value == "" or value == "-":
+        return None
+    try:
+        if isinstance(value, str):
+            value = value.replace(",", "").replace("%", "").strip()
+            if not value:
+                return None
+        return float(value)
+    except (ValueError, TypeError):
+        return None
+
+
+def parse_int(value) -> Optional[int]:
+    """统一整数解析函数"""
+    if value is None or value == "" or value == "-":
+        return None
+    try:
+        if isinstance(value, str):
+            value = value.replace(",", "").strip()
+            if not value:
+                return None
+        return int(float(value))
     except (ValueError, TypeError):
         return None
 
@@ -370,4 +423,6 @@ __all__ = [
     "filter_by_date_range",
     "standardize_datetime",
     "parse_ratio",
+    "parse_num",
+    "parse_int",
 ]

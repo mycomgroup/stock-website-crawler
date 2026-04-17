@@ -160,8 +160,8 @@ class TestMinuteCacheIntegration(unittest.TestCase):
 
     def test_cache_query_path(self):
         """验证缓存查询路径正确"""
-        from market_data.minute import get_stock_minute
-        from jk2bt.db.parquet_adapter import ParquetAdapter
+        from jk2bt.data.market.minute import get_stock_minute
+        from jk2bt.data.storage.parquet_adapter import ParquetAdapter
 
         symbol = "sh600000"
         end_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -184,7 +184,7 @@ class TestMinuteCacheIntegration(unittest.TestCase):
 
     def test_etf_minute_cache(self):
         """验证 ETF 分钟数据缓存"""
-        from market_data.minute import get_etf_minute
+        from jk2bt.data.market.minute import get_etf_minute
 
         symbol = "510300"
         end_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

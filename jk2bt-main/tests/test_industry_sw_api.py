@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.market_data.industry_sw import (
+from jk2bt.data.market.industry_sw import (
     RobustResult,
     get_industry_sw,
     get_stock_industry,

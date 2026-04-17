@@ -9,7 +9,7 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.strategy.txt_strategy_normalizer import (
+from jk2bt.scanner.txt_normalizer import (
     TxtStrategyNormalizer as TxtNormalizer,
 )
 

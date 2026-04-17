@@ -10,7 +10,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from jk2bt.market_data.index_components import (
+from jk2bt.data.market.index_components import (
     get_index_components,
     query_index_components,
 )

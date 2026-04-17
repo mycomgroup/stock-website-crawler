@@ -2,7 +2,7 @@
 Test script for stock pool discovery enhancement
 """
 
-from jk2bt.core.runner import _static_analyze_stock_pool
+from jk2bt.engine.runner import _static_analyze_stock_pool
 
 
 def test_strategy_with_etf(context):

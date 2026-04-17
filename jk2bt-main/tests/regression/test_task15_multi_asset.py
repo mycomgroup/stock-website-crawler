@@ -21,7 +21,7 @@ import sys
 import unittest
 
 try:
-    from jk2bt.asset_router import (
+    from jk2bt.engine.asset_router import (
         AssetType,
         TradingStatus,
         identify_asset,
@@ -35,7 +35,7 @@ except ImportError:
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, project_root)
     try:
-        from jk2bt.asset_router import (
+        from jk2bt.engine.asset_router import (
             AssetType,
             TradingStatus,
             identify_asset,
@@ -231,7 +231,7 @@ class TestTradingCapability(unittest.TestCase):
         stock_supported = True
 
         try:
-            from jk2bt.asset_router import TradingStatus
+            from jk2bt.engine.asset_router import TradingStatus
 
             info = identify_asset("600519.XSHG")
             stock_supported = info.trading_status == TradingStatus.SUPPORTED
@@ -247,7 +247,7 @@ class TestTradingCapability(unittest.TestCase):
         etf_supported = True
 
         try:
-            from jk2bt.asset_router import TradingStatus
+            from jk2bt.engine.asset_router import TradingStatus
 
             info = identify_asset("510300.XSHG")
             etf_supported = info.trading_status == TradingStatus.SUPPORTED
@@ -263,7 +263,7 @@ class TestTradingCapability(unittest.TestCase):
         lof_trading_capable = False
 
         try:
-            from jk2bt.asset_router import TradingStatus
+            from jk2bt.engine.asset_router import TradingStatus
 
             info = identify_asset("160105")
             lof_trading_capable = info.trading_status == TradingStatus.SUPPORTED
@@ -293,7 +293,7 @@ class TestTradingCapability(unittest.TestCase):
         fund_of_trading_capable = False
 
         try:
-            from jk2bt.asset_router import TradingStatus
+            from jk2bt.engine.asset_router import TradingStatus
 
             info = identify_asset("000001.OF")
             fund_of_trading_capable = info.trading_status == TradingStatus.SUPPORTED
@@ -312,7 +312,7 @@ class TestTradingCapability(unittest.TestCase):
         future_trading_capable = False
 
         try:
-            from jk2bt.asset_router import TradingStatus
+            from jk2bt.engine.asset_router import TradingStatus
 
             info = identify_asset("IF2312.CCFX")
             future_trading_capable = info.trading_status == TradingStatus.SUPPORTED
@@ -337,7 +337,7 @@ class TestSpecialTradingMechanism(unittest.TestCase):
         margin_mechanism_exists = False
 
         try:
-            from jk2bt.core.strategy_base import (
+            from jk2bt.engine.strategy_base import (
                 JQ2BTBaseStrategy,
             )
             import inspect
@@ -359,7 +359,7 @@ class TestSpecialTradingMechanism(unittest.TestCase):
         arbitrage_mechanism_exists = False
 
         try:
-            from jk2bt.core.strategy_base import (
+            from jk2bt.engine.strategy_base import (
                 JQ2BTBaseStrategy,
             )
             import inspect
@@ -381,7 +381,7 @@ class TestSpecialTradingMechanism(unittest.TestCase):
         subscription_mechanism_exists = False
 
         try:
-            from jk2bt.core.strategy_base import (
+            from jk2bt.engine.strategy_base import (
                 JQ2BTBaseStrategy,
             )
             import inspect

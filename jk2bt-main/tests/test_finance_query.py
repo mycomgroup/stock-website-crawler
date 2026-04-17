@@ -17,7 +17,7 @@ sys.path.insert(
     ),
 )
 
-from jk2bt.core.strategy_base import finance, query
+from jk2bt.engine.strategy_base import finance, query
 
 
 class TestFinanceQuery(unittest.TestCase):
@@ -247,7 +247,7 @@ class TestMarginData(unittest.TestCase):
     def test_get_margin_data_basic(self):
         """测试基本融资融券数据获取"""
         try:
-            from jk2bt.finance_data.margin import get_margin_data
+            from jk2bt.data.finance.margin import get_margin_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -261,7 +261,7 @@ class TestMarginData(unittest.TestCase):
     def test_get_margin_data_different_formats(self):
         """测试不同代码格式"""
         try:
-            from jk2bt.finance_data.margin import get_margin_data
+            from jk2bt.data.finance.margin import get_margin_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -276,7 +276,7 @@ class TestMarginData(unittest.TestCase):
     def test_get_margin_data_sz_market(self):
         """测试深市股票"""
         try:
-            from jk2bt.finance_data.margin import get_margin_data
+            from jk2bt.data.finance.margin import get_margin_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -289,7 +289,7 @@ class TestMarginData(unittest.TestCase):
     def test_get_margin_data_specific_date(self):
         """测试指定日期查询"""
         try:
-            from jk2bt.finance_data.margin import get_margin_data
+            from jk2bt.data.finance.margin import get_margin_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -301,7 +301,7 @@ class TestMarginData(unittest.TestCase):
     def test_get_margin_data_invalid_stock(self):
         """测试无效股票代码"""
         try:
-            from jk2bt.finance_data.margin import get_margin_data
+            from jk2bt.data.finance.margin import get_margin_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -312,7 +312,7 @@ class TestMarginData(unittest.TestCase):
     def test_margin_field_normalization(self):
         """测试字段标准化"""
         try:
-            from jk2bt.finance_data.margin import _filter_and_normalize
+            from jk2bt.data.finance.margin import _filter_and_normalize
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -341,7 +341,7 @@ class TestForecastData(unittest.TestCase):
     def test_get_forecast_data_basic(self):
         """测试基本业绩预告数据获取"""
         try:
-            from jk2bt.finance_data.forecast import get_forecast_data
+            from jk2bt.data.finance.forecast import get_forecast_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -356,7 +356,7 @@ class TestForecastData(unittest.TestCase):
     def test_get_forecast_data_different_formats(self):
         """测试不同代码格式"""
         try:
-            from jk2bt.finance_data.forecast import get_forecast_data
+            from jk2bt.data.finance.forecast import get_forecast_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -370,7 +370,7 @@ class TestForecastData(unittest.TestCase):
     def test_get_forecast_data_sz_market(self):
         """测试深市股票"""
         try:
-            from jk2bt.finance_data.forecast import get_forecast_data
+            from jk2bt.data.finance.forecast import get_forecast_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -383,7 +383,7 @@ class TestForecastData(unittest.TestCase):
     def test_forecast_field_normalization(self):
         """测试字段标准化"""
         try:
-            from jk2bt.finance_data.forecast import _normalize_predict_data
+            from jk2bt.data.finance.forecast import _normalize_predict_data
         except ImportError:
             self.skipTest("finance_data module not available in test context")
 
@@ -561,7 +561,7 @@ class TestEdgeCases(unittest.TestCase):
 
     def test_invalid_table_query(self):
         """测试不支持的表查询"""
-        from jk2bt.core.strategy_base import _FinanceTableProxy
+        from jk2bt.engine.strategy_base import _FinanceTableProxy
 
         invalid_table = _FinanceTableProxy("INVALID_TABLE")
         df = finance.run_query(query(invalid_table.code))

@@ -1095,7 +1095,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
         """get_price_jq 使用统一接口"""
         mock_ak.stock_zh_a_hist.return_value = mock_akshare_data
 
-        from jk2bt.core.strategy_base import get_price_jq
+        from jk2bt.engine.strategy_base import get_price_jq
 
         result = get_price_jq(
             symbols="600519.XSHG",
@@ -1111,7 +1111,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
         """history 使用统一接口"""
         mock_ak.stock_zh_a_hist.return_value = mock_akshare_data
 
-        from jk2bt.core.strategy_base import history
+        from jk2bt.engine.strategy_base import history
 
         result = history(
             count=10,
@@ -1127,7 +1127,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
         """attribute_history 使用统一接口"""
         mock_ak.stock_zh_a_hist.return_value = mock_akshare_data
 
-        from jk2bt.core.strategy_base import attribute_history
+        from jk2bt.engine.strategy_base import attribute_history
 
         result = attribute_history(
             security="600519.XSHG",
@@ -1143,7 +1143,7 @@ class TestIntegrationWithBacktraderBaseStrategy:
         """get_bars_jq 使用统一接口"""
         mock_ak.stock_zh_a_hist.return_value = mock_akshare_data
 
-        from jk2bt.core.strategy_base import get_bars_jq
+        from jk2bt.engine.strategy_base import get_bars_jq
 
         result = get_bars_jq(
             security="600519.XSHG",

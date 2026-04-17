@@ -26,7 +26,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../'))
 
 # Import functions directly from technical module
-from jk2bt.factors.technical import (
+from jk2bt.analysis.factors.technical import (
     _compute_ma,
     _compute_ema,
     _compute_std,
@@ -46,7 +46,7 @@ from jk2bt.factors.technical import (
     compute_kdj,
     compute_boll,
 )
-from jk2bt.factors.base import safe_divide
+from jk2bt.analysis.factors.base import safe_divide
 
 
 # =====================================================================

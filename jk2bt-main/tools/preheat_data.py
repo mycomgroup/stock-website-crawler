@@ -75,7 +75,7 @@ def preheat_etf_data(etfs=None, start_date=None, end_date=None):
     print("预热ETF数据")
     print(f"{'='*60}")
 
-    from jk2bt.market_data.etf import get_etf_daily
+    from jk2bt.data.market.etf import get_etf_daily
 
     success_count = 0
     for code, name in etfs.items():
@@ -103,7 +103,7 @@ def preheat_index_data(indices=None, start_date=None, end_date=None):
     print("预热指数数据")
     print(f"{'='*60}")
 
-    from jk2bt.market_data.index import get_index_daily
+    from jk2bt.data.market.index import get_index_daily
 
     success_count = 0
     for code, name in indices.items():
@@ -131,7 +131,7 @@ def preheat_stock_data(stocks=None, start_date=None, end_date=None):
     print("预热股票数据")
     print(f"{'='*60}")
 
-    from jk2bt.market_data.stock import get_stock_daily
+    from jk2bt.data.market.stock import get_stock_daily
 
     success_count = 0
     for code, name in stocks.items():
