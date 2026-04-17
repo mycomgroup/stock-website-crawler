@@ -411,6 +411,95 @@ def get_trade_days(start_date: str, end_date: str) -> List[str]:
     return [d.strftime("%Y-%m-%d") for d in dates]
 
 
+
+
+def slice_window(
+    df: Optional[pd.DataFrame],
+    end_date: str,
+    count: int,
+    date_col: str = "date",
+) -> Optional[pd.DataFrame]:
+    """
+    按窗口切片数据。
+
+    Parameters
+    ----------
+    df : pd.DataFrame or None
+        输入数据框
+    end_date : str
+        截止日期
+    count : int
+        窗口大小
+    date_col : str, default "date"
+        日期列名
+
+    Returns
+    -------
+    pd.DataFrame or None
+        切片后的数据
+    """
+    if df is None:
+        return None
+    if df.empty:
+        return df.copy()
+    if date_col in df.columns:
+        mask = df[date_col] <= end_date
+        filtered = df[mask]
+        return filtered.tail(count).reset_index(drop=True)
+    else:
+        return df.tail(count).reset_index(drop=True)
+
+
+def align_to_trade_days(
+    df: Optional[pd.DataFrame],
+    date_col: str = "date",
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    fill_method: Optional[str] = None,
+) -> Optional[pd.DataFrame]:
+    """
+    将数据对齐到交易日。
+
+    Parameters
+    ----------
+    df : pd.DataFrame or None
+        输入数据框
+    date_col : str, default "date"
+        日期列名
+    start_date : str, optional
+        起始日期
+    end_date : str, optional
+        截止日期
+    fill_method : str, optional
+        填充方法，支持 "ffill", "bfill"
+
+    Returns
+    -------
+    pd.DataFrame or None
+        对齐后的数据
+    """
+    if df is None:
+        return None
+    if df.empty:
+        return df.copy()
+    if date_col not in df.columns:
+        return df.copy()
+
+    result = df.copy()
+    result[date_col] = pd.to_datetime(result[date_col]).dt.strftime("%Y-%m-%d")
+
+    _start = start_date or result[date_col].min()
+    _end = end_date or result[date_col].max()
+    trade_days = get_trade_days(_start, _end)
+
+    aligned = pd.DataFrame({date_col: trade_days})
+    aligned = aligned.merge(result, on=date_col, how="left")
+
+    if fill_method:
+        aligned = aligned.fillna(method=fill_method)
+
+    return aligned
+
 # =====================================================================
 # 因子注册表基类
 # =====================================================================
@@ -521,3 +610,32 @@ def safe_divide(
             if b == 0 or np.isnan(b):
                 return np.nan
     return result
+
+
+def fill_missing_with_warning(series: pd.Series, method: str = "ffill") -> pd.Series:
+    """
+    填充缺失值并发出警告。
+
+    Parameters
+    ----------
+    series : pd.Series
+        输入序列
+    method : str, default "ffill"
+        填充方法，支持 "ffill", "bfill", "zero", "mean"
+
+    Returns
+    -------
+    pd.Series
+        填充后的序列
+    """
+    if method == "ffill":
+        return series.ffill()
+    elif method == "bfill":
+        return series.bfill()
+    elif method == "zero":
+        return series.fillna(0)
+    elif method == "mean":
+        return series.fillna(series.mean())
+    else:
+        warnings.warn(f"未知的填充方法: {method}，返回原序列。")
+        return series

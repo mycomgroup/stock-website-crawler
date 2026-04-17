@@ -76,6 +76,13 @@ from jk2bt.engine.global_state import (
     _prerun_requested_stocks,
 )
 
+# 从 market.py 导入纯透传函数，避免重复定义
+from jk2bt.api.market import (
+    history,
+    attribute_history,
+    get_bars as get_bars_jq,
+)
+
 # =====================================================================
 # 指数成分股 API
 # =====================================================================
@@ -551,7 +558,9 @@ def get_price_jq(
 get_price = get_price_jq
 
 
-def get_ticks(security, count=1000, fields=None, df=True, date=None):
+def get_ticks(
+    security, start_dt=None, end_dt=None, count=1000, fields=None, df=True, skip=False
+):
     """
     聚宽风格 get_ticks：获取 tick 级数据。
 
@@ -559,14 +568,18 @@ def get_ticks(security, count=1000, fields=None, df=True, date=None):
     ----
     security : str or list
         股票代码
+    start_dt : str, optional
+        起始日期时间
+    end_dt : str, optional
+        结束日期时间
     count : int
         获取条数
     fields : list
         字段列表
     df : bool
         是否返回 DataFrame
-    date : str
-        查询日期
+    skip : bool
+        是否跳过停牌数据
 
     返回
     ----
@@ -579,10 +592,12 @@ def get_ticks(security, count=1000, fields=None, df=True, date=None):
 
     return _get_ticks_impl(
         security=security,
+        start_dt=start_dt,
+        end_dt=end_dt,
         count=count,
         fields=fields,
         df=df,
-        date=date,
+        skip=skip,
     )
 
 
@@ -1193,6 +1208,35 @@ def get_fundamentals(
 def get_fundamentals_robust(query_obj, date=None, statDate=None, force_update=False):
     """稳健版基本面查询，返回 RobustResult 对象"""
     return get_fundamentals(query_obj, date, statDate, force_update, robust=True)
+
+
+def run_offset_query(query_obj, offset=0, limit=5000):
+    """分页查询，突破5000行限制。
+
+    参数
+    ----
+    query_obj : Query 对象
+        查询对象
+    offset : int
+        起始偏移量，默认 0
+    limit : int
+        每页条数，默认 5000
+
+    返回
+    ----
+    DataFrame
+        拼接后的完整结果集，最大 200,000 行
+    """
+    try:
+        from jk2bt.data.finance.macro import run_offset_query as _run_offset_query
+    except ImportError:
+        from finance.macro import run_offset_query as _run_offset_query
+
+    return _run_offset_query(
+        query_obj,
+        offset=offset,
+        limit=limit,
+    )
 
 
 def _get_valuation_fundamentals(symbols, date=None, filters=None, force_update=False):
@@ -2223,6 +2267,7 @@ def get_factor_values_jq(
     factors,
     end_date=None,
     count=1,
+    start_date=None,
     force_update=False,
 ):
     """
@@ -2250,6 +2295,7 @@ def get_factor_values_jq(
             factors=factors,
             end_date=end_date,
             count=count,
+            start_date=start_date,
             force_update=force_update,
         )
     except ImportError as e:
@@ -2456,7 +2502,9 @@ def winsorize_med(factor_data, scale=3, inclusive=True, inf2nan=True, axis=0):
     # Fallback 到本地实现
     try:
         try:
-            from jk2bt.analysis.factors.preprocess import winsorize_med as _winsorize_med
+            from jk2bt.analysis.factors.preprocess import (
+                winsorize_med as _winsorize_med,
+            )
         except ImportError:
             import sys
             import os as _os
@@ -2838,6 +2886,7 @@ __all__ = [
     "analyze_performance",
     # Query
     "query",
+    "run_offset_query",
     # Alpha101/191 因子
     "get_all_alpha_101",
     "get_all_alpha_191",

@@ -203,6 +203,120 @@ from jk2bt.api.financial_indicator import (
     insurance_indicator_jq,
 )
 
+# --- 公司信息 ---
+from jk2bt.api.company_info import (
+    get_company_info,
+    get_security_status,
+    get_listing_info,
+    get_company_info_list,
+    get_industry_info,
+)
+
+# --- 股东数据 ---
+from jk2bt.api.shareholder import (
+    get_top10_shareholders,
+    get_top10_float_shareholders,
+    get_shareholder_count,
+    get_shareholder_structure,
+)
+
+# --- 分红送股 ---
+from jk2bt.api.dividend import (
+    get_dividend_info,
+    get_dividend_history,
+    get_stock_bonus,
+    get_adjust_factor,
+    get_rights_issue,
+    calculate_ex_rights_price,
+)
+
+# --- 股东变动数据 ---
+from jk2bt.api.share_change import (
+    get_pledge_info,
+    get_freeze_info,
+    get_capital_change,
+    get_major_holder_trade,
+    get_shareholder_changes,
+    get_insider_trading,
+    get_major_shareholder_change,
+)
+
+# --- 限售解禁数据 ---
+from jk2bt.api.unlock import (
+    get_unlock_info,
+    get_unlock_calendar,
+    get_unlock_schedule,
+    get_unlock_pressure,
+    get_unlock_history,
+    get_upcoming_unlocks,
+    analyze_unlock_impact,
+)
+
+# --- 基金数据 ---
+from jk2bt.api.fund import (
+    get_etf_daily,
+    get_fund_nav,
+    get_fund_of_nav,
+    get_fund_of_info,
+    get_fund_of_daily_list,
+    get_lof_daily,
+    get_lof_spot,
+    get_lof_nav,
+)
+
+# --- 宏观数据 ---
+from jk2bt.api.macro import (
+    get_macro_gdp,
+    get_macro_cpi,
+    get_macro_ppi,
+    get_macro_pmi,
+    get_macro_m2,
+    get_macro_interest_rate,
+    get_macro_exchange_rate,
+    get_macro_data,
+)
+
+# --- 北向资金 ---
+from jk2bt.api.north_money import (
+    get_north_money_flow,
+    get_north_money_daily,
+    get_north_money_holdings,
+    get_north_money_stock_flow,
+    get_north_money_stock_detail,
+    compute_north_money_signal,
+)
+
+# --- 可转债数据 ---
+from jk2bt.api.bond import (
+    get_conversion_bond_list,
+    get_conversion_bond_price,
+    get_conversion_bond_info,
+    get_conversion_bond_detail,
+    get_conversion_bond_quote,
+    get_conversion_info,
+    calculate_conversion_value,
+    calculate_premium_rate,
+    get_conversion_bond_history,
+    get_conversion_price,
+    calculate_conversion_premium,
+    get_conversion_bond_daily,
+    get_conversion_value,
+)
+
+# --- 期权数据 ---
+from jk2bt.api.option import (
+    get_option_list,
+    get_option_price,
+    get_option_daily,
+    get_option_greeks,
+    get_option_info,
+    get_option_chain,
+    get_option,
+    calculate_option_implied_vol,
+    get_option_quote,
+    query_option,
+)
+
 
 __all__ = [
     # 行情数据
@@ -333,4 +447,88 @@ __all__ = [
     "bank_indicator_jq",
     "security_indicator_jq",
     "insurance_indicator_jq",
+    # 股东变动数据
+    "get_pledge_info",
+    "get_freeze_info",
+    "get_capital_change",
+    "get_major_holder_trade",
+    "get_shareholder_changes",
+    "get_insider_trading",
+    "get_major_shareholder_change",
+    # 限售解禁数据
+    "get_unlock_info",
+    "get_unlock_calendar",
+    "get_unlock_schedule",
+    "get_unlock_pressure",
+    "get_unlock_history",
+    "get_upcoming_unlocks",
+    "analyze_unlock_impact",
+    # 公司信息
+    "get_company_info",
+    "get_security_status",
+    "get_listing_info",
+    "get_company_info_list",
+    "get_industry_info",
+    # 股东数据
+    "get_top10_shareholders",
+    "get_top10_float_shareholders",
+    "get_shareholder_count",
+    "get_shareholder_structure",
+    # 分红送股
+    "get_dividend_info",
+    "get_dividend_history",
+    "get_stock_bonus",
+    "get_adjust_factor",
+    "get_rights_issue",
+    "calculate_ex_rights_price",
+    # 基金数据
+    "get_etf_daily",
+    "get_fund_nav",
+    "get_fund_of_nav",
+    "get_fund_of_info",
+    "get_fund_of_daily_list",
+    "get_lof_daily",
+    "get_lof_spot",
+    "get_lof_nav",
+    # 宏观数据
+    "get_macro_gdp",
+    "get_macro_cpi",
+    "get_macro_ppi",
+    "get_macro_pmi",
+    "get_macro_m2",
+    "get_macro_interest_rate",
+    "get_macro_exchange_rate",
+    "get_macro_data",
+    # 北向资金
+    "get_north_money_flow",
+    "get_north_money_daily",
+    "get_north_money_holdings",
+    "get_north_money_stock_flow",
+    "get_north_money_stock_detail",
+    "compute_north_money_signal",
+    # 可转债数据
+    "get_conversion_bond_list",
+    "get_conversion_bond_price",
+    "get_conversion_bond_info",
+    "get_conversion_bond_detail",
+    "get_conversion_bond_quote",
+    "get_conversion_info",
+    "calculate_conversion_value",
+    "calculate_premium_rate",
+    "get_conversion_bond_history",
+    "get_conversion_price",
+    "calculate_conversion_premium",
+    "get_conversion_bond_daily",
+    "get_conversion_value",
+    # 期权数据
+    "get_option_list",
+    "get_option_price",
+    "get_option_daily",
+    "get_option_greeks",
+    "get_option_info",
+    "get_option_chain",
+    "get_option",
+    "calculate_option_implied_vol",
+    "get_option_quote",
+    "query_option",
 ]

@@ -34,133 +34,69 @@ import logging
 logger = logging.getLogger(__name__)
 
 # 导入拆分后的模块
-try:
-    from .strategy_wrapper import (
-        JQStrategyWrapper,
-        _set_current_strategy_instance,
-        _get_current_strategy,
-    )
-    from .executor import (
-        _load_stock_data_from_cache,
-        _load_minute_data,
-        _discover_strategy_stocks,
-        _static_analyze_stock_pool,
-    )
-    from jk2bt.api.valuation import get_valuation
-except ImportError:
-    from .strategy_wrapper import (
-        JQStrategyWrapper,
-        _set_current_strategy_instance,
-        _get_current_strategy,
-    )
-    from .executor import (
-        _load_stock_data_from_cache,
-        _load_minute_data,
-        _discover_strategy_stocks,
-        _static_analyze_stock_pool,
-    )
-    from jk2bt.api.valuation import get_valuation
+from .strategy_wrapper import (
+    JQStrategyWrapper,
+    _set_current_strategy_instance,
+    _get_current_strategy,
+)
+from .executor import (
+    _load_stock_data_from_cache,
+    _load_minute_data,
+    _discover_strategy_stocks,
+    _static_analyze_stock_pool,
+)
+from jk2bt.api.valuation import get_valuation
 
 
 # 导入统一配置
-try:
-    from jk2bt.utils.config import get_config, BacktestConfig
-except ImportError:
-    from jk2bt.utils.config import get_config, BacktestConfig
-try:
-    from jk2bt.utils.symbol import normalize_symbol
-except ImportError:
-    from jk2bt.utils.symbol import normalize_symbol
-try:
-    from .strategy_base import (
-        JQ2BTBaseStrategy,
-        GlobalState,
-        ContextProxy,
-        JQLogAdapter,
-        TimerManager,
-        get_index_weights,
-        get_index_stocks,
-        get_current_data,
-        get_current_tick,
-        get_fundamentals,
-        get_all_securities_jq,
-        get_security_info_jq,
-        get_price_jq,
-        history,
-        attribute_history,
-        query,
-        valuation,
-        income,
-        balance,
-        cash_flow,
-        indicator,
-        finance,
-        format_stock_symbol_for_akshare,
-        jq_code_to_ak,
-        ak_code_to_jq,
-        get_akshare_stock_data,
-        get_akshare_etf_data,
-        get_factor_values_jq,
-        set_current_strategy,
-        get_all_trade_days_jq,
-        get_trade_days,
-        get_extras_jq,
-        get_billboard_list_jq,
-        get_bars_jq,
-        winsorize,
-        standardlize,
-    )
+from jk2bt.utils.config import get_config, BacktestConfig
+from jk2bt.utils.symbol import normalize_symbol
 
-    normalize_code = normalize_symbol
+from .strategy_base import (
+    JQ2BTBaseStrategy,
+    GlobalState,
+    ContextProxy,
+    JQLogAdapter,
+    TimerManager,
+    get_index_weights,
+    get_index_stocks,
+    get_current_data,
+    get_current_tick,
+    get_fundamentals,
+    get_all_securities_jq,
+    get_security_info_jq,
+    get_price_jq,
+    history,
+    attribute_history,
+    query,
+    valuation,
+    income,
+    balance,
+    cash_flow,
+    indicator,
+    finance,
+    format_stock_symbol_for_akshare,
+    jq_code_to_ak,
+    ak_code_to_jq,
+    get_akshare_stock_data,
+    get_akshare_etf_data,
+    get_factor_values_jq,
+    set_current_strategy,
+    get_all_trade_days_jq,
+    get_trade_days,
+    get_extras_jq,
+    get_billboard_list_jq,
+    get_bars_jq,
+    winsorize,
+    standardlize,
+)
 
-    get_all_trade_days = get_all_trade_days_jq
-    get_extras = get_extras_jq
-    get_billboard_list = get_billboard_list_jq
-    get_bars = get_bars_jq
-except ImportError:
-    from .strategy_base import (
-        JQ2BTBaseStrategy,
-        GlobalState,
-        ContextProxy,
-        JQLogAdapter,
-        TimerManager,
-        get_index_weights,
-        get_index_stocks,
-        get_current_data,
-        get_current_tick,
-        get_fundamentals,
-        get_all_securities_jq,
-        get_security_info_jq,
-        get_price_jq,
-        history,
-        attribute_history,
-        query,
-        valuation,
-        income,
-        balance,
-        cash_flow,
-        indicator,
-        finance,
-        format_stock_symbol_for_akshare,
-        jq_code_to_ak,
-        ak_code_to_jq,
-        get_akshare_stock_data,
-        get_akshare_etf_data,
-        get_factor_values_jq,
-        set_current_strategy,
-        get_all_trade_days_jq,
-        get_trade_days,
-        get_extras_jq,
-        get_billboard_list_jq,
-        get_bars_jq,
-        winsorize,
-        standardlize,
-    )
+normalize_code = normalize_symbol
 
-    get_all_trade_days = get_all_trade_days_jq
-    get_extras = get_extras_jq
-    get_billboard_list = get_billboard_list_jq
-    get_bars = get_bars_jq
+get_all_trade_days = get_all_trade_days_jq
+get_extras = get_extras_jq
+get_billboard_list = get_billboard_list_jq
+get_bars = get_bars_jq
 
 
 # Wrapper function to support JoinQuant's positional argument style (defined once)
@@ -198,131 +134,67 @@ def get_price_wrapper(
 get_price = get_price_wrapper
 
 # 导入新模块：行业数据、北向资金、择时指标、市场情绪、竞价数据、龙虎榜数据
-try:
-    from jk2bt.data.market.industry import (
-        get_industry_classify,
-        get_industry_stocks,
-        get_all_industry_stocks,
-        get_stock_industry,
-        get_industry_daily,
-        get_industry_performance,
-        get_market_breadth,
-    )
+from jk2bt.data.market.industry import (
+    get_industry_classify,
+    get_industry_stocks,
+    get_all_industry_stocks,
+    get_stock_industry,
+    get_industry_daily,
+    get_industry_performance,
+    get_market_breadth,
+)
 
-    from jk2bt.data.market.north_money import (
-        get_north_money_flow,
-        get_north_money_daily,
-        get_north_money_holdings,
-        get_north_money_stock_flow,
-        compute_north_money_signal,
-    )
+from jk2bt.data.market.north_money import (
+    get_north_money_flow,
+    get_north_money_daily,
+    get_north_money_holdings,
+    get_north_money_stock_flow,
+    compute_north_money_signal,
+)
 
-    from jk2bt.data.market.call_auction import (
-        get_call_auction,
-        get_call_auction_jq,
-    )
+from jk2bt.data.market.call_auction import (
+    get_call_auction,
+    get_call_auction_jq,
+)
 
-    from jk2bt.data.market.option import opt
+from jk2bt.data.market.option import opt
 
-    from jk2bt.analysis.signals.rsrs import (
-        compute_rsrs,
-        compute_rsrs_signal,
-        get_rsrs_for_index,
-        get_current_rsrs_signal,
-    )
+from jk2bt.analysis.signals.rsrs import (
+    compute_rsrs,
+    compute_rsrs_signal,
+    get_rsrs_for_index,
+    get_current_rsrs_signal,
+)
 
-    from jk2bt.analysis.signals.sentiment import (
-        compute_crowding_ratio,
-        compute_gisi,
-        compute_fed_model,
-        compute_graham_index,
-        compute_below_net_ratio,
-        compute_new_high_ratio,
-        get_all_sentiment_indicators,
-    )
+from jk2bt.analysis.signals.sentiment import (
+    compute_crowding_ratio,
+    compute_gisi,
+    compute_fed_model,
+    compute_graham_index,
+    compute_below_net_ratio,
+    compute_new_high_ratio,
+    get_all_sentiment_indicators,
+)
 
-    from .io import (
-        record,
-        send_message,
-        read_file,
-        write_file,
-        get_record_data,
-        get_messages,
-        clear_runtime_data,
-        set_runtime_dir,
-        set_strategy_name,
-        get_current_strategy_name,
-        get_resource_pack,
-    )
-except ImportError:
-    from jk2bt.data.market.industry import (
-        get_industry_classify,
-        get_industry_stocks,
-        get_all_industry_stocks,
-        get_stock_industry,
-        get_industry_daily,
-        get_industry_performance,
-        get_market_breadth,
-    )
+from .io import (
+    record,
+    send_message,
+    read_file,
+    write_file,
+    get_record_data,
+    get_messages,
+    clear_runtime_data,
+    set_runtime_dir,
+    set_strategy_name,
+    get_current_strategy_name,
+    get_resource_pack,
+)
 
-    from jk2bt.data.market.north_money import (
-        get_north_money_flow,
-        get_north_money_daily,
-        get_north_money_holdings,
-        get_north_money_stock_flow,
-        compute_north_money_signal,
-    )
-
-    from jk2bt.data.market.call_auction import (
-        get_call_auction,
-        get_call_auction_jq,
-    )
-
-    from jk2bt.data.market.option import opt
-
-    from jk2bt.analysis.signals.rsrs import (
-        compute_rsrs,
-        compute_rsrs_signal,
-        get_rsrs_for_index,
-        get_current_rsrs_signal,
-    )
-
-    from jk2bt.analysis.signals.sentiment import (
-        compute_crowding_ratio,
-        compute_gisi,
-        compute_fed_model,
-        compute_graham_index,
-        compute_below_net_ratio,
-        compute_new_high_ratio,
-        get_all_sentiment_indicators,
-    )
-
-    from .io import (
-        record,
-        send_message,
-        read_file,
-        write_file,
-        get_record_data,
-        get_messages,
-        clear_runtime_data,
-        set_runtime_dir,
-        set_strategy_name,
-        get_current_strategy_name,
-        get_resource_pack,
-    )
-
-try:
-    from jk2bt.scanner.runtime_resource import (
-        RuntimeResourcePack,
-        create_resource_pack,
-        list_all_strategies,
-    )
-except ImportError:
-    from jk2bt.scanner.runtime_resource import (
-        RuntimeResourcePack,
-        create_resource_pack,
-        list_all_strategies,
-    )
+from jk2bt.scanner.runtime_resource import (
+    RuntimeResourcePack,
+    create_resource_pack,
+    list_all_strategies,
+)
 
 # 导入新实现的API模块
 try:
@@ -1057,10 +929,7 @@ def PerTrade(buy_cost=0, sell_cost=0, min_cost=0):
 
 
 # Import neutralize from factors.preprocess (authoritative implementation)
-try:
-    from jk2bt.analysis.factors.preprocess import neutralize
-except ImportError:
-    from jk2bt.analysis.factors.preprocess import neutralize
+from jk2bt.analysis.factors.preprocess import neutralize
 
 
 def security_stoploss(context, stoploss_pct, open_sell_securities=None):

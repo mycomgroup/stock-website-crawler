@@ -859,30 +859,60 @@ def _fetch_realtime_quote(symbol):
         return {}
 
 
-def _fetch_tick_data(symbol, count=1000, date=None):
-    """获取 tick 级数据"""
+def _fetch_tick_data(
+    symbol, count=1000, date=None, start_dt=None, end_dt=None, skip=False
+):
+    """获取 tick 级数据
+
+    参数
+    ----
+    symbol : str
+        股票代码
+    count : int
+        获取条数
+    date : str
+        查询日期（兼容旧接口）
+    start_dt : str, optional
+        起始日期时间
+    end_dt : str, optional
+        结束日期时间
+    skip : bool
+        是否跳过停牌数据
+
+    返回
+    ----
+    DataFrame
+    """
     ak_sym = _normalize_symbol(symbol)
 
     try:
-        try:
+        if start_dt and end_dt:
             df = get_adapter().get_stock_hist(
                 symbol=ak_sym,
                 period="1",
-                start_date=f"{date or datetime.now().strftime('%Y-%m-%d')} 09:30:00",
-                end_date=f"{date or datetime.now().strftime('%Y-%m-%d')} 15:00:00",
+                start_date=start_dt,
+                end_date=end_dt,
             )
-        except Exception:
-            prefix = _get_symbol_prefix(symbol)
-            today = date or datetime.now().strftime("%Y-%m-%d")
+        else:
             try:
                 df = get_adapter().get_stock_hist(
-                    symbol=f"{prefix}{ak_sym}",
+                    symbol=ak_sym,
                     period="1",
-                    start_date=f"{today} 09:30:00",
-                    end_date=f"{today} 15:00:00",
+                    start_date=f"{date or datetime.now().strftime('%Y-%m-%d')} 09:30:00",
+                    end_date=f"{date or datetime.now().strftime('%Y-%m-%d')} 15:00:00",
                 )
             except Exception:
-                return pd.DataFrame()
+                prefix = _get_symbol_prefix(symbol)
+                today = date or datetime.now().strftime("%Y-%m-%d")
+                try:
+                    df = get_adapter().get_stock_hist(
+                        symbol=f"{prefix}{ak_sym}",
+                        period="1",
+                        start_date=f"{today} 09:30:00",
+                        end_date=f"{today} 15:00:00",
+                    )
+                except Exception:
+                    return pd.DataFrame()
 
         if df is None or df.empty:
             return pd.DataFrame()
@@ -919,6 +949,10 @@ def _fetch_tick_data(symbol, count=1000, date=None):
 
         df["time"] = pd.to_datetime(df["time"], errors="coerce")
         df = df.dropna(subset=["time"])
+
+        if skip:
+            df = df[df["volume"] > 0]
+
         df = df.sort_values("time").reset_index(drop=True)
 
         if count and len(df) > count:
@@ -1113,7 +1147,9 @@ def get_detailed_quote(security, date=None):
     return result
 
 
-def get_ticks(security, count=1000, fields=None, df=True, date=None):
+def get_ticks(
+    security, start_dt=None, end_dt=None, count=1000, fields=None, df=True, skip=False
+):
     """获取 tick 级数据（聚宽风格）"""
     if fields is None:
         fields = ["time", "price", "volume", "amount"]
@@ -1135,7 +1171,9 @@ def get_ticks(security, count=1000, fields=None, df=True, date=None):
             result[symbol] = pd.DataFrame() if df else []
             continue
 
-        tick_df = _fetch_tick_data(symbol, count=count, date=date)
+        tick_df = _fetch_tick_data(
+            symbol, count=count, start_dt=start_dt, end_dt=end_dt, skip=skip
+        )
 
         if tick_df.empty:
             result[symbol] = pd.DataFrame() if df else []
