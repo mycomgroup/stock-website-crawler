@@ -37,6 +37,25 @@ from jk2bt.api.market import (
     get_low_limit,
 )
 
+# --- 证券元数据 ---
+from jk2bt.api.securities import (
+    get_all_securities,
+    get_security_info,
+    get_all_securities_jq,
+    get_security_info_jq,
+    normalize_code,
+)
+
+# --- 因子看板 ---
+from jk2bt.api.factor_kanban import (
+    get_all_factors,
+    get_factor_kanban_values,
+    get_factor_stats,
+    get_factor_style_returns,
+    get_factor_specific_returns,
+    get_factor_cov,
+)
+
 # --- 订单与组合 ---
 from jk2bt.api.order import (
     order_shares,
@@ -162,6 +181,8 @@ from jk2bt.api.concept import (
     get_concepts_jq,
     get_concept_stocks_jq,
     get_concept_jq,
+    get_industry,
+    get_stock_industry,
 )
 
 # --- 融资融券 ---
@@ -319,6 +340,19 @@ from jk2bt.api.option import (
 
 
 __all__ = [
+    # 证券元数据
+    "get_all_securities",
+    "get_security_info",
+    "get_all_securities_jq",
+    "get_security_info_jq",
+    "normalize_code",
+    # 因子看板
+    "get_all_factors",
+    "get_factor_kanban_values",
+    "get_factor_stats",
+    "get_factor_style_returns",
+    "get_factor_specific_returns",
+    "get_factor_cov",
     # 行情数据
     "get_price",
     "get_price_jq",
@@ -420,6 +454,8 @@ __all__ = [
     "get_concepts_jq",
     "get_concept_stocks_jq",
     "get_concept_jq",
+    "get_industry",
+    "get_stock_industry",
     # 融资融券
     "get_mtss",
     "get_margincash_stocks",

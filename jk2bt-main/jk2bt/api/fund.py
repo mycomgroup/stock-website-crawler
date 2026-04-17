@@ -274,4 +274,41 @@ __all__ = [
     "get_lof_daily",
     "get_lof_spot",
     "get_lof_nav",
+    "get_fund_margin_list",
+    "get_fund_short_sell_list",
+    "get_etf_tracking_index",
 ]
+
+
+def get_fund_margin_list(date: Optional[str] = None) -> list:
+    """
+    获取基金融资标的列表。
+
+    NotImplementedError: 基金融资标的列表需要专业数据源。
+    """
+    raise NotImplementedError(
+        "基金融资标的列表需要专业数据源（如聚宽JQData）。请替换为其他数据源。"
+    )
+
+
+def get_fund_short_sell_list(date: Optional[str] = None) -> list:
+    """
+    获取基金融券标的列表。
+
+    NotImplementedError: 基金融券标的列表需要专业数据源。
+    """
+    raise NotImplementedError(
+        "基金融券标的列表需要专业数据源（如聚宽JQData）。请替换为其他数据源。"
+    )
+
+
+def get_etf_tracking_index(etf_code: str) -> pd.DataFrame:
+    """
+    获取ETF跟踪指数信息。
+
+    NotImplementedError: ETF跟踪指数信息需要专业数据源。
+    """
+    raise NotImplementedError(
+        "finance.FUND_INVEST_TARGET 需要专业数据源（如聚宽JQData）。"
+        "请替换为其他数据源。"
+    )

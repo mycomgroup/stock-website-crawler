@@ -202,6 +202,12 @@ class CompanyInfoCacheManager:
             if col not in df.columns:
                 df[col] = None
 
+        # 转换 list_date 为日期类型
+        if "list_date" in df.columns:
+            df["list_date"] = pd.to_datetime(
+                df["list_date"].astype(str), format="%Y%m%d", errors="coerce"
+            )
+
         cols = ["symbol", "name", "industry", "area", "list_date", "market"]
         df = df[cols]
 

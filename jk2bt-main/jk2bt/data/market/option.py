@@ -41,6 +41,10 @@ __all__ = [
     "get_option_daily",
     "get_option_ticks",
     "get_option_preopen",
+    "get_option_adjustment",
+    "get_option_exercise_info",
+    "get_option_trade_rank",
+    "get_commodity_option_ticks",
     "RobustResult",
     "FinanceQuery",
     "finance",
@@ -1840,3 +1844,49 @@ def _extract_underlying_from_szse(row) -> str:
     if "(" in underlying_str and ")" in underlying_str:
         return underlying_str.split("(")[-1].replace(")", "")
     return ""
+
+
+def get_option_adjustment(option_code: str) -> pd.DataFrame:
+    """
+    获取期权合约调整记录。
+
+    NotImplementedError: 期权调整记录需要专业数据源。请替换为其他数据源。
+    """
+    raise NotImplementedError(
+        "opt.OPT_ADJUSTMENT 需要专业数据源（如聚宽JQData）。"
+        "请替换为其他数据源（如Tushare/Wind/交易所API）。"
+    )
+
+
+def get_option_exercise_info(option_code: str) -> pd.DataFrame:
+    """
+    获取期权行权交收信息。
+
+    NotImplementedError: 期权行权交收信息需要专业数据源。
+    """
+    raise NotImplementedError(
+        "opt.OPT_EXERCISE_INFO 需要专业数据源（如聚宽JQData）。请替换为其他数据源。"
+    )
+
+
+def get_option_trade_rank(exchange: str, date: str) -> pd.DataFrame:
+    """
+    获取期权交易和持仓排名统计。
+
+    NotImplementedError: 期权交易排名需要专业数据源。
+    """
+    raise NotImplementedError(
+        "opt.OPT_TRADE_RANK_STK 需要专业数据源（如聚宽JQData）。请替换为其他数据源。"
+    )
+
+
+def get_commodity_option_ticks(option_code: str, date: str) -> pd.DataFrame:
+    """
+    获取商品期权Tick数据。
+
+    NotImplementedError: 商品期权Tick数据需要专业数据源。
+    """
+    raise NotImplementedError(
+        "商品期权Tick数据需要专业数据源（如聚宽JQData）。"
+        "当前akshare仅提供金融期权Tick。请替换为其他数据源。"
+    )

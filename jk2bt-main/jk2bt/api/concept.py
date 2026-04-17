@@ -247,6 +247,59 @@ def get_industry_classify(
     return pd.DataFrame(columns=["code", "name", "level", "parent_code"])
 
 
+def get_industry(
+    security: Union[str, List[str]],
+    date: Optional[str] = None,
+) -> dict:
+    """
+    获取股票所属行业（聚宽标准接口）。
+
+    参数
+    ----
+    security : str or list of str
+        股票代码，如 '000001.XSHE' 或 ['000001.XSHE', '600519.XSHG']
+    date : str, optional
+        查询日期，格式 'YYYY-MM-DD'
+
+    返回
+    ----
+    dict
+        {代码: {'sw_l1': {'industry_code': xx, 'industry_name': xx},
+                'sw_l2': {...}, 'sw_l3': {...}, 'zjw': {...}}}
+
+    示例
+    ----
+    >>> d = get_industry('000001.XSHE')
+    >>> print(d['000001.XSHE']['sw_l1']['industry_name'])
+    """
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = list(security)
+
+    industry_types = ["sw_l1", "sw_l2", "sw_l3", "zjw"]
+    result = {}
+
+    for sec in securities:
+        sec_industries = {}
+        for ind_type in industry_types:
+            try:
+                df = get_stock_industry(security=sec, date=date, industry_type=ind_type)
+                if df is not None and not df.empty:
+                    row = df.iloc[0]
+                    sec_industries[ind_type] = {
+                        "industry_code": row.get("industry_code"),
+                        "industry_name": row.get("industry_name"),
+                    }
+                else:
+                    sec_industries[ind_type] = None
+            except Exception:
+                sec_industries[ind_type] = None
+        result[sec] = sec_industries
+
+    return result
+
+
 def get_stock_industry(
     security: str,
     date: Optional[str] = None,
@@ -336,6 +389,7 @@ __all__ = [
     "get_all_concepts",
     "get_industry_classify",
     "get_stock_industry",
+    "get_industry",
     "get_concepts_jq",
     "get_concept_stocks_jq",
     "get_concept_jq",

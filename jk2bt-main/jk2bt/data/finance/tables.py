@@ -928,6 +928,515 @@ def get_option_preopen(
 
 
 # =====================================================================
+# 沪深市场每日成交概况
+# =====================================================================
+
+STK_EXCHANGE_TRADE_INFO_SCHEMA = [
+    "date",  # 日期
+    "sh_turnover",  # 上海成交额(亿元)
+    "sh_trade_count",  # 上海成交笔数
+    "sz_turnover",  # 深圳成交额(亿元)
+    "sz_trade_count",  # 深圳成交笔数
+    "total_turnover",  # 总成交额(亿元)
+]
+
+
+def get_exchange_trade_info(
+    date: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取沪深市场每日成交概况
+
+    参数:
+        date: 指定日期
+        start_date: 开始日期
+        end_date: 结束日期
+
+    返回:
+        DataFrame，包含沪深市场每日成交概况
+    """
+    raise NotImplementedError(
+        "STK_EXCHANGE_TRADE_INFO 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+# =====================================================================
+# 货币基金收益日报
+# =====================================================================
+
+FUND_MF_DAILY_PROFIT_SCHEMA = [
+    "code",  # 基金代码
+    "date",  # 日期
+    "profit_per_million",  # 每万份收益
+    "seven_day_yield",  # 7日年化收益率
+    "five_day_avg_yield",  # 5日均价收益率
+]
+
+
+def get_fund_mf_daily_profit(
+    fund_code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取货币基金收益日报
+
+    参数:
+        fund_code: 基金代码
+        start_date: 开始日期
+        end_date: 结束日期
+
+    返回:
+        DataFrame，包含货币基金收益数据
+    """
+    import akshare as ak
+
+    try:
+        df = ak.fund_money_fund_info_em()
+        if df is None or df.empty:
+            return pd.DataFrame(columns=FUND_MF_DAILY_PROFIT_SCHEMA)
+
+        column_mapping = {
+            "净值日期": "date",
+            "每万份收益": "profit_per_million",
+            "7日年化收益率": "seven_day_yield",
+        }
+
+        df = df.rename(columns=column_mapping)
+
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"], errors="coerce")
+            if start_date:
+                df = df[df["date"] >= pd.to_datetime(start_date)]
+            if end_date:
+                df = df[df["date"] <= pd.to_datetime(end_date)]
+
+        if fund_code:
+            df["code"] = fund_code
+
+        available_cols = [c for c in FUND_MF_DAILY_PROFIT_SCHEMA if c in df.columns]
+        return df[available_cols]
+
+    except Exception as e:
+        warnings.warn(f"获取货币基金收益失败: {e}")
+        return pd.DataFrame(columns=FUND_MF_DAILY_PROFIT_SCHEMA)
+
+
+# =====================================================================
+# 审计报告
+# =====================================================================
+
+STK_AUDIT_OPINION_SCHEMA = [
+    "code",  # 股票代码
+    "pub_date",  # 公告日期
+    "report_date",  # 报告日期
+    "auditor",  # 审计机构
+    "opinion_type",  # 审计意见类型
+    "opinion_content",  # 审计意见内容
+]
+
+
+def get_audit_opinion(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取审计报告数据
+
+    参数:
+        code: 股票代码
+        start_date: 开始日期
+        end_date: 结束日期
+
+    返回:
+        DataFrame，包含审计报告数据
+    """
+    raise NotImplementedError(
+        "STK_AUDIT_OPINION 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+# =====================================================================
+# 定期报告预约披露时间表
+# =====================================================================
+
+STK_REPORT_DISCLOSURE_SCHEMA = [
+    "code",  # 股票代码
+    "report_type",  # 报告类型
+    "scheduled_date",  # 预约披露日期
+    "actual_date",  # 实际披露日期
+    "report_date",  # 报告日期
+]
+
+
+def get_report_disclosure(
+    code: Optional[str] = None,
+    year: str = "2024",
+) -> pd.DataFrame:
+    """
+    获取定期报告预约披露时间表
+
+    参数:
+        code: 股票代码
+        year: 年份
+
+    返回:
+        DataFrame，包含预约披露时间数据
+    """
+    import akshare as ak
+
+    try:
+        df = ak.stock_report_disclosure(year=year)
+        if df is None or df.empty:
+            return pd.DataFrame(columns=STK_REPORT_DISCLOSURE_SCHEMA)
+
+        column_mapping = {
+            "股票代码": "code",
+            "股票简称": "stock_name",
+            "首次预约": "scheduled_date",
+            "初次变更": "first_change",
+            "二次变更": "second_change",
+            "三次变更": "third_change",
+            "实际披露": "actual_date",
+        }
+
+        df = df.rename(columns=column_mapping)
+
+        df["report_type"] = f"{year}年年报"
+
+        if "scheduled_date" in df.columns:
+            df["scheduled_date"] = pd.to_datetime(df["scheduled_date"], errors="coerce")
+            df["report_date"] = f"{year}-12-31"
+
+        if code:
+            code = code.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+            df = df[df["code"] == code]
+
+        available_cols = [c for c in STK_REPORT_DISCLOSURE_SCHEMA if c in df.columns]
+        return df[available_cols]
+
+    except Exception as e:
+        warnings.warn(f"获取预约披露时间失败: {e}")
+        return pd.DataFrame(columns=STK_REPORT_DISCLOSURE_SCHEMA)
+
+
+# =====================================================================
+# 业绩快报
+# =====================================================================
+
+STK_PERFORMANCE_LETTERS_SCHEMA = [
+    "code",  # 股票代码
+    "pub_date",  # 公告日期
+    "report_date",  # 报告日期
+    "eps",  # 每股收益
+    "revenue",  # 营业收入
+    "net_profit",  # 净利润
+    "yoy_revenue",  # 营收同比
+    "yoy_profit",  # 利润同比
+]
+
+
+def get_performance_letters(
+    code: Optional[str] = None,
+    date: str = "2024-03-31",
+) -> pd.DataFrame:
+    """
+    获取业绩快报数据
+
+    参数:
+        code: 股票代码
+        date: 报告期
+
+    返回:
+        DataFrame，包含业绩快报数据
+    """
+    import akshare as ak
+
+    try:
+        df = ak.stock_yjkb_em(date=date)
+        if df is None or df.empty:
+            return pd.DataFrame(columns=STK_PERFORMANCE_LETTERS_SCHEMA)
+
+        column_mapping = {
+            "股票代码": "code",
+            "公告日期": "pub_date",
+            "每股收益": "eps",
+            "营业收入": "revenue",
+            "净利润": "net_profit",
+            "营业收入同比增长": "yoy_revenue",
+            "净利润同比增长": "yoy_profit",
+        }
+
+        df = df.rename(columns=column_mapping)
+
+        if "pub_date" in df.columns:
+            df["pub_date"] = pd.to_datetime(df["pub_date"], errors="coerce")
+            df["report_date"] = date
+
+        if code:
+            code = code.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+            df = df[df["code"] == code]
+
+        available_cols = [c for c in STK_PERFORMANCE_LETTERS_SCHEMA if c in df.columns]
+        return df[available_cols]
+
+    except Exception as e:
+        warnings.warn(f"获取业绩快报失败: {e}")
+        return pd.DataFrame(columns=STK_PERFORMANCE_LETTERS_SCHEMA)
+
+
+# =====================================================================
+# 金融类财务报表 -  stubs
+# =====================================================================
+
+FINANCE_INCOME_STATEMENT_SCHEMA = [
+    "id",
+    "company_id",
+    "company_name",
+    "code",
+    "a_code",
+    "b_code",
+    "h_code",
+    "pub_date",
+    "start_date",
+    "end_date",
+    "report_date",
+    "report_type",
+    "source_id",
+    "source",
+    "operating_revenue",
+    "interest_net_revenue",
+    "interest_income",
+    "interest_expense",
+    "commission_net_income",
+    "commission_income",
+    "commission_expense",
+    "investment_income",
+    "fair_value_variable_income",
+    "operating_profit",
+    "total_profit",
+    "income_tax_expense",
+    "net_profit",
+    "np_parent_company_owners",
+    "minority_profit",
+    "basic_eps",
+    "diluted_eps",
+]
+
+
+def get_finance_income_statement(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """获取金融类上市公司利润表"""
+    raise NotImplementedError(
+        "FINANCE_INCOME_STATEMENT 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+FINANCE_CASHFLOW_STATEMENT_SCHEMA = [
+    "id",
+    "company_id",
+    "company_name",
+    "code",
+    "a_code",
+    "b_code",
+    "h_code",
+    "pub_date",
+    "start_date",
+    "end_date",
+    "report_date",
+    "report_type",
+    "source_id",
+    "source",
+    "operate_cash_flow",
+    "net_operate_cash_flow",
+    "net_invest_cash_flow",
+    "net_finance_cash_flow",
+    "net_cash_increase",
+]
+
+
+def get_finance_cashflow_statement(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """获取金融类上市公司现金流量表"""
+    raise NotImplementedError(
+        "FINANCE_CASHFLOW_STATEMENT 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+FINANCE_BALANCE_SHEET_PARENT_SCHEMA = [
+    "id",
+    "company_id",
+    "company_name",
+    "code",
+    "a_code",
+    "b_code",
+    "h_code",
+    "pub_date",
+    "start_date",
+    "end_date",
+    "report_date",
+    "report_type",
+    "source_id",
+    "source",
+    "cash_equivalents",
+    "total_assets",
+    "total_liability",
+    "total_equity",
+    "accounts_receivable",
+    "accounts_payable",
+    "inventory",
+    "fixed_assets",
+    "intangible_assets",
+    "longterm_equity_invest",
+    "shortterm_loan",
+    "longterm_loan",
+    "total_debt",
+]
+
+
+def get_finance_balance_sheet_parent(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """获取金融类上市公司资产负债表（母公司）"""
+    raise NotImplementedError(
+        "FINANCE_BALANCE_SHEET_PARENT 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+FINANCE_INCOME_STATEMENT_PARENT_NEW_SCHEMA = [
+    "id",
+    "company_id",
+    "company_name",
+    "code",
+    "a_code",
+    "b_code",
+    "h_code",
+    "pub_date",
+    "start_date",
+    "end_date",
+    "report_date",
+    "report_type",
+    "source_id",
+    "source",
+    "operating_revenue",
+    "interest_net_revenue",
+    "interest_income",
+    "interest_expense",
+    "commission_net_income",
+    "commission_income",
+    "commission_expense",
+    "investment_income",
+    "fair_value_variable_income",
+    "operating_profit",
+    "total_profit",
+    "income_tax_expense",
+    "net_profit",
+    "np_parent_company_owners",
+    "minority_profit",
+    "basic_eps",
+    "diluted_eps",
+]
+
+
+def get_finance_income_statement_parent(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """获取金融类上市公司利润表（母公司）"""
+    raise NotImplementedError(
+        "FINANCE_INCOME_STATEMENT_PARENT 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+FINANCE_CASHFLOW_STATEMENT_PARENT_NEW_SCHEMA = [
+    "id",
+    "company_id",
+    "company_name",
+    "code",
+    "a_code",
+    "b_code",
+    "h_code",
+    "pub_date",
+    "start_date",
+    "end_date",
+    "report_date",
+    "report_type",
+    "source_id",
+    "source",
+    "operate_cash_flow",
+    "net_operate_cash_flow",
+    "net_invest_cash_flow",
+    "net_finance_cash_flow",
+    "net_cash_increase",
+]
+
+
+def get_finance_cashflow_statement_parent(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """获取金融类上市公司现金流量表（母公司）"""
+    raise NotImplementedError(
+        "FINANCE_CASHFLOW_STATEMENT_PARENT 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+FINANCE_BALANCE_SHEET_NEW_SCHEMA = [
+    "id",
+    "company_id",
+    "company_name",
+    "code",
+    "a_code",
+    "b_code",
+    "h_code",
+    "pub_date",
+    "start_date",
+    "end_date",
+    "report_date",
+    "report_type",
+    "source_id",
+    "source",
+    "cash_equivalents",
+    "total_assets",
+    "total_liability",
+    "total_equity",
+    "accounts_receivable",
+    "accounts_payable",
+    "inventory",
+    "fixed_assets",
+    "intangible_assets",
+    "longterm_equity_invest",
+    "shortterm_loan",
+    "longterm_loan",
+    "total_debt",
+]
+
+
+def get_finance_balance_sheet(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """获取金融类上市公司资产负债表"""
+    raise NotImplementedError(
+        "FINANCE_BALANCE_SHEET 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+    )
+
+
+# =====================================================================
 # 统一的 FinanceQuery 类
 # =====================================================================
 

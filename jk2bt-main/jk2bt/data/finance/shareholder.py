@@ -1212,6 +1212,9 @@ class FinanceQuery:
         change_amount = None
         rank = None
 
+    # Alias for JQData compatibility
+    STK_SHAREHOLDER_FLOATING_TOP10 = STK_SHAREHOLDER_FLOAT_TOP10
+
     class STK_SHAREHOLDER_NUM:
         """股东户数表"""
 
@@ -1224,6 +1227,9 @@ class FinanceQuery:
         h_holder_num = None
         holder_num_change = None
         holder_num_change_ratio = None
+
+    # Alias for JQData compatibility
+    STK_HOLDER_NUM = STK_SHAREHOLDER_NUM
 
     class TOP10_SHAREHOLDERS:
         """前十大股东表（新API）"""

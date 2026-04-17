@@ -40,15 +40,15 @@ from jk2bt.engine.asset_router import (
     is_index,
 )
 
-# Securities Utils
-from jk2bt.engine.securities_utils import (
+# Securities Utils (重新导出 api 层的工具函数)
+from jk2bt.api.securities_utils import (
     format_stock_symbol_for_akshare,
     jq_code_to_ak,
     ak_code_to_jq,
 )
 
-# Constants
-from jk2bt.engine.constants import (
+# Constants (重新导出 api 层的常量)
+from jk2bt.api.constants import (
     SECURITY_INDEXES,
     INDEX_FALLBACK_MAP,
 )

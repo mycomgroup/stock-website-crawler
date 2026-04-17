@@ -9,6 +9,32 @@ from jk2bt.api.jq_compat import (
     get_all_securities_jq as _get_all_securities_jq,
     get_security_info_jq as _get_security_info_jq,
 )
+from jk2bt.utils.symbol import ak_code_to_jq, format_stock_symbol
+
+
+def normalize_code(code: str) -> str:
+    """
+    将股票代码转换为聚宽标准格式。
+
+    参数
+    ----
+    code : str
+        任意格式的代码，如 '600519', 'sh600519', '600519.sh' 等
+
+    返回
+    ----
+    str
+        聚宽格式代码，如 '600519.XSHG'
+
+    示例
+    ----
+    >>> normalize_code('600519')
+    '600519.XSHG'
+    >>> normalize_code('sh600519')
+    '600519.XSHG'
+    """
+    code = str(code).strip()
+    return ak_code_to_jq(code)
 
 
 def get_all_securities(types=None, date=None):
