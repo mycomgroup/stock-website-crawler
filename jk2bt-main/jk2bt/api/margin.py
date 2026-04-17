@@ -16,7 +16,7 @@ from typing import Optional, List, Union
 import warnings
 from datetime import datetime, timedelta
 
-from jk2bt.data.sources import get_adapter, DataSourceError
+from jk2bt.data.sources import get_adapter
 
 
 def get_mtss(
@@ -125,10 +125,18 @@ def get_mtss(
 
 def _get_empty_mtss_frame() -> pd.DataFrame:
     """返回空的融资融券 DataFrame"""
-    return pd.DataFrame(columns=[
-        "code", "date", "margin_balance", "margin_buy", "margin_repay",
-        "short_balance_volume", "short_sell_volume", "short_repay_volume"
-    ])
+    return pd.DataFrame(
+        columns=[
+            "code",
+            "date",
+            "margin_balance",
+            "margin_buy",
+            "margin_repay",
+            "short_balance_volume",
+            "short_sell_volume",
+            "short_repay_volume",
+        ]
+    )
 
 
 def _get_market_mtss(
@@ -311,6 +319,10 @@ def get_marginsec_stocks(
 
     聚宽兼容接口
 
+    注意：与融资标的列表不同，此函数专门返回可以融券卖出的股票列表。
+    融券标的通常比融资标的范围更小，因为只有流动性较好、波动性较低
+    的股票才会被允许融券卖出。
+
     参数
     ----
     date : str, optional
@@ -327,8 +339,76 @@ def get_marginsec_stocks(
     >>> print(len(stocks))
     800
     """
-    # 可融券标的通常与可融资标的有较大重叠
-    # 使用相同的接口
+    from jk2bt.data.finance.margin import get_short_selling_underlying
+
+    stocks = get_short_selling_underlying(date)
+
+    if stocks:
+        return stocks
+
+    # 回退方案：从全市场融资融券数据中筛选有融券活动的股票
+    try:
+        if date:
+            date_str = date.replace("-", "")
+        else:
+            date_str = datetime.now().strftime("%Y%m%d")
+
+        short_stocks = []
+
+        # 上交所
+        try:
+            df_sh = get_adapter().get_margin_detail("sh", date_str)
+            if df_sh is not None and not df_sh.empty:
+                code_col = None
+                short_col = None
+                for col in ["标的证券代码", "证券代码", "代码"]:
+                    if col in df_sh.columns:
+                        code_col = col
+                        break
+                for col in ["融券余量", "融券卖出量"]:
+                    if col in df_sh.columns:
+                        short_col = col
+                        break
+                if code_col and short_col:
+                    df_active = df_sh[df_sh[short_col] > 0]
+                    for code in df_active[code_col]:
+                        code_str = str(code).zfill(6)
+                        if code_str.startswith("6"):
+                            short_stocks.append(f"{code_str}.XSHG")
+        except Exception:
+            pass
+
+        # 深交所
+        try:
+            df_sz = get_adapter().get_margin_detail("sz", date_str)
+            if df_sz is not None and not df_sz.empty:
+                code_col = None
+                short_col = None
+                for col in ["证券代码", "代码"]:
+                    if col in df_sz.columns:
+                        code_col = col
+                        break
+                for col in ["融券余量", "融券卖出量"]:
+                    if col in df_sz.columns:
+                        short_col = col
+                        break
+                if code_col and short_col:
+                    df_active = df_sz[df_sz[short_col] > 0]
+                    for code in df_active[code_col]:
+                        code_str = str(code).zfill(6)
+                        if code_str.startswith(("0", "3")):
+                            short_stocks.append(f"{code_str}.XSHE")
+        except Exception:
+            pass
+
+        if short_stocks:
+            return list(set(short_stocks))
+
+    except Exception as e:
+        warnings.warn(f"获取可融券标的列表失败: {e}")
+
+    # 最终回退：返回融资标的作为近似（融券标的通常是融资标的的子集）
+    warnings.warn("无法获取融券标的，返回融资标的作为近似")
     return get_margincash_stocks(date)
 
 

@@ -14,67 +14,47 @@ import argparse
 from pathlib import Path
 
 # Add project root to path
-project_root = Path(__file__).parent.parent
+project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 import duckdb
 import pandas as pd
 
 from jk2bt.cache import get_cache_manager
-from jk2bt.cache.schema_validator import normalize_date_columns
+from jk2bt.cache.validator import normalize_date_columns
 
 # DuckDB 文件到 parquet_cache 表的映射
 # 格式: {db_path: [(duckdb_table_name, parquet_table_name), ...]}
 DB_TABLE_MAP = {
-    "data/market.db": [
+    "data_cache/market.db": [
         ("stock_daily", "stock_daily"),
         ("etf_daily", "etf_daily"),
         ("index_daily", "index_daily"),
-        ("lof_daily", "etf_daily"),  # LOF 复用 ETF 表
         ("stock_minute", "stock_minute"),
         ("etf_minute", "etf_minute"),
     ],
-    "data/meta.db": [
+    "data_cache/meta.db": [
         ("trade_days", "trade_calendar"),
         ("securities", "securities"),
         ("security_info", "company_info"),
     ],
-    "data/dividend.db": [("dividend", "dividend")],
-    "data/shareholder.db": [
-        ("top10_shareholders", "holder"),
-        ("top10_float_shareholders", "holder"),
-        ("shareholder_num", "holder"),
-        ("shareholder_structure", "holder"),
-    ],
-    "data/share_change.db": [("share_change", "share_change")],
-    "data/unlock.db": [
+    "data_cache/share_change.db": [("share_change", "share_change")],
+    "data_cache/unlock.db": [
         ("unlock_data", "unlock"),
         ("unlock_calendar", "unlock"),
     ],
-    "data/macro.db": [("macro", "macro_data"), ("macro_data", "macro_data")],
-    "data/company_info.db": [
-        ("company_info", "company_info"),
-        ("status_change", "status_change"),
-    ],
-    "data/index_components.db": [
-        ("index_components", "index_components"),
+    "data_cache/macro.db": [("macro_data", "macro_data")],
+    "data_cache/index_components.db": [
         ("index_weights", "index_components"),
-        ("index_history", "index_components"),
     ],
-    "data/conversion_bond.db": [
+    "data_cache/conversion_bond.db": [
         ("cb_list", "conversion_bond_daily"),
         ("cb_daily", "conversion_bond_daily"),
-        ("conversion_bond", "conversion_bond_daily"),
     ],
-    "data/industry_sw.db": [
-        ("sw_industry_list", "industry_list"),
-        ("industry_sw", "industry_components"),
-    ],
-    "data/option.db": [
+    "data_cache/option.db": [
         ("option_list", "option_daily"),
         ("option_daily", "option_daily"),
         ("option_greeks", "option_daily"),
-        ("option", "option_daily"),
     ],
 }
 
@@ -280,6 +260,17 @@ def migrate_table(
     if df.empty:
         return 0
 
+    try:
+        df = conn.execute(f"SELECT * FROM {duckdb_table}").fetchdf()
+        original_count = len(df)
+        print(f"  DEBUG: {duckdb_table} has {original_count} rows")
+    except Exception as e:
+        print(f"  DEBUG: Error querying {duckdb_table}: {e}")
+        return 0
+
+    if df.empty:
+        return 0
+
     # 字段名映射
     rename_map = COLUMN_RENAME_MAP.get(parquet_table, {})
     if rename_map:
@@ -436,7 +427,7 @@ def main():
     parser.add_argument("--db", type=str, help="指定 DuckDB 文件路径")
     args = parser.parse_args()
 
-    cache = get_cache_manager(base_dir=str(project_root / "data" / "cache"))
+    cache = get_cache_manager(base_dir=str(project_root / "data_cache" / "cache"))
 
     if args.db:
         db_files = [args.db]

@@ -112,6 +112,7 @@ def _get_plt():
 # 1. 标准库和第三方库
 # =====================================================================
 import backtrader as bt
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
@@ -438,7 +439,7 @@ class FinanceDBProxy:
             if hasattr(query_obj, "_symbols") and query_obj._symbols:
                 code = query_obj._symbols[0] if query_obj._symbols else None
 
-            df = ak.stock_cixinqr_cninfo(date="20240101")
+            df = ak.stock_cixinqr_cninfo(date=datetime.now().strftime("%Y%m%d"))
             if df is None or df.empty:
                 return pd.DataFrame()
 
@@ -478,7 +479,7 @@ class FinanceDBProxy:
             if hasattr(query_obj, "_symbols") and query_obj._symbols:
                 code = query_obj._symbols[0] if query_obj._symbols else None
 
-            df = ak.stock_cixinhhr_cninfo(date="20240101")
+            df = ak.stock_cixinhhr_cninfo(date=datetime.now().strftime("%Y%m%d"))
             if df is None or df.empty:
                 return pd.DataFrame()
 

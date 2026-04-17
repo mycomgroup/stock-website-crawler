@@ -29,7 +29,10 @@ if str(project_root) not in sys.path:
 # 导入被测模块
 try:
     from jk2bt.data.storage.cache_status import CacheManager, get_cache_manager
-    from jk2bt.data.storage.parquet_adapter import ParquetAdapter, get_shared_read_only_manager
+    from jk2bt.data.storage.parquet_adapter import (
+        ParquetAdapter,
+        get_shared_read_only_manager,
+    )
     from jk2bt.data.market.stock import get_stock_daily
     from jk2bt.data.market.etf import get_etf_daily
     from jk2bt.data.market.index import get_index_daily
@@ -215,7 +218,11 @@ class OfflineTestFixture:
         cache = get_cache_manager()
 
         trade_days = pd.DataFrame(
-            {"date": pd.date_range("2023-01-01", "2023-03-31", freq="B").date}
+            {
+                "date": pd.date_range("2023-01-01", "2023-03-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2023-01-01", "2023-03-31", freq="B")),
+            }
         )
         cache.put("trade_calendar", trade_days)
 

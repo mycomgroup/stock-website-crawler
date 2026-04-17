@@ -1,7 +1,19 @@
-"""
-兼容入口：`jk2bt.api.stats_api` -> `jk2bt.api.stats`。
-"""
+"""兼容入口 - 从 stats 模块重新导出。"""
 
-from jk2bt.api.stats import *  # noqa: F401, F403
-from jk2bt.api.stats import __all__  # noqa: F401
+from .stats import (
+    get_ols,
+    get_zscore,
+    get_rank,
+    get_factor_filter_list,
+    get_num,
+    get_beta,
+)
 
+__all__ = [
+    "get_ols",
+    "get_zscore",
+    "get_rank",
+    "get_factor_filter_list",
+    "get_num",
+    "get_beta",
+]

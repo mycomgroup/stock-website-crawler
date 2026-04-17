@@ -4,7 +4,7 @@ Parquet Cache - 多进程并发安全的 Parquet 缓存系统
 Usage:
     from jk2bt.cache import CacheManager
 
-    cache = CacheManager(base_dir="data/cache")
+    cache = CacheManager(base_dir="data_cache/cache")
 
     # 写入
     cache.put("stock_daily", df, partition_value="2024-04-01")
@@ -14,7 +14,7 @@ Usage:
 
     # 聚合
     from jk2bt.cache import run_aggregation
-    run_aggregation("data/cache")
+    run_aggregation("data_cache/cache")
 """
 
 __version__ = "0.1.0"

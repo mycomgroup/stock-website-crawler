@@ -114,7 +114,10 @@ def compute_gisi(
     except ImportError:
         return pd.DataFrame()
 
-    from market_data.industry import SW_LEVEL1_CODES, get_industry_daily
+    try:
+        from jk2bt.data.market.industry import SW_LEVEL1_CODES, get_industry_daily
+    except ImportError:
+        return pd.DataFrame()
 
     if end_date is None:
         end_date = datetime.now().strftime("%Y-%m-%d")

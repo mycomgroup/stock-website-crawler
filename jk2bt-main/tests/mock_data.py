@@ -1,6 +1,5 @@
 """Minimal mock provider for legacy tests."""
 
-MOCK_PROVIDER = {
-    "name": "default-mock-provider",
-    "version": "1.0",
-}
+from tests.fixtures.mock_data import MOCK_PROVIDER
+
+__all__ = ["MOCK_PROVIDER"]

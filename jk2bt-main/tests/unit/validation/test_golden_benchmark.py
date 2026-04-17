@@ -23,18 +23,17 @@ tests/validation/test_golden_benchmark.py
 """
 
 import os
-import sys
 import pytest
 import json
 import datetime
 from typing import Dict, Any
 
-_project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if _project_root not in sys.path:
-    sys.path.insert(0, _project_root)
-
 from jk2bt import run_jq_strategy
 from jk2bt.data.storage.cache_status import get_cache_manager
+
+_project_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 
 
 # =============================================================================
@@ -44,38 +43,29 @@ from jk2bt.data.storage.cache_status import get_cache_manager
 GOLDEN_BENCHMARK_CONFIG = {
     # 策略文件
     "strategy_file": "strategies/validation_v4_double_ma.txt",
-
     # 固定日期区间
     "start_date": "2023-01-01",
     "end_date": "2023-12-31",
-
     # 固定股票池（2只蓝筹股，数据稳定可靠）
     "stock_pool": ["600519.XSHG", "000858.XSHE"],  # 贵州茅台、五粮液
-
     # 初始资金
     "initial_capital": 1000000,
-
     # 预期基准结果（需要预热数据后运行获取）
     # 注意：这些值需要根据实际运行结果更新
     "expected_baseline": {
         # 最终资金基准值（容差5%）
         "final_value": None,  # 待预热后填充
         "final_value_tolerance_pct": 5.0,
-
         # 收益率基准值（容差10%绝对误差）
         "pnl_pct": None,  # 待预热后填充
         "pnl_pct_tolerance": 10.0,  # 绝对百分比误差
-
         # 运行时间限制（秒）
         "max_run_time_seconds": 60,
-
         # 基准更新日期
         "baseline_updated": None,
     },
-
     # 测试级别：P0最高优先级，CI必须通过
     "validation_priority": "P0",
-
     # 描述
     "description": "双均线择时策略金标基准测试",
 }
@@ -93,7 +83,7 @@ def check_cache_availability() -> Dict[str, Any]:
         "available": True,
         "missing_stocks": [],
         "missing_meta": [],
-        "details": {}
+        "details": {},
     }
 
     start = GOLDEN_BENCHMARK_CONFIG["start_date"]
@@ -146,7 +136,7 @@ def load_or_create_baseline() -> Dict[str, Any]:
     return {
         "needs_creation": True,
         "baseline_file": baseline_file,
-        "message": "基准文件不存在，请先运行数据预热并生成基准"
+        "message": "基准文件不存在，请先运行数据预热并生成基准",
     }
 
 
@@ -201,12 +191,12 @@ class TestGoldenBenchmark:
 
         full_path = os.path.join(_project_root, strategy_file)
 
-        assert os.path.exists(full_path), \
+        assert os.path.exists(full_path), (
             f"金标策略文件不存在: {full_path}\n这是硬验收失败，请检查策略文件路径"
+        )
 
         # 验证股票池不为空
-        assert len(self.config["stock_pool"]) > 0, \
-            "股票池为空，这是硬验收失败"
+        assert len(self.config["stock_pool"]) > 0, "股票池为空，这是硬验收失败"
 
         # 验证日期有效
         start = self.config["start_date"]
@@ -215,8 +205,7 @@ class TestGoldenBenchmark:
         try:
             start_dt = datetime.datetime.strptime(start, "%Y-%m-%d")
             end_dt = datetime.datetime.strptime(end, "%Y-%m-%d")
-            assert end_dt > start_dt, \
-                f"结束日期必须大于开始日期: {start} -> {end}"
+            assert end_dt > start_dt, f"结束日期必须大于开始日期: {start} -> {end}"
         except ValueError as e:
             pytest.fail(f"日期格式错误: {e}")
 
@@ -274,6 +263,7 @@ class TestGoldenBenchmark:
             )
         except Exception as e:
             import traceback
+
             tb_lines = traceback.format_exc()
             pytest.fail(
                 f"金标策略运行失败（硬验收）:\n"
@@ -292,31 +282,31 @@ class TestGoldenBenchmark:
             )
 
         # 硬验收：final_value必须存在且大于0
-        assert "final_value" in result, \
-            f"结果缺少final_value字段: {result.keys()}"
+        assert "final_value" in result, f"结果缺少final_value字段: {result.keys()}"
 
         final_value = result["final_value"]
 
-        assert final_value > 0, \
-            f"最终资金无效: {final_value}"
+        assert final_value > 0, f"最终资金无效: {final_value}"
 
         # 硬验收：pnl_pct必须存在
-        assert "pnl_pct" in result, \
-            f"结果缺少pnl_pct字段: {result.keys()}"
+        assert "pnl_pct" in result, f"结果缺少pnl_pct字段: {result.keys()}"
 
         pnl_pct = result["pnl_pct"]
 
         # 验证收益率合理性（不应该有极端异常值）
-        assert abs(pnl_pct) < 500, \
+        assert abs(pnl_pct) < 500, (
             f"收益率异常（>{500}%），可能数据问题: pnl_pct={pnl_pct}"
+        )
 
         # GATE-2硬验收：runtime_errors必须为0
         runtime_errors = result.get("runtime_errors", [])
         if len(runtime_errors) > 0:
-            error_details = "\n".join([
-                f"    - {err.get('function', 'unknown')}: {err.get('error_type', 'unknown')} - {err.get('error', '')[:100]}"
-                for err in runtime_errors[:5]
-            ])
+            error_details = "\n".join(
+                [
+                    f"    - {err.get('function', 'unknown')}: {err.get('error_type', 'unknown')} - {err.get('error', '')[:100]}"
+                    for err in runtime_errors[:5]
+                ]
+            )
             pytest.fail(
                 f"金标基准运行时存在错误（硬验收失败）:\n"
                 f"  错误数量: {len(runtime_errors)}\n"
@@ -341,7 +331,9 @@ class TestGoldenBenchmark:
 
             if expected_final is not None:
                 # 硬验收：final_value容差检查
-                tolerance_pct = self.config["expected_baseline"]["final_value_tolerance_pct"]
+                tolerance_pct = self.config["expected_baseline"][
+                    "final_value_tolerance_pct"
+                ]
                 diff_pct = abs(final_value - expected_final) / expected_final * 100
 
                 if diff_pct > tolerance_pct:
@@ -355,7 +347,9 @@ class TestGoldenBenchmark:
                         f"  建议: 检查数据完整性，或更新基准值"
                     )
                 else:
-                    print(f"  final_value容差检查通过: 误差{diff_pct:.2f}% < 容差{tolerance_pct}%")
+                    print(
+                        f"  final_value容差检查通过: 误差{diff_pct:.2f}% < 容差{tolerance_pct}%"
+                    )
 
             if expected_pnl is not None:
                 # 硬验收：pnl_pct容差检查
@@ -482,11 +476,9 @@ def test_golden_benchmark_quick():
         pytest.fail("策略返回None - 数据可能缺失，请检查缓存")
 
     # 硬验收：结果有效
-    assert result["final_value"] > 0, \
-        f"最终资金无效: {result['final_value']}"
+    assert result["final_value"] > 0, f"最终资金无效: {result['final_value']}"
 
-    assert abs(result["pnl_pct"]) < 500, \
-        f"收益率异常: {result['pnl_pct']}%"
+    assert abs(result["pnl_pct"]) < 500, f"收益率异常: {result['pnl_pct']}%"
 
     print(f"\n金标基准验收通过:")
     print(f"  最终资金: {result['final_value']:,.2f}")
@@ -511,19 +503,23 @@ def test_baseline_file_consistency():
     config = GOLDEN_BENCHMARK_CONFIG
 
     # 硬验收：策略文件一致
-    assert baseline["strategy_file"] == config["strategy_file"], \
+    assert baseline["strategy_file"] == config["strategy_file"], (
         f"策略文件不一致: 基准={baseline['strategy_file']}, 测试={config['strategy_file']}"
+    )
 
     # 硬验收：日期一致
-    assert baseline["start_date"] == config["start_date"], \
+    assert baseline["start_date"] == config["start_date"], (
         f"开始日期不一致: 基准={baseline['start_date']}, 测试={config['start_date']}"
+    )
 
-    assert baseline["end_date"] == config["end_date"], \
+    assert baseline["end_date"] == config["end_date"], (
         f"结束日期不一致: 基准={baseline['end_date']}, 测试={config['end_date']}"
+    )
 
     # 硬验收：股票池一致
-    assert baseline["stock_pool"] == config["stock_pool"], \
+    assert baseline["stock_pool"] == config["stock_pool"], (
         f"股票池不一致: 基准={baseline['stock_pool']}, 测试={config['stock_pool']}"
+    )
 
     print("基准文件配置一致性检查通过")
 

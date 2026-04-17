@@ -11,36 +11,18 @@ test_stats_collector.py
 """
 
 import os
-import sys
 import json
 import csv
-import importlib.util
 import pytest
-from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-project_root = Path(__file__).parent.parent.parent
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-
-
-# 直接从文件路径加载模块，绕过 jk2bt/__init__.py
-def _load_module_from_path(module_name, file_path):
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-stats_path = project_root / "jk2bt" / "logging" / "stats.py"
-stats_module = _load_module_from_path("logging_stats", str(stats_path))
-
-RequestStats = stats_module.RequestStats
-CacheStats = stats_module.CacheStats
-StatsCollector = stats_module.StatsCollector
-get_stats_collector = stats_module.get_stats_collector
-reset_stats_collector = stats_module.reset_stats_collector
+from jk2bt.logging import (
+    RequestStats,
+    CacheStats,
+    StatsCollector,
+    get_stats_collector,
+    reset_stats_collector,
+)
 
 
 @pytest.fixture(autouse=True)

@@ -19,6 +19,7 @@ factors/finance_tables.py
 """
 
 import warnings
+from datetime import datetime
 from typing import Optional, Union, List, Dict
 import pandas as pd
 import numpy as np
@@ -78,10 +79,7 @@ class STK_XR_XD(FinanceTable):
         **kwargs,
     ) -> pd.DataFrame:
         """查询分红送转数据。"""
-        try:
-            from jk2bt.data.finance import get_dividend_info, get_dividend_history
-        except ImportError:
-            from finance_data import get_dividend_info, get_dividend_history
+        from jk2bt.data.finance import get_dividend_info, get_dividend_history
 
         if code is None:
             warnings.warn("STK_XR_XD 查询需要指定 code 参数")
@@ -305,10 +303,13 @@ class STK_AUDIT_OPINION(FinanceTable):
     """
     审计意见数据表。
 
-    字段：
+    JQData 字段：
+    - id: 自增ID
     - code: 股票代码
-    - report_date: 报告期
-    - audit_opinion: 审计意见类型
+    - pub_date: 公告日期
+    - report_date: 报告期 (end_date)
+    - audit_opinion_type: 审计意见类型
+    - audit_opinion_content: 审计意见内容
     """
 
     def __init__(self):
@@ -337,36 +338,95 @@ class STK_AUDIT_OPINION(FinanceTable):
                 ak_code = code[:6]
             ak_code = ak_code.zfill(6)
 
-            # 尝试获取审计意见（通过 financial_benefit 接口）
-            df = get_adapter().get_financial_benefit(
-                symbol=ak_code, indicator="审计意见"
-            )
+            # 尝试获取审计意见数据
+            try:
+                df = get_adapter().get_financial_benefit(
+                    symbol=ak_code, indicator="审计意见"
+                )
+            except Exception:
+                df = None
 
-            if df is None or df.empty:
-                # 返回默认审计意见（标准无保留意见）
-                return pd.DataFrame(
-                    {
-                        "code": [code],
-                        "audit_opinion": ["标准无保留意见"],
-                        "report_date": [
-                            end_date or pd.Timestamp.today().strftime("%Y-%m-%d")
-                        ],
-                    }
+            if df is not None and not df.empty:
+                # 标准化列名到 JQData schema
+                col_map = {
+                    "代码": "code",
+                    "公告日期": "pub_date",
+                    "报告期": "report_date",
+                    "end_date": "report_date",
+                    "审计意见类型": "audit_opinion_type",
+                    "opinion_type": "audit_opinion_type",
+                    "审计意见": "audit_opinion_type",
+                    "审计意见内容": "audit_opinion_content",
+                    "opinion_content": "audit_opinion_content",
+                    "会计师事务所": "accounting_firm",
+                    "签字会计师": "accountant",
+                    "报告类型": "report_type",
+                }
+                df = df.rename(
+                    columns={k: v for k, v in col_map.items() if k in df.columns}
                 )
 
-            return df
+                # 确保必需字段存在
+                required = [
+                    "code",
+                    "pub_date",
+                    "report_date",
+                    "audit_opinion_type",
+                    "audit_opinion_content",
+                ]
+                for col in required:
+                    if col not in df.columns:
+                        if col == "audit_opinion_content":
+                            df[col] = df.get("accounting_firm", "")
+                        else:
+                            df[col] = None
+
+                # 格式化 code 为 JQData 格式
+                if "code" in df.columns:
+                    df["code"] = df["code"].apply(
+                        lambda x: self._format_code(str(x)) if pd.notna(x) else code
+                    )
+
+                # 日期过滤
+                if start_date and "pub_date" in df.columns:
+                    df = df[df["pub_date"] >= start_date]
+                if end_date and "pub_date" in df.columns:
+                    df = df[df["pub_date"] <= end_date]
+
+                return df[required]
+
+            # 返回空 DataFrame 但保持正确 schema
+            return pd.DataFrame(
+                columns=[
+                    "code",
+                    "pub_date",
+                    "report_date",
+                    "audit_opinion_type",
+                    "audit_opinion_content",
+                ]
+            )
+
         except Exception as e:
             warnings.warn(f"查询 STK_AUDIT_OPINION 失败: {e}")
-            # 返回默认审计意见
             return pd.DataFrame(
-                {
-                    "code": [code],
-                    "audit_opinion": ["标准无保留意见"],
-                    "report_date": [
-                        end_date or pd.Timestamp.today().strftime("%Y-%m-%d")
-                    ],
-                }
+                columns=[
+                    "code",
+                    "pub_date",
+                    "report_date",
+                    "audit_opinion_type",
+                    "audit_opinion_content",
+                ]
             )
+
+    def _format_code(self, code: str) -> str:
+        """将代码格式化为 JQData 标准格式。"""
+        code = code.strip()
+        if "." in code:
+            return code
+        code = code.zfill(6)
+        if code.startswith("6"):
+            return f"{code}.XSHG"
+        return f"{code}.XSHE"
 
 
 class BALANCE(FinanceTable):
@@ -447,10 +507,7 @@ class CASH_FLOW(FinanceTable):
         **kwargs,
     ) -> pd.DataFrame:
         """查询现金流量表数据。"""
-        try:
-            from jk2bt.data.finance import get_cashflow
-        except ImportError:
-            from finance_data import get_cashflow
+        from jk2bt.data.finance import get_cashflow
 
         if code is None:
             warnings.warn("CASH_FLOW 查询需要指定 code 参数")
@@ -1363,7 +1420,7 @@ class STK_LIMITED_SHARES_LIST(FinanceTable):
             return pd.DataFrame()
 
         try:
-            df = ak.stock_cixinqr_cninfo(date="20240101")
+            df = ak.stock_cixinqr_cninfo(date=datetime.now().strftime("%Y%m%d"))
             if df is None or df.empty:
                 return pd.DataFrame()
 
@@ -1433,7 +1490,7 @@ class STK_LIMITED_SHARES_UNLIMIT(FinanceTable):
             return pd.DataFrame()
 
         try:
-            df = ak.stock_cixinhhr_cninfo(date="20240101")
+            df = ak.stock_cixinhhr_cninfo(date=datetime.now().strftime("%Y%m%d"))
             if df is None or df.empty:
                 return pd.DataFrame()
 

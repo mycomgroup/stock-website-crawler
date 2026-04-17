@@ -12,7 +12,6 @@
 
 import pandas as pd
 import warnings
-from datetime import datetime
 
 from jk2bt.data.sources import get_adapter
 from jk2bt.utils.symbol import normalize_symbol as _normalize_code
@@ -71,13 +70,14 @@ def get_money_flow(
 def _get_single_stock_money_flow(code, start_date=None, end_date=None, count=None):
     """获取单个股票的资金流向"""
     try:
-        # 尝试使用 adapter 的个股资金流接口
+        # 优先使用 akshare 直接调用，stock_individual_fund_flow 返回历史数据
         try:
-            # 个股资金流向历史数据
+            import akshare as ak
+
             market = "sh" if code.startswith("6") else "sz"
-            df = get_adapter().get_individual_fund_flow(stock=code, market=market)
+            ak_code = code.zfill(6)
+            df = ak.stock_individual_fund_flow(stock=ak_code, market=market)
             if df is not None and not df.empty:
-                # 标准化列名
                 df = _standardize_columns(df)
                 df["code"] = code
 
@@ -90,15 +90,19 @@ def _get_single_stock_money_flow(code, start_date=None, end_date=None, count=Non
                     df = df.tail(count)
 
                 return df
-        except Exception:
-            pass
+        except Exception as e:
+            warnings.warn(
+                f"ak.stock_individual_fund_flow 获取 {code} 历史资金流失败: {e}"
+            )
 
-        # 备用接口：当日资金流
+        # 备用接口：当日资金流（仅返回当天数据）
         try:
             df = get_adapter().get_individual_fund_flow_rank(indicator="今日")
             if df is not None and not df.empty:
                 df = _standardize_columns(df)
                 df = df[df["code"] == code]
+                if not df.empty:
+                    warnings.warn(f"{code} 历史资金流数据不可用，仅返回当日数据")
                 return df
         except Exception:
             pass

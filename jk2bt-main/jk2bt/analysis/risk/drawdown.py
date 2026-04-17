@@ -10,10 +10,7 @@ from typing import Optional, Union, Dict
 import pandas as pd
 import numpy as np
 
-try:
-    from jk2bt.analysis.factors.technical import _get_daily_ohlcv
-except ImportError:
-    from jk2bt.analysis.factors.technical import _get_daily_ohlcv
+from jk2bt.analysis.factors.technical import _get_daily_ohlcv
 
 
 # =====================================================================

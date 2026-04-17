@@ -23,16 +23,18 @@ import json
 @dataclass
 class CacheConfig:
     """缓存配置"""
+
     enabled: bool = True
     ttl_hours: int = 24
     max_memory_items: int = 5000
-    cache_dir: str = "data/cache"
-    duckdb_path: str = "data/jk2bt.duckdb"
+    cache_dir: str = "data_cache/cache"
+    duckdb_path: str = "data_cache/jk2bt.duckdb"
 
 
 @dataclass
 class DataSourceConfig:
     """数据源配置"""
+
     provider: str = "akshare"
     timeout: int = 30
     retry_count: int = 3
@@ -42,6 +44,7 @@ class DataSourceConfig:
 @dataclass
 class LoggingConfig:
     """日志配置"""
+
     level: str = "INFO"
     log_file: str = "logs/jk2bt.log"
     format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -50,6 +53,7 @@ class LoggingConfig:
 @dataclass
 class BacktestConfig:
     """回测配置"""
+
     initial_capital: float = 1000000.0
     commission_rate: float = 0.0003
     slippage: float = 0.0
@@ -59,6 +63,7 @@ class BacktestConfig:
 @dataclass
 class Config:
     """主配置类"""
+
     cache: CacheConfig = field(default_factory=CacheConfig)
     data_source: DataSourceConfig = field(default_factory=DataSourceConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
@@ -82,7 +87,7 @@ class Config:
         return cls(
             cache=CacheConfig(
                 enabled=os.environ.get("JK2BT_CACHE_ENABLED", "true").lower() == "true",
-                cache_dir=os.environ.get("JK2BT_CACHE_DIR", "data/cache"),
+                cache_dir=os.environ.get("JK2BT_CACHE_DIR", "data_cache/cache"),
             ),
             logging=LoggingConfig(
                 level=os.environ.get("JK2BT_LOG_LEVEL", "INFO"),
@@ -137,7 +142,9 @@ def get_config() -> Config:
             _config = Config.from_file(config_file)
         else:
             # 尝试加载默认配置文件
-            default_config_path = Path(__file__).parent.parent.parent / "config" / "default.json"
+            default_config_path = (
+                Path(__file__).parent.parent.parent / "config" / "default.json"
+            )
             if default_config_path.exists():
                 _config = Config.from_file(str(default_config_path))
             else:

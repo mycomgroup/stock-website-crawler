@@ -18,6 +18,7 @@ from .data_proxies import PositionProxy, PortfolioProxy
 logger = logging.getLogger(__name__)
 
 
+_current_strategy = None
 _log = None
 
 
@@ -42,9 +43,6 @@ def set_current_strategy(strategy):
     global _current_strategy, _log
     _current_strategy = strategy
     _log = None
-
-
-_current_strategy = None
 
 
 def order_target(security, amount):
@@ -149,7 +147,7 @@ class FundOFPosition:
 
     def subscribe(
         self, amount: float, nav: float, fee_rate: float = None, date=None
-    ) -> tuple:
+    ) -> tuple[float, float]:
         """申购基金
 
         参数:
@@ -197,7 +195,7 @@ class FundOFPosition:
         fee_rate: float = None,
         holding_days: int = 0,
         date=None,
-    ) -> tuple:
+    ) -> tuple[float, float]:
         """赎回基金
 
         参数:
@@ -383,9 +381,9 @@ class ContextProxy:
 
     def add_subportfolio(self, config):
         try:
-            from .subportfolios import SubportfolioConfig, SubportfolioType
+            from ..strategy.subportfolios import SubportfolioConfig, SubportfolioType
         except ImportError:
-            from subportfolios import SubportfolioConfig, SubportfolioType
+            from .subportfolios import SubportfolioConfig, SubportfolioType
 
         if isinstance(config, dict):
             sp_type = SubportfolioType.MIXED

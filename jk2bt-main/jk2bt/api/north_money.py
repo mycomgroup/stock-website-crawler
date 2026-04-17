@@ -12,10 +12,14 @@ Functions:
 - get_north_money_stock_flow: Individual stock north money flow
 - get_north_money_stock_detail: Individual stock north money detail
 - compute_north_money_signal: North money timing signal
+- get_north_top_active_stocks: Top 10 active stocks by turnover
+- get_north_quota_info: Quota and trading info
+- get_north_exchange_rate: Exchange rate for northbound trading
+- get_north_calendar: Trading calendar
 """
 
 import pandas as pd
-from typing import Optional, Dict, List
+from typing import Optional, Dict
 
 from jk2bt.data.market.north_money import get_north_money_flow as _get_north_money_flow
 from jk2bt.data.market.north_money import (
@@ -32,6 +36,18 @@ from jk2bt.data.market.north_money import (
 )
 from jk2bt.data.market.north_money import (
     compute_north_money_signal as _compute_north_money_signal,
+)
+from jk2bt.data.market.north_money import (
+    get_north_top_active_stocks as _get_north_top_active_stocks,
+)
+from jk2bt.data.market.north_money import (
+    get_north_quota_info as _get_north_quota_info,
+)
+from jk2bt.data.market.north_money import (
+    get_north_exchange_rate as _get_north_exchange_rate,
+)
+from jk2bt.data.market.north_money import (
+    get_north_calendar as _get_north_calendar,
 )
 
 
@@ -157,7 +173,7 @@ def get_north_money_stock_flow(
 def get_north_money_stock_detail(
     symbol: str,
     date: Optional[str] = None,
-) -> Dict[str, float]:
+) -> Dict[str, any]:
     """
     Get north money detail for a specific stock on a specific date.
 
@@ -172,16 +188,41 @@ def get_north_money_stock_detail(
 
     Returns
     ----
-    Dict[str, float]
-        {'net_inflow': net inflow, 'holdings': holdings, 'holding_change': holdings change}
+    Dict[str, any]
+        {'net_inflow': net inflow, 'holdings': holdings, 'holding_change': holdings change,
+         'link_id': 'sh' or 'sz', 'link_name': '沪股通' or '深股通'}
     """
     if not symbol:
-        return {"net_inflow": 0.0, "holdings": 0.0, "holding_change": 0.0}
+        code = symbol or ""
+        link_id = "sh" if code.startswith("6") else "sz"
+        link_name = "沪股通" if link_id == "sh" else "深股通"
+        return {
+            "net_inflow": 0.0,
+            "holdings": 0.0,
+            "holding_change": 0.0,
+            "link_id": link_id,
+            "link_name": link_name,
+        }
 
     try:
         return _get_north_money_stock_detail(symbol=symbol, date=date)
     except Exception:
-        return {"net_inflow": 0.0, "holdings": 0.0, "holding_change": 0.0}
+        code = (
+            symbol.replace("sh", "")
+            .replace("sz", "")
+            .replace(".XSHG", "")
+            .replace(".XSHE", "")
+            .zfill(6)
+        )
+        link_id = "sh" if code.startswith("6") else "sz"
+        link_name = "沪股通" if link_id == "sh" else "深股通"
+        return {
+            "net_inflow": 0.0,
+            "holdings": 0.0,
+            "holding_change": 0.0,
+            "link_id": link_id,
+            "link_name": link_name,
+        }
 
 
 def compute_north_money_signal(
@@ -228,6 +269,119 @@ def compute_north_money_signal(
         }
 
 
+def get_north_top_active_stocks(
+    date: Optional[str] = None,
+    link_id: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    Get top 10 most active stocks by northbound turnover.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    date : str, optional
+        Query date, default is most recent trading day
+    link_id : str, optional
+        'sh' for 沪股通, 'sz' for 深股通, None for both
+
+    Returns
+    ----
+    pd.DataFrame
+        Top active stocks with columns:
+        code, name, close, change_pct, turnover, north_net_inflow,
+        north_holdings, north_holdings_pct, link_id, link_name
+    """
+    try:
+        return _get_north_top_active_stocks(date=date, link_id=link_id)
+    except Exception:
+        return pd.DataFrame()
+
+
+def get_north_quota_info(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    Get northbound quota and trading information.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    start_date : str, optional
+        Start date 'YYYY-MM-DD'
+    end_date : str, optional
+        End date 'YYYY-MM-DD'
+
+    Returns
+    ----
+    pd.DataFrame
+        Quota info with columns:
+        date, link_id, link_name, daily_quota, used_quota, balance, net_inflow
+    """
+    try:
+        return _get_north_quota_info(start_date=start_date, end_date=end_date)
+    except Exception:
+        return pd.DataFrame()
+
+
+def get_north_exchange_rate(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    Get northbound trading exchange rate (HKD/CNY).
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    start_date : str, optional
+        Start date 'YYYY-MM-DD'
+    end_date : str, optional
+        End date 'YYYY-MM-DD'
+
+    Returns
+    ----
+    pd.DataFrame
+        Exchange rate data with columns:
+        date, link_id, exchange_rate, currency
+    """
+    try:
+        return _get_north_exchange_rate(start_date=start_date, end_date=end_date)
+    except Exception:
+        return pd.DataFrame()
+
+
+def get_north_calendar(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    Get northbound trading calendar.
+
+    JQData compatible interface
+
+    Parameters
+    ----
+    start_date : str, optional
+        Start date 'YYYY-MM-DD'
+    end_date : str, optional
+        End date 'YYYY-MM-DD'
+
+    Returns
+    ----
+    pd.DataFrame
+        Trading calendar with columns:
+        date, is_trading, link_id, holiday
+    """
+    try:
+        return _get_north_calendar(start_date=start_date, end_date=end_date)
+    except Exception:
+        return pd.DataFrame()
+
+
 __all__ = [
     "get_north_money_flow",
     "get_north_money_daily",
@@ -235,4 +389,8 @@ __all__ = [
     "get_north_money_stock_flow",
     "get_north_money_stock_detail",
     "compute_north_money_signal",
+    "get_north_top_active_stocks",
+    "get_north_quota_info",
+    "get_north_exchange_rate",
+    "get_north_calendar",
 ]

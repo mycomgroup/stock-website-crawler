@@ -18,14 +18,13 @@ bond 模块 - 可转债专项JQData接口
 
 import pandas as pd
 import logging
-from typing import Optional, Union
+from typing import Optional
 
 from jk2bt.data.market.conversion_bond import (
     get_conversion_bond_list as _get_conversion_bond_list,
     get_conversion_bond_price as _get_conversion_bond_price,
     get_conversion_bond_info as _get_conversion_bond_info,
     get_conversion_bond_detail as _get_conversion_bond_detail,
-    get_conversion_bond_quote as _get_conversion_bond_quote,
     get_conversion_info as _get_conversion_info,
     calculate_conversion_value as _calculate_conversion_value,
     calculate_premium_rate as _calculate_premium_rate,
@@ -34,7 +33,6 @@ from jk2bt.data.market.conversion_bond import (
     calculate_conversion_premium as _calculate_conversion_premium,
     get_conversion_bond_daily as _get_conversion_bond_daily,
     get_conversion_value as _get_conversion_value,
-    get_conversion_bond,
     _CB_SCHEMA,
 )
 
@@ -427,7 +425,80 @@ class BondQuery:
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
         """查询债券基本信息"""
-        logger.debug("[BondQuery] BOND_BASIC_INFO: akshare 暂无此接口，返回空DataFrame")
+        try:
+            import akshare as ak
+
+            df = ak.bond_zh_hs_spot()
+            if df is not None and not df.empty:
+                rename_map = {}
+                for col in df.columns:
+                    if "代码" in col or col == "code":
+                        rename_map[col] = "code"
+                    elif "简称" in col:
+                        rename_map[col] = "short_name"
+                    elif "全称" in col:
+                        rename_map[col] = "full_name"
+                    elif "上市状态" in col or "状态" in col:
+                        rename_map[col] = "list_status"
+                    elif "发行人" in col:
+                        rename_map[col] = "issuer"
+                    elif "公司代码" in col:
+                        rename_map[col] = "company_code"
+                    elif "交易所" in col:
+                        rename_map[col] = "exchange"
+                    elif "债券类型" in col or "类型" in col:
+                        rename_map[col] = "bond_type"
+                    elif "形态" in col:
+                        rename_map[col] = "bond_form"
+                    elif "上市日期" in col:
+                        rename_map[col] = "list_date"
+                    elif "退市" in col or "摘牌" in col:
+                        rename_map[col] = "delist_date"
+                    elif "起息" in col:
+                        rename_map[col] = "interest_begin_date"
+                    elif "到期" in col:
+                        rename_map[col] = "maturity_date"
+                    elif "付息" in col:
+                        rename_map[col] = "interest_date"
+
+                df = df.rename(columns=rename_map)
+                df["id"] = range(len(df))
+
+                required_cols = [
+                    "id",
+                    "code",
+                    "short_name",
+                    "full_name",
+                    "list_status_id",
+                    "list_status",
+                    "issuer",
+                    "company_code",
+                    "exchange_code",
+                    "exchange",
+                    "bond_type",
+                    "bond_form_id",
+                    "bond_form",
+                    "list_date",
+                    "delist_date",
+                    "interest_begin_date",
+                    "maturity_date",
+                    "interest_date",
+                    "last_cash_date",
+                    "cash_comment",
+                ]
+                for col in required_cols:
+                    if col not in df.columns:
+                        df[col] = None
+
+                if "exchange" in df.columns and "exchange_code" not in df.columns:
+                    df["exchange_code"] = df["exchange"].apply(
+                        lambda x: "XSHG" if "上海" in str(x) else "XSHE"
+                    )
+
+                return df[required_cols]
+        except Exception as e:
+            logger.warning(f"[BondQuery] BOND_BASIC_INFO 获取失败: {e}")
+
         return pd.DataFrame(
             columns=[
                 "id",
@@ -460,7 +531,70 @@ class BondQuery:
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
         """查询债券票面利率"""
-        logger.debug("[BondQuery] BOND_COUPON: akshare 暂无此接口，返回空DataFrame")
+        try:
+            import akshare as ak
+
+            df = ak.bond_info_cm()
+            if df is not None and not df.empty:
+                rename_map = {}
+                for col in df.columns:
+                    if "代码" in col or col == "code":
+                        rename_map[col] = "code"
+                    elif "简称" in col:
+                        rename_map[col] = "short_name"
+                    elif "公告" in col or "pub" in col.lower():
+                        rename_map[col] = "pub_date"
+                    elif "交易所" in col:
+                        rename_map[col] = "exchange"
+                    elif "票面利率" in col or "利率" in col:
+                        rename_map[col] = "coupon"
+                    elif "开始" in col and "日期" in col:
+                        rename_map[col] = "coupon_start_date"
+                    elif "结束" in col and "日期" in col:
+                        rename_map[col] = "coupon_end_date"
+                    elif "参考" in col:
+                        rename_map[col] = "reference_rate"
+                    elif "利差" in col:
+                        rename_map[col] = "margin_rate"
+                    elif "上限" in col:
+                        rename_map[col] = "coupon_upper_limit"
+                    elif "下限" in col:
+                        rename_map[col] = "coupon_lower_limit"
+
+                df = df.rename(columns=rename_map)
+                df["id"] = range(len(df))
+
+                required_cols = [
+                    "id",
+                    "code",
+                    "short_name",
+                    "pub_date",
+                    "exchange_code",
+                    "exchange",
+                    "coupon_type_id",
+                    "coupon_type",
+                    "coupon",
+                    "coupon_start_date",
+                    "coupon_end_date",
+                    "reference_rate",
+                    "reference_rate_comment",
+                    "margin_rate",
+                    "coupon_upper_limit",
+                    "coupon_lower_limit",
+                ]
+                for col in required_cols:
+                    if col not in df.columns:
+                        df[col] = None
+
+                if "exchange" in df.columns and "exchange_code" not in df.columns:
+                    df["exchange_code"] = df["exchange"].apply(
+                        lambda x: "XSHG" if "上海" in str(x) else "XSHE"
+                    )
+
+                return df[required_cols]
+        except Exception as e:
+            logger.warning(f"[BondQuery] BOND_COUPON 获取失败: {e}")
+
         return pd.DataFrame(
             columns=[
                 "id",
@@ -489,9 +623,88 @@ class BondQuery:
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
         """查询债券付息事件"""
-        logger.debug(
-            "[BondQuery] BOND_INTEREST_PAYMENT: akshare 暂无此接口，返回空DataFrame"
-        )
+        try:
+            import akshare as ak
+
+            df = ak.bond_cash_summary_sina()
+            if df is not None and not df.empty:
+                rename_map = {}
+                for col in df.columns:
+                    if "代码" in col or col == "code":
+                        rename_map[col] = "code"
+                    elif "名称" in col or "name" in col.lower():
+                        rename_map[col] = "name"
+                    elif "公告" in col or "pub" in col.lower():
+                        rename_map[col] = "pub_date"
+                    elif "交易所" in col:
+                        rename_map[col] = "exchange"
+                    elif "事件" in col or "类型" in col:
+                        rename_map[col] = "event_type"
+                    elif "计息开始" in col:
+                        rename_map[col] = "interest_start_date"
+                    elif "票面利率" in col or "利率" in col:
+                        rename_map[col] = "coupon"
+                    elif "计息结束" in col:
+                        rename_map[col] = "interest_end_date"
+                    elif "利息" in col and "单位" not in col:
+                        rename_map[col] = "autual_interest"
+                    elif "单位利息" in col or "每份" in col:
+                        rename_map[col] = "interest_per_unit"
+                    elif "登记" in col:
+                        rename_map[col] = "register_date"
+                    elif "除权" in col or "除息" in col:
+                        rename_map[col] = "dividend_date"
+                    elif "付息开始" in col:
+                        rename_map[col] = "interest_pay_start_date"
+                    elif "付息结束" in col:
+                        rename_map[col] = "interest_pay_end_date"
+                    elif "兑付" in col and "日期" in col:
+                        rename_map[col] = "payment_date"
+                    elif "单位兑付" in col:
+                        rename_map[col] = "payment_per_unit"
+                    elif "税率" in col:
+                        rename_map[col] = "tax_rate"
+                    elif "税收" in col or "渠道" in col:
+                        rename_map[col] = "tax_channel"
+
+                df = df.rename(columns=rename_map)
+                df["id"] = range(len(df))
+
+                required_cols = [
+                    "id",
+                    "code",
+                    "name",
+                    "pub_date",
+                    "exchange_code",
+                    "exchange",
+                    "event_type",
+                    "interest_start_date",
+                    "coupon",
+                    "interest_end_date",
+                    "autual_interest",
+                    "interest_per_unit",
+                    "register_date",
+                    "dividend_date",
+                    "interest_pay_start_date",
+                    "interest_pay_end_date",
+                    "payment_date",
+                    "payment_per_unit",
+                    "tax_rate",
+                    "tax_channel",
+                ]
+                for col in required_cols:
+                    if col not in df.columns:
+                        df[col] = None
+
+                if "exchange" in df.columns and "exchange_code" not in df.columns:
+                    df["exchange_code"] = df["exchange"].apply(
+                        lambda x: "XSHG" if "上海" in str(x) else "XSHE"
+                    )
+
+                return df[required_cols]
+        except Exception as e:
+            logger.warning(f"[BondQuery] BOND_INTEREST_PAYMENT 获取失败: {e}")
+
         return pd.DataFrame(
             columns=[
                 "id",

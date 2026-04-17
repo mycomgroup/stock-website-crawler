@@ -236,38 +236,17 @@ class TestOfflineDataPrewarmCommands:
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
         assert "--sample" in result.stdout, "应显示sample参数"
 
-    def test_prewarm_monthly_help(self):
-        """测试prewarm_monthly.py帮助"""
+    def test_prewarm_static_help(self):
+        """测试prewarm_static.py帮助"""
         result = subprocess.run(
-            [sys.executable, "tools/offline_data/prewarm_monthly.py", "--help"],
+            [sys.executable, "tools/offline_data/prewarm_static.py", "--help"],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
             timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
-
-    def test_prewarm_quarterly_help(self):
-        """测试prewarm_quarterly.py帮助"""
-        result = subprocess.run(
-            [sys.executable, "tools/offline_data/prewarm_quarterly.py", "--help"],
-            cwd=PROJECT_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-        assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
-
-    def test_prewarm_weekly_help(self):
-        """测试prewarm_weekly.py帮助"""
-        result = subprocess.run(
-            [sys.executable, "tools/offline_data/prewarm_weekly.py", "--help"],
-            cwd=PROJECT_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-        assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
+        assert "--force" in result.stdout, "应显示force参数"
 
 
 class TestCLIEntryPoints:
@@ -448,13 +427,10 @@ class TestOfflineDataReadmeCommands:
         )
 
     def test_prewarm_scripts_all_exist(self):
-        """验证所有预热脚本都存在"""
+        """验证预热脚本都存在"""
         scripts = [
             "prewarm_all.py",
             "prewarm_static.py",
-            "prewarm_quarterly.py",
-            "prewarm_monthly.py",
-            "prewarm_weekly.py",
             "prewarm_daily.py",
         ]
         for script in scripts:

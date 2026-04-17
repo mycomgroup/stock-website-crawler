@@ -5,7 +5,7 @@ utils/__init__.py
 
 from .cache import fetch_and_cache_data
 from .standardize import standardize_ohlcv, standardize_financial
-from .symbol import format_stock_symbol
+from .symbol import format_stock_symbol, normalize_symbol, normalize_code
 from .date_utils import find_date_column
 from .config import (
     Config,
@@ -23,6 +23,8 @@ __all__ = [
     "standardize_ohlcv",
     "standardize_financial",
     "format_stock_symbol",
+    "normalize_symbol",
+    "normalize_code",
     "find_date_column",
     # Config
     "Config",

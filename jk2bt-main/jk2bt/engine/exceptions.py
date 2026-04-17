@@ -53,9 +53,16 @@ class JK2BTError(Exception):
         raise JK2BTError("操作失败", context={"symbol": "600519", "operation": "fetch"})
     """
 
-    def __init__(self, message: str, context: dict = None):
+    def __init__(
+        self, message: str, context: dict = None, source: str = None, **kwargs
+    ):
         self.message = message
         self.context = context or {}
+        if source:
+            self.context["source"] = source
+        for k, v in kwargs.items():
+            if k not in ("message", "context"):
+                self.context[k] = v
         super().__init__(self.message)
 
     def __str__(self):
@@ -74,6 +81,7 @@ class DataSourceError(JK2BTError):
     示例:
         raise DataSourceError("AkShare API 调用失败", context={"api": "stock_zh_a_hist"})
     """
+
     pass
 
 
@@ -91,6 +99,7 @@ class NetworkError(DataSourceError):
         except requests.Timeout as e:
             raise NetworkError("请求超时") from e
     """
+
     pass
 
 
@@ -106,6 +115,7 @@ class CacheError(JK2BTError):
         except Exception as e:
             raise CacheError(f"缓存读取失败: {cache_file}") from e
     """
+
     pass
 
 
@@ -121,6 +131,7 @@ class ValidationError(JK2BTError):
         if 'close' not in df.columns:
             raise ValidationError("缺少必需列", context={"missing": "close", "columns": df.columns.tolist()})
     """
+
     pass
 
 
@@ -133,6 +144,7 @@ class StrategyError(JK2BTError):
     示例:
         raise StrategyError("订单执行失败", context={"order_id": order.id, "reason": "insufficient_balance"})
     """
+
     pass
 
 
@@ -145,6 +157,7 @@ class APICompatibilityError(JK2BTError):
     示例:
         raise APICompatibilityError("接口签名不匹配", context={"api": "get_price", "expected": "panel参数"})
     """
+
     pass
 
 
@@ -162,7 +175,9 @@ class IndexNotSupportedError(DataSourceError):
         raise IndexNotSupportedError('999999', supported_indices=['000300', '000905'])
     """
 
-    def __init__(self, index_code: str, supported_indices: list = None, context: dict = None):
+    def __init__(
+        self, index_code: str, supported_indices: list = None, context: dict = None
+    ):
         self.index_code = index_code
         self.supported_indices = supported_indices or []
 
@@ -189,6 +204,7 @@ class ValuationDataError(DataSourceError):
     示例:
         raise ValuationDataError(f"无法获取 {symbol} 的估值数据", context={"symbol": symbol, "source": "baidu"})
     """
+
     pass
 
 
@@ -201,6 +217,7 @@ class FinancialDataError(DataSourceError):
     示例:
         raise FinancialDataError("利润表获取失败", context={"symbol": symbol, "report_type": "income"})
     """
+
     pass
 
 
@@ -213,6 +230,7 @@ class MarketDataError(DataSourceError):
     示例:
         raise MarketDataError("分钟数据获取失败", context={"symbol": symbol, "frequency": "5m"})
     """
+
     pass
 
 
@@ -225,6 +243,7 @@ class DatabaseError(JK2BTError):
     示例:
         raise DatabaseError("数据库连接失败", context={"db_path": db_path})
     """
+
     pass
 
 
@@ -237,17 +256,19 @@ class ConfigurationError(JK2BTError):
     示例:
         raise ConfigurationError("缺少必需配置", context={"missing_key": "cache_dir"})
     """
+
     pass
 
 
 # 异常处理辅助函数
+
 
 def wrap_exception(
     original_exception: Exception,
     new_exception_class: type,
     message: str,
     context: dict = None,
-    preserve_chain: bool = True
+    preserve_chain: bool = True,
 ) -> JK2BTError:
     """
     将原始异常包装为自定义异常。
@@ -272,8 +293,8 @@ def wrap_exception(
     if preserve_chain:
         # 创建新异常并保留原始异常信息
         context = context or {}
-        context['original_error'] = str(original_exception)
-        context['original_type'] = type(original_exception).__name__
+        context["original_error"] = str(original_exception)
+        context["original_type"] = type(original_exception).__name__
         return new_exception_class(message, context=context)
     return new_exception_class(message, context=context)
 
@@ -283,7 +304,7 @@ def log_and_raise(
     message: str,
     context: dict = None,
     log_level: str = "error",
-    from_exception: Exception = None
+    from_exception: Exception = None,
 ):
     """
     记录日志并抛出异常。
@@ -347,20 +368,20 @@ def safe_call(func, *args, default=None, exceptions_to_catch=None, **kwargs):
 
 # 导出所有异常类
 __all__ = [
-    'JK2BTError',
-    'DataSourceError',
-    'NetworkError',
-    'CacheError',
-    'ValidationError',
-    'StrategyError',
-    'APICompatibilityError',
-    'IndexNotSupportedError',
-    'ValuationDataError',
-    'FinancialDataError',
-    'MarketDataError',
-    'DatabaseError',
-    'ConfigurationError',
-    'wrap_exception',
-    'log_and_raise',
-    'safe_call',
+    "JK2BTError",
+    "DataSourceError",
+    "NetworkError",
+    "CacheError",
+    "ValidationError",
+    "StrategyError",
+    "APICompatibilityError",
+    "IndexNotSupportedError",
+    "ValuationDataError",
+    "FinancialDataError",
+    "MarketDataError",
+    "DatabaseError",
+    "ConfigurationError",
+    "wrap_exception",
+    "log_and_raise",
+    "safe_call",
 ]

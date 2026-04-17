@@ -16,7 +16,7 @@ Functions:
 """
 
 import pandas as pd
-from typing import Optional, List, Union
+from typing import Optional, List
 
 from jk2bt.data.market.etf import get_etf_daily as _get_etf_daily
 from jk2bt.data.market.fund_of import get_fund_of_nav as _get_fund_of_nav
@@ -116,18 +116,6 @@ def get_fund_nav(
 
 
 get_fund_of_nav = get_fund_nav
-
-
-def get_fund_of_nav(
-    symbol: str,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
-    force_update: bool = False,
-) -> pd.DataFrame:
-    """
-    Alias for get_fund_nav.
-    """
-    return get_fund_nav(symbol, start, end, force_update)
 
 
 def get_fund_of_info(symbol: str) -> dict:

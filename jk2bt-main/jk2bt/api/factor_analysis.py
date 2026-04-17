@@ -13,8 +13,7 @@ jk2bt/api/factor_analysis.py
 
 import numpy as np
 import pandas as pd
-from typing import Union, List, Dict, Optional, Tuple
-import warnings
+from typing import Union, Dict, Optional, Tuple
 
 
 class FactorAnalyzer:

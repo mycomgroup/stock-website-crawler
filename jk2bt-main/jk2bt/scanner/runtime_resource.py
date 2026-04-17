@@ -65,7 +65,7 @@ class RuntimeResourcePack:
         },
     }
 
-    DEFAULT_RUNTIME_BASE = "data/outputs"
+    DEFAULT_RUNTIME_BASE = "data_cache/outputs"
 
     _current_strategy_name: Optional[str] = None
     _lock = threading.Lock()

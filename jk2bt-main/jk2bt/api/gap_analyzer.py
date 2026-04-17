@@ -16,13 +16,8 @@ jk2bt/api/gap_analyzer.py — API 缺口分析器
 import os
 import re
 import ast
-import json
-import csv
-from typing import Dict, List, Set, Tuple, Optional
+from typing import Dict, List, Set
 from dataclasses import dataclass, field
-from collections import defaultdict
-from pathlib import Path
-import pandas as pd
 
 
 @dataclass

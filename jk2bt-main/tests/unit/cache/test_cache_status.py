@@ -408,10 +408,24 @@ class TestValidateCacheForOffline:
         cache_dir = tmp_path / "partial_cache"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2023-01-01", "2024-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2023-01-01", "2024-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2023-01-01", "2024-12-31", freq="B")),
+            }
         )
         securities_df = pd.DataFrame(
-            {"code": ["sh600519", "sz000858"], "name": ["贵州茅台", "五粮液"]}
+            {
+                "symbol": ["sh600519", "sz000858"],
+                "name": ["贵州茅台", "五粮液"],
+                "type": ["stock", "stock"],
+                "list_date": [
+                    pd.Timestamp("2001-01-01").date(),
+                    pd.Timestamp("1998-04-27").date(),
+                ],
+                "delist_date": [None, None],
+                "exchange": ["XSHG", "XSHE"],
+            }
         )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
@@ -455,10 +469,24 @@ class TestValidateCacheForOffline:
         cache_dir = tmp_path / "complete_cache"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2022-01-01", "2024-12-31", freq="B")),
+            }
         )
         securities_df = pd.DataFrame(
-            {"code": ["sh600519", "sz000858"], "name": ["贵州茅台", "五粮液"]}
+            {
+                "symbol": ["sh600519", "sz000858"],
+                "name": ["贵州茅台", "五粮液"],
+                "type": ["stock", "stock"],
+                "list_date": [
+                    pd.Timestamp("2001-01-01").date(),
+                    pd.Timestamp("1998-04-27").date(),
+                ],
+                "delist_date": [None, None],
+                "exchange": ["XSHG", "XSHE"],
+            }
         )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
@@ -502,7 +530,11 @@ class TestValidateCacheForOffline:
         custom_cache_dir = tmp_path / "custom_location"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2023-01-01", "2023-12-31", freq="B")),
+            }
         )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
@@ -603,9 +635,22 @@ class TestSymbolConversion:
         cache_dir = tmp_path / "symbol_cache"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2022-01-01", "2024-12-31", freq="B")),
+            }
         )
-        securities_df = pd.DataFrame({"code": ["sh600519"], "name": ["贵州茅台"]})
+        securities_df = pd.DataFrame(
+            {
+                "symbol": ["sh600519"],
+                "name": ["贵州茅台"],
+                "type": ["stock"],
+                "list_date": [pd.Timestamp("2001-01-01").date()],
+                "delist_date": [None],
+                "exchange": ["XSHG"],
+            }
+        )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
         cache.put("securities", securities_df)
@@ -644,9 +689,22 @@ class TestSymbolConversion:
         cache_dir = tmp_path / "symbol_cache2"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2022-01-01", "2024-12-31", freq="B")),
+            }
         )
-        securities_df = pd.DataFrame({"code": ["sz000858"], "name": ["五粮液"]})
+        securities_df = pd.DataFrame(
+            {
+                "symbol": ["sh600519"],
+                "name": ["贵州茅台"],
+                "type": ["stock"],
+                "list_date": [pd.Timestamp("2001-01-01").date()],
+                "delist_date": [None],
+                "exchange": ["XSHG"],
+            }
+        )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
         cache.put("securities", securities_df)
@@ -685,9 +743,22 @@ class TestSymbolConversion:
         cache_dir = tmp_path / "mixed_cache"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2022-01-01", "2024-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2022-01-01", "2024-12-31", freq="B")),
+            }
         )
-        securities_df = pd.DataFrame({"code": ["sh600519"], "name": ["贵州茅台"]})
+        securities_df = pd.DataFrame(
+            {
+                "symbol": ["sh600519"],
+                "name": ["贵州茅台"],
+                "type": ["stock"],
+                "list_date": [pd.Timestamp("2001-01-01").date()],
+                "delist_date": [None],
+                "exchange": ["XSHG"],
+            }
+        )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
         cache.put("securities", securities_df)
@@ -745,9 +816,22 @@ class TestEdgeCases:
         cache_dir = tmp_path / "edge_cache"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2023-01-01", "2023-12-31", freq="B")),
+            }
         )
-        securities_df = pd.DataFrame({"code": [], "name": []})
+        securities_df = pd.DataFrame(
+            {
+                "symbol": pd.Series([], dtype="str"),
+                "name": pd.Series([], dtype="str"),
+                "type": pd.Series([], dtype="str"),
+                "list_date": pd.Series([], dtype="object"),
+                "delist_date": pd.Series([], dtype="object"),
+                "exchange": pd.Series([], dtype="str"),
+            }
+        )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
         cache.put("securities", securities_df)
@@ -778,9 +862,22 @@ class TestEdgeCases:
         cache_dir = tmp_path / "old_cache"
 
         trade_days_df = pd.DataFrame(
-            {"date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date}
+            {
+                "date": pd.date_range("2023-01-01", "2023-12-31", freq="B").date,
+                "is_trading_day": [True]
+                * len(pd.date_range("2023-01-01", "2023-12-31", freq="B")),
+            }
         )
-        securities_df = pd.DataFrame({"code": ["sh600519"], "name": ["贵州茅台"]})
+        securities_df = pd.DataFrame(
+            {
+                "symbol": ["sh600519"],
+                "name": ["贵州茅台"],
+                "type": ["stock"],
+                "list_date": [pd.Timestamp("2001-01-01").date()],
+                "delist_date": [None],
+                "exchange": ["XSHG"],
+            }
+        )
         cache = parquet_get_cache_manager()
         cache.put("trade_calendar", trade_days_df)
         cache.put("securities", securities_df)

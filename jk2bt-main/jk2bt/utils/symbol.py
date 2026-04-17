@@ -171,6 +171,10 @@ def normalize_symbol(symbol):
     return format_stock_symbol(symbol)
 
 
+# JQData API 兼容别名
+normalize_code = normalize_symbol
+
+
 def get_symbol_prefix(symbol):
     """
     获取股票代码前缀（交易所标识）。
@@ -269,6 +273,7 @@ __all__ = [
     "jq_code_to_ak",
     "ak_code_to_jq",
     "normalize_symbol",
+    "normalize_code",
     "extract_code_num",
     "get_symbol_prefix",
     "is_valid_stock_code",

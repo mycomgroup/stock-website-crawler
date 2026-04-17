@@ -13,16 +13,13 @@ Main functions:
 """
 
 import pandas as pd
-from typing import Optional, List, Dict
+from typing import Optional
 
 from jk2bt.data.finance.shareholder import (
     get_top10_shareholders as _get_top10_shareholders,
     get_top10_float_shareholders as _get_top10_float_shareholders,
     get_shareholder_count as _get_shareholder_count,
     get_shareholder_structure as _get_shareholder_structure,
-    get_shareholders as _get_shareholders,
-    get_top_shareholders as _get_top_shareholders_old,
-    get_top_float_shareholders as _get_top_float_shareholders_old,
 )
 
 
