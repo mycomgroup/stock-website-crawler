@@ -42,20 +42,20 @@ def format_stock_symbol(symbol):
     symbol = str(symbol).strip()
 
     # 移除 sh/sz/bj 前缀
-    if symbol.startswith('sh') or symbol.startswith('sz') or symbol.startswith('bj'):
+    if symbol.startswith("sh") or symbol.startswith("sz") or symbol.startswith("bj"):
         symbol = symbol[2:]
 
     # 移除 .XSHG/.XSHE 后缀
-    if symbol.endswith('.XSHG') or symbol.endswith('.XSHE'):
+    if symbol.endswith(".XSHG") or symbol.endswith(".XSHE"):
         symbol = symbol[:6]
 
     # 移除 .OF 后缀（场外基金）
-    if symbol.upper().endswith('.OF'):
-        symbol = symbol.split('.')[0]
+    if symbol.upper().endswith(".OF"):
+        symbol = symbol.split(".")[0]
 
     # .CCFX 期货代码保留原始格式（不做 zfill）
-    if symbol.upper().endswith('.CCFX'):
-        return symbol.split('.')[0]
+    if symbol.upper().endswith(".CCFX"):
+        return symbol.split(".")[0]
 
     return symbol.zfill(6)
 
@@ -80,19 +80,19 @@ def jq_code_to_ak(code):
 
     code = str(code)
 
-    if code.endswith('.XSHG'):
-        return 'sh' + code[:6]
-    elif code.endswith('.XSHE'):
-        return 'sz' + code[:6]
-    elif code.startswith('sh') or code.startswith('sz'):
+    if code.endswith(".XSHG"):
+        return "sh" + code[:6]
+    elif code.endswith(".XSHE"):
+        return "sz" + code[:6]
+    elif code.startswith("sh") or code.startswith("sz"):
         return code
     else:
         # 纯数字，按首位判断交易所
         c = code.zfill(6)
-        if c.startswith('6'):
-            return 'sh' + c
+        if c.startswith("6"):
+            return "sh" + c
         else:
-            return 'sz' + c
+            return "sz" + c
 
 
 def ak_code_to_jq(code):
@@ -114,19 +114,46 @@ def ak_code_to_jq(code):
 
     code = str(code)
 
-    if code.startswith('sh'):
-        return code[2:] + '.XSHG'
-    elif code.startswith('sz'):
-        return code[2:] + '.XSHE'
-    elif code.endswith('.XSHG') or code.endswith('.XSHE'):
+    if code.startswith("sh"):
+        return code[2:] + ".XSHG"
+    elif code.startswith("sz"):
+        return code[2:] + ".XSHE"
+    elif code.endswith(".XSHG") or code.endswith(".XSHE"):
         return code
     else:
         # 纯数字，按首位判断
         c = code.zfill(6)
-        if c.startswith('6'):
-            return c + '.XSHG'
+        if c.startswith("6"):
+            return c + ".XSHG"
         else:
-            return c + '.XSHE'
+            return c + ".XSHE"
+
+
+def extract_code_num(symbol: str) -> str:
+    """
+    提取6位纯数字股票代码。
+
+    参数:
+        symbol: 股票代码（各种格式）
+
+    返回:
+        str: 6位纯数字股票代码
+
+    示例:
+        extract_code_num('sh600000') -> '600000'
+        extract_code_num('600519.XSHG') -> '600519'
+        extract_code_num('000001') -> '000001'
+    """
+    if symbol is None:
+        return None
+
+    symbol = str(symbol).strip()
+
+    if symbol.startswith("sh") or symbol.startswith("sz") or symbol.startswith("bj"):
+        return symbol[2:].zfill(6)
+    if ".XSHG" in symbol or ".XSHE" in symbol:
+        return symbol.split(".")[0].zfill(6)
+    return symbol.zfill(6)
 
 
 def normalize_symbol(symbol):
@@ -159,9 +186,9 @@ def get_symbol_prefix(symbol):
         get_symbol_prefix('000001.XSHE') -> 'sz'
     """
     code = normalize_symbol(symbol)
-    if code.startswith('6'):
-        return 'sh'
-    return 'sz'
+    if code.startswith("6"):
+        return "sh"
+    return "sz"
 
 
 def is_valid_stock_code(symbol):
@@ -181,8 +208,8 @@ def is_valid_stock_code(symbol):
 
     # 匹配各种有效格式
     patterns = [
-        r'^[shsz]?[0-9]{6}$',  # sh600000, sz000001, 600000
-        r'^[0-9]{6}\.[XSHGXSHE]{4}$',  # 600000.XSHG, 000001.XSHE
+        r"^[shsz]?[0-9]{6}$",  # sh600000, sz000001, 600000
+        r"^[0-9]{6}\.[XSHGXSHE]{4}$",  # 600000.XSHG, 000001.XSHE
     ]
 
     for pattern in patterns:
@@ -196,12 +223,55 @@ def is_valid_stock_code(symbol):
 format_stock_symbol_for_akshare = format_stock_symbol
 
 
+def is_gem_or_star(code: str) -> bool:
+    """
+    判断是否为创业板或科创板
+
+    创业板: 300xxx
+    科创板: 688xxx
+    """
+    c = normalize_symbol(code)
+    return c.startswith("300") or c.startswith("688")
+
+
+def calculate_limit_price(
+    prev_close: float, code: str, direction: str = "up"
+) -> float | None:
+    """
+    计算涨跌停价
+
+    参数:
+        prev_close: 前收盘价
+        code: 股票代码
+        direction: 'up'=涨停, 'down'=跌停
+
+    返回:
+        涨跌停价，若 prev_close 无效则返回 None
+    """
+    if prev_close is None or prev_close <= 0:
+        return None
+
+    c = normalize_symbol(code)
+
+    limit_ratio = 0.10
+    if is_gem_or_star(c):
+        limit_ratio = 0.20
+
+    if direction == "up":
+        return round(prev_close * (1 + limit_ratio), 2)
+    else:
+        return round(prev_close * (1 - limit_ratio), 2)
+
+
 __all__ = [
-    'format_stock_symbol',
-    'format_stock_symbol_for_akshare',  # 兼容别名
-    'jq_code_to_ak',
-    'ak_code_to_jq',
-    'normalize_symbol',
-    'get_symbol_prefix',
-    'is_valid_stock_code',
+    "format_stock_symbol",
+    "format_stock_symbol_for_akshare",
+    "jq_code_to_ak",
+    "ak_code_to_jq",
+    "normalize_symbol",
+    "extract_code_num",
+    "get_symbol_prefix",
+    "is_valid_stock_code",
+    "is_gem_or_star",
+    "calculate_limit_price",
 ]

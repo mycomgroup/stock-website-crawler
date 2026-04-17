@@ -13,7 +13,7 @@ market_data/industry_sw.py
 - level: 行业层级（一级/二级/三级）
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/industry_sw.db 中
+- Parquet 缓存：存储在 data/industry_sw_parquet 中
 - 按季度缓存：静态数据
 """
 
@@ -26,6 +26,7 @@ import warnings
 
 from jk2bt.data_access import get_adapter
 from jk2bt.utils.result import RobustResult
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +118,7 @@ class IndustrySWDBManager:
             base_dir = os.path.dirname(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             )
-            db_path = os.path.join(base_dir, "data", "industry_sw.db")
+            db_path = os.path.join(base_dir, "data", "industry_sw_parquet")
 
         self._db_path = db_path
         self._manager = None
@@ -269,35 +270,8 @@ def _get_db_manager():
 _db_manager = None  # 延迟初始化，避免导入时副作用
 
 
-def _extract_code_num(symbol: str) -> str:
-    if isinstance(symbol, (int, float)):
-        return str(int(symbol)).zfill(6)
-    symbol = str(symbol)
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
-def _normalize_to_jq(symbol: str) -> str:
-    if isinstance(symbol, (int, float)):
-        symbol = str(int(symbol)).zfill(6)
-    symbol = str(symbol)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
-
-
 def _normalize_stock_code(symbol: str) -> str:
-    return _extract_code_num(symbol)
+    return extract_code_num(symbol)
 
 
 def get_sw_industry_list(level: int = 1) -> RobustResult:
@@ -374,8 +348,8 @@ def get_stock_industry(symbol: str, use_cache: bool = True) -> RobustResult:
     - level3_code: 三级行业代码
     - level3_name: 三级行业名称
     """
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if use_cache:
         db_manager = _get_db_manager()
@@ -466,7 +440,7 @@ def get_industry_stocks(
             result = pd.DataFrame()
             code_col = "代码" if "代码" in df.columns else "股票代码"
             name_col = "名称" if "名称" in df.columns else "股票名称"
-            result["code"] = df[code_col].apply(lambda x: _normalize_to_jq(str(x)))
+            result["code"] = df[code_col].apply(lambda x: ak_code_to_jq(str(x)))
             result["industry_name"] = [industry_name] * len(df)
             if name_col in df.columns:
                 result["stock_name"] = df[name_col]
@@ -590,7 +564,7 @@ def get_industry_sw_batch(codes: List[str], use_cache: bool = True) -> RobustRes
             result = get_stock_industry(code, use_cache=use_cache)
             if result.success:
                 df_row = pd.DataFrame([result.data])
-                df_row["code"] = _normalize_to_jq(code)
+                df_row["code"] = ak_code_to_jq(code)
                 dfs.append(df_row)
         except Exception:
             continue
@@ -626,7 +600,7 @@ def filter_stocks_by_industry(
             stocks = []
             code_col = "代码" if "代码" in df.columns else "股票代码"
             for code in df[code_col]:
-                jq_code = _normalize_to_jq(str(code))
+                jq_code = ak_code_to_jq(str(code))
                 if codes is None or jq_code in codes:
                     stocks.append(jq_code)
             return RobustResult(success=True, data=stocks, source="network")
@@ -655,7 +629,7 @@ def get_industry_stocks_sw(industry_name: str) -> RobustResult:
             stocks = []
             code_col = "代码" if "代码" in df.columns else "股票代码"
             for code in df[code_col]:
-                stocks.append(_normalize_to_jq(str(code)))
+                stocks.append(ak_code_to_jq(str(code)))
             return RobustResult(success=True, data=stocks, source="network")
     except Exception as e:
         logger.warning(f"[get_industry_stocks_sw] 获取失败 {industry_name}: {e}")
@@ -792,7 +766,7 @@ def query_industry_sw(
             result = get_stock_industry(symbol, use_cache=use_duckdb)
             if result.success:
                 df_row = pd.DataFrame([result.data])
-                df_row["code"] = _normalize_to_jq(symbol)
+                df_row["code"] = ak_code_to_jq(symbol)
                 dfs.append(df_row)
         except Exception as e:
             logger.warning(f"[query_industry_sw] 获取 {symbol} 失败: {e}")
@@ -825,27 +799,9 @@ def get_industry_category(
     result = get_stock_industry(symbol, use_cache=not force_update)
     if result.success:
         df = pd.DataFrame([result.data])
-        df["code"] = _normalize_to_jq(symbol)
+        df["code"] = ak_code_to_jq(symbol)
         return df
     return pd.DataFrame(columns=list(DEFAULT_INDUSTRY_SCHEMA.keys()))
-
-
-def get_all_industries(level: int = 1) -> pd.DataFrame:
-    """
-    获取所有行业列表（兼容旧接口）。
-
-    参数
-    ----
-    level: 行业级别（1/2/3）
-
-    返回
-    ----
-    DataFrame，包含 industry_code, industry_name 字段
-    """
-    result = get_sw_industry_list(level)
-    if result.success:
-        return result.data
-    return pd.DataFrame()
 
 
 __all__ = [

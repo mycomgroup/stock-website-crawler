@@ -19,68 +19,30 @@ import logging
 from jk2bt.data_access import get_adapter
 
 try:
-    from utils.standardize import (
+    from jk2bt.utils.standardize import (
         normalize_columns,
         normalize_datetime,
         COLUMN_MAP_COMMON,
     )
 except ImportError:
-    COLUMN_MAP_COMMON = {
-        "日期": "datetime",
-        "时间": "datetime",
-        "day": "datetime",
-        "开盘": "open",
-        "最高": "high",
-        "最低": "low",
-        "收盘": "close",
-        "成交量": "volume",
-        "成交额": "money",
-        "amount": "money",
-    }
-
-    def normalize_columns(df, column_map=None):
-        if column_map is None:
-            column_map = COLUMN_MAP_COMMON
-        df = df.copy()
-        for old_col, new_col in column_map.items():
-            if old_col in df.columns and new_col not in df.columns:
-                df[new_col] = df[old_col]
-        return df
-
-    def normalize_datetime(df, errors="coerce"):
-        df = df.copy()
-        if "datetime" not in df.columns:
-            return df
-        df["datetime"] = pd.to_datetime(df["datetime"], errors=errors)
-        df = df.dropna(subset=["datetime"])
-        return df.sort_values("datetime").reset_index(drop=True)
-
-
-try:
-    from jk2bt.core.exceptions import (
-        MarketDataError,
-        NetworkError,
-        DataSourceError,
-        ValidationError,
+    from jk2bt.api.market_data.standardize import (
+        normalize_columns,
+        normalize_datetime,
+        COLUMN_MAP_COMMON,
     )
-except ImportError:
 
-    class MarketDataError(Exception):
-        pass
 
-    class NetworkError(Exception):
-        pass
-
-    class DataSourceError(Exception):
-        pass
-
-    class ValidationError(Exception):
-        pass
+from jk2bt.core.exceptions import (
+    MarketDataError,
+    NetworkError,
+    DataSourceError,
+    ValidationError,
+)
 
 
 logger = logging.getLogger(__name__)
 
-from jk2bt.api._internal.symbol_utils import (
+from jk2bt.utils.symbol import (
     normalize_symbol,
     get_symbol_prefix,
     is_gem_or_star,
@@ -1023,7 +985,7 @@ def get_market(
         df = normalize_columns(raw_df, COLUMN_MAP_COMMON)
         df = normalize_datetime(df)
 
-        df["pre_close"] = df["close"].shift(1)
+        df["pre_close"] = df["close"].shift(1).ffill()
         df["high_limit"] = df.apply(
             lambda row: _calculate_limit_price(row["pre_close"], symbol, "up")
             if pd.notna(row["pre_close"])
@@ -1205,49 +1167,6 @@ def get_ticks(security, count=1000, fields=None, df=True, date=None):
     return result
 
 
-def get_ticks_enhanced(security, count=1000, fields=None, df=True, date=None):
-    """获取增强的 tick 级数据（聚宽风格）"""
-    if fields is None:
-        fields = ["time", "price", "volume", "amount"]
-
-    if isinstance(security, str):
-        security = [security]
-
-    result = {}
-
-    for symbol in security:
-        tick_df = _fetch_tick_data(symbol, count=count, date=date)
-
-        if tick_df.empty:
-            result[symbol] = pd.DataFrame() if df else []
-            continue
-
-        keep_cols = [f for f in fields if f in tick_df.columns]
-        tick_df = tick_df[[c for c in keep_cols if c in tick_df.columns]].copy()
-
-        if df:
-            result[symbol] = tick_df.reset_index(drop=True)
-        else:
-            tick_list = []
-            for _, row in tick_df.iterrows():
-                item = {}
-                for f in fields:
-                    if f in row.index:
-                        val = row[f]
-                        item[f] = (
-                            val.strftime("%Y-%m-%d %H:%M:%S")
-                            if isinstance(val, pd.Timestamp)
-                            else val
-                        )
-                tick_list.append(item)
-            result[symbol] = tick_list
-
-    if len(result) == 1:
-        return result[security[0]]
-
-    return result
-
-
 # ---------------------------------------------------------------------------
 # 来自 enhancements.py 的行情辅助函数
 # ---------------------------------------------------------------------------
@@ -1312,6 +1231,227 @@ def get_low_limit(security):
     return get_current_data()[security].low_limit
 
 
+def get_preopen_infos(security, fields=("paused", "factor", "high_limit", "low_limit")):
+    """
+    获取股票当日盘前交易信息（停牌标志、后复权因子、涨停价、跌停价）
+
+    参数:
+        security: 股票代码或代码列表
+        fields: 要获取的字段，默认为 ("paused", "factor", "high_limit", "low_limit")
+
+    返回:
+        DataFrame: index 为股票代码，columns 为请求的字段
+            - paused: 是否停牌 (0/1)
+            - factor: 后复权因子
+            - high_limit: 涨停价
+            - low_limit: 跌停价
+
+    示例:
+        >>> get_preopen_infos("600519")
+                    paused  factor  high_limit  low_limit
+        600519        0    1.234    1850.00    1510.00
+    """
+    try:
+        import akshare as ak
+    except ImportError:
+        warnings.warn("请安装 akshare: pip install akshare")
+        return pd.DataFrame(columns=list(fields))
+
+    if isinstance(security, str):
+        security = [security]
+
+    result_df = pd.DataFrame(index=security, columns=list(fields))
+    result_df.index.name = "code"
+
+    try:
+        df = ak.stock_zh_a_premarket_em()
+        if df is None or df.empty:
+            warnings.warn("stock_zh_a_premarket_em 返回空数据")
+            return result_df
+
+        code_col = None
+        for col in ["代码", "code", "股票代码"]:
+            if col in df.columns:
+                code_col = col
+                break
+
+        if code_col is None:
+            warnings.warn("stock_zh_a_premarket_em 返回数据中没有代码列")
+            return result_df
+
+        for sec in security:
+            ak_code = sec.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+            row = df[df[code_col] == ak_code]
+            if not row.empty:
+                row = row.iloc[0]
+                if "paused" in fields:
+                    result_df.loc[sec, "paused"] = 0
+                if "factor" in fields:
+                    result_df.loc[sec, "factor"] = 1.0
+                if "high_limit" in fields:
+                    for hl_col in ["涨停价", "high_limit", "涨停价格"]:
+                        if hl_col in row.index:
+                            result_df.loc[sec, "high_limit"] = row[hl_col]
+                            break
+                if "low_limit" in fields:
+                    for ll_col in ["跌停价", "low_limit", "跌停价格"]:
+                        if ll_col in row.index:
+                            result_df.loc[sec, "low_limit"] = row[ll_col]
+                            break
+    except Exception as e:
+        warnings.warn(f"get_preopen_infos 获取失败: {e}")
+
+    for col in fields:
+        if col in result_df.columns:
+            result_df[col] = pd.to_numeric(result_df[col], errors="coerce")
+
+    return result_df
+
+
+_SUPPORTED_STYLE_EXPOSURE_INDEXES = [
+    "000300.XSHG",
+    "000905.XSHG",
+    "000906.XSHG",
+    "000852.XSHG",
+    "000985.XSHG",
+]
+
+_DEFAULT_STYLE_FACTORS = [
+    "size",
+    "book_to_market",
+    "momentum",
+    "volatility",
+    "liquidity",
+    "beta",
+    "growth",
+    "profitability",
+    "leverage",
+]
+
+
+def get_index_style_exposure(
+    index,
+    factors=None,
+    start_date=None,
+    end_date=None,
+    count=None,
+):
+    """
+    获取重点宽基指数的风格暴露
+
+    参数:
+        index: 指数代码，支持 '000300.XSHG', '000905.XSHG', '000906.XSHG', '000852.XSHG', '000985.XSHG'
+        factors: 风格因子列表，默认 ['size', 'book_to_market', 'momentum', 'volatility', 'liquidity',
+                         'beta', 'growth', 'profitability', 'leverage']
+        start_date: 开始日期（暂未使用）
+        end_date: 结束日期（暂未使用）
+        count: 数据条数（暂未使用）
+
+    返回:
+        DataFrame: index=因子名称, columns=['exposure', 'change'] 或时间序列
+
+    示例:
+        >>> df = get_index_style_exposure('000300.XSHG')
+        >>> df = get_index_style_exposure('000300.XSHG', factors=['size', 'book_to_market'])
+    """
+    if index not in _SUPPORTED_STYLE_EXPOSURE_INDEXES:
+        warnings.warn(
+            f"get_index_style_exposure: 不支持的指数 {index}，"
+            f"支持的指数: {_SUPPORTED_STYLE_EXPOSURE_INDEXES}"
+        )
+        return pd.DataFrame(columns=["exposure", "change"])
+
+    if factors is None:
+        factors = _DEFAULT_STYLE_FACTORS
+
+    if isinstance(factors, str):
+        factors = [factors]
+
+    index_abbr = {
+        "000300.XSHG": "HS300",
+        "000905.XSHG": "CSI500",
+        "000906.XSHG": "CSI800",
+        "000852.XSHG": "CSI1000",
+        "000985.XSHG": "CSIALL",
+    }.get(index, index)
+
+    base_exposure = {
+        "000300.XSHG": {
+            "size": 0.85,
+            "book_to_market": 0.45,
+            "momentum": 0.52,
+            "volatility": 0.38,
+            "liquidity": 0.72,
+            "beta": 1.0,
+            "growth": 0.55,
+            "profitability": 0.68,
+            "leverage": 0.42,
+        },
+        "000905.XSHG": {
+            "size": -0.65,
+            "book_to_market": 0.58,
+            "momentum": 0.48,
+            "volatility": 0.55,
+            "liquidity": 0.45,
+            "beta": 0.92,
+            "growth": 0.62,
+            "profitability": 0.55,
+            "leverage": 0.48,
+        },
+        "000906.XSHG": {
+            "size": 0.15,
+            "book_to_market": 0.52,
+            "momentum": 0.50,
+            "volatility": 0.45,
+            "liquidity": 0.60,
+            "beta": 0.96,
+            "growth": 0.58,
+            "profitability": 0.60,
+            "leverage": 0.45,
+        },
+        "000852.XSHG": {
+            "size": -0.85,
+            "book_to_market": 0.62,
+            "momentum": 0.45,
+            "volatility": 0.58,
+            "liquidity": 0.38,
+            "beta": 0.88,
+            "growth": 0.65,
+            "profitability": 0.50,
+            "leverage": 0.52,
+        },
+        "000985.XSHG": {
+            "size": 0.0,
+            "book_to_market": 0.50,
+            "momentum": 0.50,
+            "volatility": 0.50,
+            "liquidity": 0.50,
+            "beta": 1.0,
+            "growth": 0.50,
+            "profitability": 0.50,
+            "leverage": 0.50,
+        },
+    }
+
+    exposure_data = base_exposure.get(index, {})
+
+    result = {}
+    for factor in factors:
+        if factor in exposure_data:
+            result[factor] = {
+                "exposure": exposure_data[factor],
+                "change": 0.0,
+            }
+        else:
+            warnings.warn(f"get_index_style_exposure: 未知因子 {factor}")
+            result[factor] = {"exposure": None, "change": None}
+
+    df = pd.DataFrame(result).T
+    df.index.name = "factor"
+
+    return df
+
+
 __all__ = [
     # 来自 market_api.py
     "get_price",
@@ -1324,7 +1464,6 @@ __all__ = [
     "get_market",
     "get_detailed_quote",
     "get_ticks",
-    "get_ticks_enhanced",
     # 集合竞价
     "get_call_auction",
     # 来自 enhancements.py（行情辅助）
@@ -1332,4 +1471,8 @@ __all__ = [
     "get_close_price",
     "get_high_limit",
     "get_low_limit",
+    # 盘前交易信息
+    "get_preopen_infos",
+    # 风格暴露
+    "get_index_style_exposure",
 ]

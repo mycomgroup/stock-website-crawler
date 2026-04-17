@@ -10,16 +10,6 @@ import numpy as np
 from typing import Union, List, Dict, Optional, Tuple
 import warnings
 
-from jk2bt.strategy.helpers import (
-    calculate_ma as _calculate_ma,
-    calculate_ema as _calculate_ema,
-    calculate_macd as _calculate_macd,
-    calculate_kdj as _calculate_kdj,
-    calculate_rsi as _calculate_rsi,
-    calculate_atr as _calculate_atr,
-    calculate_boll as _calculate_boll,
-)
-
 
 def MA(
     closeArray: Union[pd.Series, np.ndarray, list],

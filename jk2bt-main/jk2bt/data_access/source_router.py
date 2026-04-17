@@ -34,6 +34,7 @@ class ExecutionResult:
     attempts: int
     error_details: Optional[List[Tuple[str, str]]] = None
     is_empty: bool = False
+    is_fallback: bool = False
     sources_tried: List[Dict[str, Any]] = field(default_factory=list)
 
 
@@ -45,6 +46,57 @@ def _try_import_stats_collector():
         return get_stats_collector()
     except (ImportError, AttributeError):
         return None
+
+
+class SourceHealthMonitor:
+    """Monitor health of data sources with simple circuit breaker."""
+
+    _ERROR_THRESHOLD = 5
+    _DISABLE_DURATION = 300
+
+    def __init__(self):
+        self._status: Dict[str, Dict[str, Any]] = {}
+
+    def record_result(
+        self, source: str, success: bool, error: Optional[str] = None
+    ) -> None:
+        if source not in self._status:
+            self._status[source] = {
+                "available": True,
+                "last_error": None,
+                "error_count": 0,
+            }
+        status = self._status[source]
+        if success:
+            status["available"] = True
+            status["error_count"] = 0
+            status["last_error"] = None
+        else:
+            status["error_count"] += 1
+            status["last_error"] = error
+            if status["error_count"] >= self._ERROR_THRESHOLD:
+                status["available"] = False
+                status["disabled_at"] = time.time()
+                logger.warning("数据源 %s 被临时禁用（错误次数过多）", source)
+
+    def is_available(self, source: str) -> bool:
+        if source not in self._status:
+            return True
+        status = self._status[source]
+        if not status["available"]:
+            disabled_at = status.get("disabled_at")
+            if disabled_at is not None:
+                elapsed = time.time() - disabled_at
+                if elapsed > self._DISABLE_DURATION:
+                    status["available"] = True
+                    status["error_count"] = 0
+                    logger.info("数据源 %s 已恢复", source)
+        return status["available"]
+
+    def get_status(self) -> Dict[str, Dict[str, Any]]:
+        import copy
+
+        return copy.deepcopy(self._status)
 
 
 class MultiSourceRouter:
@@ -60,11 +112,15 @@ class MultiSourceRouter:
         required_columns: Optional[List[str]] = None,
         min_rows: int = 0,
         policy: EmptyDataPolicy = EmptyDataPolicy.STRICT,
+        cache_provider: Optional[Callable] = None,
     ):
-        self.providers = providers
+        self.providers = list(providers)
+        if cache_provider is not None:
+            self.providers.append(("__cache__", cache_provider))
         self.required_columns = required_columns or []
         self.min_rows = min_rows
         self.policy = policy
+        self._health = SourceHealthMonitor()
         self._stats: Dict[str, Any] = {
             "total_calls": 0,
             "successes": 0,
@@ -87,6 +143,10 @@ class MultiSourceRouter:
         last_empty: bool = False
 
         for name, func in self.providers:
+            if not self._health.is_available(name):
+                logger.debug("Provider %s is unavailable, skipping", name)
+                continue
+
             source_info = {
                 "name": name,
                 "attempted": False,
@@ -102,6 +162,7 @@ class MultiSourceRouter:
                 data = func(**kwargs)
                 elapsed = time.time() - start
                 source_info["elapsed"] = elapsed
+                self._health.record_result(name, success=True)
 
                 if data is None or (isinstance(data, pd.DataFrame) and data.empty):
                     logger.debug("Provider %s returned empty data", name)
@@ -118,11 +179,12 @@ class MultiSourceRouter:
                     sources_tried.append(source_info)
                     continue
 
+                is_fallback = len(sources_tried) > 0 or name == "__cache__"
                 self._update_stats(
                     name,
                     success=True,
                     empty=False,
-                    fallback=len(sources_tried) > 0,
+                    fallback=is_fallback,
                     duration_ms=elapsed * 1000,
                 )
                 source_info["success"] = True
@@ -136,6 +198,7 @@ class MultiSourceRouter:
                     attempts=len(sources_tried),
                     error_details=error_details,
                     is_empty=False,
+                    is_fallback=is_fallback,
                     sources_tried=sources_tried,
                 )
 
@@ -146,6 +209,7 @@ class MultiSourceRouter:
                 sources_tried.append(source_info)
                 error_details.append((name, str(e)))
                 logger.warning("Provider %s failed: %s", name, e)
+                self._health.record_result(name, success=False, error=str(e))
                 self._update_stats(
                     name,
                     success=False,
@@ -156,33 +220,25 @@ class MultiSourceRouter:
                 )
 
         # No provider returned valid data
-        if last_empty and self.policy == EmptyDataPolicy.BEST_EFFORT:
+        if last_empty and self.policy in (
+            EmptyDataPolicy.BEST_EFFORT,
+            EmptyDataPolicy.RELAXED,
+        ):
+            is_fallback = len(sources_tried) > 1 or last_source == "__cache__"
             self._update_stats(
-                last_source, success=True, empty=True, fallback=len(sources_tried) > 1
+                last_source, success=True, empty=True, fallback=is_fallback
             )
             return ExecutionResult(
                 success=True,
                 data=last_result,
                 source=last_source,
-                error=None,
+                error="all_providers_returned_empty"
+                if self.policy == EmptyDataPolicy.RELAXED
+                else None,
                 attempts=len(sources_tried),
                 error_details=error_details,
                 is_empty=True,
-                sources_tried=sources_tried,
-            )
-
-        if last_empty and self.policy == EmptyDataPolicy.RELAXED:
-            self._update_stats(
-                last_source, success=True, empty=True, fallback=len(sources_tried) > 1
-            )
-            return ExecutionResult(
-                success=True,
-                data=last_result,
-                source=last_source,
-                error="all_providers_returned_empty",
-                attempts=len(sources_tried),
-                error_details=error_details,
-                is_empty=True,
+                is_fallback=is_fallback,
                 sources_tried=sources_tried,
             )
 
@@ -198,6 +254,7 @@ class MultiSourceRouter:
             attempts=len(sources_tried),
             error_details=error_details,
             is_empty=last_empty,
+            is_fallback=False,
             sources_tried=sources_tried,
         )
 
@@ -224,8 +281,6 @@ class MultiSourceRouter:
         """Update internal statistics and report to global StatsCollector."""
         if success:
             self._stats["successes"] += 1
-        else:
-            self._stats["failures"] += 1
         if empty:
             self._stats["empty_results"] += 1
         if fallback:
@@ -260,6 +315,7 @@ def create_simple_router(
     required_columns: Optional[List[str]] = None,
     min_rows: int = 0,
     policy: EmptyDataPolicy = EmptyDataPolicy.STRICT,
+    cache_provider: Optional[Callable] = None,
 ) -> MultiSourceRouter:
     """Create a MultiSourceRouter from a dict of {name: callable}.
 
@@ -268,6 +324,7 @@ def create_simple_router(
         required_columns: List of column names that must be present.
         min_rows: Minimum number of rows required.
         policy: Policy for handling empty results.
+        cache_provider: Optional cache provider callable.
 
     Returns:
         A configured MultiSourceRouter instance.
@@ -278,4 +335,5 @@ def create_simple_router(
         required_columns=required_columns,
         min_rows=min_rows,
         policy=policy,
+        cache_provider=cache_provider,
     )

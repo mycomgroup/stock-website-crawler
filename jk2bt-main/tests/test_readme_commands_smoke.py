@@ -38,7 +38,7 @@ class TestInstallationValidationCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"导入失败: {result.stderr}"
         assert result.stdout.strip() == "1.0.0", f"版本不正确: {result.stdout.strip()}"
@@ -48,20 +48,26 @@ class TestInstallationValidationCommands:
         # README命令: pytest -q tests/test_package_import.py tests/integration/test_jq_runner.py
         # 真实执行完整链路测试，覆盖README主流程
         result = subprocess.run(
-            [sys.executable, "-m", "pytest", "-q",
-             "tests/test_package_import.py",
-             "tests/integration/test_jq_runner.py::test_simple_strategy",
-             "--tb=short"],
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "-q",
+                "tests/test_package_import.py",
+                "tests/integration/test_jq_runner.py::test_simple_strategy",
+                "--tb=short",
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=180
+            timeout=180,
         )
         # 硬验收：测试必须通过
-        assert result.returncode == 0, \
-            f"核心链路smoke测试失败 - 硬验收:\n" \
-            f"  stdout: {result.stdout[-500:]}\n" \
+        assert result.returncode == 0, (
+            f"核心链路smoke测试失败 - 硬验收:\n"
+            f"  stdout: {result.stdout[-500:]}\n"
             f"  stderr: {result.stderr[-500:]}"
+        )
 
     def test_pytest_collect_only(self):
         """测试扫描全部测试用例命令"""
@@ -71,11 +77,11 @@ class TestInstallationValidationCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=120
+            timeout=120,
         )
         # 统计收集的测试数量
-        lines = result.stdout.strip().split('\n')
-        collected_count = sum(1 for line in lines if '::' in line)
+        lines = result.stdout.strip().split("\n")
+        collected_count = sum(1 for line in lines if "::" in line)
         assert collected_count > 100, f"应收集到大量测试，实际: {collected_count}"
 
 
@@ -86,16 +92,19 @@ class TestPythonAPICalls:
         """测试run_jq_strategy导入"""
         # README: from jk2bt import run_jq_strategy
         from jk2bt import run_jq_strategy
+
         assert callable(run_jq_strategy)
 
     def test_import_load_jq_strategy(self):
         """测试load_jq_strategy导入"""
         from jk2bt import load_jq_strategy
+
         assert callable(load_jq_strategy)
 
     def test_import_all_symbols(self):
         """测试所有__all__符号可导入"""
         import jk2bt as pkg
+
         exported = pkg.__all__
         assert len(exported) > 50, f"__all__应包含大量符号: {len(exported)}"
 
@@ -128,7 +137,7 @@ class TestStrategyRunnerCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
         assert "strategies_dir" in result.stdout, "应显示参数帮助"
@@ -136,13 +145,18 @@ class TestStrategyRunnerCommands:
     def test_run_daily_strategy_batch_limit_1(self):
         """测试批量运行策略命令"""
         result = subprocess.run(
-            [sys.executable, "run_daily_strategy_batch.py",
-             "--strategies_dir", "strategies",
-             "--limit", "1"],
+            [
+                sys.executable,
+                "run_daily_strategy_batch.py",
+                "--strategies_dir",
+                "strategies",
+                "--limit",
+                "1",
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=120
+            timeout=120,
         )
         # 可能因策略类型跳过，但不应报错
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
@@ -157,22 +171,25 @@ class TestBaseStrategyImport:
         # README: from jk2bt.core.strategy_base import JQ2BTBaseStrategy
         from jk2bt.core.strategy_base import JQ2BTBaseStrategy
         import backtrader as bt
+
         assert issubclass(JQ2BTBaseStrategy, bt.Strategy)
 
     def test_base_strategy_can_instantiate(self):
         """测试基类可以实例化"""
         from jk2bt.core.strategy_base import JQ2BTBaseStrategy
+
         # 不能直接实例化策略，需要cerebro，但可以验证类存在
-        assert hasattr(JQ2BTBaseStrategy, '__init__')
+        assert hasattr(JQ2BTBaseStrategy, "__init__")
 
     def test_global_state_exists(self):
         """测试GlobalState可用"""
         from jk2bt import GlobalState
+
         g = GlobalState()
-        assert hasattr(g, '__dict__')
+        assert hasattr(g, "__dict__")
         # 可以设置属性
-        g.stocks = ['600519.XSHG']
-        assert g.stocks == ['600519.XSHG']
+        g.stocks = ["600519.XSHG"]
+        assert g.stocks == ["600519.XSHG"]
 
 
 class TestOfflineDataPrewarmCommands:
@@ -186,7 +203,7 @@ class TestOfflineDataPrewarmCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
         assert "--force" in result.stdout, "应显示force参数"
@@ -200,7 +217,7 @@ class TestOfflineDataPrewarmCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
         assert "--stocks" in result.stdout, "应显示stocks参数"
@@ -214,7 +231,7 @@ class TestOfflineDataPrewarmCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
         assert "--sample" in result.stdout, "应显示sample参数"
@@ -226,7 +243,7 @@ class TestOfflineDataPrewarmCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
 
@@ -237,7 +254,7 @@ class TestOfflineDataPrewarmCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
 
@@ -248,7 +265,7 @@ class TestOfflineDataPrewarmCommands:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"脚本执行失败: {result.stderr}"
 
@@ -264,11 +281,12 @@ class TestCLIEntryPoints:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         # 预期输出使用帮助
-        assert "使用方法" in result.stdout or "可用命令" in result.stdout, \
+        assert "使用方法" in result.stdout or "可用命令" in result.stdout, (
             f"应显示帮助: {result.stdout}"
+        )
 
     def test_cli_run_help(self):
         """测试CLI run帮助"""
@@ -277,7 +295,7 @@ class TestCLIEntryPoints:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"CLI执行失败: {result.stderr}"
         assert "--start" in result.stdout, "应显示start参数"
@@ -290,7 +308,7 @@ class TestCLIEntryPoints:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"CLI执行失败: {result.stderr}"
         assert "--stocks" in result.stdout, "应显示stocks参数"
@@ -302,7 +320,7 @@ class TestCLIEntryPoints:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=30,
         )
         assert result.returncode == 0, f"CLI执行失败: {result.stderr}"
         assert "--json" in result.stdout, "应显示json参数"
@@ -316,22 +334,25 @@ class TestFAQCodeExamples:
         # FAQ示例导入
         try:
             from jk2bt.db.cache_status import get_cache_manager
+
             manager = get_cache_manager()
             assert manager is not None
         except ImportError:
             # 可能旧路径仍存在
-            from jk2bt.db.cache_manager import get_cache_manager
+            from jk2bt.db.cache_status import get_cache_manager
+
             manager = get_cache_manager()
             assert manager is not None
 
     def test_cache_summary(self):
         """测试缓存摘要获取"""
         from jk2bt.db.cache_status import get_cache_manager
+
         manager = get_cache_manager()
         summary = manager.get_cache_summary()
         assert isinstance(summary, dict)
         # 验证关键字存在
-        assert 'stock_count' in summary or 'total_records' in summary
+        assert "stock_count" in summary or "total_records" in summary
 
 
 class TestREADMEDataAPIExamples:
@@ -370,6 +391,7 @@ class TestREADMEDataAPIExamples:
     def test_timer_api_in_timer_manager(self):
         """验证定时器API通过TimerManager实现"""
         import jk2bt as pkg
+
         # 定时器函数通过TimerManager提供
         assert hasattr(pkg, "TimerManager"), "TimerManager应存在"
 
@@ -397,12 +419,14 @@ class TestSymbolConversionExamples:
     def test_jq_code_to_ak(self):
         """测试符号转换600519.XSHG到sh600519"""
         from jk2bt import jq_code_to_ak
+
         result = jq_code_to_ak("600519.XSHG")
         assert result == "sh600519", f"转换结果错误: {result}"
 
     def test_ak_code_to_jq(self):
         """测试符号转换sh600519到600519.XSHG"""
         from jk2bt import ak_code_to_jq
+
         result = ak_code_to_jq("sh600519")
         assert result == "600519.XSHG", f"转换结果错误: {result}"
 
@@ -419,7 +443,9 @@ class TestOfflineDataReadmeCommands:
         """验证工具模块存在"""
         utils_path = os.path.join(PROJECT_ROOT, "tools/offline_data/utils")
         assert os.path.exists(utils_path), "utils目录应存在"
-        assert os.path.exists(os.path.join(utils_path, "stock_pool.py")), "stock_pool.py应存在"
+        assert os.path.exists(os.path.join(utils_path, "stock_pool.py")), (
+            "stock_pool.py应存在"
+        )
 
     def test_prewarm_scripts_all_exist(self):
         """验证所有预热脚本都存在"""
@@ -443,10 +469,12 @@ class TestQuickStartExamples:
         """测试快速开始示例代码"""
         # from jk2bt import run_jq_strategy
         from jk2bt import run_jq_strategy
+
         assert callable(run_jq_strategy)
 
         # 验证函数签名
         import inspect
+
         sig = inspect.signature(run_jq_strategy)
         params = list(sig.parameters.keys())
         assert "strategy_file" in params
@@ -468,7 +496,7 @@ class TestProjectStructure:
         strategies_path = os.path.join(PROJECT_ROOT, "strategies")
         assert os.path.exists(strategies_path), "strategies目录应存在"
         # 应有策略文件
-        txt_files = [f for f in os.listdir(strategies_path) if f.endswith('.txt')]
+        txt_files = [f for f in os.listdir(strategies_path) if f.endswith(".txt")]
         assert len(txt_files) > 10, f"应有多个策略文件: {len(txt_files)}"
 
     def test_tests_dir_exists(self):
@@ -517,7 +545,7 @@ class TestPrewarmActualExecution:
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=120
+            timeout=120,
         )
         # 可能因网络问题失败，但脚本本身应能运行
         # 只要返回码是0或有正常输出即可
@@ -560,7 +588,9 @@ class TestREADMEFullWorkflow:
     def test_validation_strategy_exists(self):
         """硬验收：仓库内必须有验证策略文件"""
         # 干净机器验收必须使用仓库内资源，不允许外部路径
-        strategy_file = os.path.join(PROJECT_ROOT, "strategies", "validation_v4_double_ma.txt")
+        strategy_file = os.path.join(
+            PROJECT_ROOT, "strategies", "validation_v4_double_ma.txt"
+        )
         if not os.path.exists(strategy_file):
             pytest.fail(
                 f"验证策略文件不存在 - 硬验收失败:\n"
@@ -571,7 +601,9 @@ class TestREADMEFullWorkflow:
     def test_run_readme_example_strategy(self):
         """硬验收：真实执行README示例策略"""
         # README示例: run_jq_strategy(strategy_file='策略.txt', ...)
-        strategy_file = os.path.join(PROJECT_ROOT, "strategies", "validation_v4_double_ma.txt")
+        strategy_file = os.path.join(
+            PROJECT_ROOT, "strategies", "validation_v4_double_ma.txt"
+        )
 
         # 硬验收：策略文件必须存在
         if not os.path.exists(strategy_file):
@@ -586,7 +618,13 @@ class TestREADMEFullWorkflow:
                 start_date="2022-01-01",
                 end_date="2022-12-31",
                 initial_capital=1000000,
-                stock_pool=["600519.XSHG", "000858.XSHE", "000333.XSHE", "600036.XSHG", "601318.XSHG"],
+                stock_pool=[
+                    "600519.XSHG",
+                    "000858.XSHE",
+                    "000333.XSHE",
+                    "600036.XSHG",
+                    "601318.XSHG",
+                ],
             )
 
             # 硬验收：结果必须有效
@@ -594,17 +632,21 @@ class TestREADMEFullWorkflow:
                 pytest.fail("策略返回None - 硬验收失败")
 
             # 硬验收：必须有基本字段
-            assert "final_value" in result, \
+            assert "final_value" in result, (
                 f"结果缺少final_value字段 - 硬验收失败: {result.keys()}"
-            assert "pnl_pct" in result, \
+            )
+            assert "pnl_pct" in result, (
                 f"结果缺少pnl_pct字段 - 硬验收失败: {result.keys()}"
+            )
 
             # 硬验收：数值必须合理
-            assert result["final_value"] > 0, \
+            assert result["final_value"] > 0, (
                 f"最终资金无效 - 硬验收失败: {result['final_value']}"
+            )
 
         except Exception as e:
             import traceback
+
             tb_lines = traceback.format_exc()
             pytest.fail(
                 f"README示例策略运行失败 - 硬验收:\n"
@@ -617,45 +659,59 @@ class TestREADMEFullWorkflow:
         """硬验收：真实执行README批量运行命令"""
         # README命令: python3 run_daily_strategy_batch.py --strategies_dir strategies --limit 1
         result = subprocess.run(
-            [sys.executable, "run_daily_strategy_batch.py",
-             "--strategies_dir", "strategies",
-             "--limit", "1"],
+            [
+                sys.executable,
+                "run_daily_strategy_batch.py",
+                "--strategies_dir",
+                "strategies",
+                "--limit",
+                "1",
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=180
+            timeout=180,
         )
 
         # 硬验收：命令必须成功执行
-        assert result.returncode == 0, \
-            f"README批量运行命令失败 - 硬验收:\n" \
-            f"  stdout: {result.stdout[-500:]}\n" \
+        assert result.returncode == 0, (
+            f"README批量运行命令失败 - 硬验收:\n"
+            f"  stdout: {result.stdout[-500:]}\n"
             f"  stderr: {result.stderr[-500:]}"
+        )
 
         # 硬验收：必须有输出表明策略被发现和执行
-        assert "发现" in result.stdout or "总数" in result.stdout or "策略" in result.stdout, \
-            f"批量运行输出异常 - 硬验收:\n" \
-            f"  stdout: {result.stdout[-200:]}"
+        assert (
+            "发现" in result.stdout
+            or "总数" in result.stdout
+            or "策略" in result.stdout
+        ), f"批量运行输出异常 - 硬验收:\n  stdout: {result.stdout[-200:]}"
 
     def test_installation_validation_workflow(self):
         """硬验收：README安装后验收完整链路"""
         # README安装后验收命令: pytest -q tests/test_package_import.py tests/integration/test_jq_runner.py
         result = subprocess.run(
-            [sys.executable, "-m", "pytest", "-q",
-             "tests/test_package_import.py",
-             "tests/integration/test_jq_runner.py::test_simple_strategy",
-             "--tb=short"],
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "-q",
+                "tests/test_package_import.py",
+                "tests/integration/test_jq_runner.py::test_simple_strategy",
+                "--tb=short",
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=180
+            timeout=180,
         )
 
         # 硬验收：测试必须通过
-        assert result.returncode == 0, \
-            f"README安装后验收命令失败 - 硬验收:\n" \
-            f"  stdout: {result.stdout[-500:]}\n" \
+        assert result.returncode == 0, (
+            f"README安装后验收命令失败 - 硬验收:\n"
+            f"  stdout: {result.stdout[-500:]}\n"
             f"  stderr: {result.stderr[-500:]}"
+        )
 
     def test_quick_start_import_and_signature(self):
         """硬验收：README快速开始API导入和签名"""
@@ -667,17 +723,22 @@ class TestREADMEFullWorkflow:
 
         # 硬验收：签名必须匹配README示例
         import inspect
+
         sig = inspect.signature(run_jq_strategy)
         params = list(sig.parameters.keys())
 
-        assert "strategy_file" in params, \
+        assert "strategy_file" in params, (
             f"run_jq_strategy缺少strategy_file参数 - 硬验收失败: {params}"
-        assert "start_date" in params, \
+        )
+        assert "start_date" in params, (
             f"run_jq_strategy缺少start_date参数 - 硬验收失败: {params}"
-        assert "end_date" in params, \
+        )
+        assert "end_date" in params, (
             f"run_jq_strategy缺少end_date参数 - 硬验收失败: {params}"
-        assert "stock_pool" in params, \
+        )
+        assert "stock_pool" in params, (
             f"run_jq_strategy缺少stock_pool参数 - 硬验收失败: {params}"
+        )
 
 
 if __name__ == "__main__":

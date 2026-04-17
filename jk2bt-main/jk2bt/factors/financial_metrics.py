@@ -45,6 +45,13 @@ from .fundamentals import (
     _normalize_balance,
 )
 
+try:
+    from ..finance_data.cashflow import get_cashflow as _get_cashflow
+
+    _CASHFLOW_AVAILABLE = True
+except ImportError:
+    _CASHFLOW_AVAILABLE = False
+
 
 # =====================================================================
 # 每股指标
@@ -169,16 +176,17 @@ def compute_net_assets(
 # =====================================================================
 
 
-def compute_roe_indicator(
+def compute_roe_percentage(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
-    计算 ROE（净资产收益率）因子 - 聚宽indicator风格。
+    计算 ROE 百分比（净资产收益率）- 聚宽indicator风格。
 
-    公式：净利润 / 净资产
+    公式：净利润 / 净资产 * 100（返回百分比值）
+    注意：与 fundamentals.compute_roe 不同，此版本不使用平均权益且返回百分比。
     """
     income_raw = _get_income_statement(symbol)
     balance_raw = _get_balance_sheet(symbol)
@@ -220,16 +228,17 @@ def compute_roe_indicator(
     return roe
 
 
-def compute_roa_indicator(
+def compute_roa_percentage(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
-    计算 ROA（总资产收益率）因子 - 聚宽indicator风格。
+    计算 ROA 百分比（总资产收益率）- 聚宽indicator风格。
 
-    公式：净利润 / 总资产
+    公式：净利润 / 总资产 * 100（返回百分比值）
+    注意：与 fundamentals.compute_roa_ttm 不同，此版本不使用TTM且返回百分比。
     """
     income_raw = _get_income_statement(symbol)
     balance_raw = _get_balance_sheet(symbol)
@@ -271,16 +280,17 @@ def compute_roa_indicator(
     return roa
 
 
-def compute_net_profit_margin(
+def compute_net_profit_margin_pct(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
-    计算 net_profit_margin（净利润率）因子。
+    计算 net_profit_margin 百分比（净利润率）因子。
 
-    公式：净利润 / 营业收入
+    公式：净利润 / 营业收入 * 100（返回百分比值）
+    注意：与 fundamentals.compute_net_profit_ratio 不同，此版本返回百分比。
     """
     income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
@@ -310,16 +320,17 @@ def compute_net_profit_margin(
     return margin
 
 
-def compute_gross_profit_margin(
+def compute_gross_profit_margin_pct(
     symbol: str,
     end_date: Optional[str] = None,
     count: Optional[int] = None,
     **kwargs,
 ) -> Union[float, pd.Series]:
     """
-    计算 gross_profit_margin（销售毛利率）因子。
+    计算 gross_profit_margin 百分比（销售毛利率）因子。
 
-    公式：(营业收入 - 营业成本) / 营业收入
+    公式：(营业收入 - 营业成本) / 营业收入 * 100（返回百分比值）
+    注意：与 fundamentals.compute_gross_income_ratio 不同，此版本返回百分比。
     """
     income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
@@ -527,7 +538,7 @@ def compute_inc_return(
 
     公式：本期ROE - 去年同期ROE
     """
-    roe = compute_roe_indicator(
+    roe = compute_roe_percentage(
         symbol,
         end_date=None,
         count=None,
@@ -568,7 +579,6 @@ def compute_ocf_to_operating_profit(
 
     公式：经营活动现金流量净额 / 营业利润
     """
-    # 简化实现：从利润表估算
     income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
 
@@ -581,11 +591,41 @@ def compute_ocf_to_operating_profit(
     if op_profit is None:
         return np.nan
 
-    # 现金流数据通常需要单独获取，这里用营业利润 * 0.8 近似经营现金流（经验值）
-    # 实际应用中应该从现金流量表获取
-    approx_ocf = op_profit * 0.8
+    # Try to get real operating cash flow from cashflow statement
+    ocf = None
+    if _CASHFLOW_AVAILABLE:
+        try:
+            cf = _get_cashflow(symbol)
+            if cf is not None and not cf.empty:
+                for col in [
+                    "经营活动产生的现金流量净额",
+                    "net_operate_cash_flow",
+                    "经营活动现金流量净额",
+                    "operating_cash_flow",
+                ]:
+                    if col in cf.columns:
+                        ocf = cf[col].astype(float)
+                        if (
+                            "date" in cf.columns
+                            or "报告日" in cf.columns
+                            or "报告期" in cf.columns
+                        ):
+                            date_col = (
+                                "date"
+                                if "date" in cf.columns
+                                else ("报告日" if "报告日" in cf.columns else "报告期")
+                            )
+                            cf_index = pd.to_datetime(cf[date_col])
+                            ocf.index = cf_index
+                        break
+        except Exception:
+            pass
 
-    ratio = safe_divide(approx_ocf, op_profit)
+    if ocf is None:
+        # TODO: Uses approximation — real cash flow data not yet available
+        ocf = op_profit * 0.8
+
+    ratio = safe_divide(ocf, op_profit)
 
     if end_date:
         ratio = ratio[ratio.index <= pd.to_datetime(end_date)]
@@ -623,10 +663,41 @@ def compute_ocf_to_revenue(
     if net_profit is None or revenue is None:
         return np.nan
 
-    # 近似：经营现金流 ≈ 净利润 * 0.8
-    approx_ocf = net_profit * 0.8
+    # Try to get real operating cash flow from cashflow statement
+    ocf = None
+    if _CASHFLOW_AVAILABLE:
+        try:
+            cf = _get_cashflow(symbol)
+            if cf is not None and not cf.empty:
+                for col in [
+                    "经营活动产生的现金流量净额",
+                    "net_operate_cash_flow",
+                    "经营活动现金流量净额",
+                    "operating_cash_flow",
+                ]:
+                    if col in cf.columns:
+                        ocf = cf[col].astype(float)
+                        if (
+                            "date" in cf.columns
+                            or "报告日" in cf.columns
+                            or "报告期" in cf.columns
+                        ):
+                            date_col = (
+                                "date"
+                                if "date" in cf.columns
+                                else ("报告日" if "报告日" in cf.columns else "报告期")
+                            )
+                            cf_index = pd.to_datetime(cf[date_col])
+                            ocf.index = cf_index
+                        break
+        except Exception:
+            pass
 
-    ratio = safe_divide(approx_ocf, revenue)
+    if ocf is None:
+        # TODO: Uses approximation — real cash flow data not yet available
+        ocf = net_profit * 0.8
+
+    ratio = safe_divide(ocf, revenue)
 
     if end_date:
         ratio = ratio[ratio.index <= pd.to_datetime(end_date)]
@@ -655,7 +726,6 @@ def compute_adjusted_profit(
     计算 adjusted_profit（调整后利润）因子。
 
     公式：扣除非经常性损益后的净利润
-    近似实现：使用净利润 * 0.95 近似
     """
     income_raw = _get_income_statement(symbol)
     income = _normalize_income(income_raw)
@@ -664,13 +734,25 @@ def compute_adjusted_profit(
         return np.nan
 
     income = income.set_index("date")
-    net_profit = income.get("net_profit")
 
-    if net_profit is None:
-        return np.nan
+    # Try to find deducted non-recurring profit field
+    adjusted = None
+    for col in [
+        "扣除非经常性损益后的净利润",
+        "deducted_net_profit",
+        "扣非净利润",
+        "净利润(扣除非经常性损益)",
+    ]:
+        if col in income.columns:
+            adjusted = income[col].astype(float)
+            break
 
-    # 近似：调整后利润 ≈ 净利润 * 0.95
-    adjusted = net_profit * 0.95
+    if adjusted is None:
+        # TODO: Uses approximation — real deducted non-recurring profit not available in income statement
+        net_profit = income.get("net_profit")
+        if net_profit is None:
+            return np.nan
+        adjusted = net_profit * 0.95
 
     if end_date:
         adjusted = adjusted[adjusted.index <= pd.to_datetime(end_date)]
@@ -701,20 +783,26 @@ def _register_factors():
 
     # 盈利能力
     registry.register(
-        "roe", compute_roe_indicator, window=1, dependencies=["income", "balance"]
+        "roe_percentage",
+        compute_roe_percentage,
+        window=1,
+        dependencies=["income", "balance"],
     )
     registry.register(
-        "roa", compute_roa_indicator, window=1, dependencies=["income", "balance"]
+        "roa_percentage",
+        compute_roa_percentage,
+        window=1,
+        dependencies=["income", "balance"],
     )
     registry.register(
-        "net_profit_margin",
-        compute_net_profit_margin,
+        "net_profit_margin_pct",
+        compute_net_profit_margin_pct,
         window=1,
         dependencies=["income"],
     )
     registry.register(
-        "gross_profit_margin",
-        compute_gross_profit_margin,
+        "gross_profit_margin_pct",
+        compute_gross_profit_margin_pct,
         window=1,
         dependencies=["income"],
     )
@@ -776,10 +864,10 @@ _register_factors()
 __all__ = [
     "compute_eps",
     "compute_net_assets",
-    "compute_roe_indicator",
-    "compute_roa_indicator",
-    "compute_net_profit_margin",
-    "compute_gross_profit_margin",
+    "compute_roe_percentage",
+    "compute_roa_percentage",
+    "compute_net_profit_margin_pct",
+    "compute_gross_profit_margin_pct",
     "compute_inc_net_profit_year_on_year",
     "compute_inc_revenue_year_on_year",
     "compute_inc_total_revenue_year_on_year",

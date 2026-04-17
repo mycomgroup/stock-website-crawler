@@ -30,7 +30,11 @@ class CacheManager:
 
     def __init__(self, db_path: str = None):
         self.db = ParquetAdapter(db_path=db_path, read_only=True)
-        self.db_path = db_path or getattr(self.db, "db_path", None)
+        self.db_path = (
+            db_path
+            or getattr(self.db, "db_path", None)
+            or getattr(self.db, "_base_dir", None)
+        )
 
     def _get_date_range(
         self, table: str, where: dict
@@ -232,7 +236,9 @@ class CacheManager:
             Dict: {
                 'trade_days': bool,
                 'securities': bool,
-                'index_weights': Dict[str, bool]
+                'index_weights': Dict[str, bool],
+                'trade_days_date': str|None,
+                'securities_date': str|None,
             }
         """
         if cache_base_dir is None:
@@ -250,41 +256,59 @@ class CacheManager:
         result = {
             "trade_days": False,
             "securities": False,
-            "securities_date": None,
             "index_weights": {},
+            "trade_days_date": None,
+            "securities_date": None,
         }
 
-        meta_cache_dir = os.path.join(cache_base_dir, "meta_cache")
-        index_cache_dir = os.path.join(cache_base_dir, "index_cache")
+        # 通过 parquet_cache 查询元数据状态
+        try:
+            from .meta_cache_api import check_meta_cache_status
 
-        trade_days_file = os.path.join(meta_cache_dir, "trade_days.pkl")
-        if os.path.exists(trade_days_file):
-            result["trade_days"] = True
+            meta_status = check_meta_cache_status()
+
+            if meta_status.get("trade_calendar", 0) > 0:
+                result["trade_days"] = True
+                result["trade_days_date"] = datetime.now().strftime("%Y-%m-%d")
+
+            if meta_status.get("securities", 0) > 0:
+                result["securities"] = True
+                result["securities_date"] = datetime.now().strftime("%Y-%m-%d")
+
+            # 通过 parquet_cache 查询 index_weights
             try:
-                mtime = os.path.getmtime(trade_days_file)
-                result["trade_days_date"] = datetime.fromtimestamp(mtime).strftime(
-                    "%Y-%m-%d"
-                )
+                df = self.db.query("index_weights")
+                if not df.empty and "index_code" in df.columns:
+                    for code in df["index_code"].unique():
+                        result["index_weights"][str(code)] = True
             except Exception:
                 pass
 
-        # 检查 securities 文件前，确保目录存在
-        if os.path.exists(meta_cache_dir):
-            securities_files = [
-                f for f in os.listdir(meta_cache_dir) if f.startswith("securities_")
-            ]
-            if securities_files:
-                result["securities"] = True
-                latest = sorted(securities_files)[-1]
-                result["securities_date"] = latest.replace("securities_", "").replace(
-                    ".pkl", ""
-                )
+            # 如果 parquet 中有任何元数据，直接返回
+            if result["trade_days"] or result["securities"] or result["index_weights"]:
+                return result
+        except Exception as e:
+            logger.warning(f"检查 parquet 元数据缓存失败: {e}")
 
+        # 向后兼容：检查遗留的 .pkl 文件
+        meta_cache_dir = os.path.join(cache_base_dir, "meta_cache")
+        index_cache_dir = os.path.join(cache_base_dir, "index_cache")
+
+        has_legacy = False
+        if os.path.exists(meta_cache_dir):
+            if os.path.exists(os.path.join(meta_cache_dir, "trade_days.pkl")):
+                has_legacy = True
+            if any(f.startswith("securities_") for f in os.listdir(meta_cache_dir)):
+                has_legacy = True
         if os.path.exists(index_cache_dir):
-            for f in os.listdir(index_cache_dir):
-                if f.endswith("_weights.pkl"):
-                    index_code = f.replace("_weights.pkl", "")
-                    result["index_weights"][index_code] = True
+            if any(f.endswith("_weights.pkl") for f in os.listdir(index_cache_dir)):
+                has_legacy = True
+
+        if has_legacy:
+            logger.warning(
+                "检测到遗留的 .pkl 缓存文件，请执行 "
+                "`python -m jk2bt.db.migrate` 进行迁移"
+            )
 
         return result
 

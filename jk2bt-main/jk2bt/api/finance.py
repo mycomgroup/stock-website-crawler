@@ -13,6 +13,7 @@
 
 import pandas as pd
 import warnings
+import logging
 from typing import Optional, List, Union, Dict
 from datetime import datetime
 
@@ -56,7 +57,13 @@ def get_locked_shares(
 
         if df is None or df.empty:
             return pd.DataFrame(
-                columns=["code", "unlock_date", "unlock_shares", "unlock_ratio", "unlock_value"]
+                columns=[
+                    "code",
+                    "unlock_date",
+                    "unlock_shares",
+                    "unlock_ratio",
+                    "unlock_value",
+                ]
             )
 
         column_mapping = {
@@ -89,7 +96,13 @@ def get_locked_shares(
     except Exception as e:
         warnings.warn(f"获取限售股解禁数据失败: {e}")
         return pd.DataFrame(
-            columns=["code", "unlock_date", "unlock_shares", "unlock_ratio", "unlock_value"]
+            columns=[
+                "code",
+                "unlock_date",
+                "unlock_shares",
+                "unlock_ratio",
+                "unlock_value",
+            ]
         )
 
 
@@ -177,12 +190,31 @@ def get_fundamentals_continuously(
         if hasattr(query_obj, "right"):
             code = str(query_obj.right)
 
-    if end_date:
-        dates = pd.date_range(start=start_date, end=end_date, freq=f"{frequency}D")
-    elif count:
-        dates = pd.date_range(start=start_date, periods=count, freq=f"{frequency}D")
-    else:
-        dates = pd.date_range(start=start_date, end=datetime.now(), freq=f"{frequency}D")
+    try:
+        from jk2bt.utils.date_utils import get_all_trade_days
+
+        if end_date:
+            all_days = get_all_trade_days(start_date, end_date)
+        elif count:
+            all_days = get_all_trade_days(
+                start_date, datetime.now().strftime("%Y-%m-%d")
+            )
+        else:
+            all_days = get_all_trade_days(
+                start_date, datetime.now().strftime("%Y-%m-%d")
+            )
+        dates = all_days[::frequency]
+    except Exception:
+        if end_date:
+            dates = pd.bdate_range(start=start_date, end=end_date, freq=f"{frequency}B")
+        elif count:
+            dates = pd.bdate_range(
+                start=start_date, periods=count, freq=f"{frequency}B"
+            )
+        else:
+            dates = pd.bdate_range(
+                start=start_date, end=datetime.now(), freq=f"{frequency}B"
+            )
 
     results = []
 
@@ -202,8 +234,10 @@ def get_fundamentals_continuously(
                     if not df.empty:
                         df["date"] = date_str
                         results.append(df)
-        except Exception:
-            pass
+        except Exception as e:
+            logging.getLogger(__name__).warning(
+                f"Failed to fetch fundamentals for {date_str}: {e}"
+            )
 
     if not results:
         return pd.DataFrame()

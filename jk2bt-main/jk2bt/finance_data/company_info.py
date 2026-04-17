@@ -16,7 +16,7 @@ finance_data/company_info.py
 - 状态变动日期、变动类型
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/market.db 的 company_info 表中
+- Parquet 缓存：存储在 data/company_info_parquet 中
 - Pickle 缓存（备用）：存储在 finance_cache 目录
 - 静态数据缓存有效期：90天（按季度缓存）
 
@@ -34,6 +34,7 @@ import logging
 import time
 
 from jk2bt.utils.result import RobustResult
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
 
 logger = logging.getLogger(__name__)
 
@@ -270,7 +271,7 @@ def get_company_info(symbol, force_update=False, use_duckdb=True) -> pd.DataFram
     - registered_address: 注册地址
     - company_status: 公司状态（正常、停牌、退市等）
     """
-    jq_code = _normalize_to_jq(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if use_duckdb and _db_manager is not None and not force_update:
         df_cached = _db_manager.get_company_info(jq_code)
@@ -278,8 +279,8 @@ def get_company_info(symbol, force_update=False, use_duckdb=True) -> pd.DataFram
             return df_cached[_COMPANY_BASIC_INFO_SCHEMA]
 
     try:
-        df_profile = _fetch_company_profile(_extract_code_num(symbol))
-        df_industry = _fetch_company_industry(_extract_code_num(symbol))
+        df_profile = _fetch_company_profile(extract_code_num(symbol))
+        df_industry = _fetch_company_industry(extract_code_num(symbol))
 
         result = _merge_and_normalize(df_profile, df_industry, jq_code)
 
@@ -316,7 +317,7 @@ def get_security_status(
     - status_type: 状态类型（正常交易、停牌、复牌、退市等）
     - reason: 状态变动原因
     """
-    jq_code = _normalize_to_jq(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if date is None:
         date = datetime.now().strftime("%Y-%m-%d")
@@ -331,7 +332,7 @@ def get_security_status(
         df_all = _fetch_suspension_data(date_str)
         if df_all is not None and not df_all.empty:
             result = _filter_status_for_symbol(
-                df_all, _extract_code_num(symbol), jq_code
+                df_all, extract_code_num(symbol), jq_code
             )
             if use_duckdb and _db_manager is not None and not result.empty:
                 _db_manager.insert_status_change(result)
@@ -458,29 +459,6 @@ def _filter_status_for_symbol(
     return result
 
 
-def _extract_code_num(symbol: str) -> str:
-    """提取6位代码数字"""
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
-def _normalize_to_jq(symbol: str) -> str:
-    """转换为聚宽格式"""
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
-
-
 def _normalize_date(date_str: str) -> str:
     """标准化日期为 YYYY-MM-DD"""
     if "-" in date_str:
@@ -511,7 +489,7 @@ def query_company_basic_info(
 
     dfs = []
     for symbol in symbols:
-        jq_code = _normalize_to_jq(symbol)
+        jq_code = ak_code_to_jq(symbol)
 
         if use_duckdb and _db_manager is not None and not force_update:
             df_cached = _db_manager.get_company_info(jq_code)
@@ -521,7 +499,7 @@ def query_company_basic_info(
 
         try:
             df = get_company_info(
-                symbol
+                symbol,
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -565,7 +543,7 @@ def query_status_change(
 
     dfs = []
     for symbol in symbols:
-        jq_code = _normalize_to_jq(symbol)
+        jq_code = ak_code_to_jq(symbol)
 
         if (
             use_duckdb
@@ -589,7 +567,6 @@ def query_status_change(
                     df = get_security_status(
                         symbol,
                         date=date_str,
-    
                         force_update=force_update,
                         use_duckdb=use_duckdb,
                     )
@@ -599,7 +576,6 @@ def query_status_change(
             else:
                 df = get_security_status(
                     symbol,
-
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -699,7 +675,6 @@ class FinanceQuery:
             if "code" in conditions:
                 return get_company_info(
                     conditions["code"],
-
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -710,7 +685,6 @@ class FinanceQuery:
             if "code" in conditions:
                 return get_security_status(
                     conditions["code"],
-
                     force_update=force_update,
                     use_duckdb=use_duckdb,
                 )
@@ -813,8 +787,8 @@ def get_listing_info(
 
     results = []
     for sym in symbols:
-        code_num = _extract_code_num(sym)
-        jq_code = _normalize_to_jq(sym)
+        code_num = extract_code_num(sym)
+        jq_code = ak_code_to_jq(sym)
         market = _get_market(sym)
 
         if market == "sh":
@@ -922,9 +896,7 @@ def get_company_info_robust(
                 reason="股票代码列表为空",
                 source="input",
             )
-        return _get_company_info_batch_robust(
-            symbol, force_update, use_duckdb
-        )
+        return _get_company_info_batch_robust(symbol, force_update, use_duckdb)
 
     try:
         df = get_company_info(
@@ -934,7 +906,7 @@ def get_company_info_robust(
         )
 
         if df is None or df.empty:
-            jq_code = _normalize_to_jq(symbol)
+            jq_code = ak_code_to_jq(symbol)
             return RobustResult(
                 success=False,
                 data=_create_empty_company_info_df(),
@@ -975,7 +947,7 @@ def _get_company_info_batch_robust(
     for symbol in symbols:
         try:
             df = get_company_info(
-                symbol
+                symbol,
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -1140,10 +1112,10 @@ def get_company_info_list(
 
     result_dict = {}
     for security in securities:
-        jq_code = _normalize_to_jq(security)
+        jq_code = ak_code_to_jq(security)
         try:
             df = get_company_info(
-                security
+                security,
                 force_update=force_update,
                 use_duckdb=use_duckdb,
             )
@@ -1180,10 +1152,10 @@ def get_industry_info(
     >>> df = get_industry_info('600519.XSHG')
     >>> print(df['industry_name'])
     """
-    jq_code = _normalize_to_jq(security)
+    jq_code = ak_code_to_jq(security)
 
     try:
-        df_raw = _fetch_company_industry(_extract_code_num(security))
+        df_raw = _fetch_company_industry(extract_code_num(security))
         if df_raw is not None and not df_raw.empty:
             result = _normalize_industry_info(df_raw, jq_code)
             if not result.empty:
@@ -1249,7 +1221,7 @@ def prewarm_company_info_cache(
     for i, security in enumerate(securities):
         try:
             df = get_company_info(
-                security
+                security,
                 force_update=True,
                 use_duckdb=use_duckdb,
             )

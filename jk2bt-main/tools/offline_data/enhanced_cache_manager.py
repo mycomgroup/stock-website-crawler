@@ -25,29 +25,29 @@ from enum import Enum
 from pathlib import Path
 import traceback
 
-# 项目路径
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger(__name__)
+from jk2bt.logging import setup_logging, get_logger
+
+setup_logging()
+logger = get_logger(__name__)
 
 
 # ============================================================================
 # 错误分类
 # ============================================================================
 
+
 class ErrorType(Enum):
     """错误类型"""
-    TRANSIENT = "transient"       # 暂时性错误(网络、超时)
-    RATE_LIMIT = "rate_limit"     # 限流
-    NOT_FOUND = "not_found"       # 数据不存在
-    INVALID = "invalid"           # 参数错误
-    LOCK_CONFLICT = "lock"        # 数据库锁冲突
-    UNKNOWN = "unknown"           # 未知错误
+
+    TRANSIENT = "transient"  # 暂时性错误(网络、超时)
+    RATE_LIMIT = "rate_limit"  # 限流
+    NOT_FOUND = "not_found"  # 数据不存在
+    INVALID = "invalid"  # 参数错误
+    LOCK_CONFLICT = "lock"  # 数据库锁冲突
+    UNKNOWN = "unknown"  # 未知错误
 
 
 def classify_error(error: Exception) -> ErrorType:
@@ -60,9 +60,17 @@ def classify_error(error: Exception) -> ErrorType:
 
     # 暂时性错误
     transient_keywords = [
-        "timeout", "connection", "reset", "refused",
-        "aborted", "disconnected", "503", "502",
-        "remote", "eof", "broken pipe"
+        "timeout",
+        "connection",
+        "reset",
+        "refused",
+        "aborted",
+        "disconnected",
+        "503",
+        "502",
+        "remote",
+        "eof",
+        "broken pipe",
     ]
     if any(kw in error_str for kw in transient_keywords):
         return ErrorType.TRANSIENT
@@ -87,9 +95,11 @@ def classify_error(error: Exception) -> ErrorType:
 # 重试配置
 # ============================================================================
 
+
 @dataclass
 class RetryConfig:
     """重试配置"""
+
     max_retries: int = 5
     base_delay: float = 1.0
     max_delay: float = 60.0
@@ -97,31 +107,31 @@ class RetryConfig:
     jitter: bool = True
 
     # 不同错误类型的最大重试次数
-    error_max_retries: Dict[ErrorType, int] = field(default_factory=lambda: {
-        ErrorType.TRANSIENT: 5,
-        ErrorType.RATE_LIMIT: 10,
-        ErrorType.LOCK_CONFLICT: 8,
-        ErrorType.NOT_FOUND: 0,
-        ErrorType.INVALID: 0,
-        ErrorType.UNKNOWN: 3,
-    })
+    error_max_retries: Dict[ErrorType, int] = field(
+        default_factory=lambda: {
+            ErrorType.TRANSIENT: 5,
+            ErrorType.RATE_LIMIT: 10,
+            ErrorType.LOCK_CONFLICT: 8,
+            ErrorType.NOT_FOUND: 0,
+            ErrorType.INVALID: 0,
+            ErrorType.UNKNOWN: 3,
+        }
+    )
 
     # 不同错误类型的基础延迟
-    error_base_delay: Dict[ErrorType, float] = field(default_factory=lambda: {
-        ErrorType.TRANSIENT: 2.0,
-        ErrorType.RATE_LIMIT: 5.0,
-        ErrorType.LOCK_CONFLICT: 0.5,
-        ErrorType.NOT_FOUND: 0,
-        ErrorType.INVALID: 0,
-        ErrorType.UNKNOWN: 1.0,
-    })
+    error_base_delay: Dict[ErrorType, float] = field(
+        default_factory=lambda: {
+            ErrorType.TRANSIENT: 2.0,
+            ErrorType.RATE_LIMIT: 5.0,
+            ErrorType.LOCK_CONFLICT: 0.5,
+            ErrorType.NOT_FOUND: 0,
+            ErrorType.INVALID: 0,
+            ErrorType.UNKNOWN: 1.0,
+        }
+    )
 
 
-def calculate_delay(
-    attempt: int,
-    error_type: ErrorType,
-    config: RetryConfig
-) -> float:
+def calculate_delay(attempt: int, error_type: ErrorType, config: RetryConfig) -> float:
     """计算重试延迟"""
     if error_type in [ErrorType.NOT_FOUND, ErrorType.INVALID]:
         return 0
@@ -129,7 +139,7 @@ def calculate_delay(
     base = config.error_base_delay.get(error_type, config.base_delay)
 
     # 指数退避
-    delay = base * (config.exponential_base ** attempt)
+    delay = base * (config.exponential_base**attempt)
     delay = min(delay, config.max_delay)
 
     # 添加抖动
@@ -143,9 +153,11 @@ def calculate_delay(
 # 文件队列 (进程安全)
 # ============================================================================
 
+
 @dataclass
 class CacheTask:
     """缓存任务"""
+
     task_id: str
     symbol: str
     start: str
@@ -171,8 +183,12 @@ class FileQueue:
         self.completed_dir = self.queue_dir / "completed"
         self.failed_dir = self.queue_dir / "failed"
 
-        for d in [self.pending_dir, self.processing_dir,
-                  self.completed_dir, self.failed_dir]:
+        for d in [
+            self.pending_dir,
+            self.processing_dir,
+            self.completed_dir,
+            self.failed_dir,
+        ]:
             d.mkdir(parents=True, exist_ok=True)
 
         self._lock = threading.Lock()
@@ -180,7 +196,7 @@ class FileQueue:
     def push(self, task: CacheTask) -> str:
         """添加任务到队列"""
         task_file = self.pending_dir / f"{task.task_id}.json"
-        with open(task_file, 'w') as f:
+        with open(task_file, "w") as f:
             json.dump(asdict(task), f)
         return task.task_id
 
@@ -197,8 +213,7 @@ class FileQueue:
         with self._lock:
             # 按优先级和创建时间排序
             files = sorted(
-                self.pending_dir.glob("*.json"),
-                key=lambda f: f.stat().st_mtime
+                self.pending_dir.glob("*.json"), key=lambda f: f.stat().st_mtime
             )
 
             for task_file in files:
@@ -240,7 +255,7 @@ class FileQueue:
             data["failed_at"] = datetime.now().isoformat()
 
             # 写入失败目录
-            with open(dst, 'w') as f:
+            with open(dst, "w") as f:
                 json.dump(data, f)
 
             src.unlink()
@@ -286,9 +301,11 @@ class FileQueue:
 # 数据源管理
 # ============================================================================
 
+
 @dataclass
 class SourceStatus:
     """数据源状态"""
+
     name: str
     available: bool = True
     error_count: int = 0
@@ -364,6 +381,7 @@ class DataSourceManager:
 # 增强版缓存器
 # ============================================================================
 
+
 class EnhancedCacheManager:
     """增强版缓存管理器"""
 
@@ -378,20 +396,19 @@ class EnhancedCacheManager:
         self.source_manager = DataSourceManager()
         self.retry_config = retry_config or RetryConfig()
 
-        # 导入数据获取函数
         from jk2bt.utils.data_source_backup import (
             fetch_stock_daily_sina,
             fetch_stock_daily_eastmoney,
             fetch_stock_daily_baostock,
         )
-        from jk2bt.db.duckdb_manager import DuckDBManager
+        from jk2bt.db.parquet_adapter import ParquetAdapter
 
         self.fetchers = {
             "sina": fetch_stock_daily_sina,
             "east_money": fetch_stock_daily_eastmoney,
             "baostock": fetch_stock_daily_baostock,
         }
-        self.db = DuckDBManager
+        self.db = ParquetAdapter
 
     def fetch_with_retry(
         self,
@@ -413,7 +430,6 @@ class EnhancedCacheManager:
             if not fetcher:
                 continue
 
-            # 获取该数据源的最大重试次数
             error_type = ErrorType.UNKNOWN
 
             for attempt in range(self.retry_config.max_retries):
@@ -426,23 +442,22 @@ class EnhancedCacheManager:
                         self.source_manager.record_success(source, latency)
                         return df
 
-                    # 空数据，尝试下一个源
                     break
 
                 except Exception as e:
                     last_error = e
                     error_type = classify_error(e)
 
-                    # 检查是否应该重试
                     max_retries = self.retry_config.error_max_retries.get(error_type, 0)
                     if attempt >= max_retries:
                         self.source_manager.record_error(source, str(e))
                         break
 
-                    # 计算延迟并等待
                     delay = calculate_delay(attempt, error_type, self.retry_config)
                     if delay > 0:
-                        logger.debug(f"[{source}] 重试 {attempt+1}/{max_retries}, 等待 {delay:.1f}s")
+                        logger.debug(
+                            f"[{source}] 重试 {attempt + 1}/{max_retries}, 等待 {delay:.1f}s"
+                        )
                         time.sleep(delay)
 
         raise last_error or Exception("所有数据源失败")
@@ -452,22 +467,21 @@ class EnhancedCacheManager:
         logger.info(f"处理: {task.symbol} ({task.start} ~ {task.end})")
 
         try:
-            # 检查缓存是否已存在
             db = self.db()
-            if db.has_data("stock_daily", task.symbol, task.start, task.end, task.adjust):
-                existing = db.get_stock_daily(task.symbol, task.start, task.end, task.adjust)
+            if db.has_data(
+                "stock_daily", task.symbol, task.start, task.end, task.adjust
+            ):
+                existing = db.get_stock_daily(
+                    task.symbol, task.start, task.end, task.adjust
+                )
                 if len(existing) > 800:
                     logger.info(f"  已缓存: {len(existing)} 行，跳过")
                     self.queue.complete(task)
                     return True
 
-            # 获取数据
-            df = self.fetch_with_retry(
-                task.symbol, task.start, task.end, task.adjust
-            )
+            df = self.fetch_with_retry(task.symbol, task.start, task.end, task.adjust)
 
             if df is not None and not df.empty:
-                # 写入数据库 (带重试)
                 for attempt in range(3):
                     try:
                         db.insert_stock_daily(task.symbol, df, task.adjust)
@@ -521,7 +535,6 @@ class EnhancedCacheManager:
                 logger.info(f"达到最大任务数 {max_tasks}，退出")
                 break
 
-            # 请求间隔
             time.sleep(random.uniform(0.3, 0.8))
 
         return processed
@@ -556,6 +569,7 @@ class EnhancedCacheManager:
 # CLI 接口
 # ============================================================================
 
+
 def main():
     import argparse
 
@@ -586,25 +600,26 @@ def main():
 
     if args.add_hs300:
         from jk2bt.core.strategy_base import get_index_stocks
-        stocks = get_index_stocks('000300.XSHG')
-        # 转换代码格式
+
+        stocks = get_index_stocks("000300.XSHG")
         symbols = []
         for s in stocks:
-            if s.endswith('.XSHG'):
-                symbols.append('sh' + s[:6])
+            if s.endswith(".XSHG"):
+                symbols.append("sh" + s[:6])
             else:
-                symbols.append('sz' + s[:6])
+                symbols.append("sz" + s[:6])
         manager.add_stocks_batch(symbols, args.start, args.end)
 
     if args.add_zz500:
         from jk2bt.core.strategy_base import get_index_stocks
-        stocks = get_index_stocks('000905.XSHG')
+
+        stocks = get_index_stocks("000905.XSHG")
         symbols = []
         for s in stocks:
-            if s.endswith('.XSHG'):
-                symbols.append('sh' + s[:6])
+            if s.endswith(".XSHG"):
+                symbols.append("sh" + s[:6])
             else:
-                symbols.append('sz' + s[:6])
+                symbols.append("sz" + s[:6])
         manager.add_stocks_batch(symbols, args.start, args.end)
 
     if args.add_stocks:

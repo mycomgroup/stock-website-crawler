@@ -71,7 +71,7 @@ cd jk2bt_offline_data_v1.0
 ls -lh
 
 # 预期内容：
-# jk2bt.duckdb         - DuckDB数据库（约10-15MB）
+# parquet_cache/       - Parquet 分区缓存目录
 # cache/meta_cache/    - 元数据缓存
 # cache/index_cache/   - 指数权重缓存
 # validation_strategies.json - 验收策略配置
@@ -82,7 +82,7 @@ ls -lh
 
 ```bash
 # 复制到项目的data目录（假设项目根目录为 jk2bt-main）
-cp jk2bt.duckdb ../data/
+cp -r parquet_cache ../data/
 cp -r cache ../data/
 cp validation_strategies.json ../tools/validation/
 ```

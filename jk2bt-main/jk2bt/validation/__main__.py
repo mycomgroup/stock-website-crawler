@@ -20,22 +20,21 @@ jk2bt 数据验证命令行工具
 """
 
 import argparse
-import logging
 import sys
 import os
 
-# 添加项目根目录到路径
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
+
+from jk2bt.logging import setup_logging, get_logger
+
+setup_logging()
+logger = get_logger(__name__)
 
 from jk2bt.validation.config import ValidationConfig
 from jk2bt.validation.validator import DataValidator
 from jk2bt.validation.report_generator import ReportGenerator
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
 
 
 def main():
@@ -49,49 +48,31 @@ def main():
   %(prog)s --start 2024-01-01 --end 2024-03-31  # 指定日期范围
   %(prog)s --generate-scripts                 # 生成 JQ 采集脚本
   %(prog)s --config validation_config.yaml    # 使用配置文件
-        """
+        """,
     )
 
+    parser.add_argument("--config", "-c", help="配置文件路径 (YAML 或 JSON)")
+    parser.add_argument("--stocks", "-s", help="股票代码列表，逗号分隔")
+    parser.add_argument("--start", help="开始日期 (YYYY-MM-DD)")
+    parser.add_argument("--end", help="结束日期 (YYYY-MM-DD)")
     parser.add_argument(
-        "--config", "-c",
-        help="配置文件路径 (YAML 或 JSON)"
+        "--data-types", help="数据类型，逗号分隔 (valuation,trade_status,factors)"
     )
     parser.add_argument(
-        "--stocks", "-s",
-        help="股票代码列表，逗号分隔"
-    )
-    parser.add_argument(
-        "--start",
-        help="开始日期 (YYYY-MM-DD)"
-    )
-    parser.add_argument(
-        "--end",
-        help="结束日期 (YYYY-MM-DD)"
-    )
-    parser.add_argument(
-        "--data-types",
-        help="数据类型，逗号分隔 (valuation,trade_status,factors)"
-    )
-    parser.add_argument(
-        "--output-dir", "-o",
+        "--output-dir",
+        "-o",
         default="validation_results",
-        help="输出目录 (默认: validation_results)"
+        help="输出目录 (默认: validation_results)",
     )
     parser.add_argument(
         "--generate-scripts",
         action="store_true",
-        help="只生成 JoinQuant Notebook 采集脚本"
+        help="只生成 JoinQuant Notebook 采集脚本",
     )
     parser.add_argument(
-        "--validate-local",
-        action="store_true",
-        help="只验证本地数据（不对比 JQ）"
+        "--validate-local", action="store_true", help="只验证本地数据（不对比 JQ）"
     )
-    parser.add_argument(
-        "--verbose", "-v",
-        action="store_true",
-        help="详细输出"
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
 
     args = parser.parse_args()
 

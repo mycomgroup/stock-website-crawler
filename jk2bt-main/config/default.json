@@ -2,8 +2,7 @@
     "cache": {
         "enabled": true,
         "ttl_hours": 24,
-        "cache_dir": "data/cache",
-        "duckdb_path": "data/jk2bt.duckdb"
+        "cache_dir": "data/cache"
     },
     "data_source": {
         "provider": "akshare",

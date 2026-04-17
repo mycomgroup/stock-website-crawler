@@ -19,14 +19,17 @@ prewarm_all.py
 import os
 import sys
 import argparse
-import logging
 from datetime import datetime
 import time
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+from jk2bt.logging import setup_logging, get_logger
 
-_project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+setup_logging()
+logger = get_logger(__name__)
+
+_project_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
@@ -43,7 +46,7 @@ def run_prewarm_all(
 ) -> dict:
     """
     一键预热所有数据。
-    
+
     参数
     ----
     stocks : 股票代码列表
@@ -54,85 +57,90 @@ def run_prewarm_all(
     include_weekly : 是否预热周度数据
     include_daily : 是否预热日度数据
     force : 强制更新
-    
+
     返回
     ----
     dict : 汇总结果
     """
     start_time = datetime.now()
-    
+
     logger.info("=" * 60)
     logger.info("开始一键预热所有数据")
     logger.info("=" * 60)
-    
+
     summary = {
         "start_time": start_time.isoformat(),
         "pool": pool,
         "force": force,
         "results": {},
     }
-    
+
     # 1. 静态数据
     if include_static:
         logger.info("\n[1/5] 预热静态数据...")
         try:
             from tools.offline_data.prewarm_static import run_prewarm_static
+
             result = run_prewarm_static(stocks=stocks, pool=pool, force=force)
             summary["results"]["static"] = result
         except Exception as e:
             logger.error(f"静态数据预热失败: {e}")
             summary["results"]["static"] = {"error": str(e)}
-    
+
     # 2. 季度数据
     if include_quarterly:
         logger.info("\n[2/5] 预热季度数据...")
         try:
             from tools.offline_data.prewarm_quarterly import run_prewarm_quarterly
+
             result = run_prewarm_quarterly(stocks=stocks, pool=pool, force=force)
             summary["results"]["quarterly"] = result
         except Exception as e:
             logger.error(f"季度数据预热失败: {e}")
             summary["results"]["quarterly"] = {"error": str(e)}
-    
+
     # 3. 月度数据
     if include_monthly:
         logger.info("\n[3/5] 预热月度数据...")
         try:
             from tools.offline_data.prewarm_monthly import run_prewarm_monthly
+
             result = run_prewarm_monthly(force=force)
             summary["results"]["monthly"] = result
         except Exception as e:
             logger.error(f"月度数据预热失败: {e}")
             summary["results"]["monthly"] = {"error": str(e)}
-    
+
     # 4. 周度数据
     if include_weekly:
         logger.info("\n[4/5] 预热周度数据...")
         try:
             from tools.offline_data.prewarm_weekly import run_prewarm_weekly
+
             result = run_prewarm_weekly(stocks=stocks, pool=pool, force=force)
             summary["results"]["weekly"] = result
         except Exception as e:
             logger.error(f"周度数据预热失败: {e}")
             summary["results"]["weekly"] = {"error": str(e)}
-    
+
     # 5. 日度数据
     if include_daily:
         logger.info("\n[5/5] 预热日度数据...")
         try:
             from tools.offline_data.prewarm_daily import run_prewarm_daily
+
             result = run_prewarm_daily(force=force)
             summary["results"]["daily"] = result
         except Exception as e:
             logger.error(f"日度数据预热失败: {e}")
             summary["results"]["daily"] = {"error": str(e)}
-    
+
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
-    
+
     summary["end_time"] = end_time.isoformat()
     summary["duration_seconds"] = duration
-    
+
     # 打印总结
     print("\n" + "=" * 60)
     print("一键预热完成")
@@ -143,10 +151,12 @@ def run_prewarm_all(
         if "error" in result:
             print(f"  {category}: 失败 - {result['error'][:50]}")
         elif isinstance(result, dict):
-            success = result.get("success", result.get("company_info", {}).get("success", 0))
+            success = result.get(
+                "success", result.get("company_info", {}).get("success", 0)
+            )
             failed = result.get("failed", 0)
             print(f"  {category}: 成功={success}, 失败={failed}")
-    
+
     return summary
 
 
@@ -156,11 +166,13 @@ def main():
     parser.add_argument("--pool", default="custom", help="股票池名称")
     parser.add_argument("--force", action="store_true", help="强制更新")
     parser.add_argument("--static-only", action="store_true", help="只预热静态数据")
-    parser.add_argument("--skip-daily", action="store_true", help="跳过日线数据（默认已跳过）")
+    parser.add_argument(
+        "--skip-daily", action="store_true", help="跳过日线数据（默认已跳过）"
+    )
     parser.add_argument("--include-daily", action="store_true", help="包含日线数据")
-    
+
     args = parser.parse_args()
-    
+
     run_prewarm_all(
         stocks=args.stocks,
         pool=args.pool,

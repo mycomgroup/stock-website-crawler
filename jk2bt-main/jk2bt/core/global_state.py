@@ -15,23 +15,36 @@ import logging
 from jk2bt.logging.adapters import JQLogAdapter
 from .data_proxies import PositionProxy, PortfolioProxy
 
-# 配置日志
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 
-# 全局 log 对象
-log = JQLogAdapter(None)
+_log = None
 
-# 当前策略实例
-_current_strategy = None
+
+def _get_log():
+    global _log
+    if _log is None:
+        _log = JQLogAdapter(_current_strategy)
+    return _log
+
+
+class _LogProxy:
+    __slots__ = ()
+
+    def __getattr__(self, name):
+        return getattr(_get_log(), name)
+
+
+log = _LogProxy()
 
 
 def set_current_strategy(strategy):
-    """设置当前运行的策略实例"""
-    global _current_strategy, log
+    global _current_strategy, _log
     _current_strategy = strategy
-    log = JQLogAdapter(strategy)
+    _log = None
+
+
+_current_strategy = None
 
 
 def order_target(security, amount):

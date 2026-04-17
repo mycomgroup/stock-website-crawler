@@ -223,11 +223,6 @@ from jk2bt.signals import (
     compute_gisi,
     compute_fed_model,
     compute_graham_index,
-    # 指标数据
-    get_indicator_data,
-    get_indicator_batch,
-    get_indicator_ranking,
-    filter_by_indicator,
 )
 
 # =============================================================================

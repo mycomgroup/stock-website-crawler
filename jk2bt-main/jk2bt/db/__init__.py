@@ -32,34 +32,6 @@ from .meta_cache_api import (
     check_meta_cache_status,
 )
 
-try:
-    from .unified_cache import (
-        UnifiedCacheManager,
-        CachePolicy,
-        TableSchema,
-        DuckDBAdapter,
-        SharedMemoryCache,
-        get_unified_cache,
-        clear_unified_cache,
-        reset_unified_cache,
-    )
-
-    _UNIFIED_CACHE_AVAILABLE = True
-except ImportError:
-    _UNIFIED_CACHE_AVAILABLE = False
-
-try:
-    from .migrate_pickle import (
-        migrate_all_pickle,
-        migrate_meta_cache,
-        migrate_index_cache,
-        verify_migration,
-    )
-
-    _MIGRATE_PICKLE_AVAILABLE = True
-except ImportError:
-    _MIGRATE_PICKLE_AVAILABLE = False
-
 __all__ = [
     "ParquetAdapter",
     "CacheManager",

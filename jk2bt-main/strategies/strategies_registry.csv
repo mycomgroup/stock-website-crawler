@@ -145,7 +145,7 @@ path,file_name,kind,in_scope,scan_status,run_status,root_cause,scan_timestamp
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/28 正黄旗大妈策略V3.0修改版.txt,28 正黄旗大妈策略V3.0修改版.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:22.573770
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/28 韶华研究之十九，一致性用在微盘控制回撤.txt,28 韶华研究之十九，一致性用在微盘控制回撤.txt,jq_strategy_txt,False,not_strategy,non_executable,非策略文件（研究文档/配套资料）,2026-04-04T09:50:22.573781
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/29 F_Score 选股，年化80%+.txt,29 F_Score 选股，年化80%+.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:22.575716
-/Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/29 【策略.行业轮动】趋势-拥挤-景气度模型看行业轮动.ipynb,29 【策略.行业轮动】趋势-拥挤-景气度模型看行业轮动.ipynb,notebook,False,excluded_notebook,not_applicable,研究文档/notebook，非可执行策略,2026-04-04T09:50:22.575719
+/Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/docs/archive/legacy_strategies/29 【策略.行业轮动】趋势-拥挤-景气度模型看行业轮动.ipynb,29 【策略.行业轮动】趋势-拥挤-景气度模型看行业轮动.ipynb,notebook,False,excluded_notebook,not_applicable,研究文档/notebook，非可执行策略,2026-04-04T09:50:22.575719
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/29 北上资金（北向资金港资外资）因子分析与策略分享.txt,29 北上资金（北向资金港资外资）因子分析与策略分享.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:22.577895
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/29 穿越牛熊2.0（非小市值）年化50%的cta策略.txt,29 穿越牛熊2.0（非小市值）年化50%的cta策略.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:22.579133
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/29 高增长业绩股池小市值成长型策略.txt,29 高增长业绩股池小市值成长型策略.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:22.581359

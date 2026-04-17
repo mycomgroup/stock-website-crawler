@@ -17,7 +17,7 @@ market_data/conversion_bond.py
 - premium_rate: 转股溢价率
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/conversion_bond.db 中
+- Parquet 缓存：存储在 data/conversion_bond_parquet 中
 - 按日缓存：实时数据（1天）
 """
 
@@ -76,7 +76,7 @@ class ConversionBondDBManager:
         if self._initialized:
             return
 
-        if not _DUCKDB_AVAILABLE:
+        if not _PARQUET_AVAILABLE:
             self._manager = None
             self._initialized = True
             return
@@ -85,7 +85,7 @@ class ConversionBondDBManager:
             base_dir = os.path.dirname(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             )
-            db_path = os.path.join(base_dir, "data", "conversion_bond.db")
+            db_path = os.path.join(base_dir, "data", "conversion_bond_parquet")
 
         self._db_path = db_path
         self._manager = None
@@ -189,14 +189,11 @@ class ConversionBondDBManager:
 
 def _get_db_manager():
     """获取数据库管理器单例（延迟初始化）"""
-    if not _DUCKDB_AVAILABLE:
+    if not _PARQUET_AVAILABLE:
         return None
     manager = ConversionBondDBManager()
     manager._ensure_initialized()
     return manager
-
-
-_db_manager = None  # 延迟初始化，避免导入时副作用
 
 
 def _normalize_stock_code(symbol: str) -> str:

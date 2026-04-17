@@ -6,6 +6,8 @@ finance_data/margin.py
 import pandas as pd
 from datetime import datetime, timedelta
 
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
+
 try:
     from ..utils.cache import fetch_and_cache_data
 except ImportError:
@@ -36,7 +38,7 @@ def get_margin_data(symbol, date=None, force_update=False):
     - short_balance_amount: 融券余额（可选）
     - total_balance: 融资融券余额合计（可选）
     """
-    code_num = _extract_code_num(symbol)
+    code_num = extract_code_num(symbol)
     market = _get_market(symbol)
 
     if date is None:
@@ -87,15 +89,6 @@ def _get_margin_by_date(symbol, code_num, market, date, force_update):
     return pd.DataFrame()
 
 
-def _extract_code_num(symbol):
-    """提取6位代码数字"""
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
 def _get_market(symbol):
     """判断市场：sh 或 sz"""
     if "XSHG" in symbol or symbol.startswith("6") or symbol.startswith("sh"):
@@ -136,7 +129,7 @@ def _filter_and_normalize(df_all, code_num, market, original_symbol):
         return pd.DataFrame()
 
     result = pd.DataFrame()
-    result["code"] = [_normalize_to_jq(original_symbol)]
+    result["code"] = [ak_code_to_jq(original_symbol)]
 
     if market == "sh":
         row = df_filtered.iloc[0]
@@ -160,20 +153,6 @@ def _filter_and_normalize(df_all, code_num, market, original_symbol):
     return result
 
 
-def _normalize_to_jq(symbol):
-    """转换为聚宽格式"""
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
-
-
 def get_margin_history(symbol, start_date, end_date, force_update=False):
     """
     获取融资融券历史数据（多个交易日）。
@@ -190,7 +169,7 @@ def get_margin_history(symbol, start_date, end_date, force_update=False):
     DataFrame，每个交易日一条记录
     """
     market = _get_market(symbol)
-    code_num = _extract_code_num(symbol)
+    code_num = extract_code_num(symbol)
 
     start_dt = datetime.strptime(start_date.replace("-", ""), "%Y%m%d")
     end_dt = datetime.strptime(end_date.replace("-", ""), "%Y%m%d")

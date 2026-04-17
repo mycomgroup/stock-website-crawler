@@ -104,7 +104,7 @@ class TestCacheManagerInvalidate:
         deleted = cm.invalidate("stock_daily")
         assert deleted >= 0
         result = cm.get("stock_daily")
-        assert result is None
+        assert result is not None and result.empty
 
 
 class TestCacheManagerExists:

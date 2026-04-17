@@ -11,9 +11,9 @@ finance_data/shareholder.py
 6. get_shareholders(code) - 稳健版股东信息获取（返回 RobustResult）
 
 缓存策略：
-- DuckDB 缓存（优先）：按周缓存，存储在 data/shareholder.db 中
+- Parquet 缓存：按周缓存，存储在 data/shareholder_parquet 中
 - adapter 内置缓存
-- 网络失败时使用 DuckDB 缓存兜底
+- 网络失败时使用 Parquet 缓存兜底
 """
 
 import os
@@ -21,9 +21,8 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional, List, Union, Dict
 import logging
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
 
 try:
     from ..utils.standardize import standardize_financial
@@ -39,6 +38,7 @@ except ImportError:
 
 
 from jk2bt.utils.result import RobustResult
+from jk2bt.utils.date_utils import parse_date as _parse_date
 
 
 _CACHE_AVAILABLE = False
@@ -331,8 +331,8 @@ def get_top_shareholders(
     - ann_date: 公告日期
     - rank: 排名
     """
-    code_num = _extract_code_num(security)
-    jq_code = _normalize_to_jq(security)
+    code_num = extract_code_num(security)
+    jq_code = ak_code_to_jq(security)
 
     if use_duckdb and _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(
@@ -388,8 +388,8 @@ def get_top_float_shareholders(
     ----
     DataFrame，包含股东名称、持股数、持股比例等
     """
-    code_num = _extract_code_num(security)
-    jq_code = _normalize_to_jq(security)
+    code_num = extract_code_num(security)
+    jq_code = ak_code_to_jq(security)
 
     if use_duckdb and _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(
@@ -443,8 +443,8 @@ def get_shareholder_structure(
     - hold_ratio: 持股比例
     - report_date: 报告期
     """
-    code_num = _extract_code_num(security)
-    jq_code = _normalize_to_jq(security)
+    code_num = extract_code_num(security)
+    jq_code = ak_code_to_jq(security)
 
     if use_duckdb and _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(
@@ -677,8 +677,8 @@ def get_shareholders(
     >>> else:
     >>>     print(f"获取失败: {result.reason}")
     """
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(
@@ -705,81 +705,43 @@ def get_shareholders(
 
     from jk2bt.data_access import get_adapter
 
-    try:
-        df_raw = None
-        source_used = "network"
-        try:
-            df_raw = get_adapter().get_top10_holders(symbol=code_num)
-        except Exception as e1:
-            logger.warning(f"[get_shareholders] stock_zh_a_gdhs 失败: {e1}")
-            try:
-                df_raw = get_adapter().get_share_change(symbol=code_num)
-            except Exception as e2:
-                logger.warning(
-                    f"[get_shareholders] stock_share_change_cninfo 失败: {e2}"
-                )
-                if _db_manager is not None:
-                    cached_df = _db_manager.get_top10_shareholders(jq_code)
-                    if cached_df is not None and not cached_df.empty:
-                        df_raw = cached_df
-                        source_used = "fallback"
-                        logger.info(f"[get_shareholders] 使用 DuckDB 缓存兜底")
+    df_raw = get_adapter().get_shareholders_with_fallback(symbol=code_num)
+    source_used = "network"
 
-        if df_raw is not None and not df_raw.empty:
-            df = _normalize_shareholders_robust(df_raw, jq_code)
-            if not df.empty:
-                if _db_manager is not None:
-                    _db_manager.insert_top10_shareholders(df)
-                if date is None:
+    if df_raw is not None and not df_raw.empty:
+        df = _normalize_shareholders_robust(df_raw, jq_code)
+        if not df.empty:
+            if _db_manager is not None:
+                _db_manager.insert_top10_shareholders(df)
+            if date is None:
+                return RobustResult(
+                    success=True,
+                    data=df,
+                    reason=f"成功获取 {len(df)} 条股东记录",
+                    source=source_used,
+                )
+            else:
+                df_filtered = _filter_by_date(df, date)
+                if not df_filtered.empty:
                     return RobustResult(
                         success=True,
-                        data=df,
-                        reason=f"成功获取 {len(df)} 条股东记录",
+                        data=df_filtered,
+                        reason=f"成功获取 {len(df_filtered)} 条股东记录",
                         source=source_used,
                     )
                 else:
-                    df_filtered = _filter_by_date(df, date)
-                    if not df_filtered.empty:
-                        return RobustResult(
-                            success=True,
-                            data=df_filtered,
-                            reason=f"成功获取 {len(df_filtered)} 条股东记录",
-                            source=source_used,
-                        )
-                    else:
-                        return RobustResult(
-                            success=False,
-                            data=pd.DataFrame(columns=_SHAREHOLDER_SCHEMA),
-                            reason=f"指定日期 {date} 无股东记录",
-                            source=source_used,
-                        )
-    except Exception as e:
-        logger.warning(f"[get_shareholders] 网络获取失败: {e}")
-        if _db_manager is not None:
-            cached_df = _db_manager.get_top10_shareholders(jq_code)
-            if cached_df is not None and not cached_df.empty:
-                if date is None:
                     return RobustResult(
-                        success=True,
-                        data=cached_df,
-                        reason="网络失败，使用 DuckDB 缓存兜底",
-                        source="fallback",
+                        success=False,
+                        data=pd.DataFrame(columns=_SHAREHOLDER_SCHEMA),
+                        reason=f"指定日期 {date} 无股东记录",
+                        source=source_used,
                     )
-                else:
-                    df_filtered = _filter_by_date(cached_df, date)
-                    if not df_filtered.empty:
-                        return RobustResult(
-                            success=True,
-                            data=df_filtered,
-                            reason="网络失败，使用 DuckDB 缓存兜底",
-                            source="fallback",
-                        )
 
     return RobustResult(
         success=False,
         data=pd.DataFrame(columns=_SHAREHOLDER_SCHEMA),
         reason=f"无法获取股东信息 (股票: {symbol})",
-        source="fallback",
+        source="network",
     )
 
 
@@ -927,8 +889,8 @@ def get_top10_shareholders(
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取十大股东快照"""
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(
@@ -940,15 +902,12 @@ def get_top10_shareholders(
 
     from jk2bt.data_access import get_adapter
 
-    try:
-        df = get_adapter().get_top10_holders_em(symbol=code_num)
-        if df is not None and not df.empty:
-            result = _normalize_top10_holders(df, jq_code)
-            if _db_manager is not None:
-                _db_manager.insert_top10_shareholders(result)
-            return result
-    except Exception as e:
-        logger.warning(f"十大股东获取失败 {symbol}: {e}")
+    df = get_adapter().get_top10_shareholders_with_fallback(symbol=code_num)
+    if df is not None and not df.empty:
+        result = _normalize_top10_holders(df, jq_code)
+        if _db_manager is not None:
+            _db_manager.insert_top10_shareholders(result)
+        return result
 
     return pd.DataFrame(columns=_SHAREHOLDER_SCHEMA)
 
@@ -959,8 +918,8 @@ def get_top10_float_shareholders(
     force_update: bool = False,
 ) -> pd.DataFrame:
     """获取十大流通股东快照"""
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(
@@ -987,8 +946,8 @@ def get_top10_float_shareholders(
 
 def get_shareholder_count(symbol: str, force_update: bool = False) -> pd.DataFrame:
     """获取股东户数时间序列"""
-    code_num = _extract_code_num(symbol)
-    jq_code = _normalize_to_jq(symbol)
+    code_num = extract_code_num(symbol)
+    jq_code = ak_code_to_jq(symbol)
 
     if _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(
@@ -1011,27 +970,6 @@ def get_shareholder_count(symbol: str, force_update: bool = False) -> pd.DataFra
         logger.warning(f"股东户数获取失败 {symbol}: {e}")
 
     return pd.DataFrame(columns=_SHAREHOLDER_NUM_SCHEMA)
-
-
-def _extract_code_num(symbol: str) -> str:
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
-def _normalize_to_jq(symbol: str) -> str:
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
 
 
 def _normalize_top10_holders(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:

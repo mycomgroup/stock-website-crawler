@@ -24,7 +24,7 @@ class TestQueryEngineBasic:
     def test_no_data_returns_none(self, tmp_dir):
         engine = QueryEngine(tmp_dir)
         result = engine.query("nonexistent", "daily")
-        assert result is None
+        assert result is not None and result.empty
 
 
 class TestQueryEngineWhere:

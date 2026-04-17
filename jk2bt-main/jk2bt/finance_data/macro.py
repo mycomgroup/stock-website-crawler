@@ -15,7 +15,7 @@ finance_data/macro.py
 - unit: 单位
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/macro.db 中
+- Parquet 缓存：存储在 data/macro_parquet 中
 - adapter 内置缓存
 - 按发布周期缓存（30天）
 """

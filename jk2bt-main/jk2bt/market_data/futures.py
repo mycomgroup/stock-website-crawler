@@ -18,12 +18,10 @@ import warnings
 
 try:
     from jk2bt.data_access import get_adapter as _get_adapter
+
     _ADAPTER_AVAILABLE = True
 except ImportError:
     _ADAPTER_AVAILABLE = False
-
-# Keep ak as None for backward compat checks
-ak = None
 
 logger = logging.getLogger(__name__)
 

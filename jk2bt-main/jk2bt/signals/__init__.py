@@ -75,14 +75,6 @@ from .market_sentiment import (
     get_all_sentiment_indicators,
 )
 
-# 指标数据获取（已移至 factors/financials.py，保持向后兼容）
-from jk2bt.factors.financials import (
-    get_indicator_data,
-    get_indicator_batch,
-    get_indicator_ranking,
-    filter_by_indicator,
-)
-
 
 # 信号检测函数映射
 SIGNAL_DETECTORS = {
@@ -468,9 +460,4 @@ __all__ = [
     "compute_below_net_ratio",
     "compute_new_high_ratio",
     "get_all_sentiment_indicators",
-    # 指标数据
-    "get_indicator_data",
-    "get_indicator_batch",
-    "get_indicator_ranking",
-    "filter_by_indicator",
 ]

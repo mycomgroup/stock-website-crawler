@@ -15,10 +15,13 @@ import os
 
 sys.path.insert(
     0,
-    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "src"),
+    os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "src",
+    ),
 )
 
-from jk2bt.api._internal.symbol_utils import (
+from jk2bt.utils.symbol import (
     normalize_symbol,
     get_symbol_prefix,
     is_gem_or_star,
@@ -29,6 +32,7 @@ from jk2bt.api._internal.symbol_utils import (
 # ---------------------------------------------------------------------------
 # 1. normalize_symbol
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeSymbol:
     """normalize_symbol：统一股票代码为 6 位数字"""
@@ -68,6 +72,7 @@ class TestNormalizeSymbol:
 # 2. get_symbol_prefix
 # ---------------------------------------------------------------------------
 
+
 class TestGetSymbolPrefix:
     """get_symbol_prefix：返回 'sh' 或 'sz'"""
 
@@ -100,6 +105,7 @@ class TestGetSymbolPrefix:
 # 3. is_gem_or_star
 # ---------------------------------------------------------------------------
 
+
 class TestIsGemOrStar:
     """is_gem_or_star：判断创业板（300xxx）或科创板（688xxx）"""
 
@@ -131,6 +137,7 @@ class TestIsGemOrStar:
 # ---------------------------------------------------------------------------
 # 4. calculate_limit_price
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateLimitPrice:
     """calculate_limit_price：计算涨跌停价"""

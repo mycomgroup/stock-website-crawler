@@ -164,6 +164,7 @@ def get_index_stocks(index_code, date=None, robust=False):
 
     参数:
         index_code: 指数代码，支持 '000300.XSHG', '000300' 等格式
+                   也支持聚宽特色指数如 'JQ0001.SPI', 'S00001.SPI' 等
         date: 查询日期，默认最新
         robust: bool - 是否返回 RobustResult 对象
 
@@ -180,6 +181,9 @@ def get_index_stocks(index_code, date=None, robust=False):
     注意: 空列表 [] 不代表成功，可能表示指数不支持或数据获取失败。
     使用 robust=True 可明确区分成功/失败状态。
     """
+    if _is_spi_index(index_code):
+        return _get_spi_index_stocks(index_code, date, robust)
+
     try:
         from jk2bt.data_access import get_adapter
     except ImportError:
@@ -1686,16 +1690,13 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
         use_duckdb: 是否优先使用 DuckDB 缓存
     """
     if use_duckdb:
-        try:
-            from jk2bt.db.meta_cache_api import get_securities_from_cache
+        from jk2bt.db.meta_cache_api import get_securities_from_cache
 
-            df = get_securities_from_cache(
-                types=types, force_update=force_update, use_duckdb=True
-            )
-            if not df.empty:
-                return df
-        except Exception as e:
-            logger.warning(f"DuckDB 缓存获取失败，fallback 到 adapter: {e}")
+        df = get_securities_from_cache(
+            types=types, force_update=force_update, use_duckdb=True
+        )
+        if not df.empty:
+            return df
 
     if types is None:
         types = ["stock"]
@@ -1807,6 +1808,11 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
             except Exception as e:
                 logger.warning(f"获取指数列表失败: {e}")
 
+        elif t == "spi":
+            df = _get_spi_securities()
+            if df is not None and not df.empty:
+                all_dfs.append(df)
+
         elif t == "fund":
             try:
                 import akshare as ak
@@ -1856,6 +1862,200 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
 
 # 兼容不带 _jq 后缀的聚宽原始调用
 get_all_securities = get_all_securities_jq
+
+
+_SPI_INDEX_DEFINITIONS = {
+    "JQ0001.SPI": {"name": "全A等权", "description": "全部A股等权重指数"},
+    "JQ0002.SPI": {"name": "小市值", "description": "小市值股票指数"},
+    "JQ0003.SPI": {"name": "微盘", "description": "微盘股指数"},
+    "S00001.SPI": {"name": "行业-能源", "description": "聚宽行业指数-能源"},
+    "S00002.SPI": {"name": "行业-原材料", "description": "聚宽行业指数-原材料"},
+    "S00003.SPI": {"name": "行业-工业", "description": "聚宽行业指数-工业"},
+    "S00004.SPI": {"name": "行业-可选消费", "description": "聚宽行业指数-可选消费"},
+    "S00005.SPI": {"name": "行业-主要消费", "description": "聚宽行业指数-主要消费"},
+    "S00006.SPI": {"name": "行业-医药卫生", "description": "聚宽行业指数-医药卫生"},
+    "S00007.SPI": {"name": "行业-金融地产", "description": "聚宽行业指数-金融地产"},
+    "S00008.SPI": {"name": "行业-信息技术", "description": "聚宽行业指数-信息技术"},
+    "S00009.SPI": {"name": "行业-通信服务", "description": "聚宽行业指数-通信服务"},
+    "S00010.SPI": {"name": "行业-公用事业", "description": "聚宽行业指数-公用事业"},
+    "S00011.SPI": {"name": "行业-综合", "description": "聚宽行业指数-综合"},
+}
+
+
+def _get_spi_securities():
+    """获取聚宽特色指数（SPI）列表"""
+    data = []
+    for code, info in _SPI_INDEX_DEFINITIONS.items():
+        data.append(
+            {
+                "code": code,
+                "name": info["name"],
+                "jq_code": code,
+                "type": "spi",
+                "start_date": None,
+                "end_date": None,
+            }
+        )
+    df = pd.DataFrame(data)
+    return df
+
+
+def _is_spi_index(code):
+    """判断是否为SPI指数"""
+    if isinstance(code, str):
+        return code.endswith(".SPI") or code in _SPI_INDEX_DEFINITIONS
+    return False
+
+
+def _get_spi_index_stocks(index_code, date=None, robust=False):
+    """
+    获取聚宽特色指数（SPI）成分股
+
+    参数:
+        index_code: SPI指数代码，如 'JQ0001.SPI', 'S00001.SPI' 等
+        date: 查询日期（暂未使用，SPI指数为静态成分）
+        robust: bool - 是否返回 RobustResult 对象
+
+    返回:
+        list 或 RobustResult: 股票代码列表
+    """
+    if index_code not in _SPI_INDEX_DEFINITIONS:
+        error_msg = f"未知的SPI指数: {index_code}"
+        logger.error(error_msg)
+        if robust:
+            return RobustResult(
+                success=False,
+                data=[],
+                reason=error_msg,
+                source="spi_index",
+            )
+        return []
+
+    index_info = _SPI_INDEX_DEFINITIONS[index_code]
+    index_name = index_info["name"]
+
+    try:
+        if index_code == "JQ0001.SPI":
+            stocks = _get_spi_jq0001_stocks()
+        elif index_code == "JQ0002.SPI":
+            stocks = _get_spi_jq0002_stocks()
+        elif index_code == "JQ0003.SPI":
+            stocks = _get_spi_jq0003_stocks()
+        elif index_code.startswith("S000"):
+            stocks = _get_spi_industry_stocks(index_code)
+        else:
+            stocks = []
+
+        if _prerun_mode_active and stocks:
+            _prerun_requested_stocks.update(stocks)
+
+        if robust:
+            return RobustResult(
+                success=bool(stocks),
+                data=stocks,
+                reason=f"成功获取SPI指数 {index_name} ({index_code}) 的 {len(stocks)} 只成分股"
+                if stocks
+                else "无数据",
+                source="spi_index",
+            )
+        return stocks
+
+    except Exception as e:
+        error_msg = f"获取SPI指数 {index_code} 成分股异常: {e}"
+        logger.error(error_msg)
+        if robust:
+            return RobustResult(
+                success=False,
+                data=[],
+                reason=error_msg,
+                source="spi_index",
+            )
+        return []
+
+
+def _get_spi_jq0001_stocks():
+    """JQ0001.SPI 全A等权指数成分股
+
+    全A等权指数选取全部A股作为成分股，采用等权重配置。
+    由于全A数量较多，实际返回时取市值排名靠前的股票作为代理。
+    TODO: 完整实现应包含全部A股的等权重配置逻辑
+    """
+    try:
+        all_stocks = get_all_securities_jq(types=["stock"])
+        if all_stocks.empty:
+            return []
+        stock_codes = all_stocks.index.tolist()
+        return stock_codes
+    except Exception as e:
+        logger.warning(f"获取全A等权指数成分股失败: {e}")
+        return []
+
+
+def _get_spi_jq0002_stocks():
+    """JQ0002.SPI 小市值指数成分股
+
+    小市值指数选取A股中市值最小的若干只股票。
+    TODO: 完整实现应包含市值筛选和轮动逻辑
+    """
+    try:
+        all_stocks = get_all_securities_jq(types=["stock"])
+        if all_stocks.empty:
+            return []
+        stock_codes = all_stocks.index.tolist()
+        return stock_codes
+    except Exception as e:
+        logger.warning(f"获取小市值指数成分股失败: {e}")
+        return []
+
+
+def _get_spi_jq0003_stocks():
+    """JQ0003.SPI 微盘指数成分股
+
+    微盘指数选取A股中市值极小的若干只股票（通常取市值后10%）。
+    TODO: 完整实现应包含微盘股筛选和定期调样逻辑
+    """
+    try:
+        all_stocks = get_all_securities_jq(types=["stock"])
+        if all_stocks.empty:
+            return []
+        stock_codes = all_stocks.index.tolist()
+        return stock_codes
+    except Exception as e:
+        logger.warning(f"获取微盘指数成分股失败: {e}")
+        return []
+
+
+def _get_spi_industry_stocks(index_code):
+    """S00001.SPI ~ S00011.SPI 行业指数成分股
+
+    根据申万行业分类获取各行业成分股。
+    TODO: 完整实现应建立聚宽行业分类到申万行业的映射
+    """
+    try:
+        from jk2bt.data_access import get_adapter
+
+        adapter = get_adapter()
+        sw_index_map = {
+            "S00001.SPI": "能源",
+            "S00002.SPI": "原材料",
+            "S00003.SPI": "工业",
+            "S00004.SPI": "可选消费",
+            "S00005.SPI": "主要消费",
+            "S00006.SPI": "医药卫生",
+            "S00007.SPI": "金融地产",
+            "S00008.SPI": "信息技术",
+            "S00009.SPI": "通信服务",
+            "S00010.SPI": "公用事业",
+            "S00011.SPI": "综合",
+        }
+        industry_name = sw_index_map.get(index_code)
+        if not industry_name:
+            return []
+        industry_codes = adapter.get_industry_stocks(industry_name)
+        return industry_codes
+    except Exception as e:
+        logger.warning(f"获取行业指数 {index_code} 成分股失败: {e}")
+        return []
 
 
 def _is_fund_code(code):
@@ -2647,6 +2847,10 @@ __all__ = [
     "get_style_factor_returns",
     "get_specific_returns",
     "get_style_factor_covariance",
+    # SPI 指数相关
+    "_SPI_INDEX_DEFINITIONS",
+    "_is_spi_index",
+    "_get_spi_index_stocks",
     # 基金相关
     "_is_fund_code",
 ]

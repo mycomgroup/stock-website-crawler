@@ -121,11 +121,6 @@ def get_stock_daily(
     )
 
     if raw_df is None or raw_df.empty:
-        # 最后尝试本地缓存
-        df = db_read.get_stock_daily(symbol, start, end, adjust)
-        if not df.empty:
-            logger.debug(f"{symbol}: 所有数据源失败，使用本地缓存")
-            return standardize_ohlcv(df)
         raise ValueError(f"{symbol}: 所有数据源获取失败")
 
     # 存入本地数据库（使用写入管理器，静默重试）
@@ -217,40 +212,13 @@ def get_stock_daily_legacy(
     adapter = get_adapter()
     akshare_symbol = format_stock_symbol(symbol)
 
-    last_error = None
-    for attempt in range(max_retries):
-        try:
-            raw_df = adapter.get_stock_hist(
-                symbol=akshare_symbol,
-                period="daily",
-                start_date=start.replace("-", ""),
-                end_date=end.replace("-", ""),
-                adjust=adjust,
-            )
-
-            if raw_df is not None and not raw_df.empty:
-                break
-            else:
-                raise ValueError(f"{symbol}: akshare 返回空数据")
-
-        except Exception as e:
-            last_error = e
-            logger.debug(f"{symbol}: 下载失败 (尝试 {attempt + 1}/{max_retries}): {e}")
-            if attempt < max_retries - 1:
-                time.sleep(retry_delay)
-
-                df = db_read.get_stock_daily(symbol, start, end, adjust)
-                if not df.empty:
-                    logger.debug(f"{symbol} ({adjust}): 下载失败，回退到本地缓存")
-                    return standardize_ohlcv(df)
-            else:
-                df = db_read.get_stock_daily(symbol, start, end, adjust)
-                if not df.empty:
-                    logger.debug(f"{symbol}: 所有重试失败，使用本地缓存数据")
-                    return standardize_ohlcv(df)
-                else:
-                    logger.error(f"{symbol}: 下载失败且无本地缓存")
-                    raise ValueError(f"{symbol}: 数据获取失败 - {last_error}")
+    raw_df = adapter.get_stock_hist(
+        symbol=akshare_symbol,
+        period="daily",
+        start_date=start.replace("-", ""),
+        end_date=end.replace("-", ""),
+        adjust=adjust,
+    )
 
     if raw_df is None or raw_df.empty:
         raise ValueError(f"{symbol}: akshare 返回空数据")

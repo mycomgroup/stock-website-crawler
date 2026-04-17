@@ -18,12 +18,10 @@ import os
 import argparse
 import logging
 
-# 设置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger(__name__)
+from jk2bt.logging import setup_logging, get_logger
+
+setup_logging()
+logger = get_logger(__name__)
 
 
 def run_strategy_main():
@@ -34,44 +32,27 @@ def run_strategy_main():
     from jk2bt.core.runner import run_jq_strategy
 
     parser = argparse.ArgumentParser(
-        prog="jk2bt-run",
-        description="运行聚宽策略文件进行本地回测"
+        prog="jk2bt-run", description="运行聚宽策略文件进行本地回测"
+    )
+    parser.add_argument("strategy_file", help="策略文件路径 (.txt 或 .py)")
+    parser.add_argument(
+        "--start", default="2020-01-01", help="回测开始日期 (默认: 2020-01-01)"
     )
     parser.add_argument(
-        "strategy_file",
-        help="策略文件路径 (.txt 或 .py)"
+        "--end", default="2023-12-31", help="回测结束日期 (默认: 2023-12-31)"
     )
     parser.add_argument(
-        "--start",
-        default="2020-01-01",
-        help="回测开始日期 (默认: 2020-01-01)"
+        "--capital", type=float, default=1000000, help="初始资金 (默认: 1000000)"
     )
+    parser.add_argument("--stocks", nargs="+", help="指定股票池 (可选，默认自动发现)")
     parser.add_argument(
-        "--end",
-        default="2023-12-31",
-        help="回测结束日期 (默认: 2023-12-31)"
-    )
-    parser.add_argument(
-        "--capital",
-        type=float,
-        default=1000000,
-        help="初始资金 (默认: 1000000)"
-    )
-    parser.add_argument(
-        "--stocks",
-        nargs="+",
-        help="指定股票池 (可选，默认自动发现)"
-    )
-    parser.add_argument(
-        "--offline",
-        action="store_true",
-        help="离线模式，仅使用缓存数据"
+        "--offline", action="store_true", help="离线模式，仅使用缓存数据"
     )
     parser.add_argument(
         "--frequency",
         default="daily",
         choices=["daily", "1m", "5m", "15m", "30m", "60m"],
-        help="数据频率 (默认: daily)"
+        help="数据频率 (默认: daily)",
     )
 
     args = parser.parse_args()
@@ -105,55 +86,31 @@ def prewarm_main():
 
     # 动态导入 prewarm_data 模块
     import importlib.util
+
     prewarm_path = os.path.join(tools_path, "prewarm_data.py")
     spec = importlib.util.spec_from_file_location("prewarm_data", prewarm_path)
     prewarm_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(prewarm_module)
 
     parser = argparse.ArgumentParser(
-        prog="jk2bt-prewarm",
-        description="预热数据样本，支持默认股票池或自定义股票池"
+        prog="jk2bt-prewarm", description="预热数据样本，支持默认股票池或自定义股票池"
+    )
+    parser.add_argument("--stocks", nargs="+", help="股票池 (可选)")
+    parser.add_argument("--etfs", nargs="+", help="ETF池 (可选)")
+    parser.add_argument("--indexes", nargs="+", help="指数池 (可选)")
+    parser.add_argument(
+        "--start", default="2023-01-01", help="开始日期 (默认: 2023-01-01)"
     )
     parser.add_argument(
-        "--stocks",
-        nargs="+",
-        help="股票池 (可选)"
+        "--end", default="2023-12-31", help="结束日期 (默认: 2023-12-31)"
     )
-    parser.add_argument(
-        "--etfs",
-        nargs="+",
-        help="ETF池 (可选)"
-    )
-    parser.add_argument(
-        "--indexes",
-        nargs="+",
-        help="指数池 (可选)"
-    )
-    parser.add_argument(
-        "--start",
-        default="2023-01-01",
-        help="开始日期 (默认: 2023-01-01)"
-    )
-    parser.add_argument(
-        "--end",
-        default="2023-12-31",
-        help="结束日期 (默认: 2023-12-31)"
-    )
-    parser.add_argument(
-        "--adjust",
-        default="qfq",
-        help="复权方式 (默认: qfq)"
-    )
-    parser.add_argument(
-        "--force",
-        action="store_true",
-        help="强制更新，跳过已存在缓存"
-    )
+    parser.add_argument("--adjust", default="qfq", help="复权方式 (默认: qfq)")
+    parser.add_argument("--force", action="store_true", help="强制更新，跳过已存在缓存")
     parser.add_argument(
         "--sample",
         action="store_true",
         default=True,
-        help="使用默认样本股票池 (默认启用)"
+        help="使用默认样本股票池 (默认启用)",
     )
 
     args = parser.parse_args()
@@ -194,29 +151,16 @@ def validate_cache_main():
     from jk2bt.db.cache_status import get_cache_manager
 
     parser = argparse.ArgumentParser(
-        prog="jk2bt-validate",
-        description="验证数据缓存状态"
+        prog="jk2bt-validate", description="验证数据缓存状态"
+    )
+    parser.add_argument("--stocks", nargs="+", help="验证指定股票池的缓存完整性")
+    parser.add_argument(
+        "--start", default="2023-01-01", help="验证开始日期 (默认: 2023-01-01)"
     )
     parser.add_argument(
-        "--stocks",
-        nargs="+",
-        help="验证指定股票池的缓存完整性"
+        "--end", default="2023-12-31", help="验证结束日期 (默认: 2023-12-31)"
     )
-    parser.add_argument(
-        "--start",
-        default="2023-01-01",
-        help="验证开始日期 (默认: 2023-01-01)"
-    )
-    parser.add_argument(
-        "--end",
-        default="2023-12-31",
-        help="验证结束日期 (默认: 2023-12-31)"
-    )
-    parser.add_argument(
-        "--json",
-        action="store_true",
-        help="以 JSON 格式输出"
-    )
+    parser.add_argument("--json", action="store_true", help="以 JSON 格式输出")
 
     args = parser.parse_args()
 
@@ -241,7 +185,7 @@ def validate_cache_main():
     print(f"  交易日历: {'OK' if meta_status['trade_days'] else 'MISSING'}")
     print(f"  证券信息: {'OK' if meta_status['securities'] else 'MISSING'}")
 
-    if meta_status['index_weights']:
+    if meta_status["index_weights"]:
         print(f"  指数权重: {list(meta_status['index_weights'].keys())}")
 
     # 如果指定了股票池，验证完整性
@@ -255,17 +199,20 @@ def validate_cache_main():
             print(f"  状态: VALID - 所有股票缓存完整")
         else:
             print(f"  状态: INVALID")
-            if report['missing_stocks']:
+            if report["missing_stocks"]:
                 print(f"  缺失股票: {report['missing_stocks']}")
-            if report['incomplete_stocks']:
+            if report["incomplete_stocks"]:
                 print(f"  不完整股票:")
-                for item in report['incomplete_stocks']:
-                    print(f"    {item['symbol']}: {item['min_date']} ~ {item['max_date']}")
+                for item in report["incomplete_stocks"]:
+                    print(
+                        f"    {item['symbol']}: {item['min_date']} ~ {item['max_date']}"
+                    )
 
     print("=" * 60)
 
     if args.json:
         import json
+
         output = {
             "summary": summary,
             "meta_status": meta_status,

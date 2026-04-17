@@ -22,7 +22,7 @@ finance_data/dividend.py
 - adjust_factor: 复权因子
 
 缓存策略:
-- DuckDB 缓存（优先）：存储在 data/dividend.db 中
+- Parquet 缓存：存储在 data/dividend_parquet 中
 - Pickle 缓存（备用）：按季度缓存（90天有效期）
 """
 
@@ -32,7 +32,15 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Union, Dict
 import logging
 
+from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
+
 logger = logging.getLogger(__name__)
+
+from jk2bt.utils.date_utils import (
+    parse_ratio as _parse_ratio,
+    parse_date as _parse_date,
+    filter_by_date_range,
+)
 
 _CACHE_AVAILABLE = False
 try:
@@ -194,51 +202,6 @@ class DividendCacheManager:
 _db_manager = DividendCacheManager() if _CACHE_AVAILABLE else None
 
 
-def _extract_code_num(symbol: str) -> str:
-    if symbol.startswith("sh") or symbol.startswith("sz"):
-        return symbol[2:].zfill(6)
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol.split(".")[0].zfill(6)
-    return symbol.zfill(6)
-
-
-def _normalize_to_jq(symbol: str) -> str:
-    if ".XSHG" in symbol or ".XSHE" in symbol:
-        return symbol
-    if symbol.startswith("sh"):
-        return symbol[2:] + ".XSHG"
-    if symbol.startswith("sz"):
-        return symbol[2:] + ".XSHE"
-    code = symbol.zfill(6)
-    if code.startswith("6"):
-        return code + ".XSHG"
-    return code + ".XSHE"
-
-
-def _parse_date(date_str) -> Optional[str]:
-    if not date_str or pd.isna(date_str):
-        return None
-    date_str = str(date_str).strip()
-    for fmt in ["%Y-%m-%d", "%Y%m%d", "%Y/%m/%d"]:
-        try:
-            dt = datetime.strptime(date_str, fmt)
-            return dt.strftime("%Y-%m-%d")
-        except ValueError:
-            continue
-    return None
-
-
-def _parse_ratio(value) -> Optional[float]:
-    if value is None or value == "" or value == "-":
-        return None
-    try:
-        if isinstance(value, str):
-            value = value.replace("%", "").strip()
-        return float(value)
-    except (ValueError, TypeError):
-        return None
-
-
 def _calculate_adjust_factor(
     bonus_ratio_rmb: float, transfer_ratio: float, bonus_share_ratio: float
 ) -> float:
@@ -285,8 +248,8 @@ def get_dividend_info(
     - record_date: 股权登记日
     - adjust_factor: 复权因子
     """
-    code_num = _extract_code_num(security)
-    jq_code = _normalize_to_jq(security)
+    code_num = extract_code_num(security)
+    jq_code = ak_code_to_jq(security)
 
     if use_duckdb and _db_manager is not None and not force_update:
         if _db_manager.is_cache_valid(jq_code, cache_days=90):
@@ -329,7 +292,9 @@ def get_dividend_info(
                 _db_manager.insert_dividend(result_df)
             if start_date is None and end_date is None:
                 return result_df
-            return _filter_by_date_range(result_df, start_date, end_date)
+            return filter_by_date_range(
+                result_df, start_date, end_date, date_col="ex_dividend_date"
+            )
 
     except Exception as e:
         logger.warning(f"[get_dividend_info] 获取分红送股失败 {security}: {e}")
@@ -393,30 +358,6 @@ def _parse_dividend_row(row, jq_code: str) -> Optional[dict]:
         return None
 
 
-def _filter_by_date_range(
-    df: pd.DataFrame, start_date: str, end_date: str
-) -> pd.DataFrame:
-    if df.empty:
-        return df
-
-    df = df.copy()
-
-    if "ex_dividend_date" not in df.columns:
-        return df
-
-    df["_date"] = pd.to_datetime(df["ex_dividend_date"])
-
-    if start_date:
-        start_dt = pd.Timestamp(start_date)
-        df = df[df["_date"] >= start_dt]
-
-    if end_date:
-        end_dt = pd.Timestamp(end_date)
-        df = df[df["_date"] <= end_dt]
-
-    return df.drop(columns=["_date"]).reset_index(drop=True)
-
-
 def get_dividend_history(
     security: str,
     years: int = 5,
@@ -455,7 +396,7 @@ def get_dividend_history(
     if df_dividend.empty:
         return pd.DataFrame(columns=_DIVIDEND_HISTORY_SCHEMA)
 
-    jq_code = _normalize_to_jq(security)
+    jq_code = ak_code_to_jq(security)
 
     df_dividend["_year"] = pd.to_datetime(df_dividend["ex_dividend_date"]).dt.year
 
@@ -716,8 +657,8 @@ def get_dividend_by_date(
         if df_raw is not None and not df_raw.empty:
             results = []
             for _, row in df_raw.iterrows():
-                code_num = _extract_code_num(str(row.get("代码", "")))
-                jq_code = _normalize_to_jq(code_num)
+                code_num = extract_code_num(str(row.get("代码", "")))
+                jq_code = ak_code_to_jq(code_num)
 
                 bonus_ratio_rmb = _parse_ratio(row.get("现金分红-现金分红比例", 0))
                 transfer_ratio = _parse_ratio(row.get("送转股份-转股比例", 0))

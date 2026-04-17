@@ -71,6 +71,7 @@ class NetworkBlocker:
         if exceptions is None:
             # 默认模拟连接错误
             from urllib.error import URLError
+
             exceptions = [URLError("Network is blocked for testing")]
 
         return patch_network_requests(exceptions)
@@ -79,6 +80,7 @@ class NetworkBlocker:
     def create_mock_error(cls, message="Network unavailable (offline mode test)"):
         """创建模拟的网络错误"""
         from urllib.error import URLError
+
         return URLError(message)
 
 
@@ -91,10 +93,12 @@ def patch_network_requests(exceptions):
     - requests: HTTP请求库
     - urllib: URL处理库
     """
+
     def decorator(func):
         def wrapper(*args, **kwargs):
             with cls._create_network_patch(exceptions):
                 return func(*args, **kwargs)
+
         return wrapper
 
     class NetworkPatchContext:
@@ -106,21 +110,24 @@ def patch_network_requests(exceptions):
             # Patch akshare 函数
             try:
                 import akshare
+
                 # Patch 主要数据获取函数
                 self.patches.append(
-                    patch('akshare.stock_zh_a_hist', side_effect=self.exceptions)
+                    patch("akshare.stock_zh_a_hist", side_effect=self.exceptions)
                 )
                 self.patches.append(
-                    patch('akshare.fund_etf_hist_sina', side_effect=self.exceptions)
+                    patch("akshare.fund_etf_hist_sina", side_effect=self.exceptions)
                 )
                 self.patches.append(
-                    patch('akshare.index_zh_a_hist', side_effect=self.exceptions)
+                    patch("akshare.index_zh_a_hist", side_effect=self.exceptions)
                 )
                 self.patches.append(
-                    patch('akshare.tool_trade_date_hist_sina', side_effect=self.exceptions)
+                    patch(
+                        "akshare.tool_trade_date_hist_sina", side_effect=self.exceptions
+                    )
                 )
                 self.patches.append(
-                    patch('akshare.stock_info_a_code_name', side_effect=self.exceptions)
+                    patch("akshare.stock_info_a_code_name", side_effect=self.exceptions)
                 )
             except ImportError:
                 pass
@@ -128,12 +135,9 @@ def patch_network_requests(exceptions):
             # Patch requests
             try:
                 import requests
-                self.patches.append(
-                    patch('requests.get', side_effect=self.exceptions)
-                )
-                self.patches.append(
-                    patch('requests.post', side_effect=self.exceptions)
-                )
+
+                self.patches.append(patch("requests.get", side_effect=self.exceptions))
+                self.patches.append(patch("requests.post", side_effect=self.exceptions))
             except ImportError:
                 pass
 
@@ -204,22 +208,24 @@ class OfflineTestFixture:
 
     def _setup_prewarmed_data(self):
         """设置预热后的数据"""
-        # 创建模拟的交易日历数据
-        trade_days = pd.DataFrame({
-            "trade_date": pd.date_range("2023-01-01", "2023-03-31", freq="B")
-        })
-        trade_days_file = os.path.join(self.meta_cache_dir, "trade_days.pkl")
-        trade_days.to_pickle(trade_days_file)
+        from jk2bt.db.cache_config import init_default_cache
+        from parquet_cache import get_cache_manager
 
-        # 创建模拟的证券信息数据
-        securities = pd.DataFrame({
-            "code": ["sh600519", "sz000858", "sh600036"],
-            "name": ["贵州茅台", "五粮液", "招商银行"]
-        })
-        securities_file = os.path.join(
-            self.meta_cache_dir, f"securities_20230404.pkl"
+        init_default_cache()
+        cache = get_cache_manager()
+
+        trade_days = pd.DataFrame(
+            {"date": pd.date_range("2023-01-01", "2023-03-31", freq="B").date}
         )
-        securities.to_pickle(securities_file)
+        cache.put("trade_calendar", trade_days)
+
+        securities = pd.DataFrame(
+            {
+                "code": ["sh600519", "sz000858", "sh600036"],
+                "name": ["贵州茅台", "五粮液", "招商银行"],
+            }
+        )
+        cache.put("securities", securities)
 
         # 创建模拟的日线数据（写入DuckDB）
         try:
@@ -253,15 +259,17 @@ class OfflineTestFixture:
         base_price = 100 if symbol.startswith("sh6") else 50
         prices = [base_price + i * 0.5 + (i % 5 - 2) * 2 for i in range(n)]
 
-        df = pd.DataFrame({
-            "datetime": dates,
-            "open": prices,
-            "high": [p + 2 for p in prices],
-            "low": [p - 2 for p in prices],
-            "close": prices,
-            "volume": [1000000 + i * 10000 for i in range(n)],
-            "amount": [p * 1000000 for p in prices]
-        })
+        df = pd.DataFrame(
+            {
+                "datetime": dates,
+                "open": prices,
+                "high": [p + 2 for p in prices],
+                "low": [p - 2 for p in prices],
+                "close": prices,
+                "volume": [1000000 + i * 10000 for i in range(n)],
+                "amount": [p * 1000000 for p in prices],
+            }
+        )
 
         return df
 
@@ -276,12 +284,13 @@ class OfflineTestFixture:
             stock_pool=self.test_stocks,
             start_date=self.test_start,
             end_date=self.test_end,
-            cache_base_dir=self.cache_dir
+            cache_base_dir=self.cache_dir,
         )
         return is_valid, report
 
 
 # ============== 测试用例 ==============
+
 
 class TestOfflineEmptyEnvironment:
     """
@@ -350,16 +359,13 @@ class TestOfflineEmptyEnvironment:
 
         # 验证空缓存
         has_data = db_read.has_data(
-            "stock_daily", "sh600519",
-            empty_fixture.test_start, empty_fixture.test_end
+            "stock_daily", "sh600519", empty_fixture.test_start, empty_fixture.test_end
         )
         assert not has_data
 
         # 模拟离线模式获取数据
         df = db_read.get_stock_daily(
-            "sh600519",
-            empty_fixture.test_start,
-            empty_fixture.test_end
+            "sh600519", empty_fixture.test_start, empty_fixture.test_end
         )
 
         # 空缓存应该返回空数据
@@ -389,7 +395,7 @@ class TestOfflineEmptyEnvironment:
             stock_pool=["sh600519", "sz000001"],
             start_date="2023-01-01",
             end_date="2023-03-31",
-            cache_base_dir=empty_fixture.cache_dir
+            cache_base_dir=empty_fixture.cache_dir,
         )
 
         # 验证报告包含详细信息
@@ -458,7 +464,9 @@ class TestOfflinePrewarmedEnvironment:
             )
             assert status["has_data"] == True
             assert status["count"] > 0
-            logger.info(f"{stock}: has_data={status['has_data']}, count={status['count']}")
+            logger.info(
+                f"{stock}: has_data={status['has_data']}, count={status['count']}"
+            )
 
         # 检查元数据缓存
         meta_status = manager.check_meta_cache(prewarmed_fixture.cache_dir)
@@ -478,7 +486,7 @@ class TestOfflinePrewarmedEnvironment:
                         stock,
                         prewarmed_fixture.test_start,
                         prewarmed_fixture.test_end,
-                        offline_mode=True
+                        offline_mode=True,
                     )
                     assert df is not None
                     assert not df.empty
@@ -498,7 +506,7 @@ class TestOfflinePrewarmedEnvironment:
                         etf,
                         prewarmed_fixture.test_start,
                         prewarmed_fixture.test_end,
-                        offline_mode=True
+                        offline_mode=True,
                     )
                     assert df is not None
                     logger.info(f"离线ETF数据获取成功: {etf}")
@@ -514,7 +522,7 @@ class TestOfflinePrewarmedEnvironment:
                         index,
                         prewarmed_fixture.test_start,
                         prewarmed_fixture.test_end,
-                        offline_mode=True
+                        offline_mode=True,
                     )
                     assert df is not None
                     logger.info(f"离线指数数据获取成功: {index}")
@@ -564,7 +572,11 @@ class TestCacheStatusIntegration:
 
             # 验证返回字段完整
             expected_fields = [
-                "has_data", "is_complete", "min_date", "max_date", "count"
+                "has_data",
+                "is_complete",
+                "min_date",
+                "max_date",
+                "count",
             ]
             for field in expected_fields:
                 assert field in status
@@ -608,15 +620,17 @@ class TestOfflineModeEnvironmentVariable:
 
             # 写入测试数据
             db = ParquetAdapter(db_path=db_path, read_only=False)
-            test_df = pd.DataFrame({
-                "datetime": pd.date_range("2023-01-01", "2023-01-10"),
-                "open": [100 + i for i in range(10)],
-                "high": [102 + i for i in range(10)],
-                "low": [98 + i for i in range(10)],
-                "close": [100 + i for i in range(10)],
-                "volume": [1000000 for _ in range(10)],
-                "amount": [100000000 for _ in range(10)]
-            })
+            test_df = pd.DataFrame(
+                {
+                    "datetime": pd.date_range("2023-01-01", "2023-01-10"),
+                    "open": [100 + i for i in range(10)],
+                    "high": [102 + i for i in range(10)],
+                    "low": [98 + i for i in range(10)],
+                    "close": [100 + i for i in range(10)],
+                    "volume": [1000000 for _ in range(10)],
+                    "amount": [100000000 for _ in range(10)],
+                }
+            )
             db.insert_stock_daily("sh600000", test_df)
 
             # 验证数据可读取
@@ -629,14 +643,18 @@ class TestOfflineModeEnvironmentVariable:
 
 # ============== CI运行入口 ==============
 
+
 def pytest_main():
     """pytest主入口"""
-    pytest.main([
-        __file__,
-        "-v",
-        "--tb=short",
-        "-k", "Offline"  # 只运行Offline相关测试
-    ])
+    pytest.main(
+        [
+            __file__,
+            "-v",
+            "--tb=short",
+            "-k",
+            "Offline",  # 只运行Offline相关测试
+        ]
+    )
 
 
 if __name__ == "__main__":

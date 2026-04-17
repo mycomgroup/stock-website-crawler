@@ -46,6 +46,7 @@ try:
         rolling_factor_cov,
         eigenvalue_decomposition,
     )
+
     RISK_AVAILABLE = True
 except ImportError:
     RISK_AVAILABLE = False
@@ -75,8 +76,24 @@ from . import (
     finance_tables,
 )
 
-# 兼容性别名
-indicators = financial_metrics
+# 兼容性别名（已弃用，请直接使用 financial_metrics）
+import warnings as _warnings
+
+
+class _DeprecatedIndicatorsModule:
+    def __init__(self, real_module):
+        self._real = real_module
+
+    def __getattr__(self, name):
+        _warnings.warn(
+            "factors.indicators is deprecated, use factors.financial_metrics instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return getattr(self._real, name)
+
+
+indicators = _DeprecatedIndicatorsModule(financial_metrics)
 
 __all__ = [
     "get_factor_values_jq",
@@ -102,15 +119,17 @@ __all__ = [
 ]
 
 if RISK_AVAILABLE:
-    __all__.extend([
-        "get_factor_cov",
-        "get_factor_variance",
-        "get_factor_correlation",
-        "factor_risk_analysis",
-        "portfolio_factor_risk",
-        "rolling_factor_cov",
-        "eigenvalue_decomposition",
-    ])
+    __all__.extend(
+        [
+            "get_factor_cov",
+            "get_factor_variance",
+            "get_factor_correlation",
+            "factor_risk_analysis",
+            "portfolio_factor_risk",
+            "rolling_factor_cov",
+            "eigenvalue_decomposition",
+        ]
+    )
 
 if QLIB_ALPHA_AVAILABLE:
     __all__.extend(
