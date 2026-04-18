@@ -1,4 +1,18 @@
-"""弱因子组合量化策略的完整实现。
+"""弱因子组合量化策略 v1 实现（已废弃，请使用 v2）。
+
+.. deprecated::
+    本模块为 v1 实现，已被 v2 架构取代。以下函数/设计已在 v2 中废弃：
+
+    - ``combine_signals_fixed()``：固定 40/30/30 融合 → 替换为 v2 CrossFamilyModel（收缩法）
+    - ``get_active_factors()``：IC top-k 激活 → 替换为 v2 收缩法自然降权
+    - ``strategy_risk_parity()``：因子波动率倒数加权 → 理论弱，已废弃
+    - ``apply_stop_loss()``：因子层止损 → 止损属于组合层应急开关，不在因子合成层
+    - ``market_phases`` 手工划分牛熊硬切换 → 替换为 v2 SoftRegimeOverlay
+    - ``strategy_ml_weighted()``：ML 作为主模型 → 降级为 residual overlay（v2 L5）
+    - ``standardize_factors()``：全局标准化 → 替换为 v2 L1 截面标准化（含 robust winsor）
+    - ``strategy_equal_weighted()``：直接等权 → 替换为 v2 L3 equal_rank_score
+
+    v2 实现位于：``skills/autoresearch_ml_joinquant_factor_v2/v2/``
 
 该模块将《弱因子组合量化策略技术方案》中的核心功能落地为可复用代码：
 - 因子标准化与动态激活
