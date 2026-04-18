@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 打首板策略 - RiceQuant版本
 # 逻辑：选首次涨停（首板）的小市值股票，次日低开买入
 
@@ -14,7 +30,7 @@ def _build_stock_pool(min_cap=5, max_cap=60, max_size=500):
         factor_df = get_factor(stocks, ['market_cap'])
         if factor_df is None or len(factor_df) == 0:
             return stocks[:max_size]
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if not hasattr(df, 'columns'):
             df = df.to_frame(name='market_cap')
         if 'market_cap' not in df.columns:

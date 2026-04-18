@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 基本面三角3.0策略 - RiceQuant版本
 # 逻辑：ROE+PB+净利润增速三角形评分3.0版，加入大盘择时，月度调仓
 
@@ -26,7 +42,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     all_stocks = all_instruments('CS')['order_book_id'].tolist()
     stocks = [s for s in all_stocks
@@ -40,7 +55,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
         df = df[df['pb_ratio'] > 0.0]
@@ -74,10 +89,11 @@ def handle_bar(context, bar_dict):
             scores[stock] = a * 0.35 + b * 0.3 + c * 0.25 + gpm_z[i] * 0.1
 
     sorted_stocks = sorted(scores, key=scores.get, reverse=True)
-    target = [s for s in sorted_stocks if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in sorted_stocks if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
 
     if not target:
         return
+    context.month = current_month
 
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:

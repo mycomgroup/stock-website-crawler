@@ -51,7 +51,7 @@ def my_trade(context, bar_dict):
             cur_close = closes[-1]
             if 0.92 <= cur_close / limit_up_close <= 1.02:
                 bar = (bar_dict[stock] if stock in bar_dict else None)
-                if bar is not None and bar.is_trading:
+                if bar is None or bar.is_trading:
                     candidates.append(stock)
         except Exception:
             continue

@@ -47,7 +47,7 @@ def handle_bar(context, bar_dict):
     target = []
     for stock in sorted_stocks:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break

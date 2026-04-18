@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 低开买入小市值策略 - RiceQuant版本
 # 原文：低开买入小市值策略（剥头皮策略）3.0 总结
 # 逻辑：选小市值股票，当日低开（开盘价低于昨收）时买入，日内反弹卖出
@@ -34,7 +50,7 @@ def update_pool(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
         if not hasattr(df, 'columns'):
@@ -59,7 +75,7 @@ def trade(context, bar_dict):
     # 卖出持仓
     for stock in list(context.portfolio.positions.keys()):
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             order_target_value(stock, 0)
 
     # 选低开股票买入

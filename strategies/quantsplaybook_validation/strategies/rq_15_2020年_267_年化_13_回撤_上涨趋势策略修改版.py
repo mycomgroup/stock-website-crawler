@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 2020年267%年化13%回撤上涨趋势策略修改版 - RiceQuant版本
 # 逻辑：大盘上涨趋势时持有小市值股票，趋势转弱时切换到债券ETF
 
@@ -28,7 +44,7 @@ def handle_bar(context, bar_dict):
                 if stock != context.bond_etf:
                     order_target_value(stock, 0)
             bar = (bar_dict[context.bond_etf] if context.bond_etf in bar_dict else None)
-            if bar is not None and bar.is_trading:
+            if bar is None or bar.is_trading:
                 order_target_value(context.bond_etf, context.portfolio.total_value * 0.95)
             context.in_stock = False
         return
@@ -53,7 +69,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
         df = df[df['pb_ratio'] > 0.0]
@@ -63,7 +79,7 @@ def handle_bar(context, bar_dict):
         candidates = df.index.tolist()
     except Exception:
         return
-    target = [s for s in candidates if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in candidates if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
 
     if not target:
         return

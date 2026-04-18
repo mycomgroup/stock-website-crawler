@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 超稳股息率+均线选股策略 - RiceQuant版本
 # 逻辑：dividend_ratio>3% + 价格在MA20上方 + pb<3，月度调仓
 
@@ -26,7 +42,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
         df = df[df['pb_ratio'] > 0.0]
@@ -48,7 +64,7 @@ def handle_bar(context, bar_dict):
             ma20 = np.mean(closes[-20:])
             if closes[-1] > ma20:
                 bar = (bar_dict[stock] if stock in bar_dict else None)
-                if bar is not None and bar.is_trading:
+                if bar is None or bar.is_trading:
                     target.append(stock)
         except Exception:
             continue

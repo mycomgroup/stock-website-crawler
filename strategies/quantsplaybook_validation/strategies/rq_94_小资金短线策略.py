@@ -61,7 +61,7 @@ def trade(context, bar_dict):
     target = []
     for stock in context.candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.max_hold_stocknum:
             break

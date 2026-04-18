@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 菜场大妈选股法 - RiceQuant版本
 # 原文：菜场大妈选股法
 # 作者：开心果
@@ -29,7 +45,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['pb_ratio'] > 0]
         df = df[df['market_cap'] > 5e8]  # NOTE: RQ market_cap is yuan (元), JQ was 亿
         df = df.head(context.stock_num * 3)
@@ -39,7 +55,7 @@ def handle_bar(context, bar_dict):
     target = []
     for stock in candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break

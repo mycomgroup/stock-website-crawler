@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 一创PEG+EBIT+换手率波动率策略 - RiceQuant版本
 # 原文：一创PEG+EBIT+turnover_volatility
 # 逻辑：综合PEG（成长性）、EBIT/EV（盈利质量）、换手率波动率（流动性）多因子选股
@@ -28,7 +44,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or factor_df.empty:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['pe_ratio'] > 0.0]
         df = df[df['roe'] > 0.0]
         df = df[df['inc_net_profit_year_on_year'] > 0.0]
@@ -56,7 +72,7 @@ def handle_bar(context, bar_dict):
     target = []
     for stock in sorted_stocks:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break

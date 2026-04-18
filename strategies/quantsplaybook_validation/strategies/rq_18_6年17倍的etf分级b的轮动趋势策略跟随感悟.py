@@ -30,7 +30,7 @@ def handle_bar(context, bar_dict):
             if closes[-1] < ma * 0.98:
                 order_target_value(etf, 0)
                 bar = (bar_dict[context.bond_etf] if context.bond_etf in bar_dict else None)
-                if bar is not None and bar.is_trading:
+                if bar is None or bar.is_trading:
                     order_target_value(context.bond_etf, context.portfolio.total_value * 0.95)
         return
     context.month = current_month
@@ -56,7 +56,7 @@ def handle_bar(context, bar_dict):
             if etf != context.bond_etf:
                 order_target_value(etf, 0)
         bar = (bar_dict[context.bond_etf] if context.bond_etf in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             order_target_value(context.bond_etf, context.portfolio.total_value * 0.95)
         return
 
@@ -67,5 +67,5 @@ def handle_bar(context, bar_dict):
             order_target_value(etf, 0)
 
     bar = (bar_dict[best] if best in bar_dict else None)
-    if bar is not None and bar.is_trading:
+    if bar is None or bar.is_trading:
         order_target_value(best, context.portfolio.total_value * 0.95)
