@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 穿越牛熊稳健高收益策略 - RiceQuant版本
 # 原文：14年初到23年7月，年化37，夏普1.25，稳健高收益！
 # 作者：侧耳闻鹿鸣
@@ -15,7 +31,6 @@ def handle_bar(context, bar_dict):
     current_week = context.now.isocalendar()[1]
     if current_week == context.week:
         return
-    context.week = current_week
 
     instruments_df = all_instruments('CS')
     stocks = instruments_df['order_book_id'].tolist()
@@ -29,7 +44,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['pb_ratio'] > 0.0]
         df = df[df['pb_ratio'] < 5.0]
         df = df[df['roe'] > 0.04]
@@ -54,6 +69,7 @@ def handle_bar(context, bar_dict):
         except Exception:
             continue
 
+    context.week = current_week
     for stock in list(context.portfolio.positions.keys()):
         if stock not in buy:
             order_target_value(stock, 0)
@@ -64,7 +80,7 @@ def handle_bar(context, bar_dict):
     cash_per = context.portfolio.cash / len(buy)
     for stock in buy:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is None or not bar.is_trading:
+        if bar is not None and not bar.is_trading:
             continue
         if stock not in context.portfolio.positions:
             order_target_value(stock, cash_per)

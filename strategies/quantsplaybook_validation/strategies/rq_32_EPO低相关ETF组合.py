@@ -58,7 +58,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     price_data = {}
     for etf in context.etf_pool:
@@ -78,6 +77,7 @@ def handle_bar(context, bar_dict):
     weights_arr = epo_weights(returns)
     weights = dict(zip(valid_etfs, weights_arr))
 
+    context.month = current_month
     for etf in list(context.portfolio.positions.keys()):
         if etf not in weights:
             order_target_value(etf, 0)
@@ -85,6 +85,6 @@ def handle_bar(context, bar_dict):
     total_value = context.portfolio.total_value
     for etf, w in weights.items():
         bar = (bar_dict[etf] if etf in bar_dict else None)
-        if bar is None or not bar.is_trading:
+        if bar is not None and not bar.is_trading:
             continue
         order_target_value(etf, total_value * w * 0.95)

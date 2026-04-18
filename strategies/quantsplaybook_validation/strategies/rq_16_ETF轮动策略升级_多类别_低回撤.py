@@ -93,12 +93,12 @@ def handle_bar(context, bar_dict):
                 order_target_value(etf, 0)
             context.in_market = False
         return
-    context.month = current_month
 
     if rsrs < -0.7:
         for etf in list(context.portfolio.positions.keys()):
             order_target_value(etf, 0)
         context.in_market = False
+        context.month = current_month
         return
 
     # 动量+低波动率选ETF
@@ -124,6 +124,7 @@ def handle_bar(context, bar_dict):
         for etf in list(context.portfolio.positions.keys()):
             order_target_value(etf, 0)
         context.in_market = False
+        context.month = current_month
         return
 
     for etf in list(context.portfolio.positions.keys()):
@@ -131,6 +132,7 @@ def handle_bar(context, bar_dict):
             order_target_value(etf, 0)
 
     bar = (bar_dict[best] if best in bar_dict else None)
-    if bar is not None and bar.is_trading:
+    if bar is None or bar.is_trading:
         order_target_value(best, context.portfolio.total_value * 0.95)
         context.in_market = True
+        context.month = current_month

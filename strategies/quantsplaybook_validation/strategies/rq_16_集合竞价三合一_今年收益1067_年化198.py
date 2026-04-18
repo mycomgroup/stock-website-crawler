@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 集合竞价三合一策略 - RiceQuant版本
 # 逻辑：选近期有涨停、低开、量比放大的小市值股票，日度交易
 
@@ -14,7 +30,7 @@ def _build_stock_pool(min_cap=20, max_cap=500, max_size=600):
         factor_df = get_factor(stocks, ['market_cap'])
         if factor_df is None or len(factor_df) == 0:
             return stocks[:max_size]
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if not hasattr(df, 'columns'):
             df = df.to_frame(name='market_cap')
         if 'market_cap' not in df.columns:
@@ -89,7 +105,7 @@ def trade(context, bar_dict):
     target = []
     for stock in context.candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is None or not bar.is_trading:
+        if bar is not None and not bar.is_trading:
             continue
         daily = history_bars(stock, 2, '1d', ['close', 'limit_up'])
         if daily is None or len(daily) < 2:

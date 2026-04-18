@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 基本面01加RSI择时 - RiceQuant版本
 # 原文：基本面01加RSI择时
 # 逻辑：选低PB、高ROE的基本面优质股，结合RSI择时（RSI超卖时买入）
@@ -43,7 +59,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     if index_rsi > 65:
         return  # 大盘过热，不买入
@@ -60,7 +75,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
         df = df[df['pb_ratio'] > 0.0]
@@ -82,7 +97,7 @@ def handle_bar(context, bar_dict):
             rsi = calc_rsi(np.array(closes, dtype=float))
             if rsi < 55:
                 bar = (bar_dict[stock] if stock in bar_dict else None)
-                if bar is not None and bar.is_trading:
+                if bar is None or bar.is_trading:
                     target.append(stock)
         except Exception:
             continue
@@ -91,6 +106,7 @@ def handle_bar(context, bar_dict):
 
     if not target:
         return
+    context.month = current_month
 
     for stock in list(context.portfolio.positions.keys()):
         if stock not in target:

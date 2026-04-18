@@ -17,7 +17,6 @@ def handle_bar(context, bar_dict):
     current_month = context.now.month
     if current_month == context.month:
         return
-    context.month = current_month
 
     scores = {}
     for etf in context.etf_pool:
@@ -45,9 +44,10 @@ def handle_bar(context, bar_dict):
         return
 
     best = max(scores, key=scores.get)
+    context.month = current_month
     for etf in list(context.portfolio.positions.keys()):
         if etf != best:
             order_target_value(etf, 0)
     bar = (bar_dict[best] if best in bar_dict else None)
-    if bar is not None and bar.is_trading:
+    if bar is None or bar.is_trading:
         order_target_value(best, context.portfolio.total_value * 0.95)

@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 科技与狠活策略 - RiceQuant版本
 # 逻辑：选科技板块（电子、计算机、通信）小市值高成长股，月度调仓
 
@@ -43,7 +59,7 @@ def handle_bar(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         df = df[df['market_cap'] > 1e+09]
         df = df[df['market_cap'] < 3e+10]
         df = df[df['pe_ratio'] > 0.0]
@@ -53,7 +69,7 @@ def handle_bar(context, bar_dict):
         candidates = df.index.tolist()
     except Exception:
         return
-    target = [s for s in candidates if (bar_dict[s] if s in bar_dict else None) and bar_dict[s].is_trading][:context.stock_num]
+    target = [s for s in candidates if (s not in bar_dict) or bar_dict[s].is_trading][:context.stock_num]
 
     if not target:
         return

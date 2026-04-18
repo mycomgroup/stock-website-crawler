@@ -1,3 +1,19 @@
+def _normalize_factor_frame(factor_df):
+    if factor_df is None:
+        return None
+    try:
+        if hasattr(factor_df, 'empty') and factor_df.empty:
+            return factor_df
+        if not hasattr(factor_df, 'columns'):
+            factor_df = factor_df.to_frame()
+        index = getattr(factor_df, 'index', None)
+        if index is not None and getattr(index, 'nlevels', 1) > 1:
+            factor_df = factor_df.groupby(level=-1).last()
+        return factor_df.dropna()
+    except Exception:
+        return None
+
+
 # 穿越牛熊基业长青的价值精选策略 - RiceQuant版本
 # 原文：穿越牛熊基业长青的价值精选策略
 # 逻辑：选高ROE、低PB、稳定盈利的价值股，持仓集中（3-5只），月度调仓
@@ -31,7 +47,7 @@ def do_trade(context, bar_dict):
         )
         if factor_df is None or len(factor_df) == 0:
             return
-        df = factor_df.groupby(level=0).last().dropna()
+        df = _normalize_factor_frame(factor_df)
         if df is None or len(df) == 0:
             return
         df = df[df['pb_ratio'] > 0.0]
@@ -47,7 +63,7 @@ def do_trade(context, bar_dict):
     target = []
     for stock in candidates:
         bar = (bar_dict[stock] if stock in bar_dict else None)
-        if bar is not None and bar.is_trading:
+        if bar is None or bar.is_trading:
             target.append(stock)
         if len(target) >= context.stock_num:
             break
