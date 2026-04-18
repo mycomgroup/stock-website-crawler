@@ -18,6 +18,64 @@ from typing import Union, List, Dict, Optional
 import warnings
 
 
+def _history_adapter(
+    security: str,
+    count: int,
+    unit: str = "1d",
+    fields: Optional[List[str]] = None,
+    end_dt: Optional[str] = None,
+    include_now: bool = True,
+) -> pd.DataFrame:
+    """
+    将 get_stock_daily 适配为 history 接口的返回格式
+
+    history 返回格式 (panel=False):
+        - index: datetime
+        - columns: open, high, low, close, volume (或指定字段)
+
+    get_stock_daily 返回格式:
+        - index: datetime (DatetimeIndex)
+        - columns: datetime, open, high, low, close, volume
+    """
+    from jk2bt.data.market.stock import get_stock_daily
+
+    if fields is None:
+        fields = ["open", "high", "low", "close", "volume"]
+
+    if end_dt:
+        end_date = pd.to_datetime(end_dt)
+    else:
+        end_date = pd.Timestamp.now()
+
+    start_date = end_date - pd.Timedelta(days=count * 2)
+
+    df = get_stock_daily(
+        symbol=security,
+        start=start_date.strftime("%Y-%m-%d"),
+        end=end_date.strftime("%Y-%m-%d"),
+        adjust="qfq",
+    )
+
+    if df.empty:
+        return pd.DataFrame(columns=fields)
+
+    if "datetime" in df.columns:
+        df["datetime"] = pd.to_datetime(df["datetime"])
+        df = df.set_index("datetime")
+    elif not isinstance(df.index, pd.DatetimeIndex):
+        df.index = pd.to_datetime(df.index)
+
+    df = df.sort_index()
+
+    if not include_now:
+        df = df[:-1]
+
+    available_fields = [f for f in fields if f in df.columns]
+    result = df[available_fields].copy()
+
+    return result
+
+
 def _get_price_data(
     security: str,
     check_date: Optional[str] = None,
@@ -27,20 +85,39 @@ def _get_price_data(
     fields: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     """获取历史价格数据"""
-    from jk2bt.api.market import history
+    from jk2bt.data.market.stock import get_stock_daily
 
     if fields is None:
         fields = ["open", "high", "low", "close", "volume"]
 
-    df = history(
-        count=count,
-        unit=unit,
-        field=",".join(fields),
-        security_list=[security],
-        end_dt=check_date,
-        include_now=include_now,
+    if check_date:
+        end_date = pd.to_datetime(check_date)
+    else:
+        end_date = pd.Timestamp.now()
+
+    start_date = end_date - pd.Timedelta(days=count * 2)
+
+    df = get_stock_daily(
+        symbol=security,
+        start=start_date.strftime("%Y-%m-%d"),
+        end=end_date.strftime("%Y-%m-%d"),
+        adjust="qfq",
     )
-    return df
+
+    if df.empty:
+        return pd.DataFrame(columns=fields)
+
+    if "datetime" in df.columns:
+        df["datetime"] = pd.to_datetime(df["datetime"])
+        df = df.set_index("datetime")
+
+    df = df.sort_index()
+
+    if not include_now:
+        df = df[:-1]
+
+    available_fields = [f for f in fields if f in df.columns]
+    return df[available_fields].copy()
 
 
 def _process_result(
@@ -78,8 +155,6 @@ def MA(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -90,18 +165,18 @@ def MA(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             ma = close.rolling(window=timeperiod, min_periods=timeperiod).mean()
             if check_date:
                 result[sec] = float(ma.iloc[-1])
@@ -141,8 +216,6 @@ def EMA(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -153,18 +226,18 @@ def EMA(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             ema = close.ewm(span=timeperiod, adjust=False).mean()
             if check_date:
                 result[sec] = float(ema.iloc[-1])
@@ -229,8 +302,6 @@ def WMA(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -241,18 +312,18 @@ def WMA(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             weights = np.arange(1, timeperiod + 1)
 
             def weighted_avg(window):
@@ -301,8 +372,6 @@ def MACD(
     返回:
         Dict: {'DIFF': {股票: 值}, 'DEA': {股票: 值}, 'MACD': {股票: 值}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -313,11 +382,11 @@ def MACD(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=need_count,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -326,7 +395,7 @@ def MACD(
                 result["DEA"][sec] = np.nan
                 result["MACD"][sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             ema_short = close.ewm(span=SHORT, adjust=False).mean()
             ema_long = close.ewm(span=LONG, adjust=False).mean()
             diff = ema_short - ema_long
@@ -366,8 +435,6 @@ def DMI(
     返回:
         Dict: {'PDI': {...}, 'MDI': {...}, 'ADX': {...}, 'ADXR': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -377,11 +444,11 @@ def DMI(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=N + M + 20,
                 unit=unit,
-                field="open,high,low,close",
-                security_list=[sec],
+                fields=["open", "high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -448,8 +515,6 @@ def SAR(
     返回:
         Dict: {股票: SAR值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -461,11 +526,11 @@ def SAR(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=50,
                 unit=unit,
-                field="high,low",
-                security_list=[sec],
+                fields=["high", "low"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -538,8 +603,6 @@ def RSI(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -550,18 +613,18 @@ def RSI(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 20,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod + 1:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             delta = close.diff()
             gain = delta.where(delta > 0, 0)
             loss = -delta.where(delta < 0, 0)
@@ -609,8 +672,6 @@ def KDJ(
     返回:
         Dict: {'K': {...}, 'D': {...}, 'J': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -621,11 +682,11 @@ def KDJ(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=need_count,
                 unit=unit,
-                field="high,low,close",
-                security_list=[sec],
+                fields=["high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -678,8 +739,6 @@ def CCI(
     返回:
         Dict: {股票: CCI值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -688,11 +747,11 @@ def CCI(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="high,low,close",
-                security_list=[sec],
+                fields=["high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -738,8 +797,6 @@ def WR(
     返回:
         Dict: {股票: WR值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -748,11 +805,11 @@ def WR(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=N + 10,
                 unit=unit,
-                field="high,low,close",
-                security_list=[sec],
+                fields=["high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -795,8 +852,6 @@ def ROC(
     返回:
         Dict: {股票: ROC值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -805,18 +860,18 @@ def ROC(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             roc = (close - close.shift(timeperiod)) / close.shift(timeperiod) * 100
             result[sec] = float(roc.iloc[-1])
         except Exception as e:
@@ -846,8 +901,6 @@ def MTM(
     返回:
         Dict: {股票: MTM值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -856,18 +909,18 @@ def MTM(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             mtm = close - close.shift(timeperiod)
             result[sec] = float(mtm.iloc[-1])
         except Exception as e:
@@ -901,8 +954,6 @@ def BOLL(
     返回:
         Dict: {'UPPER': {...}, 'MID': {...}, 'LOWER': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -912,11 +963,11 @@ def BOLL(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -924,7 +975,7 @@ def BOLL(
                 for k in result:
                     result[k][sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             mid = close.rolling(window=timeperiod, min_periods=timeperiod).mean()
             std = close.rolling(window=timeperiod, min_periods=timeperiod).std()
             upper = mid + nbdevup * std
@@ -960,8 +1011,6 @@ def ATR(
     返回:
         Dict: {股票: ATR值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -970,11 +1019,11 @@ def ATR(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 20,
                 unit=unit,
-                field="high,low,close",
-                security_list=[sec],
+                fields=["high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1021,8 +1070,6 @@ def STD(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -1033,18 +1080,18 @@ def STD(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             std = close.rolling(window=timeperiod, min_periods=timeperiod).std()
             if check_date:
                 result[sec] = float(std.iloc[-1])
@@ -1082,8 +1129,6 @@ def VR(
     返回:
         Dict: {股票: VR值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1092,11 +1137,11 @@ def VR(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close,volume",
-                security_list=[sec],
+                fields=["close", "volume"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1146,8 +1191,6 @@ def OBV(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -1158,11 +1201,11 @@ def OBV(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 30,
                 unit=unit,
-                field="close,volume",
-                security_list=[sec],
+                fields=["close", "volume"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1212,8 +1255,6 @@ def EMV(
     返回:
         Dict: {股票: EMV值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1222,11 +1263,11 @@ def EMV(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 20,
                 unit=unit,
-                field="high,low,volume",
-                security_list=[sec],
+                fields=["high", "low", "volume"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1270,8 +1311,6 @@ def WVAD(
     返回:
         Dict: {股票: WVAD值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1280,11 +1319,11 @@ def WVAD(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="open,high,low,close,volume",
-                security_list=[sec],
+                fields=["open", "high", "low", "close", "volume"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1328,8 +1367,6 @@ def BRAR(
     返回:
         Dict: {'BR': {...}, 'AR': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1339,11 +1376,11 @@ def BRAR(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="open,high,low,close",
-                security_list=[sec],
+                fields=["open", "high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1407,8 +1444,6 @@ def CR(
     返回:
         Dict: {股票: CR值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1417,11 +1452,11 @@ def CR(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="high,low,close",
-                security_list=[sec],
+                fields=["high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1469,8 +1504,6 @@ def PSY(
     返回:
         Dict: {股票: PSY值}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1479,18 +1512,18 @@ def PSY(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod + 10,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod + 1:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             up = (close > close.shift(1)).astype(int)
             psy = (
                 up.rolling(window=timeperiod, min_periods=timeperiod).sum()
@@ -1525,8 +1558,6 @@ def BBI(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -1539,18 +1570,18 @@ def BBI(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=30,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < 24:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             ma3 = close.rolling(window=3, min_periods=3).mean()
             ma6 = close.rolling(window=6, min_periods=6).mean()
             ma12 = close.rolling(window=12, min_periods=12).mean()
@@ -1594,8 +1625,6 @@ def TRIX(
         多股票+日期: dict
         单股票无日期: Series
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
         single = True
@@ -1606,18 +1635,18 @@ def TRIX(
     result = {}
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=timeperiod * 3 + 20,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
             if df.empty or len(df) < timeperiod * 3:
                 result[sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             ema1 = close.ewm(span=timeperiod, adjust=False).mean()
             ema2 = ema1.ewm(span=timeperiod, adjust=False).mean()
             ema3 = ema2.ewm(span=timeperiod, adjust=False).mean()
@@ -1662,8 +1691,6 @@ def DMA(
     返回:
         Dict: {'DDD': {...}, 'AMA': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1674,11 +1701,11 @@ def DMA(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=need_count,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1686,7 +1713,7 @@ def DMA(
                 result["DDD"][sec] = np.nan
                 result["AMA"][sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             ma_short = close.rolling(
                 window=short_period, min_periods=short_period
             ).mean()
@@ -1729,8 +1756,6 @@ def BIAS(
     返回:
         Dict: {'BIAS1': {...}, 'BIAS2': {...}, 'BIAS3': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1741,11 +1766,11 @@ def BIAS(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=need_count,
                 unit=unit,
-                field="close",
-                security_list=[sec],
+                fields=["close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1753,7 +1778,7 @@ def BIAS(
                 for k in result:
                     result[k][sec] = np.nan
                 continue
-            close = df[sec] if sec in df.columns else df.iloc[:, 0]
+            close = df["close"] if "close" in df.columns else df.iloc[:, 0]
             ma1 = close.rolling(window=N1, min_periods=N1).mean()
             ma2 = close.rolling(window=N2, min_periods=N2).mean()
             ma3 = close.rolling(window=N3, min_periods=N3).mean()
@@ -1793,8 +1818,6 @@ def ADTM(
     返回:
         Dict: {'ADTM': {...}, 'ADTMMA': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1805,11 +1828,11 @@ def ADTM(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=need_count,
                 unit=unit,
-                field="open,high,low",
-                security_list=[sec],
+                fields=["open", "high", "low"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1885,8 +1908,6 @@ def DKX(
     返回:
         Dict: {'DKX': {...}, 'MADKX': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1897,11 +1918,11 @@ def DKX(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=need_count,
                 unit=unit,
-                field="open,high,low,close",
-                security_list=[sec],
+                fields=["open", "high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )
@@ -1964,8 +1985,6 @@ def GDX(
     返回:
         Dict: {'GDX': {...}, 'UPPER': {...}, 'LOWER': {...}}
     """
-    from jk2bt.api.market import history
-
     if isinstance(security, str):
         securities = [security]
     else:
@@ -1976,11 +1995,11 @@ def GDX(
 
     for sec in securities:
         try:
-            df = history(
+            df = _history_adapter(
+                security=sec,
                 count=need_count,
                 unit=unit,
-                field="high,low,close",
-                security_list=[sec],
+                fields=["high", "low", "close"],
                 end_dt=check_date,
                 include_now=include_now,
             )

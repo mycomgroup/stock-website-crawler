@@ -246,3 +246,105 @@ def get_stock_daily_legacy(
     ]
 
     return standardize_ohlcv(df)
+
+
+def get_stock_price(
+    securities,
+    start_date=None,
+    end_date=None,
+    count=None,
+    fields=None,
+    adjust="qfq",
+    panel=False,
+    skip_paused=True,
+):
+    """
+    获取股票价格数据（兼容聚宽 get_price 风格）。
+
+    Parameters
+    ----------
+    securities : str or list
+        股票代码或代码列表，如 'sh600000' 或 ['sh600000', 'sz000001']
+    start_date : str, optional
+        起始日期 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期 'YYYY-MM-DD'
+    count : int, optional
+        历史数据条数
+    fields : list, optional
+        字段列表，如 ['datetime', 'code', 'close', 'open', 'high', 'low', 'volume']
+    adjust : str, default 'qfq'
+        复权类型：qfq/hfq/none
+    panel : bool, default False
+        返回格式，False 时返回 DataFrame with datetime/code/close 等列
+    skip_paused : bool, default True
+        是否跳过停牌股票
+
+    Returns
+    -------
+    pd.DataFrame (panel=False) or dict (panel=True)
+        panel=False: DataFrame with datetime/code/close 等列
+        panel=True: dict{symbol: DataFrame}
+    """
+    if isinstance(securities, str):
+        securities = [securities]
+
+    if count and not start_date:
+        end_dt = pd.to_datetime(end_date) if end_date else pd.Timestamp.now()
+        start_dt = end_dt - pd.Timedelta(days=count * 3)
+        start_date = start_dt.strftime("%Y-%m-%d")
+        if not end_date:
+            end_date = end_dt.strftime("%Y-%m-%d")
+
+    default_fields = ["datetime", "code", "close", "open", "high", "low", "volume"]
+    if fields is None:
+        fields = default_fields
+    else:
+        fields = ["datetime", "code"] + [
+            f for f in fields if f not in ["datetime", "code"]
+        ]
+
+    result = {}
+    for symbol in securities:
+        df = get_stock_daily(
+            symbol=symbol,
+            start=start_date,
+            end=end_date,
+            adjust=adjust,
+        )
+
+        if df.empty:
+            result[symbol] = pd.DataFrame()
+            continue
+
+        df = df.copy()
+        if "datetime" not in df.columns and "date" in df.columns:
+            df["datetime"] = df["date"]
+        if "code" not in df.columns:
+            df["code"] = symbol
+
+        available_fields = [f for f in fields if f in df.columns]
+        df = df[available_fields].copy()
+
+        if skip_paused and "paused" in df.columns:
+            df = df[df["paused"] == 0]
+
+        if count:
+            df = df.tail(count)
+
+        result[symbol] = df.reset_index(drop=True)
+
+    if len(result) == 1:
+        return result[securities[0]]
+
+    if panel:
+        return result
+    else:
+        combined = []
+        for sym, df in result.items():
+            if not df.empty:
+                df_copy = df.copy()
+                combined.append(df_copy)
+        if not combined:
+            return pd.DataFrame()
+        return pd.concat(combined, ignore_index=True)

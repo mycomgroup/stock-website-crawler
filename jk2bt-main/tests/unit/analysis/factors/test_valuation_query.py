@@ -12,8 +12,8 @@ from jk2bt.engine.strategy_base import (
     valuation,
     _QueryBuilder,
     _FieldProxy,
-    _apply_filter,
 )
+from jk2bt.api.jq_compat import _apply_filter
 
 
 class TestQueryBuilder(unittest.TestCase):

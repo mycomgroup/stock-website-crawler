@@ -22,4 +22,9 @@ try:
 except ImportError:
     pass
 
-import jk2bt
+try:
+    import jk2bt
+except ImportError as e:
+    import warnings
+
+    warnings.warn(f"Could not import jk2bt: {e}")

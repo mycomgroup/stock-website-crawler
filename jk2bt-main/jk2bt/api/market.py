@@ -549,20 +549,7 @@ def history(
     if end_date:
         end_dt = pd.to_datetime(end_date)
     else:
-        try:
-            from jk2bt.engine.runner import _get_current_strategy
-
-            strategy = _get_current_strategy()
-            if (
-                strategy is not None
-                and hasattr(strategy, "current_dt")
-                and strategy.current_dt is not None
-            ):
-                end_dt = strategy.current_dt
-            else:
-                end_dt = pd.Timestamp.now()
-        except ImportError:
-            end_dt = pd.Timestamp.now()
+        end_dt = pd.Timestamp.now()
 
     if frequency == "daily":
         start_dt = end_dt - pd.Timedelta(days=count * 3)
@@ -626,20 +613,7 @@ def attribute_history(
     if end_date:
         end_dt = pd.to_datetime(end_date)
     else:
-        try:
-            from jk2bt.engine.runner import _get_current_strategy
-
-            strategy = _get_current_strategy()
-            if (
-                strategy is not None
-                and hasattr(strategy, "current_dt")
-                and strategy.current_dt is not None
-            ):
-                end_dt = strategy.current_dt
-            else:
-                end_dt = pd.Timestamp.now()
-        except ImportError:
-            end_dt = pd.Timestamp.now()
+        end_dt = pd.Timestamp.now()
 
     if frequency == "daily":
         start_dt = end_dt - pd.Timedelta(days=count * 3)

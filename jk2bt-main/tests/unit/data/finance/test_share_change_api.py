@@ -30,7 +30,6 @@ from jk2bt.data.finance.share_change import (
     get_insider_trading,
     get_major_shareholder_change,
     analyze_share_change_trend,
-    get_shareholder_changes,
     get_freeze_info,
     get_capital_change,
     query_share_change,
@@ -50,7 +49,6 @@ from jk2bt.data.finance.share_change import (
     _parse_num,
     _parse_ratio,
     _SHARE_CHANGE_SCHEMA,
-    _PLEDGE_SCHEMA,
     _FREEZE_SCHEMA,
 )
 
@@ -452,17 +450,6 @@ class TestSchemaDefinitions(unittest.TestCase):
             "hold_ratio_after",
         ]
         self.assertEqual(_SHARE_CHANGE_SCHEMA, expected)
-
-    def test_pledge_schema(self):
-        expected = [
-            "code",
-            "pledge_date",
-            "pledgor",
-            "pledgee",
-            "pledge_amount",
-            "pledge_ratio",
-        ]
-        self.assertEqual(_PLEDGE_SCHEMA, expected)
 
     def test_freeze_schema(self):
         expected = [

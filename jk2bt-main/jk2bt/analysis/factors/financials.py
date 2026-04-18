@@ -10,7 +10,6 @@ indicator表字段补充模块
 
 import pandas as pd
 import numpy as np
-from datetime import datetime
 import warnings
 
 INDICATOR_FIELD_MAPPING = {
@@ -132,7 +131,7 @@ def get_indicator_data(
         symbol: 股票代码，如 'sh600519' 或 '600519.XSHG'
         date: 查询日期（可选）
         fields: 需要的字段列表（可选）
-        cache_dir: 缓存目录
+        cache_dir: 缓存目录（已废弃，保留兼容性）
         force_update: 是否强制更新
 
     返回:
@@ -141,39 +140,20 @@ def get_indicator_data(
     示例:
         df = get_indicator_data('sh600519', fields=['roe', 'roa', 'inc_net_profit_year_on_year'])
     """
-    import os
-    from jk2bt.engine.strategy_base import (
-        format_stock_symbol_for_akshare,
-        _resolve_cache_dir,
-    )
-
-    cache_dir = _resolve_cache_dir(cache_dir)
-    os.makedirs(cache_dir, exist_ok=True)
+    from jk2bt.data.sources import get_adapter
+    from jk2bt.engine.strategy_base import format_stock_symbol_for_akshare
 
     code_num = format_stock_symbol_for_akshare(symbol)
-    cache_file = os.path.join(cache_dir, f"{code_num}_indicator.pkl")
 
-    need_download = force_update or not os.path.exists(cache_file)
-
-    if not need_download:
-        try:
-            df = pd.read_pickle(cache_file)
-            file_mtime = datetime.fromtimestamp(os.path.getmtime(cache_file))
-            if (datetime.now() - file_mtime).days > 7:
-                need_download = True
-        except Exception:
-            need_download = True
-
-    if need_download:
-        try:
-            from jk2bt.data.sources import get_adapter
-
-            df = get_adapter().get_financial_analysis_indicator(symbol=code_num)
-            if df is not None and not df.empty:
-                df.to_pickle(cache_file)
-        except Exception as e:
-            warnings.warn(f"获取indicator数据失败: {symbol}, {e}")
-            return pd.DataFrame()
+    try:
+        df = get_adapter().get_finance_indicator(
+            symbol=code_num,
+            start_date=None,
+            end_date=None,
+        )
+    except Exception as e:
+        warnings.warn(f"获取indicator数据失败: {symbol}, {e}")
+        return pd.DataFrame()
 
     if df is None or df.empty:
         return pd.DataFrame()

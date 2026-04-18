@@ -82,7 +82,9 @@ class ConversionBondDBManager:
             return
 
         if db_path is None:
-            db_path = "data_cache/conversion_bond_parquet"
+            from jk2bt.utils.paths import resolve_cache_path
+
+            db_path = resolve_cache_path("data_cache/conversion_bond_parquet")
 
         self._db_path = db_path
         self._manager = None
@@ -408,6 +410,20 @@ class FinanceQuery:
         volume = None
         amount = None
 
+    class CONBOND_DAILY_PRICE:
+        """可转债日行情表"""
+
+        date = None
+        code = None
+        name = None
+        open = None
+        high = None
+        low = None
+        close = None
+        volume = None
+        amount = None
+        change_pct = None
+
     def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
@@ -449,9 +465,81 @@ class FinanceQuery:
             )
         elif table_name == "CONVERSION_BOND":
             return get_conversion_bond_list(use_duckdb=use_duckdb)
+        elif table_name == "CONBOND_DAILY_PRICE":
+            return self._query_conbond_daily_price(conditions, force_update, use_duckdb)
         else:
             logger.warning(f"[FinanceQuery] 不支持的表: {table_name}")
             return pd.DataFrame()
+
+    def _query_conbond_daily_price(
+        self, conditions, force_update=False, use_duckdb=True
+    ):
+        """查询可转债日行情数据"""
+        try:
+            import akshare as ak
+
+            code = conditions.get("bond_code") or conditions.get("code")
+            if code:
+                code = str(code).replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+                symbol = f"sh{code}" if code.startswith(("11", "13")) else f"sz{code}"
+                df = ak.bond_zh_cov_daily(symbol=symbol)
+                if df is not None and not df.empty:
+                    rename_map = {}
+                    for col in df.columns:
+                        if "日期" in col or col == "date":
+                            rename_map[col] = "date"
+                        elif "开盘" in col or col == "open":
+                            rename_map[col] = "open"
+                        elif "最高" in col or col == "high":
+                            rename_map[col] = "high"
+                        elif "最低" in col or col == "low":
+                            rename_map[col] = "low"
+                        elif "收盘" in col or col == "close":
+                            rename_map[col] = "close"
+                        elif "成交量" in col or col == "volume":
+                            rename_map[col] = "volume"
+                        elif "成交额" in col or col == "amount":
+                            rename_map[col] = "amount"
+                        elif "涨跌幅" in col or col == "change_pct":
+                            rename_map[col] = "change_pct"
+
+                    df = df.rename(columns=rename_map)
+                    df["code"] = code
+                    df["name"] = ""
+
+                    required_cols = [
+                        "date",
+                        "code",
+                        "name",
+                        "open",
+                        "high",
+                        "low",
+                        "close",
+                        "volume",
+                        "amount",
+                        "change_pct",
+                    ]
+                    for col in required_cols:
+                        if col not in df.columns:
+                            df[col] = None
+                    return df[required_cols]
+        except Exception as e:
+            logger.warning(f"[CONBOND_DAILY_PRICE] 获取失败: {e}")
+
+        return pd.DataFrame(
+            columns=[
+                "date",
+                "code",
+                "name",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "amount",
+                "change_pct",
+            ]
+        )
 
 
 finance = FinanceQuery()
@@ -1099,48 +1187,46 @@ def get_conversion_bond_daily(
         logger.warning("可转债代码不能为空")
         return pd.DataFrame()
 
-    cache_file = os.path.join("finance_cache", f"cb_daily_{bond_code}.pkl")
-    os.makedirs("finance_cache", exist_ok=True)
+    try:
+        from jk2bt.cache import get_cache_manager
 
-    need_download = force_update or (not os.path.exists(cache_file))
+        cache_mgr = get_cache_manager()
 
-    if not need_download:
-        try:
-            cached_df = pd.read_pickle(cache_file)
-            cached_df["datetime"] = pd.to_datetime(cached_df["datetime"])
-            filtered = cached_df[
-                (cached_df["datetime"] >= pd.to_datetime(start_date))
-                & (cached_df["datetime"] <= pd.to_datetime(end_date))
-            ]
-            if not filtered.empty:
-                return filtered.copy()
-            need_download = True
-        except Exception:
-            need_download = True
+        if not force_update:
+            cached = cache_mgr.get(
+                "conversion_bond_daily",
+                where={"symbol": bond_code, "date": (start_date, end_date)},
+            )
+            if cached is not None and not cached.empty:
+                logger.debug(f"[cache] {bond_code}: 使用缓存可转债日线")
+                return cached
 
-    if need_download:
-        try:
-            from jk2bt.data.sources import get_adapter as _get_adapter_cb
+        from jk2bt.data.sources import get_adapter as _get_adapter_cb
 
-            symbol_format = _get_bond_symbol_format(bond_code)
-            df = _get_adapter_cb().get_bond_zh_hs_daily(symbol=symbol_format)
+        symbol_format = _get_bond_symbol_format(bond_code)
+        df = _get_adapter_cb().get_bond_zh_hs_daily(symbol=symbol_format)
 
-            if df is None or df.empty:
-                logger.warning(f"可转债 {bond_code} 日线数据为空")
-                return pd.DataFrame()
+        if df is None or df.empty:
+            logger.warning(f"可转债 {bond_code} 日线数据为空")
+            return pd.DataFrame()
 
-            df = _standardize_bond_daily(df)
-            df.to_pickle(cache_file)
+        df = _standardize_bond_daily(df)
 
-            df["datetime"] = pd.to_datetime(df["datetime"])
-            filtered = df[
-                (df["datetime"] >= pd.to_datetime(start_date))
-                & (df["datetime"] <= pd.to_datetime(end_date))
-            ]
-            return filtered.copy()
+        cache_df = df.copy()
+        cache_df["symbol"] = bond_code
+        if "datetime" in cache_df.columns:
+            cache_df["date"] = pd.to_datetime(cache_df["datetime"]).dt.date
+        cache_mgr.put("conversion_bond_daily", cache_df)
 
-        except Exception as e:
-            logger.warning(f"[get_conversion_bond_daily] 获取日线数据失败: {e}")
+        df["datetime"] = pd.to_datetime(df["datetime"])
+        filtered = df[
+            (df["datetime"] >= pd.to_datetime(start_date))
+            & (df["datetime"] <= pd.to_datetime(end_date))
+        ]
+        return filtered.copy()
+
+    except Exception as e:
+        logger.warning(f"[get_conversion_bond_daily] 获取日线数据失败: {e}")
 
     return pd.DataFrame()
 

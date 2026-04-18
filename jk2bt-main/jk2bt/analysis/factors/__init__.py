@@ -32,6 +32,12 @@ from .base import (
     FactorRegistry,
 )
 
+from .constants import (
+    CNE6_STYLE_FACTORS,
+    FACTOR_LIBRARY,
+    FACTOR_IC_BASE,
+)
+
 from .zoo import get_factor_values_jq
 from .preprocess import winsorize_med, standardlize, neutralize
 from .finance_tables import finance, FinanceTable
@@ -116,6 +122,9 @@ __all__ = [
     "barra",
     "custom",
     "finance_tables",
+    "CNE6_STYLE_FACTORS",
+    "FACTOR_LIBRARY",
+    "FACTOR_IC_BASE",
 ]
 
 if RISK_AVAILABLE:

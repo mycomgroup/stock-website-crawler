@@ -320,332 +320,29 @@ class FinanceQuery:
         change_amount = None
         change_ratio = None
 
-    def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
-        table_name = None
-        conditions = {}
+    class STK_LIMITED_SHARES_LIST:
+        """上市公司上市公告日期和预计解禁日期"""
 
-        if hasattr(query_obj, "__class__"):
-            table_name = query_obj.__class__.__name__
-
-        if hasattr(query_obj, "left") and hasattr(query_obj, "right"):
-            if hasattr(query_obj.left, "__class__"):
-                table_name = query_obj.left.__class__.__name__
-            if hasattr(query_obj, "right"):
-                conditions["code"] = query_obj.right
-
-        if table_name == "STK_SHAREHOLDER_CHANGE":
-            if "code" in conditions:
-                return get_share_change(conditions["code"], use_duckdb=use_duckdb)
-            return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
-        else:
-            raise ValueError(f"不支持的表: {table_name}")
-
-
-finance = FinanceQuery()
-
-
-def run_query_simple(
-    table: str,
-    code: str = None,
-    force_update: bool = False,
-) -> pd.DataFrame:
-    """简化的查询接口"""
-    if table == "STK_SHAREHOLDER_CHANGE":
-        if code:
-            return get_share_change(code, force_update=force_update)
-        return pd.DataFrame(columns=_SHARE_CHANGE_SCHEMA)
-    else:
-        raise ValueError(f"不支持的表: {table}")
-
-
-_PLEDGE_SCHEMA = [
-    "code",
-    "pledge_date",
-    "pledgor",
-    "pledgee",
-    "pledge_amount",
-    "pledge_ratio",
-]
-
-
-def get_pledge_info(
-    symbol: str,
-    force_update: bool = False,
-) -> pd.DataFrame:
-    """获取股权质押信息"""
-    code_num = extract_code_num(symbol)
-    jq_code = ak_code_to_jq(symbol)
-
-    from jk2bt.data.sources import get_adapter
-
-    try:
-        df_raw = get_adapter().get_pledge_ratio_em(symbol=code_num)
-        if df_raw is not None and not df_raw.empty:
-            result = pd.DataFrame()
-            result["code"] = [jq_code] * len(df_raw)
-            for col in ["质押日期", "日期"]:
-                if col in df_raw.columns:
-                    result["pledge_date"] = df_raw[col]
-                    break
-            for col in ["股东名称", "出质人"]:
-                if col in df_raw.columns:
-                    result["pledgor"] = df_raw[col]
-                    break
-            for col in ["质权人"]:
-                if col in df_raw.columns:
-                    result["pledgee"] = df_raw[col]
-                    break
-            for col in ["质押数量", "质押股数"]:
-                if col in df_raw.columns:
-                    result["pledge_amount"] = df_raw[col]
-                    break
-            for col in ["质押比例", "占股比"]:
-                if col in df_raw.columns:
-                    result["pledge_ratio"] = df_raw[col]
-                    break
-            return result
-    except Exception as e:
-        logger.warning(f"[get_pledge_info] 获取失败 {symbol}: {e}")
-
-    return pd.DataFrame(columns=_PLEDGE_SCHEMA)
-
-
-_HOLDER_TRADE_SCHEMA = [
-    "code",
-    "holder_name",
-    "trade_date",
-    "trade_type",
-    "trade_amount",
-]
-
-
-def get_major_holder_trade(
-    symbol: str,
-    force_update: bool = False,
-) -> pd.DataFrame:
-    """获取重要股东交易信息"""
-    return get_share_change(symbol, force_update=force_update)
-
-
-_SHAREHOLDER_CHANGES_SCHEMA = [
-    "code",
-    "shareholder_name",
-    "change_date",
-    "change_type",
-    "change_amount",
-    "change_ratio",
-    "change_reason",
-    "hold_amount_after",
-    "hold_ratio_after",
-]
-
-
-def get_shareholder_changes(
-    code: str,
-    start_date: str = None,
-    end_date: str = None,
-    force_update: bool = False,
-    use_duckdb: bool = True,
-) -> RobustResult:
-    """
-    获取股东增减持数据（稳健版）。
-
-    参数
-    ----
-    code         : 股票代码
-    start_date   : 起始日期
-    end_date     : 结束日期
-    force_update : 强制更新
-    use_duckdb   : 是否使用 DuckDB 缓存
-
-    返回
-    ----
-    RobustResult:
-        success: 是否成功
-        data: pandas DataFrame，标准化字段：
-            - code: 股票代码（聚宽格式）
-            - shareholder_name: 股东名称
-            - change_date: 变动日期
-            - change_type: 变动类型（增持/减持）
-            - change_amount: 变动数量
-            - change_ratio: 变动比例
-            - change_reason: 变动原因
-            - hold_amount_after: 变动后持股数量
-            - hold_ratio_after: 变动后持股比例
-        reason: 结果说明
-        source: 数据来源（cache/network/fallback）
-    """
-    if not code:
-        return RobustResult(
-            success=False,
-            data=pd.DataFrame(columns=_SHAREHOLDER_CHANGES_SCHEMA),
-            reason="股票代码不能为空",
-            source="input",
-        )
-
-    code_num = extract_code_num(code)
-    jq_code = ak_code_to_jq(code)
-
-    if use_duckdb and _db_manager is not None and not force_update:
-        if _db_manager.is_cache_valid(jq_code, cache_days=SHARE_CHANGE_CACHE_DAYS):
-            df_cached = _db_manager.get_share_change(jq_code, start_date, end_date)
-            if not df_cached.empty:
-                df_result = df_cached[_SHARE_CHANGE_SCHEMA].copy()
-                if "change_reason" not in df_result.columns:
-                    df_result["change_reason"] = None
-                df_result = df_result[_SHAREHOLDER_CHANGES_SCHEMA]
-                return RobustResult(
-                    success=True,
-                    data=df_result,
-                    reason=f"从缓存获取{len(df_result)}条股东变动记录",
-                    source="cache",
-                )
-
-    try:
-        df = _fetch_shareholder_changes_from_akshare(code_num, jq_code)
-        if df is not None and not df.empty:
-            df_result = df.copy()
-            if "change_reason" not in df_result.columns:
-                df_result["change_reason"] = None
-            df_to_cache = df_result[_SHAREHOLDER_CHANGES_SCHEMA].copy()
-            if use_duckdb and _db_manager is not None:
-                cache_df = df_to_cache.copy()
-                cache_df = cache_df[
-                    [c for c in cache_df.columns if c != "change_reason"]
-                ]
-                _db_manager.insert_share_change(cache_df)
-
-            if start_date or end_date:
-                df_result = filter_by_date_range(
-                    df_result, start_date, end_date, date_col="change_date"
-                )
-                if "change_reason" not in df_result.columns:
-                    df_result["change_reason"] = None
-
-            return RobustResult(
-                success=True,
-                data=df_result[_SHAREHOLDER_CHANGES_SCHEMA],
-                reason=f"成功获取{len(df_result)}条股东变动记录",
-                source="network",
-            )
-    except Exception as e:
-        logger.warning(f"[get_shareholder_changes] 获取股东变动失败 {code}: {e}")
-
-    return RobustResult(
-        success=False,
-        data=pd.DataFrame(columns=_SHAREHOLDER_CHANGES_SCHEMA),
-        reason="无股东变动数据",
-        source="network",
-    )
-
-
-def _fetch_shareholder_changes_from_akshare(
-    code_num: str, jq_code: str
-) -> Optional[pd.DataFrame]:
-    """从 akshare 获取股东增减持数据"""
-    from jk2bt.data.sources import get_adapter
-
-    df = get_adapter().get_shareholder_changes_with_fallback(symbol=code_num)
-    if df is not None and not df.empty:
-        if "change_date" in df.columns or "变动日期" in df.columns:
-            return _normalize_shareholder_changes(df, jq_code)
-        else:
-            return _normalize_shareholder_changes_from_cninfo(df, jq_code)
-
-    return pd.DataFrame(columns=_SHAREHOLDER_CHANGES_SCHEMA)
-
-
-def _normalize_shareholder_changes(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
-    """标准化股东增减持数据（东方财富格式）"""
-    if df is None or df.empty:
-        return pd.DataFrame(columns=_SHAREHOLDER_CHANGES_SCHEMA)
-
-    result = pd.DataFrame()
-    result["code"] = [jq_code] * len(df)
-
-    col_map = {
-        "股东名称": "shareholder_name",
-        "变动日期": "change_date",
-        "增减": "change_type",
-        "变动数量": "change_amount",
-        "变动比例": "change_ratio",
-        "持股数量": "hold_amount_after",
-        "持股比例": "hold_ratio_after",
-        "变动原因": "change_reason",
-    }
-
-    for src, target in col_map.items():
-        if src in df.columns:
-            if target == "change_date":
-                result[target] = df[src].apply(_parse_date)
-            elif target in ["change_amount", "hold_amount_after"]:
-                result[target] = df[src].apply(_parse_num)
-            elif target in ["change_ratio", "hold_ratio_after"]:
-                result[target] = df[src].apply(_parse_ratio)
-            else:
-                result[target] = df[src]
-        else:
-            result[target] = None
-
-    for col in _SHAREHOLDER_CHANGES_SCHEMA:
-        if col not in result.columns:
-            result[col] = None
-
-    return result[_SHAREHOLDER_CHANGES_SCHEMA]
-
-
-def _normalize_shareholder_changes_from_cninfo(
-    df: pd.DataFrame, jq_code: str
-) -> pd.DataFrame:
-    """标准化股东增减持数据（巨潮资讯格式）"""
-    if df is None or df.empty:
-        return pd.DataFrame(columns=_SHAREHOLDER_CHANGES_SCHEMA)
-
-    result = pd.DataFrame()
-    result["code"] = [jq_code] * len(df)
-
-    col_map = {
-        "股东名称": "shareholder_name",
-        "公告日期": "change_date",
-        "变动类型": "change_type",
-        "变动股份数量": "change_amount",
-        "变动比例": "change_ratio",
-        "变动后持股数量": "hold_amount_after",
-        "变动后持股比例": "hold_ratio_after",
-        "变动原因": "change_reason",
-    }
-
-    for src, target in col_map.items():
-        if src in df.columns:
-            if target == "change_date":
-                result[target] = df[src].apply(_parse_date)
-            elif target in ["change_amount", "hold_amount_after"]:
-                result[target] = df[src].apply(_parse_num)
-            elif target in ["change_ratio", "hold_ratio_after"]:
-                result[target] = df[src].apply(_parse_ratio)
-            else:
-                result[target] = df[src]
-        else:
-            result[target] = None
-
-    for col in _SHAREHOLDER_CHANGES_SCHEMA:
-        if col not in result.columns:
-            result[col] = None
-
-    return result[_SHAREHOLDER_CHANGES_SCHEMA]
-
-
-class FinanceQueryEnhanced:
-    """聚宽 finance 模块模拟器（增强版，支持 RobustResult）"""
-
-    class STK_SHAREHOLDER_CHANGE:
         code = None
+        company_name = None
+        pub_date = None
         shareholder_name = None
-        change_date = None
-        change_type = None
-        change_amount = None
-        change_ratio = None
-        change_reason = None
+        expected_unlimited_date = None
+        expected_unlimited_number = None
+        expected_unlimited_ratio = None
+        limited_reason = None
+
+    class STK_LIMITED_SHARES_UNLIMIT:
+        """上市公司受限股份实际解禁的日期"""
+
+        code = None
+        company_name = None
+        pub_date = None
+        shareholder_name = None
+        actual_unlimited_date = None
+        actual_unlimited_number = None
+        actual_unlimited_ratio = None
+        limited_reason = None
 
     def run_query(
         self,
@@ -684,7 +381,41 @@ class FinanceQueryEnhanced:
             raise ValueError(f"不支持的表: {table_name}")
 
 
+class FinanceQueryEnhanced:
+    """FinanceQuery 增强版，提供统一的查询接口"""
+
+    def run_query_simple(
+        self,
+        table_name: str,
+        conditions: dict = None,
+        force_update: bool = False,
+        use_duckdb: bool = True,
+    ) -> pd.DataFrame:
+        """简化版查询接口"""
+        if conditions is None:
+            conditions = {}
+        if table_name == "STK_SHAREHOLDER_CHANGE":
+            code = conditions.get("code")
+            if code:
+                return get_shareholder_changes(
+                    code, force_update=force_update, use_duckdb=use_duckdb
+                )
+        return pd.DataFrame()
+
+
 finance_enhanced = FinanceQueryEnhanced()
+
+
+def run_query_simple(
+    table_name: str,
+    conditions: dict = None,
+    force_update: bool = False,
+    use_duckdb: bool = True,
+) -> pd.DataFrame:
+    """简化版查询接口（模块级函数）"""
+    return finance_enhanced.run_query_simple(
+        table_name, conditions, force_update, use_duckdb
+    )
 
 
 _INSIDER_TRADING_SCHEMA = [
@@ -697,6 +428,20 @@ _INSIDER_TRADING_SCHEMA = [
     "change_ratio",
     "hold_amount_after",
 ]
+
+
+def get_pledge_info(
+    symbol=None, start_date=None, end_date=None, force_update=False, use_duckdb=True
+):
+    """获取股权质押信息（占位实现）"""
+    return pd.DataFrame()
+
+
+def get_major_holder_trade(
+    symbol=None, start_date=None, end_date=None, force_update=False, use_duckdb=True
+):
+    """获取大股东交易信息（占位实现）"""
+    return pd.DataFrame()
 
 
 def get_insider_trading(
@@ -1046,13 +791,23 @@ finance_v2 = FinanceQueryV2()
 
 _FREEZE_SCHEMA = [
     "code",
-    "shareholder_name",
+    "pub_date",
+    "end_date",
+    "frozen_person",
+    "frozen_person_id",
+    "frozen_reason",
+    "frozen_share_nature",
+    "freeze_applicant",
+    "freeze_executor",
+    "freeze_start_date",
+    "freeze_end_date",
+    "unfrozen_date",
     "freeze_amount",
     "freeze_ratio",
-    "freeze_date",
-    "freeze_reason",
-    "freeze_type",
-    "unfreeze_date",
+    "frozen_total_ratio",
+    "unfrozen_number",
+    "unfrozen_detail",
+    "freeze_status",
 ]
 
 
@@ -1070,15 +825,11 @@ def get_freeze_info(
 
     返回
     ----
-    DataFrame，包含冻结信息：
-    - code: 股票代码（聚宽格式）
-    - shareholder_name: 股东名称
-    - freeze_amount: 冻结股数
-    - freeze_ratio: 冻结比例
-    - freeze_date: 冻结日期
-    - freeze_reason: 冻结原因
-    - freeze_type: 冻结类型
-    - unfreeze_date: 解冻日期
+    DataFrame，包含冻结信息（JQData STK_SHARES_FROZEN 兼容字段）：
+    - code, pub_date, end_date, frozen_person, frozen_person_id, frozen_reason,
+      frozen_share_nature, freeze_applicant, freeze_executor, freeze_start_date,
+      freeze_end_date, unfrozen_date, freeze_amount, freeze_ratio, frozen_total_ratio,
+      unfrozen_number, unfrozen_detail, freeze_status
     """
     code_num = extract_code_num(symbol)
     jq_code = ak_code_to_jq(symbol)
@@ -1127,26 +878,59 @@ def _normalize_freeze_data(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
     result["code"] = [jq_code] * len(df)
 
     col_map = {
-        "股东名称": "shareholder_name",
+        "股东名称": "frozen_person",
+        "被冻结股东": "frozen_person",
+        "冻结股东": "frozen_person",
+        "股东身份证号": "frozen_person_id",
+        "证件号码": "frozen_person_id",
+        "冻结原因": "frozen_reason",
+        "冻结股份性质": "frozen_share_nature",
+        "股份性质": "frozen_share_nature",
+        "申请冻结人": "freeze_applicant",
+        "申请人": "freeze_applicant",
+        "执行法院": "freeze_executor",
+        "执行人": "freeze_executor",
+        "冻结开始日期": "freeze_start_date",
+        "冻结日期": "freeze_start_date",
+        "冻结结束日期": "freeze_end_date",
+        "解冻日期": "unfrozen_date",
         "冻结股数": "freeze_amount",
         "冻结数量": "freeze_amount",
         "冻结比例": "freeze_ratio",
-        "冻结日期": "freeze_date",
-        "冻结原因": "freeze_reason",
-        "冻结类型": "freeze_type",
-        "解冻日期": "unfreeze_date",
+        "冻结占总股本比例": "frozen_total_ratio",
+        "解冻数量": "unfrozen_number",
+        "解冻详情": "unfrozen_detail",
+        "冻结状态": "freeze_status",
     }
 
     for src, target in col_map.items():
         if src in df.columns:
-            if target == "freeze_date" or target == "unfreeze_date":
+            if target in [
+                "freeze_start_date",
+                "freeze_end_date",
+                "unfrozen_date",
+                "pub_date",
+            ]:
                 result[target] = df[src].apply(_parse_date)
-            elif target in ["freeze_amount"]:
+            elif target in ["freeze_amount", "unfrozen_number"]:
                 result[target] = df[src].apply(_parse_num)
-            elif target == "freeze_ratio":
+            elif target in ["freeze_ratio", "frozen_total_ratio"]:
                 result[target] = df[src].apply(_parse_ratio)
             else:
                 result[target] = df[src]
+        else:
+            result[target] = None
+
+    # Map date columns from common akshare column names
+    for col in ["公告日期", "披露日期", "日期"]:
+        if col in df.columns and "pub_date" not in result.columns:
+            result["pub_date"] = df[col].apply(_parse_date)
+            break
+    if "pub_date" not in result.columns:
+        result["pub_date"] = None
+
+    if "end_date" not in result.columns:
+        result["end_date"] = None
 
     for col in _FREEZE_SCHEMA:
         if col not in result.columns:
@@ -1172,6 +956,38 @@ _CAPITAL_CHANGE_SCHEMA = [
     "circulating_capital_after_unit",
     "total_shares_change_ratio",
     "circulating_shares_change_ratio",
+    "share_total",
+    "share_non_trade",
+    "share_trade_total",
+    "share_rmb",
+    "share_b",
+    "share_h",
+    "share_limited",
+    "share_legal_issue",
+    "share_strategic_investor",
+    "share_general_legal",
+    "share_state_legal",
+    "share_domestic_legal",
+    "share_overseas_legal",
+    "share_sponsor",
+    "share_state_sponsor",
+    "share_domestic_sponsor",
+    "share_overseas_sponsor",
+    "share_management",
+    "share_employee",
+    "share_individual_domestic",
+    "share_individual_overseas",
+    "share_other",
+    "share_preferred_total",
+    "share_preferred_trade",
+    "share_preferred_non_trade",
+    "share_repurchase",
+    "share_repurchase_ratio",
+    "free_float_shares",
+    "restricted_float_shares",
+    "non_restricted_shares",
+    "total_shares_issued",
+    "listing_shares",
 ]
 
 
@@ -1278,27 +1094,97 @@ def _normalize_capital_change(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
         "变动后流通股单位": "circulating_capital_after_unit",
         "总股本变动比例": "total_shares_change_ratio",
         "流通股本变动比例": "circulating_shares_change_ratio",
+        "股份总数": "share_total",
+        "未上市流通股份": "share_non_trade",
+        "已上市流通股份": "share_trade_total",
+        "人民币普通股": "share_rmb",
+        "境内上市外资股": "share_b",
+        "境外上市外资股": "share_h",
+        "有限售条件股份": "share_limited",
+        "国家持股": "share_legal_issue",
+        "战略投资者持股": "share_strategic_investor",
+        "一般法人持股": "share_general_legal",
+        "国有法人持股": "share_state_legal",
+        "境内法人持股": "share_domestic_legal",
+        "境外法人持股": "share_overseas_legal",
+        "发起人持股": "share_sponsor",
+        "国家发起人持股": "share_state_sponsor",
+        "境内发起人持股": "share_domestic_sponsor",
+        "境外发起人持股": "share_overseas_sponsor",
+        "高管股份": "share_management",
+        "职工股份": "share_employee",
+        "境内自然人持股": "share_individual_domestic",
+        "境外自然人持股": "share_individual_overseas",
+        "其他股份": "share_other",
+        "优先股总数": "share_preferred_total",
+        "优先股流通股": "share_preferred_trade",
+        "优先股非流通股": "share_preferred_non_trade",
+        "回购股份": "share_repurchase",
+        "回购比例": "share_repurchase_ratio",
+        "自由流通股": "free_float_shares",
+        "限售流通股": "restricted_float_shares",
+        "非限售股份": "non_restricted_shares",
+        "发行总数": "total_shares_issued",
+        "上市股份": "listing_shares",
+    }
+
+    date_cols = {"pub_date", "change_date"}
+    num_cols = {
+        "change_amount",
+        "total_capital_before",
+        "total_capital_after",
+        "circulating_capital_before",
+        "circulating_capital_after",
+        "share_total",
+        "share_non_trade",
+        "share_trade_total",
+        "share_rmb",
+        "share_b",
+        "share_h",
+        "share_limited",
+        "share_legal_issue",
+        "share_strategic_investor",
+        "share_general_legal",
+        "share_state_legal",
+        "share_domestic_legal",
+        "share_overseas_legal",
+        "share_sponsor",
+        "share_state_sponsor",
+        "share_domestic_sponsor",
+        "share_overseas_sponsor",
+        "share_management",
+        "share_employee",
+        "share_individual_domestic",
+        "share_individual_overseas",
+        "share_other",
+        "share_preferred_total",
+        "share_preferred_trade",
+        "share_preferred_non_trade",
+        "share_repurchase",
+        "free_float_shares",
+        "restricted_float_shares",
+        "non_restricted_shares",
+        "total_shares_issued",
+        "listing_shares",
+    }
+    ratio_cols = {
+        "total_shares_change_ratio",
+        "circulating_shares_change_ratio",
+        "share_repurchase_ratio",
     }
 
     for src, target in col_map.items():
         if src in df.columns:
-            if target in ["pub_date", "change_date"]:
+            if target in date_cols:
                 result[target] = df[src].apply(_parse_date)
-            elif target in [
-                "change_amount",
-                "total_capital_before",
-                "total_capital_after",
-                "circulating_capital_before",
-                "circulating_capital_after",
-            ]:
+            elif target in num_cols:
                 result[target] = df[src].apply(_parse_num)
-            elif target in [
-                "total_shares_change_ratio",
-                "circulating_shares_change_ratio",
-            ]:
+            elif target in ratio_cols:
                 result[target] = df[src].apply(_parse_ratio)
             else:
                 result[target] = df[src]
+        else:
+            result[target] = None
 
     for col in _CAPITAL_CHANGE_SCHEMA:
         if col not in result.columns:
@@ -1568,22 +1454,46 @@ class FinanceQueryV3:
 
     class STK_SHARE_PLEDGE:
         code = None
-        pledge_date = None
+        pub_date = None
+        end_date = None
         pledgor = None
         pledgee = None
+        pledge_item = None
+        pledge_nature = None
+        pledge_start_date = None
+        pledge_end_date = None
+        unpledged_date = None
         pledge_amount = None
         pledge_ratio = None
+        pledge_total_ratio = None
+        unpledged_number = None
+        is_buy_back = None
+        pledge_total_amount = None
+        release_amount = None
+        remaining_amount = None
 
     # Alias for JQData compatibility
     STK_SHARES_PLEDGE = STK_SHARE_PLEDGE
 
     class STK_SHARE_FREEZE:
         code = None
-        shareholder_name = None
+        pub_date = None
+        end_date = None
+        frozen_person = None
+        frozen_person_id = None
+        frozen_reason = None
+        frozen_share_nature = None
+        freeze_applicant = None
+        freeze_executor = None
+        freeze_start_date = None
+        freeze_end_date = None
+        unfrozen_date = None
         freeze_amount = None
         freeze_ratio = None
-        freeze_date = None
-        freeze_reason = None
+        frozen_total_ratio = None
+        unfrozen_number = None
+        unfrozen_detail = None
+        freeze_status = None
 
     # Alias for JQData compatibility
     STK_SHARES_FROZEN = STK_SHARE_FREEZE
@@ -1614,6 +1524,38 @@ class FinanceQueryV3:
         circulating_capital_after_unit = None
         total_shares_change_ratio = None
         circulating_shares_change_ratio = None
+        share_total = None
+        share_non_trade = None
+        share_trade_total = None
+        share_rmb = None
+        share_b = None
+        share_h = None
+        share_limited = None
+        share_legal_issue = None
+        share_strategic_investor = None
+        share_general_legal = None
+        share_state_legal = None
+        share_domestic_legal = None
+        share_overseas_legal = None
+        share_sponsor = None
+        share_state_sponsor = None
+        share_domestic_sponsor = None
+        share_overseas_sponsor = None
+        share_management = None
+        share_employee = None
+        share_individual_domestic = None
+        share_individual_overseas = None
+        share_other = None
+        share_preferred_total = None
+        share_preferred_trade = None
+        share_preferred_non_trade = None
+        share_repurchase = None
+        share_repurchase_ratio = None
+        free_float_shares = None
+        restricted_float_shares = None
+        non_restricted_shares = None
+        total_shares_issued = None
+        listing_shares = None
 
     class STK_SHARE_CHANGE:
         code = None
@@ -1687,11 +1629,23 @@ class FinanceQueryV3:
                     use_duckdb=use_duckdb,
                 ).data
             return pd.DataFrame(columns=_SHAREHOLDER_CHANGES_SCHEMA)
+        elif table_name == "STK_LIMITED_SHARES_LIST":
+            return self._query_limited_shares_list(conditions, force_update, use_duckdb)
+        elif table_name == "STK_LIMITED_SHARES_UNLIMIT":
+            return self._query_limited_shares_unlimit(
+                conditions, force_update, use_duckdb
+            )
         else:
             raise ValueError(f"不支持的表: {table_name}")
 
 
 finance_v3 = FinanceQueryV3()
+finance = finance_v3
+
+
+def run_query_simple(table_name, conditions=None, date_column=None, **kwargs):
+    """Simple query wrapper for share_change module."""
+    return finance_v3.run_query(table_name, conditions=conditions, **kwargs)
 
 
 __all__ = [
@@ -1728,3 +1682,7 @@ __all__ = [
 from jk2bt.utils.symbol import extract_code_num as _extract_code_num
 from jk2bt.utils.symbol import ak_code_to_jq as _normalize_to_jq
 from jk2bt.utils.date_utils import parse_int as _parse_num
+
+# 模块级别别名 (JQData兼容)
+STK_SHARES_PLEDGE = FinanceQueryV3.STK_SHARE_PLEDGE
+STK_SHARES_FROZEN = FinanceQueryV3.STK_SHARE_FREEZE

@@ -1,7 +1,9 @@
 """
 engine - 回测引擎
 
-包含策略运行器、策略基类、执行器、全局状态
+包含策略运行器、策略基类、执行器、全局状态、运行时 API、订单 API
+
+依赖方向：engine → api（单向）
 """
 
 # Runner
@@ -38,6 +40,24 @@ from jk2bt.engine.asset_router import (
     is_fund_of,
     is_future,
     is_index,
+)
+
+# Runtime API（运行时数据获取）
+from jk2bt.engine.runtime_api import (
+    get_current_data,
+    get_current_tick,
+)
+
+# Order API（下单）
+from jk2bt.engine.order import (
+    order_shares,
+    order_target_percent,
+    LimitOrderStyle,
+    MarketOrderStyle,
+    rebalance_portfolio,
+    get_portfolio_weights,
+    calculate_position_value,
+    get_position_ratio,
 )
 
 # Securities Utils (重新导出 api 层的工具函数)
@@ -88,6 +108,18 @@ __all__ = [
     "is_fund_of",
     "is_future",
     "is_index",
+    # Runtime API
+    "get_current_data",
+    "get_current_tick",
+    # Order API
+    "order_shares",
+    "order_target_percent",
+    "LimitOrderStyle",
+    "MarketOrderStyle",
+    "rebalance_portfolio",
+    "get_portfolio_weights",
+    "calculate_position_value",
+    "get_position_ratio",
     # Securities Utils
     "format_stock_symbol_for_akshare",
     "jq_code_to_ak",

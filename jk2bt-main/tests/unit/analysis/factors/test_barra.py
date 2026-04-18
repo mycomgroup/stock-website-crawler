@@ -154,7 +154,7 @@ class TestBarraFactors:
             "jk2bt.analysis.factors.barra.get_adapter", lambda: mock_instance
         )
         monkeypatch.setattr(
-            "jk2bt.analysis.factors.barra._get_income_statement",
+            "jk2bt.analysis.factors.fundamentals._get_income_statement",
             lambda symbol: pd.DataFrame(),
         )
 
@@ -177,7 +177,7 @@ class TestBarraFactors:
             "jk2bt.analysis.factors.barra.get_adapter", lambda: mock_instance
         )
         monkeypatch.setattr(
-            "jk2bt.analysis.factors.barra._get_balance_sheet",
+            "jk2bt.analysis.factors.fundamentals._get_balance_sheet",
             lambda symbol: pd.DataFrame(),
         )
 
@@ -193,7 +193,7 @@ class TestBarraFactors:
             "jk2bt.analysis.factors.barra.get_adapter", lambda: mock_instance
         )
 
-        with patch("jk2bt.analysis.factors.barra.compute_market_cap") as mock_mc:
+        with patch("jk2bt.analysis.factors.valuation.compute_market_cap") as mock_mc:
             mock_mc.return_value = 1e10
             from jk2bt.analysis.factors.barra import compute_size
 
@@ -220,7 +220,7 @@ class TestBarraFactorRegistration:
         """测试Beta因子依赖。"""
         from jk2bt.analysis.factors import global_factor_registry
 
-        info = global_factor_registry.get_info("beta")
+        info = global_factor_registry.get_metadata("beta")
         assert info is not None
         deps = info.get("dependencies", [])
         assert "daily_ohlcv" in deps
@@ -230,6 +230,6 @@ class TestBarraFactorRegistration:
         """测试Beta因子窗口。"""
         from jk2bt.analysis.factors import global_factor_registry
 
-        info = global_factor_registry.get_info("beta")
+        info = global_factor_registry.get_metadata("beta")
         assert info is not None
         assert info.get("window") == 252

@@ -19,6 +19,8 @@ from dataclasses import dataclass, field
 from typing import Dict, Any
 import json
 
+from jk2bt.utils.paths import resolve_cache_path, resolve_cache_dir
+
 
 @dataclass
 class CacheConfig:
@@ -27,9 +29,9 @@ class CacheConfig:
     enabled: bool = True
     ttl_hours: int = 24
     max_memory_items: int = 5000
-    cache_dir: str = "data_cache/cache"
-    duckdb_path: str = "data_cache/jk2bt.duckdb"
-    parquet_cache_dir: str = "data_cache/cache"
+    cache_dir: str = resolve_cache_path("data_cache/cache")
+    duckdb_path: str = resolve_cache_path("data_cache/jk2bt.duckdb")
+    parquet_cache_dir: str = resolve_cache_path("data_cache/cache")
 
 
 @dataclass
@@ -88,7 +90,9 @@ class Config:
         return cls(
             cache=CacheConfig(
                 enabled=os.environ.get("JK2BT_CACHE_ENABLED", "true").lower() == "true",
-                cache_dir=os.environ.get("JK2BT_CACHE_DIR", "data_cache/cache"),
+                cache_dir=os.environ.get(
+                    "JK2BT_CACHE_DIR", resolve_cache_path("data_cache/cache")
+                ),
             ),
             logging=LoggingConfig(
                 level=os.environ.get("JK2BT_LOG_LEVEL", "INFO"),

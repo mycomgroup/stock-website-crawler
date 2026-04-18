@@ -40,7 +40,9 @@ def _get_runtime_dir() -> Path:
     """获取运行时目录"""
     global _RUNTIME_DIR
     if _RUNTIME_DIR is None:
-        base_dir = Path("data_cache/outputs")
+        from jk2bt.utils.paths import resolve_cache_dir
+
+        base_dir = resolve_cache_dir("data_cache/outputs")
         base_dir.mkdir(parents=True, exist_ok=True)
         _RUNTIME_DIR = base_dir
     return _RUNTIME_DIR

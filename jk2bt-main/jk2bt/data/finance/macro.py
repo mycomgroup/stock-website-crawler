@@ -731,6 +731,94 @@ def get_macro_indicator_robust(
         )
 
 
+def _run_query_stub_table(
+    table_name: str,
+    schema: List[str],
+    category_name: str,
+    akshare_func: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    宏观数据表桩实现：返回带 schema 的空 DataFrame 或尝试从 akshare 获取数据。
+
+    参数
+    ----
+    table_name : str
+        表名
+    schema : list
+        列名列表
+    category_name : str
+        类别中文名（用于错误提示）
+    akshare_func : str, optional
+        akshare 函数名（如 'macro_china_retail'），若提供则尝试调用
+
+    返回
+    ----
+    pd.DataFrame
+        若 akshare 可用且函数存在则返回真实数据，否则返回带 schema 的空 DataFrame
+    """
+    if akshare_func is not None:
+        try:
+            import akshare as ak
+
+            func = getattr(ak, akshare_func, None)
+            if func is not None:
+                df = func()
+                if df is not None and not df.empty:
+                    result = pd.DataFrame()
+                    for col in schema:
+                        if col == "id":
+                            result[col] = range(1, len(df) + 1)
+                        elif col == "date":
+                            date_col = None
+                            for c in ["日期", "date", "统计时间", "月份"]:
+                                if c in df.columns:
+                                    date_col = c
+                                    break
+                            if date_col:
+                                result[col] = df[date_col].apply(_parse_date)
+                            else:
+                                result[col] = None
+                        elif col == "indicator":
+                            result[col] = category_name
+                        elif col == "value":
+                            value_col = None
+                            for c in ["数值", "value", "当月", "当月值", "累计值"]:
+                                if c in df.columns:
+                                    value_col = c
+                                    break
+                            if value_col:
+                                result[col] = df[value_col].apply(_parse_num)
+                            else:
+                                result[col] = None
+                        elif col == "yoy":
+                            yoy_col = None
+                            for c in [
+                                "同比增长",
+                                "YoY",
+                                "同比",
+                                "同比增速",
+                                "累计同比",
+                            ]:
+                                if c in df.columns:
+                                    yoy_col = c
+                                    break
+                            if yoy_col:
+                                result[col] = df[yoy_col].apply(_parse_num)
+                            else:
+                                result[col] = None
+                        elif col == "unit":
+                            result[col] = ""
+                        else:
+                            result[col] = None
+                    result = result.dropna(subset=["date"], how="all")
+                    if not result.empty:
+                        return result
+        except Exception as e:
+            logger.debug(f"[{table_name}] akshare 获取失败: {e}")
+
+    return pd.DataFrame(columns=schema)
+
+
 class FinanceQuery:
     """聚宽 finance 模块模拟器"""
 
@@ -843,6 +931,116 @@ class FinanceQuery:
         yoy = None
         unit = None
 
+    class MAC_INDUSTRY_DOMESTIC_TRADE:
+        """国内贸易数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_INDUSTRY_EMPLOYMENT_WAGE:
+        """就业与工资数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_INDUSTRY_RESOURCE_ENV:
+        """资源环境数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_INDUSTRY_FIXED_ASSET_INV:
+        """固定资产投资数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_INDUSTRY_FOREIGN_TRADE:
+        """对外贸易数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_INDUSTRY_SENTIMENT_INDEX:
+        """景气指数数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_INDUSTRY_MANUFACTURING:
+        """工业（制造业）数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_INDUSTRY_INSURANCE:
+        """保险业数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_NATIONAL_ECONOMY:
+        """国民经济数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_PEOPLE_LIVELIHOOD:
+        """人民生活数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
+    class MAC_POPULATION_INFO:
+        """人口信息数据表"""
+
+        id = None
+        date = None
+        indicator = None
+        value = None
+        yoy = None
+        unit = None
+
     class CCTV_NEWS:
         """新闻联播文本数据表"""
 
@@ -920,6 +1118,105 @@ class FinanceQuery:
         "unit",
     ]
 
+    MAC_INDUSTRY_DOMESTIC_TRADE_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_INDUSTRY_EMPLOYMENT_WAGE_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_INDUSTRY_RESOURCE_ENV_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_INDUSTRY_FIXED_ASSET_INV_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_INDUSTRY_FOREIGN_TRADE_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_INDUSTRY_SENTIMENT_INDEX_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_INDUSTRY_MANUFACTURING_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_INDUSTRY_INSURANCE_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_NATIONAL_ECONOMY_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_PEOPLE_LIVELIHOOD_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
+    MAC_POPULATION_INFO_SCHEMA = [
+        "id",
+        "date",
+        "indicator",
+        "value",
+        "yoy",
+        "unit",
+    ]
+
     CCTV_NEWS_SCHEMA = [
         "id",
         "day",
@@ -978,6 +1275,83 @@ class FinanceQuery:
             return pd.DataFrame(columns=self.MAC_FISCAL_REVENUE_SCHEMA)
         elif table_name == "MAC_FISCAL_EXPENDITURE":
             return pd.DataFrame(columns=self.MAC_FISCAL_EXPENDITURE_SCHEMA)
+        elif table_name == "MAC_INDUSTRY_DOMESTIC_TRADE":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_DOMESTIC_TRADE",
+                self.MAC_INDUSTRY_DOMESTIC_TRADE_SCHEMA,
+                "国内贸易",
+                "macro_china_retail",
+            )
+        elif table_name == "MAC_INDUSTRY_EMPLOYMENT_WAGE":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_EMPLOYMENT_WAGE",
+                self.MAC_INDUSTRY_EMPLOYMENT_WAGE_SCHEMA,
+                "就业与工资",
+                "macro_china_urban_unemployment",
+            )
+        elif table_name == "MAC_INDUSTRY_RESOURCE_ENV":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_RESOURCE_ENV",
+                self.MAC_INDUSTRY_RESOURCE_ENV_SCHEMA,
+                "资源环境",
+                None,
+            )
+        elif table_name == "MAC_INDUSTRY_FIXED_ASSET_INV":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_FIXED_ASSET_INV",
+                self.MAC_INDUSTRY_FIXED_ASSET_INV_SCHEMA,
+                "固定资产投资",
+                "macro_china_fai",
+            )
+        elif table_name == "MAC_INDUSTRY_FOREIGN_TRADE":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_FOREIGN_TRADE",
+                self.MAC_INDUSTRY_FOREIGN_TRADE_SCHEMA,
+                "对外贸易",
+                "macro_china_import_export",
+            )
+        elif table_name == "MAC_INDUSTRY_SENTIMENT_INDEX":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_SENTIMENT_INDEX",
+                self.MAC_INDUSTRY_SENTIMENT_INDEX_SCHEMA,
+                "景气指数",
+                None,
+            )
+        elif table_name == "MAC_INDUSTRY_MANUFACTURING":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_MANUFACTURING",
+                self.MAC_INDUSTRY_MANUFACTURING_SCHEMA,
+                "工业",
+                "macro_china_industrial_production",
+            )
+        elif table_name == "MAC_INDUSTRY_INSURANCE":
+            return _run_query_stub_table(
+                "MAC_INDUSTRY_INSURANCE",
+                self.MAC_INDUSTRY_INSURANCE_SCHEMA,
+                "保险业",
+                None,
+            )
+        elif table_name == "MAC_NATIONAL_ECONOMY":
+            return _run_query_stub_table(
+                "MAC_NATIONAL_ECONOMY",
+                self.MAC_NATIONAL_ECONOMY_SCHEMA,
+                "国民经济",
+                None,
+            )
+        elif table_name == "MAC_PEOPLE_LIVELIHOOD":
+            return _run_query_stub_table(
+                "MAC_PEOPLE_LIVELIHOOD",
+                self.MAC_PEOPLE_LIVELIHOOD_SCHEMA,
+                "人民生活",
+                None,
+            )
+        elif table_name == "MAC_POPULATION_INFO":
+            return _run_query_stub_table(
+                "MAC_POPULATION_INFO",
+                self.MAC_POPULATION_INFO_SCHEMA,
+                "人口信息",
+                None,
+            )
         elif table_name == "CCTV_NEWS":
             return pd.DataFrame(columns=self.CCTV_NEWS_SCHEMA)
         else:

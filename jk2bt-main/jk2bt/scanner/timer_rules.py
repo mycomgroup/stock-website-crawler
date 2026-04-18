@@ -20,8 +20,6 @@ timer_rules.py
 from datetime import datetime, date, time, timedelta
 from typing import Optional, List, Callable, Tuple, Dict, Any, Set
 import warnings
-import os
-import pickle
 import logging
 
 try:
@@ -43,7 +41,16 @@ _TIME_RULE_PRECISION_WARNED = set()
 # 全局交易日历缓存
 _TRADING_DAYS_CACHE: Optional[Set[date]] = None
 _TRADING_DAYS_LIST_CACHE: Optional[List[date]] = None
-_CACHE_FILE_PATH = "data_cache/trading_days_cache.pkl"
+
+
+def _get_cache_file_path() -> str:
+    """Deprecated: kept for backward compatibility. Now uses CacheManager."""
+    from jk2bt.utils.paths import resolve_cache_path
+
+    return resolve_cache_path("data_cache/trading_days_cache.pkl")
+
+
+_CACHE_FILE_PATH = None  # Deprecated, kept for backward compatibility
 
 
 def _fetch_trading_days_from_akshare() -> List[date]:
@@ -76,7 +83,7 @@ def get_real_trading_days(force_update: bool = False) -> List[date]:
 
     优先级:
     1. 内存缓存
-    2. 本地文件缓存
+    2. Parquet 缓存 (CacheManager)
     3. akshare在线获取
 
     Args:
@@ -91,26 +98,25 @@ def get_real_trading_days(force_update: bool = False) -> List[date]:
     if not force_update and _TRADING_DAYS_LIST_CACHE is not None:
         return _TRADING_DAYS_LIST_CACHE
 
-    # 检查文件缓存
-    if not force_update and os.path.exists(_CACHE_FILE_PATH):
+    # 检查 Parquet 缓存
+    if not force_update:
         try:
-            with open(_CACHE_FILE_PATH, "rb") as f:
-                cached_data = pickle.load(f)
-                # 检查缓存是否过期（超过30天）
-                cache_time = cached_data.get("timestamp", 0)
-                if (datetime.now().timestamp() - cache_time) < 30 * 24 * 3600:
-                    days_list = cached_data.get("trading_days", [])
-                    if days_list:
-                        _TRADING_DAYS_LIST_CACHE = days_list
-                        _TRADING_DAYS_CACHE = set(days_list)
-                        logger.info(f"从缓存加载 {len(days_list)} 个交易日")
-                        return days_list
+            from jk2bt.cache import get_cache_manager
+
+            cache_mgr = get_cache_manager()
+            cached = cache_mgr.get("trade_calendar")
+            if cached is not None and not cached.empty:
+                date_col = "date" if "date" in cached.columns else cached.columns[0]
+                days_list = pd.to_datetime(cached[date_col]).dt.date.tolist()
+                if days_list:
+                    _TRADING_DAYS_LIST_CACHE = days_list
+                    _TRADING_DAYS_CACHE = set(days_list)
+                    logger.info(f"从Parquet缓存加载 {len(days_list)} 个交易日")
+                    return days_list
         except Exception as e:
-            logger.warning(f"加载交易日历缓存失败: {e}")
+            logger.debug(f"Parquet交易日历缓存读取失败: {e}")
 
     # 从akshare获取
-    import pandas as pd
-
     days_list = _fetch_trading_days_from_akshare()
 
     if not days_list:
@@ -118,18 +124,18 @@ def get_real_trading_days(force_update: bool = False) -> List[date]:
         logger.warning("无法获取真实交易日历，使用近似计算")
         return None
 
-    # 更新缓存
+    # 更新内存缓存
     _TRADING_DAYS_LIST_CACHE = days_list
     _TRADING_DAYS_CACHE = set(days_list)
 
-    # 保存到文件
+    # 保存到 Parquet 缓存
     try:
-        os.makedirs(os.path.dirname(_CACHE_FILE_PATH), exist_ok=True)
-        with open(_CACHE_FILE_PATH, "wb") as f:
-            pickle.dump(
-                {"trading_days": days_list, "timestamp": datetime.now().timestamp()}, f
-            )
-        logger.info(f"交易日历已缓存到 {_CACHE_FILE_PATH}")
+        from jk2bt.cache import get_cache_manager
+
+        cache_mgr = get_cache_manager()
+        cache_df = pd.DataFrame({"date": days_list})
+        cache_mgr.put("trade_calendar", cache_df)
+        logger.info(f"交易日历已缓存到 Parquet (trade_calendar)")
     except Exception as e:
         logger.warning(f"保存交易日历缓存失败: {e}")
 

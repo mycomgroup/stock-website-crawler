@@ -16,12 +16,14 @@ jq_compat.py
 - 期货相关API
 - get_current_data, get_current_tick: 当前数据获取
 - analyze_performance: 绩效分析
+
+注意: 此模块不依赖 engine，是纯粹的数据获取 API。
+预运行逻辑由 engine 层实现。
 """
 
 import os
 import re
 import warnings
-import backtrader as bt
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -42,10 +44,6 @@ from jk2bt.api.proxies import (
     SecurityInfo,
     _QueryBuilder,
     _TableProxy,
-)
-from jk2bt.engine.global_state import (
-    _prerun_mode_active,
-    _prerun_requested_stocks,
 )
 
 from jk2bt.api.market import (
@@ -95,12 +93,13 @@ def get_index_weights(
         )
 
         # 转换为 JQ 兼容的 DataFrame 格式: index=股票代码, columns=['weight', 'display_name']
+        code_col = "stock_code" if "stock_code" in df.columns else "code"
         if df.empty:
-            result_data = pd.DataFrame(columns=["weight", "display_name"])
+            result_data = pd.DataFrame(columns=["code", "weight", "display_name"])
         else:
-            code_col = "stock_code" if "stock_code" in df.columns else "code"
             stock_codes = df[code_col].tolist() if code_col in df.columns else []
             result_data = pd.DataFrame(index=stock_codes)
+            result_data["code"] = stock_codes
             result_data["weight"] = (
                 df["weight"].tolist()
                 if "weight" in df.columns
@@ -183,10 +182,6 @@ def get_index_stocks(
         stocks = _get_index_stocks_impl(
             index_code, force_update=force_update, use_duckdb=use_duckdb
         )
-
-        # 预运行模式下记录请求的股票
-        if _prerun_mode_active and stocks:
-            _prerun_requested_stocks.update(stocks)
 
         if robust:
             return RobustResult(
@@ -612,47 +607,6 @@ get_bars = get_bars_jq
 # =====================================================================
 # Current Data API
 # =====================================================================
-
-
-def get_current_data(bt_strategy=None):
-    """
-    聚宽风格 get_current_data()。
-    在回测场景中建议传入当前 bt.Strategy 实例以直接读取 bar 数据。
-    示例：
-        current = get_current_data(context)
-        price = current['sh600519'].last_price
-    """
-    from jk2bt.engine.data_proxies import _CurrentDataProxy
-
-    return _CurrentDataProxy(bt_strategy)
-
-
-def get_current_tick(security, bt_strategy=None):
-    """
-    获取当前tick数据（聚宽兼容接口）。
-
-    参数:
-        security: 股票代码，如 '000001.XSHG'
-        bt_strategy: bt.Strategy 实例
-
-    返回:
-        _TickDataProxy 对象，具有 .current 属性表示当前价格
-
-    示例：
-        tick = get_current_tick('000001.XSHG')
-        price = tick.current  # 当前价格
-    """
-    from jk2bt.engine.data_proxies import _TickDataProxy
-
-    # 如果没有传入策略实例，尝试获取当前策略实例
-    if bt_strategy is None:
-        try:
-            from jk2bt.engine.runner import _get_current_strategy
-
-            bt_strategy = _get_current_strategy()
-        except ImportError:
-            pass
-    return _TickDataProxy(security, bt_strategy)
 
 
 # =====================================================================
@@ -1756,14 +1710,6 @@ def get_all_securities_jq(types=None, date=None, force_update=False, use_duckdb=
     # 设置 index 为 jq_code（聚宽 API 风格）
     if "jq_code" in df.columns:
         df = df.set_index("jq_code")
-
-    # 预运行模式下记录请求的股票
-    if _prerun_mode_active and not df.empty:
-        if "jq_code" in df.columns:
-            sample_stocks = df["jq_code"].head(100).tolist()
-        else:
-            sample_stocks = df.index[:100].tolist()
-        _prerun_requested_stocks.update(sample_stocks)
     return df
 
 
@@ -1852,9 +1798,6 @@ def _get_spi_index_stocks(index_code, date=None, robust=False):
             stocks = _get_spi_industry_stocks(index_code)
         else:
             stocks = []
-
-        if _prerun_mode_active and stocks:
-            _prerun_requested_stocks.update(stocks)
 
         if robust:
             return RobustResult(
@@ -1967,9 +1910,6 @@ def _get_spi_jq0002_stocks():
             if jq_code:
                 stocks.append(jq_code)
 
-        if _prerun_mode_active and stocks:
-            _prerun_requested_stocks.update(stocks)
-
         return stocks
     except Exception as e:
         logger.warning(f"获取小市值指数成分股失败: {e}")
@@ -2029,9 +1969,6 @@ def _get_spi_jq0003_stocks():
             jq_code = _to_jq_code(code)
             if jq_code:
                 stocks.append(jq_code)
-
-        if _prerun_mode_active and stocks:
-            _prerun_requested_stocks.update(stocks)
 
         return stocks
     except Exception as e:

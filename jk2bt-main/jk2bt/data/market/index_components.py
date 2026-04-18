@@ -98,7 +98,9 @@ class IndexComponentsDBManager:
             return
 
         if db_path is None:
-            db_path = "data_cache/index_components_parquet"
+            from jk2bt.utils.paths import resolve_cache_path
+
+            db_path = resolve_cache_path("data_cache/index_components_parquet")
 
         self._db_path = db_path
         self._manager = None
@@ -241,6 +243,12 @@ _INDEX_CODE_MAP = {
 
 def _normalize_index_code(symbol: str) -> str:
     """标准化指数代码"""
+    from jk2bt.engine.constants import INDEX_CODE_ALIAS_MAP
+
+    symbol_lower = symbol.lower().strip()
+    if symbol_lower in INDEX_CODE_ALIAS_MAP:
+        symbol = INDEX_CODE_ALIAS_MAP[symbol_lower]
+
     if ".XSHG" in symbol or ".XSHE" in symbol:
         return symbol
     if symbol.startswith("sh"):
@@ -651,7 +659,16 @@ def get_index_weights(
     返回
     ----
     DataFrame，包含 stock_code, weight, stock_name 字段
+
+    说明
+    ----
+    1. 优先从中证指数官网获取真实权重（index_stock_cons_weight_csindex）
+    2. 若权重不可用，使用市值加权近似
+    3. 若指定日期无权重数据，返回最近可用日期的权重（与 JQData 行为一致）
     """
+    index_num = index_code.split(".")[0] if "." in index_code else index_code
+    index_num = index_num.zfill(6).replace("sh", "").replace("sz", "")
+
     df = get_index_components(
         index_code,
         force_update=force_update,
@@ -660,12 +677,134 @@ def get_index_weights(
     if df.empty:
         return pd.DataFrame(columns=["stock_code", "weight", "stock_name"])
 
+    has_real_weights = "weight" in df.columns and df["weight"].notna().any()
+
+    if not has_real_weights:
+        df = _approximate_weights_by_market_cap(df, index_num)
+
     result = pd.DataFrame()
     result["stock_code"] = df.get("code", "")
     result["weight"] = df.get("weight", 0)
-    result["stock_name"] = ""
+    result["stock_name"] = df.get("stock_name", "")
+
+    if date is not None and has_real_weights:
+        nearest_df = _get_nearest_date_weights(index_code, date, result)
+        if nearest_df is not None:
+            return nearest_df
 
     return result
+
+
+def _approximate_weights_by_market_cap(
+    df: pd.DataFrame,
+    index_num: str,
+) -> pd.DataFrame:
+    """
+    使用市值加权近似计算成分股权重。
+
+    参数
+    ----
+    df : pd.DataFrame
+        成分股 DataFrame，需包含 code 列
+    index_num : str
+        指数代码（6位数字）
+
+    返回
+    ----
+    pd.DataFrame
+        添加了 weight 列的 DataFrame
+    """
+    if df.empty:
+        return df
+
+    try:
+        from jk2bt.data.sources import get_adapter
+
+        adapter = get_adapter()
+        market_caps = []
+        for code in df["code"]:
+            code_num = code.split(".")[0] if "." in code else code
+            try:
+                daily_df = adapter.get_daily(symbol=code_num)
+                if daily_df is not None and not daily_df.empty:
+                    last_row = daily_df.iloc[-1]
+                    close = last_row.get("close", None)
+                    if close is not None and close > 0:
+                        total_share_col = None
+                        for c in ["总股本", "total_share", "流通股本"]:
+                            if c in daily_df.columns:
+                                total_share_col = c
+                                break
+                        if total_share_col:
+                            cap = close * daily_df.iloc[-1][total_share_col]
+                        else:
+                            cap = close * 1e8
+                        market_caps.append({"code": code, "market_cap": cap})
+                    else:
+                        market_caps.append({"code": code, "market_cap": 1.0})
+                else:
+                    market_caps.append({"code": code, "market_cap": 1.0})
+            except Exception:
+                market_caps.append({"code": code, "market_cap": 1.0})
+
+        if market_caps:
+            cap_df = pd.DataFrame(market_caps)
+            total_cap = cap_df["market_cap"].sum()
+            if total_cap > 0:
+                cap_weight = dict(
+                    zip(cap_df["code"], cap_df["market_cap"] / total_cap * 100)
+                )
+                df = df.copy()
+                df["weight"] = df["code"].map(cap_weight).fillna(100.0 / len(df))
+                return df
+    except Exception as e:
+        logger.debug(f"市值加权近似失败: {e}")
+
+    df = df.copy()
+    df["weight"] = 100.0 / len(df)
+    return df
+
+
+def _get_nearest_date_weights(
+    index_code: str,
+    target_date: str,
+    current_weights: pd.DataFrame,
+) -> Optional[pd.DataFrame]:
+    """
+    获取指定日期最近的权重数据。
+
+    如果目标日期没有权重数据，返回最近可用日期的权重。
+
+    参数
+    ----
+    index_code : str
+        指数代码
+    target_date : str
+        目标日期 (YYYY-MM-DD)
+    current_weights : pd.DataFrame
+        当前权重数据
+
+    返回
+    ----
+    pd.DataFrame or None
+        最近日期的权重数据，若无则返回 None
+    """
+    if current_weights is None or current_weights.empty:
+        return None
+
+    try:
+        target_dt = pd.to_datetime(target_date)
+        effective_date = current_weights.get("effective_date", None)
+        if effective_date is not None:
+            if isinstance(effective_date, pd.Series):
+                dates = pd.to_datetime(effective_date)
+                if (dates <= target_dt).any():
+                    nearest_date = dates[dates <= target_dt].max()
+                    return current_weights
+    except Exception:
+        pass
+
+    return current_weights
 
 
 def get_index_weights_history(

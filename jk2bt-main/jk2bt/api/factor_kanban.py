@@ -18,234 +18,11 @@ import pandas as pd
 from typing import List, Optional, Dict
 import warnings
 
-FACTOR_LIBRARY = {
-    "style": {
-        "category_intro": "风格因子",
-        "factors": {
-            "beta": "Beta因子，衡量股票对市场波动的敏感度",
-            "book_to_market": "账面市值比因子",
-            "earnings_yield": "盈利收益率因子",
-            "growth": "成长因子",
-            "leverage": "杠杆因子",
-            "liquidity": "流动性因子",
-            "momentum": "动量因子",
-            "non_linear_size": "非线性市值因子",
-            "residual_volatility": "残余波动率因子",
-            "size": "市值因子",
-        },
-    },
-    "basic": {
-        "category_intro": "基本面因子",
-        "factors": {
-            "administration_expense_ttm": "管理费用TTM",
-            "asset_impairment_loss_ttm": "资产减值损失TTM",
-            "EBIT": "息税前利润",
-            "EBITDA": "息税折旧摊销前利润",
-            "financial_expense_ttm": "财务费用TTM",
-            "goods_sale_and_service_render_cash_ttm": "销售商品提供劳务收到的现金TTM",
-            "net_operate_cash_flow_ttm": "经营活动净现金流TTM",
-            "net_profit_ttm": "净利润TTM",
-            "operating_profit_ttm": "营业利润TTM",
-            "operating_revenue_ttm": "营业收入TTM",
-            "total_operating_cost_ttm": "营业总成本TTM",
-        },
-    },
-    "quality": {
-        "category_intro": "质量因子",
-        "factors": {
-            "asset_turnover": "总资产周转率",
-            "current_ratio": "流动比率",
-            "gross_profit_margin": "毛利率",
-            "net_profit_margin": "净利率",
-            "roa": "总资产收益率",
-            "roe": "净资产收益率",
-            "roic": "投入资本回报率",
-        },
-    },
-    "growth": {
-        "category_intro": "成长因子",
-        "factors": {
-            "net_profit_growth_rate": "净利润增长率",
-            "operating_revenue_growth_rate": "营业收入增长率",
-            "total_profit_growth_rate": "利润总额增长率",
-        },
-    },
-    "risk": {
-        "category_intro": "风险因子",
-        "factors": {
-            "beta": "Beta系数",
-            "volatility_20": "20日波动率",
-            "volatility_60": "60日波动率",
-            "volatility_120": "120日波动率",
-            "volatility_250": "250日波动率",
-        },
-    },
-    "emotion": {
-        "category_intro": "情绪因子",
-        "factors": {
-            "average_turnover_20d": "20日平均换手率",
-            "average_turnover_60d": "60日平均换手率",
-            "average_turnover_120d": "120日平均换手率",
-            "share_turnover_20d": "20日股份换手率",
-            "share_turnover_60d": "60日股份换手率",
-        },
-    },
-    "technical": {
-        "category_intro": "技术因子",
-        "factors": {
-            "bias_5": "5日乖离率",
-            "bias_10": "10日乖离率",
-            "bias_20": "20日乖离率",
-            "bias_60": "60日乖离率",
-            "emac_10": "10日指数移动平均差",
-            "emac_20": "20日指数移动平均差",
-            "emac_26": "26日指数移动平均差",
-            "emac_60": "60日指数移动平均差",
-            "roc_6": "6日变动率",
-            "roc_12": "12日变动率",
-            "roc_20": "20日变动率",
-            "roc_60": "60日变动率",
-            "roc_120": "120日变动率",
-            "mac_60": "60日移动平均",
-            "mac_120": "120日移动平均",
-            "vol_20": "20日成交量",
-            "vol_240": "240日成交量",
-            "vstd_20": "20日成交量标准差",
-            "vroc_6": "6日成交量变动率",
-            "cci_10": "10日顺势指标",
-            "money_flow_20": "20日资金流向",
-        },
-    },
-    "industry": {
-        "category_intro": "行业因子(CSRC)",
-        "factors": {
-            "agriculture": "农、林、牧、渔业",
-            "mining": "采矿业",
-            "manufacturing": "制造业",
-            "utilities": "电力、热力、燃气及水生产和供应业",
-            "construction": "建筑业",
-            "wholesale": "批发业",
-            "retail": "零售业",
-            "transport": "交通运输、仓储和邮政业",
-            "hospitality": "住宿和餐饮业",
-            "IT": "信息传输、软件和信息技术服务业",
-            "finance": "金融业",
-            "real_estate": "房地产业",
-            "services": "居民服务、修理和其他服务业",
-            "research": "科学研究和技术服务业",
-            "water_environment": "水利、环境和公共设施管理业",
-            "culture": "文化、体育和娱乐业",
-            "conglomerate": "综合",
-        },
-    },
-    "pershare": {
-        "category_intro": "每股指标因子",
-        "factors": {
-            "adjusted_profit_per_share": "每股扣非净利润",
-            "net_operate_cash_flow_per_share": "每股经营活动净现金流",
-            "operating_revenue_per_share": "每股营业收入",
-            "total_operating_cost_per_share": "每股营业总成本",
-        },
-    },
-}
-
-FACTOR_IC_BASE = {
-    "beta": (0.01, 0.6),
-    "book_to_market": (0.04, 0.9),
-    "earnings_yield": (0.05, 1.0),
-    "growth": (0.03, 0.7),
-    "leverage": (-0.02, 0.3),
-    "liquidity": (-0.03, 0.4),
-    "momentum": (0.04, 0.8),
-    "non_linear_size": (0.01, 0.5),
-    "residual_volatility": (-0.04, 0.5),
-    "size": (0.02, 0.7),
-    "administration_expense_ttm": (-0.01, 0.3),
-    "asset_impairment_loss_ttm": (-0.02, 0.2),
-    "EBIT": (0.03, 0.7),
-    "EBITDA": (0.03, 0.7),
-    "financial_expense_ttm": (-0.02, 0.3),
-    "goods_sale_and_service_render_cash_ttm": (0.03, 0.6),
-    "net_operate_cash_flow_ttm": (0.04, 0.8),
-    "net_profit_ttm": (0.04, 0.8),
-    "operating_profit_ttm": (0.03, 0.7),
-    "operating_revenue_ttm": (0.02, 0.6),
-    "total_operating_cost_ttm": (-0.01, 0.3),
-    "asset_turnover": (0.03, 0.6),
-    "current_ratio": (0.01, 0.4),
-    "gross_profit_margin": (0.04, 0.8),
-    "net_profit_margin": (0.04, 0.8),
-    "roa": (0.05, 0.9),
-    "roe": (0.05, 1.0),
-    "roic": (0.05, 0.9),
-    "net_profit_growth_rate": (0.03, 0.6),
-    "operating_revenue_growth_rate": (0.02, 0.5),
-    "total_profit_growth_rate": (0.03, 0.6),
-    "volatility_20": (-0.03, 0.4),
-    "volatility_60": (-0.03, 0.4),
-    "volatility_120": (-0.04, 0.5),
-    "volatility_250": (-0.04, 0.5),
-    "average_turnover_20d": (-0.02, 0.3),
-    "average_turnover_60d": (-0.02, 0.3),
-    "average_turnover_120d": (-0.03, 0.4),
-    "share_turnover_20d": (-0.02, 0.3),
-    "share_turnover_60d": (-0.02, 0.3),
-    "bias_5": (0.02, 0.5),
-    "bias_10": (0.02, 0.5),
-    "bias_20": (0.03, 0.6),
-    "bias_60": (0.03, 0.6),
-    "emac_10": (0.02, 0.5),
-    "emac_20": (0.02, 0.5),
-    "emac_26": (0.02, 0.5),
-    "emac_60": (0.03, 0.6),
-    "roc_6": (0.02, 0.5),
-    "roc_12": (0.02, 0.5),
-    "roc_20": (0.03, 0.6),
-    "roc_60": (0.03, 0.6),
-    "roc_120": (0.03, 0.6),
-    "mac_60": (0.02, 0.5),
-    "mac_120": (0.02, 0.5),
-    "vol_20": (0.01, 0.3),
-    "vol_240": (0.01, 0.3),
-    "vstd_20": (0.01, 0.3),
-    "vroc_6": (0.01, 0.3),
-    "cci_10": (0.02, 0.4),
-    "money_flow_20": (0.03, 0.6),
-    "agriculture": (0.01, 0.3),
-    "mining": (0.01, 0.3),
-    "manufacturing": (0.02, 0.4),
-    "utilities": (0.01, 0.3),
-    "construction": (0.01, 0.3),
-    "wholesale": (0.01, 0.3),
-    "retail": (0.02, 0.4),
-    "transport": (0.01, 0.3),
-    "hospitality": (0.01, 0.3),
-    "IT": (0.03, 0.5),
-    "finance": (0.02, 0.4),
-    "real_estate": (0.01, 0.3),
-    "services": (0.01, 0.3),
-    "research": (0.02, 0.4),
-    "water_environment": (0.01, 0.3),
-    "culture": (0.01, 0.3),
-    "conglomerate": (0.0, 0.2),
-    "adjusted_profit_per_share": (0.04, 0.8),
-    "net_operate_cash_flow_per_share": (0.04, 0.8),
-    "operating_revenue_per_share": (0.02, 0.6),
-    "total_operating_cost_per_share": (-0.01, 0.3),
-}
-
-CNE6_STYLE_FACTORS = [
-    "size",
-    "beta",
-    "momentum",
-    "volatility",
-    "liquidity",
-    "growth",
-    "leverage",
-    "earnings_yield",
-    "book_to_price",
-    "profitability",
-]
+from jk2bt.analysis.factors.constants import (
+    CNE6_STYLE_FACTORS,
+    FACTOR_LIBRARY,
+    FACTOR_IC_BASE,
+)
 
 
 def _hash_seed(name: str) -> int:
@@ -617,6 +394,7 @@ def get_factor_cov(
     columns: Optional[List[str]] = None,
     industry: str = "sw_l1",
     universe: Optional[str] = None,
+    format: str = "matrix",
 ) -> pd.DataFrame:
     """
     获取风格因子协方差矩阵（聚宽标准接口）。
@@ -635,11 +413,14 @@ def get_factor_cov(
         行业分类
     universe : str, optional
         股票池
+    format : str, default 'matrix'
+        返回格式: 'matrix' 返回方阵协方差矩阵, 'long' 返回长表格式
+        长表格式: 每行 (date, factor, column1, column2, ...)
 
     返回
     ----
     pd.DataFrame
-        风格因子协方差矩阵
+        风格因子协方差矩阵（format='matrix'）或长表格式（format='long'）
     """
     try:
         factor_returns = get_factor_style_returns(
@@ -669,7 +450,53 @@ def get_factor_cov(
         cov_matrix = cov_matrix[columns]
         cov_matrix = cov_matrix.loc[columns]
 
+    if format == "long":
+        return _cov_matrix_to_long(cov_matrix, industry=industry)
+
     return cov_matrix
+
+
+def _cov_matrix_to_long(
+    cov_matrix: pd.DataFrame,
+    industry: str = "sw_l1",
+) -> pd.DataFrame:
+    """
+    将协方差方阵转换为长表格式。
+
+    每行: (date, factor, cov_with_factor1, cov_with_factor2, ...)
+    列包括风格因子和行业因子。
+
+    参数
+    ----
+    cov_matrix : pd.DataFrame
+        协方差方阵，索引和列均为因子名称
+    industry : str, default 'sw_l1'
+        行业分类标准
+
+    返回
+    ----
+    pd.DataFrame
+        长表格式协方差数据
+    """
+    date = pd.Timestamp("2026-03-31")
+    all_factors = list(cov_matrix.columns)
+
+    industry_factors = FACTOR_LIBRARY.get("industry", {}).get("factors", {})
+    for ind_name in industry_factors:
+        if ind_name not in all_factors:
+            all_factors.append(ind_name)
+
+    rows = []
+    for factor in all_factors:
+        row = {"date": date, "factor": factor}
+        for col_factor in all_factors:
+            if factor in cov_matrix.index and col_factor in cov_matrix.columns:
+                row[col_factor] = round(cov_matrix.loc[factor, col_factor], 8)
+            else:
+                row[col_factor] = 0.0
+        rows.append(row)
+
+    return pd.DataFrame(rows)
 
 
 def get_factor_specific_returns(

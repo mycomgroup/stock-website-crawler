@@ -91,11 +91,9 @@ def get_concept_stocks(
 def get_concept(
     security: str,
     date: Optional[str] = None,
-) -> List[str]:
+) -> dict:
     """
-    获取股票所属概念。
-
-    聚宽兼容接口
+    获取股票所属概念（聚宽标准接口）。
 
     参数
     ----
@@ -110,18 +108,38 @@ def get_concept(
 
     返回
     ----
-    List[str]
-        概念板块名称列表
+    dict
+        {security: {'jq_concept': [{'concept_code': xx, 'concept_name': xx}, ...]}}
 
     示例
     ----
     >>> concepts = get_concept('300750.XSHE')
-    >>> print(concepts)
-    ['锂电池', '新能源汽车', '储能', ...]
+    >>> print(concepts['300750.XSHE']['jq_concept'])
+    [{'concept_code': 'BK1234', 'concept_name': '锂电池'}, ...]
     """
     from jk2bt.data.market.concept import get_stock_concepts
 
-    return get_stock_concepts(security=security, date=date)
+    if isinstance(security, str):
+        securities = [security]
+    else:
+        securities = list(security)
+
+    result = {}
+    for sec in securities:
+        concepts_list = get_stock_concepts(security=sec, date=date)
+        # Convert list of concept names to JQData format
+        jq_concepts = []
+        if isinstance(concepts_list, list):
+            for name in concepts_list:
+                jq_concepts.append(
+                    {
+                        "concept_code": None,  # akshare 不提供概念代码
+                        "concept_name": name,
+                    }
+                )
+        result[sec] = {"jq_concept": jq_concepts}
+
+    return result
 
 
 def get_all_concepts(
@@ -250,7 +268,8 @@ def get_industry_classify(
 def get_industry(
     security: Union[str, List[str]],
     date: Optional[str] = None,
-) -> dict:
+    df: bool = False,
+) -> Union[dict, pd.DataFrame]:
     """
     获取股票所属行业（聚宽标准接口）。
 
@@ -260,33 +279,42 @@ def get_industry(
         股票代码，如 '000001.XSHE' 或 ['000001.XSHE', '600519.XSHG']
     date : str, optional
         查询日期，格式 'YYYY-MM-DD'
+    df : bool, default False
+        True 返回 DataFrame，False 返回 dict
 
     返回
     ----
-    dict
-        {代码: {'sw_l1': {'industry_code': xx, 'industry_name': xx},
-                'sw_l2': {...}, 'sw_l3': {...}, 'zjw': {...}}}
+    dict or pd.DataFrame
+        dict格式: {代码: {'sw_l1': {'industry_code': xx, 'industry_name': xx},
+                         'sw_l2': {...}, 'sw_l3': {...}, 'zjw': {...},
+                         'jq_l1': {...}, 'jq_l2': {...}}}
+        DataFrame格式: 包含 code, sw_l1_code, sw_l1_name, sw_l2_code, sw_l2_name,
+                      sw_l3_code, sw_l3_name, zjw_code, zjw_name, jq_l1_code, jq_l1_name,
+                      jq_l2_code, jq_l2_name 列
 
     示例
     ----
     >>> d = get_industry('000001.XSHE')
     >>> print(d['000001.XSHE']['sw_l1']['industry_name'])
+    >>> df = get_industry('000001.XSHE', df=True)
     """
     if isinstance(security, str):
         securities = [security]
     else:
         securities = list(security)
 
-    industry_types = ["sw_l1", "sw_l2", "sw_l3", "zjw"]
+    industry_types = ["sw_l1", "sw_l2", "sw_l3", "zjw", "jq_l1", "jq_l2"]
     result = {}
 
     for sec in securities:
         sec_industries = {}
         for ind_type in industry_types:
             try:
-                df = get_stock_industry(security=sec, date=date, industry_type=ind_type)
-                if df is not None and not df.empty:
-                    row = df.iloc[0]
+                df_ind = get_stock_industry(
+                    security=sec, date=date, industry_type=ind_type
+                )
+                if df_ind is not None and not df_ind.empty:
+                    row = df_ind.iloc[0]
                     sec_industries[ind_type] = {
                         "industry_code": row.get("industry_code"),
                         "industry_name": row.get("industry_name"),
@@ -296,6 +324,21 @@ def get_industry(
             except Exception:
                 sec_industries[ind_type] = None
         result[sec] = sec_industries
+
+    if df:
+        rows = []
+        for sec, industries in result.items():
+            row = {"code": sec}
+            for ind_type, ind_data in industries.items():
+                prefix = ind_type.replace("_", "_")
+                if ind_data:
+                    row[f"{prefix}_code"] = ind_data.get("industry_code")
+                    row[f"{prefix}_name"] = ind_data.get("industry_name")
+                else:
+                    row[f"{prefix}_code"] = None
+                    row[f"{prefix}_name"] = None
+            rows.append(row)
+        return pd.DataFrame(rows)
 
     return result
 
@@ -317,7 +360,8 @@ def get_stock_industry(
     date : str, optional
         查询日期
     industry_type : str, default 'sw_l1'
-        行业分类标准: 'sw_l1', 'sw_l2', 'sw_l3', 'zjw' (证监会)
+        行业分类标准: 'sw_l1', 'sw_l2', 'sw_l3', 'zjw' (证监会),
+                     'jq_l1', 'jq_l2' (聚宽行业分类)
 
     返回
     ----
@@ -337,6 +381,12 @@ def get_stock_industry(
     from jk2bt.data.sources import get_adapter
 
     code = security.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+
+    # 处理聚宽行业分类 - 映射到申万行业
+    if industry_type in ("jq_l1", "jq_l2"):
+        # 聚宽行业分类与申万行业类似，使用申万数据作为替代
+        level = "1" if industry_type == "jq_l1" else "2"
+        industry_type = f"sw_l{level}"
 
     try:
         df = get_adapter().get_stock_industry(industry_type=industry_type, code=code)

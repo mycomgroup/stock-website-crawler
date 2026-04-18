@@ -4,8 +4,6 @@ finance_data/cashflow.py
 参考 backtrader_base_strategy.get_cashflow_sina 的逻辑封装。
 """
 
-from jk2bt.utils.cache import fetch_and_cache_data
-
 
 def get_cashflow(symbol, force_update=False):
     """
@@ -20,22 +18,10 @@ def get_cashflow(symbol, force_update=False):
     ----
     pandas DataFrame，字段与新浪接口一致
     """
-    akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
-
-    def download_func():
+    try:
         from jk2bt.data.sources import get_adapter
+    except ImportError:
+        from data_access import get_adapter
 
-        return get_adapter().get_cashflow(symbol=akshare_symbol)
-
-    df = fetch_and_cache_data(
-        symbol=symbol,
-        start=None,
-        end=None,
-        cache_file=None,
-        download_func=download_func,
-        date_col=None,
-        columns_map=None,
-        select_cols=None,
-        force_update=force_update,
-    )
-    return df
+    akshare_symbol = symbol.lower() if symbol.startswith(("sh", "sz")) else symbol
+    return get_adapter().get_cashflow(symbol=akshare_symbol)

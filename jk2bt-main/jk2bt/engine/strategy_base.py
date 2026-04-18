@@ -231,11 +231,13 @@ from jk2bt.api.jq_compat import (
     winsorize,
     winsorize_med,
     standardlize,
+    query,
+)
+
+# 运行时 API（从 engine.runtime_api 导入）
+from .runtime_api import (
     get_current_data,
     get_current_tick,
-    analyze_performance,
-    query,
-    _apply_filter,
 )
 
 # 资产路由
@@ -349,6 +351,29 @@ class FinanceDBProxy:
         if table_name == "STK_LIMITED_SHARES_UNLIMIT":
             return self._query_limited_shares_unlimit(query_obj)
 
+        if table_name == "STK_AUDIT_OPINION":
+            raise NotImplementedError(
+                "STK_AUDIT_OPINION 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+            )
+
+        if table_name == "STK_SHAREHOLDERS_SHARE_CHANGE":
+            return self._query_shareholders_share_change(query_obj)
+
+        if table_name == "FUND_MF_DAILY_PROFIT":
+            return self._query_fund_mf_daily_profit(query_obj)
+
+        if table_name in [
+            "FINANCE_INCOME_STATEMENT",
+            "FINANCE_CASHFLOW_STATEMENT",
+            "FINANCE_BALANCE_SHEET_PARENT",
+            "FINANCE_INCOME_STATEMENT_PARENT",
+            "FINANCE_CASHFLOW_STATEMENT_PARENT",
+            "FINANCE_BALANCE_SHEET",
+        ]:
+            raise NotImplementedError(
+                f"{table_name} 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
+            )
+
         return pd.DataFrame()
 
     def _query_employee_info(self, query_obj):
@@ -433,7 +458,14 @@ class FinanceDBProxy:
             return pd.DataFrame()
 
     def _query_limited_shares_list(self, query_obj):
-        """查询受限股份上市公告日期数据"""
+        """查询受限股份上市公告日期数据
+
+        JQData STK_LIMITED_SHARES_LIST 字段：
+        - company_id, code, company_name, pub_date, shareholder_name,
+          expected_unlimited_date, expected_unlimited_number, expected_unlimited_ratio,
+          actual_unlimited_date, actual_unlimited_number, actual_unlimited_ratio,
+          limited_reason_id, limited_reason, trade_condition
+        """
         try:
             import akshare as ak
 
@@ -447,16 +479,47 @@ class FinanceDBProxy:
                 return pd.DataFrame()
 
             column_mapping = {
+                "公司代码": "company_id",
                 "股票代码": "code",
-                "股票简称": "name",
-                "可上市交易日期": "end_date",
+                "股票简称": "company_name",
+                "公告日期": "pub_date",
+                "股东名称": "shareholder_name",
+                "股东": "shareholder_name",
+                "可上市交易日期": "expected_unlimited_date",
+                "预计可上市流通日期": "expected_unlimited_date",
+                "预计可上市数量": "expected_unlimited_number",
+                "预计可上市数量(万股)": "expected_unlimited_number",
+                "预计可上市比例": "expected_unlimited_ratio",
+                "实际可上市流通日期": "actual_unlimited_date",
+                "实际可上市数量": "actual_unlimited_number",
+                "实际可上市数量(万股)": "actual_unlimited_number",
+                "实际可上市比例": "actual_unlimited_ratio",
+                "限售原因代码": "limited_reason_id",
+                "限售原因": "limited_reason",
+                "股份类型": "limited_reason",
+                "股份状态": "trade_condition",
                 "总股本": "total_shares",
                 "受限股份数": "limited_shares",
                 "流通股份数": "float_shares",
                 "流通比例": "float_ratio",
             }
             df = df.rename(columns=column_mapping)
-            df["pub_date"] = None
+
+            # Set fields not available from akshare to None
+            for col in [
+                "company_id",
+                "pub_date",
+                "shareholder_name",
+                "expected_unlimited_number",
+                "expected_unlimited_ratio",
+                "actual_unlimited_number",
+                "actual_unlimited_ratio",
+                "limited_reason_id",
+                "limited_reason",
+                "trade_condition",
+            ]:
+                if col not in df.columns:
+                    df[col] = None
 
             if code:
                 ak_code = code
@@ -473,7 +536,13 @@ class FinanceDBProxy:
             return pd.DataFrame()
 
     def _query_limited_shares_unlimit(self, query_obj):
-        """查询受限股份实际解禁日期数据"""
+        """查询受限股份实际解禁日期数据
+
+        JQData STK_LIMITED_SHARES_UNLIMIT 字段：
+        - company_id, code, company_name, pub_date, shareholder_name,
+          actual_unlimited_date, actual_unlimited_number, actual_unlimited_ratio,
+          limited_reason_id, limited_reason, actual_trade_number
+        """
         try:
             import akshare as ak
 
@@ -487,16 +556,37 @@ class FinanceDBProxy:
                 return pd.DataFrame()
 
             column_mapping = {
+                "公司代码": "company_id",
                 "股票代码": "code",
-                "股票简称": "name",
-                "解禁日期": "unlimit_date",
-                "股份类型": "share_type",
-                "解禁股份数": "unlimit_shares",
+                "股票简称": "company_name",
+                "公告日期": "pub_date",
+                "股东名称": "shareholder_name",
+                "股东": "shareholder_name",
+                "解禁日期": "actual_unlimited_date",
+                "实际解禁日期": "actual_unlimited_date",
+                "解禁股份数": "actual_unlimited_number",
+                "解禁股份数(万股)": "actual_unlimited_number",
+                "解禁比例": "actual_unlimited_ratio",
+                "限售原因代码": "limited_reason_id",
+                "限售原因": "limited_reason",
+                "股份类型": "limited_reason",
+                "实际可交易数量": "actual_trade_number",
                 "总股本": "total_shares",
-                "解禁比例": "unlimit_ratio",
+                "解禁类型": "share_type",
             }
             df = df.rename(columns=column_mapping)
-            df["pub_date"] = None
+
+            # Set fields not available from akshare to None
+            for col in [
+                "company_id",
+                "pub_date",
+                "shareholder_name",
+                "limited_reason_id",
+                "limited_reason",
+                "actual_trade_number",
+            ]:
+                if col not in df.columns:
+                    df[col] = None
 
             if code:
                 ak_code = code
@@ -608,6 +698,66 @@ class FinanceDBProxy:
 
             return df.reset_index(drop=True)
 
+        except Exception:
+            return pd.DataFrame()
+
+    def _query_shareholders_share_change(self, query_obj):
+        """查询大股东增减持数据"""
+        try:
+            import akshare as ak
+
+            code = None
+            if hasattr(query_obj, "_symbols") and query_obj._symbols:
+                code = query_obj._symbols[0] if query_obj._symbols else None
+
+            df = ak.stock_shareholder_change_ths()
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "股票代码": "code",
+                "股东名称": "holder_name",
+                "变动日期": "change_date",
+                "变动类型": "change_type",
+                "变动数量": "change_amount",
+                "变动比例": "change_ratio",
+                "变动后持股": "hold_amount_after",
+                "变动后持股比例": "hold_ratio_after",
+            }
+            df = df.rename(columns=column_mapping)
+
+            if code:
+                ak_code = code
+                if code.startswith("sh") or code.startswith("sz"):
+                    ak_code = code[2:]
+                if code.endswith(".XSHG") or code.endswith(".XSHE"):
+                    ak_code = code[:6]
+                ak_code = ak_code.zfill(6)
+                df = df[df["code"] == ak_code]
+
+            return df.reset_index(drop=True)
+        except Exception:
+            return pd.DataFrame()
+
+    def _query_fund_mf_daily_profit(self, query_obj):
+        """查询货币基金收益日报"""
+        try:
+            import akshare as ak
+
+            df = ak.fund_money_fund_info_em()
+            if df is None or df.empty:
+                return pd.DataFrame()
+
+            column_mapping = {
+                "基金代码": "code",
+                "基金简称": "name",
+                "报告日期": "date",
+                "每万份收益": "profit_per_million",
+                "七日年化收益率": "seven_day_yield",
+                "五日年化收益率": "five_day_avg_yield",
+            }
+            df = df.rename(columns=column_mapping)
+            return df.reset_index(drop=True)
         except Exception:
             return pd.DataFrame()
 

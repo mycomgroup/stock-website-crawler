@@ -340,6 +340,35 @@ class CONBOND_BASIC_INFO:
     premium_rate = None
 
 
+class CONBOND_DAILY_PRICE:
+    """
+    可转债日行情表 (CONBOND_DAILY_PRICE)
+
+    字段说明：
+    - date: 日期
+    - code: 可转债代码
+    - name: 可转债名称
+    - open: 开盘价
+    - high: 最高价
+    - low: 最低价
+    - close: 收盘价
+    - volume: 成交量
+    - amount: 成交额
+    - change_pct: 涨跌幅
+    """
+
+    date = None
+    code = None
+    name = None
+    open = None
+    high = None
+    low = None
+    close = None
+    volume = None
+    amount = None
+    change_pct = None
+
+
 class BondQuery:
     """
     可转债查询模块 - 模拟聚宽 bond 模块
@@ -359,6 +388,7 @@ class BondQuery:
     BOND_INTEREST_PAYMENT = BOND_INTEREST_PAYMENT
     REPO_DAILY_PRICE = REPO_DAILY_PRICE
     CONBOND_BASIC_INFO = CONBOND_BASIC_INFO
+    CONBOND_DAILY_PRICE = CONBOND_DAILY_PRICE
 
     def run_query(
         self,
@@ -414,6 +444,8 @@ class BondQuery:
             return self._query_repo_daily_price(conditions, force_update, use_duckdb)
         elif table_name == "CONBOND_BASIC_INFO":
             return self._query_conbond_basic_info(conditions, force_update, use_duckdb)
+        elif table_name == "CONBOND_DAILY_PRICE":
+            return self._query_conbond_daily_price(conditions, force_update, use_duckdb)
         else:
             logger.warning(f"[BondQuery] 不支持的表: {table_name}")
             return pd.DataFrame()
@@ -426,9 +458,9 @@ class BondQuery:
     ) -> pd.DataFrame:
         """查询债券基本信息"""
         try:
-            import akshare as ak
+            from jk2bt.data.sources import get_adapter
 
-            df = ak.bond_zh_hs_spot()
+            df = get_adapter().get_bond_zh_hs_spot()
             if df is not None and not df.empty:
                 rename_map = {}
                 for col in df.columns:
@@ -740,37 +772,83 @@ class BondQuery:
         try:
             import akshare as ak
 
-            df = ak.bond_zh_hs_repo()
+            df = None
+            # 尝试使用 bond_zh_repurchase_daily 接口
+            try:
+                df = ak.bond_zh_repurchase_daily(symbol="全部")
+            except Exception:
+                pass
+
+            # 如果上面的接口失败，尝试 bond_repo_zh_spot_sina
+            if df is None or df.empty:
+                try:
+                    df = ak.bond_repo_zh_spot_sina()
+                except Exception:
+                    pass
+
+            # 如果上面的接口也失败，尝试 bond_zh_hs_repo
+            if df is None or df.empty:
+                try:
+                    df = ak.bond_zh_hs_repo()
+                except Exception:
+                    pass
+
             if df is not None and not df.empty:
                 rename_map = {}
                 for col in df.columns:
-                    if "日期" in col or "date" in col.lower():
+                    col_str = str(col)
+                    if "日期" in col_str or col_str.lower() == "date":
                         rename_map[col] = "date"
-                    elif "代码" in col or "code" in col.lower():
+                    elif "代码" in col_str or col_str.lower() == "code":
                         rename_map[col] = "code"
-                    elif "名称" in col or "name" in col.lower():
+                    elif "名称" in col_str or col_str.lower() == "name":
                         rename_map[col] = "name"
-                    elif "前收" in col or "pre" in col.lower():
+                    elif "前收" in col_str or "pre" in col_str.lower():
                         rename_map[col] = "pre_close"
-                    elif "开盘" in col or "open" in col.lower():
+                    elif "开盘" in col_str or col_str.lower() == "open":
                         rename_map[col] = "open"
-                    elif "最高" in col or "high" in col.lower():
+                    elif "最高" in col_str or col_str.lower() == "high":
                         rename_map[col] = "high"
-                    elif "最低" in col or "low" in col.lower():
+                    elif "最低" in col_str or col_str.lower() == "low":
                         rename_map[col] = "low"
-                    elif "收盘" in col or "close" in col.lower():
+                    elif "收盘" in col_str or col_str.lower() == "close":
                         rename_map[col] = "close"
-                    elif "成交量" in col or "volume" in col.lower():
+                    elif "成交量" in col_str or col_str.lower() == "volume":
                         rename_map[col] = "volume"
-                    elif "成交额" in col or "money" in col.lower():
+                    elif "成交额" in col_str or col_str.lower() == "money":
                         rename_map[col] = "money"
-                    elif "笔数" in col or "deal" in col.lower():
+                    elif "笔数" in col_str or "deal" in col_str.lower():
                         rename_map[col] = "deal_number"
+                    elif "均价" in col_str or "avg" in col_str.lower():
+                        rename_map[col] = "avg_price"
+                    elif "涨跌" in col_str or "change" in col_str.lower():
+                        rename_map[col] = "change_pct"
 
                 df = df.rename(columns=rename_map)
                 df["id"] = range(len(df))
-                df["exchange_code"] = "XSHG"
-                return df
+                if "exchange_code" not in df.columns:
+                    df["exchange_code"] = "XSHG"
+
+                required_cols = [
+                    "id",
+                    "date",
+                    "code",
+                    "name",
+                    "exchange_code",
+                    "pre_close",
+                    "open",
+                    "high",
+                    "low",
+                    "close",
+                    "volume",
+                    "money",
+                    "deal_number",
+                ]
+                for col in required_cols:
+                    if col not in df.columns:
+                        df[col] = None
+
+                return df[required_cols]
         except Exception as e:
             logger.warning(f"[BondQuery] REPO_DAILY_PRICE 获取失败: {e}")
 
@@ -805,62 +883,88 @@ class BondQuery:
         try:
             import akshare as ak
 
-            df = ak.bond_cb_jsl()
+            # 优先使用 bond_zh_cov_info_sina 获取可转债基本信息
+            df = None
+            try:
+                df = ak.bond_zh_cov_info_sina()
+            except Exception:
+                pass
+
+            # 如果 sina 接口失败，尝试 bond_cb_jsl
+            if df is None or df.empty:
+                try:
+                    df = ak.bond_cb_jsl()
+                except Exception:
+                    pass
+
             if df is not None and not df.empty:
                 rename_map = {}
                 for col in df.columns:
-                    if "代码" in col or col == "code":
+                    col_str = str(col)
+                    if "代码" in col_str or col_str == "code":
                         rename_map[col] = "code"
-                    elif "简称" in col or col == "short_name":
+                    elif "简称" in col_str or col_str == "short_name":
                         rename_map[col] = "short_name"
-                    elif "全称" in col or col == "full_name":
+                    elif "全称" in col_str or col_str == "full_name":
                         rename_map[col] = "full_name"
-                    elif "上市状态" in col or col == "list_status":
+                    elif "上市状态" in col_str or col_str == "list_status":
                         rename_map[col] = "list_status"
-                    elif "发行人" in col or col == "issuer":
+                    elif "发行人" in col_str or col_str == "issuer":
                         rename_map[col] = "issuer"
-                    elif "公司代码" in col or col == "company_code":
+                    elif "公司代码" in col_str or col_str == "company_code":
                         rename_map[col] = "company_code"
-                    elif "发行开始" in col or col == "issue_start_date":
+                    elif "发行开始" in col_str or col_str == "issue_start_date":
                         rename_map[col] = "issue_start_date"
-                    elif "发行结束" in col or col == "issue_end_date":
+                    elif "发行结束" in col_str or col_str == "issue_end_date":
                         rename_map[col] = "issue_end_date"
-                    elif "债券类型" in col or col == "bond_type":
+                    elif "债券类型" in col_str or col_str == "bond_type":
                         rename_map[col] = "bond_type"
-                    elif "上市日期" in col or col == "list_date":
+                    elif "债券形态" in col_str or col_str == "bond_form":
+                        rename_map[col] = "bond_form"
+                    elif "上市日期" in col_str or col_str == "list_date":
                         rename_map[col] = "list_date"
-                    elif "退市日期" in col or col == "delist_date":
+                    elif "退市日期" in col_str or col_str == "delist_date":
                         rename_map[col] = "delist_date"
-                    elif "起息" in col or col == "interest_begin_date":
+                    elif "起息" in col_str or col_str == "interest_begin_date":
                         rename_map[col] = "interest_begin_date"
-                    elif "到期" in col or col == "maturity_date":
+                    elif "到期" in col_str or col_str == "maturity_date":
                         rename_map[col] = "maturity_date"
-                    elif "转股价" in col or col == "convert_price":
+                    elif "付息" in col_str or col_str == "interest_date":
+                        rename_map[col] = "interest_date"
+                    elif "最后付息" in col_str or col_str == "last_cash_date":
+                        rename_map[col] = "last_cash_date"
+                    elif "付息说明" in col_str or col_str == "cash_comment":
+                        rename_map[col] = "cash_comment"
+                    elif "转股价" in col_str or col_str == "convert_price":
                         rename_map[col] = "convert_price"
-                    elif "转股开始" in col or col == "convert_start_date":
+                    elif "转股开始" in col_str or col_str == "convert_start_date":
                         rename_map[col] = "convert_start_date"
-                    elif "转股结束" in col or col == "convert_end_date":
+                    elif "转股结束" in col_str or col_str == "convert_end_date":
                         rename_map[col] = "convert_end_date"
-                    elif "赎回" in col or col == "redeem_price":
+                    elif "赎回" in col_str or col_str == "redeem_price":
                         rename_map[col] = "redeem_price"
-                    elif "回售" in col or col == "put_price":
+                    elif "回售" in col_str or col_str == "put_price":
                         rename_map[col] = "put_price"
-                    elif "票面利率" in col or col == "coupon_rate":
+                    elif "票面利率" in col_str or col_str == "coupon_rate":
                         rename_map[col] = "coupon_rate"
-                    elif "面值" in col or col == "par_value":
+                    elif "面值" in col_str or col_str == "par_value":
                         rename_map[col] = "par_value"
-                    elif "发行量" in col or col == "issue_amount":
+                    elif "发行量" in col_str or col_str == "issue_amount":
                         rename_map[col] = "issue_amount"
-                    elif "剩余" in col or col == "remain_amount":
+                    elif "剩余" in col_str or col_str == "remain_amount":
                         rename_map[col] = "remain_amount"
-                    elif "评级" in col or col == "rating":
+                    elif "评级" in col_str or col_str == "rating":
                         rename_map[col] = "rating"
-                    elif "担保" in col or col == "guarantee":
+                    elif "担保" in col_str or col_str == "guarantee":
                         rename_map[col] = "guarantee"
-                    elif "转股价值" in col or col == "convert_value":
+                    elif "转股价值" in col_str or col_str == "convert_value":
                         rename_map[col] = "convert_value"
-                    elif "溢价" in col or col == "premium_rate":
+                    elif "溢价" in col_str or col_str == "premium_rate":
                         rename_map[col] = "premium_rate"
+                    elif "正股代码" in col_str:
+                        rename_map[col] = "underlying_code"
+                    elif "正股名称" in col_str:
+                        rename_map[col] = "underlying_name"
 
                 df = df.rename(columns=rename_map)
                 df["id"] = range(len(df))
@@ -948,34 +1052,89 @@ class BondQuery:
             ]
         )
 
+    def _query_conbond_daily_price(
+        self,
+        conditions: dict,
+        force_update: bool = False,
+        use_duckdb: bool = True,
+    ) -> pd.DataFrame:
+        """查询可转债日行情数据"""
+        try:
+            import akshare as ak
+
+            code = conditions.get("code") or conditions.get("value")
+            if code:
+                code = str(code).replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+                symbol = f"sh{code}" if code.startswith(("11", "13")) else f"sz{code}"
+                df = ak.bond_zh_cov_daily(symbol=symbol)
+                if df is not None and not df.empty:
+                    rename_map = {}
+                    for col in df.columns:
+                        if "日期" in col or col == "date":
+                            rename_map[col] = "date"
+                        elif "开盘" in col or col == "open":
+                            rename_map[col] = "open"
+                        elif "最高" in col or col == "high":
+                            rename_map[col] = "high"
+                        elif "最低" in col or col == "low":
+                            rename_map[col] = "low"
+                        elif "收盘" in col or col == "close":
+                            rename_map[col] = "close"
+                        elif "成交量" in col or col == "volume":
+                            rename_map[col] = "volume"
+                        elif "成交额" in col or col == "amount":
+                            rename_map[col] = "amount"
+                        elif "涨跌幅" in col or col == "change_pct":
+                            rename_map[col] = "change_pct"
+
+                    df = df.rename(columns=rename_map)
+                    df["code"] = code
+                    df["name"] = ""
+
+                    required_cols = [
+                        "date",
+                        "code",
+                        "name",
+                        "open",
+                        "high",
+                        "low",
+                        "close",
+                        "volume",
+                        "amount",
+                        "change_pct",
+                    ]
+                    for col in required_cols:
+                        if col not in df.columns:
+                            df[col] = None
+                    return df[required_cols]
+        except Exception as e:
+            logger.warning(f"[BondQuery] CONBOND_DAILY_PRICE 获取失败: {e}")
+
+        return pd.DataFrame(
+            columns=[
+                "date",
+                "code",
+                "name",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "amount",
+                "change_pct",
+            ]
+        )
+
     def _query_convert_price_adjust(
         self,
         conditions: dict,
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
-        """
-        查询可转债转股价格调整数据
-
-        TODO: akshare 目前没有直接提供可转债转股价格调整的接口
-        如需实现，可考虑以下数据源：
-        - 聚宽自有数据
-        - 东方财富可转债详情页
-        - 交易所公告数据
-        """
-        logger.debug(
-            "[BondQuery] CONBOND_CONVERT_PRICE_ADJUST: "
-            "akshare 暂无此接口，返回空DataFrame"
-        )
-        return pd.DataFrame(
-            columns=[
-                "code",
-                "name",
-                "pub_date",
-                "adjust_date",
-                "new_convert_price",
-                "adjust_reason",
-            ]
+        """查询可转债转股价格调整数据"""
+        raise NotImplementedError(
+            "bond.CONBOND_CONVERT_PRICE_ADJUST 需要专业数据源。"
+            "akshare无可转债转股价格调整接口。请替换为其他数据源。"
         )
 
     def _query_daily_convert(
@@ -984,32 +1143,10 @@ class BondQuery:
         force_update: bool = False,
         use_duckdb: bool = True,
     ) -> pd.DataFrame:
-        """
-        查询可转债每日转股统计数据
-
-        TODO: akshare 目前没有直接提供可转债每日转股统计的接口
-        如需实现，可考虑以下数据源：
-        - 聚宽自有数据
-        - 东方财富可转债转股详情页
-        - 交易所每日转股数据
-        """
-        logger.debug(
-            "[BondQuery] CONBOND_DAILY_CONVERT: akshare 暂无此接口，返回空DataFrame"
-        )
-        return pd.DataFrame(
-            columns=[
-                "date",
-                "code",
-                "name",
-                "exchange_code",
-                "issue_number",
-                "convert_price",
-                "daily_convert_number",
-                "acc_convert_number",
-                "acc_convert_ratio",
-                "convert_premium",
-                "convert_premium_rate",
-            ]
+        """查询可转债每日转股统计数据"""
+        raise NotImplementedError(
+            "bond.CONBOND_DAILY_CONVERT 需要专业数据源。"
+            "akshare无可转债每日转股统计接口。请替换为其他数据源。"
         )
 
 

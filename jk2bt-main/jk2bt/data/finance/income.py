@@ -1,6 +1,3 @@
-from jk2bt.utils.cache import fetch_and_cache_data
-
-
 def get_income(symbol, indicator="按报告期", force_update=False):
     try:
         from jk2bt.data.sources import get_adapter
@@ -8,21 +5,7 @@ def get_income(symbol, indicator="按报告期", force_update=False):
         from data_access import get_adapter
 
     adapter = get_adapter()
-
-    def download_func():
-        return adapter.get_financial_benefit(symbol=symbol, indicator=indicator)
-
-    df = fetch_and_cache_data(
-        symbol=symbol,
-        start=None,
-        end=None,
-        cache_file=None,
-        download_func=download_func,
-        date_col=None,
-        columns_map=None,
-        select_cols=None,
-        force_update=force_update,
-    )
+    df = adapter.get_financial_benefit(symbol=symbol, indicator=indicator)
 
     # Align column names with JQData income statement schema
     if df is not None and not df.empty:

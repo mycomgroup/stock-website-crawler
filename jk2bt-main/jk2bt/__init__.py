@@ -62,8 +62,6 @@ from jk2bt.engine.strategy_base import (
     get_price_jq,
     get_fundamentals,
     get_fundamentals_jq,
-    get_current_data,
-    get_current_tick,
     history,
     attribute_history,
     get_index_weights,
@@ -132,11 +130,21 @@ from jk2bt.engine.asset_router import (
 )
 
 # =============================================================================
-# API - 交易API
+# Engine - 交易API（运行时功能）
 # =============================================================================
-from jk2bt.api import (
+from jk2bt.engine import (
     order_shares,
     order_target_percent,
+    LimitOrderStyle,
+    MarketOrderStyle,
+    get_current_data,
+    get_current_tick,
+)
+
+# =============================================================================
+# API - 数据API（纯数据获取功能）
+# =============================================================================
+from jk2bt.api import (
     filter_st,
     filter_paused,
     filter_limit_up,
@@ -185,7 +193,7 @@ from jk2bt.api import (
 # =============================================================================
 # API - 增强功能
 # =============================================================================
-from jk2bt.api.enhancements import (
+from jk2bt.api.order import (
     calculate_position_value,
     get_position_ratio,
     rebalance_portfolio,

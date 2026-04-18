@@ -65,7 +65,7 @@ class RuntimeResourcePack:
         },
     }
 
-    DEFAULT_RUNTIME_BASE = "data_cache/outputs"
+    DEFAULT_RUNTIME_BASE = None  # 延迟初始化，使用 resolve_cache_path
 
     _current_strategy_name: Optional[str] = None
     _lock = threading.Lock()
@@ -89,7 +89,9 @@ class RuntimeResourcePack:
 
     @classmethod
     def _get_default_runtime_base(cls) -> Path:
-        base_dir = Path(cls.DEFAULT_RUNTIME_BASE)
+        from jk2bt.utils.paths import resolve_cache_dir
+
+        base_dir = resolve_cache_dir("data_cache/outputs")
         base_dir.mkdir(parents=True, exist_ok=True)
         return base_dir
 

@@ -223,11 +223,15 @@ def cmd_cleanup(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    from jk2bt.utils.paths import resolve_cache_path
+
     parser = argparse.ArgumentParser(
         prog="parquet-cache",
         description="Parquet Cache CLI",
     )
-    parser.add_argument("--base-dir", default="data_cache/cache", help="缓存根目录")
+    parser.add_argument(
+        "--base-dir", default=resolve_cache_path("data_cache/cache"), help="缓存根目录"
+    )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
