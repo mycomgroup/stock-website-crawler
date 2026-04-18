@@ -444,6 +444,124 @@ def get_fund_dividend(
 
 
 # =====================================================================
+# 基金净值及业绩表现
+# =====================================================================
+
+FUND_PERFORMANCE_SCHEMA = [
+    "code",  # 基金代码
+    "date",  # 日期
+    "unit_nav",  # 单位净值
+    "acc_nav",  # 累计净值
+    "accumulated_nav",  # 复权净值
+    "growth_rate",  # 日增长率
+    "return_1m",  # 近1月收益
+    "return_3m",  # 近3月收益
+    "return_6m",  # 近6月收益
+    "return_1y",  # 近1年收益
+    "return_3y",  # 近3年收益
+    "return_5y",  # 近5年收益
+]
+
+
+def get_fund_performance(
+    fund_code: str,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取基金净值及业绩表现数据
+
+    参数:
+        fund_code: 基金代码
+        start_date: 开始日期
+        end_date: 结束日期
+
+    返回:
+        DataFrame，包含基金净值及业绩表现数据
+    """
+    from jk2bt.data.sources import get_adapter
+
+    try:
+        df_unit = get_adapter().get_fund_net_value_hist(
+            fund_code=fund_code, indicator="单位净值走势"
+        )
+        df_acc = get_adapter().get_fund_net_value_hist(
+            fund_code=fund_code, indicator="累计净值走势"
+        )
+
+        if df_unit is None or df_unit.empty:
+            return pd.DataFrame(columns=FUND_PERFORMANCE_SCHEMA)
+
+        column_mapping = {
+            "净值日期": "date",
+            "单位净值": "unit_nav",
+            "累计净值": "acc_nav",
+            "日增长率": "growth_rate",
+        }
+
+        df = df_unit.rename(columns=column_mapping)
+        df["code"] = fund_code
+
+        if df_acc is not None and not df_acc.empty:
+            acc_mapping = {"净值日期": "date", "累计净值": "accumulated_nav"}
+            df_acc = df_acc.rename(columns=acc_mapping)
+            if "accumulated_nav" in df_acc.columns and "date" in df_acc.columns:
+                acc_dict = dict(
+                    zip(df_acc["date"].astype(str), df_acc["accumulated_nav"])
+                )
+                df["accumulated_nav"] = df["date"].astype(str).map(acc_dict)
+
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"], errors="coerce")
+            if start_date:
+                df = df[df["date"] >= pd.to_datetime(start_date)]
+            if end_date:
+                df = df[df["date"] <= pd.to_datetime(end_date)]
+
+            if len(df) > 1:
+                df_sorted = df.sort_values("date").reset_index(drop=True)
+                nav_col = "unit_nav" if "unit_nav" in df_sorted.columns else "acc_nav"
+                if nav_col in df_sorted.columns:
+                    nav_values = pd.to_numeric(df_sorted[nav_col], errors="coerce")
+                    if len(nav_values) >= 2:
+                        current_nav = nav_values.iloc[-1]
+                        if current_nav > 0:
+                            for period_days, col_name in [
+                                (20, "return_1m"),
+                                (60, "return_3m"),
+                                (120, "return_6m"),
+                                (252, "return_1y"),
+                                (756, "return_3y"),
+                                (1260, "return_5y"),
+                            ]:
+                                if len(nav_values) > period_days:
+                                    past_nav = nav_values.iloc[-(period_days + 1)]
+                                    if past_nav > 0:
+                                        df_sorted.loc[df_sorted.index[-1], col_name] = (
+                                            round((current_nav / past_nav - 1) * 100, 2)
+                                        )
+                                    else:
+                                        df_sorted.loc[df_sorted.index[-1], col_name] = (
+                                            None
+                                        )
+                                else:
+                                    df_sorted.loc[df_sorted.index[-1], col_name] = None
+
+                df = df_sorted
+
+        for col in FUND_PERFORMANCE_SCHEMA:
+            if col not in df.columns:
+                df[col] = None
+
+        available_cols = [c for c in FUND_PERFORMANCE_SCHEMA if c in df.columns]
+        return df[available_cols]
+
+    except Exception as e:
+        warnings.warn(f"获取基金业绩表现失败 {fund_code}: {e}")
+        return pd.DataFrame(columns=FUND_PERFORMANCE_SCHEMA)
+
+
+# =====================================================================
 # 期货保证金
 # =====================================================================
 
@@ -960,6 +1078,194 @@ def get_exchange_trade_info(
     raise NotImplementedError(
         "STK_EXCHANGE_TRADE_INFO 需要专业数据源。请替换为其他数据源（如Tushare/Wind）。"
     )
+
+
+# =====================================================================
+# 基金财务指标
+# =====================================================================
+
+FUND_FIN_INDICATOR_SCHEMA = [
+    "code",  # 基金代码
+    "date",  # 日期
+    "profit",  # 利润
+    "adjust_profit",  # 调整后利润
+    "avg_roe",  # 平均净资产收益率
+    "nav_growth",  # 净值增长率
+    "total_asset",  # 总资产
+    "net_asset",  # 净资产
+    "operating_revenue",  # 营业收入
+    "net_profit",  # 净利润
+    "eps",  # 每股收益
+    "bvps",  # 每份净资产
+    "operating_cash_flow_per_share",  # 每股经营现金流
+]
+
+
+def get_fund_fin_indicator(
+    fund_code: str,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取基金财务指标数据
+
+    参数:
+        fund_code: 基金代码
+        start_date: 开始日期
+        end_date: 结束日期
+
+    返回:
+        DataFrame，包含基金财务指标数据
+    """
+    import akshare as ak
+
+    try:
+        # 尝试获取基金开放信息
+        df = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
+        if df is None or df.empty:
+            return pd.DataFrame(columns=FUND_FIN_INDICATOR_SCHEMA)
+
+        column_mapping = {
+            "净值日期": "date",
+            "单位净值": "net_value",
+            "累计净值": "accumulated_value",
+            "日增长率": "daily_growth",
+        }
+        df = df.rename(columns=column_mapping)
+        df["code"] = fund_code
+
+        # 日期过滤
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"], errors="coerce")
+            if start_date:
+                df = df[df["date"] >= pd.to_datetime(start_date)]
+            if end_date:
+                df = df[df["date"] <= pd.to_datetime(end_date)]
+
+        # 从净值数据计算财务指标
+        if "net_value" in df.columns and len(df) > 1:
+            df["nav_growth"] = df["net_value"].pct_change()
+            df["total_asset"] = None
+            df["net_asset"] = (
+                df["accumulated_value"] if "accumulated_value" in df.columns else None
+            )
+            df["profit"] = None
+            df["adjust_profit"] = None
+            df["avg_roe"] = None
+            df["operating_revenue"] = None
+            df["net_profit"] = None
+            df["eps"] = None
+            df["bvps"] = df["net_value"]
+            df["operating_cash_flow_per_share"] = None
+
+        available_cols = [c for c in FUND_FIN_INDICATOR_SCHEMA if c in df.columns]
+        return df[available_cols]
+
+    except Exception as e:
+        warnings.warn(f"获取基金财务指标失败 {fund_code}: {e}")
+        return pd.DataFrame(columns=FUND_FIN_INDICATOR_SCHEMA)
+
+
+# =====================================================================
+# 基金投资标的(ETF跟踪指数)
+# =====================================================================
+
+FUND_INVEST_TARGET_SCHEMA = [
+    "code",  # 基金代码
+    "fund_name",  # 基金名称
+    "index_code",  # 指数代码
+    "index_name",  # 指数名称
+    "tracking_error",  # 跟踪误差
+    "tracking_deviation",  # 跟踪偏离度
+]
+
+
+def get_fund_invest_target(
+    fund_code: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取ETF跟踪指数信息
+
+    参数:
+        fund_code: 基金代码（可选，不传则返回全部ETF）
+
+    返回:
+        DataFrame，包含ETF跟踪指数信息
+    """
+    import akshare as ak
+
+    try:
+        # 获取ETF现货数据
+        df = ak.fund_etf_spot_em()
+        if df is None or df.empty:
+            return pd.DataFrame(columns=FUND_INVEST_TARGET_SCHEMA)
+
+        column_mapping = {}
+        for col in df.columns:
+            if "代码" in col or col == "代码":
+                column_mapping[col] = "code"
+            elif "名称" in col:
+                column_mapping[col] = "fund_name"
+
+        df = df.rename(columns=column_mapping)
+
+        # 尝试获取指数基金信息来补充指数数据
+        try:
+            index_df = ak.fund_index_fund_em()
+            if index_df is not None and not index_df.empty:
+                index_map = {}
+                for _, row in index_df.iterrows():
+                    code_col = None
+                    name_col = None
+                    idx_code_col = None
+                    idx_name_col = None
+                    for c in index_df.columns:
+                        if "基金代码" in c or "代码" == c.strip():
+                            code_col = c
+                        elif "基金名称" in c or "名称" == c.strip():
+                            name_col = c
+                        elif "指数代码" in c:
+                            idx_code_col = c
+                        elif "指数名称" in c:
+                            idx_name_col = c
+                    if code_col and idx_code_col:
+                        fund_c = str(index_df.loc[_, code_col]).strip()
+                        index_map[fund_c] = {
+                            "index_code": str(index_df.loc[_, idx_code_col]).strip()
+                            if idx_code_col
+                            else None,
+                            "index_name": str(index_df.loc[_, idx_name_col]).strip()
+                            if idx_name_col and pd.notna(index_df.loc[_, idx_name_col])
+                            else None,
+                        }
+
+                df["index_code"] = df["code"].map(
+                    lambda x: index_map.get(str(x), {}).get("index_code")
+                )
+                df["index_name"] = df["code"].map(
+                    lambda x: index_map.get(str(x), {}).get("index_name")
+                )
+        except Exception:
+            pass
+
+        df["tracking_error"] = None
+        df["tracking_deviation"] = None
+
+        if fund_code:
+            df = df[
+                df["code"]
+                .astype(str)
+                .str.contains(
+                    fund_code.replace(".XSHG", "").replace(".XSHE", ""), na=False
+                )
+            ]
+
+        available_cols = [c for c in FUND_INVEST_TARGET_SCHEMA if c in df.columns]
+        return df[available_cols]
+
+    except Exception as e:
+        warnings.warn(f"获取ETF跟踪指数信息失败: {e}")
+        return pd.DataFrame(columns=FUND_INVEST_TARGET_SCHEMA)
 
 
 # =====================================================================
@@ -1522,6 +1828,46 @@ class FinanceTables:
         dividend = None
         split_ratio = None
 
+    # 基金净值及业绩表现
+    class FUND_PERFORMANCE:
+        code = None
+        date = None
+        unit_nav = None
+        acc_nav = None
+        accumulated_nav = None
+        growth_rate = None
+        return_1m = None
+        return_3m = None
+        return_6m = None
+        return_1y = None
+        return_3y = None
+        return_5y = None
+
+    # 基金财务指标
+    class FUND_FIN_INDICATOR:
+        code = None
+        date = None
+        profit = None
+        adjust_profit = None
+        avg_roe = None
+        nav_growth = None
+        total_asset = None
+        net_asset = None
+        operating_revenue = None
+        net_profit = None
+        eps = None
+        bvps = None
+        operating_cash_flow_per_share = None
+
+    # 基金投资标的(ETF跟踪指数)
+    class FUND_INVEST_TARGET:
+        code = None
+        fund_name = None
+        index_code = None
+        index_name = None
+        tracking_error = None
+        tracking_deviation = None
+
     # 期货保证金
     class FUT_MARGIN:
         day = None
@@ -1576,6 +1922,137 @@ class FinanceTables:
         pre_position = None
         limit_up = None
         limit_down = None
+
+    # 沪深市场每日成交概况
+    class STK_EXCHANGE_TRADE_INFO:
+        date = None
+        sh_turnover = None
+        sh_trade_count = None
+        sz_turnover = None
+        sz_trade_count = None
+        total_turnover = None
+
+    # 货币基金收益日报
+    class FUND_MF_DAILY_PROFIT:
+        code = None
+        date = None
+        profit_per_million = None
+        seven_day_yield = None
+        five_day_avg_yield = None
+
+    # 审计报告
+    class STK_AUDIT_OPINION:
+        code = None
+        pub_date = None
+        report_date = None
+        auditor = None
+        opinion_type = None
+        opinion_content = None
+
+    # 定期报告预约披露时间表
+    class STK_REPORT_DISCLOSURE:
+        code = None
+        report_type = None
+        scheduled_date = None
+        actual_date = None
+        report_date = None
+
+    # 业绩快报
+    class STK_PERFORMANCE_LETTERS:
+        code = None
+        pub_date = None
+        report_date = None
+        eps = None
+        revenue = None
+        net_profit = None
+        yoy_revenue = None
+        yoy_profit = None
+
+    # 金融类利润表
+    class FINANCE_INCOME_STATEMENT:
+        id = None
+        company_id = None
+        company_name = None
+        code = None
+        a_code = None
+        b_code = None
+        h_code = None
+        pub_date = None
+        start_date = None
+        end_date = None
+        report_date = None
+        report_type = None
+        source_id = None
+        source = None
+        operating_revenue = None
+        interest_net_revenue = None
+        interest_income = None
+        interest_expense = None
+        commission_net_income = None
+        commission_income = None
+        commission_expense = None
+        investment_income = None
+        fair_value_variable_income = None
+        operating_profit = None
+        total_profit = None
+        income_tax_expense = None
+        net_profit = None
+        np_parent_company_owners = None
+        minority_profit = None
+        basic_eps = None
+        diluted_eps = None
+
+    # 金融类现金流量表
+    class FINANCE_CASHFLOW_STATEMENT:
+        id = None
+        company_id = None
+        company_name = None
+        code = None
+        a_code = None
+        b_code = None
+        h_code = None
+        pub_date = None
+        start_date = None
+        end_date = None
+        report_date = None
+        report_type = None
+        source_id = None
+        source = None
+        operate_cash_flow = None
+        net_operate_cash_flow = None
+        net_invest_cash_flow = None
+        net_finance_cash_flow = None
+        net_cash_increase = None
+
+    # 金融类资产负债表（母公司）
+    class FINANCE_BALANCE_SHEET_PARENT:
+        id = None
+        company_id = None
+        company_name = None
+        code = None
+        a_code = None
+        b_code = None
+        h_code = None
+        pub_date = None
+        start_date = None
+        end_date = None
+        report_date = None
+        report_type = None
+        source_id = None
+        source = None
+        cash_equivalents = None
+        total_assets = None
+        total_liability = None
+        total_equity = None
+        accounts_receivable = None
+        accounts_payable = None
+        inventory = None
+        fixed_assets = None
+        intangible_assets = None
+        longterm_equity_invest = None
+        shortterm_loan = None
+        longterm_loan = None
+        total_debt = None
 
     # 母公司利润表
     class FINANCE_INCOME_STATEMENT_PARENT:
@@ -1753,6 +2230,15 @@ class FinanceTables:
     FUT_CHARGE_SCHEMA = FUT_CHARGE_SCHEMA
     FUT_WAREHOUSE_SCHEMA = FUT_WAREHOUSE_SCHEMA
     FUT_MEMBER_POSITION_SCHEMA = FUT_MEMBER_POSITION_SCHEMA
+
+    STK_EXCHANGE_TRADE_INFO_SCHEMA = STK_EXCHANGE_TRADE_INFO_SCHEMA
+    FUND_MF_DAILY_PROFIT_SCHEMA = FUND_MF_DAILY_PROFIT_SCHEMA
+    STK_AUDIT_OPINION_SCHEMA = STK_AUDIT_OPINION_SCHEMA
+    STK_REPORT_DISCLOSURE_SCHEMA = STK_REPORT_DISCLOSURE_SCHEMA
+    STK_PERFORMANCE_LETTERS_SCHEMA = STK_PERFORMANCE_LETTERS_SCHEMA
+    FINANCE_INCOME_STATEMENT_SCHEMA = FINANCE_INCOME_STATEMENT_SCHEMA
+    FINANCE_CASHFLOW_STATEMENT_SCHEMA = FINANCE_CASHFLOW_STATEMENT_SCHEMA
+    FINANCE_BALANCE_SHEET_PARENT_SCHEMA = FINANCE_BALANCE_SHEET_PARENT_SCHEMA
 
     def _get_income_statement_parent(
         self,
@@ -1937,12 +2423,18 @@ class FinanceTables:
         code = None
 
         # 解析查询对象
-        if hasattr(query_obj, "__class__"):
+        if hasattr(query_obj, "__name__"):
+            # 类对象
+            table_name = query_obj.__name__
+        elif hasattr(query_obj, "__class__"):
+            # 实例对象
             table_name = query_obj.__class__.__name__
 
         # 如果是过滤条件对象
         if hasattr(query_obj, "left"):
-            if hasattr(query_obj.left, "__class__"):
+            if hasattr(query_obj.left, "__name__"):
+                table_name = query_obj.left.__name__
+            elif hasattr(query_obj.left, "__class__"):
                 table_name = query_obj.left.__class__.__name__
             if hasattr(query_obj, "right"):
                 code = str(query_obj.right)
@@ -1978,6 +2470,19 @@ class FinanceTables:
                 return get_fund_dividend(code, **kwargs)
             return pd.DataFrame(columns=FUND_DIVIDEND_SCHEMA)
 
+        elif table_name == "FUND_PERFORMANCE":
+            if code:
+                return get_fund_performance(code, **kwargs)
+            return pd.DataFrame(columns=FUND_PERFORMANCE_SCHEMA)
+
+        elif table_name == "FUND_FIN_INDICATOR":
+            if code:
+                return get_fund_fin_indicator(code, **kwargs)
+            return pd.DataFrame(columns=FUND_FIN_INDICATOR_SCHEMA)
+
+        elif table_name == "FUND_INVEST_TARGET":
+            return get_fund_invest_target(fund_code=code, **kwargs)
+
         elif table_name == "FINANCE_INCOME_STATEMENT_PARENT":
             return self._get_income_statement_parent(code, **kwargs)
 
@@ -2002,6 +2507,41 @@ class FinanceTables:
         elif table_name == "OPT_DAILY_PREOPEN":
             return get_option_preopen(**kwargs)
 
+        elif table_name == "STK_EXCHANGE_TRADE_INFO":
+            return get_exchange_trade_info(**kwargs)
+
+        elif table_name == "FUND_MF_DAILY_PROFIT":
+            if code:
+                return get_fund_mf_daily_profit(fund_code=code, **kwargs)
+            return get_fund_mf_daily_profit(**kwargs)
+
+        elif table_name == "STK_AUDIT_OPINION":
+            return get_audit_opinion(code=code, **kwargs)
+
+        elif table_name == "STK_REPORT_DISCLOSURE":
+            return get_report_disclosure(code=code, **kwargs)
+
+        elif table_name == "STK_PERFORMANCE_LETTERS":
+            return get_performance_letters(code=code, **kwargs)
+
+        elif table_name == "FINANCE_INCOME_STATEMENT":
+            return get_finance_income_statement(code=code, **kwargs)
+
+        elif table_name == "FINANCE_CASHFLOW_STATEMENT":
+            return get_finance_cashflow_statement(code=code, **kwargs)
+
+        elif table_name == "FINANCE_BALANCE_SHEET_PARENT":
+            return get_finance_balance_sheet_parent(code=code, **kwargs)
+
+        elif table_name == "FINANCE_INCOME_STATEMENT_PARENT":
+            return self._get_income_statement_parent(code, **kwargs)
+
+        elif table_name == "FINANCE_CASHFLOW_STATEMENT_PARENT":
+            return self._get_cashflow_statement_parent(code, **kwargs)
+
+        elif table_name == "FINANCE_BALANCE_SHEET":
+            return self._get_balance_sheet_parent(code, **kwargs)
+
         else:
             raise ValueError(f"不支持的表: {table_name}")
 
@@ -2009,6 +2549,21 @@ class FinanceTables:
 # 创建全局实例
 finance_tables = FinanceTables()
 
+# 模块级别别名（方便直接导入使用）
+STK_EXCHANGE_TRADE_INFO = FinanceTables.STK_EXCHANGE_TRADE_INFO
+FUND_MF_DAILY_PROFIT = FinanceTables.FUND_MF_DAILY_PROFIT
+STK_AUDIT_OPINION = FinanceTables.STK_AUDIT_OPINION
+STK_REPORT_DISCLOSURE = FinanceTables.STK_REPORT_DISCLOSURE
+STK_PERFORMANCE_LETTERS = FinanceTables.STK_PERFORMANCE_LETTERS
+FINANCE_INCOME_STATEMENT = FinanceTables.FINANCE_INCOME_STATEMENT
+FINANCE_CASHFLOW_STATEMENT = FinanceTables.FINANCE_CASHFLOW_STATEMENT
+FINANCE_BALANCE_SHEET_PARENT = FinanceTables.FINANCE_BALANCE_SHEET_PARENT
+FINANCE_INCOME_STATEMENT_PARENT = FinanceTables.FINANCE_INCOME_STATEMENT_PARENT
+FINANCE_CASHFLOW_STATEMENT_PARENT = FinanceTables.FINANCE_CASHFLOW_STATEMENT_PARENT
+FINANCE_BALANCE_SHEET = FinanceTables.FINANCE_BALANCE_SHEET
+OPT_DAILY_PREOPEN = FinanceTables.OPT_DAILY_PREOPEN
+FUND_FIN_INDICATOR = FinanceTables.FUND_FIN_INDICATOR
+FUND_INVEST_TARGET = FinanceTables.FUND_INVEST_TARGET
 
 __all__ = [
     "STK_BALANCE_SHEET_SCHEMA",
@@ -2017,22 +2572,47 @@ __all__ = [
     "FUND_NET_VALUE_SCHEMA",
     "FUND_PORTFOLIO_SCHEMA",
     "FUND_DIVIDEND_SCHEMA",
+    "FUND_PERFORMANCE_SCHEMA",
+    "FUND_FIN_INDICATOR_SCHEMA",
+    "FUND_INVEST_TARGET_SCHEMA",
     "FUT_MARGIN_SCHEMA",
     "FUT_CHARGE_SCHEMA",
     "FUT_WAREHOUSE_SCHEMA",
     "FUT_MEMBER_POSITION_SCHEMA",
     "OPT_DAILY_PREOPEN_SCHEMA",
+    "STK_EXCHANGE_TRADE_INFO_SCHEMA",
+    "FUND_MF_DAILY_PROFIT_SCHEMA",
+    "STK_AUDIT_OPINION_SCHEMA",
+    "STK_REPORT_DISCLOSURE_SCHEMA",
+    "STK_PERFORMANCE_LETTERS_SCHEMA",
+    "FINANCE_INCOME_STATEMENT_SCHEMA",
+    "FINANCE_CASHFLOW_STATEMENT_SCHEMA",
+    "FINANCE_BALANCE_SHEET_PARENT_SCHEMA",
     "get_balance_sheet",
     "get_income_statement",
     "get_cashflow_statement",
     "get_fund_net_value",
     "get_fund_portfolio",
     "get_fund_dividend",
+    "get_fund_performance",
+    "get_fund_fin_indicator",
+    "get_fund_invest_target",
     "get_futures_margin",
     "get_futures_charge",
     "get_futures_warehouse",
     "get_futures_member_position",
     "get_option_preopen",
+    "get_exchange_trade_info",
+    "get_fund_mf_daily_profit",
+    "get_audit_opinion",
+    "get_report_disclosure",
+    "get_performance_letters",
+    "get_finance_income_statement",
+    "get_finance_cashflow_statement",
+    "get_finance_balance_sheet_parent",
+    "get_finance_income_statement_parent",
+    "get_finance_cashflow_statement_parent",
+    "get_finance_balance_sheet",
     "FinanceTables",
     "finance_tables",
 ]

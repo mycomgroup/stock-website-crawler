@@ -32,6 +32,14 @@ _DATE_COLUMN_CANDIDATES = {
         "STATEMENT_DATE",
         "date",
         "report_date",
+        "REPORT_DATE",
+    ],
+    "valuation": [
+        "日期",
+        "date",
+        "REPORT_DATE",
+        "NOTICE_DATE",
+        "trade_date",
     ],
 }
 

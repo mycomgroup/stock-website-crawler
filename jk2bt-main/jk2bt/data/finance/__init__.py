@@ -75,7 +75,6 @@ from .share_change import (
     run_query_simple as run_query_simple_share_change,
     get_pledge_info,
     get_major_holder_trade,
-    get_shareholder_changes,
     get_insider_trading,
     get_major_shareholder_change,
     analyze_share_change_trend,
@@ -258,4 +257,131 @@ __all__ = [
     "get_fund_portfolio",
     "FinanceTables",
     "finance_tables",
+    "get_financial_data",
 ]
+
+
+def get_financial_data(
+    securities,
+    start_date=None,
+    end_date=None,
+    fields=None,
+    count=None,
+    report_type="all",
+):
+    """
+    获取财务数据统一接口（兼容聚宽风格）。
+
+    Parameters
+    ----------
+    securities : str or list
+        股票代码或代码列表
+    start_date : str, optional
+        起始日期 'YYYY-MM-DD'
+    end_date : str, optional
+        结束日期 'YYYY-MM-DD'
+    fields : list, optional
+        字段列表，如 ['code', 'pub_date', 'stat_date', 'roe', 'roa', 'eps']
+    count : int, optional
+        数据条数
+    report_type : str, default 'all'
+        报表类型：'income'(利润表), 'balance'(资产负债表), 'cashflow'(现金流量表),
+        'indicator'(财务指标), 'all'
+
+    Returns
+    -------
+    pd.DataFrame
+        财务数据 DataFrame
+    """
+    from jk2bt.data.sources import get_adapter
+
+    if isinstance(securities, str):
+        securities = [securities]
+
+    all_results = []
+
+    for symbol in securities:
+        code = symbol.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+
+        if report_type == "income":
+            try:
+                df = get_income(code, start_date=start_date, end_date=end_date)
+                if not df.empty:
+                    df["code"] = code
+                    all_results.append(df)
+            except Exception:
+                pass
+
+        elif report_type == "balance":
+            try:
+                df = get_balance_sheet(code, start_date=start_date, end_date=end_date)
+                if not df.empty:
+                    df["code"] = code
+                    all_results.append(df)
+            except Exception:
+                pass
+
+        elif report_type == "cashflow":
+            try:
+                df = get_cashflow(code, start_date=start_date, end_date=end_date)
+                if not df.empty:
+                    df["code"] = code
+                    all_results.append(df)
+            except Exception:
+                pass
+
+        elif report_type == "indicator":
+            try:
+                df = get_forecast_data(code)
+                if df is not None and not df.empty:
+                    df["code"] = code
+                    if start_date:
+                        df = df[df["pub_date"] >= start_date]
+                    if end_date:
+                        df = df[df["pub_date"] <= end_date]
+                    all_results.append(df)
+            except Exception:
+                pass
+
+        else:
+            try:
+                income_df = get_income(code, start_date=start_date, end_date=end_date)
+                if income_df is not None and not income_df.empty:
+                    income_df["code"] = code
+                    all_results.append(income_df)
+            except Exception:
+                pass
+
+            try:
+                balance_df = get_balance_sheet(
+                    code, start_date=start_date, end_date=end_date
+                )
+                if balance_df is not None and not balance_df.empty:
+                    balance_df["code"] = code
+                    all_results.append(balance_df)
+            except Exception:
+                pass
+
+            try:
+                cashflow_df = get_cashflow(
+                    code, start_date=start_date, end_date=end_date
+                )
+                if cashflow_df is not None and not cashflow_df.empty:
+                    cashflow_df["code"] = code
+                    all_results.append(cashflow_df)
+            except Exception:
+                pass
+
+    if not all_results:
+        return pd.DataFrame()
+
+    combined = pd.concat(all_results, ignore_index=True)
+
+    if fields:
+        available_fields = [f for f in fields if f in combined.columns]
+        combined = combined[available_fields]
+
+    if count:
+        combined = combined.tail(count)
+
+    return combined

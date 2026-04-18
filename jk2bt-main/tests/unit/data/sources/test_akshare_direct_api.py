@@ -87,7 +87,7 @@ class TestAkShareDirectAPI:
         """指数成分股"""
         df = _skip_on_network_error(
             ak.index_stock_cons,
-            index="000300",
+            symbol="000300",
         )
         assert isinstance(df, pd.DataFrame)
         assert not df.empty
@@ -96,7 +96,7 @@ class TestAkShareDirectAPI:
         """指数成分股权重"""
         df = _skip_on_network_error(
             ak.index_stock_cons_weight_csindex,
-            index_code="000300",
+            symbol="000300",
         )
         assert isinstance(df, pd.DataFrame)
 
@@ -149,7 +149,7 @@ class TestAkShareDirectAPI:
         """资产负债表"""
         df = _skip_on_network_error(
             ak.stock_balance_sheet_by_report_em,
-            symbol="600519",
+            symbol="SH600519",
         )
         assert isinstance(df, pd.DataFrame)
 
@@ -165,10 +165,11 @@ class TestAkShareDirectAPI:
         assert isinstance(df, pd.DataFrame)
 
     def test_stock_fund_flow_individual(self):
-        """个股资金流向"""
+        """个股资金流向（东方财富）"""
         df = _skip_on_network_error(
-            ak.stock_fund_flow_individual,
-            symbol="600519",
+            ak.stock_individual_fund_flow,
+            stock="600519",
+            market="sh",
         )
         assert isinstance(df, pd.DataFrame)
 
@@ -196,7 +197,7 @@ class TestAkShareDirectAPI:
         """股东户数"""
         df = _skip_on_network_error(
             ak.stock_zh_a_gdhs,
-            symbol="600519",
+            symbol="20230930",
         )
         assert isinstance(df, pd.DataFrame)
 

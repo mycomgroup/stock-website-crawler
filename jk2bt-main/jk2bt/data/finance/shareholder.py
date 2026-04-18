@@ -69,6 +69,13 @@ _SHAREHOLDER_SCHEMA = [
 
 _SHAREHOLDER_NUM_SCHEMA = [
     "code",
+    "pub_date",
+    "end_date",
+    "share_holders",
+    "a_share_holders",
+    "b_share_holders",
+    "h_share_holders",
+    # Bonus fields from akshare (kept for backward compatibility)
     "report_date",
     "ann_date",
     "holder_num",
@@ -1023,46 +1030,68 @@ def _normalize_holder_count(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
     result = pd.DataFrame()
     result["code"] = [jq_code] * len(df)
 
+    # JQData standard fields
     if "股东户数" in df.columns:
-        result["holder_num"] = df["股东户数"]
+        result["share_holders"] = df["股东户数"]
+        result["holder_num"] = df["股东户数"]  # backward compat alias
     elif "户数" in df.columns:
+        result["share_holders"] = df["户数"]
         result["holder_num"] = df["户数"]
     else:
+        result["share_holders"] = None
         result["holder_num"] = None
 
     if "A股股东户数" in df.columns:
-        result["a_holder_num"] = df["A股股东户数"]
+        result["a_share_holders"] = df["A股股东户数"]
+        result["a_holder_num"] = df["A股股东户数"]  # backward compat alias
     elif "A股东户数" in df.columns:
+        result["a_share_holders"] = df["A股东户数"]
         result["a_holder_num"] = df["A股东户数"]
     else:
+        result["a_share_holders"] = None
         result["a_holder_num"] = None
 
     if "B股股东户数" in df.columns:
+        result["b_share_holders"] = df["B股股东户数"]
         result["b_holder_num"] = df["B股股东户数"]
     elif "B股东户数" in df.columns:
+        result["b_share_holders"] = df["B股东户数"]
         result["b_holder_num"] = df["B股东户数"]
     else:
+        result["b_share_holders"] = None
         result["b_holder_num"] = None
 
     if "H股股东户数" in df.columns:
+        result["h_share_holders"] = df["H股股东户数"]
         result["h_holder_num"] = df["H股股东户数"]
     elif "H股东户数" in df.columns:
+        result["h_share_holders"] = df["H股东户数"]
         result["h_holder_num"] = df["H股东户数"]
     else:
+        result["h_share_holders"] = None
         result["h_holder_num"] = None
 
+    # Date fields - JQData uses pub_date and end_date
+    if "公告日期" in df.columns:
+        result["pub_date"] = df["公告日期"]
+    else:
+        result["pub_date"] = None
+
     if "报告期" in df.columns:
-        result["report_date"] = df["报告期"]
+        result["end_date"] = df["报告期"]
+        result["report_date"] = df["报告期"]  # backward compat alias
     elif "截止日期" in df.columns:
+        result["end_date"] = df["截止日期"]
         result["report_date"] = df["截止日期"]
     else:
+        result["end_date"] = None
         result["report_date"] = None
 
-    if "公告日期" in df.columns:
-        result["ann_date"] = df["公告日期"]
-    else:
-        result["ann_date"] = result["report_date"]
+    # ann_date alias
+    if "ann_date" not in result.columns:
+        result["ann_date"] = result.get("pub_date", result.get("end_date", None))
 
+    # Change fields (bonus)
     if "股东户数变化" in df.columns:
         result["holder_num_change"] = pd.to_numeric(df["股东户数变化"], errors="coerce")
     elif "变化" in df.columns:
@@ -1156,6 +1185,79 @@ def query_shareholder_num(symbols: list, force_update: bool = False) -> pd.DataF
     return pd.concat(dfs, ignore_index=True)
 
 
+# =====================================================================
+# 大股东增减持
+# =====================================================================
+
+_STK_SHAREHOLDERS_SHARE_CHANGE_SCHEMA = [
+    "code",  # 股票代码
+    "holder_name",  # 股东名称
+    "change_date",  # 变动日期
+    "change_type",  # 变动类型（增持/减持）
+    "change_amount",  # 变动数量
+    "change_ratio",  # 变动比例
+    "hold_amount_after",  # 变动后持股数量
+    "hold_ratio_after",  # 变动后持股比例
+]
+
+
+def get_shareholders_share_change(
+    code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    获取大股东增减持数据
+
+    参数:
+        code: 股票代码
+        start_date: 开始日期
+        end_date: 结束日期
+
+    返回:
+        DataFrame，包含大股东增减持数据
+    """
+    import akshare as ak
+
+    try:
+        df = ak.stock_shareholder_change_ths()
+        if df is None or df.empty:
+            return pd.DataFrame(columns=_STK_SHAREHOLDERS_SHARE_CHANGE_SCHEMA)
+
+        column_mapping = {
+            "股票代码": "code",
+            "股东名称": "holder_name",
+            "变动日期": "change_date",
+            "变动类型": "change_type",
+            "变动数量": "change_amount",
+            "变动比例": "change_ratio",
+            "变动后持股": "hold_amount_after",
+            "变动后持股比例": "hold_ratio_after",
+        }
+
+        df = df.rename(columns=column_mapping)
+
+        if "change_date" in df.columns:
+            df["change_date"] = pd.to_datetime(df["change_date"], errors="coerce")
+            if start_date:
+                df = df[df["change_date"] >= pd.to_datetime(start_date)]
+            if end_date:
+                df = df[df["change_date"] <= pd.to_datetime(end_date)]
+
+        if code:
+            code = code.replace(".XSHG", "").replace(".XSHE", "").zfill(6)
+            df = df[df["code"] == code]
+
+        available_cols = [
+            c for c in _STK_SHAREHOLDERS_SHARE_CHANGE_SCHEMA if c in df.columns
+        ]
+        return df[available_cols]
+
+    except Exception as e:
+        logger.warning(f"获取大股东增减持数据失败: {e}")
+        return pd.DataFrame(columns=_STK_SHAREHOLDERS_SHARE_CHANGE_SCHEMA)
+
+
 class FinanceQuery:
     """
     聚宽 finance 模块模拟器。
@@ -1219,6 +1321,13 @@ class FinanceQuery:
         """股东户数表"""
 
         code = None
+        pub_date = None
+        end_date = None
+        share_holders = None
+        a_share_holders = None
+        b_share_holders = None
+        h_share_holders = None
+        # Bonus fields for backward compatibility
         report_date = None
         ann_date = None
         holder_num = None
@@ -1260,6 +1369,18 @@ class FinanceQuery:
         change_type = None
         change_amount = None
         rank = None
+
+    class STK_SHAREHOLDERS_SHARE_CHANGE:
+        """大股东增减持表"""
+
+        code = None
+        holder_name = None
+        change_date = None
+        change_type = None
+        change_amount = None
+        change_ratio = None
+        hold_amount_after = None
+        hold_ratio_after = None
 
     def run_query(
         self,
@@ -1494,11 +1615,19 @@ class FinanceQuery:
                     )
                 return empty_df
 
+        elif table_name == "STK_SHAREHOLDERS_SHARE_CHANGE":
+            if "code" in conditions:
+                return get_shareholders_share_change(code=conditions["code"])
+            return get_shareholders_share_change()
+
         else:
             raise ValueError(f"不支持的表: {table_name}")
 
 
 finance = FinanceQuery()
+
+# 模块级别别名
+STK_SHAREHOLDERS_SHARE_CHANGE = FinanceQuery.STK_SHAREHOLDERS_SHARE_CHANGE
 
 
 def run_query_simple(
@@ -1625,9 +1754,18 @@ def run_query_simple(
                 )
             return empty_df
 
+    elif table == "STK_SHAREHOLDERS_SHARE_CHANGE":
+        if code:
+            return get_shareholders_share_change(code=code)
+        return get_shareholders_share_change()
+
     else:
         raise ValueError(f"不支持的表: {table}")
 
 
 from jk2bt.utils.symbol import extract_code_num as _extract_code_num
 from jk2bt.utils.symbol import ak_code_to_jq as _normalize_to_jq
+
+# 模块级别别名 (JQData兼容)
+STK_SHAREHOLDER_FLOATING_TOP10 = FinanceQuery.STK_SHAREHOLDER_FLOAT_TOP10
+STK_HOLDER_NUM = FinanceQuery.STK_SHAREHOLDER_NUM

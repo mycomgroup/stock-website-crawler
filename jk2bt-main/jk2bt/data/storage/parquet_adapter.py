@@ -13,6 +13,7 @@ import pandas as pd
 
 from jk2bt.cache import get_cache_manager, CacheManager
 from jk2bt.utils.symbol import ak_code_to_jq as normalize_to_jq_format
+from jk2bt.utils.paths import resolve_cache_path
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class ParquetAdapter:
                 config = get_config()
                 base_dir = config.cache.parquet_cache_dir
             except Exception:
-                base_dir = "data_cache/cache"
+                base_dir = resolve_cache_path("data_cache/cache")
         else:
             base_dir = db_path
 

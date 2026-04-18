@@ -346,9 +346,21 @@ def compute_style_factor_returns_real(
     ValueError
         当参数不合法时
     """
-    from jk2bt.api.jq_compat import get_index_stocks, get_price, get_fundamentals
-    from jk2bt.api.jq_compat import query, valuation
-    from jk2bt.api.factor_kanban import CNE6_STYLE_FACTORS
+    from jk2bt.data.market.index_components import get_index_stocks as _get_index_stocks
+    from jk2bt.data.market.stock import get_stock_daily
+
+    CNE6_STYLE_FACTORS = [
+        "size",
+        "beta",
+        "momentum",
+        "volatility",
+        "liquidity",
+        "growth",
+        "leverage",
+        "earnings_yield",
+        "book_to_price",
+        "profitability",
+    ]
 
     if factors is None:
         factors = CNE6_STYLE_FACTORS.copy()
@@ -372,7 +384,7 @@ def compute_style_factor_returns_real(
 
     # 1. 获取股票池
     try:
-        stocks = get_index_stocks(index_code)
+        stocks = _get_index_stocks(index_code)
     except Exception as e:
         warnings.warn(f"获取指数成分股失败: {e}")
         return pd.DataFrame()
@@ -388,16 +400,27 @@ def compute_style_factor_returns_real(
 
     # 2. 获取股票价格数据计算收益率
     try:
-        price_data = get_price(
-            stocks,
-            start_date=start_date,
-            end_date=end_date,
-            frequency="daily",
-            fields=["close"],
-            skip_paused=True,
-            fq="pre",
-            panel=False,
-        )
+        price_data_list = []
+        for stock in stocks:
+            try:
+                df = get_stock_daily(
+                    stock,
+                    start=start_date,
+                    end=end_date,
+                    adjust="qfq",
+                )
+                if df is not None and not df.empty:
+                    df = df.copy()
+                    df["code"] = stock
+                    price_data_list.append(df)
+            except Exception:
+                continue
+
+        if not price_data_list:
+            warnings.warn("获取价格数据失败")
+            return pd.DataFrame()
+
+        price_data = pd.concat(price_data_list, ignore_index=True)
     except Exception as e:
         warnings.warn(f"获取价格数据失败: {e}")
         return pd.DataFrame()
@@ -505,31 +528,20 @@ def _calculate_factor_exposures(
     pd.DataFrame
         因子暴露矩阵，index 为股票代码，columns 为因子名称
     """
-    from jk2bt.api.jq_compat import get_fundamentals, query, valuation
-    from jk2bt.api.jq_compat import get_price
+    # get_fundamentals/query/valuation 暂未实现，数据层无对应接口
+    # valuation_df 相关逻辑暂时禁用
 
     date_str = str(date)[:10] if isinstance(date, pd.Timestamp) else str(date)[:10]
 
     exposures = pd.DataFrame(index=stocks)
 
-    # 获取估值数据
-    try:
-        valuation_df = get_fundamentals(
-            query(valuation).filter(valuation.code.in_(stocks)),
-            date=date_str,
-        )
-    except Exception:
-        valuation_df = pd.DataFrame()
-
-    if not valuation_df.empty and "code" in valuation_df.columns:
-        valuation_df.set_index("code", inplace=True)
+    # 获取估值数据 - 暂未实现
+    # TODO: 待 data/finance 层实现 get_fundamentals 后补充
+    valuation_df = pd.DataFrame()
 
     # Size因子: ln(market_cap)
     if "size" in factors:
-        if not valuation_df.empty and "market_cap" in valuation_df.columns:
-            exposures["size"] = np.log(valuation_df["market_cap"])
-        else:
-            exposures["size"] = 0.0
+        exposures["size"] = 0.0
 
     # Beta因子: 使用过去一年的日收益率对市场收益率回归
     if "beta" in factors:
@@ -545,57 +557,28 @@ def _calculate_factor_exposures(
 
     # Liquidity因子: 过去一个月的平均换手率（用成交量/流通市值近似）
     if "liquidity" in factors:
-        if not valuation_df.empty and "circulating_market_cap" in valuation_df.columns:
-            exposures["liquidity"] = _calculate_liquidity(
-                stocks, date_str, valuation_df["circulating_market_cap"]
-            )
-        else:
-            exposures["liquidity"] = 0.0
+        exposures["liquidity"] = 0.0
 
     # Growth因子: 营业收入增长率
     if "growth" in factors:
-        if (
-            not valuation_df.empty
-            and "inc_revenue_year_on_year" in valuation_df.columns
-        ):
-            exposures["growth"] = valuation_df["inc_revenue_year_on_year"]
-        else:
-            exposures["growth"] = 0.0
+        exposures["growth"] = 0.0
 
     # Leverage因子: 资产负债率
     if "leverage" in factors:
-        if not valuation_df.empty and "debt_to_asset" in valuation_df.columns:
-            exposures["leverage"] = valuation_df["debt_to_asset"]
-        else:
-            exposures["leverage"] = 0.0
+        exposures["leverage"] = 0.0
 
     # Earnings Yield因子: 盈利收益率 (EP = 1/PE)
     if "earnings_yield" in factors:
-        if not valuation_df.empty and "pe_ratio" in valuation_df.columns:
-            pe = valuation_df["pe_ratio"].copy()
-            pe = pe.replace(0, np.nan)
-            exposures["earnings_yield"] = 1.0 / pe
-            exposures["earnings_yield"] = exposures["earnings_yield"].fillna(0)
-        else:
-            exposures["earnings_yield"] = 0.0
+        exposures["earnings_yield"] = 0.0
 
     # Book to Price因子: 账面市值比 (1/PB)
     if "book_to_price" in factors or "book_to_market" in factors:
         col_name = "book_to_price" if "book_to_price" in factors else "book_to_market"
-        if not valuation_df.empty and "pb_ratio" in valuation_df.columns:
-            pb = valuation_df["pb_ratio"].copy()
-            pb = pb.replace(0, np.nan)
-            exposures[col_name] = 1.0 / pb
-            exposures[col_name] = exposures[col_name].fillna(0)
-        else:
-            exposures[col_name] = 0.0
+        exposures[col_name] = 0.0
 
     # Profitability因子: ROE
     if "profitability" in factors:
-        if not valuation_df.empty and "roe_ratio" in valuation_df.columns:
-            exposures["profitability"] = valuation_df["roe_ratio"]
-        else:
-            exposures["profitability"] = 0.0
+        exposures["profitability"] = 0.0
 
     # 填充缺失值
     exposures = exposures.fillna(0)
@@ -616,44 +599,43 @@ def _calculate_beta(
 
     使用过去 window 个交易日的日收益率对市场收益率回归。
     """
-    from jk2bt.api.jq_compat import get_index_stocks, get_price
+    from jk2bt.data.market.index_components import get_index_stocks as _get_index_stocks
+    from jk2bt.data.market.stock import get_stock_daily
 
     try:
         start_dt = pd.Timestamp(date_str) - pd.Timedelta(days=window * 2)
         start_str = start_dt.strftime("%Y-%m-%d")
 
         # 获取沪深300指数作为市场基准
-        index_prices = get_price(
+        index_df = get_stock_daily(
             "000300.XSHG",
-            start_date=start_str,
-            end_date=date_str,
-            frequency="daily",
-            fields=["close"],
-            skip_paused=True,
+            start=start_str,
+            end=date_str,
+            adjust="qfq",
         )
 
-        if index_prices is None or index_prices.empty:
+        if index_df is None or index_df.empty:
             return pd.Series(1.0, index=stocks)
 
-        market_returns = index_prices["close"].pct_change().dropna()
+        index_prices = index_df.set_index("datetime")["close"]
+        market_returns = index_prices.pct_change().dropna()
 
         betas = {}
         for stock in stocks[:50]:  # 限制计算量
             try:
-                stock_prices = get_price(
+                stock_df = get_stock_daily(
                     stock,
-                    start_date=start_str,
-                    end_date=date_str,
-                    frequency="daily",
-                    fields=["close"],
-                    skip_paused=True,
+                    start=start_str,
+                    end=date_str,
+                    adjust="qfq",
                 )
 
-                if stock_prices is None or stock_prices.empty:
+                if stock_df is None or stock_df.empty:
                     betas[stock] = 1.0
                     continue
 
-                stock_returns = stock_prices["close"].pct_change().dropna()
+                stock_prices = stock_df.set_index("datetime")["close"]
+                stock_returns = stock_prices.pct_change().dropna()
 
                 # 对齐数据
                 common_idx = market_returns.index.intersection(stock_returns.index)
@@ -697,7 +679,7 @@ def _calculate_momentum(
     """
     计算动量因子：过去12个月收益率（剔除最近1个月）。
     """
-    from jk2bt.api.jq_compat import get_price
+    from jk2bt.data.market.stock import get_stock_daily
 
     try:
         end_dt = pd.Timestamp(date_str)
@@ -707,20 +689,18 @@ def _calculate_momentum(
         momentums = {}
         for stock in stocks[:50]:
             try:
-                prices = get_price(
+                prices_df = get_stock_daily(
                     stock,
-                    start_date=start_str,
-                    end_date=date_str,
-                    frequency="daily",
-                    fields=["close"],
-                    skip_paused=True,
+                    start=start_str,
+                    end=date_str,
+                    adjust="qfq",
                 )
 
-                if prices is None or prices.empty or len(prices) < 60:
+                if prices_df is None or prices_df.empty or len(prices_df) < 60:
                     momentums[stock] = 0.0
                     continue
 
-                close = prices["close"]
+                close = prices_df.set_index("datetime")["close"]
                 # 计算 skip_months 前的价格和 lookback_months 前的价格
                 skip_days = skip_months * 20
                 lookback_days = lookback_months * 20
@@ -758,7 +738,7 @@ def _calculate_volatility(
     """
     计算波动率因子：过去一年的日收益率标准差。
     """
-    from jk2bt.api.jq_compat import get_price
+    from jk2bt.data.market.stock import get_stock_daily
 
     try:
         start_dt = pd.Timestamp(date_str) - pd.Timedelta(days=window * 2)
@@ -767,20 +747,18 @@ def _calculate_volatility(
         vols = {}
         for stock in stocks[:50]:
             try:
-                prices = get_price(
+                prices_df = get_stock_daily(
                     stock,
-                    start_date=start_str,
-                    end_date=date_str,
-                    frequency="daily",
-                    fields=["close"],
-                    skip_paused=True,
+                    start=start_str,
+                    end=date_str,
+                    adjust="qfq",
                 )
 
-                if prices is None or prices.empty or len(prices) < 60:
+                if prices_df is None or prices_df.empty or len(prices_df) < 60:
                     vols[stock] = 0.0
                     continue
 
-                returns = prices["close"].pct_change().dropna()
+                returns = prices_df.set_index("datetime")["close"].pct_change().dropna()
                 vols[stock] = returns.std() * np.sqrt(252)
 
             except Exception:
@@ -807,7 +785,7 @@ def _calculate_liquidity(
     计算流动性因子：过去一个月的日均换手率。
     使用成交量/流通股本近似。
     """
-    from jk2bt.api.jq_compat import get_price
+    from jk2bt.data.market.stock import get_stock_daily
 
     try:
         start_dt = pd.Timestamp(date_str) - pd.Timedelta(days=window * 2)
@@ -816,21 +794,19 @@ def _calculate_liquidity(
         liqs = {}
         for stock in stocks[:50]:
             try:
-                prices = get_price(
+                prices_df = get_stock_daily(
                     stock,
-                    start_date=start_str,
-                    end_date=date_str,
-                    frequency="daily",
-                    fields=["volume"],
-                    skip_paused=True,
+                    start=start_str,
+                    end=date_str,
+                    adjust="qfq",
                 )
 
-                if prices is None or prices.empty:
+                if prices_df is None or prices_df.empty:
                     liqs[stock] = 0.0
                     continue
 
                 # 使用成交量的对数作为流动性代理
-                avg_volume = prices["volume"].mean()
+                avg_volume = prices_df["volume"].mean()
                 liqs[stock] = np.log1p(avg_volume)
 
             except Exception:

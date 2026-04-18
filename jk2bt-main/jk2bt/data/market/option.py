@@ -257,7 +257,9 @@ class OptionDBManager(LazyInitSingleton):
             return
 
         if db_path is None:
-            db_path = "data_cache/option_parquet"
+            from jk2bt.utils.paths import resolve_cache_path
+
+            db_path = resolve_cache_path("data_cache/option_parquet")
 
         self._db_path = db_path
         self._manager = None
@@ -1230,6 +1232,20 @@ class FinanceQuery:
         theta = None
         vega = None
 
+    class OPT_RISK_INDICATOR:
+        """期权风险指标表"""
+
+        date = None
+        option_code = None
+        delta = None
+        gamma = None
+        theta = None
+        vega = None
+        rho = None
+        implied_vol = None
+        time_value = None
+        intrinsic_value = None
+
     def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         table_name = None
         conditions = {}
@@ -1365,8 +1381,167 @@ class FinanceQuery:
             if result.success and result.data is not None:
                 return result.data
             return pd.DataFrame(columns=_OPT_DAILY_PREOPEN_SCHEMA)
+        elif table_name == "OPT_RISK_INDICATOR":
+            return self._query_opt_risk_indicator(conditions, force_update, use_duckdb)
         else:
             raise ValueError(f"不支持的表: {table_name}")
+
+    def _query_opt_risk_indicator(
+        self, conditions, force_update=False, use_duckdb=True
+    ):
+        """查询期权风险指标"""
+        import math
+
+        def norm_cdf(x):
+            return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+        def norm_pdf(x):
+            return math.exp(-0.5 * x * x) / math.sqrt(2 * math.pi)
+
+        option_code = conditions.get("option_code")
+        if not option_code:
+            return pd.DataFrame(
+                columns=[
+                    "date",
+                    "option_code",
+                    "delta",
+                    "gamma",
+                    "theta",
+                    "vega",
+                    "rho",
+                    "implied_vol",
+                    "time_value",
+                    "intrinsic_value",
+                ]
+            )
+
+        try:
+            greeks_result = get_option_greeks(option_code, force_update=force_update)
+            if not greeks_result.success or greeks_result.data.empty:
+                return pd.DataFrame(
+                    columns=[
+                        "date",
+                        "option_code",
+                        "delta",
+                        "gamma",
+                        "theta",
+                        "vega",
+                        "rho",
+                        "implied_vol",
+                        "time_value",
+                        "intrinsic_value",
+                    ]
+                )
+
+            greeks_df = greeks_result.data
+            info_result = get_option_info(option_code, force_update=force_update)
+            strike = None
+            option_type_str = ""
+            if info_result.success and not info_result.data.empty:
+                info = info_result.data.iloc[0]
+                strike = info.get("strike")
+                option_type_str = info.get("option_type", "")
+
+            results = []
+            for _, row in greeks_df.iterrows():
+                iv = row.get("implied_vol")
+                last_price = row.get("last_price")
+                date_val = row.get("date", datetime.now().strftime("%Y-%m-%d"))
+
+                if iv is None or iv <= 0:
+                    iv = 0.3
+                if strike is None or strike <= 0:
+                    strike = row.get("strike", 0)
+                if last_price is None or last_price <= 0:
+                    last_price = 0
+
+                S = strike if strike > 0 else 1.0
+                K = strike if strike > 0 else 1.0
+                T = 0.25
+                r = 0.03
+
+                d1 = (
+                    (math.log(S / K) + (r + 0.5 * iv**2) * T) / (iv * math.sqrt(T))
+                    if iv > 0 and T > 0
+                    else 0
+                )
+                d2 = d1 - iv * math.sqrt(T) if iv > 0 and T > 0 else 0
+
+                is_call = "购" in str(option_type_str) or "看涨" in str(option_type_str)
+                delta = norm_cdf(d1) if is_call else norm_cdf(d1) - 1
+                gamma = (
+                    norm_pdf(d1) / (S * iv * math.sqrt(T))
+                    if iv > 0 and T > 0 and S > 0
+                    else 0
+                )
+                theta = (
+                    (
+                        (
+                            -S * norm_pdf(d1) * iv / (2 * math.sqrt(T))
+                            - r * K * math.exp(-r * T) * norm_cdf(d2)
+                        )
+                        / 365
+                        if is_call
+                        else (
+                            -S * norm_pdf(d1) * iv / (2 * math.sqrt(T))
+                            + r * K * math.exp(-r * T) * norm_cdf(-d2)
+                        )
+                        / 365
+                    )
+                    if iv > 0 and T > 0
+                    else 0
+                )
+                vega = S * norm_pdf(d1) * math.sqrt(T) / 100 if iv > 0 and T > 0 else 0
+                rho = (
+                    (
+                        K * T * math.exp(-r * T) * norm_cdf(d2) / 100
+                        if is_call
+                        else -K * T * math.exp(-r * T) * norm_cdf(-d2) / 100
+                    )
+                    if T > 0
+                    else 0
+                )
+
+                if is_call:
+                    intrinsic_value = max(S - K, 0)
+                else:
+                    intrinsic_value = max(K - S, 0)
+                time_value = (
+                    max(last_price - intrinsic_value, 0) if last_price > 0 else 0
+                )
+
+                results.append(
+                    {
+                        "date": date_val,
+                        "option_code": option_code,
+                        "delta": round(delta, 6),
+                        "gamma": round(gamma, 6),
+                        "theta": round(theta, 6),
+                        "vega": round(vega, 6),
+                        "rho": round(rho, 6),
+                        "implied_vol": round(iv, 6),
+                        "time_value": round(time_value, 4),
+                        "intrinsic_value": round(intrinsic_value, 4),
+                    }
+                )
+
+            return pd.DataFrame(results)
+        except Exception as e:
+            logger.warning(f"[OPT_RISK_INDICATOR] 获取风险指标失败: {e}")
+            return pd.DataFrame(
+                columns=[
+                    "date",
+                    "option_code",
+                    "delta",
+                    "gamma",
+                    "theta",
+                    "vega",
+                    "rho",
+                    "implied_vol",
+                    "time_value",
+                    "intrinsic_value",
+                ]
+            )
 
 
 finance = FinanceQuery()
@@ -1379,6 +1554,7 @@ class OptionQuery:
     OPT_EXERCISE_INFO = FinanceQuery.OPT_EXERCISE_INFO
     OPT_ADJUSTMENT = FinanceQuery.OPT_ADJUSTMENT
     OPT_DAILY_PREOPEN = FinanceQuery.OPT_DAILY_PREOPEN
+    OPT_RISK_INDICATOR = FinanceQuery.OPT_RISK_INDICATOR
 
     def run_query(self, query_obj, force_update=False, use_duckdb=True) -> pd.DataFrame:
         return finance.run_query(query_obj, force_update, use_duckdb)

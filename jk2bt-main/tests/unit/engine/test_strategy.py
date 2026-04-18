@@ -1,9 +1,9 @@
 from jk2bt.engine.strategy_base import (
     JQ2BTBaseStrategy,
+)
+from jk2bt import (
     get_akshare_etf_data,
     get_akshare_stock_data,
-    get_index_nav,
-    analyze_performance,
 )
 import backtrader as bt
 import pandas as pd

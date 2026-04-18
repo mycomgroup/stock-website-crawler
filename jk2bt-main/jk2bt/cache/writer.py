@@ -36,7 +36,7 @@ class AtomicWriter:
         )
         self.partition_manager.ensure_dir(partition_path)
 
-        prepared_data = self._validate_and_prepare(data, schema, primary_key)
+        prepared_data = self._validate_and_prepare(table, data, schema, primary_key)
 
         filename = self.partition_manager.generate_filename(partition_value)
         target_path = partition_path / filename
@@ -53,20 +53,21 @@ class AtomicWriter:
         meta_path = self.partition_manager.raw_partition_path(table, "meta", None, None)
         self.partition_manager.ensure_dir(meta_path)
 
-        prepared_data = self._validate_and_prepare(data, schema, primary_key)
+        prepared_data = self._validate_and_prepare(table, data, schema, primary_key)
 
         target_path = meta_path / f"{table}.parquet"
         return self._write_atomic(prepared_data, target_path)
 
     def _validate_and_prepare(
         self,
+        table: str,
         data: pd.DataFrame,
         schema: dict[str, str] | None,
         primary_key: list[str] | None,
     ) -> pd.DataFrame:
         result = data
         if schema is not None:
-            validator = SchemaValidator("unknown", schema)
+            validator = SchemaValidator(table, schema)
             result = validator.validate_and_cast(result, primary_key)
         if primary_key is not None:
             result = deduplicate_by_key(result, primary_key)

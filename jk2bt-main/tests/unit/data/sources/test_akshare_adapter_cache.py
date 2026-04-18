@@ -223,6 +223,7 @@ class TestAkShareAdapterCache:
         df2 = adapter.get_dividend_fhps(symbol="600519")
         assert isinstance(df2, pd.DataFrame)
 
+    @pytest.mark.skip(reason="stock_gpzy_pledge_ratio_detail_em API is too slow (>90s)")
     def test_get_pledge_ratio_em(self, adapter):
         """测试股权质押缓存"""
         _skip_if_no_akshare(adapter)

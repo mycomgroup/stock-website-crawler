@@ -4,18 +4,18 @@ API 层公共接口 —— 按功能分组导出所有公开符号
 
 分组：
   1. 行情数据       来自 market.py
-  2. 订单与组合     来自 order.py
-  3. 过滤工具       来自 filter.py
-  4. 财务数据       来自 finance.py
-  5. 统计与因子     来自 stats.py + factor.py
-  6. 日期工具       来自 date.py
-  7. 技术指标       来自 indicators.py
-  8. 榜单数据       来自 billboard.py
-  9. 缓存与性能     来自 cache.py
+  2. 过滤工具       来自 filter.py
+  3. 财务数据       来自 finance.py
+  4. 统计与因子     来自 stats.py + factor.py
+  5. 日期工具       来自 date.py
+  6. 技术指标       来自 indicators.py
+  7. 榜单数据       来自 billboard.py
+  8. 缓存与性能     来自 cache.py
+
+注意：订单相关函数（order_shares, order_target_percent 等）已移到 engine 层。
+      请使用 from jk2bt.engine import order_shares 或 from jk2bt import order_shares。
 
 向后兼容说明：
-  - will_sell_on_limit_up、will_buy_on_limit_down、get_position_ratio
-    从 order.py 导出，保持向后兼容
   - APIUsageInfo、analyze_api_gaps 仍从 gap_analyzer.py 导入，保持向后兼容
   - APIGapAnalyzer 不再导出（开发工具，不属于运行时 API）
   - _internal 下的符号不在 __all__ 中
@@ -54,23 +54,6 @@ from jk2bt.api.factor_kanban import (
     get_factor_style_returns,
     get_factor_specific_returns,
     get_factor_cov,
-)
-
-# --- 订单与组合 ---
-from jk2bt.api.order import (
-    order_shares,
-    order_target_percent,
-    LimitOrderStyle,
-    MarketOrderStyle,
-    rebalance_portfolio,
-    get_portfolio_weights,
-    calculate_position_value,
-)
-
-from jk2bt.api.order import (
-    will_sell_on_limit_up,
-    will_buy_on_limit_down,
-    get_position_ratio,
 )
 
 # --- 过滤工具 ---
@@ -336,6 +319,36 @@ from jk2bt.api.option import (
     calculate_option_implied_vol,
     get_option_quote,
     query_option,
+    get_option_ticks,
+    get_option_preopen,
+    get_option_adjustment,
+    get_option_exercise_info,
+    get_option_trade_rank,
+    get_commodity_option_ticks,
+)
+
+# --- 市场数据扩展 ---
+from jk2bt.api.market import (
+    get_call_auction,
+    get_preopen_infos,
+)
+
+# --- 资金流向 ---
+from jk2bt.api.money_flow_api import (
+    get_money_flow,
+    get_money_flow_pro,
+)
+
+# --- JQ兼容扩展 ---
+from jk2bt.api.jq_compat import (
+    get_extras,
+)
+
+# --- 基金数据扩展 ---
+from jk2bt.api.fund import (
+    get_fund_margin_list,
+    get_fund_short_sell_list,
+    get_etf_tracking_index,
 )
 
 
@@ -366,17 +379,6 @@ __all__ = [
     "get_close_price",
     "get_high_limit",
     "get_low_limit",
-    # 订单与组合
-    "order_shares",
-    "order_target_percent",
-    "LimitOrderStyle",
-    "MarketOrderStyle",
-    "rebalance_portfolio",
-    "get_portfolio_weights",
-    "calculate_position_value",
-    "will_sell_on_limit_up",
-    "will_buy_on_limit_down",
-    "get_position_ratio",
     # 过滤工具
     "get_dividend_ratio_filter_list",
     "get_margine_stocks",
@@ -567,4 +569,22 @@ __all__ = [
     "calculate_option_implied_vol",
     "get_option_quote",
     "query_option",
+    "get_option_ticks",
+    "get_option_preopen",
+    "get_option_adjustment",
+    "get_option_exercise_info",
+    "get_option_trade_rank",
+    "get_commodity_option_ticks",
+    # 市场数据扩展
+    "get_call_auction",
+    "get_preopen_infos",
+    # 资金流向
+    "get_money_flow",
+    "get_money_flow_pro",
+    # JQ兼容扩展
+    "get_extras",
+    # 基金数据扩展
+    "get_fund_margin_list",
+    "get_fund_short_sell_list",
+    "get_etf_tracking_index",
 ]

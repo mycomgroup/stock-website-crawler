@@ -108,7 +108,9 @@ class IndustrySWDBManager(LazyInitSingleton):
             return
 
         if db_path is None:
-            db_path = "data_cache/industry_sw_parquet"
+            from jk2bt.utils.paths import resolve_cache_path
+
+            db_path = resolve_cache_path("data_cache/industry_sw_parquet")
 
         self._db_path = db_path
         self._manager = None

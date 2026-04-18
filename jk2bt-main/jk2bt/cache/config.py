@@ -3,6 +3,8 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from jk2bt.utils.paths import resolve_cache_path
+
 
 @dataclass
 class TableConfig:
@@ -14,7 +16,7 @@ class TableConfig:
 
 @dataclass
 class CacheConfig:
-    base_dir: str = "data_cache/cache"
+    base_dir: str = resolve_cache_path("data_cache/cache")
     memory_cache_max_items: int = 5000
     memory_cache_default_ttl_seconds: int = 3600
     compression: str = "snappy"

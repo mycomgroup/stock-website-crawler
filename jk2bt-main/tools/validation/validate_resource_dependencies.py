@@ -18,7 +18,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from jk2bt.scanner.runtime_resource import RuntimeResourcePack
-from jk2bt.runtime_io import (
+from jk2bt.engine.io import (
     read_file,
     write_file,
     set_strategy_name,

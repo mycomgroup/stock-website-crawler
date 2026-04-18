@@ -39,9 +39,23 @@ from jk2bt.utils.symbol import extract_code_num, ak_code_to_jq
 
 logger = logging.getLogger(__name__)
 
-_MAX_RETRY_ATTEMPTS = 5
-_RETRY_DELAY_SECONDS = 3
-_RETRY_JITTER = 3
+
+def _parse_date(val):
+    """Parse date value, returning None for invalid values."""
+    if val is None or pd.isna(val):
+        return None
+    val = str(val).strip()
+    if not val or val in ("None", "nan", "NaT", ""):
+        return None
+    try:
+        return pd.to_datetime(val).strftime("%Y-%m-%d")
+    except Exception:
+        return val
+
+
+_MAX_RETRY_ATTEMPTS = 3
+_RETRY_DELAY_SECONDS = 2
+_RETRY_JITTER = 2
 
 
 def _retry_akshare_call(func, *args, max_attempts=_MAX_RETRY_ATTEMPTS, **kwargs):
@@ -113,18 +127,46 @@ _STATUS_CHANGE_SCHEMA = [
 
 _MANAGEMENT_INFO_SCHEMA = [
     "code",
+    "person_id",
+    "title_class_id",
+    "title_class",
+    "title",
     "name",
     "position",
     "gender",
+    "birth_year",
+    "highest_degree",
+    "title_level",
+    "profession_certificate",
+    "nationality",
+    "resume",
     "education",
     "start_date",
     "end_date",
+    "leave_date",
+    "leave_reason",
+    "on_job",
     "shares_held",
     "compensation",
+    "relationship",
+    "direct_shares",
+    "indirect_shares",
+    "option_shares",
 ]
 
 _EMPLOYEE_INFO_SCHEMA = [
+    # JQData standard fields
+    "company_id",
     "code",
+    "name",
+    "end_date",
+    "pub_date",
+    "employee",
+    "retirement",
+    "graduate_rate",
+    "college_rate",
+    "middle_rate",
+    # akshare detailed fields (kept for backward compatibility)
     "report_date",
     "employee_count",
     "professional_count",
@@ -164,7 +206,9 @@ class CompanyInfoCacheManager:
             return None
 
         if base_dir is None:
-            base_dir = "data_cache/cache"
+            from jk2bt.utils.paths import resolve_cache_path
+
+            base_dir = resolve_cache_path("data_cache/cache")
 
         self.base_dir = base_dir
         self._cache = None
@@ -377,6 +421,43 @@ class CompanyInfoCacheManager:
 
 _db_manager = CompanyInfoCacheManager() if _CACHE_AVAILABLE else None
 
+# Baostock 连接池（避免频繁 login/logout）
+_bs_connected = False
+
+
+def _bs_login():
+    """获取 Baostock 连接（单例模式）"""
+    global _bs_connected
+    if not _bs_connected:
+        try:
+            import baostock as bs
+
+            lg = bs.login()
+            if lg.error_code == "0":
+                _bs_connected = True
+                return True
+        except Exception:
+            pass
+    return _bs_connected
+
+
+def _bs_logout():
+    """关闭 Baostock 连接"""
+    global _bs_connected
+    if _bs_connected:
+        try:
+            import baostock as bs
+
+            bs.logout()
+        except Exception:
+            pass
+        _bs_connected = False
+
+
+import atexit
+
+atexit.register(_bs_logout)
+
 
 def get_company_info(symbol, force_update=False, use_duckdb=True) -> pd.DataFrame:
     """
@@ -473,37 +554,105 @@ def get_security_status(
 
 
 def _fetch_company_profile(code_num: str) -> Optional[pd.DataFrame]:
-    """从 AkShare 获取公司基本信息（带重试机制）"""
-    from jk2bt.data.sources import get_adapter
-
+    """从 Baostock 获取公司基本信息（优先），AkShare 作为备用"""
+    # 优先使用 Baostock（稳定快速，无网络限制）
     try:
-        df = _retry_akshare_call(get_adapter().get_company_info, symbol=code_num)
-        return df
+        df = _fetch_company_profile_baostock(code_num)
+        if df is not None and not df.empty:
+            return df
     except Exception as e:
-        logger.error(f"[company_profile] 获取失败 {code_num}: {e}")
+        logger.warning(f"[company_profile] Baostock 获取失败 {code_num}: {e}")
+
+    # 备用：AkShare
+    logger.info(f"[company_profile] 尝试 AkShare 获取 {code_num}")
+    try:
+        from jk2bt.data.sources import get_adapter
+
+        df = _retry_akshare_call(get_adapter().get_company_info, symbol=code_num)
+        if df is not None and not df.empty:
+            return df
+    except Exception as e:
+        logger.error(f"[company_profile] AkShare 获取失败 {code_num}: {e}")
+
+    return None
+
+
+def _fetch_company_profile_baostock(code_num: str) -> Optional[pd.DataFrame]:
+    """从 Baostock 获取公司基本信息（使用全局连接）"""
+    try:
+        import baostock as bs
+
+        if not _bs_login():
+            return None
+
+        bs_code = f"sh.{code_num}" if code_num.startswith("6") else f"sz.{code_num}"
+
+        rs = bs.query_stock_basic(code=bs_code)
+        if rs.error_code != "0":
+            return None
+
+        fields = rs.fields
+        rows = []
+        while (rs.error_code == "0") and rs.next():
+            row_data = rs.get_row_data()
+            row_dict = dict(zip(fields, row_data))
+            rows.append(row_dict)
+
+        if not rows:
+            return None
+
+        row = rows[0]
+        items = []
+        items.append({"item": "公司名称", "value": row.get("code_name", "")})
+        items.append({"item": "上市时间", "value": row.get("ipoDate", "")})
+        items.append({"item": "所属行业", "value": row.get("industry", "")})
+        items.append(
+            {"item": "行业分类", "value": row.get("industryClassification", "")}
+        )
+
+        return pd.DataFrame(items)
+
+    except ImportError:
+        return None
+    except Exception as e:
+        logger.error(f"[baostock] 获取公司信息失败 {code_num}: {e}")
         return None
 
 
 def _fetch_company_industry(code_num: str) -> Optional[pd.DataFrame]:
-    """从 AkShare 获取公司行业信息（带重试机制）
-
-    注意：stock_individual_info_em 已包含行业信息，无需单独调用
-    stock_board_industry_name_em（不接受 symbol 参数）
-    """
-    from jk2bt.data.sources import get_adapter
-
+    """从 Baostock 获取公司行业信息（使用全局连接）"""
     try:
-        # 从公司信息中提取行业信息
-        df = _retry_akshare_call(get_adapter().get_company_info, symbol=code_num)
-        if df is not None and not df.empty and "item" in df.columns:
-            # 提取行业行
-            industry_rows = df[df["item"] == "行业"]
-            if not industry_rows.empty:
-                industry_name = industry_rows.iloc[0]["value"]
-                return pd.DataFrame({"行业板块": [industry_name]})
+        import baostock as bs
+
+        if not _bs_login():
+            return None
+
+        bs_code = f"sh.{code_num}" if code_num.startswith("6") else f"sz.{code_num}"
+
+        rs = bs.query_stock_industry(code=bs_code)
+        if rs.error_code != "0":
+            return None
+
+        fields = rs.fields
+        rows = []
+        while (rs.error_code == "0") and rs.next():
+            row_data = rs.get_row_data()
+            row_dict = dict(zip(fields, row_data))
+            rows.append(row_dict)
+
+        if not rows:
+            return None
+
+        industry_name = rows[0].get("industry", "")
+        if industry_name:
+            return pd.DataFrame({"行业板块": [industry_name]})
+
+        return None
+
+    except ImportError:
         return None
     except Exception as e:
-        logger.warning(f"[company_industry] 获取失败 {code_num}: {e}")
+        logger.warning(f"[company_industry] Baostock 获取失败 {code_num}: {e}")
         return None
 
 
@@ -843,19 +992,45 @@ class FinanceQuery:
         """管理人员任职情况表"""
 
         code = None
+        person_id = None
+        title_class_id = None
+        title_class = None
+        title = None
         name = None
         position = None
         gender = None
+        birth_year = None
+        highest_degree = None
+        title_level = None
+        profession_certificate = None
+        nationality = None
+        resume = None
         education = None
         start_date = None
         end_date = None
+        leave_date = None
+        leave_reason = None
+        on_job = None
         shares_held = None
         compensation = None
+        relationship = None
+        direct_shares = None
+        indirect_shares = None
+        option_shares = None
 
     class STK_EMPLOYEE_INFO:
         """员工情况信息表"""
 
+        company_id = None
         code = None
+        name = None
+        end_date = None
+        pub_date = None
+        employee = None
+        retirement = None
+        graduate_rate = None
+        college_rate = None
+        middle_rate = None
         report_date = None
         employee_count = None
         professional_count = None
@@ -1677,17 +1852,11 @@ def get_employee_info(
     返回
     ----
     pandas DataFrame，字段：
-    - code: 股票代码（聚宽格式）
-    - report_date: 报告期
-    - employee_count: 员工总数
-    - professional_count: 专业人员数
-    - production_count: 生产人员数
-    - sales_count: 销售人员数
-    - finance_count: 财务人员数
-    - admin_count: 行政人员数
-    - education_bachelor: 本科人数
-    - education_master: 硕士人数
-    - education_phd: 博士人数
+    - JQData标准字段: company_id, code, name, end_date, pub_date, employee,
+      retirement, graduate_rate, college_rate, middle_rate
+    - akshare详细字段: report_date, employee_count, professional_count,
+      production_count, sales_count, finance_count, admin_count,
+      education_bachelor, education_master, education_phd
     """
     jq_code = ak_code_to_jq(symbol)
     code_num = extract_code_num(symbol)
@@ -1697,21 +1866,25 @@ def get_employee_info(
         if not df_cached.empty:
             if year:
                 df_cached = df_cached[
-                    df_cached["report_date"].astype(str).str.startswith(str(year))
+                    df_cached["end_date"].astype(str).str.startswith(str(year))
+                    | df_cached["report_date"].astype(str).str.startswith(str(year))
                 ]
             return df_cached
 
     try:
         import akshare as ak
 
-        # akshare 没有直接的员工信息接口，尝试从财务报告中提取
-        # 使用 stock_financial_report_sina 作为备选
-        df = _retry_akshare_call(
-            ak.stock_financial_report_sina, stock=code_num, symbol="资产负债表"
-        )
-        # 员工信息通常不在标准财务报表中，返回空结果
-        # 注：员工数据需要从年报中手工提取，akshare 暂无直接接口
-        logger.info(f"[employee_info] akshare 暂无直接员工信息接口，返回空结果")
+        df = _retry_akshare_call(ak.stock_employee_info_em)
+        if df is not None and not df.empty:
+            result = _normalize_employee_info_v2(df, jq_code, code_num)
+            if year:
+                result = result[
+                    result["end_date"].astype(str).str.startswith(str(year))
+                    | result["report_date"].astype(str).str.startswith(str(year))
+                ]
+            if use_duckdb and _db_manager is not None and not result.empty:
+                _db_manager.insert_employee_info(result)
+            return result
     except Exception as e:
         logger.warning(f"[employee_info] 获取 {symbol} 员工信息失败: {e}")
 
@@ -1770,57 +1943,191 @@ def _normalize_management_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
         return pd.DataFrame(columns=_MANAGEMENT_INFO_SCHEMA)
 
     result = pd.DataFrame()
+    result["code"] = [jq_code] * len(df)
 
     col_map = {
-        "name": ["姓名", "高管姓名", "name", "董监高姓名", "变动人"],
-        "position": ["职位", "职务", "position", "岗位", "与公司高管关系"],
-        "gender": ["性别", "gender"],
-        "education": ["学历", "education", "教育程度", "文化程度"],
-        "start_date": [
-            "任职起始日期",
-            "任职开始日期",
-            "start_date",
-            "上任日期",
-            "任职日期",
-            "变动日期",
-        ],
-        "end_date": ["任职结束日期", "离任日期", "end_date", "截止日期"],
-        "shares_held": [
-            "持股数",
-            "持股数量",
-            "shares_held",
-            "期末持股数",
-            "持股数量(股)",
-            "剩余股数",
-        ],
-        "compensation": [
-            "薪酬",
-            "compensation",
-            "报酬",
-            "年薪",
-            "从公司获得的税前报酬",
-            "交易均价",
-        ],
+        # JQData standard fields
+        "董监高ID": "person_id",
+        "人员ID": "person_id",
+        "人员编号": "person_id",
+        "职务类别ID": "title_class_id",
+        "职务类别": "title_class",
+        "职务": "title",
+        "姓名": "name",
+        "高管姓名": "name",
+        "董监高姓名": "name",
+        "变动人": "name",
+        "职位": "position",
+        "岗位": "position",
+        "与公司高管关系": "position",
+        "性别": "gender",
+        "出生年份": "birth_year",
+        "出生年月": "birth_year",
+        "最高学历": "highest_degree",
+        "学历": "highest_degree",
+        "教育程度": "education",
+        "文化程度": "education",
+        "职务级别": "title_level",
+        "职业资格证书": "profession_certificate",
+        "国籍": "nationality",
+        "简历": "resume",
+        "个人简介": "resume",
+        "任职起始日期": "start_date",
+        "任职开始日期": "start_date",
+        "上任日期": "start_date",
+        "任职日期": "start_date",
+        "变动日期": "start_date",
+        "任职结束日期": "end_date",
+        "离任日期": "end_date",
+        "截止日期": "end_date",
+        "离任日期": "leave_date",
+        "解职日期": "leave_date",
+        "离任原因": "leave_reason",
+        "是否在职": "on_job",
+        "在职状态": "on_job",
+        "持股数": "shares_held",
+        "持股数量": "shares_held",
+        "期末持股数": "shares_held",
+        "持股数量(股)": "shares_held",
+        "剩余股数": "shares_held",
+        "薪酬": "compensation",
+        "报酬": "compensation",
+        "年薪": "compensation",
+        "从公司获得的税前报酬": "compensation",
+        "交易均价": "compensation",
+        "关系": "relationship",
+        "直接持股": "direct_shares",
+        "间接持股": "indirect_shares",
+        "期权持股": "option_shares",
     }
 
-    for field, possible_cols in col_map.items():
-        found = None
-        for col in possible_cols:
-            if col in df.columns:
-                found = col
-                break
-        if found:
-            result[field] = df[found].values
-        else:
-            result[field] = None
+    date_cols = {"start_date", "end_date", "leave_date"}
+    num_cols = {
+        "shares_held",
+        "compensation",
+        "birth_year",
+        "direct_shares",
+        "indirect_shares",
+        "option_shares",
+    }
 
-    result.insert(0, "code", jq_code)
+    for src, target in col_map.items():
+        if src in df.columns:
+            if target in date_cols:
+                result[target] = df[src].apply(_parse_date)
+            elif target in num_cols:
+                result[target] = pd.to_numeric(df[src], errors="coerce")
+            else:
+                result[target] = df[src]
+        elif target not in result.columns:
+            result[target] = None
 
-    return result
+    # Ensure all schema columns exist
+    for col in _MANAGEMENT_INFO_SCHEMA:
+        if col not in result.columns:
+            result[col] = None
+
+    return result[_MANAGEMENT_INFO_SCHEMA]
+
+
+def _normalize_employee_info_v2(
+    df: pd.DataFrame, jq_code: str, code_num: str
+) -> pd.DataFrame:
+    """标准化员工信息数据（支持 JQData 字段 + akshare 详细字段）"""
+    if df is None or df.empty:
+        return pd.DataFrame(columns=_EMPLOYEE_INFO_SCHEMA)
+
+    results = []
+    for _, row in df.iterrows():
+        record = {
+            "company_id": None,
+            "code": jq_code,
+            "name": None,
+            "end_date": None,
+            "pub_date": None,
+            "employee": None,
+            "retirement": None,
+            "graduate_rate": None,
+            "college_rate": None,
+            "middle_rate": None,
+            "report_date": None,
+            "employee_count": None,
+            "professional_count": None,
+            "production_count": None,
+            "sales_count": None,
+            "finance_count": None,
+            "admin_count": None,
+            "education_bachelor": None,
+            "education_master": None,
+            "education_phd": None,
+        }
+
+        # Map akshare columns
+        col_map = {
+            "股票代码": "code",
+            "股票简称": "name",
+            "公司名称": "name",
+            "报告期": "end_date",
+            "截止日期": "end_date",
+            "发布日期": "pub_date",
+            "公告日期": "pub_date",
+            "员工总数": "employee",
+            "员工人数": "employee",
+            "employee_count": "employee",
+            "退休人员": "retirement",
+            "退休人数": "retirement",
+            "本科及以上比例": "graduate_rate",
+            "本科比例": "graduate_rate",
+            "大专比例": "college_rate",
+            "专科比例": "college_rate",
+            "中专及以下比例": "middle_rate",
+            "中专比例": "middle_rate",
+            "专业人员数": "professional_count",
+            "技术人员数": "professional_count",
+            "研发人员数": "professional_count",
+            "生产人员数": "production_count",
+            "生产人员": "production_count",
+            "操作人员": "production_count",
+            "销售人员数": "sales_count",
+            "销售人员": "sales_count",
+            "营销人员": "sales_count",
+            "财务人员数": "finance_count",
+            "财务人员": "finance_count",
+            "行政人员数": "admin_count",
+            "行政人员": "admin_count",
+            "管理人员": "admin_count",
+            "本科人数": "education_bachelor",
+            "大学本科": "education_bachelor",
+            "本科学历": "education_bachelor",
+            "硕士人数": "education_master",
+            "硕士研究生": "education_master",
+            "硕士学历": "education_master",
+            "博士人数": "education_phd",
+            "博士研究生": "education_phd",
+            "博士学历": "education_phd",
+        }
+
+        for src, target in col_map.items():
+            if src in df.columns:
+                val = row.get(src)
+                if val is not None and not pd.isna(val):
+                    record[target] = val
+
+        # Aliases for backward compatibility
+        if record["employee"] is not None:
+            record["employee_count"] = record["employee"]
+        if record["end_date"] is not None:
+            record["report_date"] = record["end_date"]
+
+        results.append(record)
+
+    if results:
+        return pd.DataFrame(results)
+    return pd.DataFrame(columns=_EMPLOYEE_INFO_SCHEMA)
 
 
 def _normalize_employee_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
-    """标准化员工信息数据"""
+    """标准化员工信息数据（旧版兼容）"""
     if df is None or df.empty:
         return pd.DataFrame(columns=_EMPLOYEE_INFO_SCHEMA)
 
@@ -1834,6 +2141,7 @@ def _normalize_employee_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
                 report_date = row.get(col)
                 break
         record["report_date"] = report_date
+        record["end_date"] = report_date
 
         employee_count = None
         for col in ["员工总数", "employee_count", "员工人数", "总人数"]:
@@ -1841,6 +2149,7 @@ def _normalize_employee_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
                 employee_count = row.get(col)
                 break
         record["employee_count"] = employee_count
+        record["employee"] = employee_count
 
         professional_count = None
         for col in ["专业人员数", "professional_count", "技术人员数", "研发人员数"]:
@@ -1897,6 +2206,19 @@ def _normalize_employee_info(df: pd.DataFrame, jq_code: str) -> pd.DataFrame:
                 education_phd = row.get(col)
                 break
         record["education_phd"] = education_phd
+
+        # Set JQData fields to None if not available
+        for col in [
+            "company_id",
+            "name",
+            "pub_date",
+            "retirement",
+            "graduate_rate",
+            "college_rate",
+            "middle_rate",
+        ]:
+            if col not in record:
+                record[col] = None
 
         results.append(record)
 

@@ -30,6 +30,7 @@ except ImportError:
 
 # 导入统一的代码转换工具
 from jk2bt.utils.symbol import ak_code_to_jq as normalize_to_jq_format
+from jk2bt.utils.paths import resolve_cache_path
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +145,7 @@ class DuckDBManager:
                 config = get_config()
                 db_path = config.cache.duckdb_path
             except Exception:
-                db_path = "data_cache/market.db"
+                db_path = resolve_cache_path("data_cache/market.db")
 
         self.db_path = db_path
         self.read_only = read_only
@@ -1381,7 +1382,7 @@ def get_shared_read_only_manager(
 
             db_path = get_config().cache.duckdb_path
         except Exception:
-            db_path = "data_cache/market.db"
+            db_path = resolve_cache_path("data_cache/market.db")
 
     # 使用进程级单例
     cache_key = f"ro:{db_path}:{use_cache}"
@@ -1416,7 +1417,7 @@ def get_writer_manager(db_path: str = None, use_cache: bool = False) -> DuckDBMa
 
             db_path = get_config().cache.duckdb_path
         except Exception:
-            db_path = "data_cache/market.db"
+            db_path = resolve_cache_path("data_cache/market.db")
 
     # 使用进程级单例
     cache_key = f"rw:{db_path}:{use_cache}"

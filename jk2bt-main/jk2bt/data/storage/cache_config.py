@@ -9,8 +9,11 @@ db/cache_config.py
 """
 
 import logging
+import os
 from typing import List, Any, Optional
 from dataclasses import dataclass, field
+
+from jk2bt.utils.paths import resolve_cache_path
 
 logger = logging.getLogger(__name__)
 
@@ -335,21 +338,36 @@ DEFAULT_POLICIES: List[CachePolicy] = [
 
 
 DOMAIN_DB_MAPPING = {
-    "meta": {"db_path": "data_cache/meta.db", "schemas": META_SCHEMAS},
-    "market": {"db_path": "data_cache/market.db", "schemas": MARKET_SCHEMAS},
-    "option": {"db_path": "data_cache/option.db", "schemas": OPTION_SCHEMAS},
+    "meta": {
+        "db_path": resolve_cache_path("data_cache/meta.db"),
+        "schemas": META_SCHEMAS,
+    },
+    "market": {
+        "db_path": resolve_cache_path("data_cache/market.db"),
+        "schemas": MARKET_SCHEMAS,
+    },
+    "option": {
+        "db_path": resolve_cache_path("data_cache/option.db"),
+        "schemas": OPTION_SCHEMAS,
+    },
     "conversion_bond": {
-        "db_path": "data_cache/conversion_bond.db",
+        "db_path": resolve_cache_path("data_cache/conversion_bond.db"),
         "schemas": CONVERSION_BOND_SCHEMAS,
     },
-    "macro": {"db_path": "data_cache/macro.db", "schemas": MACRO_SCHEMAS},
+    "macro": {
+        "db_path": resolve_cache_path("data_cache/macro.db"),
+        "schemas": MACRO_SCHEMAS,
+    },
     "share_change": {
-        "db_path": "data_cache/share_change.db",
+        "db_path": resolve_cache_path("data_cache/share_change.db"),
         "schemas": SHARE_CHANGE_SCHEMAS,
     },
-    "unlock": {"db_path": "data_cache/unlock.db", "schemas": UNLOCK_SCHEMAS},
+    "unlock": {
+        "db_path": resolve_cache_path("data_cache/unlock.db"),
+        "schemas": UNLOCK_SCHEMAS,
+    },
     "index_components": {
-        "db_path": "data_cache/index_components.db",
+        "db_path": resolve_cache_path("data_cache/index_components.db"),
         "schemas": INDEX_COMPONENTS_SCHEMAS,
     },
 }
@@ -358,17 +376,11 @@ DOMAIN_DB_MAPPING = {
 def init_default_cache() -> None:
     """初始化默认缓存配置"""
     from .unified_cache import UnifiedCacheManager
-    import os
 
     cache = UnifiedCacheManager.get_instance()
 
-    base_dir = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
-
     for domain, config in DOMAIN_DB_MAPPING.items():
-        db_path = os.path.join(base_dir, config["db_path"])
-        cache.register_db(domain, db_path, config["schemas"])
+        cache.register_db(domain, config["db_path"], config["schemas"])
 
     for policy in DEFAULT_POLICIES:
         cache.register_policy(policy)
