@@ -24,6 +24,7 @@ import pandas as pd
 # 1. Winsorization
 # ---------------------------------------------------------------------------
 
+
 def _winsorize_series(s: pd.Series, mad_multiplier: float) -> pd.Series:
     """对单个截面（单日单因子）执行 robust winsor。
 
@@ -118,9 +119,9 @@ def winsorize_cross_section(
         X = factor_arr[mask]  # (n_stocks, K)
 
         # 计算每列的 median 和 MAD（忽略 NaN）
-        median = np.nanmedian(X, axis=0)          # (K,)
+        median = np.nanmedian(X, axis=0)  # (K,)
         abs_dev = np.abs(X - median)
-        mad = np.nanmedian(abs_dev, axis=0)        # (K,)
+        mad = np.nanmedian(abs_dev, axis=0)  # (K,)
 
         # 只对 MAD > 0 的列做 clip
         valid_mad = mad > 0
@@ -145,7 +146,9 @@ def winsorize_cross_section(
 # ---------------------------------------------------------------------------
 
 # 财务类家族：用行业内中位数填补
-_FINANCIAL_FAMILIES: frozenset[str] = frozenset({"basics", "quality", "growth", "pershare"})
+_FINANCIAL_FAMILIES: frozenset[str] = frozenset(
+    {"basics", "quality", "growth", "pershare"}
+)
 # 微观结构类家族：用前推（forward fill）
 _MICROSTRUCTURE_FAMILIES: frozenset[str] = frozenset({"emotion", "technical"})
 
@@ -251,29 +254,58 @@ def impute_factors(
 
     # 分类因子
     financial_cols = [
-        col for col in factor_cols
+        col
+        for col in factor_cols
         if _classify_factor(col, factor_family_map) == "financial"
     ]
     microstructure_cols = [
-        col for col in factor_cols
+        col
+        for col in factor_cols
         if _classify_factor(col, factor_family_map) == "microstructure"
     ]
 
     # ------------------------------------------------------------------
-    # 财务类因子：截面中位数填补（向量化）
+    # 财务类因子：先按 (date, industry) 中位数填补，再退化为截面中位数
     # ------------------------------------------------------------------
     if financial_cols:
         fin_arr = result[financial_cols].values.astype(float)  # (N, K_fin)
         date_codes, _ = pd.factorize(result["date"], sort=True)
+        industry_values = (
+            result[industry_col].astype("object").fillna("__missing_industry__").values
+            if has_industry
+            else None
+        )
 
         for d in np.unique(date_codes):
             mask = date_codes == d
             X = fin_arr[mask]  # (n_stocks, K_fin)
-            # 对每列用截面中位数填补 NaN
+
+            if has_industry:
+                industries_d = industry_values[mask]
+                for industry in pd.unique(industries_d):
+                    industry_mask = industries_d == industry
+                    X_ind = X[industry_mask]
+                    industry_medians = np.nanmedian(X_ind, axis=0)
+                    nan_mask_ind = np.isnan(X_ind)
+                    if nan_mask_ind.any():
+                        valid_fill = ~np.isnan(np.take(industry_medians, np.where(nan_mask_ind)[1]))
+                        if valid_fill.any():
+                            rows, cols = np.where(nan_mask_ind)
+                            rows = rows[valid_fill]
+                            cols = cols[valid_fill]
+                            X_ind[rows, cols] = industry_medians[cols]
+                        X[industry_mask] = X_ind
+
+            # 对剩余 NaN 再用截面中位数填补
             col_medians = np.nanmedian(X, axis=0)  # (K_fin,)
             nan_mask = np.isnan(X)
-            # 广播填补
-            X[nan_mask] = np.take(col_medians, np.where(nan_mask)[1])
+            if nan_mask.any():
+                valid_fill = ~np.isnan(np.take(col_medians, np.where(nan_mask)[1]))
+                if valid_fill.any():
+                    rows, cols = np.where(nan_mask)
+                    rows = rows[valid_fill]
+                    cols = cols[valid_fill]
+                    X[rows, cols] = col_medians[cols]
             fin_arr[mask] = X
 
         result[financial_cols] = fin_arr
@@ -323,6 +355,7 @@ def impute_factors(
 # ---------------------------------------------------------------------------
 # 3. Standardization (task 2.3)
 # ---------------------------------------------------------------------------
+
 
 def _rank_series(s: pd.Series) -> pd.Series:
     """对单个截面执行 rank 表示：rank(x) / (N+1) - 0.5。
@@ -457,13 +490,16 @@ def standardize_factors(
         # Rank 表示：rank(x) / (N+1) - 0.5
         # 使用 scipy.stats.rankdata 向量化处理所有列
         from scipy.stats import rankdata
+
         for k in range(X.shape[1]):
             col_vals = X[:, k]
             valid = ~np.isnan(col_vals)
             n_valid = valid.sum()
             if n_valid > 0:
                 ranks = rankdata(col_vals[valid], method="average")
-                rank_arr[mask, k][valid] = ranks / (n_valid + 1) - 0.5
+                col_rank = np.full(len(col_vals), np.nan)
+                col_rank[valid] = ranks / (n_valid + 1) - 0.5
+                rank_arr[mask, k] = col_rank
 
         # Robust zscore：(x - median) / (MAD + eps)
         median = np.nanmedian(X, axis=0)  # (K,)
@@ -480,6 +516,7 @@ def standardize_factors(
 # ---------------------------------------------------------------------------
 # 4. Neutralization (task 2.4)
 # ---------------------------------------------------------------------------
+
 
 def _build_exposure_matrix(
     cross_section: pd.DataFrame,
@@ -524,13 +561,17 @@ def _build_exposure_matrix(
         industry_counts = industry.value_counts()
         small_industries = industry_counts[industry_counts < min_industry_size].index
         if len(small_industries) > 0:
-            industry = industry.where(~industry.isin(small_industries), other="__other__")
+            industry = industry.where(
+                ~industry.isin(small_industries), other="__other__"
+            )
 
         # 获取所有行业，按字母排序，drop 第一个（K-1 哑变量）
         unique_industries = sorted(industry.unique())
         if len(unique_industries) > 1:
             # drop_first=True → K-1 哑变量
-            dummies = pd.get_dummies(industry, prefix="ind", drop_first=True, dtype=float)
+            dummies = pd.get_dummies(
+                industry, prefix="ind", drop_first=True, dtype=float
+            )
             for c in dummies.columns:
                 cols.append(dummies[c].values)
                 col_names.append(c)
@@ -590,11 +631,11 @@ def _wls_ridge_residual(
         中性化残差 y - B @ gamma。
     """
     # 向量化加权：避免构造 N×N 对角矩阵
-    Bw = B * w[:, np.newaxis]   # (N, M)，每行乘以对应权重
+    Bw = B * w[:, np.newaxis]  # (N, M)，每行乘以对应权重
 
     # 正规方程：(B' W B + alpha * I) gamma = B' W y
-    BtWB = Bw.T @ B             # (M, M)
-    BtWy = Bw.T @ y             # (M,)
+    BtWB = Bw.T @ B  # (M, M)
+    BtWy = Bw.T @ y  # (M,)
 
     # ridge 正则化
     M = B.shape[1]
@@ -696,7 +737,8 @@ def neutralize_factors(
 
     # 确定实际存在的暴露列（连续暴露）
     continuous_exposure_cols = [
-        c for c in [ln_mcap_col, beta_col, residual_vol_col, liquidity_col]
+        c
+        for c in [ln_mcap_col, beta_col, residual_vol_col, liquidity_col]
         if c in df.columns
     ]
 
@@ -724,9 +766,8 @@ def neutralize_factors(
         # 确定完整暴露列（用于确定有效行）
         # ------------------------------------------------------------------
         exposure_cols_present = (
-            ([industry_col] if industry_col in group.columns else [])
-            + continuous_exposure_cols
-        )
+            [industry_col] if industry_col in group.columns else []
+        ) + continuous_exposure_cols
 
         # ------------------------------------------------------------------
         # 对每个因子单独回归（使用同一组联合风险暴露）

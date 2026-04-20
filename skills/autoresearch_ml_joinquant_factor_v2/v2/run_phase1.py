@@ -121,6 +121,7 @@ def run_phase1_validation(use_small_data: bool = True) -> dict:
     logger.info("[L0] 加载数据：%s", csv_path)
     panel = build_pit_panel(csv_path)
     df = panel.df
+    tradable_mask = panel.tradable_mask
     logger.info("[L0] 完成：%s", panel)
 
     # 使用 research data（排除最后 104 周作为 final holdout）
@@ -129,8 +130,15 @@ def run_phase1_validation(use_small_data: bool = True) -> dict:
     if len(dates) > n_holdout + 10:
         research_dates = dates[:-n_holdout]
         df = df[df["date"].isin(research_dates)].copy()
+        tradable_mask = tradable_mask.loc[df.index]
         logger.info("[L0] Research data：%d 个截面日期（排除最后 %d 周 holdout）",
                     len(research_dates), n_holdout)
+
+    # 只在可交易样本上训练和评估，确保 OOF 口径与可交易宇宙一致
+    if not tradable_mask.empty:
+        tradable_mask = tradable_mask.reindex(df.index, fill_value=False)
+        df = df.loc[tradable_mask].copy()
+        logger.info("[L0] 应用可交易掩码后：%d 行", len(df))
 
     # ---- L1: 预处理 ------------------------------------------
     logger.info("[L1] 因子预处理（winsor → impute → standardize）")

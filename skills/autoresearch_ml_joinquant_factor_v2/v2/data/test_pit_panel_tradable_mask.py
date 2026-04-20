@@ -252,17 +252,15 @@ class TestComputeTradableMask:
         assert result.tolist() == [False, True, False]
 
     def test_limit_filter_using_pchg_when_no_high_low(self):
-        """|pchg| >= 0.099 时应被过滤（无 high/low 列时用 pchg 代替）。"""
+        """无 high/low 且 |pchg| 明显接近 20% 板时应被保守过滤。"""
         df = _make_df(
             stocks=["A", "B", "C", "D"],
             dates=["2020-01-01"] * 4,
-            pchg=[0.10, 0.05, -0.10, 0.02],
+            pchg=[0.20, 0.05, -0.20, 0.02],
         )
         result = compute_tradable_mask(df, new_stock_cooldown_days=0)
-        # A: |0.10| >= 0.099 → 过滤
-        # B: |0.05| < 0.099 → 保留
-        # C: |-0.10| >= 0.099 → 过滤
-        # D: |0.02| < 0.099 → 保留
+        # A/C: |pchg| >= 0.195 → 过滤
+        # B/D: |pchg| < 0.195 → 保留
         assert result.tolist() == [False, True, False, True]
 
     def test_limit_filter_20pct_threshold(self):
@@ -273,7 +271,7 @@ class TestComputeTradableMask:
             pchg=[0.20, 0.15],
         )
         result = compute_tradable_mask(df, new_stock_cooldown_days=0)
-        assert result.tolist() == [False, False]  # 0.20 >= 0.099, 0.15 >= 0.099
+        assert result.tolist() == [False, True]
 
     def test_high_low_takes_priority_over_pchg(self):
         """当 high 和 low 列同时存在时，应使用 high==low 而非 pchg。"""
@@ -396,10 +394,10 @@ class TestComputeTradableMask:
         )
         result = compute_tradable_mask(df, new_stock_cooldown_days=0)
         # A: ST → 过滤
-        # B: pchg=0.10 >= 0.099 → 过滤
+        # B: 无 high/low 且 pchg=0.10，不应被 20% 板保守过滤
         # C: suspended → 过滤
         # D: 全部通过 → 可交易
-        assert result.tolist() == [False, False, False, True]
+        assert result.tolist() == [False, True, False, True]
 
     def test_empty_dataframe(self):
         """空 DataFrame 应返回空 Series。"""

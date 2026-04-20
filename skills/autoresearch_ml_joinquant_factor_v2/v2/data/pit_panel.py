@@ -258,16 +258,16 @@ def compute_tradable_mask(
             n_filtered, 100.0 * n_filtered / n_rows,
         )
     elif "pchg" in df.columns:
-        # 退而求其次：用 pchg 接近涨跌停阈值来识别一字板
-        # 覆盖：普通股 ±10%、科创板/创业板 ±20%、ST ±5%（±5% 包含在 ±10% 内）
+        # 退而求其次：在缺少 high/low 时，只对明显接近 ±20% 的截面做保守过滤。
+        # 若无板块信息，无法仅凭 pchg 稳健地区分普通股 10% 板和正常大波动。
         abs_pchg = df["pchg"].abs()
-        limit_filter = (abs_pchg >= pchg_limit_10pct) | (abs_pchg >= pchg_limit_20pct)
+        limit_filter = abs_pchg >= pchg_limit_20pct
         n_filtered = limit_filter.sum()
         mask &= ~limit_filter
         logger.info(
-            "compute_tradable_mask [一字板过滤]: 使用 |pchg|>=%.3f 或 |pchg|>=%.3f，"
+            "compute_tradable_mask [一字板过滤]: 缺少 high/low，保守使用 |pchg|>=%.3f，"
             "过滤 %d 行（%.2f%%）",
-            pchg_limit_10pct, pchg_limit_20pct,
+            pchg_limit_20pct,
             n_filtered, 100.0 * n_filtered / n_rows,
         )
     else:
