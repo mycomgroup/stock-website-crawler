@@ -1,0 +1,31 @@
+# 小票池 T2 级基础排雷层（所有策略共享）
+# 对应汇总表里的"通用排雷条件"+"小票池独有风险"。
+#
+# 数据量纲提示（聚宽 260 因子）:
+#   eps_ttm                       元/股
+#   roe_ttm                       小数 (0.05 = 5%)
+#   debt_to_asset_ratio           小数 (0.5 = 50%)
+#   quick_ratio                   倍数
+#   earnings_to_price_ratio       小数 (1/PE，0.04 ≈ PE 25)
+#   circulating_market_cap        元（3 亿 = 3.0e8）
+#   share_turnover_monthly        ⚠️ z-score 归一化，用 between + 分位阈值
+
+hard_filters:
+
+  # 1. 盈利底线
+  - {op: gt, column: EPS, value: 0, name: 近一年 EPS 为正}
+
+  # 2. 经营现金流为正
+  - {op: gt, column: 经营现金流, value: 0, name: TTM 经营现金流为正}
+
+  # 3. 资产负债率不失控（数据是 0-1 小数）
+  - {op: lt, column: 资产负债率, value: 0.70, name: 资产负债率 < 70%}
+
+  # 4. 速动比率不垮塌
+  - {op: gt, column: 速动比率, value: 0.8, name: 速动比率 > 0.8}
+
+  # 5. E/P 为正（净利为负的二次防线）
+  - {op: gt, column: 市盈率倒数, value: 0, name: E/P 为正}
+
+  # 6. 剔除流通市值极端小（YAML 需写成 3.0e8 否则解析为字符串）
+  - {op: gt, column: 流通市值, value: 3.0e8, name: 流通市值 > 3 亿}

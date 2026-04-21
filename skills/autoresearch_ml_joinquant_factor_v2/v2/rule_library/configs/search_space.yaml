@@ -1,0 +1,74 @@
+# 针对小票池的网格搜索空间。
+# 每个 filter_choice 的 variants 里 null 表示"跳过该槽"。
+# 展开后若组合数 > max_combinations，会按 random_seed 做无放回采样。
+#
+# 量纲提示: ROE / 增速 / 毛利率 / 债务率 均为小数；52周位置=1-250；月换手率=z-score。
+
+search:
+
+  base_filters: []
+
+  filter_choices:
+
+    - name: 盈利门槛
+      variants:
+        - null
+        - {op: gt, column: EPS, value: 0.1}
+        - {op: gt, column: EPS, value: 0.3}
+        - {op: gt, column: EPS, value: 0.5}
+        - {op: gt, column: EPS, value: 0.8}
+
+    - name: 质量
+      variants:
+        - null
+        - {op: gt, column: ROE, value: 0.08}
+        - {op: gt, column: ROE, value: 0.12}
+        - {op: gt, column: ROE, value: 0.15}
+        - {op: gt, column: 毛利率, value: 0.30}
+        - {op: gt, column: 毛利率, value: 0.40}
+
+    - name: 成长
+      variants:
+        - null
+        - {op: gt, column: 营收增速, value: 0.10}
+        - {op: gt, column: 营收增速, value: 0.20}
+        - {op: gt, column: 净利润增速, value: 0.20}
+        - {op: gt, column: 净利润增速, value: 0.50}
+
+    - name: 估值
+      variants:
+        - null
+        - {op: between, column: PEG, low: 0, high: 1.0}
+        - {op: between, column: PEG, low: 0, high: 1.5}
+        - {op: gt, column: 市盈率倒数, value: 0.04}   # PE < 25
+        - {op: gt, column: 市盈率倒数, value: 0.067}  # PE < 15
+
+    - name: 位置/动量
+      variants:
+        - null
+        - {op: gt, column: 52周位置, value: 200}    # 靠 52w 高点
+        - {op: lt, column: 52周位置, value: 80}     # 位于 52w 低位
+        - {op: gt, column: MAC60, value: 1.0}       # 站上 60 日均线
+
+    - name: 流动性/换手 (z-score)
+      variants:
+        - null
+        - {op: between, column: 月换手率, low: -1.0, high: 1.0}
+        - {op: between, column: 月换手率, low: -0.5, high: 1.5}
+
+  sort_keys:
+    - {column: 近一月动量, ascending: false, name: Rank1M_desc}
+    - {column: MAC60, ascending: false, name: MAC60_desc}
+    - {column: 52周位置, ascending: false, name: 52w_desc}
+    - {column: 净利润增速, ascending: false, name: profit_growth_desc}
+    - {column: EPS, ascending: false, name: eps_desc}
+    - {column: 流通市值, ascending: true, name: mcap_asc}
+
+  n_stocks_options: [30, 50, 70]
+
+  stage1_top_pcts: [null, 0.10, 0.20]
+
+  rebalance_weeks: 1
+
+  max_combinations: 600
+  random_seed: 42
