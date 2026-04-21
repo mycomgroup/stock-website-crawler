@@ -1,0 +1,17 @@
+{
+  "name": "营收利润持续增长策略",
+  "description": "筛选连续8个季度营收和利润增长大于20%的成长股",
+  "formula": [
+    "非ST",
+    "最近8个季度营业收入同比增长率均大于20%",
+    "最近8个季度净利润同比增长率均大于20%"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 30,
+  "stopLoss": 15,
+  "trailingStopLoss": 10
+}

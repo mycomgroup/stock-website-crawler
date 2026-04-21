@@ -1,0 +1,18 @@
+{
+  "name": "破净股安全边际策略",
+  "description": "筛选股价低于每股净资产、负债率低、现金流健康的公司",
+  "formula": [
+    "非ST",
+    "股价小于每股净资产",
+    "资产负债率小于50%",
+    "经营活动产生的现金流量净额大于0"
+  ],
+  "daysForSaleStrategy": "4,8",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 25,
+  "stopLoss": 12,
+  "trailingStopLoss": 8
+}

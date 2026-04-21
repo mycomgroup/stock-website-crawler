@@ -1,0 +1,18 @@
+{
+  "name": "均线趋势策略",
+  "description": "筛选5日均线上穿20日均线、股价站上20日均线的趋势股",
+  "formula": [
+    "非ST",
+    "5日均线上穿20日均线",
+    "股价站上20日均线",
+    "20日均线向上"
+  ],
+  "daysForSaleStrategy": "2,3",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 8,
+  "trailingStopLoss": 5
+}

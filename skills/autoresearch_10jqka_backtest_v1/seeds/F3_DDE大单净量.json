@@ -1,0 +1,18 @@
+{
+  "name": "DDE大单净量策略",
+  "description": "筛选近3日DDE大单净量均大于0、涨幅小于10%、市值小的资金流入股",
+  "formula": [
+    "非ST",
+    "近3日DDE大单净量均大于0",
+    "涨跌幅小于10%",
+    "总市值小于100亿元"
+  ],
+  "daysForSaleStrategy": "2,3",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

@@ -1,0 +1,19 @@
+{
+  "name": "风险过滤策略",
+  "description": "筛选非ST、流通市值大于5亿、近1个月无减持公告的安全股",
+  "formula": [
+    "非ST",
+    "非退市",
+    "非停牌",
+    "流通市值大于5亿元",
+    "近1个月有减持公告取反"
+  ],
+  "daysForSaleStrategy": "5,10",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 8,
+  "dailyBuyCount": 2,
+  "takeProfit": 15,
+  "stopLoss": 8,
+  "trailingStopLoss": 5
+}

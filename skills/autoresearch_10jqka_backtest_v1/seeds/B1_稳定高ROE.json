@@ -1,0 +1,18 @@
+{
+  "name": "稳定高ROE质量成长策略",
+  "description": "筛选连续5年ROE大于15%的公司，追求高质量稳定增长",
+  "formula": [
+    "非ST",
+    "连续5年ROE大于15%",
+    "连续5年净利润为正",
+    "资产负债率小于60%"
+  ],
+  "daysForSaleStrategy": "5,10",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 25,
+  "stopLoss": 12,
+  "trailingStopLoss": 8
+}

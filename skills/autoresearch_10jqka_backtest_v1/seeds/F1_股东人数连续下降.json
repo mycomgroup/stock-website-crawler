@@ -1,0 +1,17 @@
+{
+  "name": "股东人数连续下降策略",
+  "description": "筛选股东人数连续两个报告期下降、近期涨幅为正的筹码集中股",
+  "formula": [
+    "非ST",
+    "股东人数连续两个报告期下降",
+    "近20日区间涨跌幅大于0"
+  ],
+  "daysForSaleStrategy": "4,8",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 22,
+  "stopLoss": 10,
+  "trailingStopLoss": 6
+}

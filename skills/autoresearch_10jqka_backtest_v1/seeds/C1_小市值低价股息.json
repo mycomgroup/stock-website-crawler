@@ -1,0 +1,19 @@
+{
+  "name": "小市值低价股息策略",
+  "description": "筛选总市值小于50亿、股价小于10元、有股息的小盘价值股",
+  "formula": [
+    "非ST",
+    "总市值小于50亿元",
+    "股价小于10元",
+    "近一年净利润为正",
+    "股息率大于1.5%"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 25,
+  "stopLoss": 12,
+  "trailingStopLoss": 8
+}

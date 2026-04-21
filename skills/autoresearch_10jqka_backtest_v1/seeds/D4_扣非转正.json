@@ -1,0 +1,17 @@
+{
+  "name": "扣非转正困境反转策略",
+  "description": "筛选扣非净利润同比转正、营收增长大于20%的公司",
+  "formula": [
+    "非ST",
+    "扣非净利润同比转正",
+    "营业收入同比增长率大于20%"
+  ],
+  "daysForSaleStrategy": "2,4",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 35,
+  "stopLoss": 18,
+  "trailingStopLoss": 12
+}

@@ -1,0 +1,18 @@
+{
+  "name": "研报目标价策略",
+  "description": "筛选股价低于目标价70%、低估值高增长的公司",
+  "formula": [
+    "非ST",
+    "股价/目标价小于0.7",
+    "低估值",
+    "高增长"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 3,
+  "takeProfit": 30,
+  "stopLoss": 15,
+  "trailingStopLoss": 10
+}

@@ -1,0 +1,19 @@
+{
+  "name": "连续分红高股息策略",
+  "description": "筛选连续三年分红、自由现金流为正的公司，注重分红可持续性",
+  "formula": [
+    "非ST",
+    "近三年连续分红",
+    "自由现金流为正",
+    "市盈率小于20",
+    "股息率从大到小排序"
+  ],
+  "daysForSaleStrategy": "5,10",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 18,
+  "stopLoss": 8,
+  "trailingStopLoss": 5
+}
