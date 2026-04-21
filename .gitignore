@@ -36,5 +36,12 @@ QuantsPlaybook/*
 stock-backtesting-system/*
 skills/autoresearch/*jk2bt-main/data/db/*.duckdb
 
+# Large CSV files (>100MB)
 skills/autoresearch_ml_joinquant_factor_v2/train_merged_all.csv
+skills/autoresearch_ml_joinquant_factor_v2/train_merged_all_with_2026.csv
 skills/autoresearch_ml_joinquant_factor_v2/test_data_small.csv
+skills/autoresearch_ml_joinquant_factor_v2/data/weekly_factors/factors_20250616_all.csv
+
+# Output prediction files
+skills/autoresearch_ml_joinquant_factor_v2/output/phase1/oof_predictions_phase1.csv
+skills/autoresearch_ml_joinquant_factor_v2/output/phase2/oof_predictions_phase2.csv
