@@ -249,13 +249,35 @@ def compute_decile_spread(
     a = alpha_clean.loc[common]
     l = label_clean.loc[common]
 
-    top_10pct = a.quantile(0.9)
-    bot_10pct = a.quantile(0.1)
+    if not isinstance(a.index, pd.MultiIndex) or "date" not in a.index.names:
+        top_10pct = a.quantile(0.9)
+        bot_10pct = a.quantile(0.1)
+        top_returns = l[a >= top_10pct].mean()
+        bot_returns = l[a <= bot_10pct].mean()
+        return float(top_returns - bot_returns)
 
-    top_returns = l[a >= top_10pct].mean()
-    bot_returns = l[a <= bot_10pct].mean()
+    spreads = []
+    dates = a.index.get_level_values("date").unique()
+    for date in dates:
+        a_d = a.xs(date, level="date")
+        l_d = l.xs(date, level="date")
+        idx = a_d.index.intersection(l_d.index)
+        if len(idx) < 10:
+            continue
 
-    return float(top_returns - bot_returns)
+        a_v = a_d.loc[idx]
+        l_v = l_d.loc[idx]
+        top_10pct = a_v.quantile(0.9)
+        bot_10pct = a_v.quantile(0.1)
+        top_returns = l_v[a_v >= top_10pct].mean()
+        bot_returns = l_v[a_v <= bot_10pct].mean()
+
+        if np.isfinite(top_returns) and np.isfinite(bot_returns):
+            spreads.append(float(top_returns - bot_returns))
+
+    if not spreads:
+        return float("nan")
+    return float(np.mean(spreads))
 
 
 def evaluate_synthesis_layer(

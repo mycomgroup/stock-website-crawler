@@ -113,7 +113,10 @@ class WeakFactorPipelineV2:
 
         # ---- L0: 数据治理 ----------------------------------------
         logger.info("[L0] 数据治理：加载点时一致因子面板")
-        self.panel = build_pit_panel(self.config.csv_path)
+        self.panel = build_pit_panel(
+            self.config.csv_path,
+            new_stock_cooldown_days=self.config.new_stock_cooldown_days,
+        )
         logger.info(
             "[L0] 完成：%s", self.panel
         )
@@ -124,10 +127,17 @@ class WeakFactorPipelineV2:
                 "[L0] 使用 final holdout（访问次数=%d）",
                 self.holdout_partition.access_count,
             )
-            df = self.holdout_partition.get_holdout_data(self.panel.df)
+            df_partition = self.holdout_partition.get_holdout_data(self.panel.df)
         else:
             logger.info("[L0] 使用 research OOS（不访问 final holdout）")
-            df = self.holdout_partition.get_research_data(self.panel.df)
+            df_partition = self.holdout_partition.get_research_data(self.panel.df)
+
+        tradable_mask = self.panel.tradable_mask.reindex(
+            df_partition.index,
+            fill_value=False,
+        )
+        df = df_partition.loc[tradable_mask].copy()
+        logger.info("[L0] 应用可交易掩码后：%d 行", len(df))
 
         # ---- L1: 因子预处理 --------------------------------------
         logger.info("[L1] 因子预处理：winsor → impute → standardize")
@@ -172,6 +182,7 @@ class WeakFactorPipelineV2:
         logger.info("[L3] 组内合成：为每个家族生成代表分数")
 
         family_scores = {}
+        label_series = df_clean.set_index(["date", "stock_id"])["pchg"]
         for family_name, family_factors in family_map.items():
             # Filter factors that exist in df_clean
             available_factors = [f for f in family_factors if f in df_clean.columns]
@@ -187,8 +198,46 @@ class WeakFactorPipelineV2:
                 len(available_factors),
             )
 
-            # Generate family score (simplified: use equal_rank for Phase 1)
-            family_score = equal_rank_score(df_clean, available_factors)
+            if self.config.intra_family_method == "equal_rank":
+                family_score = equal_rank_score(df_clean, available_factors)
+            elif self.config.intra_family_method == "ridge":
+                family_score = ridge_family_score(
+                    df_clean,
+                    available_factors,
+                    label_col="pchg",
+                    min_train_periods=self.config.min_train_periods,
+                    test_block=self.config.test_block,
+                    step=self.config.step,
+                    embargo=self.config.embargo,
+                )
+            elif self.config.intra_family_method == "pc1":
+                family_score = pc1_score_with_sign_anchor(df_clean, available_factors)
+            elif self.config.intra_family_method == "stack":
+                eq_score = equal_rank_score(df_clean, available_factors)
+                ridge_score = ridge_family_score(
+                    df_clean,
+                    available_factors,
+                    label_col="pchg",
+                    min_train_periods=self.config.min_train_periods,
+                    test_block=self.config.test_block,
+                    step=self.config.step,
+                    embargo=self.config.embargo,
+                )
+                pc1_score = pc1_score_with_sign_anchor(
+                    df_clean,
+                    available_factors,
+                    anchor_score=eq_score,
+                )
+                family_score = stack_family_scores_oof(
+                    eq_score,
+                    ridge_score,
+                    pc1_score,
+                    label_series,
+                )
+            else:
+                raise ValueError(
+                    f"Unknown intra_family_method: {self.config.intra_family_method}"
+                )
             family_scores[family_name] = family_score
 
         logger.info("[L3] 完成：生成 %d 个家族分数", len(family_scores))
@@ -197,8 +246,8 @@ class WeakFactorPipelineV2:
         logger.info("[L4] 组间收缩合成：rolling ridge/elastic net")
 
         # Assemble family scores matrix
+        y = label_series
         S = pd.DataFrame(family_scores)
-        y = df_clean.set_index(["date", "stock_id"])["pchg"]
 
         # Align S and y
         common_idx = S.index.intersection(y.index)
@@ -226,11 +275,18 @@ class WeakFactorPipelineV2:
         S_train = S[S.index.get_level_values("date").isin(train_dates)]
         y_train = y[y.index.isin(S_train.index)]
 
-        cross_family_model.fit(S_train, y_train, best_alpha=1.0, best_l1_ratio=0.0)
+        best_alpha, best_l1_ratio = cross_family_model.select_hyperparams(S_train, y_train)
+        cross_family_model.fit(
+            S_train,
+            y_train,
+            best_alpha=best_alpha,
+            best_l1_ratio=best_l1_ratio,
+        )
         logger.info("[L4] CrossFamilyModel 训练完成，beta=%s", cross_family_model.current_beta)
 
-        # Predict on full data (for Phase 1 demo)
-        alpha_linear = cross_family_model.predict(S)
+        # 仅对测试区间预测，避免训练样本内推断造成评价口径污染
+        S_test = S[S.index.get_level_values("date").isin(test_dates)]
+        alpha_linear = cross_family_model.predict(S_test if len(S_test) > 0 else S)
         logger.info("[L4] 完成：生成 %d 个 alpha_linear 预测", len(alpha_linear))
 
         # ---- L7: 组合优化 ----------------------------------------
@@ -246,12 +302,14 @@ class WeakFactorPipelineV2:
         all_weights = []
         for date in sorted(alpha_linear.index.get_level_values("date").unique()):
             date_alpha = alpha_linear.xs(date, level="date")
-            date_tradable = self.panel.tradable_mask[
-                self.panel.df["date"] == date
-            ]
-            date_tradable.index = self.panel.df.loc[
-                self.panel.df["date"] == date, "stock_id"
-            ].values
+            date_rows = df_partition["date"] == date
+            date_stock_ids = df_partition.loc[date_rows, "stock_id"].values
+            date_tradable_values = tradable_mask.loc[df_partition.index[date_rows]].values
+            date_tradable = pd.Series(
+                date_tradable_values,
+                index=date_stock_ids,
+                dtype=bool,
+            ).groupby(level=0).max()
 
             # Get prev weights (if available)
             if all_weights:

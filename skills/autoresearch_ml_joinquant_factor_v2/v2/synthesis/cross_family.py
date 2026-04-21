@@ -2,7 +2,17 @@
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import ElasticNet, Ridge
+
+
+def _ridge_fit(
+    X: np.ndarray,
+    y: np.ndarray,
+    alpha: float,
+) -> np.ndarray:
+    """Fit ridge regression coefficients with NumPy."""
+    n_features = X.shape[1]
+    reg = float(alpha) * np.eye(n_features)
+    return np.linalg.solve(X.T @ X + reg, X.T @ y)
 
 
 def predict_alpha_linear(
@@ -105,19 +115,9 @@ class CrossFamilyModel:
         X = S_train.loc[common_idx].fillna(0).values
         y = y_train.loc[common_idx].fillna(0).values
 
-        # Fit model: pure ridge when l1_ratio == 0, elastic net otherwise
-        if best_l1_ratio == 0.0:
-            model = Ridge(alpha=best_alpha, fit_intercept=False)
-        else:
-            model = ElasticNet(
-                alpha=best_alpha,
-                l1_ratio=best_l1_ratio,
-                fit_intercept=False,
-                max_iter=1000,
-            )
-
-        model.fit(X, y)
-        raw_beta = pd.Series(model.coef_, index=S_train.columns)
+        # 当前本地实现不依赖 sklearn：统一使用 ridge 闭式解。
+        raw_coef = _ridge_fit(X=X, y=y, alpha=best_alpha)
+        raw_beta = pd.Series(raw_coef, index=S_train.columns)
 
         # Apply weight constraints (single-family cap)
         beta = self._apply_weight_constraints(raw_beta)
@@ -206,28 +206,25 @@ class CrossFamilyModel:
 
         for alpha_reg in self.alpha_reg_grid:
             for l1_ratio in self.l1_ratio_grid:
-                try:
-                    model_copy = CrossFamilyModel(
-                        alpha_reg_grid=[alpha_reg],
-                        l1_ratio_grid=[l1_ratio],
-                        max_single_family_weight=self.max_single_family_weight,
-                        allow_negative=self.allow_negative,
-                    )
-                    model_copy.fit(S_inner_train, y_inner_train, alpha_reg, l1_ratio)
-                    preds = model_copy.predict(S_inner_val)
+                model_copy = CrossFamilyModel(
+                    alpha_reg_grid=[alpha_reg],
+                    l1_ratio_grid=[l1_ratio],
+                    max_single_family_weight=self.max_single_family_weight,
+                    allow_negative=self.allow_negative,
+                )
+                model_copy.fit(S_inner_train, y_inner_train, alpha_reg, l1_ratio)
+                preds = model_copy.predict(S_inner_val)
 
-                    common = preds.index.intersection(y_inner_val.index)
-                    if len(common) < 5:
-                        continue
-
-                    # Rank IC as selection criterion
-                    ic = preds.loc[common].rank().corr(y_inner_val.loc[common].rank())
-                    if np.isfinite(ic) and ic > best_score:
-                        best_score = ic
-                        best_alpha = alpha_reg
-                        best_l1 = l1_ratio
-                except Exception:
+                common = preds.index.intersection(y_inner_val.index)
+                if len(common) < 5:
                     continue
+
+                # Rank IC as selection criterion
+                ic = preds.loc[common].rank().corr(y_inner_val.loc[common].rank())
+                if np.isfinite(ic) and ic > best_score:
+                    best_score = ic
+                    best_alpha = alpha_reg
+                    best_l1 = l1_ratio
 
         return best_alpha, best_l1
 

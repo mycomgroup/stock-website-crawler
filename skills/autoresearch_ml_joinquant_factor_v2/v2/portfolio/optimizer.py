@@ -173,11 +173,10 @@ class TopNEqualWeightOptimizer:
                     w[s] = equal_w
                 break
             else:
-                # cap all at max_single_weight, carry over excess
+                # infeasible to satisfy cap with available names:
+                # fall back to equal allocation across selected names.
                 for s in remaining_stocks:
-                    w[s] = self.max_single_weight
-                remaining_budget -= len(remaining_stocks) * self.max_single_weight
-                remaining_stocks = []  # all capped, no redistribution needed
+                    w[s] = equal_w
                 break
 
         return w
