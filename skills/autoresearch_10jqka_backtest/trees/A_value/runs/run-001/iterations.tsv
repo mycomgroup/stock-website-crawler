@@ -1,0 +1,3 @@
+iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation	robust_score	recent6	recent12	prior12	full24	sensitivity	trade_count	complexity	reason
+0001	mock_1776843426	stage_c_fail	0.1506	0.0704	1.8856	1.187351	rollback	tree_run:run-001 round:1 | [添加条件] 股息率大于3%	0.000000	1.503609	1.187351	0.000000	0.000000	0.2477	143	10	good_ratio=0.80, floor_ok=False, sensitivity=0.2477, anchor=1.1874
+0002	mock_1776843444	ok	0.1065	0.0507	1.2847	0.978638	keep	tree_run:run-001 round:2 | [添加条件] 近10天的涨幅大于3.0%小于27.7%	1.226382	1.149095	0.978638	1.419848	1.457991	0.1695	198	11	first version, automatically champion

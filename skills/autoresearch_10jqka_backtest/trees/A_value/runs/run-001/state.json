@@ -1,0 +1,110 @@
+{
+  "current_iter": 3,
+  "champion_score": 0.9786375147928991,
+  "champion_robust_score": 1.2263821108065194,
+  "consecutive_failures": 0,
+  "last_update": "2026-04-22T15:37:46.879657",
+  "objective_version": "v4_tree_profile",
+  "seed_name": "价值树",
+  "search_mode": "tree_profile",
+  "phase": "fine_search",
+  "direction_status": "ACTIVE",
+  "direction_reason": "recent_6m / recent_12m 均未明显弱于 baseline",
+  "champion_metrics": {
+    "annual_return": 0.1065,
+    "max_drawdown": 0.0507,
+    "sortino": 1.4376,
+    "information_ratio": 1.2438,
+    "win_rate": 0.5873,
+    "trade_count": 198,
+    "sharpe": 1.2847,
+    "avg_holding_days": 6.86
+  },
+  "champion_windows": {
+    "recent_6m": {
+      "score": 1.1490945631067957,
+      "annual_return": 0.1012,
+      "max_drawdown": 0.0515,
+      "sortino": 1.9582,
+      "information_ratio": 1.4142,
+      "win_rate": 0.6208,
+      "trade_count": 122,
+      "sharpe": 1.4961,
+      "avg_holding_days": 5.99
+    },
+    "recent_12m": {
+      "score": 0.9786375147928991,
+      "annual_return": 0.1065,
+      "max_drawdown": 0.0507,
+      "sortino": 1.4376,
+      "information_ratio": 1.2438,
+      "win_rate": 0.5873,
+      "trade_count": 198,
+      "sharpe": 1.2847,
+      "avg_holding_days": 6.86
+    },
+    "prior_12m": {
+      "score": 1.4198483295711057,
+      "annual_return": 0.0808,
+      "max_drawdown": 0.0443,
+      "sortino": 2.8512,
+      "information_ratio": 1.439,
+      "win_rate": 0.589,
+      "trade_count": 53,
+      "sharpe": 2.1597,
+      "avg_holding_days": 5.88
+    },
+    "full_24m": {
+      "score": 1.4579908940397348,
+      "annual_return": 0.1986,
+      "max_drawdown": 0.0906,
+      "sortino": 2.6753,
+      "information_ratio": 1.3776,
+      "win_rate": 0.5738,
+      "trade_count": 124,
+      "sharpe": 2.3439,
+      "avg_holding_days": 6.35
+    }
+  },
+  "baseline_window_scores": {},
+  "baseline_metrics_by_window": {},
+  "stable_param_ranges": {
+    "takeProfit": {
+      "kind": "parameter",
+      "lower": 10,
+      "upper": 20,
+      "current": 15,
+      "tested": 2
+    },
+    "stopLoss": {
+      "kind": "parameter",
+      "lower": 5,
+      "upper": 9,
+      "current": 7,
+      "tested": 2
+    },
+    "trailingStopLoss": {
+      "kind": "parameter",
+      "lower": 3,
+      "upper": 7,
+      "current": 5,
+      "tested": 2
+    },
+    "maxPositions": {
+      "kind": "parameter",
+      "lower": 4,
+      "upper": 10,
+      "current": 4,
+      "tested": 4
+    }
+  },
+  "last_keep_reason": "first version, automatically champion",
+  "last_mutation_type": "adjust_formula_sort",
+  "final_recommendation": "继续跟踪 champion，并优先在稳定参数带内微调。",
+  "stop_reason": "",
+  "tree_profile": {
+    "tree_id": "A_value",
+    "run_id": "run-001"
+  },
+  "param_penalty": 0.0
+}
