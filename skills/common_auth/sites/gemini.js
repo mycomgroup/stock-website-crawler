@@ -15,16 +15,22 @@ export default {
         }
       });
 
-      if (!resp.ok) return false;
+      if (!resp.ok) return { success: false };
       const json = await resp.json();
-      return json && (json.email || json.id || json.user_id);
+      if (json && (json.email || json.id || json.user_id)) {
+        return { success: true, user: json.email || json.id || json.user_id };
+      }
+      return { success: false };
     } catch (e) {
       try {
         const homeResp = await fetch('https://gemini.google.com/', { headers: { 'Cookie': cookieHeader } });
         const html = await homeResp.text();
-        return html.includes('signed-in') || html.includes('Gemini');
+        if (html.includes('signed-in') || html.includes('Gemini')) {
+          return { success: true };
+        }
+        return { success: false };
       } catch {
-        return false;
+        return { success: false };
       }
     }
   },

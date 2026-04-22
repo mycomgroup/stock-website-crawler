@@ -13,16 +13,16 @@
  *     对应 JoinQuant 的 { resultPath, backtestId, summary }
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import * as path from 'node:path';
 import '../load-env.js';
 import { ensureSession } from './bigquant-auth.js';
 import { BigQuantClient } from './bigquant-client.js';
 
 function normalizeCellSource(cellSource, strategyPath) {
   if (cellSource) return String(cellSource);
-  if (strategyPath && fs.existsSync(strategyPath)) {
-    return fs.readFileSync(strategyPath, 'utf8');
+  if (strategyPath && existsSync(strategyPath)) {
+    return readFileSync(strategyPath, 'utf8');
   }
   return 'print("hello from bigquant")';
 }

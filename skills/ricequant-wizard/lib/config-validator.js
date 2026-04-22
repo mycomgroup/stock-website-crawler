@@ -122,11 +122,11 @@ export function normalizeConfig(config) {
     normalized.stOption = 'exclude';
   }
 
-  if (!normalized.maxHoldingNum) {
+  if (normalized.maxHoldingNum === undefined) {
     normalized.maxHoldingNum = 10;
   }
 
-  if (!normalized.rebalanceInterval) {
+  if (normalized.rebalanceInterval === undefined) {
     normalized.rebalanceInterval = 5;
   }
 

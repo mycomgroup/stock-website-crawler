@@ -11,7 +11,7 @@ import { withAutoRelogin } from '../ricequant_strategy/browser/session-manager.j
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-function showHelp() {
+export function showHelp() {
   console.log(`
 RiceQuant 向导式策略工具
 
@@ -52,7 +52,7 @@ RiceQuant 向导式策略工具
 `);
 }
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const args = {};
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -69,14 +69,14 @@ function parseArgs(argv) {
   return args;
 }
 
-function loadConfig(configPath) {
+export function loadConfig(configPath) {
   if (!fs.existsSync(configPath)) {
     throw new Error(`配置文件不存在: ${configPath}`);
   }
   return JSON.parse(fs.readFileSync(configPath, 'utf8'));
 }
 
-async function createStrategy(client, args) {
+export async function createStrategy(client, args) {
   const config = loadConfig(args.config);
   
   const validation = validateWizardConfig(config);
@@ -136,7 +136,7 @@ async function createStrategy(client, args) {
   return result;
 }
 
-async function updateStrategy(client, args) {
+export async function updateStrategy(client, args) {
   const config = loadConfig(args.config);
   
   const validation = validateWizardConfig(config);
@@ -153,7 +153,7 @@ async function updateStrategy(client, args) {
   console.log('更新成功');
 }
 
-async function runBacktest(client, args) {
+export async function runBacktest(client, args) {
   
   const backtestConfig = {
     start: args.start || '2020-01-01',
@@ -200,7 +200,7 @@ async function runBacktest(client, args) {
   return result;
 }
 
-async function getReport(client, args) {
+export async function getReport(client, args) {
   
   const report = await client.getFullReport(args.id);
   const reportPath = path.join(DATA_DIR, `report-${args.id}-${Date.now()}.json`);
@@ -225,7 +225,7 @@ async function getReport(client, args) {
   console.log(`\n详细报告: ${reportPath}`);
 }
 
-async function listStrategies(client, args) {
+export async function listStrategies(client, args) {
   
   const strategies = await client.listStrategies({ type: args.type });
   
@@ -236,7 +236,7 @@ async function listStrategies(client, args) {
   }
 }
 
-async function deleteStrategy(client, args) {
+export async function deleteStrategy(client, args) {
   
   console.log(`删除策略 ${args.id}...`);
   const success = await client.deleteStrategy(args.id);
@@ -248,7 +248,7 @@ async function deleteStrategy(client, args) {
   }
 }
 
-function validateConfig(args) {
+export function validateConfig(args) {
   const config = loadConfig(args.config);
   const validation = validateWizardConfig(config);
   
@@ -272,7 +272,7 @@ function validateConfig(args) {
   }
 }
 
-function listFactors() {
+export function listFactors() {
   
   const factors = getAllFactorsFlat();
   

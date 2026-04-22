@@ -180,6 +180,8 @@ export class AntiDetection {
       backoff = true
     } = options;
 
+    let lastError = null;
+    
     for (let i = 0; i < maxRetries; i++) {
       try {
         const response = await fetchFn();
@@ -188,16 +190,17 @@ export class AntiDetection {
           return response;
         }
         
-        // 处理限流
         if (response.status === 429) {
           const delay = backoff ? retryDelay * Math.pow(2, i) : retryDelay;
           console.log(`Rate limited, waiting ${delay}ms before retry...`);
           await this.randomDelay(delay, delay + 2000);
+          lastError = new Error(`HTTP ${response.status}: ${response.statusText}`);
           continue;
         }
         
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       } catch (error) {
+        lastError = error;
         if (i === maxRetries - 1) {
           throw error;
         }
@@ -207,6 +210,12 @@ export class AntiDetection {
         await this.randomDelay(delay, delay + 1000);
       }
     }
+    
+    if (lastError) {
+      throw lastError;
+    }
+    
+    throw new Error('Max retries exceeded without a successful response');
   }
 
   /**

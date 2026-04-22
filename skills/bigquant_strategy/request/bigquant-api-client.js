@@ -11,21 +11,21 @@
  * - /bigapis/trading/v1/portfolio/strategies - Portfolio strategies
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import * as path from 'node:path';
 import '../load-env.js';
 import { OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X_10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 
 function ensureDir(filePath) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  mkdirSync(path.dirname(filePath), { recursive: true });
 }
 
 export function loadJson(filePath) {
-  if (!fs.existsSync(filePath)) return {};
+  if (!existsSync(filePath)) return {};
   try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return JSON.parse(readFileSync(filePath, 'utf8'));
   } catch (e) {
     return {};
   }
@@ -33,7 +33,7 @@ export function loadJson(filePath) {
 
 export function saveJson(filePath, data) {
   ensureDir(filePath);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
 export class BigQuantAPIClient {

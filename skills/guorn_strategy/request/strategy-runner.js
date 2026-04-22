@@ -13,7 +13,7 @@ import { DATA_ROOT, OUTPUT_ROOT, SESSION_FILE } from '../paths.js';
  *
  * 账号限制：level=1 普通账号回测时间窗口约 1 年内
  */
-async function runBacktestViaBrowser(config, sessionFile) {
+export async function runBacktestViaBrowser(config, sessionFile) {
   const session = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
 
   const browser = await chromium.launch({ headless: true });

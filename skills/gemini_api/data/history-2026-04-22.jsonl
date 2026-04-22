@@ -1,0 +1,97 @@
+{"timestamp":"2026-04-22T03:08:26.901Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.903Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.904Z","message":"Test","response":"Response to: Test","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.912Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.913Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.913Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.914Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:08:26.915Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:08:26.916Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.928Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.928Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:08:26.929Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:08:26.929Z","message":"Test","response":"Response"}
+{"timestamp":"2026-04-22T03:13:07.286Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.287Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.289Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.289Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.289Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.290Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:07.290Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:07.290Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.303Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.304Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:07.304Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:13:07.304Z","message":"Test","response":"Response"}
+{"timestamp":"2026-04-22T03:13:13.747Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":1}
+{"timestamp":"2026-04-22T03:13:13.750Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:13.752Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:13.752Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:13.752Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:13.753Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:13.753Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:13.755Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":1}
+{"timestamp":"2026-04-22T03:13:13.767Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:13.768Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:13.769Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:13:13.769Z","message":"Test","response":"Response"}
+{"timestamp":"2026-04-22T03:13:29.777Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.778Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.780Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.780Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.780Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.780Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:29.780Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:29.781Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.792Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.793Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:29.793Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:13:29.793Z","message":"Test","response":"Response"}
+{"timestamp":"2026-04-22T03:13:35.636Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.638Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.640Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.640Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.640Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.641Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:35.641Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:13:35.642Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.654Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.655Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:13:35.656Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:13:35.656Z","message":"Test","response":"Response"}
+{"timestamp":"2026-04-22T03:20:38.333Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.335Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.336Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.336Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.336Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.337Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:20:38.337Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:20:38.337Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.348Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.349Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:20:38.349Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:20:38.349Z","message":"Test","response":"Response"}
+{"timestamp":"2026-04-22T03:21:00.947Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.948Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.949Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.949Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.950Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.950Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:21:00.950Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:21:00.950Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.962Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.964Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:21:00.965Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:21:00.965Z","message":"Test","response":"Response"}
+{"timestamp":"2026-04-22T03:30:11.459Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.463Z","message":"Hello","response":"Response to: Hello","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.465Z","message":"Message 1","response":"Response to: Message 1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.465Z","message":"Message 2","response":"Response to: Message 2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.465Z","message":"Message 3","response":"Response to: Message 3","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.467Z","message":"M1","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:30:11.467Z","message":"M3","response":"OK","model":"gemini-pro","duration":0}
+{"timestamp":"2026-04-22T03:30:11.469Z","message":"M1","response":"Response to: M1","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.480Z","message":"M2","response":"Response to: M2","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.481Z","message":"Single","response":"Response to: Single","model":"gemini-pro","conversationId":"conv-123","messageId":"msg-456","duration":0}
+{"timestamp":"2026-04-22T03:30:11.482Z","message":"Test","response":"Response","model":"gemini-pro"}
+{"timestamp":"2026-04-22T03:30:11.482Z","message":"Test","response":"Response"}

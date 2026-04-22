@@ -15,11 +15,14 @@ export default {
         }
       });
 
-      if (!resp.ok) return false;
+      if (!resp.ok) return { success: false };
       const json = await resp.json();
-      return json.id && json.email;
+      if (json.id && json.email) {
+        return { success: true, user: json.email };
+      }
+      return { success: false };
     } catch (e) {
-      return false;
+      return { success: false, message: e.message };
     }
   },
 

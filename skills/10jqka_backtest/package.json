@@ -7,10 +7,16 @@
     "login": "node browser/manual-login-capture.js",
     "login:auto": "node browser/automated-login.js",
     "login:local": "node browser/extract-local-session.js",
-    "test:session": "node test-session.js"
+    "test:session": "node test-session.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },
   "dependencies": {
-    "playwright": "^1.42.1",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "playwright": "^1.42.1"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "jest": "^29.7.0"
   }
 }

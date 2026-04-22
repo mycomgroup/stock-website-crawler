@@ -1,0 +1,1 @@
+"""Guorn strategy processing module."""

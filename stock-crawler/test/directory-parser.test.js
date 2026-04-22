@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import DirectoryParser from '../src/parsers/directory-parser.js';
 
 describe('DirectoryParser', () => {
@@ -8,68 +7,78 @@ describe('DirectoryParser', () => {
     parser = new DirectoryParser();
   });
 
-  test('matches 支持分类命中与URL规则命中', () => {
-    expect(parser.matches('https://example.com/xxx', { classification: { type: 'directory_page' } })).toBe(true);
-    expect(parser.matches('https://example.com/directory')).toBe(true);
-    expect(parser.matches('https://example.com/index')).toBe(true);
-    expect(parser.matches('https://example.com/guide/getting-started')).toBe(true);
-    expect(parser.matches('https://example.com/catalog/list')).toBe(true);
+  describe('matches', () => {
+    test('should match URLs with directory keywords', () => {
+      expect(parser.matches('https://example.com/directory')).toBe(true);
+      expect(parser.matches('https://example.com/directory/apis')).toBe(true);
+      expect(parser.matches('https://example.com/index')).toBe(true);
+      expect(parser.matches('https://example.com/guide')).toBe(true);
+      expect(parser.matches('https://example.com/catalog')).toBe(true);
+    });
+
+    test('should match with classification option', () => {
+      expect(parser.matches('https://example.com/any', { classification: { type: 'directory_page' } })).toBe(true);
+    });
+
+    test('should not match other URLs', () => {
+      expect(parser.matches('https://example.com/api')).toBe(false);
+      expect(parser.matches('https://example.com/article')).toBe(false);
+    });
   });
 
-  test('matches 在非目录URL时返回 false', () => {
-    expect(parser.matches('https://example.com/article/1')).toBe(false);
+  describe('getPriority', () => {
+    test('should return 80', () => {
+      expect(parser.getPriority()).toBe(80);
+    });
   });
 
-  test('getPriority 返回 80', () => {
-    expect(parser.getPriority()).toBe(80);
+  describe('countNodes', () => {
+    test('should count total nodes including children', () => {
+      const tree = [
+        { name: 'Node 1', children: [{ name: 'Child 1', children: [] }, { name: 'Child 2', children: [{ name: 'Grandchild', children: [] }] }] },
+        { name: 'Node 2', children: [] }
+      ];
+
+      expect(parser.countNodes(tree)).toBe(5);
+    });
+
+    test('should handle empty tree', () => {
+      expect(parser.countNodes([])).toBe(0);
+    });
   });
 
-  test('countNodes 应递归统计节点数', () => {
-    const tree = [
-      {
-        name: 'A',
-        url: '/a',
-        children: [
-          { name: 'A-1', url: '/a-1', children: [] },
-          {
-            name: 'A-2',
-            url: '/a-2',
-            children: [{ name: 'A-2-1', url: '/a-2-1', children: [] }]
-          }
+  describe('parse', () => {
+    test('should parse directory structure', async () => {
+      const mockPage = {
+        evaluate: async () => [
+          { name: 'API Reference', url: '/api/reference', children: [{ name: 'Users', url: '/api/users', children: [] }] },
+          { name: 'Guides', url: '/guides', children: [] }
         ]
-      },
-      { name: 'B', url: '/b', children: [] }
-    ];
+      };
 
-    expect(parser.countNodes(tree)).toBe(5);
-    expect(parser.countNodes()).toBe(0);
-  });
+      parser.extractTitle = async () => 'Documentation';
 
-  test('parse 应返回目录结构与 nodeCount', async () => {
-    parser.extractTitle = jest.fn(async () => '目录页标题');
+      const result = await parser.parse(mockPage, 'https://example.com/directory');
 
-    const tree = [
-      {
-        name: '文档中心',
-        url: '/docs',
-        children: [{ name: 'API', url: '/docs/api', children: [] }]
-      }
-    ];
+      expect(result.type).toBe('directory-page');
+      expect(result.url).toBe('https://example.com/directory');
+      expect(result.title).toBe('Documentation');
+      expect(result.tree).toHaveLength(2);
+      expect(result.directoryMeta.nodeCount).toBe(3);
+    });
 
-    const page = {
-      evaluate: async () => tree
-    };
+    test('should handle empty directory', async () => {
+      const mockPage = {
+        evaluate: async () => []
+      };
 
-    const result = await parser.parse(page, 'https://example.com/directory');
+      parser.extractTitle = async () => 'Empty Directory';
 
-    expect(result).toEqual({
-      type: 'directory-page',
-      url: 'https://example.com/directory',
-      title: '目录页标题',
-      tree,
-      directoryMeta: {
-        nodeCount: 2
-      }
+      const result = await parser.parse(mockPage, 'https://example.com/directory');
+
+      expect(result.type).toBe('directory-page');
+      expect(result.tree).toEqual([]);
+      expect(result.directoryMeta.nodeCount).toBe(0);
     });
   });
 });

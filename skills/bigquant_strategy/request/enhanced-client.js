@@ -124,14 +124,15 @@ export class EnhancedBigQuantClient {
    * POST请求
    */
   async post(endpoint, data = {}, options = {}) {
+    const { headers: customHeaders, ...restOptions } = options;
     const response = await this.request(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers
+        ...customHeaders
       },
       body: JSON.stringify(data),
-      ...options
+      ...restOptions
     });
     
     return await response.json();

@@ -4,8 +4,15 @@
   "description": "Unified Auth Hub for Quant Skills",
   "type": "module",
   "main": "index.js",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:python": "python3 -m pytest tests/test_extractor.py -v"
+  },
   "dependencies": {
     "playwright": "^1.42.1",
     "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "pytest": ">=7.0.0"
   }
 }

@@ -1,22 +1,79 @@
 import json
 import os
+from typing import Optional, Dict, Any, List
 
-def process_meta():
-    input_file = '/Users/fengzhi/Downloads/git/testlixingren/skills/guorn_strategy/guorn_meta_full.json'
-    output_md = '/Users/fengzhi/Downloads/git/testlixingren/skills/guorn_strategy/GUORN_INDICATORS_CATALOG.md'
-    output_json = '/Users/fengzhi/Downloads/git/testlixingren/skills/guorn_strategy/indicator_mapping.json'
+DEFAULT_INPUT_FILE = os.path.join(os.path.dirname(__file__), 'guorn_meta_full.json')
+DEFAULT_OUTPUT_MD = os.path.join(os.path.dirname(__file__), 'GUORN_INDICATORS_CATALOG.md')
+DEFAULT_OUTPUT_JSON = os.path.join(os.path.dirname(__file__), 'indicator_mapping.json')
+
+
+def to_middle_name(id_str: Optional[str]) -> str:
+    """
+    Extract middle name from ID string.
+    
+    Args:
+        id_str: ID string in format '0.M.Category_Name.0' or any string
+        
+    Returns:
+        Extracted middle name or original string if format doesn't match
+        
+    Examples:
+        >>> to_middle_name('0.M.行情数据.0')
+        '行情数据'
+        >>> to_middle_name('0.M.Test.0')
+        'Test'
+        >>> to_middle_name('invalid')
+        'invalid'
+        >>> to_middle_name('')
+        ''
+        >>> to_middle_name(None)
+        ''
+    """
+    if not id_str:
+        return ''
+    
+    if id_str.startswith('0.'):
+        parts = id_str.split('.')
+        if len(parts) >= 3:
+            return parts[2]
+    return id_str
+
+
+def process_meta(
+    input_file: Optional[str] = None,
+    output_md: Optional[str] = None,
+    output_json: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Process guorn meta data and generate catalog files.
+    
+    Args:
+        input_file: Path to input JSON file. Defaults to guorn_meta_full.json in same directory.
+        output_md: Path to output Markdown file. Defaults to GUORN_INDICATORS_CATALOG.md in same directory.
+        output_json: Path to output JSON file. Defaults to indicator_mapping.json in same directory.
+        
+    Returns:
+        Dictionary containing the generated catalog with 'functions' and 'indicators' lists.
+        
+    Raises:
+        FileNotFoundError: If input file doesn't exist.
+        json.JSONDecodeError: If input file contains invalid JSON.
+        PermissionError: If cannot write to output files.
+    """
+    input_file = input_file or DEFAULT_INPUT_FILE
+    output_md = output_md or DEFAULT_OUTPUT_MD
+    output_json = output_json or DEFAULT_OUTPUT_JSON
     
     with open(input_file, 'r', encoding='utf-8') as f:
         meta = json.load(f)
         
     data = meta.get('data', {})
     
-    catalog = {
+    catalog: Dict[str, List[Dict[str, Any]]] = {
         "functions": [],
         "indicators": []
     }
     
-    # 1. Functions
     functions_blocks = data.get('function', {}).get('measures', [])
     md_content = "# 果仁网指标与函数全量手册 (Guorn Indicators Catalog)\n\n"
     md_content += "> 此文档由全量元数据自动生成，包含各分类下的函数与技术指标说明。\n\n"
@@ -35,17 +92,7 @@ def process_meta():
             catalog["functions"].append({"name": name, "expr": expr, "desc": desc, "category": cat_name})
         md_content += "\n"
 
-    # 2. Indicators (from measures and first_measures)
     md_content += "## 2. 常用指标 (Standard Indicators)\n"
-    
-    # helper to clean IDs into middle names
-    def to_middle_name(id_str):
-        if id_str.startswith('0.'):
-            # 0.M.Category_Name.0 -> Category_Name
-            parts = id_str.split('.')
-            if len(parts) >= 3:
-                return parts[2]
-        return id_str
 
     first_measures = data.get('first_measures', [])
     for block in first_measures:
@@ -71,15 +118,15 @@ def process_meta():
             catalog["indicators"].append(indicator_entry)
         md_content += "\n"
         
-    # Write MD
     with open(output_md, 'w', encoding='utf-8') as f:
         f.write(md_content)
         
-    # Write Cleaned JSON
     with open(output_json, 'w', encoding='utf-8') as f:
         json.dump(catalog, f, ensure_ascii=False, indent=2)
         
     print(f"Generated {output_md} and {output_json}")
+    
+    return catalog
 
 if __name__ == "__main__":
     process_meta()

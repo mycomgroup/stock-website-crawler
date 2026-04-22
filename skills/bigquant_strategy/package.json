@@ -12,7 +12,8 @@
     "strategy": "node run-strategy.js",
     "list": "node list-strategies.js",
     "report": "node fetch-report.js",
-    "test": "node test-all.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "test:api": "node test-api.js",
     "test:session": "node test-session.js",
     "test:strategy": "node test-strategy.js",
@@ -23,6 +24,9 @@
     "minimist": "^1.2.8",
     "playwright": "^1.41.0",
     "ws": "^8.20.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   },
   "engines": {
     "node": ">=18.0.0"

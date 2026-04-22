@@ -12,7 +12,7 @@ export const PATHS = {
   examples: join(__dirname, 'examples'),
   
   // Data files
-  sessionFile: '/Users/fengzhi/Downloads/git/testlixingren/skills/.sessions/gemini.json',
+  sessionFile: join(__dirname, '..', '.sessions', 'gemini.json'),
   conversationsFile: join(__dirname, 'data', 'conversations.json'),
   
   // Browser data

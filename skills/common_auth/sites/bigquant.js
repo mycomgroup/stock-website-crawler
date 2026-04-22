@@ -30,7 +30,7 @@ export default {
     try {
       const loginBtn = await page.$('button:has-text("登录")');
       const userAvatar = await page.$('[class*="avatar"], [class*="user"]');
-      return !loginBtn || userAvatar;
+      return !loginBtn || !!userAvatar;
     } catch (e) {
       const url = page.url();
       return !url.includes('/login');

@@ -32,7 +32,8 @@ export class AuthManager {
       const copy = { ...c };
       // Playwright expects expires as float (unix timestamp in seconds) or undefined.
       // null is an object in JS, which causes "expected float, got object" error.
-      if (copy.expires === null || typeof copy.expires !== 'number') {
+      // NaN is technically a number type but invalid for Playwright.
+      if (copy.expires === null || typeof copy.expires !== 'number' || Number.isNaN(copy.expires)) {
         delete copy.expires;
       }
       // Ensure sameSite is one of top-level capitalized values

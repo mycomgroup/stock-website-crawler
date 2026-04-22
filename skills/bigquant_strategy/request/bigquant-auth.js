@@ -3,26 +3,26 @@
  * 通过用户名/密码直接获取 bigjwt token，无需浏览器
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import * as path from 'node:path';
 import '../load-env.js';
 import { SESSION_FILE } from '../paths.js';
 
-const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X_10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 const ORIGIN = 'https://bigquant.com';
 
 function ensureDir(p) {
-  fs.mkdirSync(path.dirname(p), { recursive: true });
+  mkdirSync(path.dirname(p), { recursive: true });
 }
 
 function loadJson(p) {
-  if (!fs.existsSync(p)) return null;
-  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; }
+  if (!existsSync(p)) return null;
+  try { return JSON.parse(readFileSync(p, 'utf8')); } catch { return null; }
 }
 
 function saveJson(p, data) {
   ensureDir(p);
-  fs.writeFileSync(p, JSON.stringify(data, null, 2), 'utf8');
+  writeFileSync(p, JSON.stringify(data, null, 2), 'utf8');
 }
 
 /**

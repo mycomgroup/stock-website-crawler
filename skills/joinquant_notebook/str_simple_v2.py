@@ -102,8 +102,8 @@ for i in range(5):
     )
 
 # 6. 多空组合
-low_str_rets = [rets.get(s[0], 0) for s in sorted_str[-100:]]  # STR最低100只
-high_str_rets = [rets.get(s[0], 0) for s in sorted_str[:100]]  # STR最高100只
+low_str_rets = [rets.get(s[0], 0) for s in sorted_str[:100]]  # STR最低100只
+high_str_rets = [rets.get(s[0], 0) for s in sorted_str[-100:]]  # STR最高100只
 spread = np.mean(low_str_rets) - np.mean(high_str_rets)
 print(f"\n多空组合收益: {spread * 100:.2f}%")
 

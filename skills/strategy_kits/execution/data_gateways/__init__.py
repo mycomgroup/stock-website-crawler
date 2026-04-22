@@ -1,5 +1,3 @@
-"""Data gateway adapters for JQ, TuShare, and Qlib."""
-
 from .base import BaseDataGateway
 from .factory import create_gateway
 from .symbol import (

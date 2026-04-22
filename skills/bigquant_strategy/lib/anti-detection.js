@@ -26,10 +26,11 @@ export class AntiDetection {
       '--disable-features=BlockInsecurePrivateNetworkRequests'
     ];
 
+    const { args: customArgs, ...restOptions } = options;
     const browser = await chromium.launch({
       headless: options.headless !== false,
-      args: [...defaultArgs, ...(options.args || [])],
-      ...options
+      args: [...defaultArgs, ...(customArgs || [])],
+      ...restOptions
     });
 
     return browser;

@@ -17,7 +17,7 @@ async function listStrategies() {
     
     // Check login
     const loginStatus = await client.checkLogin();
-    if (loginStatus.code === -1) {
+    if (!loginStatus.logged) {
       console.error('Error: Not logged in');
       return;
     }

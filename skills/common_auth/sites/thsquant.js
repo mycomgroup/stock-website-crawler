@@ -71,14 +71,14 @@ export default {
     console.log('🔑 正在执行 THSQuant 自动填表登录...');
     
     // 1. 等待登录按钮并点击（如果表单没直接显示）
-    const loginTrigger = await page.$('#header_signup, .login-btn-header, :has-text("登录")');
+    const loginTrigger = await page.$('#header_signup, .login-btn-header');
     if (loginTrigger) {
       await loginTrigger.click();
       await page.waitForTimeout(1000);
     }
 
     // 2. 处理跨域 iframe
-const iframeElement = await page.waitForSelector('iframe[src*="upass.10jqka"]', { timeout: 30000 });
+    const iframeElement = await page.waitForSelector('iframe[src*="upass.10jqka"]', { timeout: 30000 });
     const frame = await iframeElement.contentFrame();
     if (!frame) throw new Error('无法获取登录 iframe');
 
