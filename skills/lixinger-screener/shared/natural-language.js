@@ -41,7 +41,7 @@ function buildBrowserCatalogPromptEntries(catalog) {
 }
 
 function buildSystemPrompt(catalog) {
-  const firstEntry = catalog[0] || null;
+  const firstEntry = Array.isArray(catalog) && catalog.length > 0 ? catalog[0] : null;
 
   if (isConditionMetricEntry(firstEntry)) {
     return `你是一个股票筛选条件解析助手。用户会用自然语言描述筛选条件，你需要将其转换为结构化 JSON。
@@ -137,7 +137,7 @@ export async function queryToUnifiedInput(userQuery, catalog) {
 export function validateUnifiedQuery(input, catalog) {
   const errors = [];
   const conditions = Array.isArray(input?.conditions) ? input.conditions : [];
-  const firstEntry = catalog[0] || null;
+  const firstEntry = Array.isArray(catalog) && catalog.length > 0 ? catalog[0] : null;
 
   if (isConditionMetricEntry(firstEntry)) {
     for (const condition of conditions) {
@@ -154,7 +154,8 @@ export function validateUnifiedQuery(input, catalog) {
           errors.push(`指标 "${condition.metric}" 不支持第 ${index + 1} 个 selector`);
           continue;
         }
-        const option = selector.options.find(item => item.label === selectors[index]);
+        const options = Array.isArray(selector.options) ? selector.options : [];
+        const option = options.find(item => item.label === selectors[index]);
         if (!option) {
           errors.push(
             `指标 "${condition.metric}" 的 selector ${index + 1} 不支持 "${selectors[index]}"`

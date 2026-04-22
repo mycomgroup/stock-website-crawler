@@ -107,16 +107,21 @@ for test_date in test_months:
         low_ret = np.mean([rets.get(s[0], 0) for s in sorted_str[: n // 5]])
         high_ret = np.mean([rets.get(s[0], 0) for s in sorted_str[-n // 5 :]])
 
+spread = low_ret - high_ret
         results.append(
             {
                 "date": test_date,
                 "ic": ic,
                 "low_str_return": low_ret,
                 "high_str_return": high_ret,
-                "spread": low_ret - high_ret,
+                "spread": spread,
                 "n": len(valid),
             }
         )
+        print(
+            f"{test_date}: IC={ic:.3f}, 多空spread={spread * 100:.1f}%, n={len(valid)}"
+        )
+        spread = low_ret - high_ret
         print(
             f"{test_date}: IC={ic:.3f}, 多空spread={spread * 100:.1f}%, n={len(valid)}"
         )

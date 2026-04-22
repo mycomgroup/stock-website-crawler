@@ -8,11 +8,17 @@
   "scripts": {
     "run": "node run-skill.js",
     "capture": "node browser/capture-session.js",
-    "analyze": "node browser/analyze-api.js"
+    "analyze": "node browser/analyze-api.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "dotenv": "^16.0.0",
     "minimist": "^1.2.8",
     "playwright": "^1.40.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0"
   }
 }

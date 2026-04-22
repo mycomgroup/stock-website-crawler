@@ -20,8 +20,8 @@ hs300 = get_index_stocks("000300.XSHG")
 zz500 = get_index_stocks("000905.XSHG")
 all_stocks = list(set(hs300 + zz500))
 # 过滤ST - 使用get_extras获取ST状态
-st_status = get_extras("is_st", stocks, end_date=TEST_DATE, count=1).iloc[-1]
-stocks = [s for s in stocks if not st_status.get(s, False)]
+st_status = get_extras("is_st", all_stocks, end_date=TEST_DATE, count=1).iloc[-1]
+stocks = [s for s in all_stocks if not st_status.get(s, False)]
 print(f"股票池大小: {len(stocks)}")
 
 # ========== 计算STR ==========

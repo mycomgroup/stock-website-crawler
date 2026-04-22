@@ -1,16 +1,16 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import * as path from 'node:path';
 import { captureBigQuantSession } from './capture-session.js';
 import { SESSION_FILE, OUTPUT_ROOT } from '../paths.js';
 
 function ensureDir(filePath) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  mkdirSync(path.dirname(filePath), { recursive: true });
 }
 
 function loadJson(filePath) {
-  if (!fs.existsSync(filePath)) return null;
+  if (!existsSync(filePath)) return null;
   try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return JSON.parse(readFileSync(filePath, 'utf8'));
   } catch (e) {
     return null;
   }
@@ -18,7 +18,7 @@ function loadJson(filePath) {
 
 function saveJson(filePath, data) {
   ensureDir(filePath);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 }
 
 function isSessionValid(session) {

@@ -13,6 +13,7 @@
   "dailyBuyCount": 2,
   "takeProfit": 18,
   "stopLoss": 8,
+<<<<<<< HEAD
   "trailingStopLoss": 5,
   "seed_metadata": {
     "core_formula": [
@@ -100,4 +101,7 @@
       }
     }
   }
+=======
+  "trailingStopLoss": 5
+>>>>>>> origin/main
 }

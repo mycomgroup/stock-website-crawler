@@ -11,8 +11,8 @@
  *   GET  /bigapis/aiflow/v1/tasks/{taskId}            读取 notebook outputs
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import * as path from 'node:path';
 import '../load-env.js';
 import { OUTPUT_ROOT } from '../paths.js';
 import { extractUserId } from './bigquant-auth.js';
@@ -21,7 +21,7 @@ import { SecureHttpClient, USER_AGENT, SEC_CH_UA } from '../../common/http-secur
 const ORIGIN = 'https://bigquant.com';
 
 function ensureDir(p) {
-  fs.mkdirSync(path.dirname(p), { recursive: true });
+  mkdirSync(path.dirname(p), { recursive: true });
 }
 
 function toOutputText(output) {
@@ -292,7 +292,7 @@ export class BigQuantClient {
     const filePath = path.join(this.outputRoot, `${baseName}-${Date.now()}.${extension}`);
     ensureDir(filePath);
     const content = extension === 'json' ? JSON.stringify(data, null, 2) : String(data);
-    fs.writeFileSync(filePath, content, 'utf8');
+    writeFileSync(filePath, content, 'utf8');
     return filePath;
   }
 

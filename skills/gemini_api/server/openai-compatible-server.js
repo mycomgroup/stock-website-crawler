@@ -142,7 +142,8 @@ async function handleChatCompletions(req, res, body) {
     });
 
     if (stream) {
-      // 流式响应
+      const streamContent = response.content || '';
+      
       res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -150,13 +151,9 @@ async function handleChatCompletions(req, res, body) {
         'Access-Control-Allow-Origin': '*'
       });
 
-      // 发送响应
-      const chunks = response.content.split(' ');
-      let content = '';
+      const chunks = streamContent.split(' ').filter(c => c.length > 0);
       
       for (let i = 0; i < chunks.length; i++) {
-        content += (i > 0 ? ' ' : '') + chunks[i];
-        
         sendSSE(res, {
           id: `chatcmpl-${response.messageId}`,
           object: 'chat.completion.chunk',

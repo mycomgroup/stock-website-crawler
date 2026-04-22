@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, unlinkSync } from 'fs';
 import { PATHS } from '../paths.js';
 import { captureSession, validateSessionInBrowser } from './capture-session.js';
 import { SessionManager } from './session-manager.js';
@@ -96,7 +96,6 @@ export class MultiAccountManager {
 
     // 保存到账号目录
     if (!existsSync(this.accountsDir)) {
-      const { mkdirSync } = await import('fs');
       mkdirSync(this.accountsDir, { recursive: true });
     }
 
@@ -134,8 +133,6 @@ export class MultiAccountManager {
 
     const account = this.accounts[index];
     
-    // 删除 session 文件
-    const { unlinkSync } = await import('fs');
     if (existsSync(account.sessionPath)) {
       unlinkSync(account.sessionPath);
     }

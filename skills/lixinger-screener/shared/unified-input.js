@@ -52,10 +52,11 @@ export function normalizeOperatorValueCondition(condition) {
   return next;
 }
 
-export function normalizeUnifiedInput(input = {}) {
-  const rawConditions = input.conditions || input.filters || [];
+export function normalizeUnifiedInput(input) {
+  const safeInput = input || {};
+  const rawConditions = safeInput.conditions || safeInput.filters || [];
   return {
-    ...input,
+    ...safeInput,
     conditions: rawConditions.map(normalizeOperatorValueCondition)
   };
 }
@@ -206,7 +207,8 @@ function defaultRanges(overrides = {}, baseRanges = {}) {
   };
 }
 
-export function normalizeFilterList(filterList = []) {
+export function normalizeFilterList(filterList) {
+  if (!filterList) return [];
   return filterList.map(item => {
     const next = { ...item };
     next.id = normalizeScreenerRequestId(next.id);

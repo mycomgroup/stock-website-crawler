@@ -1,4 +1,3 @@
-"""Validation schema for skill-driven strategy tasks."""
 from __future__ import annotations
 
 from typing import Any, Mapping
@@ -61,7 +60,6 @@ def _require_float_in(spec: Mapping[str, Any], key: str, ctx: str, low: float, h
 
 
 def validate_strategy_task_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
-    """Validate and normalize skill task spec."""
     if not isinstance(spec, Mapping):
         raise StrategyKitsError(ErrorCode.CONTRACT_INVALID_VALUE, "spec must be a mapping")
 
@@ -164,28 +162,6 @@ def validate_strategy_task_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
     if output["save_artifacts"]:
         output.setdefault("artifact_dir", "./artifacts")
 
-    # ── platform 字段（可选，默认 local）────────────────────────────────────
-    platform_cfg = dict(spec.get("platform", {}))
-    platform_cfg.setdefault("engine", "local")
-    if platform_cfg["engine"] not in {"local", "joinquant", "ricequant"}:
-        raise StrategyKitsError(
-            ErrorCode.CONTRACT_INVALID_VALUE,
-            "platform.engine must be one of local/joinquant/ricequant",
-            details={"engine": platform_cfg["engine"]},
-        )
-    # joinquant / ricequant 必须提供 strategy_id 和 strategy_file
-    if platform_cfg["engine"] in {"joinquant", "ricequant"}:
-        if not isinstance(platform_cfg.get("strategy_id"), str):
-            raise StrategyKitsError(
-                ErrorCode.CONTRACT_MISSING_COLUMN,
-                "platform.strategy_id is required for joinquant/ricequant engine",
-            )
-        if not isinstance(platform_cfg.get("strategy_file"), str):
-            raise StrategyKitsError(
-                ErrorCode.CONTRACT_MISSING_COLUMN,
-                "platform.strategy_file is required for joinquant/ricequant engine",
-            )
-
     data["start_date"] = str(start_date.date())
     data["end_date"] = str(end_date.date())
 
@@ -197,5 +173,4 @@ def validate_strategy_task_spec(spec: Mapping[str, Any]) -> dict[str, Any]:
         "backtest": backtest,
         "risk": risk,
         "output": output,
-        "platform": platform_cfg,
     }

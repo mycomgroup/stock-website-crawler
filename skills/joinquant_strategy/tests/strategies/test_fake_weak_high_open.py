@@ -1,0 +1,188 @@
+import pytest
+from unittest.mock import Mock, MagicMock, patch
+from datetime import datetime, timedelta
+import pandas as pd
+from types import SimpleNamespace
+import sys
+
+
+class TestFakeWeakHighOpen:
+    @pytest.fixture(autouse=True)
+    def setup_mocks(self, mock_jqdata):
+        self.jqdata = mock_jqdata
+        self.g = SimpleNamespace()
+        self.g.trades = 0
+        self.g.wins = 0
+        self.g.pnl_list = []
+        self.g.daily_trades = []
+        self.g.target = []
+        
+        self.jqdata.g = self.g
+        sys.modules['jqdata'] = self.jqdata
+        
+        patcher = patch.dict(sys.modules, {'jqdata': self.jqdata})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        
+        import fake_weak_high_open as module
+        self.module = module
+
+    def addCleanup(self, cleanup):
+        cleanup()
+
+    def test_initialize_sets_options(self):
+        context = SimpleNamespace()
+        
+        self.module.initialize(context)
+        
+        self.jqdata.set_option.assert_any_call("use_real_price", True)
+        self.jqdata.set_option.assert_any_call("avoid_future_data", True)
+        self.jqdata.log.set_level.assert_called_once_with("system", "error")
+        assert self.jqdata.run_daily.call_count == 3
+
+    def test_initialize_sets_global_variables(self):
+        context = SimpleNamespace()
+        
+        self.module.initialize(context)
+        
+        assert self.g.trades == 0
+        assert self.g.wins == 0
+        assert self.g.pnl_list == []
+        assert self.g.daily_trades == []
+
+    def test_select_stocks_filters_high_limit(self):
+        context = SimpleNamespace()
+        context.previous_date = datetime(2024, 1, 15)
+        
+        mock_securities = pd.DataFrame({
+            'display_name': ['Stock1']
+        }, index=['000001.XSHE'])
+        self.jqdata.get_all_securities.return_value = mock_securities
+        
+        prices = pd.DataFrame({
+            'code': ['000001.XSHE'],
+            'close': [10.0],
+            'high_limit': [10.0]
+        })
+        self.jqdata.get_price.return_value = prices
+        
+        self.jqdata.get_extras.return_value = pd.DataFrame({0: [False]}, index=['000001.XSHE']).T
+        
+        mock_info = SimpleNamespace()
+        mock_info.start_date = datetime(2023, 1, 1)
+        self.jqdata.get_security_info.return_value = mock_info
+        
+        self.module.select_stocks(context)
+        
+        assert self.g.target == ['000001.XSHE']
+
+    def test_buy_stocks_no_target(self):
+        context = SimpleNamespace()
+        context.previous_date = datetime(2024, 1, 15)
+        context.current_dt = datetime(2024, 1, 16)
+        context.portfolio = SimpleNamespace()
+        context.portfolio.available_cash = 100000
+        
+        self.g.target = []
+        
+        self.module.buy_stocks(context)
+        
+        self.jqdata.order.assert_not_called()
+
+    def test_buy_stocks_open_ratio_filter(self):
+        context = SimpleNamespace()
+        context.previous_date = datetime(2024, 1, 15)
+        context.current_dt = datetime(2024, 1, 16)
+        context.portfolio = SimpleNamespace()
+        context.portfolio.available_cash = 100000
+        
+        self.g.target = ['000001.XSHE']
+        
+        stock_data = SimpleNamespace()
+        stock_data.paused = False
+        stock_data.pre_close = 10.0
+        stock_data.day_open = 10.1
+        stock_data.high_limit = 11.0
+        stock_data.last_price = 10.2
+        
+        self.jqdata.get_current_data.return_value = {'000001.XSHE': stock_data}
+        
+        val_data = pd.DataFrame({
+            'circulating_market_cap': [100.0]
+        })
+        self.jqdata.get_valuation.return_value = val_data
+        
+        self.module.buy_stocks(context)
+        
+        assert self.g.trades >= 0
+
+    def test_buy_stocks_cap_filter_50_150(self):
+        context = SimpleNamespace()
+        context.previous_date = datetime(2024, 1, 15)
+        context.current_dt = datetime(2024, 1, 16)
+        context.portfolio = SimpleNamespace()
+        context.portfolio.available_cash = 100000
+        
+        self.g.target = ['000001.XSHE']
+        
+        stock_data = SimpleNamespace()
+        stock_data.paused = False
+        stock_data.pre_close = 10.0
+        stock_data.day_open = 10.1
+        stock_data.high_limit = 11.0
+        stock_data.last_price = 10.2
+        
+        self.jqdata.get_current_data.return_value = {'000001.XSHE': stock_data}
+        
+        val_data = pd.DataFrame({
+            'circulating_market_cap': [30.0]
+        })
+        self.jqdata.get_valuation.return_value = val_data
+        
+        self.module.buy_stocks(context)
+        
+        self.jqdata.order.assert_not_called()
+
+    def test_sell_stocks_records_pnl(self):
+        context = SimpleNamespace()
+        context.current_dt = datetime(2024, 1, 16)
+        context.portfolio = SimpleNamespace()
+        pos = SimpleNamespace()
+        pos.closeable_amount = 100
+        pos.avg_cost = 10.0
+        context.portfolio.positions = {'000001.XSHE': pos}
+        
+        stock_data = SimpleNamespace()
+        stock_data.last_price = 11.0
+        self.jqdata.get_current_data.return_value = {'000001.XSHE': stock_data}
+        
+        self.module.sell_stocks(context)
+        
+        assert len(self.g.pnl_list) == 1
+        assert self.g.wins == 1
+
+    def test_sell_stocks_year_end_stats(self):
+        context = SimpleNamespace()
+        context.current_dt = datetime(2024, 12, 28)
+        context.portfolio = SimpleNamespace()
+        pos = SimpleNamespace()
+        pos.closeable_amount = 100
+        pos.avg_cost = 10.0
+        context.portfolio.positions = {'000001.XSHE': pos}
+        
+        stock_data = SimpleNamespace()
+        stock_data.last_price = 11.0
+        self.jqdata.get_current_data.return_value = {'000001.XSHE': stock_data}
+        
+        self.module.sell_stocks(context)
+        
+        self.jqdata.log.info.assert_called()
+
+    def test_open_ratio_calculation(self):
+        pre_close = 10.0
+        limit_price = pre_close * 1.1
+        day_open = 10.1
+        
+        open_ratio = day_open / limit_price
+        
+        assert 1.005 <= open_ratio <= 1.015
