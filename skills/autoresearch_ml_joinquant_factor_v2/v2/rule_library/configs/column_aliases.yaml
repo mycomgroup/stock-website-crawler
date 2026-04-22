@@ -1,0 +1,80 @@
+# 业务名 → CSV 列名。YAML 里可以用左边的名字，loader 会解析到右边。
+# 缺失的别名会原样透传，所以直接写真实列名也可以。
+
+aliases:
+  # 盈利/质量
+  EPS: eps_ttm
+  ROE: roe_ttm
+  ROE_8y: roe_ttm_8y
+  ROA: roa_ttm
+  ROIC: roic_ttm
+  毛利率: gross_income_ratio
+  净利率: net_profit_ratio
+  经营现金流: net_operate_cash_flow_ttm
+  经营现金流每股: net_operate_cash_flow_per_share
+  净利润: net_profit_ttm
+  营业利润: operating_profit_ttm
+  每股未分配利润: retained_profit_per_share
+  每股公积金: capital_reserve_fund_per_share
+  每股现金: cash_and_equivalents_per_share
+
+  # 估值
+  PEG: PEG
+  市净率倒数: book_to_price_ratio
+  市销率倒数: sales_to_price_ratio
+  市盈率倒数: earnings_to_price_ratio
+  预测市盈率倒数: predicted_earnings_to_price_ratio
+  现金市盈率倒数: cash_earnings_to_price_ratio
+  现金流市盈率倒数: cash_flow_to_price_ratio
+
+  # 成长
+  营收增速: operating_revenue_growth_rate
+  净利润增速: net_profit_growth_rate
+  总利润增速: total_profit_growth_rate
+  营业利润增速: operating_profit_growth_rate
+  归母净利增速: np_parent_company_owners_growth_rate
+  sales_growth: sales_growth
+  总资产增速: total_asset_growth_rate
+  净资产增速: net_asset_growth_rate
+
+  # 杠杆/偿债
+  资产负债率: debt_to_asset_ratio
+  长债资产比: long_debt_to_asset_ratio
+  负债权益比: debt_to_equity_ratio
+  流动比率: current_ratio
+  速动比率: quick_ratio
+  超速动比率: super_quick_ratio
+
+  # 规模/流动性
+  市值: market_cap
+  流通市值: circulating_market_cap
+  月换手率: share_turnover_monthly
+  季换手率: average_share_turnover_quarterly
+  年换手率: average_share_turnover_annual
+  换手率波动: turnover_volatility
+  月成交量: Volume1M
+
+  # 动量/技术
+  近一月动量: Rank1M
+  近一月价格变化: Price1M
+  近三月价格变化: Price3M
+  近一年价格变化: Price1Y
+  52周位置: fifty_two_week_close_rank
+  MAC5: MAC5
+  MAC10: MAC10
+  MAC20: MAC20
+  MAC60: MAC60
+  MAC120: MAC120
+  EMAC12: EMAC12
+  EMAC26: EMAC26
+  EMAC120: EMAC120
+
+  # 风险
+  贝塔: beta
+  残差波动率: residual_volatility
+  夏普20: sharpe_ratio_20
+  夏普60: sharpe_ratio_60
+  夏普120: sharpe_ratio_120
+
+  # 标签
+  收益: pchg
