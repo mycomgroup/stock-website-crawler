@@ -1,0 +1,87 @@
+{
+  "name": "高股息非一次性策略",
+  "description": "筛选股息率超过3%且近三年连续分红的股票，排除一次性高股息陷阱",
+  "formula": [
+    "非ST",
+    "非退市",
+    "非停牌",
+    "股息率大于3%",
+    "近三年连续分红",
+    "市盈率小于25"
+  ],
+  "daysForSaleStrategy": "5,10",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 6,
+  "dailyBuyCount": 2,
+  "takeProfit": 18,
+  "stopLoss": 8,
+  "trailingStopLoss": 5,
+  "seed_metadata": {
+    "core_formula": [
+      "非ST",
+      "股息率大于3%",
+      "近三年连续分红"
+    ],
+    "locked_formula": [
+      "非ST"
+    ],
+    "forbidden_formula": [],
+    "parameter_priors": {
+      "maxPositions": {
+        "type": "discrete",
+        "values": [3, 5, 8, 10],
+        "preferred": 6
+      },
+      "takeProfit": {
+        "type": "range",
+        "min": 12,
+        "max": 25,
+        "step": 5,
+        "preferred": 18
+      },
+      "stopLoss": {
+        "type": "range",
+        "min": 6,
+        "max": 10,
+        "step": 1,
+        "preferred": 8
+      },
+      "trailingStopLoss": {
+        "type": "range",
+        "min": 3,
+        "max": 7,
+        "step": 1,
+        "preferred": 5
+      }
+    },
+    "expected_holding_profile": "medium_term",
+    "expected_position_range": [4, 9],
+    "recency_weight_profile": {
+      "recent6m": 0.4,
+      "recent12m": 0.4,
+      "prior12m": 0.15,
+      "full24m": 0.05
+    }
+  },
+  "tree_tags": ["value"],
+  "search_hints": {
+    "coarse_step_sizes": {
+      "growth_rates": 5,
+      "profitability": 2,
+      "valuation": 10,
+      "turnover": 1
+    },
+    "fine_step_sizes": {
+      "growth_rates": 2,
+      "profitability": 1,
+      "valuation": 5,
+      "turnover": 0.5
+    },
+    "avoid_extreme_values": {
+      "maxPositions": {"min": 4, "max": 12},
+      "takeProfit": {"min": 10, "max": 35},
+      "stopLoss": {"min": 5, "max": 15}
+    }
+  }
+}

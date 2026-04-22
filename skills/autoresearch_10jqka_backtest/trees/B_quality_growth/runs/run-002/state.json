@@ -1,0 +1,26 @@
+{
+  "current_iter": 51,
+  "champion_score": -1e+308,
+  "champion_robust_score": -1e+308,
+  "consecutive_failures": 50,
+  "last_update": "2026-04-22T19:44:11.601337",
+  "objective_version": "v4_tree_profile",
+  "seed_name": "质量成长树",
+  "search_mode": "tree_profile",
+  "phase": "coarse_search",
+  "direction_status": "UNKNOWN",
+  "direction_reason": "",
+  "champion_metrics": {},
+  "champion_windows": {},
+  "baseline_window_scores": {},
+  "baseline_metrics_by_window": {},
+  "stable_param_ranges": {},
+  "last_keep_reason": "",
+  "last_mutation_type": "baseline",
+  "final_recommendation": "",
+  "stop_reason": "BacktestFailedError: 回测失败 (exit=1)\n🧮 格式化策略参数...\n📝 提交给问财引擎的参数: {\n  \"name\": \"质量成长树-run-002\",\n  \"description\": \"探索高质量成长机会 | Run run-002\",\n  \"query\": \"非ST，PEG小于1，净利润增长率大于85%，净资产收益率大于10%，市盈率小于32，换手率大于19%，毛利率大于30%，经营活动产生的现金流量净额大于0\",\n  \"start_date\": \"20251024\",\n  \"end_date\": \"20260422\",\n  \"stock_hold\": 4,\n  \"day_buy_stock_num\": 2,\n  \"upper_income\": 20,\n  \"lower_income\": 10,\n  \"fall_income\": 6,\n  \"period\": \"3,5\",\n  \"capital\": \"10000000\",\n  \"engine\": \"undefined\"\n}\n\n🚀 正在提交10jqka问财回测...\n\n❌ 回测执行失败: fetch failed\n{\"status\":\"error\",\"error\":\"execution_failed\",\"message\":\"fetch failed\"}\n",
+  "tree_profile": {
+    "tree_id": "B_quality_growth",
+    "run_id": "run-002"
+  }
+}

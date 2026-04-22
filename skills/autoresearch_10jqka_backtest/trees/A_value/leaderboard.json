@@ -1,0 +1,197 @@
+{
+  "tree_id": "A_value",
+  "generated_at": "2026-04-22T18:24:50.894820",
+  "total_runs": 2,
+  "champions": [
+    {
+      "run_id": "run-001",
+      "champion_score": 1.152659574468085,
+      "champion_robust_score": 1.2000332728158842,
+      "config": {
+        "name": "价值树-run-001",
+        "description": "探索估值低估带来的修复机会 | Run run-001",
+        "formula": [
+          "非ST",
+          "非退市",
+          "市净率小于3",
+          "市盈率小于30",
+          "周成交量环比增长率大于18%",
+          "股息率大于3%"
+        ],
+        "startDate": "2024-01-01",
+        "endDate": "2026-04-22",
+        "maxPositions": 4,
+        "dailyBuyCount": 2,
+        "takeProfit": 15,
+        "stopLoss": 7,
+        "trailingStopLoss": 5,
+        "daysForSaleStrategy": "3,5"
+      },
+      "formula": [
+        "非ST",
+        "非退市",
+        "市净率小于3",
+        "市盈率小于30",
+        "周成交量环比增长率大于18%",
+        "股息率大于3%"
+      ],
+      "maxPositions": 4,
+      "takeProfit": 15,
+      "stopLoss": 7,
+      "trailingStopLoss": 5,
+      "total_iterations": 55,
+      "direction_status": "ACTIVE",
+      "champion_metrics": {
+        "annual_return": 10.0,
+        "max_drawdown": 0.17,
+        "sortino": 0.0,
+        "information_ratio": 0.0,
+        "win_rate": 0.526595744680851,
+        "trade_count": 279,
+        "sharpe": 3.959556267474279,
+        "avg_holding_days": 5.0
+      },
+      "champion_windows": {
+        "recent_6m": {
+          "score": 1.1488372093023254,
+          "annual_return": 4.0,
+          "max_drawdown": 0.18,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.4883720930232558,
+          "trade_count": 270,
+          "sharpe": 1.8853851787590776,
+          "avg_holding_days": 3.0
+        },
+        "recent_12m": {
+          "score": 1.152659574468085,
+          "annual_return": 10.0,
+          "max_drawdown": 0.17,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.526595744680851,
+          "trade_count": 279,
+          "sharpe": 3.959556267474279,
+          "avg_holding_days": 5.0
+        },
+        "prior_12m": {
+          "score": 1.1485714285714284,
+          "annual_return": 2.0,
+          "max_drawdown": 0.15,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.4857142857142857,
+          "trade_count": 293,
+          "sharpe": 1.21559542840753,
+          "avg_holding_days": 5.0
+        },
+        "full_24m": {
+          "score": 1.148157894736842,
+          "annual_return": 2.0,
+          "max_drawdown": 0.15,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.48157894736842105,
+          "trade_count": 294,
+          "sharpe": 1.1168491394556457,
+          "avg_holding_days": 5.0
+        }
+      }
+    },
+    {
+      "run_id": "run-002",
+      "champion_score": -0.24934667935666174,
+      "champion_robust_score": 0.30366629590639965,
+      "config": {
+        "name": "价值树-run-002",
+        "description": "探索估值低估带来的修复机会 | Run run-002",
+        "formula": [
+          "非ST",
+          "非退市",
+          "市净率小于10",
+          "流通市值小于444亿",
+          "经营活动产生的现金流量净额连续三年为正",
+          "股息率大于3%"
+        ],
+        "startDate": "2024-01-01",
+        "endDate": "2026-04-22",
+        "maxPositions": 4,
+        "dailyBuyCount": 2,
+        "takeProfit": 15,
+        "stopLoss": 7,
+        "trailingStopLoss": 5,
+        "daysForSaleStrategy": "3,5"
+      },
+      "formula": [
+        "非ST",
+        "非退市",
+        "市净率小于10",
+        "流通市值小于444亿",
+        "经营活动产生的现金流量净额连续三年为正",
+        "股息率大于3%"
+      ],
+      "maxPositions": 4,
+      "takeProfit": 15,
+      "stopLoss": 7,
+      "trailingStopLoss": 5,
+      "total_iterations": 116,
+      "direction_status": "ACTIVE",
+      "champion_metrics": {
+        "annual_return": 0.0551284188308796,
+        "max_drawdown": 0.17,
+        "sortino": 0.0,
+        "information_ratio": 0.0,
+        "win_rate": 0.533678756476684,
+        "trade_count": 169,
+        "sharpe": 0.3351627884313154,
+        "avg_holding_days": 5.0
+      },
+      "champion_windows": {
+        "recent_6m": {
+          "score": 1.151063829787234,
+          "annual_return": 2.0,
+          "max_drawdown": 0.18,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.5106382978723404,
+          "trade_count": 168,
+          "sharpe": 1.4172223004140523,
+          "avg_holding_days": 5.0
+        },
+        "recent_12m": {
+          "score": -0.24934667935666174,
+          "annual_return": 0.0551284188308796,
+          "max_drawdown": 0.17,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.533678756476684,
+          "trade_count": 169,
+          "sharpe": 0.3351627884313154,
+          "avg_holding_days": 5.0
+        },
+        "prior_12m": {
+          "score": -0.18745393021430942,
+          "annual_return": 0.0860074765352743,
+          "max_drawdown": 0.16,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.5128205128205128,
+          "trade_count": 146,
+          "sharpe": 0.47648778346588966,
+          "avg_holding_days": 5.0
+        },
+        "full_24m": {
+          "score": -0.22544411474769496,
+          "annual_return": 0.06525231629040684,
+          "max_drawdown": 0.16,
+          "sortino": 0.0,
+          "information_ratio": 0.0,
+          "win_rate": 0.522077922077922,
+          "trade_count": 147,
+          "sharpe": 0.3555741275545282,
+          "avg_holding_days": 5.0
+        }
+      }
+    }
+  ]
+}

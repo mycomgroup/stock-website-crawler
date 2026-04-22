@@ -1,9 +1,9 @@
 {
-  "current_iter": 8,
+  "current_iter": 29,
   "champion_score": 1.1595207667731628,
   "champion_robust_score": 1.2104029666207423,
-  "consecutive_failures": 0,
-  "last_update": "2026-04-22T19:55:12.007980",
+  "consecutive_failures": 21,
+  "last_update": "2026-04-22T19:58:29.317635",
   "objective_version": "v4_tree_profile",
   "seed_name": "质量成长树",
   "search_mode": "tree_profile",
@@ -80,7 +80,7 @@
   "last_keep_reason": "first version, automatically champion",
   "last_mutation_type": "coarse_threshold_adjust",
   "final_recommendation": "继续跟踪 champion，并优先在稳定参数带内微调。",
-  "stop_reason": "",
+  "stop_reason": "BacktestFailedError: 回测失败 (exit=1)\nfile:///Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/paths.js:3\n<<<<<<< HEAD\n^^\n\nSyntaxError: Unexpected token '<<'\n    at compileSourceTextModule (node:internal/modules/esm/utils:344:16)\n    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:106:18)\n    at #translate (node:internal/modules/esm/loader:534:12)\n    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:581:27)\n\nNode.js v23.11.0\n",
   "tree_profile": {
     "tree_id": "B_quality_growth",
     "run_id": "run-003"

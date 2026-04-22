@@ -1,0 +1,975 @@
+iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation	robust_score	recent6	recent12	prior12	full24	sensitivity	trade_count	complexity	reason
+0001		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:1	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	8	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，毛利率大于30%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0002		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:2	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	8	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，净资产收益率大于10%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0003		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:3	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	9	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，净资产收益率大于10%，周成交量环比增长率大于19%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0004		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:4	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	10	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，净资产收益率大于10%，周成交量环比增长率大于19%，市净率小于8",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0005		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:5	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	10	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，净资产收益率大于12%，周成交量环比增长率大于19%，市净率小于8",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0006		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:6	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	10	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，净资产收益率大于12%，周成交量环比增长率大于19%，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0007		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:7	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净资产收益率大于12%，周成交量环比增长率大于19%，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0008		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:8	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，周成交量环比增长率大于19%，毛利率大于30%，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0009		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:9 | [添加条件] 周成交量环比增长率大于12% (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0010		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:10	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净资产收益率大于10%，周成交量环比增长率大于19%，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0011		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:11	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净资产收益率大于8%，周成交量环比增长率大于19%，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0012		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:12	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净资产收益率大于8%，周成交量环比增长率大于19%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0013		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:13	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于8%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0014		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:14	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	12	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于8%，毛利率大于30%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0015		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:15	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于8%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0016		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:16	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0017		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:17	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0018		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:18 | [添加条件] 毛利率大于12% (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0019		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:19	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，周成交量环比增长率大于17%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0020		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:20	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0021		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:21 | [添加条件] 经营活动产生的现金流量净额大于净利润 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0022		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:22	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于30%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0023		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:23	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于15%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0024		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:24	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于91%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额连续三年为正，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0025		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:25	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于91%，净资产收益率大于10%，市盈率小于32，毛利率大于43%，经营活动产生的现金流量净额连续三年为正，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0026		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:26	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，上市时间大于652天，净利润增长率大于91%，净资产收益率大于10%，市盈率小于32，毛利率大于43%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0027		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:27	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于91%，净资产收益率大于10%，市盈率小于32，毛利率大于43%，经营活动产生的现金流量净额连续三年为正",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0028		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:28	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于91%，净资产收益率大于10%，市盈率小于32，毛利率大于43%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0029		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:29	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，市盈率小于32，毛利率大于43%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0030		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:30	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于15%，净资产收益率大于10%，市盈率小于32，毛利率大于43%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0031		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:31	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于10%，净资产收益率大于10%，市盈率小于32，毛利率大于43%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0032		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:32	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于10%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0033		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:33	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于10%，净资产收益率大于10%，市盈率小于32，成交额大于899万，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0034		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:34	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于15%，净资产收益率大于10%，市盈率小于32，成交额大于899万，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0035		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:35 | [添加条件] 市净率小于9 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0036		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:36	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，市盈率小于32，成交额大于899万，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0037		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:37	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0038		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:38	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于20%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0039		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:39 | [添加条件] 周成交量环比增长率大于19% (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0040		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:40 | [添加条件] 营业收入增长率大于15% (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0041		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:41	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于10%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0042		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:42	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于15%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0043		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:43	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于98%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0，经营活动产生的现金流量净额大于净利润",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0044		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:44 | [添加条件] 营业收入增长率大于15% (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0045		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:45 | [添加条件] 营业收入增长率大于15% (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0046		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:46	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于98%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0047		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:47	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	13	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于100%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0048		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:48	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于100%，净资产收益率大于10%，市盈率小于32，毛利率大于30%，经营活动产生的现金流量净额大于0，营业收入增长率大于15%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0049		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:49	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于100%，净资产收益率大于10%，市盈率小于32，换手率大于19%，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+
+0050		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:50	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "query": "非ST，PEG小于1，净利润增长率大于85%，净资产收益率大于10%，市盈率小于32，换手率大于19%，毛利率大于30%，经营活动产生的现金流量净额大于0",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 20,
+  "lower_income": 10,
+  "fall_income": 6,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+
+❌ 回测执行失败: fetch failed
+{"status":"error","error":"execution_failed","message":"fetch failed"}
+

@@ -1,0 +1,26 @@
+{
+  "current_iter": 52,
+  "champion_score": -1e+308,
+  "champion_robust_score": -1e+308,
+  "consecutive_failures": 51,
+  "last_update": "2026-04-22T18:24:50.834982",
+  "objective_version": "v4_tree_profile",
+  "seed_name": "价值树",
+  "search_mode": "tree_profile",
+  "phase": "coarse_search",
+  "direction_status": "UNKNOWN",
+  "direction_reason": "",
+  "champion_metrics": {},
+  "champion_windows": {},
+  "baseline_window_scores": {},
+  "baseline_metrics_by_window": {},
+  "stable_param_ranges": {},
+  "last_keep_reason": "",
+  "last_mutation_type": "baseline",
+  "final_recommendation": "",
+  "stop_reason": "ValueError: time data 'AUTO' does not match format '%Y-%m-%d'",
+  "tree_profile": {
+    "tree_id": "A_value",
+    "run_id": "run-004"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "current_iter": 1,
+  "champion_score": -1e+308,
+  "champion_robust_score": -1e+308,
+  "consecutive_failures": 0,
+  "last_update": "2026-04-22T19:58:30.142373",
+  "objective_version": "v4_tree_profile",
+  "seed_name": "质量成长树",
+  "search_mode": "tree_profile",
+  "phase": "coarse_search",
+  "direction_status": "UNKNOWN",
+  "direction_reason": "",
+  "champion_metrics": {},
+  "champion_windows": {},
+  "baseline_window_scores": {},
+  "baseline_metrics_by_window": {},
+  "stable_param_ranges": {},
+  "last_keep_reason": "",
+  "last_mutation_type": "baseline",
+  "final_recommendation": "",
+  "stop_reason": "",
+  "tree_profile": {
+    "tree_id": "B_quality_growth",
+    "run_id": "run-004"
+  }
+}

@@ -138,3 +138,16 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 {"status":"error","error":"execution_failed","message":"fetch failed"}
 
 0007	jqka_1776858256011	ok	5.0000	0.0800	1.5664	1.159521	keep	tree_run:run-003 round:7 | [粗调阈值] 毛利率 30.0 → 34	1.210403	1.162632	1.159521	1.159227	1.158437	0.0000	450	9	first version, automatically champion
+0028		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-003 round:28	0.000000	1.152000	1.150162	0.000000	0.000000	0.0004	0	9	BacktestFailedError: 回测失败 (exit=1)
+file:///Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/paths.js:3
+<<<<<<< HEAD
+^^
+
+SyntaxError: Unexpected token '<<'
+    at compileSourceTextModule (node:internal/modules/esm/utils:344:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:106:18)
+    at #translate (node:internal/modules/esm/loader:534:12)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:581:27)
+
+Node.js v23.11.0
+

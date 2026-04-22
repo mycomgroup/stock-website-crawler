@@ -1,0 +1,87 @@
+{
+  "name": "现金含量高策略",
+  "description": "筛选经营现金流/营业收入比率超过10%的股票，注重收入现金质量",
+  "formula": [
+    "非ST",
+    "非退市",
+    "非停牌",
+    "经营现金流营收比大于10%",
+    "营业收入大于0",
+    "市盈率小于25"
+  ],
+  "daysForSaleStrategy": "3,5",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 3,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6,
+  "seed_metadata": {
+    "core_formula": [
+      "非ST",
+      "经营现金流营收比大于10%",
+      "营业收入大于0"
+    ],
+    "locked_formula": [
+      "非ST"
+    ],
+    "forbidden_formula": [],
+    "parameter_priors": {
+      "maxPositions": {
+        "type": "discrete",
+        "values": [3, 5, 8, 10],
+        "preferred": 5
+      },
+      "takeProfit": {
+        "type": "range",
+        "min": 15,
+        "max": 30,
+        "step": 5,
+        "preferred": 20
+      },
+      "stopLoss": {
+        "type": "range",
+        "min": 7,
+        "max": 12,
+        "step": 1,
+        "preferred": 10
+      },
+      "trailingStopLoss": {
+        "type": "range",
+        "min": 3,
+        "max": 8,
+        "step": 1,
+        "preferred": 6
+      }
+    },
+    "expected_holding_profile": "medium_term",
+    "expected_position_range": [3, 8],
+    "recency_weight_profile": {
+      "recent6m": 0.4,
+      "recent12m": 0.4,
+      "prior12m": 0.15,
+      "full24m": 0.05
+    }
+  },
+  "tree_tags": ["value"],
+  "search_hints": {
+    "coarse_step_sizes": {
+      "growth_rates": 5,
+      "profitability": 2,
+      "valuation": 10,
+      "turnover": 1
+    },
+    "fine_step_sizes": {
+      "growth_rates": 2,
+      "profitability": 1,
+      "valuation": 5,
+      "turnover": 0.5
+    },
+    "avoid_extreme_values": {
+      "maxPositions": {"min": 4, "max": 12},
+      "takeProfit": {"min": 10, "max": 35},
+      "stopLoss": {"min": 5, "max": 15}
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "质量成长树-run-002",
+  "description": "探索高质量成长机会 | Run run-002",
+  "formula": [
+    "非ST",
+    "PEG小于1",
+    "净利润增长率大于85%",
+    "净资产收益率大于10%",
+    "市盈率小于32",
+    "换手率大于19%",
+    "毛利率大于30%",
+    "经营活动产生的现金流量净额大于0"
+  ],
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-22",
+  "maxPositions": 4,
+  "dailyBuyCount": 2,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6,
+  "daysForSaleStrategy": "3,5"
+}

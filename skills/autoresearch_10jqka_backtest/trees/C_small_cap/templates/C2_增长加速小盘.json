@@ -1,0 +1,93 @@
+{
+  "name": "增长加速小盘策略",
+  "description": "筛选流通市值小于50亿、营收和净利双增长超过20%的高弹性小盘股",
+  "formula": [
+    "非ST",
+    "流通市值小于50亿元",
+    "营业收入同比增长率大于20%",
+    "净利润同比增长率大于20%"
+  ],
+  "daysForSaleStrategy": "2,3",
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-10",
+  "maxPositions": 5,
+  "dailyBuyCount": 2,
+  "takeProfit": 35,
+  "stopLoss": 18,
+  "trailingStopLoss": 12,
+  "seed_metadata": {
+    "core_formula": [
+      "非ST",
+      "流通市值小于50亿元",
+      "营业收入同比增长率大于20%",
+      "净利润同比增长率大于20%"
+    ],
+    "locked_formula": ["非ST"],
+    "forbidden_formula": [],
+    "parameter_priors": {
+      "maxPositions": {
+        "type": "discrete",
+        "values": [3, 5, 6, 8],
+        "preferred": 5
+      },
+      "takeProfit": {
+        "type": "range",
+        "min": 25,
+        "max": 40,
+        "step": 5,
+        "preferred": 35
+      },
+      "stopLoss": {
+        "type": "range",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "preferred": 18
+      },
+      "trailingStopLoss": {
+        "type": "range",
+        "min": 8,
+        "max": 15,
+        "step": 1,
+        "preferred": 12
+      }
+    },
+    "expected_holding_profile": "short_term",
+    "expected_position_range": [3, 7],
+    "recency_weight_profile": {
+      "recent6m": 0.5,
+      "recent12m": 0.3,
+      "prior12m": 0.15,
+      "full24m": 0.05
+    }
+  },
+  "tree_tags": ["small_cap"],
+  "search_hints": {
+    "coarse_step_sizes": {
+      "growth_rates": 5,
+      "profitability": 2,
+      "valuation": 10,
+      "turnover": 1
+    },
+    "fine_step_sizes": {
+      "growth_rates": 2,
+      "profitability": 1,
+      "valuation": 5,
+      "turnover": 0.5
+    },
+    "avoid_extreme_values": {
+      "maxPositions": {
+        "min": 3,
+        "max": 8
+      },
+      "takeProfit": {
+        "min": 20,
+        "max": 40
+      },
+      "stopLoss": {
+        "min": 10,
+        "max": 20
+      }
+    }
+  }
+}
