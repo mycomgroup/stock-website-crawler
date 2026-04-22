@@ -1,458 +1,150 @@
-# 错杀反转树回测自动研究 — Agent 操作指南
+# D_mispricing_reversal 自动研究操作指南
 
-你是一个自主运行的错杀反转策略优化 agent。读完本文件后立即开始循环，不要停下来问用户。
+你要做的事情很简单：**按照程序已经固定好的 A/B/C/D 流程推进，不自行发明阈值、规则或市场解释。**
 
 ---
 
 ## 策略目标
 
-**策略名称**: {{STRATEGY_NAME}}
+- **策略名称**: {{STRATEGY_NAME}}
+- **策略描述**: {{STRATEGY_DESCRIPTION}}
 
-**策略描述**: {{STRATEGY_DESCRIPTION}}
-
-**重要提示**: 所有优化方向必须围绕上述策略目标进行，不要偏离核心定位。
-
----
-
-## 错杀反转树核心理念
-
-错杀反转研究的是一件事：**市场是不是把一个问题定价得过重了**。
-
-反转类研究的收益通常不来自"长期复利"，而来自"预期修正"。
-
-你需要分辨四类"错杀"：
-
-- **真错杀**：基本面没坏，只是情绪过度反应
-- **假错杀**：其实是价值陷阱，便宜有便宜的道理
-- **反弹而非反转**：短期修复后会继续下跌
-- **困境持续恶化**：最坏还没来
-
-你的任务是通过回测结果，逐步分辨这四类，找到真正有效的错杀反转策略。
+目标不是找最高分，而是找：
+- **短期仍有效**
+- **不过拟合**
+- **长周期不死**
+- **参数有稳定带**
+- **多窗口确认过**
 
 ---
 
-## D树的四个分支
+## 以程序结果为准
 
-### D1. 破发反转
+下面这些内容已经固化在程序中，**不要再靠你自己判断**：
 
-研究股票跌破发行价后的修复机会。
+- `ACTIVE / WATCH / INACTIVE` 的判断
+- 多窗口评分和权重
+- keep / rollback 的 epsilon 规则
+- 持仓数、交易数、回撤等硬约束
+- D_mispricing_reversal 的粗调 / 细调步长
+- 邻域稳健测试的通过标准
 
-核心问题：
-- 为什么破发？
-- 破发后公司有没有继续恶化？
-- 发行定价是否过高？
-- 当前估值是否重新回到合理区域？
-
-**自然语言条件样例（参考）：**
-
-```
-非ST，相对发行价涨跌幅小于0，营业收入同比增长率大于10%，总股本小于2亿股
-
-非ST，破发，最近两个季度净利润同比增长率均为正，经营现金流大于0
-
-非ST，股价低于发行价，市盈率小于25，近一年无重大减持公告
-```
-
-### D2. 大跌后修复
-
-研究股价大幅下跌后的修复机会。
-
-核心问题：
-- 下跌是市场系统性原因还是公司个体原因？
-- 下跌后是否出现业绩确认？
-- 是否有情绪修复空间？
-
-**自然语言条件样例（参考）：**
-
-```
-非ST，最近40天下跌超过20%，市盈率小于25，最近一年净利润为正
-
-非ST，近三年跌幅大于60%，连续两年每股收益大于0.1元
-
-非ST，55天跌幅大于25%，基本每股收益大于0.1，股价小于60元
-```
-
-### D3. 基本面强 + 股价弱
-
-这是反转树中最值得长期研究的枝干之一。
-
-核心逻辑：
-- 业绩不差
-- 股价表现差
-- 市场情绪与基本面暂时背离
-
-核心问题：
-- 这种背离出现的原因？
-- 背离平均修复周期？
-- 修复前是否会继续杀估值？
-
-**自然语言条件样例（参考）：**
-
-```
-非ST，净利润同比增长率大于50%，近4个月股价跌幅最大
-
-非ST，营收同比增长率大于20%，净利润同比增长率大于30%，近60日股价跌幅大于板块平均
-
-非ST，ROE大于12%，毛利率大于30%，近3个月涨跌幅小于-15%
-```
-
-### D4. 困境反转
-
-这是最危险、但也最具弹性的分支。
-
-核心逻辑：
-- 公司曾经很差
-- 但最差阶段可能已经过去
-
-适合研究的信号：
-- 连续亏损结束
-- 扭亏为盈
-- 资产负债表修复
-- 主业恢复
-- 现金流回正
-
-**自然语言条件样例（参考）：**
-
-```
-非ST，最新年报扭亏为盈，经营活动产生的现金流量净额大于0，资产负债率下降
-
-非ST，扣非净利润同比转正，营业收入同比增长率大于20%
-
-非ST，最近两个季度连续盈利，股价仍处于近一年低位
-```
+你只负责：
+- 读取状态
+- 执行一次迭代
+- 看结果
+- 把结果同步到 `search_notes.md`
 
 ---
 
-## 反转树最大风险
-
-在探索错杀反转时，要特别注意避免以下陷阱：
-
-- **你以为是错杀，其实是价值陷阱**：基本面已经恶化，股价下跌是合理的
-- **你以为是反转，其实只是反弹**：短期修复后继续下跌
-- **你以为最坏已过，其实更坏还没来**：困境持续恶化
-
-可以通过添加以下条件来规避：
-- 检查盈利是否真正改善（连续多个季度净利润为正）
-- 检查现金流是否回正（经营现金流大于0）
-- 检查负债是否下降（资产负债率下降）
-- 避免连续亏损公司（除非明确扭亏信号）
-
----
-
-## 目录结构
-
-```
-trees/D_mispricing_reversal/
-├── seed.json                ← 只读，种子配置
-├── program.md               ← 只读，本文件
-└── experiments/<name>/
-    ├── formula_config.json  ← 当前 champion 配置（只读，由脚本维护）
-    ├── state.json           ← 只读，由脚本维护
-    ├── iterations.tsv       ← 只读，由脚本维护
-    └── search_notes.md      ← 你维护的搜索地图
-```
-
-**只读文件（不可修改）**：`formula_config.json`、`state.json`、`seed.json`、`program.md`、`iterations.tsv`
-
-**你可以修改的文件**：`search_notes.md`（搜索笔记）
-
----
-
-## 实验循环
-
-**LOOP FOREVER（直到人工中断或触发停止条件）：**
+## 固定流程
 
 ### 第 1 步：读取状态
 
+先读：
+
 ```bash
 cat trees/D_mispricing_reversal/experiments/<name>/state.json
-cat trees/D_mispricing_reversal/experiments/<name>/iterations.tsv
+cat trees/D_mispricing_reversal/experiments/<name>/iterations.tsv | tail -5
 ```
 
-**停止条件（满足任一即停止）：**
-- `consecutive_failures >= 5` 且 `search_notes.md` 中"待探索方向"已全部尝试
-- 或 `current_iter >= 100`
+优先看这些字段：
+- `direction_status`
+- `direction_reason`
+- `phase`
+- `stable_param_ranges`
+- `final_recommendation`
+- `stop_reason`
 
-如未触发停止条件，继续下一步。
+如果满足以下任一条件，就停止继续自动探索：
+- `direction_status == "INACTIVE"`
+- `stop_reason` 非空
+- `current_iter >= 100`
 
 ---
 
-### 第 2 步：读取变异能力定义
-
-在规划探索方向前，先读取 `formula_mutator.py` 了解可用的条件和参数范围：
-
-```bash
-SKILL_DIR="skills/autoresearch_10jqka_backtest"
-
-# 读取数值条件候选库
-head -80 ${SKILL_DIR}/formula_mutator.py
-
-# 读取可添加条件库
-grep "FORMULA_ADDABLE_CONDITIONS" -A 30 ${SKILL_DIR}/formula_mutator.py
-```
-
-关键信息：
-- `FORMULA_NUMERIC_CONDITIONS`：数值条件库，每个条件含 `range`、`template`
-- `FORMULA_ADDABLE_CONDITIONS`：可添加条件列表
-- `MUTATION_TYPES`：变异类型列表
-
----
-
-### 第 3 步：分析历史，选择变异方向
-
-读取或创建 `search_notes.md`，维护搜索地图：
-
-```markdown
-## 搜索地图
-
-### 已验证有效（keep）
-- [变异类型] 具体改动描述：score 从 X.XXX → Y.YYY，+Z.ZZZ
-
-### 已验证无效（rollback）
-- [变异类型] 具体改动描述：rollback，原因
-
-### 待探索方向
-（列出基于回测结果观察到的潜在改进方向）
-
-### D树分支探索记录
-- D1分支（破发反转）：尝试过哪些，结果如何
-- D2分支（大跌后修复）：尝试过哪些，结果如何
-- D3分支（基本面强+股价弱）：尝试过哪些，结果如何
-- D4分支（困境反转）：尝试过哪些，结果如何
-
-### 规律总结
-- 当前最优分支倾向
-- 错杀反转策略在本回测区间表现特点
-```
-
-**决策规则：**
-1. 优先从回测结果中观察到的问题出发（如选股太少、回撤太大等）
-2. 根据当前formula判断处于哪个分支，尝试深化该分支或切换分支
-3. 不要重复"已验证无效"的方向
-4. 每次变异要能解释"为什么这样改"
-
----
-
-### 第 4 步：执行迭代
+### 第 2 步：执行一次迭代
 
 ```bash
 SKILL_DIR="skills/autoresearch_10jqka_backtest"
 python ${SKILL_DIR}/run_iteration.py \
-    --base trees/D_mispricing_reversal/experiments/<name> \
-    --mutation-summary "【变异类型】具体改了什么（改前→改后），预期效果" \
-    [--mutation-type <type>]
-echo "exit: $?"
+  --base trees/D_mispricing_reversal/experiments/<name> \
+  --mutation-summary "D_mispricing_reversal 单轮验证"
 ```
 
-`--mutation-summary` 格式要求：
-- 写清楚**变异类型**
-- 写清楚**具体改了什么**
-- 写清楚**预期效果**
-
-`--mutation-type` 可选，不指定时系统随机选择变异类型。
-
-**退出码含义：**
-- `0` = keep（新配置更优，已保存为 champion）
-- `1` = rollback（新配置不如 champion，已恢复）
-- `2` = crash（执行出错，consecutive_failures +1）
+说明：
+- 不要自己定义阶段 A/B/C/D 的阈值
+- 不要手动改 `formula_config.json`
+- 不要并行跑多个迭代
+- D_mispricing_reversal 默认只做有限粗搜索和有限细调
 
 ---
 
-### 第 5 步：查看结果，更新搜索地图
+### 第 3 步：查看结果
+
+再读：
+
+如果你在**仓库根目录**执行：
 
 ```bash
-cat trees/D_mispricing_reversal/experiments/<name>/iterations.tsv | tail -5
+cat skills/autoresearch_10jqka_backtest/trees/D_mispricing_reversal/experiments/<name>/state.json
+cat skills/autoresearch_10jqka_backtest/trees/D_mispricing_reversal/experiments/<name>/iterations.tsv | tail -5
 ```
 
-更新 `search_notes.md`：
-- 退出码 0（keep）→ 归入"已验证有效"，记录变异类型和 score 提升量
-- 退出码 1（rollback）→ 归入"已验证无效"，记录为什么无效
-- 退出码 2（crash）→ 记录 crash 原因，跳过这个方向
+如果你在**实验目录**执行：
 
-**回到第 1 步，继续循环。**
+```bash
+cat state.json
+cat iterations.tsv | tail -5
+```
 
----
-
-## D树常用条件库
-
-以下条件可用于变异，**但只是参考，你可以根据回测结果自主选择**：
-
-### 筛选条件
-
-**错杀信号类（核心）：**
-- `相对发行价涨跌幅小于0`（破发）
-- `近X日跌幅大于X%`（大跌后修复，X范围：20-60日，15-30%）
-- `近X个月股价跌幅最大`（寻找跌幅最大）
-- `近X日股价跌幅大于板块平均`（相对弱势）
-
-**基本面改善类：**
-- `净利润同比增长率大于X%`（X范围：20-50）
-- `营业收入同比增长率大于X%`（X范围：10-30）
-- `最新年报扭亏为盈`
-- `扣非净利润同比转正`
-- `最近X季度净利润同比增长率均为正`
-
-**现金流质量类：**
-- `经营活动产生的现金流量净额大于0`
-- `经营活动产生的现金流量净额大于净利润`
-- `资产负债率下降`
-
-**估值安全类：**
-- `市盈率大于0小于X`（X范围：20-35）
-- `市净率小于X`（X范围：1.5-3）
-- `股价小于每股净资产`（破净）
-
-**修复信号类：**
-- `股价重新站上20日均线`（技术确认）
-- `最近X季度净利润同比增长率持续改善`
-- `股价仍处于近一年低位`
-
-### 排序条件
-
-- `近X日跌幅从大到小`（跌幅越大排序越靠前）
-- `净利润同比增长率从高到低`
-- `市盈率从低到高`
+你要关注的是：
+- 当前 `direction_status` 是什么
+- 这轮是 `keep` 还是 `rollback`
+- `recent_6m / recent_12m / prior_12m / full_24m` 怎么样
+- 有没有新的 `stable_param_ranges`
+- `final_recommendation` 有没有变化
 
 ---
 
-## 回测参数探索
+### 第 4 步：更新 `search_notes.md`
 
-错杀反转策略的特点：
+只同步**程序已经得出的结论**，不要自己重新解释阈值。
 
-- **持仓周期**：通常较短，可探索 2-5 天
-- **持仓数量**：**5-10支最佳**，错杀股波动大，分散风险重要
-- **止盈**：较高，可探索 35-50%（反转弹性大）
-- **止损**：适中偏紧，可探索 15-25%（避免假反转持续亏损）
-
-根据回测结果调整：
-- 如果选股太少（<5支） → 放宽错杀信号条件或减少基本面要求
-- 如果选股太多（>15支） → 加强基本面筛选或添加估值安全条件
-- 如果回撤太大 → 加强基本面确认条件或收紧止损
-- 如果假反转太多 → 添加现金流或负债改善条件
-
----
-
-## 每次迭代要回答的标准问题
-
-在每次变异前，问自己这几个问题：
-
-### 逻辑问题
-- 这个改动赚的到底是什么钱？是预期修正、困境反转，还是反弹？
-- 这个逻辑依赖什么市场前提？
-
-### 因子问题
-- 主因子是什么？辅因子是什么？
-- 哪些因子是识别错杀的？哪些是确认反转的？
-
-### 市场环境问题
-- 牛市更有效还是熊市更有效？
-- 风险偏好上升时是否更有效？
-
-### 风险问题
-- 最大回撤可能来自什么？是价值陷阱还是假反转？
-- 失效时会怎么失效？是连续小亏，还是偶发大亏？
-
----
-
-## 错杀反转树研究常见错误（避坑）
-
-1. **把破发误认为错杀** - 破发可能是因为发行价过高或基本面恶化
-2. **把反弹误认为反转** - 短期修复后可能继续下跌
-3. **忽视基本面确认** - 只看跌幅不看基本面容易踩价值陷阱
-4. **把困境反转想得太简单** - 需要多重信号确认困境真正结束
-5. **没有建立排雷层** - 先过滤ST、退市、财务造假风险
-
----
-
-## search_notes.md 建议模板
-
-每次研究一根枝干时，建议按以下格式记录：
+建议写法：
 
 ```markdown
-## 当前探索分支：D1/D2/D3/D4
+## 当前状态
+- 方向状态：ACTIVE / WATCH / INACTIVE
+- 原因：直接抄 `state.json` 中的 `direction_reason`
+- 阶段：直接抄 `phase`
 
-### 一句话定义
-这个配置赚什么钱？
+## 当前 champion
+- 最近6M：抄 `champion_windows.recent_6m.score`
+- 最近12M：抄 `champion_windows.recent_12m.score`
+- 前12M：抄 `champion_windows.prior_12m.score`
+- 全24M：抄 `champion_windows.full_24m.score`
 
-### 核心假设
-为什么这个方向可能有效？
+## 稳定参数带
+- 直接抄 `stable_param_ranges`
 
-### 主因子
-- 列出主要筛选条件
-
-### 辅因子
-- 列出辅助条件
-
-### 失效条件
-- 在什么市场环境下会失效？
-
-### 回测观察
-- 选股数量是否足够？
-- 反转成功率高还是假反转多？
-- 收益来源是什么（预期修正/困境反转/情绪修复）？
-
-### 下一步方向
-- 基于回测结果，下一步尝试什么？
+## 最近结论
+- keep / rollback 原因：直接抄最近一行 `iterations.tsv`
+- 执行建议：直接抄 `final_recommendation`
 ```
 
 ---
 
-## 评分公式（v2 - 防过拟合优化版）
+## 不要做的事
 
-```
-calmar = annual_return / max(abs(max_drawdown), 0.01)
-complexity_penalty = min((formula条件数 + 调优参数数) / 10, 1.0)
-
-# 选股数量惩罚（双边软约束）
-if maxPositions < 5:
-    position_penalty = (5 - maxPositions) ** 2 * 0.1  # 选1支扣1.6分
-elif maxPositions > 15:
-    position_penalty = (maxPositions - 15) ** 2 * 0.01  # 选50支扣1.2分
-else:
-    position_penalty = 0
-
-score = sortino * 0.40 + calmar * 0.25 + information_ratio * 0.15 
-      + win_rate * 0.10 - complexity_penalty * 0.10 - position_penalty
-```
-
-**选股数量建议**：5-10支最佳，错杀股波动大，需分散风险。
-
-**硬约束**：
-- `abs(max_drawdown) > 0.35` 直接 rollback
-- 新 score **严格大于** champion score 才 keep
+- 不要自己定义什么叫 ACTIVE
+- 不要自己发明新的评分规则
+- 不要把 `program.md` 写成新的系统设计文档
+- 不要跨 D1/D2/D3/D4 随意跳方向
+- 不要因为一次局部好看，就忽略邻域和多窗口验证
 
 ---
 
-## 约束（不可违反）
+## 一句话原则
 
-1. **先读变异能力定义**，每次规划探索前先读取 formula_mutator.py
-2. **只通过 run_iteration.py 修改配置**，不要直接编辑 formula_config.json
-3. **按顺序执行**，每次只运行一个回测
-4. **不要重复失败的改动**
-5. **不要问用户是否继续**，你是自主运行的
-6. **必须维护 search_notes.md**，记录分支探索情况
-7. **crash 后分析原因**，调整策略后再继续
-
----
-
-## 简洁性原则
-
-改动要权衡收益和复杂度：
-- 微小提升（score 提升 < 0.001）但增加了大量复杂配置 → **不值得**
-- 删掉筛选条件后得分持平或更好 → **一定 keep**
-- 得分接近但配置更简洁 → **keep**
-
----
-
-## 停止条件
-
-满足以下任一条件时停止循环：
-
-1. `consecutive_failures >= 5` **且** `search_notes.md` 中"待探索方向"已全部尝试
-2. `current_iter >= 100`
-
-停止后输出最终 champion：
-
-```bash
-cat trees/D_mispricing_reversal/experiments/<name>/state.json | python -c "import json,sys; s=json.load(sys.stdin); print(f'champion_score={s[\"champion_score\"]:.4f}')"
-```
+**程序负责判断，你负责按顺序执行和记录。**

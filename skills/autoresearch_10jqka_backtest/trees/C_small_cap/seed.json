@@ -70,7 +70,7 @@
       "full24m": 0.05
     }
   },
-  "tree_tags": [],
+  "tree_tags": ["small_cap"],
   "search_hints": {
     "coarse_step_sizes": {
       "growth_rates": 5,

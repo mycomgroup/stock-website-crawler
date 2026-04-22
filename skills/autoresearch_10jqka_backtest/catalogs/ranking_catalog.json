@@ -1,0 +1,94 @@
+{
+  "rankings": [
+    {
+      "id": "turnover_desc",
+      "name": "换手率从高到低",
+      "family": "liquidity",
+      "kind": "ranking",
+      "template": "换手率从高到低",
+      "reverse_template": "换手率从低到高",
+      "tree_weights": {"A_value": 0.5, "E_technical_trend": 0.8, "F_fund_flow": 0.7},
+      "stage_fit": ["bootstrap", "coarse"]
+    },
+    {
+      "id": "turnover_asc",
+      "name": "换手率从低到高",
+      "family": "liquidity",
+      "kind": "ranking",
+      "template": "换手率从低到高",
+      "reverse_template": "换手率从高到低",
+      "tree_weights": {},
+      "stage_fit": ["coarse", "refine"]
+    },
+    {
+      "id": "market_cap_asc",
+      "name": "市值从小到大",
+      "family": "market_cap",
+      "kind": "ranking",
+      "template": "市值从小到大",
+      "reverse_template": "市值从大到小",
+      "tree_weights": {"C_small_cap": 1.0, "A_value": 0.5},
+      "stage_fit": ["bootstrap", "coarse"]
+    },
+    {
+      "id": "market_cap_desc",
+      "name": "市值从大到小",
+      "family": "market_cap",
+      "kind": "ranking",
+      "template": "市值从大到小",
+      "reverse_template": "市值从小到大",
+      "tree_weights": {},
+      "stage_fit": ["coarse", "refine"]
+    },
+    {
+      "id": "volume_desc",
+      "name": "成交额从大到小",
+      "family": "liquidity",
+      "kind": "ranking",
+      "template": "成交额从大到小",
+      "reverse_template": "成交额从小到大",
+      "tree_weights": {"E_technical_trend": 0.6, "F_fund_flow": 0.5},
+      "stage_fit": ["bootstrap", "coarse"]
+    },
+    {
+      "id": "volume_asc",
+      "name": "成交额从小到大",
+      "family": "liquidity",
+      "kind": "ranking",
+      "template": "成交额从小到大",
+      "reverse_template": "成交额从大到小",
+      "tree_weights": {},
+      "stage_fit": ["coarse", "refine"]
+    },
+    {
+      "id": "dividend_yield_desc",
+      "name": "股息率从高到低",
+      "family": "dividend",
+      "kind": "ranking",
+      "template": "股息率从高到低",
+      "reverse_template": "股息率从低到高",
+      "tree_weights": {"A_value": 1.0, "H_composite": 0.5},
+      "stage_fit": ["bootstrap", "coarse"]
+    },
+    {
+      "id": "roe_desc",
+      "name": "净资产收益率从高到低",
+      "family": "quality",
+      "kind": "ranking",
+      "template": "净资产收益率从高到低",
+      "reverse_template": "净资产收益率从低到高",
+      "tree_weights": {"B_quality_growth": 1.0, "H_composite": 0.5},
+      "stage_fit": ["bootstrap", "coarse"]
+    },
+    {
+      "id": "revenue_growth_desc",
+      "name": "营收增长率从高到低",
+      "family": "growth",
+      "kind": "ranking",
+      "template": "营业收入增长率从高到低",
+      "reverse_template": "营业收入增长率从低到高",
+      "tree_weights": {"B_quality_growth": 0.8},
+      "stage_fit": ["bootstrap", "coarse"]
+    }
+  ]
+}

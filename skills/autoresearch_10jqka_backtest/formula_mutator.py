@@ -32,6 +32,10 @@ from dataclasses import dataclass, asdict
 from typing import Optional, Tuple, List, Dict
 from pathlib import Path
 
+from condition_catalog import get_addable_conditions, sample_condition_for_tree, get_conditions_for_tree
+from ranking_catalog import sample_ranking_for_tree, get_rankings_for_tree
+from tree_profile import load_tree_profile_from_dir, get_primary_families, get_secondary_families, check_promotion_rules, get_soft_prior_value
+
 
 GROWTH_STEP = 5
 PROFITABILITY_STEP = 2
@@ -835,7 +839,7 @@ def mutate_with_seed_constraints(
 
 def mutate(
     config: dict, mutation_type: Optional[str] = None, mutation_hint: Optional[str] = None,
-    seed_metadata: Optional[SeedMetadata] = None
+    seed_metadata: Optional[SeedMetadata] = None, tree_name: Optional[str] = None
 ) -> Tuple[dict, str, str]:
     """
     生成候选配置。
@@ -890,20 +894,40 @@ def mutate(
     if fn is None:
         raise ValueError(f"Unknown mutation type: {raw_type}")
 
-    if raw_type == "add_formula_condition" and mutation_hint:
-        result_config, desc = _mutate_add_formula_condition(new_config, specified_condition=mutation_hint)
+    if raw_type == "add_formula_condition":
+        result_config, desc = _mutate_add_formula_condition(
+            new_config,
+            specified_condition=mutation_hint,
+            tree_name=tree_name,
+        )
         return result_config, desc, raw_type
     if raw_type == "remove_formula_condition" and mutation_hint:
         result_config, desc = _mutate_remove_formula_condition(new_config, specified_clause=mutation_hint)
         return result_config, desc, raw_type
-    if raw_type == "replace_formula_condition" and mutation_hint:
-        parts = mutation_hint.split("->", 1)
+    if raw_type == "replace_formula_condition":
+        parts = mutation_hint.split("->", 1) if mutation_hint else []
         if len(parts) == 2:
             result_config, desc = _mutate_replace_formula_condition(
-                new_config, old_clause=parts[0].strip(), new_clause=parts[1].strip()
+                new_config,
+                old_clause=parts[0].strip(),
+                new_clause=parts[1].strip(),
+                tree_name=tree_name,
             )
         else:
-            result_config, desc = _mutate_replace_formula_condition(new_config)
+            result_config, desc = _mutate_replace_formula_condition(new_config, tree_name=tree_name)
+        return result_config, desc, raw_type
+
+    if raw_type == "adjust_max_positions":
+        result_config, desc = _mutate_adjust_max_positions(new_config, tree_name=tree_name)
+        return result_config, desc, raw_type
+    if raw_type == "adjust_take_profit":
+        result_config, desc = _mutate_adjust_take_profit(new_config, tree_name=tree_name)
+        return result_config, desc, raw_type
+    if raw_type == "adjust_stop_loss":
+        result_config, desc = _mutate_adjust_stop_loss(new_config, tree_name=tree_name)
+        return result_config, desc, raw_type
+    if raw_type == "adjust_trailing_stop":
+        result_config, desc = _mutate_adjust_trailing_stop(new_config, tree_name=tree_name)
         return result_config, desc, raw_type
 
     result_config, desc = fn(new_config)
@@ -1115,8 +1139,8 @@ def _mutate_probe_stability(config: dict) -> Tuple[dict, str]:
     return config, f"[稳定性探测] {param} {old_val}→{new_val}"
 
 
-def _mutate_add_formula_condition(config: dict, specified_condition: Optional[str] = None) -> Tuple[dict, str]:
-    """添加新的 formula 条件"""
+def _mutate_add_formula_condition(config: dict, specified_condition: Optional[str] = None, tree_name: Optional[str] = None) -> Tuple[dict, str]:
+    """添加新的 formula 条件，优先从 catalog 抽样"""
     formula = config.get("formula", [])
     engine = ConditionTemplateEngine()
 
@@ -1124,6 +1148,12 @@ def _mutate_add_formula_condition(config: dict, specified_condition: Optional[st
 
     if specified_condition and specified_condition not in existing_text:
         new_condition = specified_condition
+    elif tree_name:
+        new_condition = sample_condition_for_tree(tree_name, existing=formula)
+        if new_condition is None:
+            new_condition = sample_ranking_for_tree(tree_name, existing=formula)
+        if new_condition is None:
+            new_condition = engine.generate_condition(formula)
     else:
         new_condition = engine.generate_condition(formula)
 
@@ -1191,32 +1221,51 @@ def _mutate_remove_formula_condition(config: dict, specified_clause: Optional[st
 
 
 def _mutate_replace_formula_condition(
-    config: dict, old_clause: Optional[str] = None, new_clause: Optional[str] = None
+    config: dict,
+    old_clause: Optional[str] = None,
+    new_clause: Optional[str] = None,
+    tree_name: Optional[str] = None,
 ) -> Tuple[dict, str]:
-    """替换 formula 中的某个条件为另一个条件"""
+    """替换 formula 中的某个条件为另一个条件。"""
     formula = config.get("formula", [])
     if not formula:
-        return _mutate_add_formula_condition(config)
+        return _mutate_add_formula_condition(config, tree_name=tree_name)
 
-    if old_clause and old_clause in formula:
-        idx = formula.index(old_clause)
-        formula[idx] = new_clause or old_clause
-        config["formula"] = formula
-        return config, f"[替换条件] {old_clause} → {new_clause}"
+    engine = ConditionTemplateEngine()
 
     replaceable_indices = []
     for i, clause in enumerate(formula):
         if clause not in ["非ST", "非科创板", "非退市", "沪深A股"]:
             replaceable_indices.append(i)
 
-    if not replaceable_indices or not new_clause:
-        return _mutate_add_formula_condition(config)
+    if old_clause and old_clause in formula:
+        idx = formula.index(old_clause)
+    elif replaceable_indices:
+        idx = random.choice(replaceable_indices)
+        old_clause = formula[idx]
+    else:
+        return _mutate_add_formula_condition(config, tree_name=tree_name)
 
-    idx = random.choice(replaceable_indices)
-    old = formula[idx]
+    existing_without_old = formula[:idx] + formula[idx + 1 :]
+
+    if not new_clause:
+        is_sort_clause = any(
+            kw in old_clause
+            for kw in ["从大到小", "从小到大", "由近到远", "由远到近", "从高到低", "从低到高"]
+        )
+        if tree_name and is_sort_clause:
+            new_clause = sample_ranking_for_tree(tree_name, existing=existing_without_old)
+        if tree_name and not new_clause:
+            new_clause = sample_condition_for_tree(tree_name, existing=existing_without_old)
+        if not new_clause:
+            new_clause = engine.generate_condition(existing_without_old)
+
+    if not new_clause or new_clause == old_clause or new_clause in existing_without_old:
+        return config, "[替换条件] 无可用替换"
+
     formula[idx] = new_clause
-    config["formula"] = formula
-    return config, f"[替换条件] {old} → {new_clause}"
+    config["formula"] = canonicalize_formula(formula)
+    return config, f"[替换条件] {old_clause} → {new_clause}"
 
 
 def _mutate_adjust_formula_sort(config: dict) -> Tuple[dict, str]:
@@ -1279,9 +1328,33 @@ def _mutate_adjust_days_for_sale(config: dict) -> Tuple[dict, str]:
     return config, desc
 
 
-def _mutate_adjust_max_positions(config: dict) -> Tuple[dict, str]:
-    """调整最大持仓数"""
+def _mutate_adjust_max_positions(config: dict, tree_name: Optional[str] = None) -> Tuple[dict, str]:
+    """调整最大持仓数，优先从 soft_priors 采样"""
     old_value = config.get("maxPositions", 2)
+
+    if tree_name:
+        from tree_profile import load_tree_profile_from_dir
+        profile = load_tree_profile_from_dir(tree_name)
+        if profile:
+            prior = get_soft_prior_value(profile, "maxPositions")
+            preferred = prior.get("preferred", [])
+            allowed = prior.get("allowed", [])
+            if isinstance(preferred, list) and len(preferred) == 2:
+                preferred_values = list(range(preferred[0], preferred[1] + 1))
+                available_preferred = [v for v in preferred_values if v != old_value]
+                if available_preferred and random.random() < 0.7:
+                    new_value = random.choice(available_preferred)
+                    config["maxPositions"] = new_value
+                    desc = f"[最大持仓] {old_value} → {new_value} (preferred)"
+                    return config, desc
+            if isinstance(allowed, list) and len(allowed) == 2:
+                allowed_values = list(range(allowed[0], allowed[1] + 1))
+                available_allowed = [v for v in allowed_values if v != old_value]
+                if available_allowed:
+                    new_value = random.choice(available_allowed)
+                    config["maxPositions"] = new_value
+                    desc = f"[最大持仓] {old_value} → {new_value} (allowed)"
+                    return config, desc
 
     available = [opt for opt in MAX_POSITIONS_OPTIONS if opt != old_value]
     if not available:
@@ -1291,7 +1364,6 @@ def _mutate_adjust_max_positions(config: dict) -> Tuple[dict, str]:
         new_value = random.choice(available)
 
     config["maxPositions"] = new_value
-
     desc = f"[最大持仓] {old_value} → {new_value}"
     return config, desc
 
@@ -1313,9 +1385,25 @@ def _mutate_adjust_daily_buy_count(config: dict) -> Tuple[dict, str]:
     return config, desc
 
 
-def _mutate_adjust_take_profit(config: dict) -> Tuple[dict, str]:
-    """调整止盈阈值"""
+def _mutate_adjust_take_profit(config: dict, tree_name: Optional[str] = None) -> Tuple[dict, str]:
+    """调整止盈阈值，优先从 soft_priors 采样"""
     old_value = config.get("takeProfit", 25)
+
+    if tree_name:
+        from tree_profile import load_tree_profile_from_dir
+        profile = load_tree_profile_from_dir(tree_name)
+        if profile:
+            prior = get_soft_prior_value(profile, "takeProfit")
+            preferred = prior.get("preferred", [])
+            allowed = prior.get("allowed", [])
+            if isinstance(preferred, list) and len(preferred) == 2:
+                preferred_values = list(range(preferred[0], preferred[1] + 1, 5))
+                available_preferred = [v for v in preferred_values if v != old_value]
+                if available_preferred and random.random() < 0.7:
+                    new_value = random.choice(available_preferred)
+                    config["takeProfit"] = new_value
+                    desc = f"[止盈] {old_value}% → {new_value}% (preferred)"
+                    return config, desc
 
     available = [opt for opt in TAKE_PROFIT_OPTIONS if opt != old_value]
     if not available:
@@ -1326,14 +1414,28 @@ def _mutate_adjust_take_profit(config: dict) -> Tuple[dict, str]:
         new_value = random.choice(available)
 
     config["takeProfit"] = new_value
-
     desc = f"[止盈] {old_value}% → {new_value}%"
     return config, desc
 
 
-def _mutate_adjust_stop_loss(config: dict) -> Tuple[dict, str]:
-    """调整止损阈值"""
+def _mutate_adjust_stop_loss(config: dict, tree_name: Optional[str] = None) -> Tuple[dict, str]:
+    """调整止损阈值，优先从 soft_priors 采样"""
     old_value = config.get("stopLoss", 9)
+
+    if tree_name:
+        from tree_profile import load_tree_profile_from_dir
+        profile = load_tree_profile_from_dir(tree_name)
+        if profile:
+            prior = get_soft_prior_value(profile, "stopLoss")
+            preferred = prior.get("preferred", [])
+            if isinstance(preferred, list) and len(preferred) == 2:
+                preferred_values = list(range(preferred[0], preferred[1] + 1))
+                available_preferred = [v for v in preferred_values if v != old_value]
+                if available_preferred and random.random() < 0.7:
+                    new_value = random.choice(available_preferred)
+                    config["stopLoss"] = new_value
+                    desc = f"[止损] {old_value}% → {new_value}% (preferred)"
+                    return config, desc
 
     available = [opt for opt in STOP_LOSS_OPTIONS if opt != old_value]
     if not available:
@@ -1344,14 +1446,28 @@ def _mutate_adjust_stop_loss(config: dict) -> Tuple[dict, str]:
         new_value = random.choice(available)
 
     config["stopLoss"] = new_value
-
     desc = f"[止损] {old_value}% → {new_value}%"
     return config, desc
 
 
-def _mutate_adjust_trailing_stop(config: dict) -> Tuple[dict, str]:
-    """调整追踪止损阈值"""
+def _mutate_adjust_trailing_stop(config: dict, tree_name: Optional[str] = None) -> Tuple[dict, str]:
+    """调整追踪止损阈值，优先从 soft_priors 采样"""
     old_value = config.get("trailingStopLoss", 5)
+
+    if tree_name:
+        from tree_profile import load_tree_profile_from_dir
+        profile = load_tree_profile_from_dir(tree_name)
+        if profile:
+            prior = get_soft_prior_value(profile, "trailingStopLoss")
+            preferred = prior.get("preferred", [])
+            if isinstance(preferred, list) and len(preferred) == 2:
+                preferred_values = list(range(preferred[0], preferred[1] + 1))
+                available_preferred = [v for v in preferred_values if v != old_value]
+                if available_preferred and random.random() < 0.7:
+                    new_value = random.choice(available_preferred)
+                    config["trailingStopLoss"] = new_value
+                    desc = f"[追踪止损] {old_value}% → {new_value}% (preferred)"
+                    return config, desc
 
     available = [opt for opt in TRAILING_STOP_OPTIONS if opt != old_value]
     if not available:
@@ -1362,7 +1478,6 @@ def _mutate_adjust_trailing_stop(config: dict) -> Tuple[dict, str]:
         new_value = random.choice(available)
 
     config["trailingStopLoss"] = new_value
-
     desc = f"[追踪止损] {old_value}% → {new_value}%"
     return config, desc
 

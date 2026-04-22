@@ -1,116 +1,63 @@
 #!/usr/bin/env python3
 """
-Upgrade seed files with new metadata fields.
+迁移旧种子文件到 templates/ 目录。
 
-Run: python upgrade_seeds.py
+用法：python upgrade_seeds.py --tree trees/A_value
 """
 
+import argparse
 import json
-import os
+import shutil
 from pathlib import Path
 
-def upgrade_seed_file(filepath: Path) -> bool:
-    with open(filepath, 'r', encoding='utf-8') as f:
-        seed = json.load(f)
-
-    if "seed_metadata" in seed:
-        return False
-
-    formula = seed.get("formula", [])
-    if isinstance(formula, str):
-        formula = [formula]
-    non_sort = [c for c in formula if not any(kw in c for kw in ["从大到小", "从小到大", "由近到远", "由远到近"])]
-    core_formula = non_sort[:3] if len(non_sort) >= 3 else non_sort
-
-    locked = [c for c in formula if c in ["非ST", "非退市", "非科创板", "创业板", "沪深A股"]]
-
-    max_pos = seed.get("maxPositions", 5)
-    take_profit = seed.get("takeProfit", 20)
-    stop_loss = seed.get("stopLoss", 9)
-    trailing = seed.get("trailingStopLoss", 5)
-
-    tree_tags = []
-    name = filepath.stem
-    if name.startswith("A"):
-        tree_tags.append("value")
-    elif name.startswith("B"):
-        tree_tags.append("quality_growth")
-    elif name.startswith("C"):
-        tree_tags.append("small_cap")
-    elif name.startswith("D"):
-        tree_tags.append("mispricing_reversal")
-    elif name.startswith("E"):
-        tree_tags.append("technical_trend")
-    elif name.startswith("F"):
-        tree_tags.append("fund_flow")
-    elif name.startswith("G"):
-        tree_tags.append("event_driven")
-    elif name.startswith("H"):
-        tree_tags.append("composite")
-    elif name.startswith("I"):
-        tree_tags.append("portfolio_risk")
-
-    seed["seed_metadata"] = {
-        "core_formula": core_formula,
-        "locked_formula": locked,
-        "forbidden_formula": [],
-        "parameter_priors": {
-            "maxPositions": {"type": "discrete", "values": [3, 5, 8, 10], "preferred": max_pos},
-            "takeProfit": {"type": "range", "min": 15, "max": 30, "step": 5, "preferred": take_profit},
-            "stopLoss": {"type": "range", "min": 7, "max": 12, "step": 1, "preferred": stop_loss},
-            "trailingStopLoss": {"type": "range", "min": 3, "max": 8, "step": 1, "preferred": trailing},
-        },
-        "expected_holding_profile": "medium_term",
-        "expected_position_range": [max(3, max_pos - 2), max_pos + 3],
-        "recency_weight_profile": {"recent6m": 0.40, "recent12m": 0.40, "prior12m": 0.15, "full24m": 0.05}
-    }
-
-    seed["tree_tags"] = tree_tags
-
-    seed["search_hints"] = {
-        "coarse_step_sizes": {"growth_rates": 5, "profitability": 2, "valuation": 10, "turnover": 1},
-        "fine_step_sizes": {"growth_rates": 2, "profitability": 1, "valuation": 5, "turnover": 0.5},
-        "avoid_extreme_values": {
-            "maxPositions": {"min": 4, "max": 12},
-            "takeProfit": {"min": 10, "max": 35},
-            "stopLoss": {"min": 5, "max": 15}
-        }
-    }
-
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(seed, f, ensure_ascii=False, indent=2)
-
-    return True
+SKILL_ROOT = Path(__file__).parent
 
 
 def main():
-    dirs = [Path("/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch_10jqka_backtest/seeds/")]
-    tree_dir = Path("/Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch_10jqka_backtest/trees")
-    if tree_dir.exists():
-        for subdir in tree_dir.iterdir():
-            if subdir.is_dir() and (subdir / "seed.json").exists():
-                dirs.append(subdir)
+    parser = argparse.ArgumentParser(description="迁移旧种子文件到 templates/ 目录")
+    parser.add_argument("--tree", required=True, help="树目录路径（如 trees/A_value）")
+    parser.add_argument("--dry-run", action="store_true", help="只显示将要迁移的文件，不实际执行")
+    args = parser.parse_args()
 
-    total_modified = 0
-    total_skipped = 0
+    tree_dir = Path(args.tree)
+    if not tree_dir.is_absolute():
+        tree_dir = SKILL_ROOT / tree_dir
 
-    for seeds_dir in dirs:
-        if not seeds_dir.exists():
+    if not tree_dir.exists():
+        print(f"错误：目录不存在：{tree_dir}")
+        return
+
+    templates_dir = tree_dir / "templates"
+
+    json_files = sorted(tree_dir.glob("*.json"))
+    seed_files = [f for f in json_files if f.name not in ("seed.json", "profile.json")]
+
+    if not seed_files:
+        print(f"没有需要迁移的种子文件：{tree_dir}")
+        return
+
+    print(f"\n=== 树目录：{tree_dir} ===")
+    print(f"发现 {len(seed_files)} 个需要迁移的种子文件：")
+    for f in seed_files:
+        print(f"  {f.name}")
+
+    if args.dry_run:
+        print("\n[dry-run] 未实际执行迁移")
+        return
+
+    templates_dir.mkdir(exist_ok=True)
+    migrated = 0
+
+    for src in seed_files:
+        dst = templates_dir / src.name
+        if dst.exists():
+            print(f"  跳过（已存在）：{dst.name}")
             continue
-        print(f"\n=== Processing {seeds_dir} ===")
+        shutil.move(str(src), str(dst))
+        print(f"  已迁移：{src.name} -> templates/{src.name}")
+        migrated += 1
 
-        for filepath in sorted(seeds_dir.glob("*.json")):
-            try:
-                if upgrade_seed_file(filepath):
-                    print(f"Upgraded: {filepath.name}")
-                    total_modified += 1
-                else:
-                    print(f"Skipped: {filepath.name}")
-                    total_skipped += 1
-            except Exception as e:
-                print(f"Error with {filepath.name}: {e}")
-
-    print(f"\nTotal: {total_modified} upgraded, {total_skipped} skipped")
+    print(f"\n总计：{migrated} 个文件已迁移到 templates/")
 
 
 if __name__ == "__main__":

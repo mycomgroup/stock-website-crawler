@@ -69,7 +69,7 @@
       "full24m": 0.05
     }
   },
-  "tree_tags": [],
+  "tree_tags": ["fund_flow"],
   "search_hints": {
     "coarse_step_sizes": {
       "growth_rates": 5,

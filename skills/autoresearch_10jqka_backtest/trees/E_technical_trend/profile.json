@@ -1,0 +1,88 @@
+{
+  "tree_id": "E_technical_trend",
+  "name": "技术趋势树",
+  "description": "探索价格、成交量和趋势本身提供的交易时点",
+  "hard_guards": [
+    "非ST",
+    "非退市"
+  ],
+  "initial_formula": [
+    "非ST",
+    "非退市",
+    "换手率大于5%"
+  ],
+  "search_space": {
+    "primary_families": [
+      "technical",
+      "volume",
+      "trend"
+    ],
+    "secondary_families": [
+      "liquidity",
+      "momentum"
+    ],
+    "allowed_actions": [
+      "add",
+      "remove",
+      "replace",
+      "sort",
+      "coarse_adjust",
+      "fine_adjust"
+    ]
+  },
+  "promotion_rules": {
+    "min_technical_conditions": 1,
+    "preferred_additional_families": [
+      "volume",
+      "momentum"
+    ]
+  },
+  "soft_priors": {
+    "maxPositions": {
+      "preferred": [
+        4,
+        8
+      ],
+      "allowed": [
+        2,
+        10
+      ]
+    },
+    "takeProfit": {
+      "preferred": [
+        15,
+        20
+      ],
+      "allowed": [
+        10,
+        30
+      ]
+    },
+    "stopLoss": {
+      "preferred": [
+        6,
+        10
+      ],
+      "allowed": [
+        5,
+        12
+      ]
+    },
+    "trailingStopLoss": {
+      "preferred": [
+        4,
+        7
+      ],
+      "allowed": [
+        3,
+        8
+      ]
+    }
+  },
+  "run_policy": {
+    "rounds_per_run": 500,
+    "num_restarts": 5,
+    "restart_on_stagnation": 50,
+    "novelty_threshold": 0.3
+  }
+}

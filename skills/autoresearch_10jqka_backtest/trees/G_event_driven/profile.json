@@ -1,0 +1,86 @@
+{
+  "tree_id": "G_event_driven",
+  "name": "事件消息树",
+  "description": "探索市场预期因新信息变化带来的机会",
+  "hard_guards": [
+    "非ST"
+  ],
+  "initial_formula": [
+    "非ST",
+    "净利润增长率大于30%"
+  ],
+  "search_space": {
+    "primary_families": [
+      "event",
+      "growth",
+      "news"
+    ],
+    "secondary_families": [
+      "valuation",
+      "quality"
+    ],
+    "allowed_actions": [
+      "add",
+      "remove",
+      "replace",
+      "sort",
+      "coarse_adjust",
+      "fine_adjust"
+    ]
+  },
+  "promotion_rules": {
+    "min_event_or_growth": 1,
+    "preferred_additional_families": [
+      "valuation",
+      "quality"
+    ]
+  },
+  "soft_priors": {
+    "maxPositions": {
+      "preferred": [
+        4,
+        8
+      ],
+      "allowed": [
+        2,
+        10
+      ]
+    },
+    "takeProfit": {
+      "preferred": [
+        20,
+        30
+      ],
+      "allowed": [
+        10,
+        35
+      ]
+    },
+    "stopLoss": {
+      "preferred": [
+        10,
+        15
+      ],
+      "allowed": [
+        5,
+        18
+      ]
+    },
+    "trailingStopLoss": {
+      "preferred": [
+        6,
+        10
+      ],
+      "allowed": [
+        3,
+        12
+      ]
+    }
+  },
+  "run_policy": {
+    "rounds_per_run": 500,
+    "num_restarts": 5,
+    "restart_on_stagnation": 50,
+    "novelty_threshold": 0.3
+  }
+}

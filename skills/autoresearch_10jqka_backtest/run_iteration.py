@@ -40,6 +40,9 @@ from formula_mutator import (
 )
 from formula_executor import run_backtest_windows
 
+from tree_profile import load_tree_profile_from_dir, get_primary_families, get_secondary_families, check_promotion_rules, get_param_penalty, is_param_preferred
+from condition_catalog import get_addable_conditions
+
 
 WINDOWS_RECENT = ["recent_6m", "recent_12m"]
 WINDOWS_FULL = ["recent_6m", "recent_12m", "prior_12m", "full_24m"]
@@ -203,13 +206,48 @@ def is_a_value_experiment(base: Path) -> bool:
     return "trees/A_value/" in str(base)
 
 
-def choose_mutation_type(base: Path, state: dict, requested_type: Optional[str]) -> Optional[str]:
+def choose_mutation_type(base: Path, state: dict, requested_type: Optional[str], tree_name: Optional[str] = None) -> Optional[str]:
+    """选择变异类型，基于树配置和当前状态进行上下文感知选择"""
     if requested_type:
         return requested_type
+    
+    phase = state.get("phase", "coarse_search")
+    
+    if tree_name:
+        profile = load_tree_profile_from_dir(tree_name)
+        if profile:
+            primary = get_primary_families(profile)
+            secondary = get_secondary_families(profile)
+            allowed = profile.get("search_space", {}).get("allowed_actions", [])
+            
+            action_map = {
+                "add": "add_formula_condition",
+                "remove": "remove_formula_condition",
+                "replace": "replace_formula_condition",
+                "sort": "adjust_formula_sort",
+                "coarse_adjust": "coarse_threshold_adjust",
+                "fine_adjust": "fine_threshold_adjust",
+            }
+            
+            allowed_mutation_types = [action_map.get(a, a) for a in allowed if a in action_map]
+            
+            if not allowed_mutation_types:
+                allowed_mutation_types = ["coarse_threshold_adjust", "fine_threshold_adjust", "add_formula_condition"]
+            
+            if phase == "coarse_search":
+                preferred = ["coarse_threshold_adjust", "add_formula_condition", "replace_formula_condition", "adjust_formula_sort"]
+            else:
+                preferred = ["fine_threshold_adjust", "replace_formula_condition", "adjust_formula_sort", "simplify_formula"]
+            
+            candidates = [m for m in allowed_mutation_types if m in preferred]
+            if not candidates:
+                candidates = allowed_mutation_types
+            
+            return random.choice(candidates)
+    
     if not is_a_value_experiment(base):
         return None
-
-    phase = state.get("phase", "coarse_search")
+    
     pool = A_VALUE_COARSE_MUTATIONS if phase == "coarse_search" else A_VALUE_FINE_MUTATIONS
     return random.choice(pool)
 
@@ -584,6 +622,14 @@ def main() -> None:
     iter_n = state.get("current_iter", 1)
     iter_id = f"{iter_n:04d}"
 
+    tree_name = None
+    base_str = str(base)
+    for tree_candidate in ["A_value", "B_quality_growth", "C_small_cap", "D_mispricing_reversal",
+                           "E_technical_trend", "F_fund_flow", "G_event_driven", "H_composite", "I_portfolio_risk"]:
+        if f"trees/{tree_candidate}" in base_str:
+            tree_name = tree_candidate
+            break
+
     print(f"[iter_{iter_id}] 开始迭代", flush=True)
 
     champion_score = float(state.get("champion_score", float("-inf")))
@@ -622,11 +668,11 @@ def main() -> None:
     stable_param_ranges = {}
     direction_status = state.get("direction_status", "UNKNOWN")
     reason = ""
-    mutation_type = choose_mutation_type(base, state, args.mutation_type)
+    mutation_type = choose_mutation_type(base, state, args.mutation_type, tree_name)
     actual_mutation_type = mutation_type or "random"
 
     try:
-        new_config, mutation_desc, actual_mutation_type = mutate(champion_config, mutation_type)
+        new_config, mutation_desc, actual_mutation_type = mutate(champion_config, mutation_type, tree_name=tree_name)
         mutation_record = combine_mutation_summary(args.mutation_summary, mutation_desc)
         print(f"[iter_{iter_id}] 变异描述: {mutation_record}", flush=True)
 
@@ -744,29 +790,59 @@ def main() -> None:
                 backtest_id = window_result.get("backtest_id", "")
                 break
 
-        hard_pass, _, hard_reason = check_hard_constraints(metrics_by_window, champion_robust_score=champion_robust_score, config=new_config)
-        if not hard_pass:
+        profile = load_tree_profile_from_dir(tree_name) if tree_name else None
+        if profile and not check_promotion_rules(new_config.get("formula", []), profile):
             decision = "rollback"
-            reason = hard_reason
+            reason = f"未满足 {tree_name} 的 promotion_rules"
         else:
-            decision, reason = decide_keep_rollback_robust(
-                new_robust_score=robust_score,
+            hard_pass, _, hard_reason = check_hard_constraints(
+                metrics_by_window,
                 champion_robust_score=champion_robust_score,
-                new_single_score=score,
-                champion_single_score=champion_score,
                 config=new_config,
-                champion_config=champion_config,
-                epsilon_absolute=0.15,
-                epsilon_relative=0.03,
             )
+            if not hard_pass:
+                decision = "rollback"
+                reason = hard_reason
+            else:
+                param_penalty = 0.0
+                if profile:
+                    for param in ["maxPositions", "takeProfit", "stopLoss", "trailingStopLoss"]:
+                        if param in new_config:
+                            param_penalty += get_param_penalty(profile, param, new_config[param])
+                    param_penalty *= 0.05
+
+                adjusted_robust_score = robust_score - param_penalty
+                adjusted_champion_robust = champion_robust_score
+
+                decision, reason = decide_keep_rollback_robust(
+                    new_robust_score=adjusted_robust_score,
+                    champion_robust_score=adjusted_champion_robust,
+                    new_single_score=score,
+                    champion_single_score=champion_score,
+                    config=new_config,
+                    champion_config=champion_config,
+                    epsilon_absolute=0.15,
+                    epsilon_relative=0.03,
+                )
+
+                if param_penalty > 0.01:
+                    reason = f"{reason} (param_penalty={param_penalty:.3f})"
 
         reward_base = champion_robust_score if champion_robust_score not in (float("-inf"), -1e308) else champion_score
         reward_score = robust_score if champion_robust_score not in (float("-inf"), -1e308) else score
         record_mutation_reward(actual_mutation_type, calculate_score_delta(reward_score, reward_base))
 
         complexity = calculate_complexity(new_config)
+        param_penalty_display = 0.0
+        if profile:
+            for param in ["maxPositions", "takeProfit", "stopLoss", "trailingStopLoss"]:
+                if param in new_config:
+                    param_penalty_display += get_param_penalty(profile, param, new_config[param])
+            param_penalty_display *= 0.05
+
         print(
             f"[iter_{iter_id}] score={score:.4f} robust_score={robust_score:.4f} "
+            f"param_penalty={param_penalty_display:.3f} "
             f"champion_score={champion_score:.4f} champion_robust={champion_robust_score:.4f} "
             f"direction={direction_status} sensitivity={sensitivity:.4f}",
             flush=True,
@@ -824,6 +900,7 @@ def main() -> None:
                     "last_mutation_type": actual_mutation_type,
                     "final_recommendation": infer_recommendation(direction_status, stable_param_ranges),
                     "stop_reason": "",
+                    "param_penalty": param_penalty_display,
                 },
             )
 

@@ -27,6 +27,7 @@ from scorer import (
     classify_direction_status,
     parse_backtest_result,
 )
+from tree_profile import load_tree_profile, load_tree_profile_from_dir, validate_profile, merge_with_defaults
 
 
 SKILL_ROOT = Path(__file__).parent
@@ -97,11 +98,18 @@ def _parse_args() -> argparse.Namespace:
         if not tree_dir.exists():
             print(f"错误：树目录不存在：{tree_dir}", file=sys.stderr)
             sys.exit(1)
-        if args.seed is None:
+        
+        profile_path = tree_dir / "profile.json"
+        if profile_path.exists():
+            args.profile_path = str(profile_path)
+            print(f"  使用树配置：{profile_path}")
+        else:
+            args.profile_path = None
+            if args.seed is None:
+                args.seed = str(tree_dir / "seed.json")
+        
+        if args.seed is None and args.profile_path is None:
             args.seed = str(tree_dir / "seed.json")
-
-    if args.seed is None:
-        args.seed = DEFAULT_SEED
 
     return args
 
@@ -123,6 +131,36 @@ def _load_seed_config(seed_path_str: str, start_date: str, end_date: str) -> dic
     if config.get("endDate") == "AUTO":
         config["endDate"] = end_date
 
+    return config
+
+
+def _load_profile_config(tree_dir: Path, start_date: str, end_date: str) -> dict:
+    """Load config from tree profile.json, generating initial formula config."""
+    profile = load_tree_profile_from_dir(tree_dir)
+    if profile is None:
+        return None
+    
+    errors = validate_profile(profile)
+    if errors:
+        print(f"警告：profile.json 校验问题: {errors}", file=sys.stderr)
+    
+    initial_formula = profile.get("initial_formula", ["非ST", "非退市"])
+    
+    config = {
+        "name": profile.get("name", tree_dir.name),
+        "description": profile.get("description", ""),
+        "formula": initial_formula,
+        "startDate": start_date,
+        "endDate": end_date,
+        "maxPositions": profile.get("soft_priors", {}).get("maxPositions", {}).get("preferred", [5, 8])[0],
+        "dailyBuyCount": 2,
+        "takeProfit": profile.get("soft_priors", {}).get("takeProfit", {}).get("preferred", [15, 25])[0],
+        "stopLoss": profile.get("soft_priors", {}).get("stopLoss", {}).get("preferred", [7, 12])[0],
+        "trailingStopLoss": profile.get("soft_priors", {}).get("trailingStopLoss", {}).get("preferred", [5, 8])[0],
+        "daysForSaleStrategy": "3,5",
+        "tree_profile": profile,
+    }
+    
     return config
 
 
@@ -175,8 +213,19 @@ def _build_window_bundle(config: dict, results_by_window: dict) -> tuple[dict, d
 def _init_experiment_dir(name: str, args: argparse.Namespace) -> Path:
     print("\n[1/4] 初始化实验目录")
 
-    seed_config = _load_seed_config(args.seed, args.start_date, args.end_date)
-    print(f"✓ 加载种子：{args.seed}（{seed_config.get('name', '未知策略')}）")
+    seed_config = None
+    profile_config = None
+    
+    if hasattr(args, 'profile_path') and args.profile_path:
+        tree_dir = Path(args.profile_path).parent
+        profile_config = _load_profile_config(tree_dir, args.start_date, args.end_date)
+    
+    if profile_config:
+        seed_config = profile_config
+        print(f"✓ 加载树配置：{args.profile_path}（{seed_config.get('name', '未知策略')}）")
+    else:
+        seed_config = _load_seed_config(args.seed, args.start_date, args.end_date)
+        print(f"✓ 加载种子：{args.seed}（{seed_config.get('name', '未知策略')}）")
     if "description" in seed_config:
         print(f"  描述：{seed_config['description']}")
 
@@ -219,7 +268,7 @@ def _init_experiment_dir(name: str, args: argparse.Namespace) -> Path:
         "objective_version": "v3_a_value_pipeline",
         "seed_name": seed_config.get("name", "unknown"),
         "seed_hash": compute_seed_hash(seed_config),
-        "search_mode": "recent_opportunity",
+        "search_mode": "tree_profile" if (hasattr(args, 'profile_path') and args.profile_path) else "seed_config",
         "phase": "coarse_search",
         "direction_status": "UNKNOWN",
         "direction_reason": "",
@@ -233,6 +282,8 @@ def _init_experiment_dir(name: str, args: argparse.Namespace) -> Path:
         "final_recommendation": "",
         "stop_reason": "",
     }
+    if hasattr(args, 'profile_path') and args.profile_path:
+        state["tree_profile_path"] = args.profile_path
     with open(exp_dir / "state.json", "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
     print("✓ 写入状态：state.json")
