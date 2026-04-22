@@ -200,3 +200,86 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 0029		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:30	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
 0030		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:31	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
 0031	jqka_1776853149655	ok	0.0161	0.1600	0.1040	-0.319578	keep	tree_run:run-002 round:32 | [粗调阈值] 市净率 1.0 → 10	-0.199031	-0.097717	-0.319578	-0.324558	-0.361959	0.0000	97	14	first version, automatically champion
+0032		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:33	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
+0033		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:34	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "价值树-run-002",
+  "description": "探索估值低估带来的修复机会 | Run run-002",
+  "query": "非ST，非退市，PEG小于1，市净率小于1，市盈率小于20，流通市值小于444亿，经营活动产生的现金流量净额连续三年为正，股息率大于3%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 7,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776853158868.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0034		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:35	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
+0035		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:36 | [添加条件] 经营活动产生的现金流量净额大于0 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0036		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:37	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
+0037	jqka_1776853161308	ok	0.0761	0.1800	0.5368	-0.371392	rollback	tree_run:run-002 round:38 | [粗调阈值] 市净率 10.0 → 1	-0.448434	-0.750145	-0.371392	-0.281049	-0.241593	0.0000	17	14	recent_12m trade_count 17 < 20
+0038		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:39 | [添加条件] 经营活动产生的现金流量净额大于0 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0039		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:40 | [添加条件] 经营活动产生的现金流量净额大于0 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0040		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:41 | [粗调阈值] 市净率 10.0 → 10	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0041		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:42	0.000000	-0.097717	-0.319578	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "价值树-run-002",
+  "description": "探索估值低估带来的修复机会 | Run run-002",
+  "query": "非ST，非退市，PEG小于1，市净率小于5，市盈率小于20，流通市值小于444亿，经营活动产生的现金流量净额连续三年为正，股息率大于3%",
+  "start_date": "20240422",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 7,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776853187607.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0042		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:43 | [添加条件] 经营活动产生的现金流量净额大于0 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0043		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:44	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
+0044		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:45 | [添加条件] 经营活动产生的现金流量净额大于0 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0045		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:46 | [筛选阈值] 市净率 10.0 → 10	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0046	jqka_1776853193723	ok	0.0591	0.1700	0.3768	-0.243169	keep	tree_run:run-002 round:47 | [替换条件] 市盈率小于20 → 经营活动产生的现金流量净额大于0	-0.124640	-0.123615	-0.243169	-0.134866	-0.173571	0.4440	137	13	robust_score -0.1246 > champion -0.1990 (diff=0.0744, relative=37.38%)
