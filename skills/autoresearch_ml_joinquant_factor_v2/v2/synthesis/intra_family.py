@@ -2,7 +2,32 @@
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import Ridge
+
+
+def _ridge_predict(
+    X_train: np.ndarray,
+    y_train: np.ndarray,
+    X_test: np.ndarray,
+    alpha: float,
+    fit_intercept: bool = True,
+) -> np.ndarray:
+    """NumPy ridge regression prediction helper (no sklearn dependency)."""
+    if fit_intercept:
+        X_mean = X_train.mean(axis=0, keepdims=True)
+        y_mean = float(np.mean(y_train))
+        Xc = X_train - X_mean
+        yc = y_train - y_mean
+        Xt = X_test - X_mean
+    else:
+        Xc = X_train
+        yc = y_train
+        Xt = X_test
+        y_mean = 0.0
+
+    n_features = Xc.shape[1]
+    reg = float(alpha) * np.eye(n_features)
+    beta = np.linalg.solve(Xc.T @ Xc + reg, Xc.T @ yc)
+    return Xt @ beta + y_mean
 
 
 def equal_rank_score(
@@ -126,17 +151,17 @@ def ridge_family_score(
             train_end += step
             continue
 
-        try:
-            model = Ridge(alpha=alpha, fit_intercept=True)
-            model.fit(X_train, y_train)
-            preds = model.predict(X_test)
-
-            for i, (_, row) in enumerate(test_df.iterrows()):
-                key = (row["date"], row["stock_id"])
-                if key not in all_preds:
-                    all_preds[key] = preds[i]
-        except Exception:
-            pass
+        preds = _ridge_predict(
+            X_train=X_train,
+            y_train=y_train,
+            X_test=X_test,
+            alpha=alpha,
+            fit_intercept=True,
+        )
+        for i, (_, row) in enumerate(test_df.iterrows()):
+            key = (row["date"], row["stock_id"])
+            if key not in all_preds:
+                all_preds[key] = preds[i]
 
         train_end += step
 
@@ -335,14 +360,10 @@ def stack_family_scores_oof(
     X_valid = X[valid_mask]
     y_valid = y[valid_mask]
 
-    # Non-negative ridge: sklearn Ridge with positive=True
-    try:
-        model = Ridge(alpha=alpha, fit_intercept=False, positive=True)
-        model.fit(X_valid, y_valid)
-        weights = model.coef_
-    except Exception:
-        # Fallback: equal weights
-        weights = np.array([1 / 3, 1 / 3, 1 / 3])
+    # Ridge + non-negative projection (no sklearn dependency)
+    n_feat = X_valid.shape[1]
+    reg = float(alpha) * np.eye(n_feat)
+    weights = np.linalg.solve(X_valid.T @ X_valid + reg, X_valid.T @ y_valid)
 
     # Ensure non-negative and normalize
     weights = np.maximum(weights, 0)

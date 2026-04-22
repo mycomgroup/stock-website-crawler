@@ -80,7 +80,10 @@ class FactorPanel:
 # 核心函数
 # ---------------------------------------------------------------------------
 
-def build_pit_panel(csv_path: str | Path) -> FactorPanel:
+def build_pit_panel(
+    csv_path: str | Path,
+    new_stock_cooldown_days: int = 60,
+) -> FactorPanel:
     """从 CSV 文件构建点时一致因子面板。
 
     步骤：
@@ -144,7 +147,10 @@ def build_pit_panel(csv_path: str | Path) -> FactorPanel:
 
     # 5. 构建可交易掩码（Task 1.2 完整实现）
     financial_cols = _infer_financial_cols(df)
-    tradable = compute_tradable_mask(df)
+    tradable = compute_tradable_mask(
+        df,
+        new_stock_cooldown_days=new_stock_cooldown_days,
+    )
 
     # 6. 财务因子时滞校验（stub，Task 1.3 完整实现）
     df = apply_disclosure_lag(df, financial_cols)
@@ -261,12 +267,16 @@ def compute_tradable_mask(
         # 退而求其次：在缺少 high/low 时，只对明显接近 ±20% 的截面做保守过滤。
         # 若无板块信息，无法仅凭 pchg 稳健地区分普通股 10% 板和正常大波动。
         abs_pchg = df["pchg"].abs()
-        limit_filter = abs_pchg >= pchg_limit_20pct
+        tol = 0.005
+        near_10 = (abs_pchg >= pchg_limit_10pct) & (abs_pchg <= pchg_limit_10pct + tol)
+        near_20 = (abs_pchg >= pchg_limit_20pct) & (abs_pchg <= pchg_limit_20pct + tol)
+        limit_filter = near_10 | near_20
         n_filtered = limit_filter.sum()
         mask &= ~limit_filter
         logger.info(
-            "compute_tradable_mask [一字板过滤]: 缺少 high/low，保守使用 |pchg|>=%.3f，"
+            "compute_tradable_mask [一字板过滤]: 缺少 high/low，使用 |pchg| 接近 %.3f/%.3f 的阈值带，"
             "过滤 %d 行（%.2f%%）",
+            pchg_limit_10pct,
             pchg_limit_20pct,
             n_filtered, 100.0 * n_filtered / n_rows,
         )
