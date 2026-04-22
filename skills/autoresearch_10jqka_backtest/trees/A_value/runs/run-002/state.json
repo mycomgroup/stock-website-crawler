@@ -1,0 +1,81 @@
+{
+  "current_iter": 32,
+  "champion_score": -0.3195775390505017,
+  "champion_robust_score": -0.1990305011940861,
+  "consecutive_failures": 0,
+  "last_update": "2026-04-22T18:19:17.967962",
+  "objective_version": "v4_tree_profile",
+  "seed_name": "价值树",
+  "search_mode": "tree_profile",
+  "phase": "coarse_search",
+  "direction_status": "WATCH",
+  "direction_reason": "近期仍有信号，但相对 baseline 不够稳定",
+  "champion_metrics": {
+    "annual_return": 0.01608569645055269,
+    "max_drawdown": 0.16,
+    "sortino": 0.0,
+    "information_ratio": 0.0,
+    "win_rate": 0.5026178010471204,
+    "trade_count": 97,
+    "sharpe": 0.10404197410029413,
+    "avg_holding_days": 5.0
+  },
+  "champion_windows": {
+    "recent_6m": {
+      "score": -0.09771688554869049,
+      "annual_return": 0.1500322890529513,
+      "max_drawdown": 0.18,
+      "sortino": 0.0,
+      "information_ratio": 0.0,
+      "win_rate": 0.5222929936305732,
+      "trade_count": 91,
+      "sharpe": 0.9202694808383629,
+      "avg_holding_days": 5.0
+    },
+    "recent_12m": {
+      "score": -0.3195775390505017,
+      "annual_return": 0.01608569645055269,
+      "max_drawdown": 0.16,
+      "sortino": 0.0,
+      "information_ratio": 0.0,
+      "win_rate": 0.5026178010471204,
+      "trade_count": 97,
+      "sharpe": 0.10404197410029413,
+      "avg_holding_days": 5.0
+    },
+    "prior_12m": {
+      "score": -0.3245576424200147,
+      "annual_return": 0.01329958495965844,
+      "max_drawdown": 0.15,
+      "sortino": 0.0,
+      "information_ratio": 0.0,
+      "win_rate": 0.4884318766066838,
+      "trade_count": 90,
+      "sharpe": 0.07215196062536143,
+      "avg_holding_days": 5.0
+    },
+    "full_24m": {
+      "score": -0.36195870814244435,
+      "annual_return": -0.006188369355362933,
+      "max_drawdown": 0.14,
+      "sortino": 0.0,
+      "information_ratio": 0.0,
+      "win_rate": 0.5130208333333334,
+      "trade_count": 91,
+      "sharpe": -0.03283004324443334,
+      "avg_holding_days": 5.0
+    }
+  },
+  "baseline_window_scores": {},
+  "baseline_metrics_by_window": {},
+  "stable_param_ranges": {},
+  "last_keep_reason": "first version, automatically champion",
+  "last_mutation_type": "coarse_threshold_adjust",
+  "final_recommendation": "保持观察，只做有限粗搜索，不扩展复杂条件。",
+  "stop_reason": "",
+  "tree_profile": {
+    "tree_id": "A_value",
+    "run_id": "run-002"
+  },
+  "param_penalty": 0.0
+}

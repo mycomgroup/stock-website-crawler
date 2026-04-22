@@ -1,0 +1,202 @@
+iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation	robust_score	recent6	recent12	prior12	full24	sensitivity	trade_count	complexity	reason
+0001	jqka_1776844429851	stage_a_fail	0.0724	0.1100	0.3421	-0.179154	rollback	tree_run:run-002 round:1 | [粗调阈值] 市盈率 30.0 → 20	0.000000	-1.534593	-0.179154	0.000000	0.000000	0.0000	1919	9	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0002		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:2	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	10	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "价值树-run-002",
+  "description": "探索估值低估带来的修复机会 | Run run-002",
+  "query": "非ST，非退市，市盈率小于62，市盈率小于20",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 7,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776844430344.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0003	jqka_1776844433619	stage_a_fail	0.0724	0.1100	0.3421	-0.189154	rollback	tree_run:run-002 round:3 | [粗调阈值] 市盈率 62.0 → 67	0.000000	-1.544593	-0.189154	0.000000	0.000000	0.0000	1919	10	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0004		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:4	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "价值树-run-002",
+  "description": "探索估值低估带来的修复机会 | Run run-002",
+  "query": "非ST，非退市，市盈率小于67，经营活动产生的现金流量净额连续三年为正，市盈率小于20",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 7,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776844434368.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0005	jqka_1776844437584	stage_c_fail	2.0000	0.1200	1.1995	1.151562	rollback	tree_run:run-002 round:5 | [添加条件] 经营活动产生的现金流量净额大于0	0.000000	-0.920523	1.151562	0.000000	0.000000	0.7424	710	12	good_ratio=0.50, floor_ok=False, sensitivity=0.7424, anchor=1.1516
+0006	jqka_1776844511621	stage_c_fail	2.0000	0.1200	1.1995	1.151562	rollback	tree_run:run-002 round:6 | [粗调阈值] 市盈率 67.0 → 57	0.000000	-0.920523	1.151562	0.000000	0.000000	0.7424	710	12	good_ratio=0.50, floor_ok=False, sensitivity=0.7424, anchor=1.1516
+0007	jqka_1776844523722	stage_c_fail	2.0000	0.1200	1.1995	1.151562	rollback	tree_run:run-002 round:7 | [添加条件] PEG小于1	0.000000	-0.920523	1.151562	0.000000	0.000000	0.7601	575	13	good_ratio=0.50, floor_ok=False, sensitivity=0.7601, anchor=1.1516
+0008	jqka_1776844538162	stage_a_fail	0.0623	0.1600	0.4208	-0.231139	rollback	tree_run:run-002 round:8 | [添加条件] 市盈率大于0小于30	0.000000	-0.605440	-0.231139	0.000000	0.000000	0.0000	417	14	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0009	jqka_1776844542928	stage_a_fail	-0.0947	0.1400	-0.4331	-0.580611	rollback	tree_run:run-002 round:9 | [添加条件] 近5天的涨幅大于2.0%小于29.5%	0.000000	-0.433314	-0.580611	0.000000	0.000000	0.0000	110	15	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0010	jqka_1776844545671	stage_a_fail	-0.0947	0.1400	-0.4331	-0.580611	rollback	tree_run:run-002 round:10 | [粗调阈值] 市盈率 57.0 → 47	0.000000	-0.433314	-0.580611	0.000000	0.000000	0.0000	110	15	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0011	jqka_1776844548415	stage_a_fail	-0.0947	0.1400	-0.4331	-0.580611	rollback	tree_run:run-002 round:11 | [添加条件] 市盈率小于30	0.000000	-0.433314	-0.580611	0.000000	0.000000	0.0000	110	16	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0012		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:12 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0013	jqka_1776847316971	stage_c_fail	3.0000	0.1600	2.0463	1.149206	rollback	tree_run:run-002 round:14 | [添加条件] 市净率小于3 (自动去重2个语义重复)	0.000000	1.146237	1.149206	0.000000	0.000000	0.4199	23	16	good_ratio=0.80, floor_ok=False, sensitivity=0.4199, anchor=1.1492
+0014		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:15 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0015		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:16 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0016		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:17	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	16	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "价值树-run-002",
+  "description": "探索估值低估带来的修复机会 | Run run-002",
+  "query": "非ST，非退市，PEG小于1，市净率小于1，市盈率大于0小于30，市盈率小于20，经营活动产生的现金流量净额大于0，经营活动产生的现金流量净额连续三年为正，股息率大于3%，近5天的涨幅大于2.0%小于29.5%",
+  "start_date": "20250427",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 7,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776847340390.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0017		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:18 | [添加条件] 市净率小于3 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0018	jqka_1776847346215	stage_a_fail	-0.0735	0.1600	-0.5619	-3.102375	rollback	tree_run:run-002 round:19 | [添加条件] 流通市值小于444亿	0.000000	-3.306000	-3.102375	0.000000	0.000000	0.0000	3	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0019		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:20 | [粗调阈值] 市净率 1.0 → 1	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0020		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:21	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	17	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "价值树-run-002",
+  "description": "探索估值低估带来的修复机会 | Run run-002",
+  "query": "非ST，非退市，PEG小于1，市净率小于10，市盈率大于0小于30，市盈率小于20，流通市值小于444亿，经营活动产生的现金流量净额大于0，经营活动产生的现金流量净额连续三年为正，股息率大于3%，近5天的涨幅大于2.0%小于29.5%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 7,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776847347617.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0021	jqka_1776847353770	stage_a_fail	0.0972	0.1600	0.4592	-0.171141	rollback	tree_run:run-002 round:22 | [替换条件] PEG小于1 → 市盈率小于30	0.000000	-0.698374	-0.171141	0.000000	0.000000	0.0000	22	16	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0022	jqka_1776847360666	stage_a_fail	0.0015	0.1800	0.0168	-3.201996	rollback	tree_run:run-002 round:23 | [添加条件] 营业收入增长率大于7%	0.000000	-3.176189	-3.201996	0.000000	0.000000	0.0000	1	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0023	jqka_1776853146091	stage_a_fail	0.0649	0.1500	0.3178	-0.321733	rollback	tree_run:run-002 round:24 | [筛选阈值] 市净率 10.0 → 5	0.000000	-0.805692	-0.321733	0.000000	0.000000	0.0000	18	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0024		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:25	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	17	NameError: name 'format_template_numeric_value' is not defined
+0025	jqka_1776847346215	stage_a_fail	-0.0735	0.1600	-0.5619	-3.102375	rollback	tree_run:run-002 round:26 | [粗调阈值] 市净率 5.0 → 1	0.000000	-3.306000	-3.102375	0.000000	0.000000	0.0000	3	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0026		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:27	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	17	NameError: name 'format_template_numeric_value' is not defined
+0027		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:28	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "价值树-run-002",
+  "description": "探索估值低估带来的修复机会 | Run run-002",
+  "query": "非ST，非退市，PEG小于1，市净率小于1，市盈率小于20，流通市值小于444亿，经营活动产生的现金流量净额连续三年为正，股息率大于3%",
+  "start_date": "20251024",
+  "end_date": "20260422",
+  "stock_hold": 4,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 7,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776853147521.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0028		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-002 round:29 | [添加条件] 经营活动产生的现金流量净额大于0 (自动去重1个语义重复)	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0029		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:30	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
+0030		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-002 round:31	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	14	NameError: name 'format_template_numeric_value' is not defined
+0031	jqka_1776853149655	ok	0.0161	0.1600	0.1040	-0.319578	keep	tree_run:run-002 round:32 | [粗调阈值] 市净率 1.0 → 10	-0.199031	-0.097717	-0.319578	-0.324558	-0.361959	0.0000	97	14	first version, automatically champion
