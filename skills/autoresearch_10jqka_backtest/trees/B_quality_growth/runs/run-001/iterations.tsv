@@ -1,0 +1,3 @@
+iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation	robust_score	recent6	recent12	prior12	full24	sensitivity	trade_count	complexity	reason
+0001	jqka_1776857029516	stage_c_fail	0.3855	0.1200	1.3454	0.632699	rollback	tree_run:run-001 round:1 | [替换条件] 净资产收益率大于15% → 毛利率大于30%	0.000000	-0.024449	0.632699	0.000000	0.000000	0.5235	1935	8	good=0.70 floor=N sens=0.5235 anchor=0.6327
+0002	jqka_1776857052072	ok	5.0000	0.0600	1.7624	1.160794	keep	tree_run:run-001 round:2 | [添加条件] 营业收入增长率大于15%	1.210581	1.161613	1.160794	1.159214	1.159045	0.1150	560	9	first version, automatically champion

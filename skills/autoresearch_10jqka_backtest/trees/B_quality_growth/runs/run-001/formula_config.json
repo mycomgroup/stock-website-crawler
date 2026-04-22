@@ -1,0 +1,17 @@
+{
+  "name": "质量成长树-run-001",
+  "description": "探索高质量成长机会 | Run run-001",
+  "formula": [
+    "非ST",
+    "毛利率大于30%",
+    "营业收入增长率大于15%"
+  ],
+  "startDate": "2024-01-01",
+  "endDate": "2026-04-22",
+  "maxPositions": 4,
+  "dailyBuyCount": 2,
+  "takeProfit": 20,
+  "stopLoss": 10,
+  "trailingStopLoss": 6,
+  "daysForSaleStrategy": "3,5"
+}
