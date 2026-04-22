@@ -9,11 +9,13 @@
 - JQKA_MOCK_MODE=1: 启用 Mock 模式，跳过实际 API 调用，返回模拟数据
 """
 
+import hashlib
 import json
 import os
 import random
 import subprocess
 import time
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -21,7 +23,111 @@ from typing import Any, Dict, Optional
 JQKA_SKILL_DIR = Path(__file__).parent.parent / "10jqka_backtest"
 RUN_SKILL_JS = JQKA_SKILL_DIR / "run-skill.js"
 
-MOCK_MODE = os.environ.get("JQKA_MOCK_MODE", "0") == "1"
+def _is_mock_mode() -> bool:
+    """Check mock mode at runtime, not import time."""
+    return os.environ.get("JQKA_MOCK_MODE", "0") == "1"
+
+
+def compute_window_dates(end_date: str, window: str) -> tuple[str, str]:
+    """
+    Compute (start_date, end_date) for a given window.
+    """
+    try:
+        end_dt = datetime.strptime(end_date, "%Y-%m%d")
+    except ValueError:
+        end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+
+    window_ranges = {
+        "recent_6m": 6,
+        "recent_12m": 12,
+        "full_24m": 24,
+        "full_36m": 36,
+    }
+
+    if window == "prior_12m":
+        start_dt = end_dt - timedelta(days=365)
+        end_prior = start_dt
+        start_dt = end_prior - timedelta(days=365)
+    elif window in window_ranges:
+        months = window_ranges[window]
+        start_dt = end_dt - timedelta(days=months * 30)
+    else:
+        raise ValueError(f"Unknown window: {window}")
+
+    start_str = start_dt.strftime("%Y%m%d")
+    end_str = end_dt.strftime("%Y%m%d")
+    return start_str, end_str
+
+
+def _get_cache_path(experiment_dir: Path, config: dict, window: str) -> Path:
+    """Compute cache file path for a config+window combination."""
+    formula_str = json.dumps(config.get("formula", []), sort_keys=True)
+    formula_hash = hashlib.md5(formula_str.encode()).hexdigest()[:12]
+
+    params_keys = ["maxPositions", "takeProfit", "stopLoss", "daysForSaleStrategy"]
+    params_str = json.dumps({k: config.get(k) for k in params_keys}, sort_keys=True)
+    params_hash = hashlib.md5(params_str.encode()).hexdigest()[:12]
+
+    start_date = config.get("startDate", "")
+    end_date = config.get("endDate", "")
+
+    cache_key = f"{formula_hash}_{params_hash}_{start_date}_{end_date}_{window}"
+    cache_hash = hashlib.md5(cache_key.encode()).hexdigest()[:16]
+
+    cache_dir = experiment_dir / "backtests"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir / f"{cache_hash}.json"
+
+
+def _read_cache(cache_path: Path) -> Optional[dict]:
+    """Read cached result if exists."""
+    if cache_path.exists():
+        try:
+            return json.loads(cache_path.read_text())
+        except Exception:
+            pass
+    return None
+
+
+def _write_cache(cache_path: Path, result: dict) -> None:
+    """Write result to cache."""
+    try:
+        cache_path.write_text(json.dumps(result, ensure_ascii=False))
+    except Exception:
+        pass
+
+
+def run_backtest_windows(
+    config: dict,
+    windows: list[str],
+    experiment_dir: Optional[Path] = None,
+) -> dict[str, dict]:
+    """
+    Execute backtest across multiple windows.
+    """
+    end_date = config.get("endDate", "")
+    results = {}
+
+    for window in windows:
+        start_date, end_date_for_window = compute_window_dates(end_date, window)
+
+        window_config = {**config, "startDate": start_date, "endDate": end_date_for_window}
+
+        if experiment_dir:
+            cache_path = _get_cache_path(experiment_dir, config, window)
+            cached = _read_cache(cache_path)
+            if cached:
+                results[window] = cached
+                continue
+
+        result = run_backtest(window_config, use_cache=False)
+
+        if experiment_dir:
+            _write_cache(cache_path, result)
+
+        results[window] = result
+
+    return results
 
 
 class JqkaExecutorError(Exception):
@@ -40,13 +146,15 @@ class SessionInvalidError(JqkaExecutorError):
     pass
 
 
-def run_backtest(config: dict, timeout: int = 120) -> dict:
+def run_backtest(config: dict, timeout: int = 120, use_cache: bool = True, experiment_dir: Optional[Path] = None) -> dict:
     """
     通过 10jqka_backtest skill 执行回测。
 
     Args:
         config: 公式策略配置，包含 formula, daysForSaleStrategy, startDate 等字段
         timeout: 最大等待秒数
+        use_cache: 是否使用缓存
+        experiment_dir: 实验目录，用于缓存
 
     Returns:
         {
@@ -71,11 +179,18 @@ def run_backtest(config: dict, timeout: int = 120) -> dict:
         BacktestTimeoutError: 回测超时时抛出
         SessionInvalidError: Session 无效时抛出
     """
-    if MOCK_MODE:
+    if _is_mock_mode():
         return _run_mock_backtest(config)
 
     import tempfile
     import re
+
+    if not RUN_SKILL_JS.exists():
+        raise JqkaExecutorError(
+            f"run-skill.js not found at {RUN_SKILL_JS}\n"
+            f"JQKA_SKILL_DIR: {JQKA_SKILL_DIR}\n"
+            f"请确保 10jqka_backtest skill 已正确安装"
+        )
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(config, f, ensure_ascii=False, indent=2)

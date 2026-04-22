@@ -1,50 +1,160 @@
-# 问财公式回测自动研究系统架构文档
+# 问财公式回测自动研究系统架构文档 (v4)
 
 ## 系统概览
 
-本系统通过 AI Agent 驱动的迭代循环，自动优化问财公式回测的参数配置。
+本系统通过 AI Agent 驱动的迭代循环，自动寻找**稳健的参数平台**而非孤立的最高分点。核心目标从"找最高分"转变为"找最近活着稳健的平台"。
 
 ---
 
-## 设计理念（借鉴 karpathy/autoresearch）
+## 设计理念（v4 核心变化）
 
+### 旧架构 (v3)
 ```
-- formula_config.json 永远是最优配置
-- 成功 → 覆盖 formula_config.json + git commit
-- 失败 → formula_config.json 保持不变，不 commit
-- iterations.tsv 记录所有结果（不 commit）
+setup.py → baseline → state.json (champion_score)
+run_iteration.py: mutate → backtest → score → keep/rollback (single window)
+scorer.py: single window scoring
+analyze.py: "战报风格" - champion分数/改进路径
+```
+
+### 新架构 (v4)
+```
+setup.py → baseline → state.json (champion_score + robust_score + seed_metadata)
+run_iteration.py: 3-stage pipeline
+  Stage 1: Quick screen (recent 12M)
+  Stage 2: Sensitivity probe (neighbor configs)
+  Stage 3: Multi-window confirm (6M, 12M, prior12M, 24M)
+scorer.py: multi-window robust scoring + sensitivity penalty + trade_count penalty
+analyze.py: "研究风格" - 5 new sections
 ```
 
 ---
 
-## 核心流程图
+## 系统目标
+
+**从找最高分 → 找最近活着稳健平台**
+
+- **最近**: 参数组合在最近 6~12 个月仍有信号
+- **活着**: 多窗口验证都表现稳定
+- **稳健**: 不是尖点，而是参数平台中心
+
+---
+
+## 4-阶段循环工作流
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                   完整迭代流程                            │
+│              完整迭代流程 (v4)                            │
 ├──────────────────────────────────────────────────────────┤
 │                                                           │
 │  setup.py (初始化)                                        │
 │  ├─ 创建实验目录                                          │
 │  ├─ 写入 formula_config.json                              │
-│  ├─ 写入 state.json                                       │
+│  ├─ 写入 state.json (champion_score + robust_score)       │
 │  ├─ 创建 iterations.tsv                                   │
 │  ├─ 创建 search_notes.md                                  │
-│  ├─ 运行 baseline 回测                                    │
+│  ├─ 运行 baseline 回测 (多窗口)                           │
 │  └─ 初始化 Git 仓库                                       │
 │                                                           │
-│  run_iteration.py (迭代循环)                              │
-│  ├─ 1. 加载状态和配置                                     │
-│  ├─ 2. 生成候选配置 (formula_mutator.py)                 │
-│  ├─ 3. 覆盖 formula_config.json（待验证）                │
-│  ├─ 4. 执行回测 (formula_executor.py)                    │
-│  ├─ 5. 计算得分 (scorer.py)                              │
-│  ├─ 6. 决策 keep/rollback                                │
-│  ├─ 7. keep → git commit；rollback → git restore        │
-│  └─ 8. 更新 state.json 和 iterations.tsv                │
+│  run_iteration.py (3-stage pipeline)                      │
+│  ├─ Stage 1: Quick screen (recent 12M)                    │
+│  │   └─ 快速淘汰无效配置                                  │
+│  ├─ Stage 2: Sensitivity probe (neighbor configs)         │
+│  │   └─ 检查是否是脆弱尖点                                │
+│  └─ Stage 3: Multi-window confirm (6M/12M/prior12M/24M)  │
+│      └─ 最终 champion 决策                               │
 │                                                           │
 └──────────────────────────────────────────────────────────┘
 ```
+
+### 阶段A: 方向确认 — 最近是否还活着
+- 检查种子方向在最近 6~12 个月是否有持续信号
+- 状态: ACTIVE / WATCH / INACTIVE
+
+### 阶段B: 粗搜索 — 找参数平台
+- 在参数空间中进行粗粒度搜索
+- 寻找分数较高且稳定的区域（而非单点峰值）
+
+### 阶段C: 邻域敏感性测试 — 检查参数是否脆弱
+- 对候选参数的相邻配置做测试
+- 计算 `sensitivity_penalty = std(neighbor_scores) / mean(neighbor_scores)`
+- >0.3 认为参数脆弱，惩罚robust_score
+
+### 阶段D: 多窗口确认 — 最终champion决策
+- 在 4 个时间窗口上验证: 6M, 12M, prior12M, 24M
+- 综合得分 = 多窗口加权平均 - 各项惩罚
+
+---
+
+## 评分公式 v4
+
+### 多窗口稳健评分
+
+```
+robust_score = 0.35×recent6m + 0.35×recent12m + 0.15×prior12m + 0.15×full24m
+              - sensitivity_penalty
+              - complexity_penalty
+              - concentration_penalty
+```
+
+### 各项惩罚说明
+
+| 惩罚项 | 计算方式 | 阈值 |
+|--------|----------|------|
+| `sensitivity_penalty` | std(neighbor_scores) / mean(neighbor_scores) | >0.3 触发 |
+| `complexity_penalty` | 公式复杂度（条件数量过多） | 固定惩罚 |
+| `concentration_penalty` | 持仓过于集中（maxPositions 过小） | 固定惩罚 |
+| `trade_count_penalty` | 交易次数<20时触发 | trade_count<20 |
+
+### trade_count_penalty
+
+交易次数太少（<20）的回测结果不可信，因此惩罚:
+```
+if trade_count < 20:
+    trade_count_penalty = 0.5
+else:
+    trade_count_penalty = 0
+```
+
+### 方向状态
+
+| 状态 | 含义 | 最近信号 |
+|------|------|----------|
+| `ACTIVE` | 持续有信号 | 最近 6~12 月稳定有交易信号 |
+| `WATCH` | 有信号但不稳 | 信号时断时续，需观察 |
+| `INACTIVE` | 近期无明显机会 | 超过 12 个月无明显信号 |
+
+---
+
+## 缓存系统
+
+### 多窗口回测缓存
+
+同一配置在不同时间窗口的组合会被缓存:
+```
+cache_key = (config_hash, start_date, end_date)
+```
+
+- Stage 1 完成的回测结果会被 Stage 3 复用
+- 邻域测试的结果也会被缓存
+
+---
+
+## 参数平台选择
+
+### 不是峰值选择，而是平台选择
+
+```
+      尖点 (peak)              平台 (plateau)
+           ▲                        ████
+          █ █                      █  █
+         █   █                    █    █
+        █     █                  █      █
+       █████████                █████████
+       不稳定，易失真              稳定，抗噪声
+```
+
+- 尖点: 单点最高分，但邻域分数差异大，实盘容易失真
+- 平台: 分数略低但邻域一致性好，实盘更稳定
 
 ---
 
@@ -52,7 +162,7 @@
 
 ### 1. setup.py - 初始化模块
 
-创建实验环境，运行 baseline 回测。
+创建实验环境，运行 baseline 多窗口回测。
 
 **输入**：
 - `--name`: 实验名称
@@ -62,12 +172,12 @@
 **输出**：
 - `experiments/<name>/` 目录
 - `formula_config.json` - 初始配置
-- `state.json` - 初始状态（current_iter=1）
+- `state.json` - 初始状态（champion_score + robust_score）
 - `iterations.tsv` - 包含 baseline 记录（iter=0000）
 
-### 2. run_iteration.py - 迭代模块
+### 2. run_iteration.py - 迭代模块 (v4)
 
-执行单次迭代优化。
+执行 3-stage 迭代优化。
 
 **输入**：
 - `--base`: 实验目录路径
@@ -79,118 +189,65 @@
 - 更新的 `state.json`
 - 追加的 `iterations.tsv`
 
-**设计要点**：
-- 先覆盖 formula_config.json，再执行回测
-- keep → git commit 全部变更
-- rollback → git checkout HEAD formula_config.json（不 commit）
-
 ### 3. formula_executor.py - 执行器模块
 
 通过 subprocess 调用 10jqka_backtest skill 执行回测。
-
-**主要函数**：
-```python
-def run_backtest(config: dict) -> dict:
-    """
-    提交回测并等待结果
-    
-    Returns:
-        {
-            "status": "ok",
-            "backtest_id": str,
-            "summary": {
-                "annualReturn": float,
-                "maxDrawdown": float,
-                ...
-            }
-        }
-    """
-```
 
 ### 4. formula_mutator.py - 变异器模块
 
 生成候选配置，支持 Formula 条件变异和回测参数变异。
 
-**Formula 条件变异（核心）**：
-- `adjust_formula_threshold` - 调整数值条件阈值
-- `add_formula_condition` - 添加新筛选条件
-- `remove_formula_condition` - 移除筛选条件
-- `adjust_formula_sort` - 调整排序条件方向
+### 5. scorer.py - 评分模块 (v4)
 
-**回测参数变异**：
-- `adjust_days_for_sale` - 调整持仓天数
-- `adjust_max_positions` - 调整最大持仓数
-- `adjust_daily_buy_count` - 调整每日买入数
-- `adjust_take_profit` - 调整止盈阈值
-- `adjust_stop_loss` - 调整止损阈值
-- `adjust_trailing_stop` - 调整追踪止损阈值
-
-### 5. scorer.py - 评分模块
-
-计算策略得分，决策 keep/rollback。
-
-**评分公式**：
-```python
-calmar = annual_return / max(abs(max_drawdown), 0.01)
-score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
-```
-
-**决策逻辑**：
-```python
-if abs(max_drawdown) > 0.35:
-    return "rollback", "回撤过大"
-elif new_score > champion_score:
-    return "keep", "得分提升"
-else:
-    return "rollback", "得分未提升"
-```
+计算多窗口稳健评分，决策 keep/rollback。
 
 ---
 
 ## 数据结构
 
-### formula_config.json
-
-```json
-{
-  "name": "策略名称",
-  "formula": [
-    "创业板",
-    "非ST",
-    "周成交量环比增长率大于8%",
-    "近3天的涨幅大于0%小于20%",
-    "上市时间大于300天",
-    "未来5天涨跌幅从大到小",
-    "龙脊线百分比由近到远"
-  ],
-  "daysForSaleStrategy": "2,3",
-  "startDate": "2025-01-01",
-  "endDate": "2026-04-10",
-  "maxPositions": 2,
-  "dailyBuyCount": 2,
-  "takeProfit": 25,
-  "stopLoss": 9,
-  "trailingStopLoss": 5
-}
-```
-
-### state.json
+### state.json (v4)
 
 ```json
 {
   "current_iter": 1,
   "champion_score": 1.8932,
+  "robust_score": 1.6543,
+  "seed_metadata": {
+    "seed_id": "A1_低PE低PB低PS",
+    "direction_status": "ACTIVE",
+    "parameter_band": {
+      "takeProfit": [15, 20],
+      "stopLoss": [9, 12],
+      "maxPositions": [5, 8]
+    }
+  },
   "consecutive_failures": 0,
   "last_update": "2026-04-13T05:43:26"
 }
 ```
 
-### iterations.tsv
+### iterations.tsv (v4)
 
 ```
-iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation
-0000	mock_xxx	success	0.0916	0.0363	1.03	1.8932	baseline	initial_seed_config
-0001	mock_xxx	ok	0.0958	0.0571	1.15	1.4785	keep	[最大持仓] 2 → 5
+iter	backtest_id	status	robust_score	sensitivity	trade_count	window_scores	decision	mutation
+0000	mock_xxx	success	1.6543	0.12	45	[0.92,0.88,0.78,0.68]	baseline	initial_seed_config
+0001	mock_xxx	ok	1.7234	0.15	52	[0.95,0.91,0.82,0.72]	keep	[最大持仓] 2 → 5
+```
+
+---
+
+## Git 版本管理
+
+每次迭代都会自动 git commit（仅 keep 时）：
+
+```bash
+cd experiments/<name>
+git log --oneline
+
+# 示例输出
+abc123f keep: iter_0002 robust=1.7234 direction=ACTIVE
+def456g keep: iter_0001 robust=1.6543 direction=ACTIVE
+baseline: initial seed config
 ```
 
 ---
@@ -201,8 +258,8 @@ iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutatio
 skills/autoresearch_10jqka_backtest/
 ├── formula_mutator.py        # 变异引擎
 ├── formula_executor.py       # 执行器
-├── scorer.py                 # 评分模块
-├── run_iteration.py          # 迭代脚本
+├── scorer.py                 # 评分模块 (v4)
+├── run_iteration.py          # 迭代脚本 (v4)
 ├── setup.py                  # 初始化脚本
 ├── program.md                # Agent 操作指南
 ├── seed_config.json          # 种子配置
@@ -212,8 +269,8 @@ skills/autoresearch_10jqka_backtest/
 ├── pyproject.toml            # Python 项目配置
 └── experiments/<name>/       # 实验目录
     ├── formula_config.json   # 当前配置
-    ├── state.json            # 当前状态
-    ├── iterations.tsv        # 迭代历史
+    ├── state.json            # 当前状态 (v4)
+    ├── iterations.tsv        # 迭代历史 (v4)
     ├── search_notes.md       # 搜索笔记
     ├── program.md            # Agent 指南副本
     └── README.md             # 实验说明
@@ -221,32 +278,14 @@ skills/autoresearch_10jqka_backtest/
 
 ---
 
-## Git 版本管理
-
-每次迭代都会自动 git commit（仅 keep 时）：
-
-```bash
-# 查看提交历史
-cd experiments/<name>
-git log --oneline
-
-# 示例输出
-abc123f keep: iter_0002 score=1.9684 annual=14.60% dd=-5.65%
-def456g keep: iter_0001 score=1.4785 annual=9.58% dd=-5.71%
-baseline: initial seed config
-```
-
-Rollback 时不 commit，用 `git checkout HEAD formula_config.json` 恢复。
-
----
-
 ## 总结
 
-本系统采用模块化设计，各组件职责清晰：
-- **setup.py**: 初始化实验环境
-- **run_iteration.py**: 执行迭代循环
-- **formula_executor.py**: 封装问财平台 API
-- **formula_mutator.py**: 生成候选配置
-- **scorer.py**: 评分和决策
+v4 架构的核心变化:
 
-通过 Git 版本管理和简洁的 iterations.tsv，系统可以追溯每次改动，便于分析和回滚。
+1. **多窗口稳健评分**: 避免单窗口尖点欺骗
+2. **敏感性测试**: 排除脆弱的尖点参数
+3. **参数平台选择**: 选区域中心而非峰值
+4. **方向状态**: ACTIVE/WATCH/INACTIVE 指导研究方向
+5. **trade_count 惩罚**: 避免小样本误导
+
+系统的核心目标是找到**最近活着稳健的参数平台**，而不是孤立的最高分点。

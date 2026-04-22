@@ -1,14 +1,25 @@
 # 问财公式回测自动研究系统
 
-通过 AI Agent 驱动的迭代循环，自动优化问财公式回测的参数配置。
+通过 AI Agent 驱动的迭代循环，自动寻找稳健的参数平台而非孤立峰值。
+
+## 核心目标
+
+**从找最高分 → 找最近活着稳健平台**
+
+- 最近: 参数在最近 6~12 个月仍有信号
+- 活着: 多窗口验证都表现稳定
+- 稳健: 不是尖点，而是平台中心
 
 ## 功能特性
 
-- **自动参数优化**：迭代调整持仓天数、止盈止损、持仓数量等参数
-- **标准化输出**：问财回测结果自动解析为统一 JSON 格式
-- **Mock 模式**：支持模拟回测，方便开发调试
-- **Git 版本管理**：每次迭代自动 commit，可追溯历史
-- **搜索笔记**：维护搜索地图，智能选择变异方向
+- **多窗口稳健评分**: 6M/12M/prior12M/24M 四窗口验证
+- **敏感性测试**: 邻域检测避免脆弱尖点
+- **方向状态**: ACTIVE/WATCH/INACTIVE 指导研究
+- **参数平台选择**: 选区域中心而非峰值
+- **Mock 模式**: 支持模拟回测开发调试
+- **Git 版本管理**: 每次迭代自动 commit，可追溯历史
+
+---
 
 ## 快速开始
 
@@ -34,33 +45,112 @@ cat iterations.tsv
 cat search_notes.md
 ```
 
+### 4. 理解输出
+
+```json
+{
+  "direction_status": "ACTIVE",
+  "robust_score": 1.6543,
+  "parameter_band": {
+    "takeProfit": [15, 20],
+    "stopLoss": [9, 12],
+    "maxPositions": [5, 8]
+  },
+  "suggestion": "可继续跟踪"
+}
+```
+
+---
+
+## 4阶段循环工作流
+
+### 阶段A: 方向确认 — 最近是否还活着
+
+检查种子方向在最近 6~12 个月是否有持续信号。
+
+| 状态 | 含义 | 最近信号 |
+|------|------|----------|
+| `ACTIVE` | 持续有信号 | 最近 6~12 月稳定有交易信号 |
+| `WATCH` | 有信号但不稳 | 信号时断时续，需观察 |
+| `INACTIVE` | 近期无明显机会 | 超过 12 个月无明显信号 |
+
+### 阶段B: 粗搜索 — 找参数平台
+
+在参数空间中进行粗粒度搜索，寻找分数较高且稳定的区域。
+
+### 阶段C: 邻域敏感性测试 — 检查参数是否脆弱
+
+对候选参数的相邻配置做测试:
+```
+sensitivity = std(neighbor_scores) / mean(neighbor_scores)
+```
+- >0.3 认为参数脆弱，触发 sensitivity_penalty
+- 尖点在实盘中容易失真，平台中心更稳定
+
+### 阶段D: 多窗口确认 — 最终champion决策
+
+在 4 个时间窗口上验证:
+- `recent6m`: 最近 6 个月
+- `recent12m`: 最近 12 个月
+- `prior12m`: 之前 12 个月
+- `full24m`: 完整 24 个月
+
+---
+
+## 评分公式 v4
+
+```
+robust_score = 0.35×recent6m + 0.35×recent12m + 0.15×prior12m + 0.15×full24m
+              - sensitivity_penalty
+              - complexity_penalty
+              - concentration_penalty
+              - trade_count_penalty
+```
+
+### 惩罚项
+
+| 惩罚 | 触发条件 | 惩罚值 |
+|------|----------|--------|
+| `sensitivity_penalty` | sensitivity > 0.3 | 0.3 |
+| `complexity_penalty` | 公式条件过多 | 0.1 |
+| `concentration_penalty` | maxPositions 过小 | 0.1 |
+| `trade_count_penalty` | trade_count < 20 | 0.5 |
+
+### 交易次数惩罚
+
+交易次数太少（<20）的回测结果不可信:
+```
+if trade_count < 20:
+    trade_count_penalty = 0.5
+else:
+    trade_count_penalty = 0
+```
+
+---
+
 ## 目录结构
 
 ```
 skills/autoresearch_10jqka_backtest/
 ├── formula_mutator.py        # 变异引擎（含条件候选库）
 ├── formula_executor.py       # 回测执行器
-├── scorer.py                 # 评分和决策
-├── run_iteration.py          # 单次迭代执行
+├── scorer.py                 # 评分和决策 (v4)
+├── run_iteration.py          # 单次迭代执行 (v4)
 ├── setup.py                  # 初始化实验
-├── program.md                # Agent 操作指南（默认模式）
+├── program.md                # Agent 操作指南
 ├── seed_config.json          # 种子配置（默认模式）
 ├── seeds/                    # 种子库（批量种子配置）
 │   ├── A1_低PE低PB低PS.json
 │   ├── B1_稳定高ROE.json
-│   └── ...                   # 共 60+ 个种子文件
-├── trees/                    # 策略树目录（按研究主题组织）
-│   ├── A_value/              # 价值树
-│   │   ├── seed.json         # 树种子配置
-│   │   ├── program.md        # 树专属 Agent 指南
-│   │   └── experiments/<name>/
-│   ├── B_quality_growth/     # 质量成长树
-│   ├── ...                   # 共 9 棵策略树（A-I）
-│   └── I_portfolio_risk/     # 组合与风控树
-├── experiments/<name>/       # 实验目录（默认模式）
+│   └── ...
+├── trees/                    # 策略树目录
+│   ├── A_value/
+│   ├── B_quality_growth/
+│   └── ...
+├── experiments/<name>/       # 实验目录
 │   ├── formula_config.json   # 当前配置
-│   ├── state.json            # 实验状态
-│   ├── iterations.tsv        # 迭代历史
+│   ├── state.json            # 实验状态 (v4)
+│   ├── iterations.tsv        # 迭代历史 (v4)
 │   ├── search_notes.md       # 搜索笔记
 │   ├── program.md            # Agent 指南副本
 │   └── README.md             # 实验说明
@@ -69,6 +159,8 @@ skills/autoresearch_10jqka_backtest/
 ├── FAQ.md                    # 常见问题
 └── pyproject.toml            # Python 项目配置
 ```
+
+---
 
 ## 两种使用模式
 
@@ -89,7 +181,7 @@ cd experiments/my_experiment
 
 ### Tree 模式（策略树研究）
 
-适合系统性研究某一策略主题（如价值、成长、小盘等）：
+适合系统性研究某一策略主题：
 
 ```bash
 # 使用树的专属种子和指南
@@ -99,27 +191,7 @@ python setup.py --name value_exp --tree A_value
 cd trees/A_value/experiments/value_exp
 ```
 
-**Tree 模式优势**：
-- 每棵树有专属的 `seed.json`（基础配置）和 `program.md`（Agent 指南）
-- 指南包含该树的核心分支（如 A 树有 A1-A4 四个分支）和特定条件库
-- Agent 根据树的核心理念进行针对性优化
-
-## seeds/ 与 trees/ 的关系
-
-| 目录 | 用途 | 适用场景 |
-|-----|------|---------|
-| `seeds/` | 批量种子库（60+ 文件） | 默认模式下选择特定策略作为起点 |
-| `trees/<tree>/seed.json` | 树种子（9 个） | Tree 模式下使用树的基础配置 |
-
-**seeds/ 目录**：
-- 包含所有分支的具体种子文件（如 `A1_低PE低PB低PS.json`、`B1_稳定高ROE.json`）
-- 文件命名格式：`<分支号>_<策略名>.json`（如 `A1_xxx.json`、`C2_xxx.json`）
-- 用于默认模式下快速选择特定策略
-
-**trees/<tree>/seed.json**：
-- 每棵树一个基础种子文件
-- 包含该树的通用筛选条件（更宽泛，便于探索）
-- 用于 Tree 模式下系统性研究该树的所有分支
+---
 
 ## 变异类型
 
@@ -143,33 +215,26 @@ cd trees/A_value/experiments/value_exp
 | `adjust_stop_loss` | 调整止损阈值 |
 | `adjust_trailing_stop` | 调整追踪止损阈值 |
 
-### 支持的数值条件阈值调整
+---
 
-- 周成交量环比增长率（1%~20%）
-- 涨幅范围（0%~30%）
-- 上市时间（100~1000天）
-- 换手率（1%~20%）
-- 市盈率（10~100）
-- 市净率（1~10）
-- 净资产收益率（5%~30%）
-- 毛利率（10%~80%）
-
-### 可添加条件库
-
-- 换手率大于5%/8%/10%
-- 流通市值小于50亿/100亿/200亿
-- 市盈率小于30/50
-- 市净率小于3/5
-- 净资产收益率大于10%/15%
-- 毛利率大于30%/50%
-- 非科创板、非退市、破发股、破净股等
-
-## 评分公式
+## 参数平台 vs 峰值选择
 
 ```
-calmar = annual_return / max(abs(max_drawdown), 0.01)
-score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
+      尖点 (peak)              平台 (plateau)
+           ▲                        ████
+          █ █                      █  █
+         █   █                    █    █
+        █     █                  █      █
+       █████████                █████████
+       不稳定，易失真              稳定，抗噪声
 ```
+
+系统选择**参数平台中心**而非单点峰值，因为:
+1. 尖点在实盘中容易失真
+2. 平台中心更稳定，抗噪声能力强
+3. 多窗口验证一致性更高
+
+---
 
 ## Mock 模式
 
@@ -179,6 +244,8 @@ score = calmar * 0.55 + sortino * 0.25 + information_ratio * 0.20
 export JQKA_MOCK_MODE=1
 python setup.py --name test
 ```
+
+---
 
 ## 环境要求
 

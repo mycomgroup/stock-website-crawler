@@ -43,6 +43,17 @@ skills/autoresearch_10jqka_backtest/
 
 **LOOP FOREVER（直到人工中断或触发停止条件）：**
 
+### 系统目标
+
+从"找最高分"改成"找最近仍活着的稳健平台"。
+
+三个层次：
+1. **方向是否活着** — seed对应的alpha假设，最近6~12个月是否还有信号
+2. **参数是否稳** — 参数附近一圈能不能打，不是只看最高点
+3. **能否用于实际跟踪** — 持仓数、交易次数、回撤、可交易性不能太离谱
+
+---
+
 ### 第 1 步：读取状态
 
 ```bash
@@ -51,10 +62,84 @@ cat iterations.tsv
 ```
 
 **停止条件（满足任一即停止）：**
-- `consecutive_failures >= 5` 且 `search_notes.md` 中"待探索方向"已全部尝试
-- 或 `current_iter >= 100`
+1. 方向状态为 INACTIVE，且"待探索方向"已全部尝试
+2. `consecutive_failures >= 5` 且 `search_notes.md` 中"待探索方向"已全部尝试
+3. `current_iter >= 100`
 
 如未触发停止条件，继续下一步。
+
+**停止后，输出最终结论：**
+- 方向状态（ACTIVE / WATCH / INACTIVE）
+- 稳定参数带（如：takeProfit: 15~20, stopLoss: 9~12, maxPositions: 5~8）
+- 执行建议（可继续跟踪 / 只观察 / 不继续优化）
+
+---
+
+### 方向确认算法（阶段A前置检查）
+
+在深入调参前，先判断这个seed最近是否还活着：
+
+**操作：**
+- 跑最近 6M 和 12M 两个窗口的回测
+- 对比基线分数判断方向状态
+
+**判断标准：**
+- **INACTIVE**: recent6m_score 和 recent12m_score 都低于基线 → 停止深挖
+- **WATCH**: 最近有信号但不稳定 → 谨慎探索
+- **ACTIVE**: 最近窗口持续性良好 → 正常探索
+
+**决策：**
+- INACTIVE → 停止此方向，更新 search_notes.md 标记为 INACTIVE
+- WATCH/ACTIVE → 进入 4阶段循环
+
+---
+
+### 4 阶段循环
+
+#### 阶段A：方向确认（最近是否还活着）
+
+先判断这个seed最近是否还活着，而不是立刻调参数。
+
+操作：
+- 跑最近 6M 和 12M 两个窗口
+- 如果最近 6M、12M 都很差 → 判为 WEAK/INACTIVE，停止深挖
+- 如果有机会 → 进入阶段B
+
+判断标准：
+- **INACTIVE**: recent6m_score 和 recent12m_score 都低于基线
+- **WATCH**: 最近有信号但不稳定
+- **ACTIVE**: 最近窗口持续性良好
+
+#### 阶段B：粗搜索（找参数平台）
+
+只在合理区间内做粗粒度搜索：
+- 条件阈值只做大步变化（如 5%步长）
+- 参数只做有限候选
+- 目标：找出大概哪一片区域有信号
+
+#### 阶段C：邻域敏感性测试
+
+对Top候选做"附近一圈"测试：
+- takeProfit: -5, 0, +5
+- stopLoss: -2, 0, +2
+- trailingStopLoss: -2, 0, +2
+- maxPositions: 5/6/8/10（邻域台阶）
+
+判断：
+- 只有一个点很好，左右都塌 → 标记为尖点，不keep
+- 周围一圈都能打 → 候选进入阶段D
+
+#### 阶段D：多窗口稳健确认
+
+对通过敏感性测试的候选，再做多窗口确认：
+- 最近 6M
+- 最近 12M
+- 前 12M（prior 12M）
+- 全 24M / 36M
+
+最终决策：
+- 近期好 + 历史不死 + 邻域稳定 → 升级为 champion
+- 否则 → rollback
 
 ---
 
@@ -93,6 +178,20 @@ grep "FORMULA_ADDABLE_CONDITIONS" -A 30 ${SKILL_DIR}/formula_mutator.py
 
 ```markdown
 ## 搜索地图
+
+### 方向状态
+- 当前状态：ACTIVE / WATCH / INACTIVE
+- 最近6M得分：X.XX
+- 最近12M得分：X.XX
+- 判断依据：...
+
+### 稳定参数带
+- takeProfit: X~Y
+- stopLoss: X~Y
+- maxPositions: X~Y
+
+### 尖点警告记录
+- [尖点] 参数X在邻域测试中塌陷
 
 ### 已验证有效（keep）
 - [变异类型] 具体改动描述：score 从 X.XXX → Y.YYY，+Z.ZZZ
@@ -170,49 +269,46 @@ cat iterations.tsv | tail -5
 
 ---
 
-## 评分公式（v3 - 防过拟合优化版）
+## 评分公式（v4 - 多窗口稳健评分）
 
+### 单窗口压缩
+对原始值做压缩变换，防止极端值爆炸：
+- annual_return: cap at ±3.0
+- calmar: cap at ±5.0
+- sortino, IR: cap at ±3.0
+
+### 多窗口稳健分
 ```
-calmar = annual_return / max(abs(max_drawdown), 0.01)
-complexity_penalty = min((formula条件数 + 调优参数数) / 10, 1.0)
-
-# 选股数量惩罚（双边软约束）
-if maxPositions < 5:
-    position_penalty = (5 - maxPositions) ** 2 * 0.1
-elif maxPositions > 15:
-    position_penalty = (maxPositions - 15) ** 2 * 0.01
-else:
-    position_penalty = 0
-
-# 过拟合惩罚（v3新增）
-overfit_penalty = 持股少时胜率不足的惩罚
-
-score = sortino * 0.40 + calmar * 0.25 + information_ratio * 0.15 
-      + win_rate * 0.10 - complexity_penalty * 0.10 - position_penalty - overfit_penalty
+robust_score = 0.35 * recent6m + 0.35 * recent12m + 0.15 * prior12m + 0.15 * full24m
+             - sensitivity_penalty
+             - complexity_penalty
+             - concentration_penalty
+             - duplicate_penalty
+             - trade_count_penalty
 ```
 
-**权重解读：**
-- **sortino (40%)**：只惩罚下行风险，对趋势策略最友好
-- **calmar (25%)**：收益/回撤比，衡量风险收益效率
-- **information_ratio (15%)**：超额收益稳定性
-- **win_rate (10%)**：胜率，防止低胜率高风险策略
-- **complexity_penalty (10%)**：复杂度惩罚，防止过拟合
+### 敏感性惩罚
+邻域波动惩罚：sensitivity = std(neighbor_scores) / mean(neighbor_scores)
+- sensitivity > 0.3 → 参数脆弱，扣分
 
-**过拟合惩罚规则（v3新增）：**
-持股少于5支时，胜率必须足够高，否则判定为过拟合：
-- 持股1支：需要胜率≥60%
-- 持股2支：需要胜率≥55%
-- 持股3支：需要胜率≥50%
-- 持股4支：需要胜率≥45%
-- 持股≥5支：无限制
+### Keep决策
+- robust_score 至少高出 epsilon (0.15) 才 keep
+- 或 相对提升 >= 3%
+- 如果分数接近但更简单 → keep 简洁版
 
-示例：持股2支、胜率30% → 惩罚 = (55%-30%) × 3 × 3 = 2.25分
+---
 
-**选股数量建议**：5-15支最佳，避免过拟合。
+## 尖点识别与避免
 
-**硬约束**：
-- `abs(max_drawdown) > 0.35` 直接 rollback
-- 新 score **严格大于** champion score 才 keep
+**尖点特征：**
+- 单点分数极高，但左右邻域都塌陷
+- 历史表现优异但近期急剧下降
+- 条件阈值非常细碎（如 5.2%, 10.8%）
+
+**避免方法：**
+- 每次 mutation 后检查邻域敏感性
+- 记录尖点警告到 search_notes.md
+- 宁可选择略低但稳健的参数平台
 
 ---
 
@@ -244,8 +340,9 @@ score = sortino * 0.40 + calmar * 0.25 + information_ratio * 0.15
 
 满足以下任一条件时停止循环：
 
-1. `consecutive_failures >= 5` **且** `search_notes.md` 中"待探索方向"已全部尝试（无未打勾的 `[ ]` 项）
-2. `current_iter >= 100`
+1. 方向状态为 INACTIVE，且"待探索方向"已全部尝试
+2. `consecutive_failures >= 5` 且 `search_notes.md` 中"待探索方向"已全部尝试
+3. `current_iter >= 100`
 
 停止后，输出最终 champion 配置的路径和 score：
 ```bash

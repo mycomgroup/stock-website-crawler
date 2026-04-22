@@ -26,7 +26,7 @@ from datetime import datetime
 
 
 def load_iterations(base: Path) -> list[dict]:
-    """加载 iterations.tsv 文件，返回迭代记录列表"""
+    """加载 iterations.tsv 文件，返回迭代记录列表（包含所有多窗口列）"""
     tsv_path = base / "iterations.tsv"
     if not tsv_path.exists():
         return []
@@ -46,12 +46,19 @@ def load_iterations(base: Path) -> list[dict]:
                     "score": float(row.get("score", 0) or 0),
                     "decision": row.get("decision", ""),
                     "mutation": row.get("mutation", ""),
+                    "robust_score": float(row.get("rich_score", 0) or 0),
+                    "recent6": float(row.get("recent6", 0) or 0),
+                    "recent12": float(row.get("recent12", 0) or 0),
+                    "prior12": float(row.get("prior12", 0) or 0),
+                    "full24": float(row.get("full24", 0) or 0),
+                    "sensitivity": float(row.get("sensitivity", 0) or 0),
+                    "trade_count": int(row.get("trade_count", 0) or 0),
+                    "complexity": int(row.get("complexity", 0) or 0),
+                    "reason": row.get("reason", ""),
                 }
                 ar = d.get("annual_return") or 0
                 dd = abs(d.get("max_drawdown") or 0)
                 d["_calmar"] = ar / max(dd, 0.01)
-                d["_sortino"] = 0
-                d["_ir"] = 0
                 records.append(d)
             except Exception:
                 pass
@@ -384,6 +391,247 @@ def section_backtest_url(config: dict) -> str:
     return "\n".join(lines)
 
 
+def section_opportunity_status(records: list[dict], state: dict) -> str:
+    """
+    分析最近机会状态：ACTIVE / WATCH / INACTIVE。
+    基于 recent6m 和 recent12m 得分判断。
+    """
+    lines = ["", "=" * 60, "  最近机会状态（方向是否活着）", "=" * 60]
+
+    keeps = [r for r in records if r.get("decision") == "keep"]
+    if not keeps:
+        lines.append("  (无 keep 记录，无法判断)")
+        return "\n".join(lines)
+
+    champion = keeps[-1]
+    recent6 = champion.get("recent6", 0) or 0
+    recent12 = champion.get("recent12", 0) or 0
+    prior12 = champion.get("prior12", 0) or 0
+    full24 = champion.get("full24", 0) or 0
+
+    lines.append(f"Champion 多窗口得分:")
+    lines.append(f"  recent_6m:  {recent6:.4f}")
+    lines.append(f"  recent_12m: {recent12:.4f}")
+    lines.append(f"  prior_12m: {prior12:.4f}")
+    lines.append(f"  full_24m:   {full24:.4f}")
+
+    robust = champion.get("robust_score", 0) or 0
+    sensitivity = champion.get("sensitivity", 0) or 0
+    lines.append(f"  robust_score: {robust:.4f}")
+    lines.append(f"  sensitivity:   {sensitivity:.4f}")
+    lines.append("")
+
+    if recent6 <= 0 and recent12 <= 0:
+        status = "INACTIVE"
+        lines.append(f"判定：{status} — 最近两个窗口均无正收益，建议停止深挖")
+    elif recent12 <= 0:
+        status = "WATCH"
+        lines.append(f"判定：{status} — 最近12M无正收益，谨慎探索")
+    elif sensitivity > 0.3:
+        status = "WATCH"
+        lines.append(f"判定：{status} — 参数敏感性偏高({sensitivity:.3f})，稳定性不足")
+    elif recent6 > 0 and recent12 > 0 and sensitivity <= 0.3:
+        status = "ACTIVE"
+        lines.append(f"判定：{status} — 近期窗口持续有信号，参数平台稳定")
+    else:
+        status = "WATCH"
+        lines.append(f"判定：{status} — 需人工确认")
+
+    baseline_records = [r for r in records if r.get("decision") == "baseline"]
+    if baseline_records:
+        bl_recent12 = baseline_records[0].get("recent12", 0) or 0
+        if recent12 > bl_recent12 + 0.1:
+            lines.append(f"  相比 baseline(recent12={bl_recent12:.4f}) 有提升 ✓")
+        elif recent12 < bl_recent12 - 0.1:
+            lines.append(f"  ⚠ 相比 baseline(recent12={bl_recent12:.4f}) 有所下降")
+
+    return "\n".join(lines)
+
+
+def section_stable_param_ranges(records: list[dict], config: dict) -> str:
+    """
+    分析稳健参数带。
+    基于多次 keep 的参数分布，推断当前稳定参数区间。
+    """
+    lines = ["", "=" * 60, "  稳健参数带（不是单点，而是区间）", "=" * 60]
+
+    keeps = [r for r in records if r.get("decision") == "keep"]
+    if not keeps:
+        lines.append("  (无 keep 记录)")
+        return "\n".join(lines)
+
+    param_collections = {
+        "takeProfit": [],
+        "stopLoss": [],
+        "trailingStopLoss": [],
+        "maxPositions": [],
+    }
+
+    for r in keeps:
+        mut = r.get("mutation", "")
+        import re as _re
+        tp_match = _re.search(r"止盈[^\d]*(\d+)", mut)
+        sl_match = _re.search(r"止损[^\d]*(\d+)", mut)
+        ts_match = _re.search(r"追踪?止损[^\d]*(\d+)", mut)
+        mp_match = _re.search(r"最大?持仓[^\d]*(\d+)", mut)
+
+        if tp_match:
+            param_collections["takeProfit"].append(int(tp_match.group(1)))
+        if sl_match:
+            param_collections["stopLoss"].append(int(sl_match.group(1)))
+        if ts_match:
+            param_collections["trailingStopLoss"].append(int(ts_match.group(1)))
+        if mp_match:
+            param_collections["maxPositions"].append(int(mp_match.group(1)))
+
+    has_data = False
+    for param_name, values in param_collections.items():
+        if len(values) >= 2:
+            has_data = True
+            mn, mx = min(values), max(values)
+            most_common = max(set(values), key=values.count)
+            lines.append(f"  {param_name}: {mn}~{mx}（历史最优{most_common}，共{len(values)}次调参）")
+        elif len(values) == 1:
+            has_data = True
+            lines.append(f"  {param_name}: {values[0]}（仅1次调参记录，建议继续探索邻域）")
+
+    if not has_data:
+        lines.append("  (从 mutation 描述中无法提取参数范围)")
+        lines.append("  当前配置参数:")
+        lines.append(f"    takeProfit: {config.get('takeProfit', 'N/A')}")
+        lines.append(f"    stopLoss: {config.get('stopLoss', 'N/A')}")
+        lines.append(f"    trailingStopLoss: {config.get('trailingStopLoss', 'N/A')}")
+        lines.append(f"    maxPositions: {config.get('maxPositions', 'N/A')}")
+
+    lines.append("")
+    lines.append("  选参原则：取平台中心值，而非单点最优值")
+    lines.append("  例如 takeProfit 区间 15~25 → 优先取 20，而非区间内某个尖点")
+
+    return "\n".join(lines)
+
+
+def section_peak_warnings(records: list[dict]) -> str:
+    """
+    尖点警告：单点分数极高但邻域塌陷的配置。
+    """
+    lines = ["", "=" * 60, "  尖点警告（单点好看，邻域塌陷）", "=" * 60]
+
+    keeps = [r for r in records if r.get("decision") == "keep"]
+    rollbacks = [r for r in records if r.get("decision") == "rollback"]
+
+    peak_warnings = []
+    for r in keeps:
+        sens = r.get("sensitivity", 0) or 0
+        if sens > 0.3:
+            ar = r.get("annual_return", 0) or 0
+            dd = abs(r.get("max_drawdown", 0) or 0)
+            score = r.get("score", 0) or 0
+            peak_warnings.append((r.get("iter", ""), sens, ar, dd, score, r.get("mutation", "")))
+
+    if peak_warnings:
+        lines.append(f"发现 {len(peak_warnings)} 个高敏感性配置：")
+        for iter_id, sens, ar, dd, sc, mut in peak_warnings:
+            lines.append(f"  [{iter_id}] sensitivity={sens:.3f} score={sc:.4f} annual={ar:.2%} dd={dd:.2%}")
+            lines.append(f"    → {mut[:60]}")
+            lines.append(f"    ⚠ 参数脆弱，建议远离此尖点，选择邻域更稳定的值")
+    else:
+        lines.append("  未检测到尖点，所有 keep 配置邻域稳定性良好 ✓")
+
+    recent_sensitivity = [r for r in records if r.get("sensitivity", 0) and r.get("sensitivity", 0) > 0.3]
+    if recent_sensitivity:
+        lines.append(f"")
+        lines.append(f"  近 {len(recent_sensitivity)} 次迭代敏感性偏高，需关注参数漂移风险")
+
+    return "\n".join(lines)
+
+
+def section_condition_redundancy(config: dict) -> str:
+    """
+    条件冗余警告：检测 formula 中是否有语义重复的条件。
+    """
+    lines = ["", "=" * 60, "  条件冗余警告（语义重复/包含）", "=" * 60]
+
+    formula = config.get("formula", [])
+    if not formula:
+        lines.append("  (formula 为空)")
+        return "\n".join(lines)
+
+    try:
+        from formula_mutator import canonicalize_formula, detect_duplicate_conditions
+        canonical = canonicalize_formula(formula)
+        duplicates = detect_duplicate_conditions(formula)
+    except Exception as e:
+        lines.append(f"  (无法分析冗余: {e})")
+        return "\n".join(lines)
+
+    lines.append(f"原始条件数: {len(formula)}")
+    lines.append(f"去重后条件数: {len(canonical)}")
+
+    if duplicates:
+        lines.append(f"  ⚠ 发现 {len(duplicates)} 组冗余条件：")
+        for redundant, to_remove in duplicates:
+            lines.append(f"    冗余: {to_remove}")
+            lines.append(f"    被包含: {redundant}")
+        lines.append(f"  建议：移除冗余条件，保留更严格的那条")
+    else:
+        lines.append("  未发现明显冗余条件 ✓")
+
+    if len(formula) > len(canonical) + 2:
+        lines.append(f"  ⚠ 条件数量偏多({len(formula)})，考虑简化")
+
+    non_numeric = [c for c in formula if not any(op in c for op in ["大于", "小于", "等于"])]
+    if len(non_numeric) > 4:
+        lines.append(f"  ⚠ 非数值条件偏多({len(non_numeric)})，可能导致参数空间过大")
+
+    lines.append("")
+    lines.append("  当前 formula:")
+    for c in formula:
+        lines.append(f"    - {c}")
+
+    return "\n".join(lines)
+
+
+def section_multi_window_table(records: list[dict]) -> str:
+    """
+    跨窗口表现表：所有 keep 的多窗口得分对比。
+    """
+    lines = ["", "=" * 60, "  跨窗口表现表（所有 keep 的 recent/prior/full 对比）", "=" * 60]
+
+    keeps = [r for r in records if r.get("decision") == "keep"]
+    if not keeps:
+        lines.append("  (无 keep 记录)")
+        return "\n".join(lines)
+
+    header = f"{'Iter':>6}  {'r6m':>7}  {'r12m':>7}  {'p12m':>7}  {'f24m':>7}  {'sens':>6}  {'robust':>8}  Score"
+    lines.append(header)
+    lines.append("-" * 70)
+
+    for r in keeps:
+        iter_id = r.get("iter", "")
+        r6 = r.get("recent6", 0) or 0
+        r12 = r.get("recent12", 0) or 0
+        p12 = r.get("prior12", 0) or 0
+        f24 = r.get("full24", 0) or 0
+        sens = r.get("sensitivity", 0) or 0
+        robust = r.get("robust_score", 0) or 0
+        sc = r.get("score", 0) or 0
+        lines.append(f"{iter_id:>6}  {r6:>7.4f}  {r12:>7.4f}  {p12:>7.4f}  {f24:>7.4f}  {sens:>6.3f}  {robust:>8.4f}  {sc:.4f}")
+
+    lines.append("-" * 70)
+    champion = keeps[-1]
+    r6 = champion.get("recent6", 0) or 0
+    r12 = champion.get("recent12", 0) or 0
+    p12 = champion.get("prior12", 0) or 0
+    f24 = champion.get("full24", 0) or 0
+    lines.append(f"Champion: recent6m={r6:.4f} recent12m={r12:.4f} prior12m={p12:.4f} full24m={f24:.4f}")
+
+    recent_good = sum(1 for r in keeps if (r.get("recent12", 0) or 0) > 0)
+    lines.append(f"")
+    lines.append(f"最近12M正收益的 keep: {recent_good}/{len(keeps)}")
+
+    return "\n".join(lines)
+
+
 def section_next_suggestions(records: list[dict], state: dict) -> str:
     """基于历史数据给出下一步改进建议（供 agent 参考）"""
     lines = ["", "=" * 60, "  下一步建议（供 agent 参考）", "=" * 60]
@@ -464,6 +712,11 @@ def main():
     report = "\n".join(
         [
             header,
+            section_opportunity_status(records, state),
+            section_stable_param_ranges(records, config),
+            section_peak_warnings(records),
+            section_condition_redundancy(config),
+            section_multi_window_table(records),
             section_overview(records, state),
             section_keep_sequence(records),
             section_top_improvements(records),
