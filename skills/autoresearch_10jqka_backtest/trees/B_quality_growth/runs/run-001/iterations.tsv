@@ -1,3 +1,4 @@
 iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation	robust_score	recent6	recent12	prior12	full24	sensitivity	trade_count	complexity	reason
-0001	jqka_1776857029516	stage_c_fail	0.3855	0.1200	1.3454	0.632699	rollback	tree_run:run-001 round:1 | [替换条件] 净资产收益率大于15% → 毛利率大于30%	0.000000	-0.024449	0.632699	0.000000	0.000000	0.5235	1935	8	good=0.70 floor=N sens=0.5235 anchor=0.6327
-0002	jqka_1776857052072	ok	5.0000	0.0600	1.7624	1.160794	keep	tree_run:run-001 round:2 | [添加条件] 营业收入增长率大于15%	1.210581	1.161613	1.160794	1.159214	1.159045	0.1150	560	9	first version, automatically champion
+0001		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-001 round:1	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	8	ValueError: time data 'AUTO' does not match format '%Y-%m-%d'
+0002	jqka_1776861155805	stage_a_fail	0.0692	0.1100	0.2793	-0.151494	rollback	tree_run:run-001 round:2 | [替换条件] 毛利率大于30% → 经营活动产生的现金流量净额连续三年为正	0.000000	-0.324401	-0.151494	0.000000	0.000000	0.0000	113	9	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0003	jqka_1776861157309	ok	3.0000	0.1400	1.5083	1.157368	keep	tree_run:run-001 round:3 | [添加条件] 经营活动产生的现金流量净额连续三年为正	1.144265	1.148387	1.157368	1.095300	0.819705	0.1136	57	10	first version, automatically champion
