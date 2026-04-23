@@ -258,7 +258,7 @@ export JOINQUANT_USERNAME="13311390323"
 export JOINQUANT_PASSWORD="#Ff09173228552"
 
 # 运行验证
-node run-strategy.js --strategy ml_ultra_quick.py --timeout-ms 180000
+node run-strategy.js --strategy ../research/ml_multifactor_unified_20260423/code/backtest_scripts/ml_ultra_quick.py --timeout-ms 180000
 
 # 查看结果
 cat output/joinquant-notebook-result-codingutf-1775029231780.json
@@ -322,7 +322,7 @@ def select_stocks_lr(features_df, returns_series, hold_n=10):
 
 - **详细结果**: `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-codingutf-1775029231780.json`
 - **Notebook快照**: `/Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-1775029231779.ipynb`
-- **验证脚本**: `/Users/fengzhi/Downloads/git/testlixingren/skills/joinquant_notebook/ml_ultra_quick.py`
+- **验证脚本**: `/Users/fengzhi/Downloads/git/testlixingren/research/ml_multifactor_unified_20260423/code/backtest_scripts/ml_ultra_quick.py`
 
 ---
 

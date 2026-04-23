@@ -20,23 +20,23 @@
 
 | 文件 | 说明 | 内容 |
 |------|------|------|
-| docs/07_ML_MultiFactor_Validation_Report_REAL.md | 详细验证报告 | 完整数据、对比分析 |
-| docs/07_ML_Results_Summary.md | 结果摘要 | 快速查看关键指标 |
-| docs/RESULT_ANALYSIS.md | 深度分析 | 统计分析、投资建议 |
+| 07_ML_MultiFactor_Validation_Report_REAL.md | 详细验证报告 | 完整数据、对比分析 |
+| 07_ML_Results_Summary.md | 结果摘要 | 快速查看关键指标 |
+| RESULT_ANALYSIS.md | 深度分析 | 统计分析、投资建议 |
 
 ### 验证脚本
 
 | 文件 | 说明 | 用途 |
 |------|------|------|
-| scripts/ml_ultra_quick.py | 快速验证 | 2-3分钟，推荐首次运行 |
-| scripts/ml_walkforward_real.py | 完整验证 | 5-10分钟，全面测试 |
-| scripts/STRATEGY_CODE.md | 实盘代码 | 可直接用于实盘 |
+| code/backtest_scripts/ml_ultra_quick.py | 快速验证 | 2-3分钟，推荐首次运行 |
+| code/backtest_scripts/ml_walkforward_real.py | 完整验证 | 5-10分钟，全面测试 |
+| code/reference_strategies/STRATEGY_CODE.md | 实盘代码 | 可直接用于实盘 |
 
 ### 运行结果
 
 | 文件 | 说明 |
 |------|------|
-| results/joinquant-notebook-result-*.json | JoinQuant真实运行结果 |
+| joinquant-notebook-result-*.json | JoinQuant真实运行结果 |
 
 ---
 
@@ -66,7 +66,7 @@
 ### 1. 查看结论
 
 ```bash
-cd /Users/fengzhi/Downloads/git/testlixingren/docs/ml_multifactor_validation_20260401
+cd /Users/fengzhi/Downloads/git/testlixingren/research/ml_multifactor_unified_20260423
 cat README.md
 ```
 
@@ -81,7 +81,7 @@ export JOINQUANT_USERNAME="13311390323"
 export JOINQUANT_PASSWORD="#Ff09173228552"
 
 # 运行快速测试
-node run-strategy.js --strategy ../docs/ml_multifactor_validation_20260401/scripts/ml_ultra_quick.py --timeout-ms 180000
+node run-strategy.js --strategy ../research/ml_multifactor_unified_20260423/code/backtest_scripts/ml_ultra_quick.py --timeout-ms 180000
 ```
 
 ### 3. 查看结果
@@ -142,10 +142,10 @@ cat /Users/fengzhi/Downloads/git/testlixingren/output/joinquant-notebook-result-
 
 ## 📞 支持
 
-- 详细文档: `docs/` 目录
+- 详细文档: 根目录下 `07_ML_*` 与 `RESULT_ANALYSIS.md`
 - 运行问题: `QUICK_START.md`
-- 代码问题: `scripts/STRATEGY_CODE.md`
-- 结果分析: `docs/RESULT_ANALYSIS.md`
+- 代码问题: `code/reference_strategies/STRATEGY_CODE.md`
+- 结果分析: `RESULT_ANALYSIS.md`
 
 ---
 

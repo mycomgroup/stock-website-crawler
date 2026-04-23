@@ -298,7 +298,7 @@ export JOINQUANT_USERNAME="13311390323"
 export JOINQUANT_PASSWORD="#Ff09173228552"
 
 # 运行策略
-node run-strategy.js --strategy ml_ultra_quick.py --timeout-ms 180000
+node run-strategy.js --strategy ../research/ml_multifactor_unified_20260423/code/backtest_scripts/ml_ultra_quick.py --timeout-ms 180000
 
 # 查看结果
 cat output/joinquant-notebook-result-*.json
