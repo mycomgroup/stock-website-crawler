@@ -508,7 +508,7 @@ path,file_name,kind,in_scope,scan_status,run_status,root_cause,scan_timestamp
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/97 稳定高回报周期股策略2-RSRS择时.txt,97 稳定高回报周期股策略2-RSRS择时.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:23.289034
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/97 趋势筛选后相关性最小etf轮动-加速10倍版.txt,97 趋势筛选后相关性最小etf轮动-加速10倍版.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:23.290325
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/97 配套资料说明.txt,97 配套资料说明.txt,jq_strategy_txt,False,not_strategy,non_executable,非策略文件（研究文档/配套资料）,2026-04-04T09:50:23.290334
-/Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/98 FScore9因子模型改进——RFScore7因子.ipynb,98 FScore9因子模型改进——RFScore7因子.ipynb,notebook,False,excluded_notebook,not_applicable,研究文档/notebook，非可执行策略,2026-04-04T09:50:23.290337
+/Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/rfscore7_main_portfolio_research/98 FScore9因子模型改进——RFScore7因子.ipynb,98 FScore9因子模型改进——RFScore7因子.ipynb,notebook,False,excluded_notebook,not_applicable,研究文档/notebook，非可执行策略,2026-04-04T09:50:23.290337
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/98 【漂亮50】“漂亮50”策略复现以及股息率排序函数.txt,98 【漂亮50】“漂亮50”策略复现以及股息率排序函数.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:23.292908
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/98 热点行业和热点概念-成分股-及龙一龙二龙三.ipynb,98 热点行业和热点概念-成分股-及龙一龙二龙三.ipynb,notebook,False,excluded_notebook,not_applicable,研究文档/notebook，非可执行策略,2026-04-04T09:50:23.292911
 /Users/fengzhi/Downloads/git/testlixingren/jk2bt-main/strategies/98 追涨大师（超额142）.txt,98 追涨大师（超额142）.txt,jq_strategy_txt,True,valid,executable,OK,2026-04-04T09:50:23.294608
