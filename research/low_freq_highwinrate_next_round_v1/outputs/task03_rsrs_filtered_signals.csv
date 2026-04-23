@@ -1,0 +1,5 @@
+date,signal,rsrs,breadth,sentiment,pass_rsrs,pass_breadth,pass_sentiment,pass_all,filtered_signal
+2026-01-31,1.0,-0.2,0.12,0.15,False,False,False,False,0.0
+2026-02-28,1.0,0.1,0.22,0.3,True,True,True,True,1.0
+2026-03-31,1.0,0.2,0.3,0.25,True,True,True,True,1.0
+2026-04-30,1.0,0.4,0.4,0.45,True,True,True,True,1.0

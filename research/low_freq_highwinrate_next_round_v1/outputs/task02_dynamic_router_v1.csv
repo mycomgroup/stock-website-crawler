@@ -1,0 +1,5 @@
+date,state,target_holdings,equity_weight,bond_weight,cash_weight
+2026-01-31,EMPTY,0,0.0,0.6,0.4
+2026-02-28,DEFENSIVE,10,0.4,0.4,0.2
+2026-03-31,CAUTIOUS,12,0.6,0.25,0.15
+2026-04-30,RISK_ON,15,0.8,0.1,0.1
