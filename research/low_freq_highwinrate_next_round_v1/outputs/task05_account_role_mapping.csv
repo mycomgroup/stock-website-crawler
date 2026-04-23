@@ -1,0 +1,5 @@
+name,strategy_type,signal_freq,risk_level,role
+稳健ETF轮动,etf_rotation,monthly,low,主仓底座
+PMI宏观慢变量,macro_pmi,monthly,medium,仓位器
+IVOL过滤,factor_filter,monthly,low,过滤器
+短线情绪,short_term_event,daily,high,仅参考
