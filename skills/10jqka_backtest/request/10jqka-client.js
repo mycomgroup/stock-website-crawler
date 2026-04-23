@@ -39,10 +39,9 @@ export class JqkaBacktestClient {
     };
   }
 
-  async request(endpoint, bodyObj = null, method = 'POST') {
+  async request(endpoint, bodyObj = null, method = 'POST', retries = 3) {
     const url = endpoint.startsWith('http') ? endpoint : `${this.origin}${endpoint}`;
     
-    // Convert body to form-urlencoded or json based on method/needs
     const options = {
       method,
       headers: this.buildHeaders(url)
@@ -50,27 +49,38 @@ export class JqkaBacktestClient {
 
     if (bodyObj) {
       options.body = typeof bodyObj === 'string' ? bodyObj : JSON.stringify(bodyObj);
-      if (options.body.includes('=')) { // if looks like url-encoded and not explicitly asked for JSON
+      if (options.body.includes('=')) {
         options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
       }
     }
 
-    try {
-      const response = await fetch(url, options);
-      const text = await response.text();
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} ${url}: ${text.slice(0, 200)}`);
-      }
-
+    for (let attempt = 0; attempt < retries; attempt++) {
       try {
-        return JSON.parse(text);
-      } catch (e) {
-        return { raw: text.slice(0, 500), parseError: e.message };
+        const response = await fetch(url, options);
+        const text = await response.text();
+        
+        if (!response.ok) {
+          if (response.status >= 500 && attempt < retries - 1) {
+            await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+            continue;
+          }
+          throw new Error(`HTTP ${response.status} ${url}: ${text.slice(0, 200)}`);
+        }
+
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          return { raw: text.slice(0, 500), parseError: e.message };
+        }
+      } catch (error) {
+        if (error.message.includes('fetch failed') && attempt < retries - 1) {
+          await new Promise(r => setTimeout(r, 3000 * (attempt + 1)));
+          continue;
+        }
+        throw error;
       }
-    } catch (error) {
-      throw error;
     }
+    throw new Error(`Request failed after ${retries} retries`);
   }
 
   /**

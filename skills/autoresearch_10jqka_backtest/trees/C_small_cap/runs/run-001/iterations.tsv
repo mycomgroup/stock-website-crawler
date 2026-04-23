@@ -1,0 +1,153 @@
+iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation	robust_score	recent6	recent12	prior12	full24	sensitivity	trade_count	complexity	reason
+0001		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-001 round:1	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	9	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "小盘风格树-run-001",
+  "description": "探索小市值公司的收益放大机会 | Run run-001",
+  "query": "非ST，市盈率小于20，流通市值小于100亿",
+  "start_date": "20251025",
+  "end_date": "20260423",
+  "stock_hold": 3,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 8,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776929169343.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0002	jqka_1776929187780	stage_a_fail	0.0571	0.0900	0.1891	-0.903721	rollback	tree_run:run-001 round:2 | [添加条件] 总市值小于100亿	0.000000	-3.174324	-0.903721	0.000000	0.000000	0.0000	1214	10	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0003		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-001 round:3	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	11	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "小盘风格树-run-001",
+  "description": "探索小市值公司的收益放大机会 | Run run-001",
+  "query": "非ST，市盈率小于20，总市值小于100亿，市盈率小于27，流通市值小于100亿",
+  "start_date": "20251025",
+  "end_date": "20260423",
+  "stock_hold": 3,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 8,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776929200960.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0004	jqka_1776929187780	stage_a_fail	0.0571	0.0900	0.1891	-0.903721	rollback	tree_run:run-001 round:4 | [替换条件] 市盈率小于27 → 市盈率小于30	0.000000	-3.174324	-0.903721	0.000000	0.000000	0.0000	1214	10	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0005	jqka_1776929226326	stage_a_fail	0.0571	0.0900	0.1891	-0.903721	rollback	tree_run:run-001 round:5 | [粗调阈值] 市盈率 20.0 → 15	0.000000	-3.174324	-0.903721	0.000000	0.000000	0.0000	1052	10	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0006	jqka_1776929240955	stage_a_fail	0.0571	0.0900	0.1891	-0.903721	rollback	tree_run:run-001 round:6 | [添加条件] 流通市值小于114亿	0.000000	-3.174324	-0.903721	0.000000	0.000000	0.0000	1052	11	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0007	jqka_1776929256023	stage_a_fail	0.0743	0.1100	0.2236	-0.645356	rollback	tree_run:run-001 round:7 | [添加条件] 周成交量环比增长率大于12%	0.000000	-2.471865	-0.645356	0.000000	0.000000	0.0000	772	12	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0008	jqka_1776929271834	stage_a_fail	-0.0105	0.0900	-0.0314	-0.884812	rollback	tree_run:run-001 round:8 | [粗调阈值] 市盈率 15.0 → 20	0.000000	-2.302513	-0.884812	0.000000	0.000000	0.0000	891	12	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0009	jqka_1776929284114	stage_c_fail	6.0000	0.1200	1.8359	0.652980	rollback	tree_run:run-001 round:9 | [添加条件] 流通市值小于50亿	0.000000	-1.098769	0.652980	0.000000	0.000000	0.4808	594	13	good_ratio=0.90, floor_ok=False, sensitivity=0.4808, anchor=0.6530
+0010	jqka_1776929307325	ok	4.0000	0.1400	1.8238	0.655714	rollback	tree_run:run-001 round:10 | [添加条件] 市盈率大于0小于30	-0.290382	-1.118500	0.655714	0.655340	0.655283	0.4010	113	14	maxPositions 3 < 4
+0011	jqka_1776929339346	ok	4.0000	0.1400	1.8238	0.655714	rollback	tree_run:run-001 round:11 | [添加条件] 市盈率小于30	-0.415382	-1.118500	0.655714	0.655340	0.655283	0.0000	113	15	maxPositions 3 < 4
+0012	jqka_1776929357962	ok	5.0000	0.1300	2.0457	0.656429	rollback	tree_run:run-001 round:12 | [添加条件] 市净率小于3	-0.356620	-1.093457	0.656429	0.654501	0.654433	0.4003	98	16	maxPositions 3 < 4
+0013		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:13 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0014	jqka_1776929389794	stage_c_fail	3.0000	0.1500	1.4680	0.152518	rollback	tree_run:run-001 round:14 | [粗调阈值] 市盈率 20.0 → 10	0.000000	-3.072957	0.152518	0.000000	0.000000	0.8299	10	16	good_ratio=1.00, floor_ok=True, sensitivity=0.8299, anchor=0.1525
+0015	jqka_1776929410567	ok	3.0000	0.1700	1.6303	0.660000	rollback	tree_run:run-001 round:15 | [粗调阈值] 市盈率 10.0 → 15	-0.240168	-0.764621	0.660000	0.654895	0.654770	0.4003	42	16	maxPositions 3 < 4
+0016	jqka_1776929357962	ok	5.0000	0.1300	2.0457	0.656429	rollback	tree_run:run-001 round:16 | [粗调阈值] 市盈率 15.0 → 20	-0.356620	-1.093457	0.656429	0.654501	0.654433	0.4003	98	16	maxPositions 3 < 4
+0017		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:17 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0018	jqka_1776929457698	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:18 | [替换条件] 市盈率小于20 → 净资产收益率大于29%	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	14	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0019	jqka_1776929473898	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:19 | [替换条件] 市盈率大于0小于30 → 流通市值小于100亿	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	13	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0020	jqka_1776929483329	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:20 | [粗调阈值] 净资产收益率 29.0 → 30	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	13	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0021		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:21 | [粗调阈值] 净资产收益率 30.0 → 30	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0022	jqka_1776929511564	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:22 | [添加条件] 市盈率大于0小于30	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	14	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0023	jqka_1776929520731	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:23 | [添加条件] 流通市值小于100亿	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	15	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0024	jqka_1776929537281	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:24 | [添加条件] 市值从小到大	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	16	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0025	jqka_1776929548970	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:25 | [排序方向] 市值从小到大 → 市值从大到小	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	16	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0026	jqka_1776929537281	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:26 | [排序方向] 市值从大到小 → 市值从小到大	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	16	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0027	jqka_1776929586069	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:27 | [添加条件] 市值从大到小	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0028	jqka_1776929603293	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:28 | [粗调阈值] 净资产收益率 30.0 → 28	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0029	jqka_1776929586069	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:29 | [粗调阈值] 净资产收益率 28.0 → 30	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0030		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:30 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0031	jqka_1776929638995	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:31 | [排序方向] 市值从小到大 → 市值从大到小	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0032		crash	0.0000	0.0000	0.0000	0.000000	crash	tree_run:run-001 round:32	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000	0	17	BacktestFailedError: 回测失败 (exit=1)
+🧮 格式化策略参数...
+📝 提交给问财引擎的参数: {
+  "name": "小盘风格树-run-001",
+  "description": "探索小市值公司的收益放大机会 | Run run-001",
+  "query": "非ST，净资产收益率大于28%，周成交量环比增长率大于12%，市净率小于3，市盈率小于30，总市值小于100亿，市盈率大于0小于30，流通市值小于100亿，市值从大到小，市值从大到小，流通市值小于50亿",
+  "start_date": "20250428",
+  "end_date": "20260423",
+  "stock_hold": 3,
+  "day_buy_stock_num": 2,
+  "upper_income": 15,
+  "lower_income": 8,
+  "fall_income": 5,
+  "period": "3,5",
+  "capital": "10000000",
+  "engine": "undefined"
+}
+
+🚀 正在提交10jqka问财回测...
+✅ 回测发起成功!
+📊 结果已保存: /Users/fengzhi/Downloads/git/testlixingren/skills/10jqka_backtest/output/backtest-1776929647476.json
+
+{
+  "status": "error",
+  "error": "errorcode_1",
+  "message": "回测失败",
+  "backtest_id": "",
+  "metrics": null,
+  "raw": {
+    "result": "",
+    "errorcode": 1,
+    "errormsg": "该问句回测失败"
+  }
+}
+
+0033		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:33 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0034	jqka_1776929675103	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:34 | [添加条件] 市值从小到大	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0035	jqka_1776929687587	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:35 | [粗调阈值] 净资产收益率 28.0 → 30	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0036	jqka_1776929697791	stage_a_fail	0.0473	0.1800	0.3896	-3.621159	rollback	tree_run:run-001 round:36 | [排序方向] 市值从小到大 → 市值从大到小	0.000000	-4.030137	-3.621159	0.000000	0.000000	0.0000	1	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0037	jqka_1776929707838	stage_a_fail	0.0361	0.1400	0.1531	-2.870789	rollback	tree_run:run-001 round:37 | [替换条件] 净资产收益率大于30% → 营业收入增长率大于57%	0.000000	-3.401238	-2.870789	0.000000	0.000000	0.0000	6	15	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0038		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:38 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0039	jqka_1776929732521	stage_a_fail	2.0000	0.1200	1.0905	-1.447857	rollback	tree_run:run-001 round:39 | [排序方向] 市值从大到小 → 市值从小到大	0.000000	-4.274933	-1.447857	0.000000	0.000000	0.0000	6	15	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0040		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:40 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0041	jqka_1776929762142	stage_a_fail	0.1977	0.1100	0.7968	-2.407541	rollback	tree_run:run-001 round:41 | [粗调阈值] 周成交量环比增长率 12.0 → 17	0.000000	-4.295235	-2.407541	0.000000	0.000000	0.0000	6	15	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0042	jqka_1776929776537	stage_a_fail	0.1977	0.1100	0.7968	-2.407541	rollback	tree_run:run-001 round:42 | [添加条件] 流通市值小于100亿	0.000000	-4.295235	-2.407541	0.000000	0.000000	0.0000	6	16	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0043	jqka_1776929786324	stage_a_fail	0.1977	0.1100	0.7968	-2.407541	rollback	tree_run:run-001 round:43 | [添加条件] 市值从大到小	0.000000	-4.295235	-2.407541	0.000000	0.000000	0.0000	6	17	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0044	jqka_1776929797734	stage_a_fail	0.1977	0.1100	0.7968	-2.407541	rollback	tree_run:run-001 round:44 | [添加条件] 换手率从低到高	0.000000	-4.295235	-2.407541	0.000000	0.000000	0.0000	6	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0045	jqka_1776929812793	stage_a_fail	4.0000	0.1400	1.6604	-1.443066	rollback	tree_run:run-001 round:45 | [粗调阈值] 周成交量环比增长率 17.0 → 2	0.000000	-4.296267	-1.443066	0.000000	0.000000	0.0000	6	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0046	jqka_1776929823964	stage_a_fail	4.0000	0.1400	1.6604	-1.443066	rollback	tree_run:run-001 round:46 | [粗调阈值] 周成交量环比增长率 2.0 → 1	0.000000	-4.367295	-1.443066	0.000000	0.000000	0.0000	6	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0047		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:47 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0048	jqka_1776929847028	stage_a_fail	2.0000	0.1100	0.9166	-1.446763	rollback	tree_run:run-001 round:48 | [粗调阈值] 周成交量环比增长率 1.0 → 16	0.000000	-4.314946	-1.446763	0.000000	0.000000	0.0000	6	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
+0049		no_change	0.0000	0.0000	0.0000	0.000000	rollback	tree_run:run-001 round:49 | [替换条件] 无可用替换	0.000000	0.000000	0.000000	0.000000	0.000000	0.0000			mutation produced no effective change
+0050	jqka_1776929868418	stage_a_fail	2.0000	0.1100	1.0120	-1.446763	rollback	tree_run:run-001 round:50 | [粗调阈值] 周成交量环比增长率 16.0 → 20	0.000000	-4.275866	-1.446763	0.000000	0.000000	0.0000	6	18	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline

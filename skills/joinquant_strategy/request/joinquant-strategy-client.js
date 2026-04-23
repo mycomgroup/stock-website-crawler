@@ -134,7 +134,7 @@ export class JoinQuantStrategyClient {
     const body = new URLSearchParams();
     body.append('algorithm[algorithmId]', algorithmId);
     body.append('algorithm[name]', name);
-    body.append('algorithm[code]', Buffer.from(code).toString('base64'));
+    body.append('algorithm[code]', code);
     body.append('token', context.token);
     body.append('ajax', '1');
 
@@ -153,21 +153,18 @@ export class JoinQuantStrategyClient {
     const url = '/algorithm/index/build?ajax=1';
     const body = new URLSearchParams();
     
-    // Algorithm Metadata
     body.append('algorithm[algorithmId]', algorithmId);
     body.append('algorithm[userId]', context.userId || '');
     body.append('algorithm[name]', context.name || '');
-    body.append('algorithm[code]', Buffer.from(code).toString('base64'));
-    body.append('encrType', 'base64');
+    body.append('algorithm[code]', code);
     
-    // Backtest Config
     const formatTime = (d) => d.includes(':') ? d : `${d} 00:00:00`;
     body.append('backtest[startTime]', formatTime(config.startTime || '2023-01-01'));
     body.append('backtest[endTime]', formatTime(config.endTime || '2023-12-31'));
     body.append('backtest[baseCapital]', config.baseCapital || '100000');
     body.append('backtest[frequency]', config.frequency || 'day');
     body.append('backtest[pyVersion]', context.pyVersion || '3');
-    body.append('backtest[type]', '0'); // 0 for backtest
+    body.append('backtest[type]', '0');
     
     body.append('ajax', '1');
     body.append('token', context.token);
@@ -183,7 +180,7 @@ export class JoinQuantStrategyClient {
       throw new Error(`Failed to start backtest: ${JSON.stringify(result)}`);
     }
 
-    return result.data; // Includes backtestId
+    return result.data;
   }
 
   /**

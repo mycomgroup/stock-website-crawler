@@ -217,9 +217,9 @@ def run_backtest(config: dict, timeout: int = 120, use_cache: bool = True, exper
                         raise SessionInvalidError(
                             f"Session 无效，请重新登录\ncd skills/10jqka_backtest && node browser/manual-login-capture.js"
                         )
-                    if "请求太频繁" in output and attempt < max_retries - 1:
-                        wait_sec = 60 * (attempt + 1)
-                        print(f"[RateLimit] 检测到请求太频繁，等待 {wait_sec} 秒后重试 ({attempt + 1}/{max_retries - 1})...")
+                    if ("请求太频繁" in output or "fetch failed" in output.lower()) and attempt < max_retries - 1:
+                        wait_sec = max(10, 30 * (attempt + 1))
+                        print(f"⏳ 网络不稳定，等待 {wait_sec} 秒后重试 ({attempt + 1}/{max_retries - 1})...")
                         time.sleep(wait_sec)
                         continue
                     raise BacktestFailedError(f"回测失败 (exit={result.returncode})\n{output[:1000]}")
@@ -267,9 +267,9 @@ def run_backtest(config: dict, timeout: int = 120, use_cache: bool = True, exper
                     error_msg = result_data.get("message", result_data.get("error", "Unknown error"))
                     raw_err = result_data.get("raw", {})
                     errormsg = raw_err.get("errormsg", "")
-                    if ("请求太频繁" in error_msg or "请求太频繁" in errormsg) and attempt < max_retries - 1:
-                        wait_sec = 60 * (attempt + 1)
-                        print(f"[RateLimit] 检测到请求太频繁，等待 {wait_sec} 秒后重试 ({attempt + 1}/{max_retries - 1})...")
+                    if ("请求太频繁" in error_msg or "请求太频繁" in errormsg or "fetch failed" in error_msg.lower()) and attempt < max_retries - 1:
+                        wait_sec = max(10, 30 * (attempt + 1))
+                        print(f"⏳ 网络不稳定，等待 {wait_sec} 秒后重试 ({attempt + 1}/{max_retries - 1})...")
                         time.sleep(wait_sec)
                         continue
                     raise BacktestFailedError(f"回测失败: {error_msg}")

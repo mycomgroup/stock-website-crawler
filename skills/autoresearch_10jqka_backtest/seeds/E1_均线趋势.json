@@ -14,8 +14,8 @@
   "dailyBuyCount": 3,
   "takeProfit": 20,
   "stopLoss": 8,
-<<<<<<< HEAD
   "trailingStopLoss": 5,
+  "wencai_url": "https://backtest.10jqka.com.cn/backtest/app.html#/strategybacktest?query=%E9%9D%9EST%EF%BC%8C5%E6%97%A5%E5%9D%87%E7%BA%BF%E4%B8%8A%E7%A9%BF20%E6%97%A5%E5%9D%87%E7%BA%BF%EF%BC%8C%E8%82%A1%E4%BB%B7%E7%AB%99%E4%B8%8A20%E6%97%A5%E5%9D%87%E7%BA%BF%EF%BC%8C20%E6%97%A5%E5%9D%87%E7%BA%BF%E5%90%91%E4%B8%8A&daysForSaleStrategy=2,3&startDate=2024-01-01&endDate=2026-04-10&stockHoldCount=6&dayBuyStockNum=3&upperIncome=20&lowerIncome=8&fallIncome=5&engine=online&capital=10000000",
   "seed_metadata": {
     "core_formula": [
       "非ST",
@@ -102,7 +102,4 @@
       }
     }
   }
-=======
-  "trailingStopLoss": 5
->>>>>>> origin/main
 }

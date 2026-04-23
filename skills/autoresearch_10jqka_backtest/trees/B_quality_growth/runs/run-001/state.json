@@ -1,9 +1,9 @@
 {
-  "current_iter": 4,
+  "current_iter": 50,
   "champion_score": 1.1573684210526314,
   "champion_robust_score": 1.1442651874820968,
-  "consecutive_failures": 0,
-  "last_update": "2026-04-22T20:32:54.048007",
+  "consecutive_failures": 46,
+  "last_update": "2026-04-22T20:44:33.243730",
   "objective_version": "v4_tree_profile",
   "seed_name": "质量成长树",
   "search_mode": "tree_profile",
@@ -101,7 +101,7 @@
   "last_keep_reason": "first version, automatically champion",
   "last_mutation_type": "add_formula_condition",
   "final_recommendation": "继续跟踪 champion，并优先在稳定参数带内微调。",
-  "stop_reason": "",
+  "stop_reason": "连续失败较多，建议暂停自动探索。",
   "tree_profile": {
     "tree_id": "B_quality_growth",
     "run_id": "run-001"

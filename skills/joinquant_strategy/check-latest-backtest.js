@@ -1,55 +1,44 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
-import path from 'node:path';
 import { JoinQuantStrategyClient } from './request/joinquant-strategy-client.js';
 import { ensureJoinQuantSession } from './request/ensure-session.js';
 
 const ALGORITHM_ID = '309ebf2421687fcf4d41223fdec01f2c';
+const BACKTEST_ID = '534e1c6a1a4d918be370c69b6d2eea2c';
 
 async function main() {
-  console.log('获取最近的回测结果...\n');
+  console.log('=== Check Latest Backtest ===');
   
   await ensureJoinQuantSession({ headed: false, headless: true });
   const client = new JoinQuantStrategyClient();
   const context = await client.getStrategyContext(ALGORITHM_ID);
   
-  console.log('获取回测列表...');
-  const backtests = await client.getBacktests(ALGORITHM_ID);
+  console.log('\nFetching result for:', BACKTEST_ID);
+  const result = await client.getBacktestResult(BACKTEST_ID, context);
   
-  console.log(`找到 ${backtests.length} 个回测记录\n`);
+  console.log('State:', result?.data?.state);
+  // state: 0=完成, 1=进行中, 2=等待中, 3=失败
   
-  if (backtests.length > 0) {
-    const latest = backtests[0];
-    console.log('最新回测:');
-    console.log(`  ID: ${latest.backtestId}`);
-    console.log(`  名称: ${latest.name}`);
-    console.log(`  时间: ${latest.time}`);
-    console.log(`  状态: ${latest.state}`);
+  if (result?.data?.state === '0' || result?.data?.state === 0) {
+    console.log('\n✓ BACKTEST COMPLETE!');
+    const stats = await client.getBacktestStats(BACKTEST_ID, context);
+    console.log(JSON.stringify(stats?.data, null, 2));
     
-    console.log('\n获取详细结果...');
-    const result = await client.getBacktestResult(latest.backtestId, context);
-    
-    if (result.results) {
-      console.log('\n回测结果:');
-      console.log('=' . repeat(60));
-      const r = result.results;
-      console.log(`年化收益: ${(r.annualized_returns * 100).toFixed(2)}%`);
-      console.log(`累计收益: ${(r.total_returns * 100).toFixed(2)}%`);
-      console.log(`夏普比率: ${r.sharpe.toFixed(3)}`);
-      console.log(`最大回撤: ${(r.max_drawdown * 100).toFixed(2)}%`);
-    } else {
-      console.log('\n结果结构:');
-      console.log(JSON.stringify(result, null, 2).slice(0, 500));
+    const log = await client.getLog(BACKTEST_ID);
+    if (log?.data?.logArr?.length > 0) {
+      console.log('\nLog (first 10):');
+      log.data.logArr.slice(0, 10).forEach(l => console.log(l.slice(0, 200)));
     }
-    
-    console.log('\n获取日志...');
-    const log = await client.getLog(latest.backtestId);
-    console.log('\n日志 (前1000字符):');
-    console.log(JSON.stringify(log, null, 2).slice(0, 1000));
-    
-    const resultFile = path.join('data', `latest_backtest_${Date.now()}.json`);
-    fs.writeFileSync(resultFile, JSON.stringify({ result, log }, null, 2));
-    console.log(`\n完整结果已保存: ${resultFile}`);
+  } else if (result?.data?.state === '3' || result?.data?.state === 3) {
+    console.log('\n✗ BACKTEST FAILED');
+    const log = await client.getLog(BACKTEST_ID);
+    if (log?.data?.logArr?.length > 0) {
+      console.log('\nError log:');
+      log.data.logArr.forEach(l => console.log(l.slice(0, 500)));
+    }
+  } else {
+    console.log('\n⏳ Still running or waiting');
+    const log = await client.getLog(BACKTEST_ID);
+    console.log('Log entries:', log?.data?.logArr?.length || 0);
   }
 }
 

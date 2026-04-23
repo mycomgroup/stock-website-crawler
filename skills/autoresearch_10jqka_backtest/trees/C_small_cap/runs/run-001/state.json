@@ -1,0 +1,26 @@
+{
+  "current_iter": 51,
+  "champion_score": -1e+308,
+  "champion_robust_score": -1e+308,
+  "consecutive_failures": 50,
+  "last_update": "2026-04-23T15:37:48.450469",
+  "objective_version": "v4_tree_profile",
+  "seed_name": "小盘风格树",
+  "search_mode": "tree_profile",
+  "phase": "coarse_search",
+  "direction_status": "UNKNOWN",
+  "direction_reason": "",
+  "champion_metrics": {},
+  "champion_windows": {},
+  "baseline_window_scores": {},
+  "baseline_metrics_by_window": {},
+  "stable_param_ranges": {},
+  "last_keep_reason": "",
+  "last_mutation_type": "baseline",
+  "final_recommendation": "",
+  "stop_reason": "direction inactive candidate",
+  "tree_profile": {
+    "tree_id": "C_small_cap",
+    "run_id": "run-001"
+  }
+}

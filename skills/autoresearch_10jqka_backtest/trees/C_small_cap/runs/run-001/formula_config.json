@@ -1,0 +1,26 @@
+{
+  "name": "小盘风格树-run-001",
+  "description": "探索小市值公司的收益放大机会 | Run run-001",
+  "formula": [
+    "非ST",
+    "周成交量环比增长率大于20%",
+    "市净率小于3",
+    "市盈率大于0小于30",
+    "市盈率小于30",
+    "总市值小于100亿",
+    "流通市值小于50亿",
+    "营业收入增长率大于57%",
+    "流通市值小于100亿",
+    "换手率从低到高",
+    "市值从大到小",
+    "市值从小到大"
+  ],
+  "startDate": "2021-01-01",
+  "endDate": "2026-04-23",
+  "maxPositions": 3,
+  "dailyBuyCount": 2,
+  "takeProfit": 15,
+  "stopLoss": 8,
+  "trailingStopLoss": 5,
+  "daysForSaleStrategy": "3,5"
+}

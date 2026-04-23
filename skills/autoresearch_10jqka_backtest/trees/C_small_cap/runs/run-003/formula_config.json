@@ -1,0 +1,22 @@
+{
+  "name": "小盘风格树-run-003",
+  "description": "探索小市值公司的收益放大机会 | Run run-003",
+  "formula": [
+    "非ST",
+    "市净率小于1",
+    "市盈率大于0小于30",
+    "市盈率小于30",
+    "总市值小于100亿",
+    "成交额大于5667万",
+    "流通市值小于50亿",
+    "市值从大到小"
+  ],
+  "startDate": "AUTO",
+  "endDate": "AUTO",
+  "maxPositions": 3,
+  "dailyBuyCount": 2,
+  "takeProfit": 15,
+  "stopLoss": 8,
+  "trailingStopLoss": 5,
+  "daysForSaleStrategy": "3,5"
+}

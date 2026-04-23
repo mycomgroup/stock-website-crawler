@@ -19,6 +19,7 @@ import sys
 import shutil
 import random
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -80,12 +81,20 @@ def setup_run(tree_dir: Path, run_id: str, profile: dict, args: argparse.Namespa
     sl_prefs = soft_priors.get("stopLoss", {}).get("preferred", [7, 12])
     tsl_prefs = soft_priors.get("trailingStopLoss", {}).get("preferred", [5, 8])
 
+    start_date = args.start_date
+    end_date = args.end_date
+
+    if start_date is None or start_date == "AUTO":
+        from datetime import timedelta
+        end_date = end_date or datetime.now().strftime("%Y-%m-%d")
+        start_date = (datetime.now() - timedelta(days=365 * 5)).strftime("%Y-%m-%d")
+
     config = {
         "name": f"{profile.get('name', tree_dir.name)}-{run_id}",
         "description": f"{profile.get('description', '')} | Run {run_id}",
         "formula": list(initial_formula),
-        "startDate": args.start_date or "AUTO",
-        "endDate": args.end_date or "AUTO",
+        "startDate": start_date,
+        "endDate": end_date,
         "maxPositions": max_pos_prefs[0] if isinstance(max_pos_prefs, list) and len(max_pos_prefs) >= 2 else 5,
         "dailyBuyCount": 2,
         "takeProfit": tp_prefs[0] if isinstance(tp_prefs, list) and len(tp_prefs) >= 2 else 20,
@@ -332,6 +341,9 @@ def main() -> None:
             mutation_summary = f"tree_run:{run_id} round:{round_n}"
 
             exit_code = run_single_iteration(run_dir, mutation_summary)
+
+            sleep_time = random.uniform(5, 15)
+            time.sleep(sleep_time)
 
             if exit_code == 0:
                 keep_count += 1

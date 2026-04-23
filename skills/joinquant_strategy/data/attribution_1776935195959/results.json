@@ -1,0 +1,112 @@
+[
+  {
+    "id": "543f837dceb9921f9c544457fe06673d",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.028851739906812,
+    "total": 0.086106769599999,
+    "sharpe": -0.050240380595606,
+    "maxDD": 0.30789960720594,
+    "alpha": 0.089070872814859,
+    "beta": 0.86870020958696,
+    "winRatio": 0.46923076923077
+  },
+  {
+    "id": "91d9a1500606a659f03240458e6942bf",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": -0.028259148217647,
+    "total": -0.079875620100004,
+    "sharpe": -0.30951983312859,
+    "maxDD": 0.30979877927442,
+    "alpha": 0.017784298729568,
+    "beta": 0.74582525539521,
+    "winRatio": 0.50925925925926
+  },
+  {
+    "id": "3c1da6e51f7b51e5dd09316c1524f9e5",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.087089671923334,
+    "total": 1.442836464,
+    "sharpe": 0.21640065805638,
+    "maxDD": 0.37706881251054,
+    "alpha": 0.057555877032002,
+    "beta": 0.72598298844715,
+    "winRatio": 0.56666666666667
+  },
+  {
+    "id": "408f9707bd70b234cdc39801097a2fca",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.11445879394405,
+    "total": 2.1871074804,
+    "sharpe": 0.32973872628886,
+    "maxDD": 0.39315018376282,
+    "alpha": 0.084546126126197,
+    "beta": 0.69970266080373,
+    "winRatio": 0.59906103286385
+  },
+  {
+    "id": "81d3cdc761f1e23f074fd334bcf1398e",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": -0.0046482178808425,
+    "total": -0.036568413940001,
+    "sharpe": -0.22230197329351,
+    "maxDD": 0.39842254894564,
+    "alpha": -0.026162169702134,
+    "beta": 0.72771880429576,
+    "winRatio": 0.48122392211405
+  },
+  {
+    "id": "dc2f11794a5796adfa1621087ad67a60",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.14370106774991,
+    "total": 3.204465412,
+    "sharpe": 0.3957046977223,
+    "maxDD": 0.43435789531189,
+    "alpha": 0.11478472109861,
+    "beta": 0.76881197124056,
+    "winRatio": 0.55357142857143
+  },
+  {
+    "id": "81c772712ef9f4d309323b189fa7e103",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.039163846778464,
+    "total": 0.359582279,
+    "sharpe": -0.0034923284923169,
+    "maxDD": 0.43725736273513,
+    "alpha": 0.018507015269866,
+    "beta": 0.76146006489737,
+    "winRatio": 0.51485148514851
+  },
+  {
+    "id": "7b4ded0dcd11d9a287a35772ecf1a3cc",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.22561690168245,
+    "total": 0.2176637849,
+    "sharpe": 0.79155716607301,
+    "maxDD": 0.16668228693342,
+    "alpha": 0.095170981526093,
+    "beta": 0.80727117084663,
+    "winRatio": 0.7
+  },
+  {
+    "id": "a2086e95a8c22d6ef4e1add783169066",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.092247771639992,
+    "total": 1.569704624,
+    "sharpe": 0.247450377549,
+    "maxDD": 0.44070240381408,
+    "alpha": 0.062427073848058,
+    "beta": 0.70608211482481,
+    "winRatio": 0.56803278688525
+  },
+  {
+    "id": "75721ec0c8a2e0bf587a15eacd7c1ef8",
+    "name": "RFScore_Attr_A0_Baseline_EqualWeight",
+    "annual": 0.0065246569044528,
+    "total": 0.072037502000001,
+    "sharpe": -0.10290394043253,
+    "maxDD": 0.73746501757117,
+    "alpha": -0.020156135064338,
+    "beta": 0.9238800835499,
+    "winRatio": 0.50931677018634
+  }
+]
