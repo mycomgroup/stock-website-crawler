@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/latest_strategy_05_8年10倍回撤小_有滑点_ETF动量简单轮动策略.py

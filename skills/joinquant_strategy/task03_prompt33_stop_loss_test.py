@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/task03_prompt33_stop_loss_test.py

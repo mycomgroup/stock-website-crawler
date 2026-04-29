@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/fix_buy.py

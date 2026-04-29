@@ -1,3 +1,0 @@
-iter	backtest_id	status	annual_return	max_drawdown	sharpe	score	decision	mutation	robust_score	recent6	recent12	prior12	full24	sensitivity	trade_count	complexity	reason
-0001	jqka_1776843569800	stage_a_fail	0.0724	0.1100	0.3421	-0.179154	rollback	tree_run:run-001 round:1 | [粗调阈值] 市盈率 30.0 → 25	0.000000	-1.534593	-0.179154	0.000000	0.000000	0.0000	2254	9	INACTIVE: recent_6m 和 recent_12m 均明显低于 baseline
-0002	jqka_1776843572376	ok	10.0000	0.1700	3.9596	1.152660	keep	tree_run:run-001 round:2 | [添加条件] 周成交量环比增长率大于18%	1.200033	1.148837	1.152660	1.148571	1.148158	0.1160	279	12	first version, automatically champion

@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/direct_buy2.py

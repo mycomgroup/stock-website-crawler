@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/first_board_low_open_backtest.py

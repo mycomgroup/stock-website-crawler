@@ -1,8 +1,0 @@
-# 批量问题示例
-# 每行一个问题，# 开头的行会被忽略
-
-什么是 RESTful API？
-解释一下 Promise 和 async/await 的区别
-如何优化 React 应用的性能？
-什么是 Docker 容器？
-解释一下 Git 的 rebase 和 merge 的区别

@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/task03_prompt32_profit_target_test.py

@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/capacity_test_simple.py

@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/weekly_test.py

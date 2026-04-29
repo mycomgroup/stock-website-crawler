@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/sentiment_switch_position.py

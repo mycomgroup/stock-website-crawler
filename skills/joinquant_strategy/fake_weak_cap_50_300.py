@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/fake_weak_cap_50_300.py

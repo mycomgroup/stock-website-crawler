@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/rfscore_v2_backtest.py

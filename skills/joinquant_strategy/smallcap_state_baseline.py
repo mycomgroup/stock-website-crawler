@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/smallcap_state_baseline.py

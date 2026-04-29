@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/attribution_b_smallcap_event.py

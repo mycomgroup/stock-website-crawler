@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/latest_strategy_21_行业ETF轮动_择时_15年至今年化收益35_回撤16.py

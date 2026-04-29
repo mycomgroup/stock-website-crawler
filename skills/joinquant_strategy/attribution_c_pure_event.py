@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/attribution_c_pure_event.py

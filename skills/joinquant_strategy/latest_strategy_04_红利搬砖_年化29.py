@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/latest_strategy_04_红利搬砖_年化29.py

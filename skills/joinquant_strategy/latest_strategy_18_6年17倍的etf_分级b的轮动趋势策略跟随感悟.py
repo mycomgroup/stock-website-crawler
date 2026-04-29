@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/latest_strategy_18_6年17倍的etf_分级b的轮动趋势策略跟随感悟.py

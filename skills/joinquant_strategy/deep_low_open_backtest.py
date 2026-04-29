@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/deep_low_open_backtest.py

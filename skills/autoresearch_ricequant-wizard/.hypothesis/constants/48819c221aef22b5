@@ -1,4 +1,0 @@
-# file: /Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch_ricequant-wizard/run_iteration.py
-# hypothesis_version: 6.151.9
-
-[0.0, 600, '--base', '--mutation-summary', '--mutation-type', '-inf', '-m', '.', ':', 'HEAD', '__main__', 'a', 'add', 'alpha', 'annualReturn', 'annual_return', 'backtest', 'backtestId', 'backtest_id', 'beta', 'candidate_num_max', 'candidate_num_min', 'champion_score', 'checkout', 'commit', 'consecutive_failures', 'crash', 'current_iter', 'decision', 'git', 'hard_constraints', 'informationRatio', 'iter', 'iterations.tsv', 'keep', 'last_update', 'loop', 'maxDrawdown', 'max_drawdown', 'max_wait_seconds', 'mutation', 'nothing to commit', 'objective', 'poll_interval', 'random', 'rollback', 'score', 'sharpe', 'smart', 'sortino', 'state.json', 'status', 'strategy_id', 'totalReturn', 'utf-8', 'w', 'weights', 'wizard_config.json', '向导式策略单次迭代执行器', '本轮变异的描述（人类可读）']

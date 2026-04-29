@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/rfscore7_pb10_optimized.py

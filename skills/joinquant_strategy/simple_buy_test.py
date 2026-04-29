@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/simple_buy_test.py

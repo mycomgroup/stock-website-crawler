@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/weak_to_strong_v2_narrow.py

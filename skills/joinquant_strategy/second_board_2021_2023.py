@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/second_board_2021_2023.py

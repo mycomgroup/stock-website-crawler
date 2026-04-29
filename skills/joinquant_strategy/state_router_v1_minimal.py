@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/state_router_v1_minimal.py

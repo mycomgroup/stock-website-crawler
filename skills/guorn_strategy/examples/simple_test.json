@@ -1,6 +1,0 @@
-{
-  "pool": "全部A股",
-  "rankings": [
-    { "indicator": "收盘价", "order": "asc" }
-  ]
-}

@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/attribution_a_simple_2024.py

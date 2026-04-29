@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/fake_weak_50_150.py

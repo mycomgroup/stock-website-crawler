@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/latest_strategy_13_不含未来宽基etf轮动8年50倍年化60.py

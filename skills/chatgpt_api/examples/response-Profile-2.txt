@@ -1,9 +1,0 @@
-Profile: Profile-2
-Username: Unknown
-Timestamp: 2026-04-06T12:54:39.839Z
-
-Question:
-请解释一下 JavaScript 中的闭包（Closure）概念，并给出一个实际应用的例子。
-
-Answer:
-

@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/attribution_a_pure_smallcap.py

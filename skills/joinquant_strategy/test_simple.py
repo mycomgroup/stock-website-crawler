@@ -1,1 +1,0 @@
-../../strategies/joinquant_strategy/test_simple.py

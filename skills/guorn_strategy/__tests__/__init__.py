@@ -1,1 +1,0 @@
-"""Tests for guorn_strategy module."""
