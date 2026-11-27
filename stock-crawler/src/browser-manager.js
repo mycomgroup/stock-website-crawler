@@ -13,6 +13,7 @@ class BrowserManager {
     this.browser = null;
     this.context = null;
     this.storageStatePath = null;
+    this.ignoreHTTPSErrors = false;
     this.execFileAsync = promisify(execFile);
   }
 
@@ -37,6 +38,7 @@ class BrowserManager {
     } = options;
     
     this.storageStatePath = storageStatePath;
+    this.ignoreHTTPSErrors = Boolean(ignoreHTTPSErrors);
     this.fetchMethod = fetchMethod;
 
     // If userDataDir is provided, use persistent context to reuse browser profile
@@ -148,13 +150,19 @@ class BrowserManager {
   }
 
   async fallbackLoadHtml(page, url, timeout) {
-    const { stdout } = await this.execFileAsync('curl', [
+    const curlArgs = [
       '-L',
+      '--compressed',
       '--max-time',
       String(Math.ceil(timeout / 1000)),
-      '--fail',
-      url
-    ], {
+      '--fail'
+    ];
+    if (this.ignoreHTTPSErrors) {
+      curlArgs.push('-k');
+    }
+    curlArgs.push(url);
+
+    const { stdout } = await this.execFileAsync('curl', curlArgs, {
       maxBuffer: 10 * 1024 * 1024
     });
 
@@ -249,6 +257,15 @@ class BrowserManager {
           } catch (htmlError) {
             throw new Error(`Failed to navigate to ${url}: ${fallbackError.message}; HTML fallback failed: ${htmlError.message}`);
           }
+        }
+      }
+
+      if (error?.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
+        try {
+          await this.fallbackLoadHtml(page, url, actualTimeout);
+          return null;
+        } catch (htmlError) {
+          throw new Error(`Failed to navigate to ${url}: ${error.message}; HTML fallback failed: ${htmlError.message}`);
         }
       }
 

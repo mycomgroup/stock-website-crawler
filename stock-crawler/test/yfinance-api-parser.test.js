@@ -16,6 +16,8 @@ describe('YfinanceApiParser', () => {
 
   describe('matches', () => {
     test('should match YFinance documentation URLs', () => {
+      expect(parser.matches('https://ranaroussi.github.io/yfinance/reference/index.html')).toBe(true);
+      expect(parser.matches('https://ranaroussi.github.io/yfinance/reference/api/yfinance.Ticker.html')).toBe(true);
       expect(parser.matches('https://www.aidoczh.com/yfinance/')).toBe(true);
       expect(parser.matches('https://www.aidoczh.com/yfinance/reference/yfinance.ticker.html')).toBe(true);
       expect(parser.matches('https://www.aidoczh.com/yfinance/tutorial/quickstart.html')).toBe(true);

@@ -1,11 +1,11 @@
 {
   "name": "yfinance-ticker-fix",
   "seedUrls": [
-    "https://www.aidoczh.com/yfinance/reference/api/yfinance.Ticker.html"
+    "https://ranaroussi.github.io/yfinance/reference/api/yfinance.Ticker.html"
   ],
   "urlRules": {
     "include": [
-      "^https://www\\.aidoczh\\.com/yfinance/reference/api/yfinance\\.Ticker\\.html$"
+      "^https://ranaroussi\\.github\\.io/yfinance/reference/api/yfinance\\.Ticker\\.html$"
     ],
     "exclude": []
   },
@@ -14,6 +14,7 @@
   },
   "crawler": {
     "headless": true,
+    "ignoreHTTPSErrors": true,
     "timeout": 90000,
     "waitBetweenRequests": 3000,
     "maxRetries": 3,
