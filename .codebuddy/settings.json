@@ -1,8 +1,0 @@
-{
-  "permissions": [
-    {
-      "tool": "*",
-      "action": "Allow"
-    }
-  ]
-}

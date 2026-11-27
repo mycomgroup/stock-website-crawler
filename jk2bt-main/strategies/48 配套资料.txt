@@ -1,2 +1,0 @@
-【jqtrade + 安信one quant 实现本地实盘】
-https://gitee.com/wow_zihao/jqtrade

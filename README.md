@@ -38,24 +38,28 @@ A flexible and powerful web crawler specifically designed for stock and financia
 
 ```
 stock-website-crawler/
-├── stock-crawler/          # Main crawler implementation
-│   ├── src/               # Source code
-│   │   ├── parsers/       # Page parsers
-│   │   ├── browser-manager.js
-│   │   ├── crawler-main.js
-│   │   ├── link-manager.js
-│   │   └── ...
-│   ├── config/            # Configuration files
-│   ├── scripts/           # Utility scripts
-│   ├── test/              # Test files
-│   └── doc/               # Documentation
-├── .kiro/                 # Kiro AI specs
+├── stock-crawler/                    # Main crawler engine
+│   ├── src/                          # Source code (application, domain, parsers, storage)
+│   ├── config/                       # Site-specific crawl configurations
+│   ├── scripts/                      # Maintenance & smoke-test scripts
+│   └── test/                         # Unit & integration tests
+├── skills/                           # Companion crawling skills
+│   ├── url-pattern-analyzer/         # URL structure clustering & pattern extraction
+│   ├── html-template-generator/      # XPath content extraction template generator
+│   └── web-api-generator/            # API docs & client generator from URL patterns
+├── docs/                             # Parser architecture summary
+│   └── parser-summary.md
+├── archived/                         # Historical crawler docs, scripts, and experiments
+├── BROWSER_ANTI_DETECTION_README.md  # Browser anti-detection guide
+├── run-crawler-loop.sh               # Batch crawl loop runner
 └── README.md
 ```
 
+> **Note**: Quantitative trading strategies, backtesting frameworks, and research documents previously stored in this repository have been split into a separate repository (`yuping322/quant-research`).
+
 ## 🚀 Quick Start
 
-See [stock-crawler/QUICK_START.md](stock-crawler/QUICK_START.md) for detailed setup instructions.
+See [stock-crawler/README.md](stock-crawler/README.md) for detailed setup instructions.
 
 ### Basic Usage
 
@@ -67,16 +71,10 @@ npm start
 
 ## 📚 Documentation
 
-- [Quick Start Guide](stock-crawler/QUICK_START.md)
-- [Implementation Summary](stock-crawler/doc/IMPLEMENTATION_SUMMARY.md)
-- [Parser Architecture](stock-crawler/doc/PARSER_ARCHITECTURE.md)
-- [Tab & Dropdown Feature](stock-crawler/doc/TAB_DROPDOWN_FEATURE.md)
-- [Tab Extraction Improvement](stock-crawler/doc/TAB_EXTRACTION_IMPROVEMENT.md)
-- [Pagination Feature](stock-crawler/doc/PAGINATION_FEATURE.md)
-- [Persistent Login](stock-crawler/doc/PERSISTENT_LOGIN.md)
-- [URL Prioritization](stock-crawler/doc/URL_PRIORITIZATION.md)
-- [Logging System](stock-crawler/doc/LOGGING.md)
-- [API Doc Crawl Optimization Guide](stock-crawler/doc/API_DOC_CRAWL_OPTIMIZATION_GUIDE.md)
+- [Crawler Overview](stock-crawler/README.md)
+- [Parser Architecture Summary](docs/parser-summary.md)
+- [Browser Anti-Detection Guide](BROWSER_ANTI_DETECTION_README.md)
+- [Archived Design & Feature Docs](archived/doc/)
 
 ## 🔧 Recent Improvements
 
