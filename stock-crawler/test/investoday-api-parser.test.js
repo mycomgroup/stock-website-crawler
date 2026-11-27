@@ -9,10 +9,11 @@ describe('InvestodayApiParser', () => {
   });
 
   describe('matches', () => {
-    test('should match data-api.investoday.net URLs', () => {
+    test('should match data-api.investoday.net and std.investoday.net URLs', () => {
       expect(parser.matches('https://data-api.investoday.net')).toBe(true);
       expect(parser.matches('https://data-api.investoday.net/')).toBe(true);
       expect(parser.matches('https://data-api.investoday.net/api/doc')).toBe(true);
+      expect(parser.matches('https://std.investoday.net/apidocs/ai-native-financial-data')).toBe(true);
     });
 
     test('should not match other URLs', () => {

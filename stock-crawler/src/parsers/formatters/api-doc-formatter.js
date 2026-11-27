@@ -431,8 +431,8 @@ export function formatApiDoc(rawData) {
   }
 
   // 提取核心字段
-  const method = findValue(rawData, FIELD_MAPPINGS.method) || '';
-  const endpoint = findValue(rawData, FIELD_MAPPINGS.endpoint) || '';
+  const method = findValue(rawData, FIELD_MAPPINGS.method) || rawData.api?.method || '';
+  const endpoint = findValue(rawData, FIELD_MAPPINGS.endpoint) || rawData.api?.endpoint || '';
   const endpointFromList = Array.isArray(rawData.endpoints) && rawData.endpoints.length > 0
     ? (rawData.endpoints[0].url || rawData.endpoints[0])
     : '';
@@ -468,7 +468,7 @@ export function formatApiDoc(rawData) {
     api: {
       method: method.toUpperCase(),
       endpoint: endpoint || endpointFromList,
-      baseUrl: rawData.baseUrl || ''
+      baseUrl: rawData.baseUrl || rawData.api?.baseUrl || ''
     },
 
     // 请求

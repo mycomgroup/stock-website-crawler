@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import AlltickApiParser from '../src/parsers/alltick-api-parser.js';
 
 describe('AlltickApiParser', () => {
@@ -156,6 +157,30 @@ describe('AlltickApiParser', () => {
       parser._formatTable(lines, tableData);
 
       expect(lines[2]).toContain('| param1 | string |');
+    });
+
+    test('should escape pipe and newline characters in table cells', () => {
+      const lines = [];
+      parser._formatTable(lines, [
+        ['Field', 'Description'],
+        ['symbol', 'A|B line1\nline2']
+      ]);
+
+      const markdown = lines.join('\n');
+      expect(markdown).toContain('| Field | Description |');
+      expect(markdown).toContain('A\\|B line1<br>line2');
+    });
+  });
+
+  describe('waitForContent', () => {
+    test('should not throw on timeout', async () => {
+      const page = {
+        waitForLoadState: jest.fn().mockRejectedValue(new Error('timeout')),
+        waitForSelector: jest.fn(),
+        waitForTimeout: jest.fn()
+      };
+
+      await expect(parser.waitForContent(page)).resolves.not.toThrow();
     });
   });
 });
