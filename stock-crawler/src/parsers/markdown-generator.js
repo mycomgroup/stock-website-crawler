@@ -746,6 +746,7 @@ class MarkdownGenerator {
    */
   generateUnifiedMcp(data) {
     const sections = [];
+    const escapeMd = (value = '') => String(value).replace(/\|/g, '\\|').replace(/\n/g, '<br>').trim();
 
     // 标题
     if (data.title) {
@@ -794,10 +795,10 @@ class MarkdownGenerator {
     // 统计数据
     if (data.stats && Object.keys(data.stats).some(k => data.stats[k])) {
       sections.push('## 统计数据\n');
-      if (data.stats.users) sections.push(`- **users**: ${data.stats.users}`);
-      if (data.stats.calls) sections.push(`- **calls**: ${data.stats.calls}`);
-      if (data.stats.avgTime) sections.push(`- **avgTime**: ${data.stats.avgTime}`);
-      if (data.stats.toolCount) sections.push(`- **toolCount**: ${data.stats.toolCount}`);
+      if (data.stats.users) sections.push(`- **用户数**: ${escapeMd(data.stats.users)}`);
+      if (data.stats.calls) sections.push(`- **调用次数**: ${escapeMd(data.stats.calls)}`);
+      if (data.stats.avgTime) sections.push(`- **平均执行时间**: ${escapeMd(data.stats.avgTime)}`);
+      if (data.stats.toolCount) sections.push(`- **工具数量**: ${escapeMd(data.stats.toolCount)}`);
       sections.push('');
     }
 
@@ -843,7 +844,7 @@ class MarkdownGenerator {
           sections.push('| 参数名 | 类型 | 必需 | 描述 |');
           sections.push('|--------|------|------|------|');
           tool.inputs.forEach(param => {
-            sections.push(`| \`${param.name}\` | ${param.type || 'string'} | ${param.required ? '是' : '否'} | ${param.description || ''} |`);
+            sections.push(`| \`${escapeMd(param.name)}\` | ${escapeMd(param.type || 'string')} | ${param.required ? '是' : '否'} | ${escapeMd(param.description || '')} |`);
           });
         }
 
@@ -860,7 +861,7 @@ class MarkdownGenerator {
               sections.push(`| \`${this.escapeMarkdown(o.name || '')}\` | ${this.escapeMarkdown(o.type || '-')} | ${this.escapeMarkdown(o.description || '-')} |`);
             });
           } else {
-            sections.push(tool.outputs.map(o => typeof o === 'string' ? `\`${o}\`` : `\`${o.name || ''}\``).join(', '));
+            sections.push(tool.outputs.map(o => typeof o === 'string' ? `\`${escapeMd(o)}\`` : `\`${escapeMd(o.name || '')}\``).join(', '));
           }
         }
 
@@ -900,7 +901,7 @@ class MarkdownGenerator {
       sections.push('## 服务器信息\n');
       Object.entries(data.serverInfo).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          sections.push(`- **${key}**: ${value}`);
+          sections.push(`- **${key}**: ${escapeMd(value)}`);
         }
       });
       sections.push('');

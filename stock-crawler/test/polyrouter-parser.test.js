@@ -77,6 +77,26 @@ describe('PolyrouterParser', () => {
 
       expect(mockPage.waitForLoadState).toHaveBeenCalled();
     });
+
+    test('should expand interactive content safely', async () => {
+      const mockClick = jest.fn().mockResolvedValue();
+      const mockLocatorItem = {
+        innerText: jest.fn().mockResolvedValue('Show response'),
+        click: mockClick
+      };
+      const mockPage = {
+        evaluate: jest.fn().mockResolvedValue(),
+        locator: jest.fn().mockReturnValue({
+          all: jest.fn().mockResolvedValue([mockLocatorItem])
+        }),
+        waitForTimeout: jest.fn().mockResolvedValue()
+      };
+
+      await parser.expandInteractiveContent(mockPage);
+
+      expect(mockPage.evaluate).toHaveBeenCalled();
+      expect(mockClick).toHaveBeenCalled();
+    });
   });
 
   describe('parse', () => {
