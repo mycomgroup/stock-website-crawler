@@ -17,6 +17,7 @@
   },
   "crawler": {
     "headless": true,
+    "ignoreHTTPSErrors": true,
     "timeout": 60000,
     "waitBetweenRequests": 1000,
     "maxRetries": 3,

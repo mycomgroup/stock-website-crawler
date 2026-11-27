@@ -186,4 +186,52 @@ describe('BrowserManager', () => {
       expect(browserManager.browser).toBeNull();
     });
   });
+
+  describe('fallbackLoadHtml and error recovery', () => {
+    test('should pass -k to curl when ignoreHTTPSErrors is true', async () => {
+      const captured = [];
+      browserManager.ignoreHTTPSErrors = true;
+      browserManager.execFileAsync = async (cmd, args) => {
+        captured.push({ cmd, args });
+        return { stdout: '<html><head></head><body>OK</body></html>' };
+      };
+
+      const mockPage = {
+        goto: async () => {},
+        setContent: async () => {}
+      };
+
+      await browserManager.fallbackLoadHtml(mockPage, 'https://example.test/doc', 15000);
+      expect(captured).toHaveLength(1);
+      expect(captured[0].cmd).toBe('curl');
+      expect(captured[0].args).toContain('-k');
+      expect(captured[0].args[captured[0].args.length - 1]).toBe('https://example.test/doc');
+    });
+
+    test('should fall back to curl when page.goto fails with ERR_BLOCKED_BY_CLIENT', async () => {
+      let setHtml = '';
+      browserManager.execFileAsync = async () => ({
+        stdout: '<html><head></head><body>Fallback OK</body></html>'
+      });
+
+      let gotoCalls = 0;
+      const mockPage = {
+        goto: async (url) => {
+          gotoCalls += 1;
+          if (gotoCalls === 1) {
+            throw new Error(`page.goto: net::ERR_BLOCKED_BY_CLIENT at ${url}`);
+          }
+          return null;
+        },
+        setContent: async (html) => {
+          setHtml = html;
+        }
+      };
+
+      const res = await browserManager.goto(mockPage, 'http://example.test/page', 10000);
+      expect(res).toBeNull();
+      expect(setHtml).toContain('Fallback OK');
+      expect(setHtml).toContain('<base href="http://example.test/page">');
+    });
+  });
 });

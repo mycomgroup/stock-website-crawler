@@ -6,14 +6,16 @@ const rootDir = path.resolve(process.cwd());
 const configDir = path.join(rootDir, 'config');
 const tempDir = path.join(rootDir, '.tmp-smoke-configs');
 const outputRoot = path.join(rootDir, 'output', 'smoke-all-configs');
-const timeoutSeconds = Number(process.env.SMOKE_TIMEOUT_SECONDS || 45);
+const timeoutSeconds = Number(process.env.SMOKE_TIMEOUT_SECONDS || 90);
+const batchSize = Number(process.env.SMOKE_BATCH_SIZE || 1);
+const includeLogin = process.env.SMOKE_INCLUDE_LOGIN === '1';
 
 fs.mkdirSync(tempDir, { recursive: true });
 fs.mkdirSync(outputRoot, { recursive: true });
 
 const configFiles = fs
   .readdirSync(configDir)
-  .filter((f) => f.endsWith('.json'))
+  .filter((f) => f.endsWith('.json') && f !== 'example.json')
   .sort();
 
 const results = [];
@@ -22,18 +24,28 @@ for (const file of configFiles) {
   const configPath = path.join(configDir, file);
   const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
   const name = path.basename(file, '.json');
+
+  if (!includeLogin && config.login?.required) {
+    console.log(`[${file}] skipped (login required)`);
+    results.push({ config: file, skipped: true, reason: 'login_required' });
+    continue;
+  }
+
   const smokeOutputDir = `./output/smoke-all-configs/${name}`;
 
   config.name = `${config.name || name}-smoke`;
   config.output = config.output || {};
   config.output.directory = smokeOutputDir;
   config.crawler = {
+    ...(config.crawler || {}),
     headless: true,
+    batchSize,
     timeout: Math.min(config?.crawler?.timeout || 30000, 30000),
     waitBetweenRequests: 0,
     maxRetries: 1,
     ignoreHTTPSErrors: true
   };
+  delete config.crawler.userDataDir;
 
   const smokeConfigPath = path.join(tempDir, `${name}.json`);
   fs.writeFileSync(smokeConfigPath, JSON.stringify(config, null, 2));
