@@ -1,3 +1,0 @@
-# SKIP REASON
-# JQ-specific: jqfactor library, pickle module
-# Uses JoinQuant factor system and local pickle caching not available in RiceQuant

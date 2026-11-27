@@ -1,4 +1,0 @@
-# file: /Users/fengzhi/Downloads/git/testlixingren/skills/autoresearch_ricequant-wizard/scorer.py
-# hypothesis_version: 6.151.9
-
-[0.0, 0.01, 0.2, 0.25, 0.35, 0.55, 'alpha', 'annualReturn', 'backtestId', 'beta', 'calmar', 'completed', 'done', 'finished', 'informationRatio', 'information_ratio', 'keep', 'maxDrawdown', 'max_drawdown_limit', 'normal_exit', 'rollback', 'sharpe', 'sortino', 'status', 'success', 'success_exit', 'totalReturn']

@@ -1,3 +1,0 @@
-# SKIP REASON
-# JQ-specific finance module: finance.STK_ML_QUOTA (northbound capital data)
-# Uses JQ finance macro data API not available in RiceQuant

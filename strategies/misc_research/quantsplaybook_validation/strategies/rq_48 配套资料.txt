@@ -1,2 +1,0 @@
-# SKIP REASON
-# Not a strategy code file - only contains reference link to jqtrade repository

@@ -1,3 +1,0 @@
-# SKIP REASON
-# JQ-specific: kuanke.wizard (RiskControl class), get_data() with pd.Panel, attribute_history(), get_bars()
-# Uses Kuanke wizard framework and JQ-specific panel data structure not available in RiceQuant

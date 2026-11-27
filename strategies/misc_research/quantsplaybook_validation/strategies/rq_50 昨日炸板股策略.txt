@@ -1,3 +1,0 @@
-# SKIP REASON
-# JQ-specific: get_extras('is_st', ...) not available in RiceQuant
-# Uses JQ-specific stock filtering API for ST stock detection
