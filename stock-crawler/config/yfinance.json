@@ -1,11 +1,11 @@
 {
   "name": "yfinance-api-docs",
   "seedUrls": [
-    "https://www.aidoczh.com/yfinance/reference/index.html"
+    "https://ranaroussi.github.io/yfinance/reference/index.html"
   ],
   "urlRules": {
     "include": [
-      "^https://www\\.aidoczh\\.com/yfinance/.*"
+      "^https://ranaroussi\\.github\\.io/yfinance/.*"
     ],
     "exclude": []
   },

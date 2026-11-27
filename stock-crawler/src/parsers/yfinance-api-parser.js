@@ -15,7 +15,7 @@ class YfinanceApiParser extends BaseParser {
    * @returns {boolean} 是否匹配
    */
   matches(url) {
-    return /^https?:\/\/www\.aidoczh\.com\/yfinance\//.test(url);
+    return /^https?:\/\/(ranaroussi\.github\.io|www\.aidoczh\.com)\/yfinance\//.test(url);
   }
 
   /**
@@ -208,9 +208,15 @@ class YfinanceApiParser extends BaseParser {
         sidebarLinks.forEach(link => {
           const href = link.getAttribute('href');
           if (href) {
+            let resolvedUrl = href;
+            try {
+              resolvedUrl = new URL(href, window.location.href).href;
+            } catch (e) {
+              resolvedUrl = href.startsWith('http') ? href : `${window.location.origin}${href.startsWith('/') ? '' : '/'}${href}`;
+            }
             result.sidebarLinks.push({
               title: link.textContent.trim(),
-              url: href.startsWith('http') ? href : `https://www.aidoczh.com${href}`
+              url: resolvedUrl
             });
           }
         });
@@ -601,7 +607,14 @@ class YfinanceApiParser extends BaseParser {
 
       // Sphinx 文档的侧边栏链接是相对于文档根目录的
       // 使用当前页面的 URL 作为 base 来解析相对路径
-      const baseUrl = 'https://www.aidoczh.com/yfinance/reference/';
+      let baseUrl = 'https://ranaroussi.github.io/yfinance/reference/';
+      try {
+        if (currentUrl) {
+          baseUrl = new URL('/yfinance/reference/', currentUrl).href;
+        }
+      } catch (e) {
+        // fallback to official yfinance reference URL
+      }
       console.log(`YFinance parser current page URL: ${currentUrl}`);
       console.log(`YFinance parser using baseUrl: ${baseUrl}`);
 

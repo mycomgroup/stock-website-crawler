@@ -609,6 +609,23 @@ class FinancialModelingPrepApiParser extends BaseParser {
       // 等待网络基本完成
       await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
       await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
+
+      // 若触发 FMP 闲置会话浮层（"Stay Ahead with Fresh Data!" / "Refresh Now"），先刷新恢复正文
+      const hasInactiveOverlay = await page.evaluate(() => {
+        const text = document.body?.innerText || '';
+        return /Stay Ahead with Fresh Data|Your session has been inactive/i.test(text) && !document.querySelector('h1');
+      }).catch(() => false);
+
+      if (hasInactiveOverlay) {
+        const refreshBtn = await page.$('button:has-text("Refresh Now")').catch(() => null);
+        if (refreshBtn) {
+          await refreshBtn.click().catch(() => {});
+        } else {
+          await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {});
+        }
+        await page.waitForTimeout(2000);
+      }
+
       // 等待主要内容容器出现
       await page.waitForSelector('[class*="singleDocument_root"], [class*="documentationWrapper"], h1', { timeout: 20000 });
       // 额外等待 JavaScript 渲染
@@ -621,26 +638,28 @@ class FinancialModelingPrepApiParser extends BaseParser {
   async expandCollapsedContent(page) {
     try {
       const clickedCount = await page.evaluate(() => {
+        const container = document.querySelector('[class*="singleDocument_root"], [class*="documentationWrapper"]');
+        if (!container) return 0;
+
         const candidateSelectors = [
           'button[aria-expanded="false"]',
           '[role="button"][aria-expanded="false"]',
-          'button',
-          '[role="button"]',
-          '[class*="expand"]',
-          '[class*="collapse"]'
+          'button[class*="expand"]',
+          'button[class*="collapse"]'
         ];
 
         let clicked = 0;
         const seen = new Set();
 
         candidateSelectors.forEach((selector) => {
-          const nodes = document.querySelectorAll(selector);
+          const nodes = container.querySelectorAll(selector);
           nodes.forEach((node) => {
             if (!(node instanceof HTMLElement) || seen.has(node)) return;
+            if (node.closest('nav, header, footer, a[href]')) return;
             seen.add(node);
-            const text = (node.textContent || '').toLowerCase();
+            const text = (node.textContent || '').trim().toLowerCase();
             const shouldClick = node.getAttribute('aria-expanded') === 'false'
-              || /show more|view more|expand|more/.test(text);
+              || /^(show more|view more|expand|expand all|show parameters|show response)$/i.test(text);
             if (shouldClick) {
               node.click();
               clicked++;
@@ -648,7 +667,7 @@ class FinancialModelingPrepApiParser extends BaseParser {
           });
         });
 
-        document.querySelectorAll('details').forEach((details) => {
+        container.querySelectorAll('details').forEach((details) => {
           if (!details.open) {
             details.open = true;
             clicked++;

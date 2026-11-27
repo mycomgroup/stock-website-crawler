@@ -1,11 +1,11 @@
 {
   "name": "yfinance-ticker-fix",
   "seedUrls": [
-    "https://www.aidoczh.com/yfinance/reference/api/yfinance.Ticker.html"
+    "https://ranaroussi.github.io/yfinance/reference/api/yfinance.Ticker.html"
   ],
   "urlRules": {
     "include": [
-      "^https://www\\.aidoczh\\.com/yfinance/reference/api/yfinance\\.Ticker\\.html$"
+      "^https://ranaroussi\\.github\\.io/yfinance/reference/api/yfinance\\.Ticker\\.html$"
     ],
     "exclude": []
   },
