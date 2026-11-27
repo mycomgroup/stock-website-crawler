@@ -55,7 +55,7 @@ stock-website-crawler/
 └── README.md
 ```
 
-> **Note**: Quantitative trading strategies, backtesting frameworks, and research documents previously stored in this repository have been split into a separate repository (`yuping322/quant-research`).
+> **Note**: Quantitative trading strategies, backtesting frameworks, and research documents previously stored in this repository have been split into a separate repository (`mycomgroup/quant-research`).
 
 ## 🚀 Quick Start
 
